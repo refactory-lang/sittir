@@ -1,4 +1,4 @@
-85 SCIP kinds: 35 none, 23 kind, 11 family, 10 name, 4 flag, 2 owner
+85 SCIP kinds: 34 none, 23 kind, 12 family, 10 name, 4 flag, 2 owner
 kind: one vocabulary kind; family: one of SCIP's analogous kinds, which the vocabulary holds as one kind; flag: a kind with a flag set; owner: a kind under an owner kind; name: the same word for a different fact; none: a fact no vocabulary kind holds
 
 == kind (23)
@@ -12,13 +12,13 @@ kind: one vocabulary kind; family: one of SCIP's analogous kinds, which the voca
   Field                declaration.field, declaration.field.signature
   File                 file  (the vocabulary's root kind, a source file)
   Function             declaration.function, declaration.function.signature
-  Getter               declaration.method.getter, declaration.method.signature.getter
+  Getter               declaration.property.getter, declaration.property.signature.getter, declaration.property.signature.abstract.getter
   Interface            declaration.interface
   Macro                declaration.macro
   Method               declaration.method, declaration.method.signature
   Module               declaration.module
   Parameter            declaration.parameter
-  Setter               declaration.method.setter, declaration.method.signature.setter
+  Setter               declaration.property.setter, declaration.property.signature.setter, declaration.property.signature.abstract.setter
   Struct               declaration.struct
   Trait                declaration.interface.trait
   TypeAlias            declaration.type_alias
@@ -26,12 +26,13 @@ kind: one vocabulary kind; family: one of SCIP's analogous kinds, which the voca
   Union                declaration.union
   Variable             declaration.variable
 
-== family (11)
+== family (12)
   AbstractMethod       declaration.method.signature.abstract, declaration.method.signature  (a method with no body: the abstract signature, or a signature in an interface)
+  Accessor             declaration.property  (ruby's attr_accessor makes a getter and a setter over storage, as typescript's auto-accessor does)
   MethodReceiver       declaration.parameter.receiver  (Go's receiver, which has no conventional name)
   MethodSpecification  declaration.method.signature  (Go's interface method)
   Namespace            declaration.module  (typescript's namespace is declaration.module; namespace is no synonym, so it stays free for the C++ and C# namespace)
-  Property             declaration.field  (typescript's property is a field; property is no synonym, so it stays free for C#'s property, which has accessors)
+  Property             declaration.property  (C#'s property, which has accessors, and typescript's getters, setters and auto-accessors; typescript's plain property is storage, a field)
   Protocol             declaration.interface  (Swift's protocol; the bindings spec places it as declaration.interface.protocol, which no grammar claims yet)
   PureVirtualMethod    declaration.method.signature.abstract  (C++'s abstract method)
   SelfParameter        declaration.parameter.receiver, identifier.receiver  (self is a synonym of receiver)
@@ -43,7 +44,7 @@ kind: one vocabulary kind; family: one of SCIP's analogous kinds, which the voca
   StaticDataMember     declaration.field#static  (C++'s static field)
   StaticField          declaration.field#static
   StaticMethod         declaration.method#static
-  StaticProperty       declaration.field#static
+  StaticProperty       declaration.property#static  (typescript's static plain property is a static field, SCIP's StaticField)
 
 == owner (2)
   ProtocolMethod       declaration.method.signature  (a signature in a protocol)
@@ -61,8 +62,7 @@ kind: one vocabulary kind; family: one of SCIP's analogous kinds, which the voca
   String               literal.string, type.primitive.string  (a data file's string symbol)
   Value                element.pair  (a data file's value symbol)
 
-== none (35)
-  Accessor             -  (ruby's attr_accessor)
+== none (34)
   Assertion            -  (alloy)
   Axiom                -  (lean)
   Concept              -  (C++20's concept, a named bound; the nearest fact is a bound, clause.bounds)
@@ -98,7 +98,7 @@ kind: one vocabulary kind; family: one of SCIP's analogous kinds, which the voca
   TypeClassMethod      -  (haskell, purescript)
   TypeFamily           -  (haskell)
 
-== declaration kinds: 53 of 57 reached by a SCIP kind
+== declaration kinds: 56 of 60 reached by a SCIP kind
   declaration.ambient                              (none)
   declaration.class                                Class
   declaration.constant                             Constant
@@ -109,7 +109,7 @@ kind: one vocabulary kind; family: one of SCIP's analogous kinds, which the voca
   declaration.enum_member.tuple                    EnumMember through declaration.enum_member
   declaration.extension                            Extension
   declaration.extension.conformance                Extension through declaration.extension
-  declaration.field                                Field, Property, StaticDataMember (#static), StaticField (#static), StaticProperty (#static)
+  declaration.field                                Field, StaticDataMember (#static), StaticField (#static)
   declaration.field.signature                      Field
   declaration.function                             Function
   declaration.function.signature                   Function
@@ -117,14 +117,8 @@ kind: one vocabulary kind; family: one of SCIP's analogous kinds, which the voca
   declaration.interface.trait                      Trait
   declaration.macro                                Macro
   declaration.method                               Method, StaticMethod (#static), TraitMethod
-  declaration.method.getter                        Getter
-  declaration.method.setter                        Setter
   declaration.method.signature                     AbstractMethod, Method, MethodSpecification, ProtocolMethod, TraitMethod
   declaration.method.signature.abstract            AbstractMethod, PureVirtualMethod
-  declaration.method.signature.abstract.getter     AbstractMethod, PureVirtualMethod through declaration.method.signature.abstract
-  declaration.method.signature.abstract.setter     AbstractMethod, PureVirtualMethod through declaration.method.signature.abstract
-  declaration.method.signature.getter              Getter
-  declaration.method.signature.setter              Setter
   declaration.method.special                       Method, StaticMethod (#static), TraitMethod through declaration.method
   declaration.method.static                        Method, StaticMethod (#static), TraitMethod through declaration.method
   declaration.module                               Module, Namespace
@@ -137,6 +131,15 @@ kind: one vocabulary kind; family: one of SCIP's analogous kinds, which the voca
   declaration.parameter.typed                      Parameter through declaration.parameter
   declaration.parameter.typed_default              Parameter through declaration.parameter
   declaration.parameter.variadic                   Parameter through declaration.parameter
+  declaration.property                             Accessor, Property, StaticProperty (#static)
+  declaration.property.getter                      Getter
+  declaration.property.setter                      Setter
+  declaration.property.signature                   Accessor, Property, StaticProperty (#static) through declaration.property
+  declaration.property.signature.abstract          Accessor, Property, StaticProperty (#static) through declaration.property
+  declaration.property.signature.abstract.getter   Getter
+  declaration.property.signature.abstract.setter   Setter
+  declaration.property.signature.getter            Getter
+  declaration.property.signature.setter            Setter
   declaration.signature                            (none)
   declaration.signature.call                       (none)
   declaration.signature.construct                  Constructor

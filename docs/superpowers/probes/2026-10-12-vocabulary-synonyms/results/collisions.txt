@@ -1,4 +1,4 @@
-587 kinds; 67 renames and 18 additions give 572 kinds
+587 kinds; 73 renames and 22 additions give 578 kinds
 
 == argument
   named            keyword                          at argument.named (1)

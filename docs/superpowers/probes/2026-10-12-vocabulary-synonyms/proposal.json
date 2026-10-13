@@ -66,7 +66,13 @@
   ["pattern.tuple.struct", "pattern.struct", "NO9"],
   ["statement.import.type", null, "typeOnly"],
   ["module", "file", "SK4"],
-  ["declaration.variable.static", "declaration.variable", "SK2"]
+  ["declaration.variable.static", "declaration.variable", "SK2"],
+  ["declaration.method.getter", "declaration.property.getter", "SK5"],
+  ["declaration.method.setter", "declaration.property.setter", "SK5"],
+  ["declaration.method.signature.getter", "declaration.property.signature.getter", "SK5"],
+  ["declaration.method.signature.setter", "declaration.property.signature.setter", "SK5"],
+  ["declaration.method.signature.abstract.getter", "declaration.property.signature.abstract.getter", "SK5"],
+  ["declaration.method.signature.abstract.setter", "declaration.property.signature.abstract.setter", "SK5"]
  ],
  "adds": [
   ["statement.import.alias", "NO11"],
@@ -86,7 +92,11 @@
   ["type.primitive.any", "ID7"],
   ["type.primitive.unknown", "ID7"],
   ["type.primitive.symbol", "ID7"],
-  ["type.primitive.object", "ID7"]
+  ["type.primitive.object", "ID7"],
+  ["declaration.property", "SK6"],
+  ["declaration.property.private", "SK6"],
+  ["declaration.property.protected", "SK6"],
+  ["declaration.property.public", "SK6"]
  ],
  "levels": {
   "argument": {"named": ["keyword"]},

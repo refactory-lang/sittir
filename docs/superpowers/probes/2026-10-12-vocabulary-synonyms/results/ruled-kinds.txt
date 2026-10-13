@@ -82,14 +82,8 @@ declaration.interface                            <- declaration.interface  t:int
 declaration.interface.trait                      <- declaration.interface.trait  r:trait_item
 declaration.macro                                <- declaration.macro  r:macro_definition
 declaration.method                               <- declaration.method  p:class_definition r:impl_item_body,trait_item t:method_definition
-declaration.method.getter                        <- declaration.method.getter  t:method_definition
-declaration.method.setter                        <- declaration.method.setter  t:method_definition
 declaration.method.signature                     <- declaration.method.signature  r:trait_item t:method_signature
 declaration.method.signature.abstract            <- declaration.method.signature.abstract  t:abstract_method_signature
-declaration.method.signature.abstract.getter     <- declaration.method.signature.abstract.getter  t:abstract_method_signature
-declaration.method.signature.abstract.setter     <- declaration.method.signature.abstract.setter  t:abstract_method_signature
-declaration.method.signature.getter              <- declaration.method.signature.getter  t:method_signature
-declaration.method.signature.setter              <- declaration.method.signature.setter  t:method_signature
 declaration.method.special                       <- declaration.method.dunder  p:function_definition
 declaration.method.static                        <- declaration.method.static  p:decorated_definition r:impl_item_body
 declaration.module                               <- declaration.module  r:mod_item,mod_item_external,mod_item_inline t:internal_module
@@ -102,6 +96,15 @@ declaration.parameter.receiver                   <- declaration.parameter.self  
 declaration.parameter.typed                      <- declaration.parameter.typed  p:typed_parameter
 declaration.parameter.typed_default              <- declaration.parameter.typed_default  p:typed_default_parameter
 declaration.parameter.variadic                   <- declaration.parameter.variadic  r:variadic_parameter
+declaration.property                             <- none
+declaration.property.getter                      <- declaration.method.getter  t:method_definition
+declaration.property.setter                      <- declaration.method.setter  t:method_definition
+declaration.property.signature                   <- none
+declaration.property.signature.abstract          <- none
+declaration.property.signature.abstract.getter   <- declaration.method.signature.abstract.getter  t:abstract_method_signature
+declaration.property.signature.abstract.setter   <- declaration.method.signature.abstract.setter  t:abstract_method_signature
+declaration.property.signature.getter            <- declaration.method.signature.getter  t:method_signature
+declaration.property.signature.setter            <- declaration.method.signature.setter  t:method_signature
 declaration.signature                            <- declaration.signature
 declaration.signature.call                       <- declaration.signature.call  t:call_signature
 declaration.signature.construct                  <- declaration.signature.construct  t:construct_signature
