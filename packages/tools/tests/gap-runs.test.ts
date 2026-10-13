@@ -13,9 +13,9 @@ describe('blankBucketOf', () => {
 
 describe('rolesOfBindings', () => {
 	it('takes the first segment of a single-node pattern capture and ignores the rest', () => {
-		const roles = rolesOfBindings('(source_file) @module\n(function_item) @declaration.function\n(function_item (parameters)) @declaration.method\n(use_declaration) @statement.import\n');
+		const roles = rolesOfBindings('(source_file) @file\n(function_item) @declaration.function\n(function_item (parameters)) @declaration.method\n(use_declaration) @statement.import\n');
 		expect([...roles]).toEqual([
-			['source_file', 'module'],
+			['source_file', 'file'],
 			['function_item', 'declaration'],
 			['use_declaration', 'statement']
 		]);
