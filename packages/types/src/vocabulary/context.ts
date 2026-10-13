@@ -111,7 +111,19 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['literal'];
 		};
 		readonly 'clause.catch': {
-			readonly catchClauseGroup: unknown;
+			readonly body: V.Declaration.TypeAlias<G> | G['statement'];
+			readonly name:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
+			readonly type:
+				| unknown
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| G['type'];
 		};
 		readonly 'clause.comprehension.for': {
 			readonly left: G['expression'] | G['identifier'] | G['pattern'];
@@ -146,20 +158,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['pattern'];
 			readonly consequence: V.Declaration.TypeAlias<G> | G['statement'];
 		};
-		readonly 'clause.except': {
-			readonly alias:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['pattern'];
-			readonly exception:
-				| unknown
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['pattern'];
-			readonly suite: V.Declaration.TypeAlias<G> | G['statement'];
-		};
 		readonly 'clause.export.namespace': {
 			readonly moduleExportName: G['identifier'] | V.Literal.String<G>;
 		};
@@ -174,7 +172,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly types: V.Identifier.Type<G> | G['type'];
 		};
 		readonly 'clause.finally': {
-			readonly block: V.Declaration.TypeAlias<G> | G['statement'];
+			readonly body: V.Declaration.TypeAlias<G> | G['statement'];
 		};
 		readonly 'clause.implements': {
 			readonly types: G['identifier'] | G['type'];

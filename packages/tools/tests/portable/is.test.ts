@@ -82,6 +82,14 @@ describe('portable is: python', async () => {
 		expect(at('literal.string.bytes')(b, bc)).toBe(true);
 	});
 
+	it('reads an except clause as the one catch kind, and its finally as finally', () => {
+		const SOURCE = 'try:\n    pass\nexcept E as e:\n    pass\nfinally:\n    pass\n';
+		const [handler, hc] = find(SOURCE, 'except_clause');
+		const [finalizer, fc] = find(SOURCE, 'finally_clause');
+		expect(at('clause.catch')(handler, hc)).toBe(true);
+		expect(at('clause.finally')(finalizer, fc)).toBe(true);
+	});
+
 	it('reads each text piece of a string as its text, an f-string\'s included', () => {
 		const SOURCE = 'x = "a\\nb"\ny = f"c{x}"\n';
 		for (const text of ['a', 'b', 'c']) {
@@ -384,6 +392,14 @@ describe('portable is: typescript', async () => {
 			expect(typeof at(path), path).toBe('function');
 			expect(at(path), path).not.toBe(owned);
 		}
+	});
+
+	it('reads a catch clause as the one catch kind, with or without its binding', () => {
+		const SOURCE = 'try { a(); } catch (e: unknown) { b(); }\ntry { c(); } catch { d(); }\n';
+		const [bound, bc] = find(SOURCE, 'catch_clause');
+		const [bare, nc] = find(SOURCE, 'catch_clause', undefined, 1);
+		expect(at('clause.catch')(bound, bc)).toBe(true);
+		expect(at('clause.catch')(bare, nc)).toBe(true);
 	});
 
 	it('reads an enum member through the wildcard claim under the enum body\'s elements', () => {

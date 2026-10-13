@@ -3,7 +3,7 @@
 import { alias, bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "81e289d035aafa761f4c30fe66b5786a31d531c56f4c67f557cdc41ec0591929",
+	hash: "41665411c1dda178100579a75fb355ac1f5fbf7e65d52d9f53db164fec858b9b",
 	patches: {
 		_expression_within_for_in_clause: { "-1": alias(sym("lambda_within_for_in_clause"), sym("lambda_expression")) },
 		assignment_eq: { "0": field("name"), "1/1": field("value") },
@@ -16,6 +16,7 @@ export default bindings({
 		default_parameter: { "2": field("default") },
 		dictionary_splat_pattern: { "1": field("pattern") },
 		expression: { "-5": alias(sym("lambda"), sym("lambda_expression")) },
+		finally_clause: { "2": field("body") },
 		list: { "1/0": field("elements") },
 		list_pattern: { "1/0": field("elements") },
 		list_splat_pattern: { "1": field("pattern") },
@@ -47,6 +48,7 @@ export default bindings({
 		rename("pass_statement", "empty_statement"),
 		rename("print_statement_chevron", "chevron_print_statement"),
 		rename("elif_clause", "else_if_clause"),
+		rename("except_clause", "catch_clause"),
 		rename("case_clause", "match_case_clause"),
 		rename("with_clause", "resource_clause"),
 		rename("with_item", "item_resource_clause"),

@@ -3294,10 +3294,10 @@
       ]
     },
     "except_clause": {
-      "vocab": "clause.except",
+      "vocab": "clause.catch",
       "read": [
         {
-          "vocab": "clause.except",
+          "vocab": "clause.catch",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3317,7 +3317,7 @@
           ]
         },
         {
-          "name": "suite",
+          "name": "body",
           "route": "slot",
           "slot": "suite",
           "path": [
@@ -3328,7 +3328,7 @@
           ]
         },
         {
-          "name": "exception",
+          "name": "type",
           "route": "nested",
           "via": [
             {
@@ -3363,7 +3363,7 @@
           ]
         },
         {
-          "name": "alias",
+          "name": "name",
           "route": "nested",
           "via": [
             {
@@ -3398,7 +3398,7 @@
           ]
         },
         {
-          "name": "exception",
+          "name": "type",
           "route": "nested",
           "via": [
             {
@@ -3570,7 +3570,7 @@
       ],
       "members": [
         {
-          "name": "block",
+          "name": "body",
           "route": "slot",
           "slot": "block",
           "path": [
