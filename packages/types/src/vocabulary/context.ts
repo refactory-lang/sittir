@@ -165,7 +165,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'clause.export.specifier': {
 			readonly alias: G['identifier'] | V.Literal.String<G>;
-			readonly exportKind: string;
 			readonly name: G['identifier'] | V.Literal.String<G>;
 		};
 		readonly 'clause.extends': {
@@ -191,7 +190,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'clause.import.specifier': {
 			readonly alias: G['identifier'] | string;
-			readonly importKind: string;
 			readonly name:
 				| G['identifier']
 				| V.Literal.String<G>

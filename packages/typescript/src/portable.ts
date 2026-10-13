@@ -52,6 +52,7 @@ export interface PortableIds {
 	'clause.export': TSKindId.ExportClause | TSKindId.ExportSpecifier | TSKindId.NamespaceExport;
 	'clause.export.namespace': TSKindId.NamespaceExport;
 	'clause.export.specifier': TSKindId.ExportSpecifier;
+	'clause.export.specifier.typeof': TSKindId.ExportSpecifier;
 	'clause.extends': TSKindId.ExtendsClause | TSKindId.ExtendsTypeClause;
 	'clause.extends.type': TSKindId.ExtendsTypeClause;
 	'clause.finally': TSKindId.FinallyClause;
@@ -71,6 +72,7 @@ export interface PortableIds {
 	'clause.import.namespace': TSKindId.NamespaceImport;
 	'clause.import.require': TSKindId.ImportRequireClause;
 	'clause.import.specifier': TSKindId.ImportSpecifier | TSKindId.ImportSpecifierAs | TSKindId.ImportSpecifierName;
+	'clause.import.specifier.typeof': TSKindId.ImportSpecifierAs | TSKindId.ImportSpecifierName;
 	'clause.mapped_type': TSKindId.MappedTypeClause;
 	comment: TSKindId.CommentBlock | TSKindId.CommentLine | TSKindId.HtmlComment;
 	'comment.block': TSKindId.CommentBlock;
@@ -664,7 +666,11 @@ export interface PortableKindsAt {
 		readonly specifier: PortableKindsAt['clause.export.specifier'];
 	};
 	'clause.export.namespace': { readonly $ids: readonly PortableIds['clause.export.namespace'][] };
-	'clause.export.specifier': { readonly $ids: readonly PortableIds['clause.export.specifier'][] };
+	'clause.export.specifier': {
+		readonly $ids: readonly PortableIds['clause.export.specifier'][];
+		readonly typeof: PortableKindsAt['clause.export.specifier.typeof'];
+	};
+	'clause.export.specifier.typeof': { readonly $ids: readonly PortableIds['clause.export.specifier.typeof'][] };
 	'clause.extends': {
 		readonly $ids: readonly PortableIds['clause.extends'][];
 		readonly type: PortableKindsAt['clause.extends.type'];
@@ -686,7 +692,11 @@ export interface PortableKindsAt {
 	'clause.import.names': { readonly $ids: readonly PortableIds['clause.import.names'][] };
 	'clause.import.namespace': { readonly $ids: readonly PortableIds['clause.import.namespace'][] };
 	'clause.import.require': { readonly $ids: readonly PortableIds['clause.import.require'][] };
-	'clause.import.specifier': { readonly $ids: readonly PortableIds['clause.import.specifier'][] };
+	'clause.import.specifier': {
+		readonly $ids: readonly PortableIds['clause.import.specifier'][];
+		readonly typeof: PortableKindsAt['clause.import.specifier.typeof'];
+	};
+	'clause.import.specifier.typeof': { readonly $ids: readonly PortableIds['clause.import.specifier.typeof'][] };
 	'clause.mapped_type': { readonly $ids: readonly PortableIds['clause.mapped_type'][] };
 	comment: {
 		readonly $ids: readonly PortableIds['comment'][];
@@ -1519,7 +1529,10 @@ export interface PortableIsAt {
 		readonly specifier: PortableIsAt['clause.export.specifier'];
 	};
 	'clause.export.namespace': PortableGuard<PortableIds['clause.export.namespace']> & {};
-	'clause.export.specifier': PortableGuard<PortableIds['clause.export.specifier']> & {};
+	'clause.export.specifier': PortableGuard<PortableIds['clause.export.specifier']> & {
+		readonly typeof: PortableIsAt['clause.export.specifier.typeof'];
+	};
+	'clause.export.specifier.typeof': PortableGuard<PortableIds['clause.export.specifier.typeof']> & {};
 	'clause.extends': PortableGuard<PortableIds['clause.extends']> & {
 		readonly type: PortableIsAt['clause.extends.type'];
 	};
@@ -1539,7 +1552,10 @@ export interface PortableIsAt {
 	'clause.import.names': PortableGuard<PortableIds['clause.import.names']> & {};
 	'clause.import.namespace': PortableGuard<PortableIds['clause.import.namespace']> & {};
 	'clause.import.require': PortableGuard<PortableIds['clause.import.require']> & {};
-	'clause.import.specifier': PortableGuard<PortableIds['clause.import.specifier']> & {};
+	'clause.import.specifier': PortableGuard<PortableIds['clause.import.specifier']> & {
+		readonly typeof: PortableIsAt['clause.import.specifier.typeof'];
+	};
+	'clause.import.specifier.typeof': PortableGuard<PortableIds['clause.import.specifier.typeof']> & {};
 	'clause.mapped_type': PortableGuard<PortableIds['clause.mapped_type']> & {};
 	comment: PortableGuard<PortableIds['comment']> & {
 		readonly block: PortableIsAt['comment.block'];
@@ -2303,6 +2319,7 @@ const table: PortableTable = {
 		'clause.export': { ids: [TSKindId.ExportClause, TSKindId.ExportSpecifier, TSKindId.NamespaceExport], exact: true },
 		'clause.export.namespace': { ids: [TSKindId.NamespaceExport], exact: true },
 		'clause.export.specifier': { ids: [TSKindId.ExportSpecifier], exact: true },
+		'clause.export.specifier.typeof': { ids: [TSKindId.ExportSpecifier], exact: false },
 		'clause.extends': { ids: [TSKindId.ExtendsClause, TSKindId.ExtendsTypeClause], exact: true },
 		'clause.extends.type': { ids: [TSKindId.ExtendsTypeClause], exact: true },
 		'clause.finally': { ids: [TSKindId.FinallyClause], exact: true },
@@ -2329,6 +2346,7 @@ const table: PortableTable = {
 			ids: [TSKindId.ImportSpecifier, TSKindId.ImportSpecifierAs, TSKindId.ImportSpecifierName],
 			exact: true
 		},
+		'clause.import.specifier.typeof': { ids: [TSKindId.ImportSpecifierAs, TSKindId.ImportSpecifierName], exact: false },
 		'clause.mapped_type': { ids: [TSKindId.MappedTypeClause], exact: true },
 		comment: { ids: [TSKindId.CommentBlock, TSKindId.CommentLine, TSKindId.HtmlComment], exact: true },
 		'comment.block': { ids: [TSKindId.CommentBlock], exact: false },
@@ -3368,7 +3386,14 @@ const table: PortableTable = {
 		[TSKindId.EscapeSequence]: [{ path: 'literal.string.escape', within: [], test: [] }],
 		[TSKindId.ExistentialType]: [{ path: 'type.existential', within: [], test: [] }],
 		[TSKindId.ExportClause]: [{ path: 'clause.export', within: [], test: [] }],
-		[TSKindId.ExportSpecifier]: [{ path: 'clause.export.specifier', within: [], test: [] }],
+		[TSKindId.ExportSpecifier]: [
+			{
+				path: 'clause.export.specifier.typeof',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', fields: ['export_kind'], kinds: [] } }]
+			},
+			{ path: 'clause.export.specifier', within: [], test: [] }
+		],
 		[TSKindId.ExportStatement]: [{ path: 'statement.export', within: [], test: [] }],
 		[TSKindId.ExportStatementDefault]: [{ path: 'statement.export', within: [], test: [] }],
 		[TSKindId.ExportStatementDefaultDeclaration]: [
@@ -3456,8 +3481,22 @@ const table: PortableTable = {
 		[TSKindId.ImportClause]: [{ path: 'clause.import.names', within: [], test: [] }],
 		[TSKindId.ImportRequireClause]: [{ path: 'clause.import.require', within: [], test: [] }],
 		[TSKindId.ImportSpecifier]: [{ path: 'clause.import.specifier', within: [], test: [] }],
-		[TSKindId.ImportSpecifierAs]: [{ path: 'clause.import.specifier', within: [], test: [] }],
-		[TSKindId.ImportSpecifierName]: [{ path: 'clause.import.specifier', within: [], test: [] }],
+		[TSKindId.ImportSpecifierAs]: [
+			{
+				path: 'clause.import.specifier.typeof',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', fields: ['import_kind'], kinds: [] } }]
+			},
+			{ path: 'clause.import.specifier', within: [], test: [] }
+		],
+		[TSKindId.ImportSpecifierName]: [
+			{
+				path: 'clause.import.specifier.typeof',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', fields: ['import_kind'], kinds: [] } }]
+			},
+			{ path: 'clause.import.specifier', within: [], test: [] }
+		],
 		[TSKindId.ImportStatement]: [
 			{
 				path: 'statement.import.typeof',
