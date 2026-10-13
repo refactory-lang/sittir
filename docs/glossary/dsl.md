@@ -2743,6 +2743,8 @@ the rule in place. Called once from `enrich`, after
 labelled too. Returns the record, which `enrich` always attaches to its
 result as `ENRICH_AUTOMATIC_VARIANTS_KEY`.
 
+With `into`, the labels go onto an existing record instead of a fresh one, and `owners` limits the run to the rules named. `grammar()` uses both to label what wire created or changed with this same function, so a kind a patch authors after enrich ran carries the labels enrich would have given it. A supertype owner joins `into` only when stamping it added a label.
+
 ### `packages/codegen/src/dsl/automatic-variants.ts::getEnrichAutomaticVariants`
 
 The record on an enriched grammar, or `undefined` when the grammar carries

@@ -134,6 +134,9 @@ export interface SubBuilderRowKind {
 	'simpleStatement.raise': TSKindId.RaiseStatement;
 	'simpleStatement.return': TSKindId.ReturnStatement;
 	'simpleStatement.typeAlias': TSKindId.TypeAliasStatement;
+	'stringContent.escapeInterpolation': TSKindId.EscapeInterpolation;
+	'stringContent.notEscapeSequence': TSKindId.NotEscapeSequence;
+	'stringContent.stringFragment': TSKindId.StringFragment;
 	'suite.block': TSKindId.SuiteBlock;
 	'suite.empty': TSKindId.SuiteEmpty;
 	'suite.inline': TSKindId.SuiteInline;

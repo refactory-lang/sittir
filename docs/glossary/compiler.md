@@ -7876,6 +7876,8 @@ The global `grammar()` during evaluation, under the DSL's contract: `grammar(opt
 `grammar(base, options)` to extend a `grammar()` result. The base is told apart from options by its `grammar`
 property, and a call that mixes the two shapes throws.
 
+When the base was wired, the rules wire created or changed (the layout supertype excepted, which enrich mints after its own labelling) are labelled with `stampAutomaticVariants` into the wire context's record. That is the same stamping enrich applies to a kind it mints, run on the arms a patch or `groups:` entry authored after enrich, so a later enrich pass finds those arms already labelled.
+
 #### body
 
 ```text

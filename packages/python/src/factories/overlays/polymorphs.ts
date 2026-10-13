@@ -171,6 +171,144 @@ export const importFromStatement = Object.freeze({
 	};
 };
 
+const printStatementChevron$printChevronArguments =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'printChevronArguments'> & { printChevronArguments: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { printChevronArguments: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)(
+			{ ...rest, printChevronArguments: _c(child)(...seated) } as never,
+			options as never
+		);
+	};
+const printStatementChevron$printChevronArguments$strict = printStatementChevron$printChevronArguments(
+	F.buildPrintStatementChevron,
+	F.buildPrintChevronArguments
+);
+const printStatementChevron$printChevronArguments$coerce = printStatementChevron$printChevronArguments(
+	C.coerceToPrintStatementChevron,
+	C.coerceToPrintChevronArguments
+);
+const printStatementChevron$comma =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'printChevronArguments'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, printChevronArguments: value } as never, options as never);
+const printStatementChevron$comma$strict = printStatementChevron$comma(F.buildPrintStatementChevron, TSKindId.Comma);
+const printStatementChevron$comma$coerce = printStatementChevron$comma(C.coerceToPrintStatementChevron, TSKindId.Comma);
+export const printStatementChevron = Object.freeze({
+	...B.printStatementChevron,
+	printChevronArguments: bundle(
+		printStatementChevron$printChevronArguments$strict,
+		printStatementChevron$printChevronArguments$coerce,
+		{ key: 'printStatementChevron.printChevronArguments', max: 2 }
+	),
+	comma: bundle(printStatementChevron$comma$strict, printStatementChevron$comma$coerce, {
+		key: 'printStatementChevron.comma',
+		max: 2
+	})
+}) as unknown as typeof B.printStatementChevron & {
+	printChevronArguments: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPrintStatementChevron>[0], 'printChevronArguments'> & {
+				printChevronArguments: ArgsOf<typeof F.buildPrintChevronArguments>;
+			},
+			options?: OptionsArg<typeof F.buildPrintStatementChevron>
+		) => ReturnType<typeof F.buildPrintStatementChevron>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPrintStatementChevron>[0], 'printChevronArguments'> & {
+				printChevronArguments: ArgsOf<typeof C.coerceToPrintChevronArguments>;
+			},
+			options?: OptionsArg<typeof C.coerceToPrintStatementChevron>
+		) => ReturnType<typeof C.coerceToPrintStatementChevron>;
+	};
+	comma: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPrintStatementChevron>[0], 'printChevronArguments'>,
+			options?: OptionsArg<typeof F.buildPrintStatementChevron>
+		) => ReturnType<typeof F.buildPrintStatementChevron>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPrintStatementChevron>[0], 'printChevronArguments'>,
+			options?: OptionsArg<typeof C.coerceToPrintStatementChevron>
+		) => ReturnType<typeof C.coerceToPrintStatementChevron>;
+	};
+};
+
+const printStatement$chevron =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const printStatement$chevron$strict = printStatement$chevron(F.buildPrintStatement, F.buildPrintStatementChevron);
+const printStatement$chevron$coerce = printStatement$chevron(F.buildPrintStatement, C.coerceToPrintStatementChevron);
+const printStatement$plain =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const printStatement$plain$strict = printStatement$plain(F.buildPrintStatement, F.buildPrintStatementPlain);
+const printStatement$plain$coerce = printStatement$plain(F.buildPrintStatement, C.coerceToPrintStatementPlain);
+const printStatement$chevron$printChevronArguments =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const printStatement$chevron$printChevronArguments$strict = printStatement$chevron$printChevronArguments(
+	F.buildPrintStatement,
+	printStatementChevron.printChevronArguments.strict
+);
+const printStatement$chevron$printChevronArguments$coerce = printStatement$chevron$printChevronArguments(
+	F.buildPrintStatement,
+	printStatementChevron.printChevronArguments.coerce
+);
+const printStatement$chevron$comma =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const printStatement$chevron$comma$strict = printStatement$chevron$comma(
+	F.buildPrintStatement,
+	printStatementChevron.comma.strict
+);
+const printStatement$chevron$comma$coerce = printStatement$chevron$comma(
+	F.buildPrintStatement,
+	printStatementChevron.comma.coerce
+);
+export const printStatement = Object.freeze({
+	...B.printStatement,
+	chevron: {
+		...bundle(printStatement$chevron$strict, printStatement$chevron$coerce, { key: 'printStatement.chevron', max: 1 }),
+		printChevronArguments: bundle(
+			printStatement$chevron$printChevronArguments$strict,
+			printStatement$chevron$printChevronArguments$coerce,
+			{ key: 'printStatement.chevron.printChevronArguments', max: 2 }
+		),
+		comma: bundle(printStatement$chevron$comma$strict, printStatement$chevron$comma$coerce, {
+			key: 'printStatement.chevron.comma',
+			max: 2
+		})
+	},
+	plain: bundle(printStatement$plain$strict, printStatement$plain$coerce)
+}) as unknown as typeof B.printStatement & {
+	chevron: {
+		strict: (...args: ArgsOf<typeof F.buildPrintStatementChevron>) => ReturnType<typeof F.buildPrintStatement>;
+		coerce: (...args: ArgsOf<typeof C.coerceToPrintStatementChevron>) => ReturnType<typeof F.buildPrintStatement>;
+		printChevronArguments: {
+			strict: (
+				...args: ArgsOf<typeof printStatementChevron.printChevronArguments.strict>
+			) => ReturnType<typeof F.buildPrintStatement>;
+			coerce: (
+				...args: ArgsOf<typeof printStatementChevron.printChevronArguments.coerce>
+			) => ReturnType<typeof F.buildPrintStatement>;
+		};
+		comma: {
+			strict: (...args: ArgsOf<typeof printStatementChevron.comma.strict>) => ReturnType<typeof F.buildPrintStatement>;
+			coerce: (...args: ArgsOf<typeof printStatementChevron.comma.coerce>) => ReturnType<typeof F.buildPrintStatement>;
+		};
+	};
+	plain: {
+		strict: (...args: ArgsOf<typeof F.buildPrintStatementPlain>) => ReturnType<typeof F.buildPrintStatement>;
+		coerce: (...args: ArgsOf<typeof C.coerceToPrintStatementPlain>) => ReturnType<typeof F.buildPrintStatement>;
+	};
+};
+
 const comparisonOperator$comparators = <
 	PF extends (config: never) => unknown,
 	CF extends (...args: never[]) => unknown
@@ -1450,151 +1588,27 @@ export const exceptClause = Object.freeze({
 	};
 };
 
-const keywordPattern$negative =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'sign' || key === 'value') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(inner) } as never, options as never);
-	};
-const keywordPattern$negative$strict = keywordPattern$negative(F.buildKeywordPattern, F.buildSimplePatternNegative);
-const keywordPattern$negative$coerce = keywordPattern$negative(
-	C.coerceToKeywordPattern,
-	C.coerceToSimplePatternNegative
-);
-export const keywordPattern = Object.freeze({
-	...B.keywordPattern,
-	negative: bundle(keywordPattern$negative$strict, keywordPattern$negative$coerce, {
-		key: 'keywordPattern.negative',
-		max: 2
-	})
-}) as unknown as typeof B.keywordPattern & {
-	negative: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> &
-				ArgsOf<typeof F.buildSimplePatternNegative>[0],
-			options?: OptionsArg<typeof F.buildKeywordPattern>
-		) => ReturnType<typeof F.buildKeywordPattern>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> &
-				ArgsOf<typeof C.coerceToSimplePatternNegative>[0],
-			options?: OptionsArg<typeof C.coerceToKeywordPattern>
-		) => ReturnType<typeof C.coerceToKeywordPattern>;
+const classPattern$arguments = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
+	parent: PF,
+	child: CF
+) => {
+	return (config: unknown, options?: unknown): ReturnType<PF> => {
+		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
+		const seat = _o(config)['arguments'];
+		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
+		return _fwd<ReturnType<PF>>(parent, { ..._o(config), arguments: _c(child)(...seat) }, options);
 	};
 };
-
-const simplePattern$negative =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const simplePattern$negative$strict = simplePattern$negative(F.buildSimplePattern, F.buildSimplePatternNegative);
-const simplePattern$negative$coerce = simplePattern$negative(F.buildSimplePattern, C.coerceToSimplePatternNegative);
-export const simplePattern = Object.freeze({
-	...B.simplePattern,
-	negative: bundle(simplePattern$negative$strict, simplePattern$negative$coerce, {
-		key: 'simplePattern.negative',
-		max: 1
-	})
-}) as unknown as typeof B.simplePattern & {
-	negative: {
-		strict: (...args: ArgsOf<typeof F.buildSimplePatternNegative>) => ReturnType<typeof F.buildSimplePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSimplePatternNegative>) => ReturnType<typeof F.buildSimplePattern>;
-	};
-};
-
-const casePattern$caseAsPattern =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const casePattern$caseAsPattern$strict = casePattern$caseAsPattern(F.buildCasePattern, F.buildCaseAsPattern);
-const casePattern$caseAsPattern$coerce = casePattern$caseAsPattern(F.buildCasePattern, C.coerceToCaseAsPattern);
-const casePattern$keywordPattern =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const casePattern$keywordPattern$strict = casePattern$keywordPattern(F.buildCasePattern, F.buildKeywordPattern);
-const casePattern$keywordPattern$coerce = casePattern$keywordPattern(F.buildCasePattern, C.coerceToKeywordPattern);
-const casePattern$simplePattern =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const casePattern$simplePattern$strict = casePattern$simplePattern(F.buildCasePattern, F.buildSimplePattern);
-const casePattern$simplePattern$coerce = casePattern$simplePattern(F.buildCasePattern, C.coerceToSimplePattern);
-const casePattern$keywordPattern$negative =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const casePattern$keywordPattern$negative$strict = casePattern$keywordPattern$negative(
-	F.buildCasePattern,
-	keywordPattern.negative.strict
-);
-const casePattern$keywordPattern$negative$coerce = casePattern$keywordPattern$negative(
-	F.buildCasePattern,
-	keywordPattern.negative.coerce
-);
-const casePattern$simplePattern$negative =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const casePattern$simplePattern$negative$strict = casePattern$simplePattern$negative(
-	F.buildCasePattern,
-	simplePattern.negative.strict
-);
-const casePattern$simplePattern$negative$coerce = casePattern$simplePattern$negative(
-	F.buildCasePattern,
-	simplePattern.negative.coerce
-);
-export const casePattern = Object.freeze({
-	...B.casePattern,
-	caseAsPattern: bundle(casePattern$caseAsPattern$strict, casePattern$caseAsPattern$coerce, {
-		key: 'casePattern.caseAsPattern',
-		max: 1
-	}),
-	keywordPattern: {
-		...bundle(casePattern$keywordPattern$strict, casePattern$keywordPattern$coerce, {
-			key: 'casePattern.keywordPattern',
-			max: 1
-		}),
-		negative: bundle(casePattern$keywordPattern$negative$strict, casePattern$keywordPattern$negative$coerce, {
-			key: 'casePattern.keywordPattern.negative',
-			max: 2
-		})
-	},
-	simplePattern: {
-		...bundle(casePattern$simplePattern$strict, casePattern$simplePattern$coerce, {
-			key: 'casePattern.simplePattern',
-			max: 1
-		}),
-		negative: bundle(casePattern$simplePattern$negative$strict, casePattern$simplePattern$negative$coerce, {
-			key: 'casePattern.simplePattern.negative',
-			max: 1
-		})
-	}
-}) as unknown as typeof B.casePattern & {
-	caseAsPattern: {
-		strict: (...args: ArgsOf<typeof F.buildCaseAsPattern>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCaseAsPattern>) => ReturnType<typeof F.buildCasePattern>;
-	};
-	keywordPattern: {
-		strict: (...args: ArgsOf<typeof F.buildKeywordPattern>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToKeywordPattern>) => ReturnType<typeof F.buildCasePattern>;
-		negative: {
-			strict: (...args: ArgsOf<typeof keywordPattern.negative.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof keywordPattern.negative.coerce>) => ReturnType<typeof F.buildCasePattern>;
-		};
-	};
-	simplePattern: {
-		strict: (...args: ArgsOf<typeof F.buildSimplePattern>) => ReturnType<typeof F.buildCasePattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSimplePattern>) => ReturnType<typeof F.buildCasePattern>;
-		negative: {
-			strict: (...args: ArgsOf<typeof simplePattern.negative.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePattern.negative.coerce>) => ReturnType<typeof F.buildCasePattern>;
-		};
-	};
+const classPattern$seated: (...args: T.ClassPattern.BuildArgs) => ReturnType<typeof F.buildClassPattern> =
+	classPattern$arguments(F.buildClassPattern, F.buildListPatternCasePatterns);
+const classPattern$seatedCoerce: (...args: T.ClassPattern.LooseArgs) => ReturnType<typeof C.coerceToClassPattern> =
+	classPattern$arguments(C.coerceToClassPattern, C.coerceToListPatternCasePatterns);
+export const classPattern = Object.freeze({
+	...B.classPattern,
+	...bundle(classPattern$seated, classPattern$seatedCoerce, { key: 'classPattern', max: 1 })
+}) as unknown as Omit<typeof B.classPattern, 'strict' | 'coerce'> & {
+	strict: typeof classPattern$seated;
+	coerce: typeof classPattern$seatedCoerce;
 };
 
 const unionPattern$patterns = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
@@ -1617,6 +1631,1404 @@ export const unionPattern = Object.freeze({
 	coerce: typeof unionPattern$seatedCoerce;
 };
 
+const keywordPattern$classPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(seated) } as never, options as never);
+	};
+const keywordPattern$classPattern$strict = keywordPattern$classPattern(F.buildKeywordPattern, classPattern.strict);
+const keywordPattern$classPattern$coerce = keywordPattern$classPattern(C.coerceToKeywordPattern, classPattern.coerce);
+const keywordPattern$splatPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(seated) } as never, options as never);
+	};
+const keywordPattern$splatPattern$strict = keywordPattern$splatPattern(F.buildKeywordPattern, F.buildSplatPattern);
+const keywordPattern$splatPattern$coerce = keywordPattern$splatPattern(
+	C.coerceToKeywordPattern,
+	C.coerceToSplatPattern
+);
+const keywordPattern$unionPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) } as never, options as never);
+	};
+const keywordPattern$unionPattern$strict = keywordPattern$unionPattern(F.buildKeywordPattern, unionPattern.strict);
+const keywordPattern$unionPattern$coerce = keywordPattern$unionPattern(C.coerceToKeywordPattern, unionPattern.coerce);
+const keywordPattern$caseListPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(seated) } as never, options as never);
+	};
+const keywordPattern$caseListPattern$strict = keywordPattern$caseListPattern(
+	F.buildKeywordPattern,
+	F.buildCaseListPattern
+);
+const keywordPattern$caseListPattern$coerce = keywordPattern$caseListPattern(
+	C.coerceToKeywordPattern,
+	C.coerceToCaseListPattern
+);
+const keywordPattern$caseTuplePattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(seated) } as never, options as never);
+	};
+const keywordPattern$caseTuplePattern$strict = keywordPattern$caseTuplePattern(
+	F.buildKeywordPattern,
+	F.buildCaseTuplePattern
+);
+const keywordPattern$caseTuplePattern$coerce = keywordPattern$caseTuplePattern(
+	C.coerceToKeywordPattern,
+	C.coerceToCaseTuplePattern
+);
+const keywordPattern$dictPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(seated) } as never, options as never);
+	};
+const keywordPattern$dictPattern$strict = keywordPattern$dictPattern(F.buildKeywordPattern, F.buildDictPattern);
+const keywordPattern$dictPattern$coerce = keywordPattern$dictPattern(C.coerceToKeywordPattern, C.coerceToDictPattern);
+const keywordPattern$string =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'stringStart' || key === 'content' || key === 'stringEnd') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(inner) } as never, options as never);
+	};
+const keywordPattern$string$strict = keywordPattern$string(F.buildKeywordPattern, F.buildString);
+const keywordPattern$string$coerce = keywordPattern$string(C.coerceToKeywordPattern, C.coerceToString);
+const keywordPattern$concatenatedString =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) } as never, options as never);
+	};
+const keywordPattern$concatenatedString$strict = keywordPattern$concatenatedString(
+	F.buildKeywordPattern,
+	F.buildConcatenatedString
+);
+const keywordPattern$concatenatedString$coerce = keywordPattern$concatenatedString(
+	C.coerceToKeywordPattern,
+	C.coerceToConcatenatedString
+);
+const keywordPattern$true =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, value: value } as never, options as never);
+const keywordPattern$true$strict = keywordPattern$true(F.buildKeywordPattern, TSKindId.True);
+const keywordPattern$true$coerce = keywordPattern$true(C.coerceToKeywordPattern, TSKindId.True);
+const keywordPattern$false =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, value: value } as never, options as never);
+const keywordPattern$false$strict = keywordPattern$false(F.buildKeywordPattern, TSKindId.False);
+const keywordPattern$false$coerce = keywordPattern$false(C.coerceToKeywordPattern, TSKindId.False);
+const keywordPattern$none =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, value: value } as never, options as never);
+const keywordPattern$none$strict = keywordPattern$none(F.buildKeywordPattern, TSKindId.None);
+const keywordPattern$none$coerce = keywordPattern$none(C.coerceToKeywordPattern, TSKindId.None);
+const keywordPattern$negative =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'sign' || key === 'value') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(inner) } as never, options as never);
+	};
+const keywordPattern$negative$strict = keywordPattern$negative(F.buildKeywordPattern, F.buildSimplePatternNegative);
+const keywordPattern$negative$coerce = keywordPattern$negative(
+	C.coerceToKeywordPattern,
+	C.coerceToSimplePatternNegative
+);
+const keywordPattern$complexPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'sign' || key === 'real' || key === 'operator' || key === 'imaginary') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(inner) } as never, options as never);
+	};
+const keywordPattern$complexPattern$strict = keywordPattern$complexPattern(
+	F.buildKeywordPattern,
+	F.buildComplexPattern
+);
+const keywordPattern$complexPattern$coerce = keywordPattern$complexPattern(
+	C.coerceToKeywordPattern,
+	C.coerceToComplexPattern
+);
+const keywordPattern$dottedName =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) } as never, options as never);
+	};
+const keywordPattern$dottedName$strict = keywordPattern$dottedName(F.buildKeywordPattern, F.buildDottedName);
+const keywordPattern$dottedName$coerce = keywordPattern$dottedName(C.coerceToKeywordPattern, C.coerceToDottedName);
+const keywordPattern$wildcardPattern =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, value: value } as never, options as never);
+const keywordPattern$wildcardPattern$strict = keywordPattern$wildcardPattern(
+	F.buildKeywordPattern,
+	TSKindId.WildcardPattern
+);
+const keywordPattern$wildcardPattern$coerce = keywordPattern$wildcardPattern(
+	C.coerceToKeywordPattern,
+	TSKindId.WildcardPattern
+);
+export const keywordPattern = Object.freeze({
+	...B.keywordPattern,
+	classPattern: bundle(keywordPattern$classPattern$strict, keywordPattern$classPattern$coerce, {
+		key: 'keywordPattern.classPattern',
+		max: 2
+	}),
+	splatPattern: bundle(keywordPattern$splatPattern$strict, keywordPattern$splatPattern$coerce, {
+		key: 'keywordPattern.splatPattern',
+		max: 2
+	}),
+	unionPattern: bundle(keywordPattern$unionPattern$strict, keywordPattern$unionPattern$coerce, {
+		key: 'keywordPattern.unionPattern',
+		max: 2
+	}),
+	caseListPattern: bundle(keywordPattern$caseListPattern$strict, keywordPattern$caseListPattern$coerce, {
+		key: 'keywordPattern.caseListPattern',
+		max: 2
+	}),
+	caseTuplePattern: bundle(keywordPattern$caseTuplePattern$strict, keywordPattern$caseTuplePattern$coerce, {
+		key: 'keywordPattern.caseTuplePattern',
+		max: 2
+	}),
+	dictPattern: bundle(keywordPattern$dictPattern$strict, keywordPattern$dictPattern$coerce, {
+		key: 'keywordPattern.dictPattern',
+		max: 2
+	}),
+	string: bundle(keywordPattern$string$strict, keywordPattern$string$coerce, { key: 'keywordPattern.string', max: 2 }),
+	concatenatedString: bundle(keywordPattern$concatenatedString$strict, keywordPattern$concatenatedString$coerce, {
+		key: 'keywordPattern.concatenatedString',
+		max: 2
+	}),
+	true: bundle(keywordPattern$true$strict, keywordPattern$true$coerce, { key: 'keywordPattern.true', max: 2 }),
+	false: bundle(keywordPattern$false$strict, keywordPattern$false$coerce, { key: 'keywordPattern.false', max: 2 }),
+	none: bundle(keywordPattern$none$strict, keywordPattern$none$coerce, { key: 'keywordPattern.none', max: 2 }),
+	negative: bundle(keywordPattern$negative$strict, keywordPattern$negative$coerce, {
+		key: 'keywordPattern.negative',
+		max: 2
+	}),
+	complexPattern: bundle(keywordPattern$complexPattern$strict, keywordPattern$complexPattern$coerce, {
+		key: 'keywordPattern.complexPattern',
+		max: 2
+	}),
+	dottedName: bundle(keywordPattern$dottedName$strict, keywordPattern$dottedName$coerce, {
+		key: 'keywordPattern.dottedName',
+		max: 2
+	}),
+	wildcardPattern: bundle(keywordPattern$wildcardPattern$strict, keywordPattern$wildcardPattern$coerce, {
+		key: 'keywordPattern.wildcardPattern',
+		max: 2
+	})
+}) as unknown as typeof B.keywordPattern & {
+	classPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof classPattern.strict>[0];
+			},
+			options?: OptionsArg<typeof F.buildKeywordPattern>
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof classPattern.coerce>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToKeywordPattern>
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
+	splatPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof F.buildSplatPattern>[0];
+			},
+			options?: OptionsArg<typeof F.buildKeywordPattern>
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof C.coerceToSplatPattern>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToKeywordPattern>
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
+	unionPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof unionPattern.strict>;
+			},
+			options?: OptionsArg<typeof F.buildKeywordPattern>
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof unionPattern.coerce>;
+			},
+			options?: OptionsArg<typeof C.coerceToKeywordPattern>
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
+	caseListPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof F.buildCaseListPattern>[0];
+			},
+			options?: OptionsArg<typeof F.buildKeywordPattern>
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof C.coerceToCaseListPattern>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToKeywordPattern>
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
+	caseTuplePattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof F.buildCaseTuplePattern>[0];
+			},
+			options?: OptionsArg<typeof F.buildKeywordPattern>
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof C.coerceToCaseTuplePattern>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToKeywordPattern>
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
+	dictPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof F.buildDictPattern>[0];
+			},
+			options?: OptionsArg<typeof F.buildKeywordPattern>
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof C.coerceToDictPattern>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToKeywordPattern>
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
+	string: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & ArgsOf<typeof F.buildString>[0],
+			options?: OptionsArg<typeof F.buildKeywordPattern>
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & ArgsOf<typeof C.coerceToString>[0],
+			options?: OptionsArg<typeof C.coerceToKeywordPattern>
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
+	concatenatedString: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof F.buildConcatenatedString>;
+			},
+			options?: OptionsArg<typeof F.buildKeywordPattern>
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof C.coerceToConcatenatedString>;
+			},
+			options?: OptionsArg<typeof C.coerceToKeywordPattern>
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
+	true: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>,
+			options?: OptionsArg<typeof F.buildKeywordPattern>
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>,
+			options?: OptionsArg<typeof C.coerceToKeywordPattern>
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
+	false: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>,
+			options?: OptionsArg<typeof F.buildKeywordPattern>
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>,
+			options?: OptionsArg<typeof C.coerceToKeywordPattern>
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
+	none: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>,
+			options?: OptionsArg<typeof F.buildKeywordPattern>
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>,
+			options?: OptionsArg<typeof C.coerceToKeywordPattern>
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
+	negative: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> &
+				ArgsOf<typeof F.buildSimplePatternNegative>[0],
+			options?: OptionsArg<typeof F.buildKeywordPattern>
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> &
+				ArgsOf<typeof C.coerceToSimplePatternNegative>[0],
+			options?: OptionsArg<typeof C.coerceToKeywordPattern>
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
+	complexPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & ArgsOf<typeof F.buildComplexPattern>[0],
+			options?: OptionsArg<typeof F.buildKeywordPattern>
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> &
+				ArgsOf<typeof C.coerceToComplexPattern>[0],
+			options?: OptionsArg<typeof C.coerceToKeywordPattern>
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
+	dottedName: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & { value: ArgsOf<typeof F.buildDottedName> },
+			options?: OptionsArg<typeof F.buildKeywordPattern>
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof C.coerceToDottedName>;
+			},
+			options?: OptionsArg<typeof C.coerceToKeywordPattern>
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
+	wildcardPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>,
+			options?: OptionsArg<typeof F.buildKeywordPattern>
+		) => ReturnType<typeof F.buildKeywordPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>,
+			options?: OptionsArg<typeof C.coerceToKeywordPattern>
+		) => ReturnType<typeof C.coerceToKeywordPattern>;
+	};
+};
+
+const simplePattern$classPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const simplePattern$classPattern$strict = simplePattern$classPattern(F.buildSimplePattern, classPattern.strict);
+const simplePattern$classPattern$coerce = simplePattern$classPattern(F.buildSimplePattern, classPattern.coerce);
+const simplePattern$splatPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const simplePattern$splatPattern$strict = simplePattern$splatPattern(F.buildSimplePattern, F.buildSplatPattern);
+const simplePattern$splatPattern$coerce = simplePattern$splatPattern(F.buildSimplePattern, C.coerceToSplatPattern);
+const simplePattern$unionPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const simplePattern$unionPattern$strict = simplePattern$unionPattern(F.buildSimplePattern, unionPattern.strict);
+const simplePattern$unionPattern$coerce = simplePattern$unionPattern(F.buildSimplePattern, unionPattern.coerce);
+const simplePattern$caseListPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const simplePattern$caseListPattern$strict = simplePattern$caseListPattern(
+	F.buildSimplePattern,
+	F.buildCaseListPattern
+);
+const simplePattern$caseListPattern$coerce = simplePattern$caseListPattern(
+	F.buildSimplePattern,
+	C.coerceToCaseListPattern
+);
+const simplePattern$caseTuplePattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const simplePattern$caseTuplePattern$strict = simplePattern$caseTuplePattern(
+	F.buildSimplePattern,
+	F.buildCaseTuplePattern
+);
+const simplePattern$caseTuplePattern$coerce = simplePattern$caseTuplePattern(
+	F.buildSimplePattern,
+	C.coerceToCaseTuplePattern
+);
+const simplePattern$dictPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const simplePattern$dictPattern$strict = simplePattern$dictPattern(F.buildSimplePattern, F.buildDictPattern);
+const simplePattern$dictPattern$coerce = simplePattern$dictPattern(F.buildSimplePattern, C.coerceToDictPattern);
+const simplePattern$string =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const simplePattern$string$strict = simplePattern$string(F.buildSimplePattern, F.buildString);
+const simplePattern$string$coerce = simplePattern$string(F.buildSimplePattern, C.coerceToString);
+const simplePattern$concatenatedString =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const simplePattern$concatenatedString$strict = simplePattern$concatenatedString(
+	F.buildSimplePattern,
+	F.buildConcatenatedString
+);
+const simplePattern$concatenatedString$coerce = simplePattern$concatenatedString(
+	F.buildSimplePattern,
+	C.coerceToConcatenatedString
+);
+const simplePattern$true =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const simplePattern$true$strict = simplePattern$true(F.buildSimplePattern, TSKindId.True);
+const simplePattern$true$coerce = simplePattern$true(C.coerceToSimplePattern, TSKindId.True);
+const simplePattern$false =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const simplePattern$false$strict = simplePattern$false(F.buildSimplePattern, TSKindId.False);
+const simplePattern$false$coerce = simplePattern$false(C.coerceToSimplePattern, TSKindId.False);
+const simplePattern$none =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const simplePattern$none$strict = simplePattern$none(F.buildSimplePattern, TSKindId.None);
+const simplePattern$none$coerce = simplePattern$none(C.coerceToSimplePattern, TSKindId.None);
+const simplePattern$negative =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const simplePattern$negative$strict = simplePattern$negative(F.buildSimplePattern, F.buildSimplePatternNegative);
+const simplePattern$negative$coerce = simplePattern$negative(F.buildSimplePattern, C.coerceToSimplePatternNegative);
+const simplePattern$complexPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const simplePattern$complexPattern$strict = simplePattern$complexPattern(F.buildSimplePattern, F.buildComplexPattern);
+const simplePattern$complexPattern$coerce = simplePattern$complexPattern(
+	F.buildSimplePattern,
+	C.coerceToComplexPattern
+);
+const simplePattern$dottedName =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const simplePattern$dottedName$strict = simplePattern$dottedName(F.buildSimplePattern, F.buildDottedName);
+const simplePattern$dottedName$coerce = simplePattern$dottedName(F.buildSimplePattern, C.coerceToDottedName);
+const simplePattern$wildcardPattern =
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const simplePattern$wildcardPattern$strict = simplePattern$wildcardPattern(
+	F.buildSimplePattern,
+	TSKindId.WildcardPattern
+);
+const simplePattern$wildcardPattern$coerce = simplePattern$wildcardPattern(
+	C.coerceToSimplePattern,
+	TSKindId.WildcardPattern
+);
+export const simplePattern = Object.freeze({
+	...B.simplePattern,
+	classPattern: bundle(simplePattern$classPattern$strict, simplePattern$classPattern$coerce, {
+		key: 'simplePattern.classPattern',
+		max: 1
+	}),
+	splatPattern: bundle(simplePattern$splatPattern$strict, simplePattern$splatPattern$coerce, {
+		key: 'simplePattern.splatPattern',
+		max: 1
+	}),
+	unionPattern: bundle(simplePattern$unionPattern$strict, simplePattern$unionPattern$coerce),
+	caseListPattern: bundle(simplePattern$caseListPattern$strict, simplePattern$caseListPattern$coerce),
+	caseTuplePattern: bundle(simplePattern$caseTuplePattern$strict, simplePattern$caseTuplePattern$coerce),
+	dictPattern: bundle(simplePattern$dictPattern$strict, simplePattern$dictPattern$coerce),
+	string: bundle(simplePattern$string$strict, simplePattern$string$coerce, { key: 'simplePattern.string', max: 1 }),
+	concatenatedString: bundle(simplePattern$concatenatedString$strict, simplePattern$concatenatedString$coerce),
+	true: bundle(simplePattern$true$strict, simplePattern$true$coerce, { key: 'simplePattern.true', max: 1 }),
+	false: bundle(simplePattern$false$strict, simplePattern$false$coerce, { key: 'simplePattern.false', max: 1 }),
+	none: bundle(simplePattern$none$strict, simplePattern$none$coerce, { key: 'simplePattern.none', max: 1 }),
+	negative: bundle(simplePattern$negative$strict, simplePattern$negative$coerce, {
+		key: 'simplePattern.negative',
+		max: 1
+	}),
+	complexPattern: bundle(simplePattern$complexPattern$strict, simplePattern$complexPattern$coerce, {
+		key: 'simplePattern.complexPattern',
+		max: 1
+	}),
+	dottedName: bundle(simplePattern$dottedName$strict, simplePattern$dottedName$coerce),
+	wildcardPattern: bundle(simplePattern$wildcardPattern$strict, simplePattern$wildcardPattern$coerce, {
+		key: 'simplePattern.wildcardPattern',
+		max: 1
+	})
+}) as unknown as typeof B.simplePattern & {
+	classPattern: {
+		strict: (...args: ArgsOf<typeof classPattern.strict>) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: (...args: ArgsOf<typeof classPattern.coerce>) => ReturnType<typeof F.buildSimplePattern>;
+	};
+	splatPattern: {
+		strict: (...args: ArgsOf<typeof F.buildSplatPattern>) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSplatPattern>) => ReturnType<typeof F.buildSimplePattern>;
+	};
+	unionPattern: {
+		strict: (...args: ArgsOf<typeof unionPattern.strict>) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: (...args: ArgsOf<typeof unionPattern.coerce>) => ReturnType<typeof F.buildSimplePattern>;
+	};
+	caseListPattern: {
+		strict: (...args: ArgsOf<typeof F.buildCaseListPattern>) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToCaseListPattern>) => ReturnType<typeof F.buildSimplePattern>;
+	};
+	caseTuplePattern: {
+		strict: (...args: ArgsOf<typeof F.buildCaseTuplePattern>) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToCaseTuplePattern>) => ReturnType<typeof F.buildSimplePattern>;
+	};
+	dictPattern: {
+		strict: (...args: ArgsOf<typeof F.buildDictPattern>) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToDictPattern>) => ReturnType<typeof F.buildSimplePattern>;
+	};
+	string: {
+		strict: (...args: ArgsOf<typeof F.buildString>) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToString>) => ReturnType<typeof F.buildSimplePattern>;
+	};
+	concatenatedString: {
+		strict: (...args: ArgsOf<typeof F.buildConcatenatedString>) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToConcatenatedString>) => ReturnType<typeof F.buildSimplePattern>;
+	};
+	true: {
+		strict: (options?: OptionsArg<typeof F.buildSimplePattern>) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: (options?: OptionsArg<typeof C.coerceToSimplePattern>) => ReturnType<typeof C.coerceToSimplePattern>;
+	};
+	false: {
+		strict: (options?: OptionsArg<typeof F.buildSimplePattern>) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: (options?: OptionsArg<typeof C.coerceToSimplePattern>) => ReturnType<typeof C.coerceToSimplePattern>;
+	};
+	none: {
+		strict: (options?: OptionsArg<typeof F.buildSimplePattern>) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: (options?: OptionsArg<typeof C.coerceToSimplePattern>) => ReturnType<typeof C.coerceToSimplePattern>;
+	};
+	negative: {
+		strict: (...args: ArgsOf<typeof F.buildSimplePatternNegative>) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSimplePatternNegative>) => ReturnType<typeof F.buildSimplePattern>;
+	};
+	complexPattern: {
+		strict: (...args: ArgsOf<typeof F.buildComplexPattern>) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToComplexPattern>) => ReturnType<typeof F.buildSimplePattern>;
+	};
+	dottedName: {
+		strict: (...args: ArgsOf<typeof F.buildDottedName>) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToDottedName>) => ReturnType<typeof F.buildSimplePattern>;
+	};
+	wildcardPattern: {
+		strict: (options?: OptionsArg<typeof F.buildSimplePattern>) => ReturnType<typeof F.buildSimplePattern>;
+		coerce: (options?: OptionsArg<typeof C.coerceToSimplePattern>) => ReturnType<typeof C.coerceToSimplePattern>;
+	};
+};
+
+const casePattern$caseAsPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$caseAsPattern$strict = casePattern$caseAsPattern(F.buildCasePattern, F.buildCaseAsPattern);
+const casePattern$caseAsPattern$coerce = casePattern$caseAsPattern(F.buildCasePattern, C.coerceToCaseAsPattern);
+const casePattern$keywordPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$keywordPattern$strict = casePattern$keywordPattern(F.buildCasePattern, F.buildKeywordPattern);
+const casePattern$keywordPattern$coerce = casePattern$keywordPattern(F.buildCasePattern, C.coerceToKeywordPattern);
+const casePattern$simplePattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$simplePattern$strict = casePattern$simplePattern(F.buildCasePattern, F.buildSimplePattern);
+const casePattern$simplePattern$coerce = casePattern$simplePattern(F.buildCasePattern, C.coerceToSimplePattern);
+const casePattern$keywordPattern$classPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$keywordPattern$classPattern$strict = casePattern$keywordPattern$classPattern(
+	F.buildCasePattern,
+	keywordPattern.classPattern.strict
+);
+const casePattern$keywordPattern$classPattern$coerce = casePattern$keywordPattern$classPattern(
+	F.buildCasePattern,
+	keywordPattern.classPattern.coerce
+);
+const casePattern$keywordPattern$splatPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$keywordPattern$splatPattern$strict = casePattern$keywordPattern$splatPattern(
+	F.buildCasePattern,
+	keywordPattern.splatPattern.strict
+);
+const casePattern$keywordPattern$splatPattern$coerce = casePattern$keywordPattern$splatPattern(
+	F.buildCasePattern,
+	keywordPattern.splatPattern.coerce
+);
+const casePattern$keywordPattern$unionPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$keywordPattern$unionPattern$strict = casePattern$keywordPattern$unionPattern(
+	F.buildCasePattern,
+	keywordPattern.unionPattern.strict
+);
+const casePattern$keywordPattern$unionPattern$coerce = casePattern$keywordPattern$unionPattern(
+	F.buildCasePattern,
+	keywordPattern.unionPattern.coerce
+);
+const casePattern$keywordPattern$caseListPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$keywordPattern$caseListPattern$strict = casePattern$keywordPattern$caseListPattern(
+	F.buildCasePattern,
+	keywordPattern.caseListPattern.strict
+);
+const casePattern$keywordPattern$caseListPattern$coerce = casePattern$keywordPattern$caseListPattern(
+	F.buildCasePattern,
+	keywordPattern.caseListPattern.coerce
+);
+const casePattern$keywordPattern$caseTuplePattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$keywordPattern$caseTuplePattern$strict = casePattern$keywordPattern$caseTuplePattern(
+	F.buildCasePattern,
+	keywordPattern.caseTuplePattern.strict
+);
+const casePattern$keywordPattern$caseTuplePattern$coerce = casePattern$keywordPattern$caseTuplePattern(
+	F.buildCasePattern,
+	keywordPattern.caseTuplePattern.coerce
+);
+const casePattern$keywordPattern$dictPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$keywordPattern$dictPattern$strict = casePattern$keywordPattern$dictPattern(
+	F.buildCasePattern,
+	keywordPattern.dictPattern.strict
+);
+const casePattern$keywordPattern$dictPattern$coerce = casePattern$keywordPattern$dictPattern(
+	F.buildCasePattern,
+	keywordPattern.dictPattern.coerce
+);
+const casePattern$keywordPattern$string =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$keywordPattern$string$strict = casePattern$keywordPattern$string(
+	F.buildCasePattern,
+	keywordPattern.string.strict
+);
+const casePattern$keywordPattern$string$coerce = casePattern$keywordPattern$string(
+	F.buildCasePattern,
+	keywordPattern.string.coerce
+);
+const casePattern$keywordPattern$concatenatedString =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$keywordPattern$concatenatedString$strict = casePattern$keywordPattern$concatenatedString(
+	F.buildCasePattern,
+	keywordPattern.concatenatedString.strict
+);
+const casePattern$keywordPattern$concatenatedString$coerce = casePattern$keywordPattern$concatenatedString(
+	F.buildCasePattern,
+	keywordPattern.concatenatedString.coerce
+);
+const casePattern$keywordPattern$true =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$keywordPattern$true$strict = casePattern$keywordPattern$true(
+	F.buildCasePattern,
+	keywordPattern.true.strict
+);
+const casePattern$keywordPattern$true$coerce = casePattern$keywordPattern$true(
+	F.buildCasePattern,
+	keywordPattern.true.coerce
+);
+const casePattern$keywordPattern$false =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$keywordPattern$false$strict = casePattern$keywordPattern$false(
+	F.buildCasePattern,
+	keywordPattern.false.strict
+);
+const casePattern$keywordPattern$false$coerce = casePattern$keywordPattern$false(
+	F.buildCasePattern,
+	keywordPattern.false.coerce
+);
+const casePattern$keywordPattern$none =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$keywordPattern$none$strict = casePattern$keywordPattern$none(
+	F.buildCasePattern,
+	keywordPattern.none.strict
+);
+const casePattern$keywordPattern$none$coerce = casePattern$keywordPattern$none(
+	F.buildCasePattern,
+	keywordPattern.none.coerce
+);
+const casePattern$keywordPattern$negative =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$keywordPattern$negative$strict = casePattern$keywordPattern$negative(
+	F.buildCasePattern,
+	keywordPattern.negative.strict
+);
+const casePattern$keywordPattern$negative$coerce = casePattern$keywordPattern$negative(
+	F.buildCasePattern,
+	keywordPattern.negative.coerce
+);
+const casePattern$keywordPattern$complexPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$keywordPattern$complexPattern$strict = casePattern$keywordPattern$complexPattern(
+	F.buildCasePattern,
+	keywordPattern.complexPattern.strict
+);
+const casePattern$keywordPattern$complexPattern$coerce = casePattern$keywordPattern$complexPattern(
+	F.buildCasePattern,
+	keywordPattern.complexPattern.coerce
+);
+const casePattern$keywordPattern$dottedName =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$keywordPattern$dottedName$strict = casePattern$keywordPattern$dottedName(
+	F.buildCasePattern,
+	keywordPattern.dottedName.strict
+);
+const casePattern$keywordPattern$dottedName$coerce = casePattern$keywordPattern$dottedName(
+	F.buildCasePattern,
+	keywordPattern.dottedName.coerce
+);
+const casePattern$keywordPattern$wildcardPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$keywordPattern$wildcardPattern$strict = casePattern$keywordPattern$wildcardPattern(
+	F.buildCasePattern,
+	keywordPattern.wildcardPattern.strict
+);
+const casePattern$keywordPattern$wildcardPattern$coerce = casePattern$keywordPattern$wildcardPattern(
+	F.buildCasePattern,
+	keywordPattern.wildcardPattern.coerce
+);
+const casePattern$simplePattern$classPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$simplePattern$classPattern$strict = casePattern$simplePattern$classPattern(
+	F.buildCasePattern,
+	simplePattern.classPattern.strict
+);
+const casePattern$simplePattern$classPattern$coerce = casePattern$simplePattern$classPattern(
+	F.buildCasePattern,
+	simplePattern.classPattern.coerce
+);
+const casePattern$simplePattern$splatPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$simplePattern$splatPattern$strict = casePattern$simplePattern$splatPattern(
+	F.buildCasePattern,
+	simplePattern.splatPattern.strict
+);
+const casePattern$simplePattern$splatPattern$coerce = casePattern$simplePattern$splatPattern(
+	F.buildCasePattern,
+	simplePattern.splatPattern.coerce
+);
+const casePattern$simplePattern$unionPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$simplePattern$unionPattern$strict = casePattern$simplePattern$unionPattern(
+	F.buildCasePattern,
+	simplePattern.unionPattern.strict
+);
+const casePattern$simplePattern$unionPattern$coerce = casePattern$simplePattern$unionPattern(
+	F.buildCasePattern,
+	simplePattern.unionPattern.coerce
+);
+const casePattern$simplePattern$caseListPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$simplePattern$caseListPattern$strict = casePattern$simplePattern$caseListPattern(
+	F.buildCasePattern,
+	simplePattern.caseListPattern.strict
+);
+const casePattern$simplePattern$caseListPattern$coerce = casePattern$simplePattern$caseListPattern(
+	F.buildCasePattern,
+	simplePattern.caseListPattern.coerce
+);
+const casePattern$simplePattern$caseTuplePattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$simplePattern$caseTuplePattern$strict = casePattern$simplePattern$caseTuplePattern(
+	F.buildCasePattern,
+	simplePattern.caseTuplePattern.strict
+);
+const casePattern$simplePattern$caseTuplePattern$coerce = casePattern$simplePattern$caseTuplePattern(
+	F.buildCasePattern,
+	simplePattern.caseTuplePattern.coerce
+);
+const casePattern$simplePattern$dictPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$simplePattern$dictPattern$strict = casePattern$simplePattern$dictPattern(
+	F.buildCasePattern,
+	simplePattern.dictPattern.strict
+);
+const casePattern$simplePattern$dictPattern$coerce = casePattern$simplePattern$dictPattern(
+	F.buildCasePattern,
+	simplePattern.dictPattern.coerce
+);
+const casePattern$simplePattern$string =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$simplePattern$string$strict = casePattern$simplePattern$string(
+	F.buildCasePattern,
+	simplePattern.string.strict
+);
+const casePattern$simplePattern$string$coerce = casePattern$simplePattern$string(
+	F.buildCasePattern,
+	simplePattern.string.coerce
+);
+const casePattern$simplePattern$concatenatedString =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$simplePattern$concatenatedString$strict = casePattern$simplePattern$concatenatedString(
+	F.buildCasePattern,
+	simplePattern.concatenatedString.strict
+);
+const casePattern$simplePattern$concatenatedString$coerce = casePattern$simplePattern$concatenatedString(
+	F.buildCasePattern,
+	simplePattern.concatenatedString.coerce
+);
+const casePattern$simplePattern$true =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$simplePattern$true$strict = casePattern$simplePattern$true(
+	F.buildCasePattern,
+	simplePattern.true.strict
+);
+const casePattern$simplePattern$true$coerce = casePattern$simplePattern$true(
+	F.buildCasePattern,
+	simplePattern.true.coerce
+);
+const casePattern$simplePattern$false =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$simplePattern$false$strict = casePattern$simplePattern$false(
+	F.buildCasePattern,
+	simplePattern.false.strict
+);
+const casePattern$simplePattern$false$coerce = casePattern$simplePattern$false(
+	F.buildCasePattern,
+	simplePattern.false.coerce
+);
+const casePattern$simplePattern$none =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$simplePattern$none$strict = casePattern$simplePattern$none(
+	F.buildCasePattern,
+	simplePattern.none.strict
+);
+const casePattern$simplePattern$none$coerce = casePattern$simplePattern$none(
+	F.buildCasePattern,
+	simplePattern.none.coerce
+);
+const casePattern$simplePattern$negative =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$simplePattern$negative$strict = casePattern$simplePattern$negative(
+	F.buildCasePattern,
+	simplePattern.negative.strict
+);
+const casePattern$simplePattern$negative$coerce = casePattern$simplePattern$negative(
+	F.buildCasePattern,
+	simplePattern.negative.coerce
+);
+const casePattern$simplePattern$complexPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$simplePattern$complexPattern$strict = casePattern$simplePattern$complexPattern(
+	F.buildCasePattern,
+	simplePattern.complexPattern.strict
+);
+const casePattern$simplePattern$complexPattern$coerce = casePattern$simplePattern$complexPattern(
+	F.buildCasePattern,
+	simplePattern.complexPattern.coerce
+);
+const casePattern$simplePattern$dottedName =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$simplePattern$dottedName$strict = casePattern$simplePattern$dottedName(
+	F.buildCasePattern,
+	simplePattern.dottedName.strict
+);
+const casePattern$simplePattern$dottedName$coerce = casePattern$simplePattern$dottedName(
+	F.buildCasePattern,
+	simplePattern.dottedName.coerce
+);
+const casePattern$simplePattern$wildcardPattern =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$simplePattern$wildcardPattern$strict = casePattern$simplePattern$wildcardPattern(
+	F.buildCasePattern,
+	simplePattern.wildcardPattern.strict
+);
+const casePattern$simplePattern$wildcardPattern$coerce = casePattern$simplePattern$wildcardPattern(
+	F.buildCasePattern,
+	simplePattern.wildcardPattern.coerce
+);
+export const casePattern = Object.freeze({
+	...B.casePattern,
+	caseAsPattern: bundle(casePattern$caseAsPattern$strict, casePattern$caseAsPattern$coerce, {
+		key: 'casePattern.caseAsPattern',
+		max: 1
+	}),
+	keywordPattern: {
+		...bundle(casePattern$keywordPattern$strict, casePattern$keywordPattern$coerce, {
+			key: 'casePattern.keywordPattern',
+			max: 1
+		}),
+		classPattern: bundle(
+			casePattern$keywordPattern$classPattern$strict,
+			casePattern$keywordPattern$classPattern$coerce,
+			{ key: 'casePattern.keywordPattern.classPattern', max: 2 }
+		),
+		splatPattern: bundle(
+			casePattern$keywordPattern$splatPattern$strict,
+			casePattern$keywordPattern$splatPattern$coerce,
+			{ key: 'casePattern.keywordPattern.splatPattern', max: 2 }
+		),
+		unionPattern: bundle(
+			casePattern$keywordPattern$unionPattern$strict,
+			casePattern$keywordPattern$unionPattern$coerce,
+			{ key: 'casePattern.keywordPattern.unionPattern', max: 2 }
+		),
+		caseListPattern: bundle(
+			casePattern$keywordPattern$caseListPattern$strict,
+			casePattern$keywordPattern$caseListPattern$coerce,
+			{ key: 'casePattern.keywordPattern.caseListPattern', max: 2 }
+		),
+		caseTuplePattern: bundle(
+			casePattern$keywordPattern$caseTuplePattern$strict,
+			casePattern$keywordPattern$caseTuplePattern$coerce,
+			{ key: 'casePattern.keywordPattern.caseTuplePattern', max: 2 }
+		),
+		dictPattern: bundle(casePattern$keywordPattern$dictPattern$strict, casePattern$keywordPattern$dictPattern$coerce, {
+			key: 'casePattern.keywordPattern.dictPattern',
+			max: 2
+		}),
+		string: bundle(casePattern$keywordPattern$string$strict, casePattern$keywordPattern$string$coerce, {
+			key: 'casePattern.keywordPattern.string',
+			max: 2
+		}),
+		concatenatedString: bundle(
+			casePattern$keywordPattern$concatenatedString$strict,
+			casePattern$keywordPattern$concatenatedString$coerce,
+			{ key: 'casePattern.keywordPattern.concatenatedString', max: 2 }
+		),
+		true: bundle(casePattern$keywordPattern$true$strict, casePattern$keywordPattern$true$coerce, {
+			key: 'casePattern.keywordPattern.true',
+			max: 2
+		}),
+		false: bundle(casePattern$keywordPattern$false$strict, casePattern$keywordPattern$false$coerce, {
+			key: 'casePattern.keywordPattern.false',
+			max: 2
+		}),
+		none: bundle(casePattern$keywordPattern$none$strict, casePattern$keywordPattern$none$coerce, {
+			key: 'casePattern.keywordPattern.none',
+			max: 2
+		}),
+		negative: bundle(casePattern$keywordPattern$negative$strict, casePattern$keywordPattern$negative$coerce, {
+			key: 'casePattern.keywordPattern.negative',
+			max: 2
+		}),
+		complexPattern: bundle(
+			casePattern$keywordPattern$complexPattern$strict,
+			casePattern$keywordPattern$complexPattern$coerce,
+			{ key: 'casePattern.keywordPattern.complexPattern', max: 2 }
+		),
+		dottedName: bundle(casePattern$keywordPattern$dottedName$strict, casePattern$keywordPattern$dottedName$coerce, {
+			key: 'casePattern.keywordPattern.dottedName',
+			max: 2
+		}),
+		wildcardPattern: bundle(
+			casePattern$keywordPattern$wildcardPattern$strict,
+			casePattern$keywordPattern$wildcardPattern$coerce,
+			{ key: 'casePattern.keywordPattern.wildcardPattern', max: 2 }
+		)
+	},
+	simplePattern: {
+		...bundle(casePattern$simplePattern$strict, casePattern$simplePattern$coerce, {
+			key: 'casePattern.simplePattern',
+			max: 1
+		}),
+		classPattern: bundle(casePattern$simplePattern$classPattern$strict, casePattern$simplePattern$classPattern$coerce, {
+			key: 'casePattern.simplePattern.classPattern',
+			max: 1
+		}),
+		splatPattern: bundle(casePattern$simplePattern$splatPattern$strict, casePattern$simplePattern$splatPattern$coerce, {
+			key: 'casePattern.simplePattern.splatPattern',
+			max: 1
+		}),
+		unionPattern: bundle(casePattern$simplePattern$unionPattern$strict, casePattern$simplePattern$unionPattern$coerce),
+		caseListPattern: bundle(
+			casePattern$simplePattern$caseListPattern$strict,
+			casePattern$simplePattern$caseListPattern$coerce
+		),
+		caseTuplePattern: bundle(
+			casePattern$simplePattern$caseTuplePattern$strict,
+			casePattern$simplePattern$caseTuplePattern$coerce
+		),
+		dictPattern: bundle(casePattern$simplePattern$dictPattern$strict, casePattern$simplePattern$dictPattern$coerce),
+		string: bundle(casePattern$simplePattern$string$strict, casePattern$simplePattern$string$coerce, {
+			key: 'casePattern.simplePattern.string',
+			max: 1
+		}),
+		concatenatedString: bundle(
+			casePattern$simplePattern$concatenatedString$strict,
+			casePattern$simplePattern$concatenatedString$coerce
+		),
+		true: bundle(casePattern$simplePattern$true$strict, casePattern$simplePattern$true$coerce, {
+			key: 'casePattern.simplePattern.true',
+			max: 1
+		}),
+		false: bundle(casePattern$simplePattern$false$strict, casePattern$simplePattern$false$coerce, {
+			key: 'casePattern.simplePattern.false',
+			max: 1
+		}),
+		none: bundle(casePattern$simplePattern$none$strict, casePattern$simplePattern$none$coerce, {
+			key: 'casePattern.simplePattern.none',
+			max: 1
+		}),
+		negative: bundle(casePattern$simplePattern$negative$strict, casePattern$simplePattern$negative$coerce, {
+			key: 'casePattern.simplePattern.negative',
+			max: 1
+		}),
+		complexPattern: bundle(
+			casePattern$simplePattern$complexPattern$strict,
+			casePattern$simplePattern$complexPattern$coerce,
+			{ key: 'casePattern.simplePattern.complexPattern', max: 1 }
+		),
+		dottedName: bundle(casePattern$simplePattern$dottedName$strict, casePattern$simplePattern$dottedName$coerce),
+		wildcardPattern: bundle(
+			casePattern$simplePattern$wildcardPattern$strict,
+			casePattern$simplePattern$wildcardPattern$coerce,
+			{ key: 'casePattern.simplePattern.wildcardPattern', max: 1 }
+		)
+	}
+}) as unknown as typeof B.casePattern & {
+	caseAsPattern: {
+		strict: (...args: ArgsOf<typeof F.buildCaseAsPattern>) => ReturnType<typeof F.buildCasePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToCaseAsPattern>) => ReturnType<typeof F.buildCasePattern>;
+	};
+	keywordPattern: {
+		strict: (...args: ArgsOf<typeof F.buildKeywordPattern>) => ReturnType<typeof F.buildCasePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToKeywordPattern>) => ReturnType<typeof F.buildCasePattern>;
+		classPattern: {
+			strict: (...args: ArgsOf<typeof keywordPattern.classPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.classPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		splatPattern: {
+			strict: (...args: ArgsOf<typeof keywordPattern.splatPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.splatPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		unionPattern: {
+			strict: (...args: ArgsOf<typeof keywordPattern.unionPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.unionPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		caseListPattern: {
+			strict: (...args: ArgsOf<typeof keywordPattern.caseListPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.caseListPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		caseTuplePattern: {
+			strict: (...args: ArgsOf<typeof keywordPattern.caseTuplePattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.caseTuplePattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		dictPattern: {
+			strict: (...args: ArgsOf<typeof keywordPattern.dictPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.dictPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		string: {
+			strict: (...args: ArgsOf<typeof keywordPattern.string.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.string.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		concatenatedString: {
+			strict: (
+				...args: ArgsOf<typeof keywordPattern.concatenatedString.strict>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (
+				...args: ArgsOf<typeof keywordPattern.concatenatedString.coerce>
+			) => ReturnType<typeof F.buildCasePattern>;
+		};
+		true: {
+			strict: (...args: ArgsOf<typeof keywordPattern.true.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.true.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		false: {
+			strict: (...args: ArgsOf<typeof keywordPattern.false.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.false.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		none: {
+			strict: (...args: ArgsOf<typeof keywordPattern.none.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.none.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		negative: {
+			strict: (...args: ArgsOf<typeof keywordPattern.negative.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.negative.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		complexPattern: {
+			strict: (...args: ArgsOf<typeof keywordPattern.complexPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.complexPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		dottedName: {
+			strict: (...args: ArgsOf<typeof keywordPattern.dottedName.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.dottedName.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		wildcardPattern: {
+			strict: (...args: ArgsOf<typeof keywordPattern.wildcardPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof keywordPattern.wildcardPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+	};
+	simplePattern: {
+		strict: (...args: ArgsOf<typeof F.buildSimplePattern>) => ReturnType<typeof F.buildCasePattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSimplePattern>) => ReturnType<typeof F.buildCasePattern>;
+		classPattern: {
+			strict: (...args: ArgsOf<typeof simplePattern.classPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof simplePattern.classPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		splatPattern: {
+			strict: (...args: ArgsOf<typeof simplePattern.splatPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof simplePattern.splatPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		unionPattern: {
+			strict: (...args: ArgsOf<typeof simplePattern.unionPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof simplePattern.unionPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		caseListPattern: {
+			strict: (...args: ArgsOf<typeof simplePattern.caseListPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof simplePattern.caseListPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		caseTuplePattern: {
+			strict: (...args: ArgsOf<typeof simplePattern.caseTuplePattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof simplePattern.caseTuplePattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		dictPattern: {
+			strict: (...args: ArgsOf<typeof simplePattern.dictPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof simplePattern.dictPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		string: {
+			strict: (...args: ArgsOf<typeof simplePattern.string.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof simplePattern.string.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		concatenatedString: {
+			strict: (
+				...args: ArgsOf<typeof simplePattern.concatenatedString.strict>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (
+				...args: ArgsOf<typeof simplePattern.concatenatedString.coerce>
+			) => ReturnType<typeof F.buildCasePattern>;
+		};
+		true: {
+			strict: (...args: ArgsOf<typeof simplePattern.true.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof simplePattern.true.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		false: {
+			strict: (...args: ArgsOf<typeof simplePattern.false.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof simplePattern.false.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		none: {
+			strict: (...args: ArgsOf<typeof simplePattern.none.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof simplePattern.none.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		negative: {
+			strict: (...args: ArgsOf<typeof simplePattern.negative.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof simplePattern.negative.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		complexPattern: {
+			strict: (...args: ArgsOf<typeof simplePattern.complexPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof simplePattern.complexPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		dottedName: {
+			strict: (...args: ArgsOf<typeof simplePattern.dottedName.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof simplePattern.dottedName.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		wildcardPattern: {
+			strict: (...args: ArgsOf<typeof simplePattern.wildcardPattern.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof simplePattern.wildcardPattern.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+	};
+};
+
+const keyValuePattern$classPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'name' || key === 'arguments') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) } as never, options as never);
+	};
+const keyValuePattern$classPattern$strict = keyValuePattern$classPattern(F.buildKeyValuePattern, classPattern.strict);
+const keyValuePattern$classPattern$coerce = keyValuePattern$classPattern(
+	C.coerceToKeyValuePattern,
+	classPattern.coerce
+);
+const keyValuePattern$splatPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'operator' || key === 'name') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) } as never, options as never);
+	};
+const keyValuePattern$splatPattern$strict = keyValuePattern$splatPattern(F.buildKeyValuePattern, F.buildSplatPattern);
+const keyValuePattern$splatPattern$coerce = keyValuePattern$splatPattern(
+	C.coerceToKeyValuePattern,
+	C.coerceToSplatPattern
+);
+const keyValuePattern$unionPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) } as never, options as never);
+	};
+const keyValuePattern$unionPattern$strict = keyValuePattern$unionPattern(F.buildKeyValuePattern, unionPattern.strict);
+const keyValuePattern$unionPattern$coerce = keyValuePattern$unionPattern(
+	C.coerceToKeyValuePattern,
+	unionPattern.coerce
+);
+const keyValuePattern$caseListPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(seated) } as never, options as never);
+	};
+const keyValuePattern$caseListPattern$strict = keyValuePattern$caseListPattern(
+	F.buildKeyValuePattern,
+	F.buildCaseListPattern
+);
+const keyValuePattern$caseListPattern$coerce = keyValuePattern$caseListPattern(
+	C.coerceToKeyValuePattern,
+	C.coerceToCaseListPattern
+);
+const keyValuePattern$caseTuplePattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(seated) } as never, options as never);
+	};
+const keyValuePattern$caseTuplePattern$strict = keyValuePattern$caseTuplePattern(
+	F.buildKeyValuePattern,
+	F.buildCaseTuplePattern
+);
+const keyValuePattern$caseTuplePattern$coerce = keyValuePattern$caseTuplePattern(
+	C.coerceToKeyValuePattern,
+	C.coerceToCaseTuplePattern
+);
+const keyValuePattern$dictPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(seated) } as never, options as never);
+	};
+const keyValuePattern$dictPattern$strict = keyValuePattern$dictPattern(F.buildKeyValuePattern, F.buildDictPattern);
+const keyValuePattern$dictPattern$coerce = keyValuePattern$dictPattern(
+	C.coerceToKeyValuePattern,
+	C.coerceToDictPattern
+);
+const keyValuePattern$string =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'stringStart' || key === 'content' || key === 'stringEnd') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) } as never, options as never);
+	};
+const keyValuePattern$string$strict = keyValuePattern$string(F.buildKeyValuePattern, F.buildString);
+const keyValuePattern$string$coerce = keyValuePattern$string(C.coerceToKeyValuePattern, C.coerceToString);
+const keyValuePattern$concatenatedString =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) } as never, options as never);
+	};
+const keyValuePattern$concatenatedString$strict = keyValuePattern$concatenatedString(
+	F.buildKeyValuePattern,
+	F.buildConcatenatedString
+);
+const keyValuePattern$concatenatedString$coerce = keyValuePattern$concatenatedString(
+	C.coerceToKeyValuePattern,
+	C.coerceToConcatenatedString
+);
+const keyValuePattern$true =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, key: value } as never, options as never);
+const keyValuePattern$true$strict = keyValuePattern$true(F.buildKeyValuePattern, TSKindId.True);
+const keyValuePattern$true$coerce = keyValuePattern$true(C.coerceToKeyValuePattern, TSKindId.True);
+const keyValuePattern$false =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, key: value } as never, options as never);
+const keyValuePattern$false$strict = keyValuePattern$false(F.buildKeyValuePattern, TSKindId.False);
+const keyValuePattern$false$coerce = keyValuePattern$false(C.coerceToKeyValuePattern, TSKindId.False);
+const keyValuePattern$none =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, key: value } as never, options as never);
+const keyValuePattern$none$strict = keyValuePattern$none(F.buildKeyValuePattern, TSKindId.None);
+const keyValuePattern$none$coerce = keyValuePattern$none(C.coerceToKeyValuePattern, TSKindId.None);
 const keyValuePattern$negative =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -1628,13 +3040,225 @@ const keyValuePattern$negative$coerce = keyValuePattern$negative(
 	C.coerceToKeyValuePattern,
 	C.coerceToSimplePatternNegative
 );
+const keyValuePattern$complexPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'sign' || key === 'real' || key === 'operator' || key === 'imaginary') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) } as never, options as never);
+	};
+const keyValuePattern$complexPattern$strict = keyValuePattern$complexPattern(
+	F.buildKeyValuePattern,
+	F.buildComplexPattern
+);
+const keyValuePattern$complexPattern$coerce = keyValuePattern$complexPattern(
+	C.coerceToKeyValuePattern,
+	C.coerceToComplexPattern
+);
+const keyValuePattern$dottedName =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) } as never, options as never);
+	};
+const keyValuePattern$dottedName$strict = keyValuePattern$dottedName(F.buildKeyValuePattern, F.buildDottedName);
+const keyValuePattern$dottedName$coerce = keyValuePattern$dottedName(C.coerceToKeyValuePattern, C.coerceToDottedName);
+const keyValuePattern$wildcardPattern =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, key: value } as never, options as never);
+const keyValuePattern$wildcardPattern$strict = keyValuePattern$wildcardPattern(
+	F.buildKeyValuePattern,
+	TSKindId.WildcardPattern
+);
+const keyValuePattern$wildcardPattern$coerce = keyValuePattern$wildcardPattern(
+	C.coerceToKeyValuePattern,
+	TSKindId.WildcardPattern
+);
 export const keyValuePattern = Object.freeze({
 	...B.keyValuePattern,
+	classPattern: bundle(keyValuePattern$classPattern$strict, keyValuePattern$classPattern$coerce, {
+		key: 'keyValuePattern.classPattern',
+		max: 2
+	}),
+	splatPattern: bundle(keyValuePattern$splatPattern$strict, keyValuePattern$splatPattern$coerce, {
+		key: 'keyValuePattern.splatPattern',
+		max: 2
+	}),
+	unionPattern: bundle(keyValuePattern$unionPattern$strict, keyValuePattern$unionPattern$coerce, {
+		key: 'keyValuePattern.unionPattern',
+		max: 2
+	}),
+	caseListPattern: bundle(keyValuePattern$caseListPattern$strict, keyValuePattern$caseListPattern$coerce, {
+		key: 'keyValuePattern.caseListPattern',
+		max: 2
+	}),
+	caseTuplePattern: bundle(keyValuePattern$caseTuplePattern$strict, keyValuePattern$caseTuplePattern$coerce, {
+		key: 'keyValuePattern.caseTuplePattern',
+		max: 2
+	}),
+	dictPattern: bundle(keyValuePattern$dictPattern$strict, keyValuePattern$dictPattern$coerce, {
+		key: 'keyValuePattern.dictPattern',
+		max: 2
+	}),
+	string: bundle(keyValuePattern$string$strict, keyValuePattern$string$coerce, {
+		key: 'keyValuePattern.string',
+		max: 2
+	}),
+	concatenatedString: bundle(keyValuePattern$concatenatedString$strict, keyValuePattern$concatenatedString$coerce, {
+		key: 'keyValuePattern.concatenatedString',
+		max: 2
+	}),
+	true: bundle(keyValuePattern$true$strict, keyValuePattern$true$coerce, { key: 'keyValuePattern.true', max: 2 }),
+	false: bundle(keyValuePattern$false$strict, keyValuePattern$false$coerce, { key: 'keyValuePattern.false', max: 2 }),
+	none: bundle(keyValuePattern$none$strict, keyValuePattern$none$coerce, { key: 'keyValuePattern.none', max: 2 }),
 	negative: bundle(keyValuePattern$negative$strict, keyValuePattern$negative$coerce, {
 		key: 'keyValuePattern.negative',
 		max: 2
+	}),
+	complexPattern: bundle(keyValuePattern$complexPattern$strict, keyValuePattern$complexPattern$coerce, {
+		key: 'keyValuePattern.complexPattern',
+		max: 2
+	}),
+	dottedName: bundle(keyValuePattern$dottedName$strict, keyValuePattern$dottedName$coerce, {
+		key: 'keyValuePattern.dottedName',
+		max: 2
+	}),
+	wildcardPattern: bundle(keyValuePattern$wildcardPattern$strict, keyValuePattern$wildcardPattern$coerce, {
+		key: 'keyValuePattern.wildcardPattern',
+		max: 2
 	})
 }) as unknown as typeof B.keyValuePattern & {
+	classPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & ArgsOf<typeof classPattern.strict>[0],
+			options?: OptionsArg<typeof F.buildKeyValuePattern>
+		) => ReturnType<typeof F.buildKeyValuePattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & ArgsOf<typeof classPattern.coerce>[0],
+			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
+		) => ReturnType<typeof C.coerceToKeyValuePattern>;
+	};
+	splatPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & ArgsOf<typeof F.buildSplatPattern>[0],
+			options?: OptionsArg<typeof F.buildKeyValuePattern>
+		) => ReturnType<typeof F.buildKeyValuePattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & ArgsOf<typeof C.coerceToSplatPattern>[0],
+			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
+		) => ReturnType<typeof C.coerceToKeyValuePattern>;
+	};
+	unionPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof unionPattern.strict> },
+			options?: OptionsArg<typeof F.buildKeyValuePattern>
+		) => ReturnType<typeof F.buildKeyValuePattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+				key: ArgsOf<typeof unionPattern.coerce>;
+			},
+			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
+		) => ReturnType<typeof C.coerceToKeyValuePattern>;
+	};
+	caseListPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+				key: ArgsOf<typeof F.buildCaseListPattern>[0];
+			},
+			options?: OptionsArg<typeof F.buildKeyValuePattern>
+		) => ReturnType<typeof F.buildKeyValuePattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+				key: ArgsOf<typeof C.coerceToCaseListPattern>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
+		) => ReturnType<typeof C.coerceToKeyValuePattern>;
+	};
+	caseTuplePattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+				key: ArgsOf<typeof F.buildCaseTuplePattern>[0];
+			},
+			options?: OptionsArg<typeof F.buildKeyValuePattern>
+		) => ReturnType<typeof F.buildKeyValuePattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+				key: ArgsOf<typeof C.coerceToCaseTuplePattern>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
+		) => ReturnType<typeof C.coerceToKeyValuePattern>;
+	};
+	dictPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof F.buildDictPattern>[0] },
+			options?: OptionsArg<typeof F.buildKeyValuePattern>
+		) => ReturnType<typeof F.buildKeyValuePattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+				key: ArgsOf<typeof C.coerceToDictPattern>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
+		) => ReturnType<typeof C.coerceToKeyValuePattern>;
+	};
+	string: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & ArgsOf<typeof F.buildString>[0],
+			options?: OptionsArg<typeof F.buildKeyValuePattern>
+		) => ReturnType<typeof F.buildKeyValuePattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & ArgsOf<typeof C.coerceToString>[0],
+			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
+		) => ReturnType<typeof C.coerceToKeyValuePattern>;
+	};
+	concatenatedString: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+				key: ArgsOf<typeof F.buildConcatenatedString>;
+			},
+			options?: OptionsArg<typeof F.buildKeyValuePattern>
+		) => ReturnType<typeof F.buildKeyValuePattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+				key: ArgsOf<typeof C.coerceToConcatenatedString>;
+			},
+			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
+		) => ReturnType<typeof C.coerceToKeyValuePattern>;
+	};
+	true: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>,
+			options?: OptionsArg<typeof F.buildKeyValuePattern>
+		) => ReturnType<typeof F.buildKeyValuePattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>,
+			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
+		) => ReturnType<typeof C.coerceToKeyValuePattern>;
+	};
+	false: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>,
+			options?: OptionsArg<typeof F.buildKeyValuePattern>
+		) => ReturnType<typeof F.buildKeyValuePattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>,
+			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
+		) => ReturnType<typeof C.coerceToKeyValuePattern>;
+	};
+	none: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>,
+			options?: OptionsArg<typeof F.buildKeyValuePattern>
+		) => ReturnType<typeof F.buildKeyValuePattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>,
+			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
+		) => ReturnType<typeof C.coerceToKeyValuePattern>;
+	};
 	negative: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
@@ -1649,29 +3273,38 @@ export const keyValuePattern = Object.freeze({
 			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
-};
-
-const classPattern$arguments = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
-	parent: PF,
-	child: CF
-) => {
-	return (config: unknown, options?: unknown): ReturnType<PF> => {
-		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
-		const seat = _o(config)['arguments'];
-		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
-		return _fwd<ReturnType<PF>>(parent, { ..._o(config), arguments: _c(child)(...seat) }, options);
+	complexPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & ArgsOf<typeof F.buildComplexPattern>[0],
+			options?: OptionsArg<typeof F.buildKeyValuePattern>
+		) => ReturnType<typeof F.buildKeyValuePattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & ArgsOf<typeof C.coerceToComplexPattern>[0],
+			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
+		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
-};
-const classPattern$seated: (...args: T.ClassPattern.BuildArgs) => ReturnType<typeof F.buildClassPattern> =
-	classPattern$arguments(F.buildClassPattern, F.buildListPatternCasePatterns);
-const classPattern$seatedCoerce: (...args: T.ClassPattern.LooseArgs) => ReturnType<typeof C.coerceToClassPattern> =
-	classPattern$arguments(C.coerceToClassPattern, C.coerceToListPatternCasePatterns);
-export const classPattern = Object.freeze({
-	...B.classPattern,
-	...bundle(classPattern$seated, classPattern$seatedCoerce, { key: 'classPattern', max: 1 })
-}) as unknown as Omit<typeof B.classPattern, 'strict' | 'coerce'> & {
-	strict: typeof classPattern$seated;
-	coerce: typeof classPattern$seatedCoerce;
+	dottedName: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof F.buildDottedName> },
+			options?: OptionsArg<typeof F.buildKeyValuePattern>
+		) => ReturnType<typeof F.buildKeyValuePattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+				key: ArgsOf<typeof C.coerceToDottedName>;
+			},
+			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
+		) => ReturnType<typeof C.coerceToKeyValuePattern>;
+	};
+	wildcardPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>,
+			options?: OptionsArg<typeof F.buildKeyValuePattern>
+		) => ReturnType<typeof F.buildKeyValuePattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>,
+			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
+		) => ReturnType<typeof C.coerceToKeyValuePattern>;
+	};
 };
 
 const subscript$subscripts = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
@@ -1870,11 +3503,22 @@ export const type = Object.freeze({
 	};
 };
 
+export const stringContent = Object.freeze({
+	...B.stringContent,
+	escapeInterpolation: F.buildEscapeInterpolation,
+	notEscapeSequence: F.buildNotEscapeSequence,
+	stringFragment: F.buildStringFragment
+}) as unknown as typeof B.stringContent & {
+	escapeInterpolation: typeof F.buildEscapeInterpolation;
+	notEscapeSequence: typeof F.buildNotEscapeSequence;
+	stringFragment: typeof F.buildStringFragment;
+};
+
 export const simpleStatement: {
 	readonly futureImport: typeof futureImportStatement;
 	readonly import: typeof B.importStatement;
 	readonly importFrom: typeof importFromStatement;
-	readonly print: typeof B.printStatement;
+	readonly print: typeof printStatement;
 	readonly assert: typeof B.assertStatement;
 	readonly expression: typeof expressionStatement;
 	readonly return: typeof B.returnStatement;
@@ -1891,7 +3535,7 @@ export const simpleStatement: {
 	futureImport: futureImportStatement,
 	import: B.importStatement,
 	importFrom: importFromStatement,
-	print: B.printStatement,
+	print: printStatement,
 	assert: B.assertStatement,
 	expression: expressionStatement,
 	return: B.returnStatement,

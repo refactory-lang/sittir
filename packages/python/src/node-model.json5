@@ -132,6 +132,13 @@
         "parenthesized_import_list": "parenthesized_import_list"
       }
     },
+    "print_statement": {
+      "definedBy": "enrich",
+      "childKind": {
+        "print_statement_chevron": "chevron",
+        "print_statement_plain": "plain"
+      }
+    },
     "expression_statement": {
       "definedBy": "override",
       "childKind": {
@@ -166,7 +173,21 @@
     "_simple_pattern": {
       "definedBy": "override",
       "childKind": {
-        "simple_pattern_negative": "negative"
+        "class_pattern": "class_pattern",
+        "splat_pattern": "splat_pattern",
+        "union_pattern": "union_pattern",
+        "case_list_pattern": "case_list_pattern",
+        "case_tuple_pattern": "case_tuple_pattern",
+        "dict_pattern": "dict_pattern",
+        "string": "string",
+        "concatenated_string": "concatenated_string",
+        "true": "true",
+        "false": "false",
+        "none": "none",
+        "simple_pattern_negative": "negative",
+        "complex_pattern": "complex_pattern",
+        "dotted_name": "dotted_name",
+        "wildcard_pattern": "wildcard_pattern"
       }
     },
     "yield": {
@@ -184,6 +205,21 @@
         "union_type": "union_type",
         "constrained_type": "constrained_type",
         "member_type": "member_type"
+      }
+    },
+    "string_content": {
+      "definedBy": "override",
+      "childKind": {
+        "escape_interpolation": "escape_interpolation",
+        "escape_sequence": "escape_sequence",
+        "not_escape_sequence": "not_escape_sequence",
+        "string_fragment": "string_fragment"
+      }
+    },
+    "print_statement_chevron": {
+      "definedBy": "override",
+      "childKind": {
+        "print_chevron_arguments": "print_chevron_arguments"
       }
     },
     "except_clause_exception": {
@@ -7340,6 +7376,12 @@
       "builderPath": [
         "escapeInterpolation"
       ],
+      "builderPathAlternates": [
+        [
+          "stringContent",
+          "escapeInterpolation"
+        ]
+      ],
       "hidden": false,
       "pattern": "\\{\\{|\\}\\}",
       "leafPattern": "/^(?:(?:\\{\\{|\\}\\}))$/u",
@@ -12898,6 +12940,12 @@
       "builderPath": [
         "notEscapeSequence"
       ],
+      "builderPathAlternates": [
+        [
+          "stringContent",
+          "notEscapeSequence"
+        ]
+      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"\\\\\" as const",
@@ -15360,6 +15408,12 @@
       "irKey": "stringFragment",
       "builderPath": [
         "stringFragment"
+      ],
+      "builderPathAlternates": [
+        [
+          "stringContent",
+          "stringFragment"
+        ]
       ],
       "hidden": false,
       "pattern": "[\\s\\S]+",

@@ -148,7 +148,9 @@
         "self": "self",
         "super": "super",
         "crate": "crate",
-        "primitive_type": "primitive_type"
+        "primitive_type": "primitive_type",
+        "token_tree_punctuation": "token_tree_punctuation",
+        "_token_keywords": "token_keywords"
       }
     },
     "attribute": {
@@ -208,6 +210,34 @@
       "childKind": {
         "range_pattern_with_left_with_right": "with_right",
         "range_pattern_with_left_bare": "bare"
+      }
+    },
+    "attributed_parameter": {
+      "definedBy": "enrich",
+      "childKind": {
+        "parameter": "parameter",
+        "self_parameter": "self_parameter",
+        "variadic_parameter": "variadic_parameter",
+        "_type": "type"
+      }
+    },
+    "attributed_type_parameter": {
+      "definedBy": "enrich",
+      "childKind": {
+        "metavariable": "metavariable",
+        "type_parameter": "type_parameter",
+        "lifetime_parameter": "lifetime_parameter",
+        "const_parameter": "const_parameter"
+      }
+    },
+    "type_argument": {
+      "definedBy": "enrich",
+      "childKind": {
+        "_type": "type",
+        "type_binding": "type_binding",
+        "lifetime": "lifetime",
+        "_literal": "literal",
+        "block": "block"
       }
     }
   },

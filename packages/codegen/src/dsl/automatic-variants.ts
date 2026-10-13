@@ -147,14 +147,23 @@ export function stampAutomaticVariants(
 	supertypeNames: ReadonlySet<string>,
 	inlineNames: ReadonlySet<string>,
 	elementChoices: ReadonlySet<string>,
-	symbols: SymbolSource
+	symbols: SymbolSource,
+	into?: AutomaticVariants,
+	owners?: ReadonlySet<string>
 ): AutomaticVariants {
-	const supertypeOwners = new Set(Object.keys(rules).filter((owner) => isSupertypeOwner(owner, rules, supertypeNames, inlineNames)));
-	const automatic: AutomaticVariants = { keys: new Set(), supertypeOwners };
+	const supertypeOwners = new Set(
+		Object.keys(rules).filter((owner) => (owners === undefined || owners.has(owner)) && isSupertypeOwner(owner, rules, supertypeNames, inlineNames))
+	);
+	const automatic: AutomaticVariants =
+		into === undefined
+			? { keys: new Set(), supertypeOwners }
+			: { keys: into.keys, supertypeOwners: new Set([...into.supertypeOwners, ...supertypeOwners]) };
 	for (const owner of Object.keys(rules)) {
 		const rule = rules[owner];
-		if (rule === undefined) continue;
+		if (rule === undefined || (owners !== undefined && !owners.has(owner))) continue;
+		const stamped = automatic.keys.size;
 		rules[owner] = stampRuleVariants(owner, rule, (name) => rules[name], automatic, elementChoices, symbols) as Rule;
+		if (into !== undefined && automatic.keys.size > stamped && supertypeOwners.has(owner)) (into.supertypeOwners as Set<string>).add(owner);
 	}
 	return automatic;
 }
