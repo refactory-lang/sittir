@@ -2,8 +2,8 @@
 ; How `sittir tool bindings-inventory` reads a pattern: docs/glossary/packages-tools-src-inventory.md
 ; (`readBindings` for the captures, `derive` for the members a claim takes from its slots).
 
-; ── module ─────────────────────────────────────────────────────────────────────
-(module) @module
+; ── file ───────────────────────────────────────────────────────────────────────
+(module) @file
 
 ; ── declaration ────────────────────────────────────────────────────────────────
 (function_definition) @declaration.function

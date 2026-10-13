@@ -99,12 +99,5 @@ export namespace Declaration {
 				readonly $kind: 'declaration.variable.reassignable.function_scoped';
 			}
 		}
-		export interface Static<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Variable<G>> {
-			// claimed by r
-			readonly $kind: 'declaration.variable.static';
-			readonly mutable?: Flag;
-			readonly name: G['identifier'];
-			readonly value?: G['slots']['declaration.variable.static']['value'];
-		}
 	}
 }

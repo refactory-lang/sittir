@@ -17,6 +17,7 @@ import type {
 	Clause,
 	Declaration,
 	Expression,
+	File,
 	GrammarContext,
 	Identifier,
 	ScopedVisibility,
@@ -161,6 +162,15 @@ export const privateFlag = Flags.Private;
 export function nameOf<G extends GrammarContext<G>>(d: Declaration.Any<G>): unknown {
 	if (d.$kind === 'declaration.function') return d.parameters;
 	return d.$kind;
+}
+
+// The root of a file is `file`, and `module` names only a module declared in a file.
+export function file<G extends GrammarContext<G>>(statements: G['slots']['file']['statements'][]): File<G> {
+	return { $kind: 'file', statements };
+}
+export function declaredModuleAsFile<G extends GrammarContext<G>>(m: Declaration.Module<G>): File<G> {
+	// @ts-expect-error a module declared in a file is no file
+	return m;
 }
 
 // A loop family: the shared for-in is a refinement of loop, and needs its subject and body.

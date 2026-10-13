@@ -3,7 +3,7 @@
 import { alias, bindings, field, rename, split } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "7bea48229b4ed652d28dca15e7cd242f308ff68fa066a1cc55122a1ae871782d",
+	hash: "28c00f46c6edcc6055402105d7599ac299ca62b20f22ba6623a682438bb53895",
 	patches: {
 		attribute_item: { "2": field("content") },
 		block_comment: { "1/0/2": alias(sym("block_comment_regular"), sym("text_comment")) },
@@ -41,7 +41,7 @@ export default bindings({
 		where_clause: { "1/0": field("where_predicates") }
 	},
 	renames: [
-		rename("source_file", "module"),
+		rename("source_file", "file"),
 		rename("function_item", "function_declaration"),
 		rename("function_signature_item", "signature_function_declaration"),
 		rename("impl_item_body", "extension_declaration"),
@@ -58,7 +58,6 @@ export default bindings({
 		rename("foreign_mod_item", "foreign_module_declaration"),
 		rename("extern_crate_declaration", "crate_import_statement"),
 		rename("const_item", "constant_declaration"),
-		rename("static_item", "static_variable_declaration"),
 		rename("let_declaration", "variable_declaration"),
 		rename("macro_definition", "macro_declaration"),
 		rename("parameter", "parameter_declaration"),

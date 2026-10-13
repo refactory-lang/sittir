@@ -9430,10 +9430,10 @@
       "members": []
     },
     "program": {
-      "vocab": "module",
+      "vocab": "file",
       "read": [
         {
-          "vocab": "module",
+          "vocab": "file",
           "toplevel": true,
           "within": [],
           "pins": [],
