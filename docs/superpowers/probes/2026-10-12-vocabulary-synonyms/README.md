@@ -27,7 +27,7 @@ docs/superpowers/probes/2026-10-12-vocabulary-synonyms/run.sh [commit]   # defau
   - `results/kinds.txt`: every kind except the owner × level refinements, with its owner, its claims per grammar, its members and its flags.
   - `results/identifiers.txt`: each grammar's identifier-like kinds, the paths that claim them, and the words the grammar aliases to an identifier kind.
   - `results/collisions.txt`: applies the proposal's renames to the 587 kinds, then checks every synonym against the collision rule at every position its canonical segment has.
-- **`proposal.json`** holds the ruled proposal. It has 64 renames: 24 to neutral terms, 27 that collapse name-only kinds, and 13 that collapse identifiers. It adds 19 kinds: the primitive types' 16 refinements, the rest type's `**` form, typescript's import-equals statement, and the type-only export, `statement.export.type`. It gives 61 canonical segments 88 synonyms. Its flag table is empty, and it excludes ten words. Each rename carries the question that decides it. The members merged kinds take are in §2, not in the file.
+- **`proposal.json`** holds the ruled proposal. It has 65 renames: 24 to neutral terms, 27 that collapse name-only kinds, 13 that collapse identifiers, and one that removes `statement.import.type`, since a type-only import or export is the `typeOnly` flag. It adds 18 kinds: the primitive types' 16 refinements, the rest type's `**` form, and typescript's import-equals statement. It gives 61 canonical segments 88 synonyms. Its flag table is empty, and it excludes ten words. Each rename carries the question that decides it. The members merged kinds take are in §2, not in the file.
 
 ## Answer
 

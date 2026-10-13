@@ -742,8 +742,10 @@ Typescript (`typescript-samples-*.txt`):
     `typed_self_parameter`). A visible variant never keeps its kind's name (finding 10). The group
     takes enrich's name for it, `<list>_<field>_group`.
 21. **Typescript's type-only export** (`export type {A} from`, `export type * from`). Ruled: a
-    refinement, `statement.export.type`, mirroring `statement.import.type`. The vocabulary pass
-    may rename the segment.
+    flag, `typeOnly`, on `statement.export` and on `statement.import`, where it replaces the
+    `statement.import.type` refinement. A refinement could not hold it: `export type * from` is
+    one node with the `type` keyword and the `*`, so it would be `statement.export.all` and a
+    type refinement at once. Flow's `import typeof` stays `statement.import.typeof`.
 22. **How the edit's output meets enrich's group synthesis.** Ruled by the maintainer: enrich
     runs again, whole, over every rule a grammar-bindings edit newly creates, "pretty much splits
     and merges, but may include others". A renamed rule does not pass again. The lead stays in

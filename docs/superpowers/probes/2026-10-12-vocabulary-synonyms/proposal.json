@@ -63,7 +63,8 @@
   ["type.named", null, "ID8"],
   ["statement.loop.for", "statement.loop.for_each", "NT13"],
   ["pattern.match", null, "NO7"],
-  ["pattern.tuple.struct", "pattern.struct", "NO9"]
+  ["pattern.tuple.struct", "pattern.struct", "NO9"],
+  ["statement.import.type", null, "typeOnly"]
  ],
  "adds": [
   ["statement.import.alias", "NO11"],
@@ -83,8 +84,7 @@
   ["type.primitive.any", "ID7"],
   ["type.primitive.unknown", "ID7"],
   ["type.primitive.symbol", "ID7"],
-  ["type.primitive.object", "ID7"],
-  ["statement.export.type", "type-only export"]
+  ["type.primitive.object", "ID7"]
  ],
  "levels": {
   "argument": {"named": ["keyword"]},
