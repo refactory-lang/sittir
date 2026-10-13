@@ -568,10 +568,10 @@ function shapeRef(slot: string): SlotRef {
 
 function recorder(context: Context, kind: number | undefined): Recorder<unknown> {
 	const table = context.hooks.querySlots;
+	const owner = kind === undefined ? 'this grammar' : kindLabel(context, kind);
 	const known = kind === undefined ? undefined : slotsOf(table, kind);
 	const names: ReadonlySet<string> = known === undefined ? everyAccessor(table) : new Set(known.keys());
-	const refFor = (key: string): SlotRef | PresenceRef => (known === undefined ? shapeRef(key) : refOf(key, known.get(key)!));
-	const owner = kind === undefined ? 'this grammar' : kindLabel(context, kind);
+	const refFor = (key: string): SlotRef | PresenceRef => (known === undefined ? shapeRef(key) : refOf(`${owner}.${key}`, known.get(key)!));
 	const refuseRecorder = (what: string): never =>
 		refuse(`query: ${what}; a condition reads slots and compares them (c.slot.eq / .match)`);
 	return new Proxy(Object.create(null) as Recorder<unknown>, {

@@ -411,6 +411,12 @@ describe('where on a boolean slot', () => {
 		expect(() => all.where((c) => c.async!.eq(42))).toThrow(/text to compare/);
 	});
 
+	it('names the kind and the slot when a slot is compared in the wrong form', () => {
+		const loose = (c: unknown) => c as Record<string, { eq(v: unknown): never }>;
+		expect(() => defs().where((c) => loose(c).name!.eq(true))).toThrow(/function_definition\.name/);
+		expect(() => defs().where((c) => loose(c).async!.eq('async'))).toThrow(/function_definition\.async/);
+	});
+
 	it('refuses text and patterns on a boolean slot', () => {
 		const loose = (c: unknown) => (c as Record<string, { eq(t: string): never; match(p: RegExp): never }>).async!;
 		expect(() => defs().where((c) => loose(c).eq('async'))).toThrow(/eq\(true\)/);

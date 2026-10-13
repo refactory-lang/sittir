@@ -15,4 +15,9 @@ describe('a boolean slot compared after a type-guard filter', () => {
 		expect(count(guarded().where((c) => c.type.eq(true)))).toBe(count(ofType().where((c) => c.type.eq(true))));
 		expect(count(guarded().where((c) => c.type.eq(false)))).toBe(count(ofType().where((c) => c.type.eq(false))));
 	});
+
+	it('refuses a wrong form when the view runs, naming the kind and the slot', () => {
+		const loose = guarded().where((c) => (c.type as unknown as { eq(t: string): never }).eq('type'));
+		expect(() => [...loose]).toThrow(/export_statement_default_from\.type/);
+	});
 });
