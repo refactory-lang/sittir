@@ -1,4 +1,5 @@
-import type { BaselineRun, NativeEngineLike, StoredLayout } from '@sittir/common/engine';
+import type { BaselineRun, LayoutWork, NativeEngineLike, StoredLayout } from '@sittir/common/engine';
+import { treeOf } from '@sittir/common/utils';
 import { loadCorpusEntries } from './common.ts';
 
 /** A run of a corpus entry that no region's record reaches: at render it keeps its source class. */
@@ -55,6 +56,17 @@ async function withTreeOf(grammar: string): Promise<<T>(source: string, use: (en
 export async function layoutRunsOf(grammar: string): Promise<(source: string, whole?: boolean) => BaselineRun[]> {
 	const withTree = await withTreeOf(grammar);
 	return (source, whole = false) => withTree(source, (engine, treeId) => engine.layoutBaseline(treeId, whole));
+}
+
+/** A function reading the work done so far by the layout reads of the tree a parsed node belongs to (`NativeEngineLike.layoutWork`). */
+export async function layoutWorkOf(grammar: string): Promise<(node: object) => LayoutWork> {
+	const native = await nativeBackendOf(grammar);
+	const engine = new native.SittirEngine();
+	return (node) => {
+		const treeId = treeOf(node)?.id;
+		if (treeId === undefined) throw new Error('layout work: the node names no live tree');
+		return engine.layoutWork(treeId);
+	};
 }
 
 /** What `source` stores of its layout apart from its read-time options (`NativeEngineLike.storedLayout`). */
