@@ -116,12 +116,8 @@ function slotsOf(table: QuerySlots, kind: number): ReadonlyMap<string, QuerySlot
 	return slots;
 }
 
-function everyAccessor(table: QuerySlots): ReadonlyMap<string, QuerySlot> {
-	const keywords = new Map<string, string | undefined>();
-	for (const row of Object.values(table))
-		for (const [accessor, , keyword] of row)
-			keywords.set(accessor, keywords.has(accessor) && keywords.get(accessor) !== keyword ? undefined : keyword);
-	return new Map([...keywords].map(([accessor, keyword]) => [accessor, { routes: NO_ROUTES, keyword }]));
+function everyAccessor(table: QuerySlots): ReadonlySet<string> {
+	return new Set(Object.values(table).flatMap((row) => row.map(([accessor]) => accessor)));
 }
 
 type Source =
@@ -561,27 +557,33 @@ function presenceRef(slot: string, routes: SlotRoutes, keyword: string): Presenc
 const refOf = (key: string, slot: QuerySlot): SlotRef | PresenceRef =>
 	slot.keyword === undefined ? slotRef(key, slot.routes) : presenceRef(key, slot.routes, slot.keyword);
 
+function shapeRef(slot: string): SlotRef {
+	const text = slotRef(slot, NO_ROUTES);
+	const presence = presenceRef(slot, NO_ROUTES, slot);
+	return Object.freeze({
+		eq: (value: string) => (typeof value === 'boolean' ? presence.eq(value) : text.eq(value)),
+		match: text.match
+	});
+}
+
 function recorder(context: Context, kind: number | undefined): Recorder<unknown> {
 	const table = context.hooks.querySlots;
-	const slots: ReadonlyMap<string, QuerySlot> = kind === undefined ? everyAccessor(table) : slotsOf(table, kind);
+	const known = kind === undefined ? undefined : slotsOf(table, kind);
+	const names: ReadonlySet<string> = known === undefined ? everyAccessor(table) : new Set(known.keys());
+	const refFor = (key: string): SlotRef | PresenceRef => (known === undefined ? shapeRef(key) : refOf(key, known.get(key)!));
 	const owner = kind === undefined ? 'this grammar' : kindLabel(context, kind);
 	const refuseRecorder = (what: string): never =>
 		refuse(`query: ${what}; a condition reads slots and compares them (c.slot.eq / .match)`);
 	return new Proxy(Object.create(null) as Recorder<unknown>, {
 		get(_, key) {
-			if (typeof key === 'string') {
-				const slot = slots.get(key);
-				if (slot !== undefined) return refOf(key, slot);
-			}
+			if (typeof key === 'string' && names.has(key)) return refFor(key);
 			return refuseRecorder(`${String(key)} is not a slot of ${owner}`);
 		},
 		set: () => refuseRecorder('a condition cannot assign'),
-		has: (_, key) => typeof key === 'string' && slots.has(key),
-		ownKeys: () => [...slots.keys()],
+		has: (_, key) => typeof key === 'string' && names.has(key),
+		ownKeys: () => [...names],
 		getOwnPropertyDescriptor: (_, key) =>
-			typeof key === 'string' && slots.has(key)
-				? { configurable: true, enumerable: true, value: refOf(key, slots.get(key)!) }
-				: undefined
+			typeof key === 'string' && names.has(key) ? { configurable: true, enumerable: true, value: refFor(key) } : undefined
 	});
 }
 

@@ -404,10 +404,11 @@ describe('where on a boolean slot', () => {
 		expect(steps.every((step) => step.kinds?.[0] === K.FunctionDefinition && step.plan !== undefined)).toBe(true);
 	});
 
-	it('checks a condition before ofType against the slot every kind with it holds: a presence where each holds the keyword', () => {
+	it('checks a condition before ofType by its shape only: each slot takes a text or a boolean, as its kind decides when it runs', () => {
 		const all = tree.$query().$descendants as unknown as { where(c: (r: Record<string, { eq(v: unknown): unknown }>) => unknown): unknown };
 		expect(() => all.where((c) => c.async!.eq(true))).not.toThrow();
-		expect(() => all.where((c) => c.async!.eq('async'))).toThrow(/eq\(true\)/);
+		expect(() => all.where((c) => c.async!.eq('async'))).not.toThrow();
+		expect(() => all.where((c) => c.async!.eq(42))).toThrow(/text to compare/);
 	});
 
 	it('refuses text and patterns on a boolean slot', () => {
