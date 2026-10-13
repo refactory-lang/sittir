@@ -43,10 +43,20 @@ export interface ValidationRun {
 	builtRenderParsePass?: number;
 	builtRenderParseTotal?: number;
 	builtRenderParseAstMatchPass?: number;
+	/** Built nodes whose AST matched only by taking another of a list's separators; absent on rows recorded before the row existed. */
+	builtRenderParseSeparatorTolerated?: number;
 	/** Trivia-only losses, kept out of the totals; absent on rows recorded before the trivia row existed. */
 	fromTrivia?: number;
 	readRenderParseTrivia?: number;
 	readRenderParseShallowTrivia?: number;
+	/** Layout runs over the corpus, those no region's record reaches, and the entries whose region render was refused; absent on rows recorded before the row existed. */
+	layoutRunsTotal?: number;
+	layoutRunsUnreached?: number;
+	layoutRunsRefused?: number;
+	/** What the corpus stores of its layout apart from its read-time options: the runs a side stores, the list slots storing a layout, and the items storing their own separator; absent on rows recorded before the row existed. */
+	layoutStoredDeviations?: number;
+	layoutStoredSlots?: number;
+	layoutStoredSeparators?: number;
 }
 
 /**

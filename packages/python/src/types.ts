@@ -8,6 +8,7 @@ import type {
 	KeywordNs,
 	LeafNs,
 	Terminal,
+	TriviaFlanks,
 	NonEmptyArray,
 	BooleanKeyword as BaseBooleanKeyword,
 	KindEnum,
@@ -5280,7 +5281,7 @@ export type WildcardPattern = TSKindId.WildcardPattern;
 export type IntegerDecimalLong = Terminal<TSKindId.IntegerDecimalLong, string>;
 export type IntegerDecimalImaginary = Terminal<TSKindId.IntegerDecimalImaginary, string>;
 export type IntegerDecimalPlain = Terminal<TSKindId.IntegerDecimalPlain, string>;
-export type LineContinuationNewline = Terminal<TSKindId.LineContinuationNewline, string>;
+export type LineContinuationNewline = Terminal<TSKindId.LineContinuationNewline, string> & TriviaFlanks;
 export type LineContinuationNul = TSKindId.LineContinuationNul;
 export type StringStart = Terminal<TSKindId.StringStart, string>;
 export type StringFragment = Terminal<TSKindId.StringFragment, string>;
@@ -15539,18 +15540,7 @@ export interface PythonTypeMap extends GrammarTypeMap {
 		| { readonly node: MatchBlockBlock; readonly empty: EmptyMatchBlockBlock }
 		| { readonly node: MatchBlockBlock.Bound; readonly empty: EmptyMatchBlockBlock }
 		| { readonly node: MatchBlockBlock.Parsed; readonly empty: EmptyMatchBlockBlock.Parsed };
-	readonly trivia:
-		| Blankline
-		| Comment
-		| Dedent
-		| DoubleBlankline
-		| Indent
-		| LineContinuation
-		| LineContinuationNewline
-		| LineContinuationNul
-		| Newline
-		| Space
-		| Tab;
+	readonly trivia: Comment | Dedent | Indent | Layout | LineContinuation;
 }
 
 export type NodeMethodsOf = NodeMethods<PythonTypeMap['trivia']>;

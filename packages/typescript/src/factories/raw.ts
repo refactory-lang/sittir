@@ -8256,7 +8256,7 @@ function _buildObjectTypeContent(
 ): T.ObjectTypeContent.Bound {
 	_assertNonEmpty(elements, 'object_type_content.elements');
 	const _item = elements;
-	const _separator = options.separator ?? TSKindId.Semi;
+	const _separator = options.separator;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();

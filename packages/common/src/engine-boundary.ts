@@ -2,6 +2,8 @@ export { createNativeEngine, createRenderHandle, nativeLanguageEngine } from './
 export { hostPlatform, nativeLoadFailure, platformSuffix, targetSuffix } from './native-binding.ts';
 export type { HostPlatform, NativeBindingSpec } from './native-binding.ts';
 export type {
+	BaselineRun,
+	StoredLayout,
 	ParseEngine,
 	RenderOptions,
 	RenderOptionValues,

@@ -25491,18 +25491,7 @@ export interface TypescriptTypeMap extends GrammarTypeMap {
 		| { readonly node: TupleType; readonly empty: EmptyTupleType }
 		| { readonly node: TupleType.Bound; readonly empty: EmptyTupleType }
 		| { readonly node: TupleType.Parsed; readonly empty: EmptyTupleType.Parsed };
-	readonly trivia:
-		| Blankline
-		| Comment
-		| CommentBlock
-		| CommentLine
-		| Dedent
-		| DoubleBlankline
-		| HtmlComment
-		| Indent
-		| Newline
-		| Space
-		| Tab;
+	readonly trivia: Comment | HtmlComment | Layout;
 }
 
 export type NodeMethodsOf = NodeMethods<TypescriptTypeMap['trivia']>;

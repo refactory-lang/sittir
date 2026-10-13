@@ -1,7 +1,7 @@
 {
-	"python": 5,
+	"python": 20,
 	"regex": 0,
-	"rust": 648,
-	"scm": 391,
-	"typescript": 41
+	"rust": 750,
+	"scm": 509,
+	"typescript": 83
 }

@@ -21,7 +21,7 @@ impl SourceTable for NoSources {
 #[test]
 fn an_empty_suite_block_closes_the_indent_it_opened() {
     let options = options::defaults();
-    let ctx = RenderContext { options: &options, sources: &NoSources };
+    let ctx = RenderContext { options: &options, sources: &NoSources, recording: None };
     let block = BlockTransport {
         layout: None,
         statements: Vec::new(),

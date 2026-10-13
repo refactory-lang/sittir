@@ -58,14 +58,17 @@ impl Case {
         assert_eq!(self.entries(self.at(kind, owner), side), [Assigned::Extra(entry)], "{side:?} of {kind} {owner:?}");
     }
 
-    /// The layout runs of every side, as source text.
+    /// The layout runs holding a line break of every side, as source text.
     fn layout(&self) -> Vec<(u32, TriviaSide, &str)> {
         let mut runs = Vec::new();
         for index in 0..self.tree.root_node().descendant_count() as u32 {
             for side in [Leading, Trailing, Inner] {
                 for entry in self.table.side(index, side) {
                     if let Assigned::Layout { start, end, .. } = *entry {
-                        runs.push((index, side, &self.source[start as usize..end as usize]));
+                        let text = &self.source[start as usize..end as usize];
+                        if text.contains('\n') {
+                            runs.push((index, side, text));
+                        }
                     }
                 }
             }
@@ -137,14 +140,14 @@ fn a_comment_on_a_statements_line_trails_the_statement_not_the_call() {
     let case = Case::new(rust(), "fn f() {\n    s1(); // x\n    // y\n    s2();\n}\n");
     case.holds("expression_statement", "s1();", Trailing, "line_comment", "// x");
     case.holds("expression_statement", "s2();", Leading, "line_comment", "// y");
-    assert_eq!(case.table.side(case.at("call_expression", "s1()"), Trailing), []);
+    assert_eq!(case.entries(case.at("call_expression", "s1()"), Trailing), []);
 }
 
 #[test]
 fn python_newline_text_is_layout_and_never_an_entry() {
     let case = Case::new(python(), "x = 1  # c\ny = 2\n");
     case.holds("expression_statement", "x = 1", Trailing, "comment", "# c");
-    assert_eq!(case.table.side(case.at("simple_statements", "y = 2"), Leading), [Assigned::Layout { start: 10, end: 11, owner: 0, depth: 0 }]);
+    assert!(matches!(case.table.side(case.at("simple_statements", "y = 2"), Leading), [Assigned::Layout { start: 10, end: 11, owner: 0, depth: 0, .. }]));
 }
 
 #[test]
@@ -204,14 +207,13 @@ fn the_outer_node_takes_the_side() {
 fn a_line_break_run_is_layout_on_the_side_its_gap_goes_to() {
     let case = Case::new(rust(), "fn f() {}\n\nfn g() {}\n");
     let g = case.at("function_item", "fn g() {}");
-    assert_eq!(case.table.side(g, Leading), [Assigned::Layout { start: 9, end: 11, owner: 0, depth: 0 }]);
+    assert!(matches!(case.table.side(g, Leading), [Assigned::Layout { start: 9, end: 11, owner: 0, depth: 0, .. }]));
 }
 
 #[test]
-fn a_one_line_block_stores_no_layout() {
+fn a_one_line_block_holds_no_line_break_run_and_the_files_edge_none() {
     let case = Case::new(rust(), "fn f() { a(); b(); }\n");
-    let f = case.at("function_item", "fn f() { a(); b(); }");
-    assert_eq!(case.layout(), [(f, Trailing, "\n")]);
+    assert_eq!(case.layout(), []);
 }
 
 #[test]
@@ -272,13 +274,14 @@ fn the_run_between_a_leading_entry_and_its_owner_is_on_the_entrys_side() {
 }
 
 impl Case {
-    /// The depth members of `side` of the node at `index`: each run's, then each restore's, in order.
+    /// The depth members of `side` of the node at `index`: each line break run's, then each restore's, in order.
     fn depths(&self, index: u32, side: TriviaSide) -> Vec<i32> {
         self.table
             .side(index, side)
             .iter()
             .filter_map(|entry| match *entry {
-                Assigned::Layout { depth, .. } | Assigned::Depth(depth) => Some(depth),
+                Assigned::Layout { start, end, depth, .. } if self.source[start as usize..end as usize].contains('\n') => Some(depth),
+                Assigned::Depth(depth) => Some(depth),
                 _ => None,
             })
             .collect()
@@ -351,7 +354,7 @@ fn a_body_indented_by_any_width_is_structural() {
         .flat_map(|at| [Leading, Trailing, Inner].map(|side| case.depths(at, side)))
         .flatten()
         .collect();
-    assert_eq!(runs, [0, 0, 0], "each body's first line sets its block's indentation");
+    assert_eq!(runs, [0, 0], "each body's first line sets its block's indentation");
 }
 
 
@@ -374,4 +377,11 @@ fn a_list_items_siblings_are_the_items_of_its_own_list() {
     let last = sittir_core::engine::siblings(&tree, index_of(&tree, source, "decorator", "@b"));
     assert_eq!((first.previous, first.next), (None, sibling(3, 5)));
     assert_eq!((last.previous, last.next), (sibling(0, 2), None), "the definition after the decorators is another slot's");
+}
+
+#[test]
+fn runs_a_zero_width_token_parts_carry_once_though_an_entry_follows_in_the_second_gap() {
+    let case = Case::new(python(), "def f():\n    # c\n    pass\n");
+    let carrying: Vec<(&str, bool)> = case.table.runs().iter().filter(|run| run.start >= 8 && run.end <= 13).map(|run| (&case.source[run.start as usize..run.end as usize], run.carries)).collect();
+    assert_eq!(carrying, [("", false), ("\n    ", true)]);
 }

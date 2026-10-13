@@ -21931,6 +21931,10 @@
       "leadingDelimiter": "optional",
       "trailingDelimiter": "optional",
       "defaultDelimiter": "Delimiter.Trailing",
+      "separatorCandidates": [
+        ",",
+        ";"
+      ],
       "elementKinds": [
         "export_statement",
         "property_signature",

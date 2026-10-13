@@ -180,11 +180,11 @@ function letAt(fn: RootStatement | undefined, at: number) {
 }
 
 describe('the fold by range', () => {
-	it('a deep write unfolds its ancestors, whose in-line gaps take the seam defaults, and leaves siblings and cousins as bytes', () => {
+	it('a deep write unfolds its ancestors, whose in-line gaps keep their stored layout, and leaves siblings and cousins as bytes', () => {
 		const root = engine.parse(NESTED, { depth: 1 });
 		const [, b] = root.statements();
 		letAt(b, 0).$trivia.leading(engine.build.lineComment(' q'));
-		expect(root.$render()).toBe('fn a() { let p = 1; }\nfn b() {\n    // q\n    let q = 2;\n    let r = 3;\n}\nfn c() { let s = 4; }\n');
+		expect(root.$render()).toBe('fn a() { let p = 1; }\nfn b() {\n    // q\n    let q = 2; let r = 3; }\nfn c() { let s = 4; }\n');
 	});
 
 	it('nested writes fold only untouched ranges', () => {
@@ -204,7 +204,7 @@ describe('the fold by range', () => {
 		if (b === undefined || !engine.is.functionItem(b)) throw new Error('expected a function');
 		letAt(b, 0).$trivia.leading(engine.build.lineComment(' q'));
 		const built = engine.build.sourceFile({ statements: [b] });
-		expect(built.$render()).toBe('fn b() {\n    // q\n    let q = 2;\n    let r = 3;\n}\n');
+		expect(built.$render()).toBe('fn b() {\n    // q\n    let q = 2; let r = 3; }\n');
 	});
 
 	it('an untouched node folds after a write elsewhere', () => {
