@@ -22,7 +22,7 @@ const facts = (inner: readonly string[] = []) => ({
 	kinds: new Set(['comment']),
 	innerKinds: new Set(inner),
 	rebuildWrappers: new Set<number>(),
-	listKinds: new Set<number>()
+	listKinds: new Set<number>(), layout: new Set<number>()
 });
 const handleOf = (inner?: readonly string[]) => liveHandle({ render: () => 'rendered', trivia: facts(inner) });
 

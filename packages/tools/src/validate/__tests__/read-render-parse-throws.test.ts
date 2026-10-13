@@ -1,17 +1,14 @@
 import { describe, expect, it, vi } from 'vitest';
 
-const INJECTED = 'injected kind view failure';
+const INJECTED = 'injected detached-data failure';
 
-vi.mock('../common.ts', async (importOriginal) => {
-	const actual = await importOriginal<typeof import('../common.ts')>();
+vi.mock('@sittir/common/utils', async (importOriginal) => {
+	const actual = await importOriginal<typeof import('@sittir/common/utils')>();
 	return {
 		...actual,
-		kindViewOf: (engine: Parameters<typeof actual.kindViewOf>[0]) => ({
-			...actual.kindViewOf(engine),
-			isList: () => {
-				throw new Error(INJECTED);
-			}
-		})
+		toDetachedTransportData: () => {
+			throw new Error(INJECTED);
+		}
 	};
 });
 

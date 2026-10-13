@@ -78,6 +78,16 @@ impl EngineGrammar for TypeScriptGrammar {
             .and_then(|mut any| sittir_core::read::HasLayout::<Option<Box<sittir_core::layout::TransportLayout<Self::Trivia>>>>::take_layout(&mut any))
             .map_or_else(Vec::new, |layout| layout.units)
     }
+
+    fn render_read(self, tree: &tree_sitter::Tree, index: u32, depth: sittir_core::read::Depth, ctx: &sittir_core::read::ReadCtx<'_>, render: &sittir_core::prepare::RenderContext<'_>) -> std::result::Result<String, String> {
+        let node = sittir_core::read::read_at::<AnyTransport>(&mut tree.walk(), ctx, index, depth)
+            .map_err(|refusal| refusal.describe(&|kind| self.kind_name(kind)))?;
+        render_transport_parts(sittir_core::SlotValue::Transport(node), render).map(|(_, text)| text).map_err(|error| error.to_string())
+    }
+
+    fn slot_routes(self, tree: &tree_sitter::Tree, index: u32) -> Option<sittir_core::read::Routed> {
+        sittir_core::read::routes_at::<AnyTransport>(&mut tree.walk(), index)
+    }
 }
 
 // The engine class itself — parse, read, render, edits, and the live-tree

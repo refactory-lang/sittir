@@ -1,9 +1,9 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { whitespaceTrivia, type WhitespaceTrivia } from '../compiler/model/trivia.ts';
 import { compareOrdinal, wireRoutesOf, type WireRoutes } from './shared.ts';
-import type { AssembledNonterminal } from '../compiler/model/node-map.ts';
+import { AssembledSupertype, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { grammarTypeMapName } from './engine.ts';
-import { listKindIds, rebuildWrapperKindIds } from './wrap.ts';
+import { layoutTriviaKindIds, listKindIds, rebuildWrapperKindIds } from './wrap.ts';
 
 export interface EmitClientUtilsConfig {
 	grammar: string;
@@ -21,7 +21,13 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 		`import { KIND_NAMES, type ${map} } from './types.js';`,
 		"import { INNER_SITES } from './consts.js';",
 		'',
-		...emitTriviaFacts(whitespaceTrivia(config.nodeMap), config.triviaKinds ?? [], rebuildWrapperKindIds(config.nodeMap), listKindIds(config.nodeMap)),
+		...emitTriviaFacts(
+			whitespaceTrivia(config.nodeMap),
+			config.triviaKinds ?? [],
+			rebuildWrapperKindIds(config.nodeMap),
+			listKindIds(config.nodeMap),
+			layoutTriviaKindIds(config.nodeMap)
+		),
 		'',
 		...emitQuerySlots(querySlotRows(config.nodeMap)),
 		'',
@@ -34,7 +40,8 @@ function emitTriviaFacts(
 	whitespace: WhitespaceTrivia | undefined,
 	triviaKinds: readonly string[],
 	rebuildWrappers: readonly number[],
-	listKinds: readonly number[]
+	listKinds: readonly number[],
+	layoutKinds: readonly number[]
 ): string[] {
 	const facts = [
 		"    kindName: (type: AnyUntypedNode['$type']) => (typeof type === 'number' ? KIND_NAMES.get(type) : type)",
@@ -42,6 +49,7 @@ function emitTriviaFacts(
 		'    innerKinds: INNER_SITES',
 		`    rebuildWrappers: new Set<number>(${JSON.stringify(rebuildWrappers)})`,
 		`    listKinds: new Set<number>(${JSON.stringify(listKinds)})`,
+		`    layout: new Set<number>(${JSON.stringify(layoutKinds)})`,
 		...(whitespace === undefined
 			? []
 			: [
@@ -77,9 +85,16 @@ function emitQuerySlots(rows: ReadonlyMap<number, readonly QuerySlotRow[]>): str
 }
 
 export function resolveTriviaTypeNames(triviaKinds: readonly string[], nodeMap: NodeMap): string[] {
-	const names = triviaKinds
-		.map((kind) => nodeMap.nodes.get(kind)?.typeName)
-		.filter((name): name is string => name !== undefined);
+	const covered = new Set(
+		triviaKinds.flatMap((kind) => {
+			const node = nodeMap.nodes.get(kind);
+			return node instanceof AssembledSupertype ? node.subtypeNames : [];
+		})
+	);
+	const names = triviaKinds.flatMap((kind) => {
+		const node = nodeMap.nodes.get(kind);
+		return node === undefined || covered.has(kind) ? [] : [node.typeName];
+	});
 	return [...new Set(names)].sort();
 }
 

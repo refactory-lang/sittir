@@ -150,7 +150,7 @@ The public engine a validator reads and renders through, typed for any grammar: 
 
 ### `packages/tools/src/validate/common.ts::kindViewOf`
 
-The kind view a validator crosses data through (`KindView`), built from the engine it loaded: the engine's `rebuildWrappers` for `isWrapper` and its `listKinds` for `isList`. It is the view the engine's own render uses, so the detached input `selfContainedRenderInput` builds carries the edges and the source gaps the validated render printed.
+The kind view a validator crosses data through (`KindView`), built from the engine it loaded: the engine's `rebuildWrappers` for `isWrapper`. It is the view the engine's own render uses, so the detached input `selfContainedRenderInput` builds carries the edges the validated render printed.
 
 ### `packages/tools/src/validate/common.ts::loadNativeEngine`
 
@@ -1228,7 +1228,7 @@ A wrapped tree as plain data with no coordinates: `materialize` resolves every a
 
 Detaching removes the hold on the tree with the coordinates, and a leaf whose slots are projected from its text keeps a text-only coordinate that a render still slices. The result is therefore given the tree of the root it was made from (`holdingTreeOf`), so it renders for as long as it is held.
 
-Each copied node keeps the source identity of the node it copies (`carrySource`), as a live rebuild does. A copy is not sliced, but its list gaps, list flanks and derived line-gap runs are still classified from the source, so the validator's render follows the source layout the way an edit would, rather than falling back to canonical.
+Each copied node keeps the source identity of the node it copies (`carrySource`), as a live rebuild does. A copy is not sliced, but its sides and its list slots' stored layouts are still read from the source, so the validator's render follows the source layout the way an edit would, rather than falling back to canonical.
 
 ### `packages/tools/src/validate/common.ts::holdingTreeOf`
 
@@ -1769,3 +1769,19 @@ The candidate as its own source span has it. Its leading and trailing sides lie 
 value. An `elements` seat projects each element, a `tuple` seat takes the
 group's call arguments as the slot's value, and a `forwarded` seat assigns the
 value under the slot key as an unseated slot's value is.
+
+### `packages/tools/src/validate/layout-runs.ts::withTreeOf`
+
+Parses a source with a grammar's native engine, hands the tree id to the caller, and disposes the tree after, so each corpus diagnostic (`layoutRunsOf`, `storedLayoutOf`) reads one live tree per source and leaks none.
+
+### `packages/tools/src/validate/layout-runs.ts::layoutRunsOf`
+
+Every run of whitespace a side of the source's tree takes, each with the line breaks, spaces and tabs its read-time options write there (`SittirEngine::layoutBaseline`): read from the run's region, or from the whole tree's record when `whole`. The corpus test compares the two, the whole tally, for every run, so a region record that renders a token next to the run as a slice (and so cannot know its edge) shows up as a disagreement.
+
+### `packages/tools/src/validate/layout-runs.ts::storedLayoutOf`
+
+How much of its layout the source's tree stores apart from its read-time options (`SittirEngine::storedLayout`): the runs a side stores as a member, the list slots that store a layout, and the items that store their own separator.
+
+### `packages/tools/src/validate/layout-runs.ts::runLayoutRuns`
+
+The layout rows of a grammar's corpus: how many runs, which no region's record reaches, which entries' region render was refused, and what the corpus stores (`stored`, summed over `storedLayoutOf`). The stored counts are small against the runs because the baseline is the read-time options, the tree's inferred layer over the engine's: a source's own conventions are inferred once and store nothing per gap.

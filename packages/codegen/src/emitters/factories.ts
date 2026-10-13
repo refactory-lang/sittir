@@ -2368,11 +2368,10 @@ function emitSeparatedListFactory(
 		lines.push(`  const ${contentStorageKey} = ${admitted};`);
 	}
 	if (hasSeparatorKindOption) {
-		const separatorDefault = declaredSeparatorDefault(node, nodeMap, kindEntries);
-		if (separatorDefault === undefined) {
+		if (declaredSeparatorDefault(node, nodeMap, kindEntries) === undefined) {
 			lines.push(`  if (options.separator === undefined) throw new Error('${node.kind}: its separator has no declared default; pass options.separator');`);
-			lines.push('  const _separator = options.separator;');
-		} else lines.push(`  const _separator = options.separator ?? ${separatorDefault};`);
+		}
+		lines.push('  const _separator = options.separator;');
 	}
 	if (hasDelimiterOption) {
 		lines.push('  const _delimiter = options.delimiter;');

@@ -22,11 +22,13 @@
 //! side. A list node (the grammar's list kinds) passes an extra or an
 //! `ERROR` to the item ending or starting at the token, where one does and
 //! the surface exposes it as a node (not a unit kind): the surface exposes a
-//! list's items, not the list. A layout run stays on the list, whose source
-//! flanks spell its edges. A run of whitespace holding a line break is a layout entry, placed
-//! as an entry ending on its last row is: it leads the child after it, or
-//! trails the child before it when none follows. A run on one line is no
-//! entry.
+//! list's items, not the list. A layout run stays on the list, whose own
+//! sides spell its edges. A run of whitespace is a layout entry, placed as an
+//! entry ending on its last row is: it leads the child after it, or trails
+//! the child before it when none follows. A side read turns it into a member
+//! only where it deviates from what the read-time options write there, or,
+//! in a gap of a list slot, from the class the slot stores
+//! (`ParsedTree::deviation`, `list_slots`).
 
 use std::collections::BTreeMap;
 
@@ -50,13 +52,14 @@ pub struct Token {
 }
 
 /// An entry the assignment gives a side: an extra or an `ERROR` by its
-/// descendant index; a run of whitespace holding a line break by its bytes,
-/// the descendant index of its owner (the smallest node holding the tokens
+/// descendant index; a run of whitespace between two tokens or entries, with
+/// or without a line break, by its place among the table's runs
+/// (`TriviaTable::runs`), its bytes, the descendant index of its owner (the smallest node holding the tokens
 /// on both sides of the run's gap, or the node itself for its `inner` side)
 /// and the signed number of depth members it carries (`depth`); an extra
 /// that is a layout member (`SurfaceKinds::layout`) by its descendant index;
-/// or the depth members that restore an owner's excess at its end
-/// (`Depth`). A run after an entry placed on a node's leading side is on
+/// or depth members alone: those that restore an owner's excess at its end,
+/// or those of a run at the file's edge, which stores no layout (`Depth`). A run after an entry placed on a node's leading side is on
 /// that side too: it spells the gap from the entry to its owner.
 ///
 /// A run's excess is how far its last line's indentation reaches past the
@@ -73,7 +76,7 @@ pub struct Token {
 pub enum Assigned {
     Extra(u32),
     Error(u32),
-    Layout { start: u32, end: u32, owner: u32, depth: i32 },
+    Layout { run: u32, start: u32, end: u32, owner: u32, depth: i32 },
     Member(u32),
     Depth(i32),
 }
@@ -357,9 +360,29 @@ impl Nodes {
 }
 
 /// Where the assignment puts an entry of a gap.
+#[derive(Clone, Copy)]
 enum Place {
     Side(u32, TriviaSide),
     Unowned,
+}
+
+/// A run of whitespace between two tokens or entries that a side takes,
+/// with or without a line break, and empty where they touch: its bytes, the
+/// side, its owner (`Assigned::Layout`), and whether it carries the layout
+/// written between the tokens around it. The file's two edges are none.
+///
+/// Gaps that only a zero-width token parts (an automatic semicolon, a
+/// dedent) are one gap to a render, which writes nothing for the token: the
+/// layout written there lands in one of their runs, the first that holds
+/// whitespace, else the last, and each other run `carries` none.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct LayoutRun {
+    pub start: u32,
+    pub end: u32,
+    pub node: u32,
+    pub side: TriviaSide,
+    pub owner: u32,
+    pub carries: bool,
 }
 
 /// The trivia of a parsed tree, assigned once to its nodes' sides.
@@ -367,6 +390,7 @@ enum Place {
 pub struct TriviaTable {
     sides: BTreeMap<(u32, TriviaSide), Vec<Assigned>>,
     unowned: Vec<u32>,
+    runs: Vec<LayoutRun>,
 }
 
 impl TriviaTable {
@@ -410,6 +434,7 @@ impl TriviaTable {
             }
         };
         let mut next = entries.iter().peekable();
+        let mut parted = Parted::default();
         for k in 0..=tokens.len() {
             let left = k.checked_sub(1).map(|k| &tokens[k]);
             let right = tokens.get(k);
@@ -420,15 +445,30 @@ impl TriviaTable {
             let mut at = from;
             let mut led = None;
             let mut run = |at: u32, until: u32, led: Option<u32>, table: &mut TriviaTable, excess: &mut Excess| {
-                let Some(text) = source.get(at as usize..until as usize).filter(|text| text.contains('\n')) else { return };
+                let Some(text) = source.get(at as usize..until as usize) else { return };
                 let place = led.map_or_else(|| place(left, right, false, None), |node| Place::Side(node, TriviaSide::Leading));
                 let owner = match place {
                     Place::Side(node, TriviaSide::Inner) => node,
                     Place::Side(_, _) | Place::Unowned => owner_of(left, right),
                 };
-                let reach = structure.excess(&nodes, right.map_or(0, |right| right.node), until, text.rsplit('\n').next().unwrap_or_default());
-                let depth = excess.change(owner, nodes.end[owner as usize], reach, || nodes.restore_side(owner, kinds));
-                table.push(place, Assigned::Layout { start: at, end: until, owner, depth });
+                let edge = at == 0 || until as usize == source.len();
+                let depth = if text.contains('\n') {
+                    let reach = structure.excess(&nodes, right.map_or(0, |right| right.node), until, text.rsplit('\n').next().unwrap_or_default());
+                    excess.change(owner, nodes.end[owner as usize], reach, || nodes.restore_side(owner, kinds))
+                } else {
+                    0
+                };
+                match place {
+                    Place::Side(node, side) if !edge => {
+                        let joined = at == from && left.is_some_and(|left| left.start == left.end) && table.runs.last().is_some_and(|run| run.end == at);
+                        let run = table.runs.len() as u32;
+                        table.runs.push(LayoutRun { start: at, end: until, node, side, owner, carries: true });
+                        parted.placed(&mut table.runs, joined);
+                        table.push(place, Assigned::Layout { run, start: at, end: until, owner, depth });
+                    }
+                    _ if depth != 0 => table.push(place, Assigned::Depth(depth)),
+                    _ => {}
+                }
             };
             while let Some(&&index) = next.peek() {
                 let (start, end) = (nodes.start[index as usize], nodes.end[index as usize]);
@@ -452,6 +492,7 @@ impl TriviaTable {
             }
             run(at, to, led, &mut table, &mut excess);
         }
+        parted.finish(&mut table.runs);
         excess.close_until(u32::MAX, &mut table);
         table
     }
@@ -476,6 +517,50 @@ impl TriviaTable {
     /// tokens, with no named child beside them.
     pub fn unowned(&self) -> &[u32] {
         &self.unowned
+    }
+
+    /// Every run of whitespace a side takes, in source order (`LayoutRun`).
+    pub fn runs(&self) -> &[LayoutRun] {
+        &self.runs
+    }
+}
+
+/// The runs only zero-width tokens part from one another, as the
+/// assignment places them (`LayoutRun::carries`): where the group so far
+/// begins among the table's runs.
+#[derive(Default)]
+struct Parted {
+    from: usize,
+}
+
+impl Parted {
+    /// The run just placed, the last of `runs`, joins the group when only a
+    /// zero-width token parts it from the run before it (`joined`), whatever
+    /// follows it in its own gap; otherwise the group before it settles and
+    /// it begins the next.
+    fn placed(&mut self, runs: &mut [LayoutRun], joined: bool) {
+        let last = runs.len() - 1;
+        if !joined {
+            Self::settle(&mut runs[self.from..last]);
+            self.from = last;
+        }
+    }
+
+    /// The last group settles.
+    fn finish(&mut self, runs: &mut [LayoutRun]) {
+        Self::settle(&mut runs[self.from..]);
+    }
+
+    /// A group of more than one run settles: all but its first run holding
+    /// whitespace, else its last, carry none.
+    fn settle(group: &mut [LayoutRun]) {
+        if group.len() < 2 {
+            return;
+        }
+        let carrier = group.iter().position(|run| run.start < run.end).unwrap_or(group.len() - 1);
+        for (at, run) in group.iter_mut().enumerate() {
+            run.carries = at == carrier;
+        }
     }
 }
 

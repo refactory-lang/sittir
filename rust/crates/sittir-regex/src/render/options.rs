@@ -485,6 +485,15 @@ pub static SEATS_TERM_TERM_GROUP: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 108,
 ];
 
+/// Per kind id of a wrapper, the field its seat passes through: 0 for its unfielded content.
+pub static SEAT_WRAPPERS: &[u16] = &[
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, 0, NO_SITE, NO_SITE, NO_SITE, 0, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 0,
+];
+
 pub fn defaults() -> ResolvedOptions {
     ResolvedOptions {
         spacing: ResolvedOptions::default_spacing(SITE_SPECS),
@@ -492,6 +501,7 @@ pub fn defaults() -> ResolvedOptions {
         edges: EDGE_SITES,
         edge_rows: EDGE_ROWS,
         kind_flags: KIND_FLAGS,
+        seat_wrappers: SEAT_WRAPPERS,
         sites: SITE_SPECS,
         newline: "\n".to_string(),
         ..ResolvedOptions::default()

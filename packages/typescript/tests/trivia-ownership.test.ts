@@ -18,9 +18,9 @@ function leadLastStatementOfFirstBody(root: ReturnType<typeof ts.parse>): void {
 describe('a comment between two of its owner tokens, with no named child beside it, goes to the nearest child', () => {
 	it('keeps it through an edit inside its owner and through a snapshot', () => {
 		const root = ts.parse('for /* keep */ (;;) { x(); }\n');
-		expect(ts.render(root.$snapshot()).toString()).toBe('for (/* keep */ ;;) {\n  x();\n}\n');
+		expect(ts.render(root.$snapshot()).toString()).toBe('for (/* keep */;;) { x(); }\n');
 		leadLastStatementOfFirstBody(root);
-		expect(root.$render()).toBe('for (/* keep */ ;;) {\n  // lead\n  x();\n}\n');
+		expect(root.$render()).toBe('for (/* keep */;;) {\n  // lead\n  x(); }\n');
 	});
 
 	it('trails the last item of a list when it sits after the trailing separator', () => {
@@ -33,7 +33,7 @@ describe("a unit child's comment renders once and follows the unit through a lis
 	it('frames a unit once when an edit beside it rebuilds its holder', () => {
 		const root = ts.parse('while (a) { /* c */ ; x(); }\n');
 		leadLastStatementOfFirstBody(root);
-		expect(root.$render()).toBe('while (a) {\n  /* c */ ;\n  // lead\n  x();\n}\n');
+		expect(root.$render()).toBe('while (a) { /* c */ ;\n  // lead\n  x(); }\n');
 	});
 
 	const source = '// A\n;\n// B\ndebugger;\n';
@@ -92,14 +92,36 @@ describe('unit items keep their own comments in an array', () => {
 	});
 });
 
-describe('a large list edit aligns its units in linear time and memory', () => {
-	it('carries a unit comment through the reversal of thousands of statements', () => {
-		const count = 2000;
+describe('a large list edit aligns its units in linear time', () => {
+	const reverse = (count: number): string => {
 		const root = ts.parse(`// A\n;\n${Array.from({ length: count }, (_, i) => `x${i}();`).join('\n')}\n`);
-		const reversed = root.$with.statements(...[...root.statements()].reverse()).$render();
+		return root.$with.statements(...[...root.statements()].reverse()).$render();
+	};
+	const timed = (count: number): number => {
+		const start = performance.now();
+		reverse(count);
+		return performance.now() - start;
+	};
+
+	it('carries a unit comment through the reversal of a list', () => {
+		const count = 200;
+		const reversed = reverse(count);
 		expect(reversed.startsWith(`x${count - 1}();\n`)).toBe(true);
 		expect(reversed.endsWith('x0();\n// A\n;\n')).toBe(true);
 	});
+
+	it('takes time that grows with the list linearly, not quadratically', () => {
+		const small = 500;
+		const large = small * 4;
+		timed(small);
+		let smallMs = Infinity;
+		let largeMs = Infinity;
+		for (let round = 0; round < 3; round++) {
+			smallMs = Math.min(smallMs, timed(small));
+			largeMs = Math.min(largeMs, timed(large));
+		}
+		expect(largeMs / smallMs).toBeLessThan(8);
+	}, 60_000);
 });
 
 describe('an empty container whose inside is only layout takes its first child', () => {

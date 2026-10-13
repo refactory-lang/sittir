@@ -12,17 +12,7 @@
             "$type": 5,
             "$text": "program"
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ],
-              "trailing": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         }
       ],
       "$errors": []
@@ -88,14 +78,7 @@
             "$type": 5,
             "$text": "program"
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 47,
@@ -111,14 +94,7 @@
               ]
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 47,
@@ -139,9 +115,6 @@
             "trivia": {
               "leading": [
                 29
-              ],
-              "trailing": [
-                28
               ]
             }
           }
@@ -451,25 +424,10 @@
                 },
                 "_elements": []
               },
-              "_anchor": false,
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
-              }
+              "_anchor": false
             }
           ],
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ],
-              "trailing": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         }
       ],
       "$errors": []
@@ -537,12 +495,7 @@
             },
             "_elements": []
           },
-          "_anchor": false,
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
-          }
+          "_anchor": false
         }
       ],
       "_elements": []
@@ -873,14 +826,7 @@
                 "$text": "wildcard"
               }
             }
-          ],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          ]
         },
         {
           "$type": 61,
@@ -1020,9 +966,6 @@
             "trivia": {
               "leading": [
                 29
-              ],
-              "trailing": [
-                28
               ]
             }
           }
@@ -1746,14 +1689,7 @@
               }
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 50,
@@ -1828,9 +1764,6 @@
             "trivia": {
               "leading": [
                 29
-              ],
-              "trailing": [
-                28
               ]
             }
           }
@@ -2388,14 +2321,7 @@
               }
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 61,
@@ -2455,9 +2381,6 @@
             "trivia": {
               "leading": [
                 29
-              ],
-              "trailing": [
-                28
               ]
             }
           }
@@ -3083,17 +3006,7 @@
               }
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ],
-              "trailing": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         }
       ],
       "$errors": []
@@ -3336,17 +3249,7 @@
               }
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ],
-              "trailing": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         }
       ],
       "$errors": []
@@ -3589,17 +3492,7 @@
               }
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ],
-              "trailing": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         }
       ],
       "$errors": []
@@ -3832,32 +3725,17 @@
                     "_name": {
                       "$type": 6,
                       "$text": "variable"
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": " "
-                      }
                     }
                   },
                   {
                     "$type": 54,
-                    "_quantifier": 2,
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
+                    "_quantifier": 2
                   },
                   {
                     "$type": 39,
                     "_name": {
                       "$type": 6,
                       "$text": "spell"
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": " "
-                      }
                     }
                   }
                 ]
@@ -3875,17 +3753,7 @@
               }
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ],
-              "trailing": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         }
       ],
       "$errors": []
@@ -3941,32 +3809,17 @@
                 "_name": {
                   "$type": 6,
                   "$text": "variable"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": " "
-                  }
                 }
               },
               {
                 "$type": 54,
-                "_quantifier": 2,
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "_quantifier": 2
               },
               {
                 "$type": 39,
                 "_name": {
                   "$type": 6,
                   "$text": "spell"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": " "
-                  }
                 }
               }
             ]
@@ -4027,32 +3880,17 @@
           "_name": {
             "$type": 6,
             "$text": "variable"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
           }
         },
         {
           "$type": 54,
-          "_quantifier": 2,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_quantifier": 2
         },
         {
           "$type": 39,
           "_name": {
             "$type": 6,
             "$text": "spell"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
           }
         }
       ]
@@ -4102,32 +3940,17 @@
               "_name": {
                 "$type": 6,
                 "$text": "variable"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
               }
             },
             {
               "$type": 54,
-              "_quantifier": 2,
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
-              }
+              "_quantifier": 2
             },
             {
               "$type": 39,
               "_name": {
                 "$type": 6,
                 "$text": "spell"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
               }
             }
           ]
@@ -4309,22 +4132,10 @@
                 },
                 "_elements": []
               },
-              "_anchor": false,
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
-              }
+              "_anchor": false
             }
           ],
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 45,
@@ -4368,22 +4179,12 @@
                         ]
                       }
                     },
-                    "_elements": [],
-                    "$_layout": {
-                      "gap": {
-                        "$text": " "
-                      }
-                    }
+                    "_elements": []
                   }
                 ],
                 "_elements": []
               },
-              "_anchor": false,
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
-              }
+              "_anchor": false
             }
           ],
           "_elements": [],
@@ -4391,9 +4192,6 @@
             "trivia": {
               "leading": [
                 29
-              ],
-              "trailing": [
-                28
               ]
             }
           }
@@ -4448,12 +4246,7 @@
             },
             "_elements": []
           },
-          "_anchor": false,
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
-          }
+          "_anchor": false
         }
       ],
       "_elements": []
@@ -4522,22 +4315,12 @@
                     ]
                   }
                 },
-                "_elements": [],
-                "$_layout": {
-                  "gap": {
-                    "$text": " "
-                  }
-                }
+                "_elements": []
               }
             ],
             "_elements": []
           },
-          "_anchor": false,
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
-          }
+          "_anchor": false
         }
       ],
       "_elements": []
@@ -4693,12 +4476,7 @@
                 ]
               }
             },
-            "_elements": [],
-            "$_layout": {
-              "gap": {
-                "$text": " "
-              }
-            }
+            "_elements": []
           }
         ],
         "_elements": []
@@ -4872,12 +4650,7 @@
               ]
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
-          }
+          "_elements": []
         }
       ],
       "_elements": []
@@ -5045,11 +4818,6 @@
                       "_name": {
                         "$type": 6,
                         "$text": "test"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
                       }
                     }
                   ]
@@ -5080,17 +4848,7 @@
                 }
               }
             }
-          ],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ],
-              "trailing": [
-                28
-              ]
-            }
-          }
+          ]
         }
       ],
       "$errors": []
@@ -5155,11 +4913,6 @@
                   "_name": {
                     "$type": 6,
                     "$text": "test"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
                   }
                 }
               ]
@@ -5236,11 +4989,6 @@
           "_name": {
             "$type": 6,
             "$text": "test"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
           }
         }
       ]
@@ -5299,11 +5047,6 @@
                 "_name": {
                   "$type": 6,
                   "$text": "test"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": " "
-                  }
                 }
               }
             ]
@@ -5361,11 +5104,6 @@
             "_name": {
               "$type": 6,
               "$text": "test"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": " "
-              }
             }
           }
         ]
@@ -5581,14 +5319,7 @@
                 "$text": "ops"
               }
             }
-          ],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          ]
         },
         {
           "$type": 61,
@@ -5711,9 +5442,6 @@
             "trivia": {
               "leading": [
                 29
-              ],
-              "trailing": [
-                28
               ]
             }
           }
@@ -6948,30 +6676,15 @@
                             "$text": "test"
                           }
                         ]
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
                       }
                     },
                     {
                       "$type": 5,
-                      "$text": "local",
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
-                      }
+                      "$text": "local"
                     },
                     {
                       "$type": 5,
-                      "$text": "_",
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
-                      }
+                      "$text": "_"
                     }
                   ]
                 }
@@ -6990,14 +6703,7 @@
               }
             }
           ],
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 45,
@@ -7052,11 +6758,6 @@
                             "$text": "test"
                           }
                         ]
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
                       }
                     }
                   ]
@@ -7138,9 +6839,6 @@
             "trivia": {
               "leading": [
                 29
-              ],
-              "trailing": [
-                28
               ]
             }
           }
@@ -7226,30 +6924,15 @@
                         "$text": "test"
                       }
                     ]
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
                   }
                 },
                 {
                   "$type": 5,
-                  "$text": "local",
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
-                  }
+                  "$text": "local"
                 },
                 {
                   "$type": 5,
-                  "$text": "_",
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
-                  }
+                  "$text": "_"
                 }
               ]
             }
@@ -7348,11 +7031,6 @@
                         "$text": "test"
                       }
                     ]
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
                   }
                 }
               ]
@@ -7549,30 +7227,15 @@
                     "$text": "test"
                   }
                 ]
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
               }
             },
             {
               "$type": 5,
-              "$text": "local",
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
-              }
+              "$text": "local"
             },
             {
               "$type": 5,
-              "$text": "_",
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
-              }
+              "$text": "_"
             }
           ]
         }
@@ -7679,11 +7342,6 @@
                     "$text": "test"
                   }
                 ]
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
               }
             }
           ]
@@ -8110,30 +7768,15 @@
                   "$text": "test"
                 }
               ]
-            },
-            "$_layout": {
-              "gap": {
-                "$text": " "
-              }
             }
           },
           {
             "$type": 5,
-            "$text": "local",
-            "$_layout": {
-              "gap": {
-                "$text": " "
-              }
-            }
+            "$text": "local"
           },
           {
             "$type": 5,
-            "$text": "_",
-            "$_layout": {
-              "gap": {
-                "$text": " "
-              }
-            }
+            "$text": "_"
           }
         ]
       }
@@ -8191,11 +7834,6 @@
                   "$text": "test"
                 }
               ]
-            },
-            "$_layout": {
-              "gap": {
-                "$text": " "
-              }
             }
           }
         ]
@@ -8280,30 +7918,15 @@
                 "$text": "test"
               }
             ]
-          },
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
           }
         },
         {
           "$type": 5,
-          "$text": "local",
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
-          }
+          "$text": "local"
         },
         {
           "$type": 5,
-          "$text": "_",
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
-          }
+          "$text": "_"
         }
       ]
     },
@@ -8352,11 +7975,6 @@
                 "$text": "test"
               }
             ]
-          },
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
           }
         }
       ]
@@ -8558,14 +8176,7 @@
               "_anchor": false
             }
           ],
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 45,
@@ -8613,14 +8224,7 @@
               "_anchor": false
             }
           ],
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 45,
@@ -8709,14 +8313,7 @@
               "_anchor": false
             }
           ],
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 45,
@@ -8753,14 +8350,7 @@
               "_anchor": false
             }
           ],
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 45,
@@ -8804,12 +8394,7 @@
                             ]
                           }
                         },
-                        "_elements": [],
-                        "$_layout": {
-                          "gap": {
-                            "$text": " "
-                          }
-                        }
+                        "_elements": []
                       }
                     ],
                     "_elements": []
@@ -8880,12 +8465,7 @@
                           ]
                         }
                       },
-                      "_elements": [],
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
-                      }
+                      "_elements": []
                     }
                   ],
                   "_elements": []
@@ -8899,22 +8479,10 @@
                   "_elements": []
                 }
               },
-              "_anchor": false,
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
-              }
+              "_anchor": false
             }
           ],
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 45,
@@ -8956,12 +8524,7 @@
                           ]
                         }
                       },
-                      "_elements": [],
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
-                      }
+                      "_elements": []
                     }
                   ],
                   "_elements": []
@@ -8979,22 +8542,10 @@
                 },
                 "_elements": []
               },
-              "_anchor": false,
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
-              }
+              "_anchor": false
             }
           ],
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 45,
@@ -9036,12 +8587,7 @@
                           ]
                         }
                       },
-                      "_elements": [],
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
-                      }
+                      "_elements": []
                     }
                   ],
                   "_elements": []
@@ -9065,12 +8611,7 @@
                 ],
                 "_elements": []
               },
-              "_anchor": false,
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
-              }
+              "_anchor": false
             }
           ],
           "_elements": [],
@@ -9124,12 +8665,7 @@
                             ]
                           }
                         },
-                        "_elements": [],
-                        "$_layout": {
-                          "gap": {
-                            "$text": " "
-                          }
-                        }
+                        "_elements": []
                       }
                     ],
                     "_elements": []
@@ -9153,14 +8689,7 @@
               "_anchor": false
             }
           ],
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 61,
@@ -9210,14 +8739,7 @@
               "_elements": []
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 61,
@@ -9238,14 +8760,7 @@
               "_elements": []
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 61,
@@ -9311,14 +8826,7 @@
               "_elements": []
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 61,
@@ -9366,14 +8874,7 @@
               }
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 61,
@@ -9484,14 +8985,7 @@
               }
             ]
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 61,
@@ -9542,14 +9036,7 @@
               }
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 61,
@@ -9600,14 +9087,7 @@
               }
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 61,
@@ -9671,14 +9151,7 @@
               }
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 61,
@@ -9706,14 +9179,7 @@
               }
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 61,
@@ -9746,12 +9212,7 @@
                   "$type": 5,
                   "$text": "identifier"
                 },
-                "_elements": [],
-                "$_layout": {
-                  "gap": {
-                    "$text": " "
-                  }
-                }
+                "_elements": []
               }
             ]
           },
@@ -9802,14 +9263,7 @@
               }
             ]
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 61,
@@ -9848,14 +9302,7 @@
               }
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 61,
@@ -9955,14 +9402,7 @@
               }
             ]
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 61,
@@ -10008,14 +9448,7 @@
               }
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 61,
@@ -10062,14 +9495,7 @@
               }
             ]
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 61,
@@ -10105,9 +9531,6 @@
             "trivia": {
               "leading": [
                 29
-              ],
-              "trailing": [
-                28
               ]
             }
           }
@@ -10485,12 +9908,7 @@
                         ]
                       }
                     },
-                    "_elements": [],
-                    "$_layout": {
-                      "gap": {
-                        "$text": " "
-                      }
-                    }
+                    "_elements": []
                   }
                 ],
                 "_elements": []
@@ -10576,12 +9994,7 @@
                       ]
                     }
                   },
-                  "_elements": [],
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
-                  }
+                  "_elements": []
                 }
               ],
               "_elements": []
@@ -10595,12 +10008,7 @@
               "_elements": []
             }
           },
-          "_anchor": false,
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
-          }
+          "_anchor": false
         }
       ],
       "_elements": []
@@ -10667,12 +10075,7 @@
                       ]
                     }
                   },
-                  "_elements": [],
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
-                  }
+                  "_elements": []
                 }
               ],
               "_elements": []
@@ -10690,12 +10093,7 @@
             },
             "_elements": []
           },
-          "_anchor": false,
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
-          }
+          "_anchor": false
         }
       ],
       "_elements": []
@@ -10762,12 +10160,7 @@
                       ]
                     }
                   },
-                  "_elements": [],
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
-                  }
+                  "_elements": []
                 }
               ],
               "_elements": []
@@ -10791,12 +10184,7 @@
             ],
             "_elements": []
           },
-          "_anchor": false,
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
-          }
+          "_anchor": false
         }
       ],
       "_elements": []
@@ -10865,12 +10253,7 @@
                         ]
                       }
                     },
-                    "_elements": [],
-                    "$_layout": {
-                      "gap": {
-                        "$text": " "
-                      }
-                    }
+                    "_elements": []
                   }
                 ],
                 "_elements": []
@@ -11273,12 +10656,7 @@
                     ]
                   }
                 },
-                "_elements": [],
-                "$_layout": {
-                  "gap": {
-                    "$text": " "
-                  }
-                }
+                "_elements": []
               }
             ],
             "_elements": []
@@ -11380,12 +10758,7 @@
                   ]
                 }
               },
-              "_elements": [],
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
-              }
+              "_elements": []
             }
           ],
           "_elements": []
@@ -11460,12 +10833,7 @@
                   ]
                 }
               },
-              "_elements": [],
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
-              }
+              "_elements": []
             }
           ],
           "_elements": []
@@ -11566,12 +10934,7 @@
                   ]
                 }
               },
-              "_elements": [],
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
-              }
+              "_elements": []
             }
           ],
           "_elements": []
@@ -11680,12 +11043,7 @@
                     ]
                   }
                 },
-                "_elements": [],
-                "$_layout": {
-                  "gap": {
-                    "$text": " "
-                  }
-                }
+                "_elements": []
               }
             ],
             "_elements": []
@@ -12106,12 +11464,7 @@
                   ]
                 }
               },
-              "_elements": [],
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
-              }
+              "_elements": []
             }
           ],
           "_elements": []
@@ -12183,12 +11536,7 @@
                 ]
               }
             },
-            "_elements": [],
-            "$_layout": {
-              "gap": {
-                "$text": " "
-              }
-            }
+            "_elements": []
           }
         ],
         "_elements": []
@@ -12243,12 +11591,7 @@
                 ]
               }
             },
-            "_elements": [],
-            "$_layout": {
-              "gap": {
-                "$text": " "
-              }
-            }
+            "_elements": []
           }
         ],
         "_elements": []
@@ -12319,12 +11662,7 @@
                 ]
               }
             },
-            "_elements": [],
-            "$_layout": {
-              "gap": {
-                "$text": " "
-              }
-            }
+            "_elements": []
           }
         ],
         "_elements": []
@@ -12387,12 +11725,7 @@
                 ]
               }
             },
-            "_elements": [],
-            "$_layout": {
-              "gap": {
-                "$text": " "
-              }
-            }
+            "_elements": []
           }
         ],
         "_elements": []
@@ -12457,12 +11790,7 @@
                   ]
                 }
               },
-              "_elements": [],
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
-              }
+              "_elements": []
             }
           ],
           "_elements": []
@@ -12540,12 +11868,7 @@
                 ]
               }
             },
-            "_elements": [],
-            "$_layout": {
-              "gap": {
-                "$text": " "
-              }
-            }
+            "_elements": []
           }
         ],
         "_elements": []
@@ -14402,12 +13725,7 @@
               "$type": 5,
               "$text": "identifier"
             },
-            "_elements": [],
-            "$_layout": {
-              "gap": {
-                "$text": " "
-              }
-            }
+            "_elements": []
           }
         ]
       },
@@ -17214,12 +16532,7 @@
               ]
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
-          }
+          "_elements": []
         }
       ],
       "_elements": []
@@ -17271,12 +16584,7 @@
               ]
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
-          }
+          "_elements": []
         }
       ],
       "_elements": []
@@ -17328,12 +16636,7 @@
               ]
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
-          }
+          "_elements": []
         }
       ],
       "_elements": []
@@ -17385,12 +16688,7 @@
               ]
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
-          }
+          "_elements": []
         }
       ],
       "_elements": []
@@ -17478,12 +16776,7 @@
               ]
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
-          }
+          "_elements": []
         }
       ],
       "_elements": []
@@ -17826,12 +17119,7 @@
             "$type": 5,
             "$text": "identifier"
           },
-          "_elements": [],
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
-          }
+          "_elements": []
         }
       ]
     },
@@ -20023,11 +19311,6 @@
                             "$text": "I'm a string; not a comment"
                           }
                         ]
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
                       }
                     }
                   ]
@@ -20074,19 +19357,9 @@
                           },
                           {
                             "$type": 1,
-                            "_content": "\"",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
+                            "_content": "\""
                           }
                         ]
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
                       }
                     }
                   ]
@@ -20132,37 +19405,17 @@
                           },
                           {
                             "$type": 1,
-                            "_content": "\"",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
+                            "_content": "\""
                           },
                           {
                             "$type": 1,
-                            "_content": "\"",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
+                            "_content": "\""
                           },
                           {
                             "$type": 23,
-                            "$text": "ting",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
+                            "$text": "ting"
                           }
                         ]
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
                       }
                     }
                   ]
@@ -20208,19 +19461,9 @@
                           },
                           {
                             "$type": 23,
-                            "$text": "test",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
+                            "$text": "test"
                           }
                         ]
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": " "
-                        }
                       }
                     }
                   ]
@@ -20239,17 +19482,7 @@
               }
             }
           ],
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ],
-              "trailing": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         }
       ],
       "$errors": []
@@ -20332,11 +19565,6 @@
                         "$text": "I'm a string; not a comment"
                       }
                     ]
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
                   }
                 }
               ]
@@ -20383,19 +19611,9 @@
                       },
                       {
                         "$type": 1,
-                        "_content": "\"",
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
-                        }
+                        "_content": "\""
                       }
                     ]
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
                   }
                 }
               ]
@@ -20441,37 +19659,17 @@
                       },
                       {
                         "$type": 1,
-                        "_content": "\"",
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
-                        }
+                        "_content": "\""
                       },
                       {
                         "$type": 1,
-                        "_content": "\"",
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
-                        }
+                        "_content": "\""
                       },
                       {
                         "$type": 23,
-                        "$text": "ting",
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
-                        }
+                        "$text": "ting"
                       }
                     ]
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
                   }
                 }
               ]
@@ -20517,19 +19715,9 @@
                       },
                       {
                         "$type": 23,
-                        "$text": "test",
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
-                        }
+                        "$text": "test"
                       }
                     ]
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": " "
-                    }
                   }
                 }
               ]
@@ -20650,11 +19838,6 @@
                     "$text": "I'm a string; not a comment"
                   }
                 ]
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
               }
             }
           ]
@@ -20718,19 +19901,9 @@
                   },
                   {
                     "$type": 1,
-                    "_content": "\"",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
+                    "_content": "\""
                   }
                 ]
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
               }
             }
           ]
@@ -20794,37 +19967,17 @@
                   },
                   {
                     "$type": 1,
-                    "_content": "\"",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
+                    "_content": "\""
                   },
                   {
                     "$type": 1,
-                    "_content": "\"",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
+                    "_content": "\""
                   },
                   {
                     "$type": 23,
-                    "$text": "ting",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
+                    "$text": "ting"
                   }
                 ]
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
               }
             }
           ]
@@ -20888,19 +20041,9 @@
                   },
                   {
                     "$type": 23,
-                    "$text": "test",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
+                    "$text": "test"
                   }
                 ]
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": " "
-                }
               }
             }
           ]
@@ -21162,11 +20305,6 @@
                   "$text": "I'm a string; not a comment"
                 }
               ]
-            },
-            "$_layout": {
-              "gap": {
-                "$text": " "
-              }
             }
           }
         ]
@@ -21226,19 +20364,9 @@
                 },
                 {
                   "$type": 1,
-                  "_content": "\"",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "_content": "\""
                 }
               ]
-            },
-            "$_layout": {
-              "gap": {
-                "$text": " "
-              }
             }
           }
         ]
@@ -21298,37 +20426,17 @@
                 },
                 {
                   "$type": 1,
-                  "_content": "\"",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "_content": "\""
                 },
                 {
                   "$type": 1,
-                  "_content": "\"",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "_content": "\""
                 },
                 {
                   "$type": 23,
-                  "$text": "ting",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "ting"
                 }
               ]
-            },
-            "$_layout": {
-              "gap": {
-                "$text": " "
-              }
             }
           }
         ]
@@ -21388,19 +20496,9 @@
                 },
                 {
                   "$type": 23,
-                  "$text": "test",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "test"
                 }
               ]
-            },
-            "$_layout": {
-              "gap": {
-                "$text": " "
-              }
             }
           }
         ]
@@ -21451,11 +20549,6 @@
                 "$text": "I'm a string; not a comment"
               }
             ]
-          },
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
           }
         }
       ]
@@ -21506,19 +20599,9 @@
               },
               {
                 "$type": 1,
-                "_content": "\"",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "_content": "\""
               }
             ]
-          },
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
           }
         }
       ]
@@ -21569,37 +20652,17 @@
               },
               {
                 "$type": 1,
-                "_content": "\"",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "_content": "\""
               },
               {
                 "$type": 1,
-                "_content": "\"",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "_content": "\""
               },
               {
                 "$type": 23,
-                "$text": "ting",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "ting"
               }
             ]
-          },
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
           }
         }
       ]
@@ -21650,19 +20713,9 @@
               },
               {
                 "$type": 23,
-                "$text": "test",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "test"
               }
             ]
-          },
-          "$_layout": {
-            "gap": {
-              "$text": " "
-            }
           }
         }
       ]
@@ -21740,12 +20793,7 @@
           },
           {
             "$type": 1,
-            "_content": "\"",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "_content": "\""
           }
         ]
       }
@@ -21786,30 +20834,15 @@
           },
           {
             "$type": 1,
-            "_content": "\"",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "_content": "\""
           },
           {
             "$type": 1,
-            "_content": "\"",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "_content": "\""
           },
           {
             "$type": 23,
-            "$text": "ting",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "ting"
           }
         ]
       }
@@ -21850,12 +20883,7 @@
           },
           {
             "$type": 23,
-            "$text": "test",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "test"
           }
         ]
       }
@@ -21928,12 +20956,7 @@
         },
         {
           "$type": 1,
-          "_content": "\"",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": "\""
         }
       ]
     },
@@ -21971,30 +20994,15 @@
         },
         {
           "$type": 1,
-          "_content": "\"",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": "\""
         },
         {
           "$type": 1,
-          "_content": "\"",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": "\""
         },
         {
           "$type": 23,
-          "$text": "ting",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "ting"
         }
       ]
     },
@@ -22032,12 +21040,7 @@
         },
         {
           "$type": 23,
-          "$text": "test",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "test"
         }
       ]
     },
@@ -22221,8 +21224,7 @@
                       {
                         "$type": 11,
                         "$text": "; bar"
-                      },
-                      28
+                      }
                     ]
                   }
                 }
@@ -22234,13 +21236,6 @@
                   28
                 ]
               }
-            }
-          },
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
             }
           }
         },
@@ -22278,8 +21273,7 @@
                   {
                     "$type": 11,
                     "$text": "; Capture the name"
-                  },
-                  28
+                  }
                 ],
                 "trailing": [
                   32
@@ -22310,7 +21304,6 @@
                     "$type": 11,
                     "$text": "; wild comment!"
                   },
-                  28,
                   32
                 ]
               }
@@ -22321,9 +21314,6 @@
             "trivia": {
               "leading": [
                 29
-              ],
-              "trailing": [
-                28
               ]
             }
           }
@@ -22392,8 +21382,7 @@
                   {
                     "$type": 11,
                     "$text": "; bar"
-                  },
-                  28
+                  }
                 ]
               }
             }
@@ -22461,8 +21450,7 @@
                 {
                   "$type": 11,
                   "$text": "; bar"
-                },
-                28
+                }
               ]
             }
           }
@@ -22631,8 +21619,7 @@
               {
                 "$type": 11,
                 "$text": "; Capture the name"
-              },
-              28
+              }
             ],
             "trailing": [
               32
@@ -22714,7 +21701,6 @@
                 "$type": 11,
                 "$text": "; wild comment!"
               },
-              28,
               32
             ]
           }
@@ -22918,14 +21904,7 @@
               }
             }
           },
-          "_elements": [],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          "_elements": []
         },
         {
           "$type": 61,
@@ -23022,9 +22001,6 @@
             "trivia": {
               "leading": [
                 29
-              ],
-              "trailing": [
-                28
               ]
             }
           }
@@ -24101,14 +23077,7 @@
                 "$text": "prog"
               }
             }
-          ],
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                28
-              ]
-            }
-          }
+          ]
         },
         {
           "$type": 46,
@@ -24176,9 +23145,6 @@
             "trivia": {
               "leading": [
                 29
-              ],
-              "trailing": [
-                28
               ]
             }
           }

@@ -142,6 +142,7 @@ fn list<'a>(
         template: "{}",
         before,
         token,
+        separators: None,
         after,
         leading,
         trailing,
@@ -149,6 +150,14 @@ fn list<'a>(
         tail: None,
         units: None,
     }
+}
+
+#[test]
+fn an_item_with_its_own_separator_writes_it_in_place_of_the_token() {
+    let items = [node("a"), node("b"), node("c")];
+    let tokens = [None, None, Some(2)];
+    let view = ListView { separators: Some((&tokens, |kind| if kind == 2 { ";" } else { "," })), ..list(&items, TIGHT, ",", SPACE, false, false) };
+    assert_eq!(rt(&view), "a, b; c");
 }
 
 #[test]
@@ -210,6 +219,7 @@ fn an_empty_list_writes_nothing_even_with_flanks_head_tail_and_template() {
         template: "in{}",
         before: TIGHT,
         token: ",",
+        separators: None,
         after: SPACE,
         leading: true,
         trailing: true,
@@ -223,6 +233,7 @@ fn an_empty_list_writes_nothing_even_with_flanks_head_tail_and_template() {
         template: "in{}",
         before: TIGHT,
         token: ",",
+        separators: None,
         after: TIGHT,
         leading: false,
         trailing: false,
@@ -241,6 +252,7 @@ fn template_is_outside_head_and_tail() {
         template: "{{{}}}",
         before: TIGHT,
         token: ",",
+        separators: None,
         after: TIGHT,
         leading: false,
         trailing: false,
@@ -259,6 +271,7 @@ fn optional_elements_still_take_separators() {
         template: "{}",
         before: TIGHT,
         token: ",",
+        separators: None,
         after: TIGHT,
         leading: false,
         trailing: false,
