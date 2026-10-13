@@ -6,3 +6,4 @@ export const tsname = (seg: string): string =>
 		.split('_')
 		.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
 		.join('');
+export const boundKindName = (vocab: string, hidden: boolean): string => `${hidden ? '_' : ''}${vocab.split('.').reverse().join('_')}`;

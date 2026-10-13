@@ -116,5 +116,6 @@ export default bindings({
 		rename("decorator", "decorator_attribute"),
 		rename("comment", "line_comment")
 	],
+	leads: [],
 	splits: []
 });

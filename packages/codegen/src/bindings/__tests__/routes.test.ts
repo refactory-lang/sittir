@@ -127,7 +127,14 @@ const MODEL = [
 	node('fn_x', [slot('vis', ['vis_mod'], { required: false }), slot('name', ['identifier'])]),
 	node('vis_mod', [slot('content', ['crate_kw', 'vis_pub'])], { modelType: 'polymorph' }),
 	node('crate_kw', [], { modelType: 'keyword', text: 'crate' }),
-	node('vis_pub', [slot('scope', ['identifier'], { required: false })], { modelType: 'envelope' })
+	node('vis_pub', [slot('scope', ['identifier'], { required: false })], { modelType: 'envelope' }),
+	node('fn_item', [slot('params', ['params_x'])]),
+	node('params_x', [slot('elements', ['params_elements'], { required: false })]),
+	node('params_elements', [slot('item', ['attr_param'], { propertyName: 'items', multiple: true })], { modelType: 'list', elementKinds: ['attr_param'] }),
+	node('attr_param', [slot('element', ['recv_self', 'param_x'])]),
+	node('recv_self'),
+	node('param_x', [slot('name', ['self_kw', 'identifier'])]),
+	node('self_kw', [], { modelType: 'keyword', text: 'self' })
 ];
 
 const grammar = async (bindings: string): Promise<GrammarInput> => ({
@@ -139,6 +146,23 @@ const grammar = async (bindings: string): Promise<GrammarInput> => ({
 });
 
 describe('resolveRoutes', () => {
+	it('reads a receiver claimed once per arm exactly: a first parameter not named self is no method', async () => {
+		const routes = resolveRoutes(
+			await grammar(
+				[
+					'(fn_item (params_x (params_elements . (attr_param (recv_self)) @receiver))) @declaration.method',
+					'(fn_item (params_x (params_elements . (attr_param (param_x name: (self_kw))) @receiver))) @declaration.method'
+				].join('\n')
+			)
+		);
+		const tests = (routes.readEntries.get('fn_item') ?? []).map((entry) =>
+			entry.children.flatMap((child) => ('kinds' in child ? [{ field: child.subject.down.at(-1)?.field ?? null, kinds: child.kinds }] : []))
+		);
+		expect(tests).toContainEqual(expect.arrayContaining([{ field: null, kinds: ['recv_self'] }]));
+		expect(tests).toContainEqual(expect.arrayContaining([{ field: 'name', kinds: ['self_kw'] }]));
+		expect(tests.every((entry) => entry.some(({ kinds }) => kinds.includes('recv_self') || kinds.includes('self_kw')))).toBe(true);
+	});
+
 	it('orders a kind\'s read entries placed-and-predicate, predicate, placed, literals, then plain, ties in file order', async () => {
 		const routes = resolveRoutes(
 			await grammar(

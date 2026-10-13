@@ -1,4 +1,5 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { relative } from 'node:path';
 import { bindingIssues, compileQuery } from './bindings.ts';
 import {
 	type GrammarBindings,
@@ -22,7 +23,7 @@ import {
 	VOCABULARY_DIR
 } from '@sittir/codegen/bindings';
 import { printFlagsModule } from './flags.ts';
-import type { GrammarName } from '@sittir/codegen/grammars';
+import { REPO_ROOT, type GrammarName } from '@sittir/codegen/grammars';
 import { compileNodeMap, evaluateGrammar, invoke } from '../codegen-surface.ts';
 import { readNodeModelFile } from '../validate/common.ts';
 
@@ -88,12 +89,14 @@ export async function bindingsModule(grammar: GrammarName): Promise<BindingsModu
 	const model = await invoke('nodeModel', 'buildNodeModel', await compileNodeMap(grammar, { unbound: true }));
 	const input = await grammarInput(grammar, base, model);
 	if (input === undefined) throw new Error(`bindings-inventory: ${grammar} has no bindings.scm`);
-	const { bindings, report } = deriveGrammarBindings({
+	const { bindings, report, diagnostics } = deriveGrammarBindings({
+		file: relative(REPO_ROOT, bindingsPath(grammar)),
 		facts: input.bindings,
 		base,
 		vocabMembers: vocabularyMembers(await readVocabulary(VOCABULARY_DIR)),
 		routedMembers: resolveRoutes(input).members
 	});
+	await invoke('grammarDiagnostics', 'assertGatePasses', diagnostics, undefined);
 	return { text: printBindingsModule(bindings, grammarBindingsHash(grammar)), bindings, report };
 }
 

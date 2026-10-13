@@ -15,6 +15,7 @@ import type {
 	ScmAPI,
 	String as QueryString
 } from '@sittir/scm';
+import type { LeadMatch } from '../dsl/bind.ts';
 import { loadPinnedBuild, type PinnedBuild } from '../bootstrap/pinned.ts';
 import {
 	type Anchor,
@@ -25,6 +26,8 @@ import {
 	type ChildFact,
 	type ClaimFact,
 	type ContainerFact,
+	type LeadLeadMatch,
+	type MatchRead,
 	type MemberFact,
 	type PatternOrigin,
 	type PredicateArgument,
@@ -76,6 +79,7 @@ interface Visit {
 	readonly alternation: Expression | null;
 	readonly inherited: readonly ListElement.Parsed[];
 	readonly children: Visit[];
+	readonly negated: NegatedField.Parsed[];
 }
 
 interface Anchored {
@@ -273,7 +277,7 @@ function readPattern(top: PatternNode, inherited: readonly ListElement.Parsed[],
 		alternation: Expression | null,
 		inherited: readonly ListElement.Parsed[]
 	): Visit => {
-		const v: Visit = { node, field, anchor, adjacent, parent, alternation, inherited, children: [] };
+		const v: Visit = { node, field, anchor, adjacent, parent, alternation, inherited, children: [], negated: [] };
 		nodes.push(v);
 		for (const { expression, anchor, adjacent } of expressionsOf(node, origin)) place(expression, null, anchor, adjacent, v, null, []);
 		refuseLooseAnchors(v, origin);
@@ -310,6 +314,7 @@ function readPattern(top: PatternNode, inherited: readonly ListElement.Parsed[],
 			case K.MissingNode:
 				if (anchor !== null || adjacent) refuse(origin, 'an anchor pins a child node; a predicate, negated field or missing node is none');
 				if (expression.$type === K.Predicate) predicates.push(expression);
+				if (expression.$type === K.NegatedField) parent.negated.push(expression);
 				return;
 		}
 	};
@@ -378,6 +383,48 @@ function placesClaim(v: Visit): boolean {
 }
 
 const capturesMember = (v: Visit): boolean => captures(v).some((name) => !isPath(name) && !name.startsWith('_') && name !== 'element');
+
+const leadsList = (v: Visit): boolean => v.anchor === 'first' && capturesMember(v);
+
+const within = (v: Visit, root: Visit): boolean => {
+	for (let cursor: Visit | null = v; cursor !== null; cursor = cursor.parent) if (cursor === root) return true;
+	return false;
+};
+
+function predicateReason(operator: string): string {
+	return operator === 'not-kind-eq' ? 'a negated kind' : operator === 'kind-eq' ? 'a kind predicate' : 'a text test';
+}
+
+function matchOf(root: Visit, nodes: readonly Visit[], predicates: readonly Omit<PredicateFact, 'subject'>[]): MatchRead {
+	const tested = predicates.find((p) => p.capture !== null && nodes.some((v) => captures(v).includes(p.capture!) && within(v, root)));
+	if (tested !== undefined) return { refused: predicateReason(tested.operator) };
+	const read = (v: Visit): MatchRead => {
+		if (v.children.some((child) => mayBeAbsent(child) || quantified(child))) return { refused: 'a quantifier' };
+		if (v.negated.length > 0) return { refused: 'a negated field' };
+		if (tokenText(v) !== null) return { refused: 'a text test' };
+		const kind = kindOf(v);
+		if (kind === WILDCARD) return { refused: 'a wildcard' };
+		if (kind === null) return { refused: 'a grouping' };
+		const restrictions: Visit[][] = [];
+		for (const child of v.children) {
+			const group = child.alternation === null ? undefined : restrictions.find((r) => r[0]!.alternation === child.alternation);
+			if (group !== undefined) group.push(child);
+			else restrictions.push([child]);
+		}
+		if (restrictions.length > 1) return { refused: 'a second restriction on one kind' };
+		const [options] = restrictions;
+		if (options === undefined) return { match: { kind } };
+		if (options.some((option) => option.field !== options[0]!.field)) return { refused: 'an alternation over two fields' };
+		const admits: LeadMatch[] = [];
+		for (const option of options) {
+			const arm = read(option);
+			if ('refused' in arm) return arm;
+			admits.push(arm.match);
+		}
+		return { match: { kind, within: { field: options[0]!.field, admits } } };
+	};
+	return read(root);
+}
 
 function siblingsOf(holder: Visit): readonly Visit[] {
 	return holder.children.flatMap((v) =>
@@ -456,10 +503,19 @@ function claimFact(
 		const enclosing = kindOf(cursor);
 		if (enclosing !== null) within.push(enclosing);
 	}
-	return { vocab, kind, field: v.field, predicates, toplevel, within, fieldLiterals, tokens, children: isGroup(v) ? [] : childFacts(v, origin) };
+	const read = isGroup(v) || v.children.length === 0 ? undefined : matchOf(v, nodes, patternPredicates);
+	const match = read !== undefined && 'match' in read && read.match.within !== undefined ? { match: read.match } : {};
+	return { vocab, kind, field: v.field, predicates, toplevel, within, fieldLiterals, tokens, children: isGroup(v) ? [] : childFacts(v, origin), ...match };
 }
 
-function memberFact(v: Visit, name: string, top: Visit, topKind: string | null, claimed: ReadonlyMap<Visit, readonly number[]>): MemberFact | null {
+function memberFact(
+	v: Visit,
+	name: string,
+	top: Visit,
+	topKind: string | null,
+	claimed: ReadonlyMap<Visit, readonly number[]>,
+	leadMatch: LeadLeadMatch | undefined
+): MemberFact | null {
 	const parent = v.parent;
 	if (parent === null || isGroup(parent)) return null;
 	const owner = kindOf(parent);
@@ -468,7 +524,7 @@ function memberFact(v: Visit, name: string, top: Visit, topKind: string | null, 
 	const homeKind = home === top ? topKind : kindOf(home);
 	const direct = parent === home || homeKind === null;
 	const claims = claimed.get(direct ? parent : home);
-	const of = claims === undefined ? {} : { claims };
+	const of = { ...(claims === undefined ? {} : { claims }), ...(leadMatch === undefined ? {} : { leadMatch }) };
 	if (name === DROPPED) return { route: 'dropped', owner, ...selector(v), ...of };
 	const token = tokenText(v);
 	if (direct) {
@@ -562,7 +618,8 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 		const members: MemberFact[] = [];
 		for (const name of captures(v)) {
 			if (inClaimPosition(name, v === top) || name.startsWith('_') || name === 'element') continue;
-			const member: MemberFact | null = kindPresence(members[0], v, name) ?? memberFact(v, name, top, topKind, claimed);
+			const leadMatch = leadsList(v) ? { line: origin.line, ...matchOf(v, nodes, claimPredicates) } : undefined;
+			const member: MemberFact | null = kindPresence(members[0], v, name) ?? memberFact(v, name, top, topKind, claimed, leadMatch);
 			if (member !== null) members.push(member);
 		}
 		facts.members.push(...slotNamed(members));

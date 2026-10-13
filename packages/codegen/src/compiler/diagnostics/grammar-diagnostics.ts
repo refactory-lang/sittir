@@ -360,7 +360,8 @@ const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'conflict-authored',
 	'conflict-unresolvable',
 	'conflict-resolutions-stale',
-	'conflict-dynamic-precedence-lost'
+	'conflict-dynamic-precedence-lost',
+	'lead-refused'
 ]);
 
 export function unexpectableExpectEntries(
