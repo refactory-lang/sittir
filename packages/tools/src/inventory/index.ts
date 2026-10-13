@@ -94,7 +94,8 @@ export async function bindingsModule(grammar: GrammarName): Promise<BindingsModu
 		facts: input.bindings,
 		base,
 		vocabMembers: vocabularyMembers(await readVocabulary(VOCABULARY_DIR)),
-		routedMembers: resolveRoutes(input).members
+		routes: resolveRoutes(input),
+		model: input.model
 	});
 	await invoke('grammarDiagnostics', 'assertGatePasses', diagnostics, undefined);
 	return { text: printBindingsModule(bindings, grammarBindingsHash(grammar)), bindings, report };
@@ -160,6 +161,7 @@ export function summarize(d: Derivation): string {
 		lines.push(`predicates with an operator the derivation does not know ${d.unknownPredicates.join('; ')}`);
 	if (d.wildcardContainers.length > 0)
 		lines.push(`wildcard claims that land on a list or container, not on its members ${d.wildcardContainers.join('; ')}`);
+	if (d.unenteredForms.length > 0) lines.push(`forms with no entry for their supertype's claim ${d.unenteredForms.join('; ')}`);
 	const top = [...d.unmapped].sort((a, b) => b[1] - a[1]).slice(0, 12);
 	if (top.length > 0) lines.push(`  ${top.map(([k, n]) => `${k.slice(1, -1)}×${n}`).join(' ')}`);
 	return lines.join('\n');
@@ -225,7 +227,7 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 			`vocabulary flags: ${current ? `${vocabulary.flags.size} current` : `flags.ts is stale against the Flag declarations; write it with \`${REGENERATE_BINDINGS_COMMAND}\``}\n`
 		);
 	}
-	if (d.cycles.length > 0 || d.untargeted.length > 0 || d.uncaptured.length > 0 || d.unknownPredicates.length > 0 || d.wildcardContainers.length > 0)
+	if (d.cycles.length > 0 || d.untargeted.length > 0 || d.uncaptured.length > 0 || d.unknownPredicates.length > 0 || d.wildcardContainers.length > 0 || d.unenteredForms.length > 0)
 		code = 1;
 	return code;
 }

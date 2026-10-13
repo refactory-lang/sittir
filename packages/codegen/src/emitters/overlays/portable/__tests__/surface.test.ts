@@ -84,4 +84,10 @@ describe('emitPortableSurface', () => {
 		expect(text).toContain('\tfixedText: { [TSKindId.Plus]: "+" },');
 		expect(text).toContain('export const portable = portableSurface<PortableKinds, PortableIs>(table, querySlots);');
 	});
+
+	it('decides a path by kind id when every entry a guard can reach is under it, though an entry after an unconditional one is not', async () => {
+		const text = await emit(['(assign) @expression.assignment.add', '(assign) @expression.assignment'].join('\n'));
+		expect(text).toContain('\t\t[TSKindId.Assign]: [{ path: "expression.assignment.add", within: [], test: [] }, { path: "expression.assignment", within: [], test: [] }],');
+		expect(text).toContain('\t\t"expression.assignment.add": { ids: [TSKindId.Assign], exact: true },');
+	});
 });

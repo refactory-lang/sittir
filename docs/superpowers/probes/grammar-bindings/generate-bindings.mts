@@ -36,7 +36,7 @@ export const boundName = (vocab: string, hidden: boolean): string =>
 const fieldNameOf = (member: string): string => member.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
 
 const facts = await readBindings(readFileSync(join(dir, 'bindings.scm'), 'utf8'));
-const claims = refineClaims(facts.claims);
+const claims = refineClaims(facts.claims, (kind) => [kind]);
 const base = await evaluateGrammar(grammar, { unbound: true });
 const rules = base.rules as Record<string, unknown>;
 const ruleNames = new Set(Object.keys(rules));

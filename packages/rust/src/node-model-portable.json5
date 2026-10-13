@@ -162,6 +162,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "expression.collection.list",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -14110,6 +14117,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "expression.range",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [],
@@ -14244,6 +14258,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "expression.range",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -14272,6 +14293,13 @@
       "read": [
         {
           "vocab": "expression.range.exclusive",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "expression.range",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15918,6 +15946,23 @@
       "vocab": "literal.string",
       "read": [
         {
+          "vocab": "literal.string.bytes",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^b\"",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.parameter",
           "toplevel": false,
           "within": [
@@ -16875,6 +16920,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "declaration.struct",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -17352,6 +17404,13 @@
         },
         {
           "vocab": "declaration.struct.unit",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "declaration.struct",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -21389,14 +21448,14 @@
       {
         "depth": 2,
         "paths": 103,
-        "kinds": 154,
+        "kinds": 159,
         "refinements": 12
       },
       {
         "depth": 3,
-        "paths": 102,
-        "kinds": 113,
-        "refinements": 74
+        "paths": 103,
+        "kinds": 115,
+        "refinements": 75
       },
       {
         "depth": 4,

@@ -2775,9 +2775,9 @@ const table: PortableTable = {
 			ids: [TSKindId.PrivateKeyword, TSKindId.ProtectedKeyword, TSKindId.PublicKeyword],
 			exact: true
 		},
-		'modifier.visibility.private': { ids: [TSKindId.PrivateKeyword], exact: false },
-		'modifier.visibility.protected': { ids: [TSKindId.ProtectedKeyword], exact: false },
-		'modifier.visibility.public': { ids: [TSKindId.PublicKeyword], exact: false },
+		'modifier.visibility.private': { ids: [TSKindId.PrivateKeyword], exact: true },
+		'modifier.visibility.protected': { ids: [TSKindId.ProtectedKeyword], exact: true },
+		'modifier.visibility.public': { ids: [TSKindId.PublicKeyword], exact: true },
 		module: { ids: [TSKindId.Program], exact: true },
 		pattern: {
 			ids: [
@@ -3437,7 +3437,10 @@ const table: PortableTable = {
 		],
 		[TSKindId.IndexSignature]: [{ path: 'declaration.signature.index', within: [], test: [] }],
 		[TSKindId.IndexSignatureColon]: [{ path: 'declaration.signature.index', within: [], test: [] }],
-		[TSKindId.IndexSignatureMappedTypeClause]: [{ path: 'declaration.signature.index.mapped', within: [], test: [] }],
+		[TSKindId.IndexSignatureMappedTypeClause]: [
+			{ path: 'declaration.signature.index.mapped', within: [], test: [] },
+			{ path: 'declaration.signature.index', within: [], test: [] }
+		],
 		[TSKindId.IndexTypeQuery]: [{ path: 'type.index_query', within: [], test: [] }],
 		[TSKindId.InferType]: [{ path: 'type.infer', within: [], test: [] }],
 		[TSKindId.InstantiationExpression]: [{ path: 'expression.instantiation', within: [], test: [] }],
@@ -3732,18 +3735,51 @@ const table: PortableTable = {
 		[TSKindId.Null]: [{ path: 'literal.null', within: [], test: [] }],
 		[TSKindId.Number]: [{ path: 'literal.number', within: [], test: [] }],
 		[TSKindId.NumberBigint]: [{ path: 'literal.number', within: [], test: [] }],
-		[TSKindId.NumberBigintBinary]: [{ path: 'literal.number.integer.big.binary', within: [], test: [] }],
-		[TSKindId.NumberBigintDecimal]: [{ path: 'literal.number.integer.big', within: [], test: [] }],
-		[TSKindId.NumberBigintHex]: [{ path: 'literal.number.integer.big.hex', within: [], test: [] }],
-		[TSKindId.NumberBigintOctal]: [{ path: 'literal.number.integer.big.octal', within: [], test: [] }],
-		[TSKindId.NumberBinary]: [{ path: 'literal.number.integer.binary', within: [], test: [] }],
-		[TSKindId.NumberDecimal]: [{ path: 'literal.number.integer', within: [], test: [] }],
-		[TSKindId.NumberFloatLeadingPoint]: [{ path: 'literal.number.float.leading_point', within: [], test: [] }],
-		[TSKindId.NumberFloatPoint]: [{ path: 'literal.number.float', within: [], test: [] }],
-		[TSKindId.NumberFloatScientific]: [{ path: 'literal.number.float.scientific', within: [], test: [] }],
-		[TSKindId.NumberHex]: [{ path: 'literal.number.integer.hex', within: [], test: [] }],
+		[TSKindId.NumberBigintBinary]: [
+			{ path: 'literal.number.integer.big.binary', within: [], test: [] },
+			{ path: 'literal.number', within: [], test: [] }
+		],
+		[TSKindId.NumberBigintDecimal]: [
+			{ path: 'literal.number.integer.big', within: [], test: [] },
+			{ path: 'literal.number', within: [], test: [] }
+		],
+		[TSKindId.NumberBigintHex]: [
+			{ path: 'literal.number.integer.big.hex', within: [], test: [] },
+			{ path: 'literal.number', within: [], test: [] }
+		],
+		[TSKindId.NumberBigintOctal]: [
+			{ path: 'literal.number.integer.big.octal', within: [], test: [] },
+			{ path: 'literal.number', within: [], test: [] }
+		],
+		[TSKindId.NumberBinary]: [
+			{ path: 'literal.number.integer.binary', within: [], test: [] },
+			{ path: 'literal.number', within: [], test: [] }
+		],
+		[TSKindId.NumberDecimal]: [
+			{ path: 'literal.number.integer', within: [], test: [] },
+			{ path: 'literal.number', within: [], test: [] }
+		],
+		[TSKindId.NumberFloatLeadingPoint]: [
+			{ path: 'literal.number.float.leading_point', within: [], test: [] },
+			{ path: 'literal.number', within: [], test: [] }
+		],
+		[TSKindId.NumberFloatPoint]: [
+			{ path: 'literal.number.float', within: [], test: [] },
+			{ path: 'literal.number', within: [], test: [] }
+		],
+		[TSKindId.NumberFloatScientific]: [
+			{ path: 'literal.number.float.scientific', within: [], test: [] },
+			{ path: 'literal.number', within: [], test: [] }
+		],
+		[TSKindId.NumberHex]: [
+			{ path: 'literal.number.integer.hex', within: [], test: [] },
+			{ path: 'literal.number', within: [], test: [] }
+		],
 		[TSKindId.NumberKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
-		[TSKindId.NumberOctal]: [{ path: 'literal.number.integer.octal', within: [], test: [] }],
+		[TSKindId.NumberOctal]: [
+			{ path: 'literal.number.integer.octal', within: [], test: [] },
+			{ path: 'literal.number', within: [], test: [] }
+		],
 		[TSKindId.Object]: [{ path: 'expression.collection.object', within: [], test: [] }],
 		[TSKindId.ObjectAssignmentPattern]: [{ path: 'pattern.object.assignment', within: [], test: [] }],
 		[TSKindId.ObjectKeyword]: [{ path: 'type.primitive', within: [], test: [] }],

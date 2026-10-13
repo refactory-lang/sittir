@@ -135,9 +135,7 @@
 (import_statement from_clause: (import_statement_clause_from source: (_) @source))
 (import_statement from_clause: (import_statement_clause_from (import_clause) @importClause))
 (export_statement) @statement.export
-(export_statement_default_declaration) @statement.export
 (export_statement_default_declaration (export_statement_default_declaration_default_kw)) @statement.export.default
-(export_statement_default_from) @statement.export
 (export_statement_default_from (export_statement_default_from_star_from)) @statement.export.all
 (export_statement_default_declaration (declaration) @declaration)
 (export_statement_default_declaration (export_statement_default_declaration_default_kw (declaration) @declaration))
@@ -173,10 +171,8 @@
 (import_require_clause) @clause.import.require
 (namespace_import) @clause.import.namespace
 (import_specifier) @clause.import.specifier
-(import_specifier_name) @clause.import.specifier
 (import_specifier_name import_kind: "type" @typeOnly)
 (import_specifier_name import_kind: "typeof") @clause.import.specifier.typeof
-(import_specifier_as) @clause.import.specifier
 (import_specifier_as import_kind: "type" @typeOnly)
 (import_specifier_as import_kind: "typeof") @clause.import.specifier.typeof
 (import_attribute) @clause.import.attribute

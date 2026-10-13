@@ -106,12 +106,14 @@ describe('bindFacts', () => {
 	});
 });
 
+const SAME = (kind: string): readonly string[] => [kind];
+
 describe('refineClaims', () => {
 	it('marks a claim that extends another claim of the same kind and placement as its refinement', () => {
-		const [parent, child] = refineClaims([
-			claim('expression.binary', 'binary_expression'),
-			claim('expression.binary.add', 'binary_expression', { fieldLiterals: { operator: '+' } })
-		]);
+		const [parent, child] = refineClaims(
+			[claim('expression.binary', 'binary_expression'), claim('expression.binary.add', 'binary_expression', { fieldLiterals: { operator: '+' } })],
+			SAME
+		);
 		expect([parent?.refines, parent?.refinement]).toEqual([null, null]);
 		expect([child?.refines, child?.refinement]).toEqual(['expression.binary', 'field-literal']);
 	});
@@ -124,22 +126,39 @@ describe('refineClaims', () => {
 			claim('literal.number.integer.big', 'number', { within: ['call'], tokens: ['n'] })
 		];
 		const expected = [null, 'literal.number', 'literal.number.integer', null];
-		expect(refineClaims(claims).map((c) => c.refines)).toEqual(expected);
-		expect(refineClaims([...claims].reverse()).map((c) => c.refines)).toEqual([...expected].reverse());
+		expect(refineClaims(claims, SAME).map((c) => c.refines)).toEqual(expected);
+		expect(refineClaims([...claims].reverse(), SAME).map((c) => c.refines)).toEqual([...expected].reverse());
 	});
 
 	it('names how a refinement tells its nodes apart: predicate, field literal, token or child pattern', () => {
-		const claims = refineClaims([
-			claim('identifier', 'identifier'),
-			claim('identifier.self', 'identifier', { predicates: [{ operator: 'eq', capture: 'identifier.self', arguments: [{ text: 'self' }], subject: { up: 0, down: [] } }] }),
-			claim('identifier.self.token', 'identifier', { tokens: ['self'] }),
-			claim('identifier.self.token.child', 'identifier')
-		]);
+		const claims = refineClaims(
+			[
+				claim('identifier', 'identifier'),
+				claim('identifier.self', 'identifier', { predicates: [{ operator: 'eq', capture: 'identifier.self', arguments: [{ text: 'self' }], subject: { up: 0, down: [] } }] }),
+				claim('identifier.self.token', 'identifier', { tokens: ['self'] }),
+				claim('identifier.self.token.child', 'identifier')
+			],
+			SAME
+		);
 		expect(claims.map((c) => c.refinement)).toEqual([null, 'predicate', 'token', 'child-pattern']);
 	});
 
+	it('refines a form\'s claim by its supertype\'s claim: a claim with a test of its own is a refinement, a plain one names the form', () => {
+		const formsOf = (kind: string): readonly string[] => (kind === '_struct' ? ['_struct', 'struct_named', 'struct_unit'] : [kind]);
+		const unit = { subject: { up: 0, down: [] }, kinds: ['unit_marker'], captured: false };
+		const claims = refineClaims(
+			[claim('declaration.struct', '_struct'), claim('declaration.struct.named', 'struct_named'), claim('declaration.struct.unit', 'struct_unit', { children: [unit] })],
+			formsOf
+		);
+		expect(claims.map((c) => [c.refines, c.refinement])).toEqual([
+			[null, null],
+			['declaration.struct', null],
+			['declaration.struct', 'child-pattern']
+		]);
+	});
+
 	it('keeps an unrefined claim\'s own predicate, field literal or token as its refinement kind', () => {
-		const [claimed] = refineClaims([claim('identifier.self', 'identifier', { tokens: ['self'] })]);
+		const [claimed] = refineClaims([claim('identifier.self', 'identifier', { tokens: ['self'] })], SAME);
 		expect([claimed?.refines, claimed?.refinement]).toEqual([null, 'token']);
 	});
 });

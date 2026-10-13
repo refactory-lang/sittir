@@ -130,6 +130,13 @@ describe('portable is: rust', async () => {
 		}
 	});
 
+	it('reads a string literal opening with b" as a byte string, and a plain or C string as none', () => {
+		const SOURCE = 'fn f() { let a = b"ab"; let b = "cd"; let c = c"ef"; }\n';
+		const [bytes, plain, cString] = [0, 1, 2].map((nth) => find(SOURCE, 'string_literal', undefined, nth));
+		expect([bytes, plain, cString].map(([node, context]) => at('literal.string.bytes')(node, context))).toEqual([true, false, false]);
+		expect([bytes, plain, cString].map(([node, context]) => at('literal.string')(node, context))).toEqual([true, true, true]);
+	});
+
 	it('reads a kind-id leaf in the asking engine\'s language, on the low-level surface too', () => {
 		const [wildcard] = find('fn f(x: u8) { match x { _ => 1 } }\n', 'wildcard_pattern');
 		expect(typeof wildcard).toBe('number');

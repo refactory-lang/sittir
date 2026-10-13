@@ -645,15 +645,12 @@ function readKinds(model: SlotModel, kind: string, claim: ClaimFact): readonly s
 }
 
 export function resolveRoutes(input: GrammarInput): GrammarRoutes {
-	const named = input.bindings.claims.flatMap((c) => (c.kind === null || c.kind === WILDCARD ? [] : [c]));
-	const claimsOwn = new Set(named.map((c) => `${c.kind} ${c.vocab}`));
-	const selfClaimed = new Set(named.map((c) => c.kind));
-	const reached = (owner: string): readonly string[] => formsOf(input.model, owner).filter((form) => form === owner || !selfClaimed.has(form));
+	const claimsOwn = new Set(input.bindings.claims.flatMap((c) => (c.kind === null || c.kind === WILDCARD ? [] : [`${c.kind} ${c.vocab}`])));
 
 	const slotNames = new Map<string, Map<string, string | null>>();
 	for (const member of input.bindings.members) {
 		if ((member.route !== 'rename' && member.route !== 'dropped') || (member.route === 'rename' && member.flag === true)) continue;
-		for (const form of reached(member.owner)) {
+		for (const form of formsOf(input.model, member.owner)) {
 			const slot = slotFor(input.model, modelNode(input.model, form)?.slots ?? [], member);
 			if (slot !== undefined)
 				(slotNames.get(form) ?? slotNames.set(form, new Map<string, string | null>()).get(form))?.set(slot.name, member.route === 'rename' ? member.name : null);
@@ -662,14 +659,16 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	const slotNamesOf = (kind: string): SlotNames => slotNames.get(kind) ?? new Map<string, string | null>();
 
 	const readEntries = new Map<string, ReadEntry[]>();
+	const inherited = new Set<ReadEntry>();
 	input.bindings.claims.forEach((claim, index) => {
 		const owner = claim.kind;
 		if (owner === null) return;
 		const forms =
 			owner === WILDCARD
 				? admittedKinds(input.model, claim).filter((kind) => !claimsOwn.has(`${kind} ${claim.vocab}`))
-				: reached(owner);
-		for (const [claimed, kind] of forms.flatMap((form) => readKinds(input.model, form, claim).map((read) => [owner === WILDCARD ? form : owner, read] as const))) {
+				: formsOf(input.model, owner);
+		for (const [form, kind] of forms.flatMap((form) => readKinds(input.model, form, claim).map((read) => [form, read] as const))) {
+			const claimed = owner === WILDCARD ? form : owner;
 			const entry: ReadEntry = {
 				kind,
 				claimed,
@@ -681,18 +680,22 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 				template: input.bindings.templates.find((t) => t.vocabs.includes(claim.vocab)),
 				members: []
 			};
+			if (form !== claimed) inherited.add(entry);
 			(readEntries.get(kind) ?? readEntries.set(kind, []).get(kind))?.push(entry);
 		}
 	});
 
+	const isPlain = (e: ReadEntry): boolean => e.claim.predicates.length === 0 && e.pins.length === 0 && e.children.length === 0;
 	const vocabOf = new Map<string, string>();
 	for (const [kind, entries] of readEntries) {
 		const top = entries.filter((e) => e.claim.toplevel);
-		const plain = top.find((e) => e.claim.predicates.length === 0 && e.pins.length === 0 && e.children.length === 0);
-		const vocab = plain?.vocab ?? refinedParent(kind, top);
+		const own = top.filter((e) => !inherited.has(e));
+		const vocab = own.find(isPlain)?.vocab ?? top.find(isPlain)?.vocab ?? refinedParent(kind, own.length > 0 ? own : top);
 		if (vocab !== undefined) vocabOf.set(kind, vocab);
 	}
-	for (const entries of readEntries.values()) entries.sort((a, b) => specificity(a) - specificity(b) || testCount(b) - testCount(a) || a.index - b.index);
+	const rank = (e: ReadEntry): number => (inherited.has(e) ? 1 : 0);
+	for (const entries of readEntries.values())
+		entries.sort((a, b) => specificity(a) - specificity(b) || rank(a) - rank(b) || testCount(b) - testCount(a) || a.index - b.index);
 
 	const members = new Map<string, MemberRoute[]>();
 	for (const [kind, entries] of readEntries) {
@@ -717,4 +720,15 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	}
 
 	return { grammar: input.grammar, readEntries, vocabOf, members, containers };
+}
+
+export function unenteredForms(input: GrammarInput, routes: GrammarRoutes): string[] {
+	return input.bindings.claims.flatMap((claim, index) => {
+		const owner = claim.kind;
+		if (owner === null || owner === WILDCARD) return [];
+		return formsOf(input.model, owner)
+			.filter((form) => form !== owner)
+			.flatMap((form) => readKinds(input.model, form, claim).filter((kind) => !(routes.readEntries.get(kind) ?? []).some((e) => e.index === index)))
+			.map((kind) => `${input.grammar}: ${kind} has no entry for its supertype ${owner}'s claim @${claim.vocab}, so it reads by no path there when no claim of its own holds`);
+	});
 }
