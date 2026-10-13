@@ -220,6 +220,7 @@ export interface PortableIds {
 	'expression.unary.plus': TSKindId.UnaryOperator;
 	'expression.yield': TSKindId.Yield | TSKindId.YieldFromClause;
 	'expression.yield.delegate': TSKindId.YieldFromClause;
+	file: TSKindId.Module;
 	identifier: TSKindId.DottedName | TSKindId.Identifier;
 	'identifier.dotted': TSKindId.DottedName;
 	'identifier.type': TSKindId.Identifier;
@@ -308,7 +309,6 @@ export interface PortableIds {
 	'literal.string.raw': TSKindId.String;
 	'literal.string.text': TSKindId.StringFragment;
 	'literal.string.triple': TSKindId.String;
-	module: TSKindId.Module;
 	pattern:
 		| TSKindId.AsPattern
 		| TSKindId.CaseAsPattern
@@ -820,6 +820,7 @@ export interface PortableKindsAt {
 		readonly delegate: PortableKindsAt['expression.yield.delegate'];
 	};
 	'expression.yield.delegate': { readonly $ids: readonly PortableIds['expression.yield.delegate'][] };
+	file: { readonly $ids: readonly PortableIds['file'][] };
 	identifier: {
 		readonly $ids: readonly PortableIds['identifier'][];
 		readonly dotted: PortableKindsAt['identifier.dotted'];
@@ -886,7 +887,6 @@ export interface PortableKindsAt {
 	'literal.string.raw': { readonly $ids: readonly PortableIds['literal.string.raw'][] };
 	'literal.string.text': { readonly $ids: readonly PortableIds['literal.string.text'][] };
 	'literal.string.triple': { readonly $ids: readonly PortableIds['literal.string.triple'][] };
-	module: { readonly $ids: readonly PortableIds['module'][] };
 	pattern: {
 		readonly $ids: readonly PortableIds['pattern'][];
 		readonly as: PortableKindsAt['pattern.as'];
@@ -1317,6 +1317,7 @@ export interface PortableIsAt {
 		readonly delegate: PortableIsAt['expression.yield.delegate'];
 	};
 	'expression.yield.delegate': PortableGuard<PortableIds['expression.yield.delegate']> & {};
+	file: PortableGuard<PortableIds['file']> & {};
 	identifier: PortableGuard<PortableIds['identifier']> & {
 		readonly dotted: PortableIsAt['identifier.dotted'];
 		readonly type: PortableIsAt['identifier.type'];
@@ -1376,7 +1377,6 @@ export interface PortableIsAt {
 	'literal.string.raw': PortableGuard<PortableIds['literal.string.raw']> & {};
 	'literal.string.text': PortableGuard<PortableIds['literal.string.text']> & {};
 	'literal.string.triple': PortableGuard<PortableIds['literal.string.triple']> & {};
-	module: PortableGuard<PortableIds['module']> & {};
 	pattern: PortableGuard<PortableIds['pattern']> & {
 		readonly as: PortableIsAt['pattern.as'];
 		readonly case: PortableIsAt['pattern.case'];
@@ -1487,9 +1487,9 @@ export interface PortableKinds {
 	readonly declaration: PortableKindsAt['declaration'];
 	readonly element: PortableKindsAt['element'];
 	readonly expression: PortableKindsAt['expression'];
+	readonly file: PortableKindsAt['file'];
 	readonly identifier: PortableKindsAt['identifier'];
 	readonly literal: PortableKindsAt['literal'];
-	readonly module: PortableKindsAt['module'];
 	readonly pattern: PortableKindsAt['pattern'];
 	readonly statement: PortableKindsAt['statement'];
 	readonly type: PortableKindsAt['type'];
@@ -1503,9 +1503,9 @@ export interface PortableIs {
 	readonly declaration: PortableIsAt['declaration'];
 	readonly element: PortableIsAt['element'];
 	readonly expression: PortableIsAt['expression'];
+	readonly file: PortableIsAt['file'];
 	readonly identifier: PortableIsAt['identifier'];
 	readonly literal: PortableIsAt['literal'];
-	readonly module: PortableIsAt['module'];
 	readonly pattern: PortableIsAt['pattern'];
 	readonly statement: PortableIsAt['statement'];
 	readonly type: PortableIsAt['type'];
@@ -1768,6 +1768,7 @@ const table: PortableTable = {
 		'expression.unary.plus': { ids: [TSKindId.UnaryOperator], exact: false },
 		'expression.yield': { ids: [TSKindId.Yield, TSKindId.YieldFromClause], exact: true },
 		'expression.yield.delegate': { ids: [TSKindId.YieldFromClause], exact: true },
+		file: { ids: [TSKindId.Module], exact: true },
 		identifier: { ids: [TSKindId.DottedName, TSKindId.Identifier], exact: false },
 		'identifier.dotted': { ids: [TSKindId.DottedName], exact: true },
 		'identifier.type': { ids: [TSKindId.Identifier], exact: false },
@@ -1879,7 +1880,6 @@ const table: PortableTable = {
 		'literal.string.raw': { ids: [TSKindId.String], exact: false },
 		'literal.string.text': { ids: [TSKindId.StringFragment], exact: true },
 		'literal.string.triple': { ids: [TSKindId.String], exact: false },
-		module: { ids: [TSKindId.Module], exact: true },
 		pattern: {
 			ids: [
 				TSKindId.AsPattern,
@@ -2509,7 +2509,7 @@ const table: PortableTable = {
 		[TSKindId.ListSplatPattern]: [{ path: 'pattern.splat', within: [], test: [] }],
 		[TSKindId.MatchStatement]: [{ path: 'statement.match', within: [], test: [] }],
 		[TSKindId.MemberType]: [{ path: 'type.path', within: [], test: [] }],
-		[TSKindId.Module]: [{ path: 'module', within: [], test: [] }],
+		[TSKindId.Module]: [{ path: 'file', within: [], test: [] }],
 		[TSKindId.NamedExpression]: [{ path: 'expression.assignment', within: [], test: [] }],
 		[TSKindId.None]: [{ path: 'literal.null', within: [], test: [] }],
 		[TSKindId.NonlocalStatement]: [{ path: 'statement.nonlocal', within: [], test: [] }],

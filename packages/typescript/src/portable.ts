@@ -348,6 +348,7 @@ export interface PortableIds {
 	'expression.update.increment': TSKindId.UpdateExpressionPostfix | TSKindId.UpdateExpressionPrefix;
 	'expression.yield': TSKindId.YieldExpression | TSKindId.YieldExpressionDelegate;
 	'expression.yield.delegate': TSKindId.YieldExpressionDelegate;
+	file: TSKindId.Program;
 	identifier:
 		| TSKindId.Identifier
 		| TSKindId.NestedIdentifier
@@ -466,7 +467,6 @@ export interface PortableIds {
 	'modifier.visibility.private': TSKindId.PrivateKeyword;
 	'modifier.visibility.protected': TSKindId.ProtectedKeyword;
 	'modifier.visibility.public': TSKindId.PublicKeyword;
-	module: TSKindId.Program;
 	pattern:
 		| TSKindId.ArrayPattern
 		| TSKindId.AssignmentPattern
@@ -1214,6 +1214,7 @@ export interface PortableKindsAt {
 		readonly delegate: PortableKindsAt['expression.yield.delegate'];
 	};
 	'expression.yield.delegate': { readonly $ids: readonly PortableIds['expression.yield.delegate'][] };
+	file: { readonly $ids: readonly PortableIds['file'][] };
 	identifier: {
 		readonly $ids: readonly PortableIds['identifier'][];
 		readonly label: PortableKindsAt['identifier.label'];
@@ -1315,7 +1316,6 @@ export interface PortableKindsAt {
 	'modifier.visibility.private': { readonly $ids: readonly PortableIds['modifier.visibility.private'][] };
 	'modifier.visibility.protected': { readonly $ids: readonly PortableIds['modifier.visibility.protected'][] };
 	'modifier.visibility.public': { readonly $ids: readonly PortableIds['modifier.visibility.public'][] };
-	module: { readonly $ids: readonly PortableIds['module'][] };
 	pattern: {
 		readonly $ids: readonly PortableIds['pattern'][];
 		readonly array: PortableKindsAt['pattern.array'];
@@ -1965,6 +1965,7 @@ export interface PortableIsAt {
 		readonly delegate: PortableIsAt['expression.yield.delegate'];
 	};
 	'expression.yield.delegate': PortableGuard<PortableIds['expression.yield.delegate']> & {};
+	file: PortableGuard<PortableIds['file']> & {};
 	identifier: PortableGuard<PortableIds['identifier']> & {
 		readonly label: PortableIsAt['identifier.label'];
 		readonly nested: PortableIsAt['identifier.nested'];
@@ -2051,7 +2052,6 @@ export interface PortableIsAt {
 	'modifier.visibility.private': PortableGuard<PortableIds['modifier.visibility.private']> & {};
 	'modifier.visibility.protected': PortableGuard<PortableIds['modifier.visibility.protected']> & {};
 	'modifier.visibility.public': PortableGuard<PortableIds['modifier.visibility.public']> & {};
-	module: PortableGuard<PortableIds['module']> & {};
 	pattern: PortableGuard<PortableIds['pattern']> & {
 		readonly array: PortableIsAt['pattern.array'];
 		readonly assignment: PortableIsAt['pattern.assignment'];
@@ -2187,10 +2187,10 @@ export interface PortableKinds {
 	readonly declaration: PortableKindsAt['declaration'];
 	readonly element: PortableKindsAt['element'];
 	readonly expression: PortableKindsAt['expression'];
+	readonly file: PortableKindsAt['file'];
 	readonly identifier: PortableKindsAt['identifier'];
 	readonly literal: PortableKindsAt['literal'];
 	readonly modifier: PortableKindsAt['modifier'];
-	readonly module: PortableKindsAt['module'];
 	readonly pattern: PortableKindsAt['pattern'];
 	readonly statement: PortableKindsAt['statement'];
 	readonly type: PortableKindsAt['type'];
@@ -2203,10 +2203,10 @@ export interface PortableIs {
 	readonly declaration: PortableIsAt['declaration'];
 	readonly element: PortableIsAt['element'];
 	readonly expression: PortableIsAt['expression'];
+	readonly file: PortableIsAt['file'];
 	readonly identifier: PortableIsAt['identifier'];
 	readonly literal: PortableIsAt['literal'];
 	readonly modifier: PortableIsAt['modifier'];
-	readonly module: PortableIsAt['module'];
 	readonly pattern: PortableIsAt['pattern'];
 	readonly statement: PortableIsAt['statement'];
 	readonly type: PortableIsAt['type'];
@@ -2623,6 +2623,7 @@ const table: PortableTable = {
 		},
 		'expression.yield': { ids: [TSKindId.YieldExpression, TSKindId.YieldExpressionDelegate], exact: true },
 		'expression.yield.delegate': { ids: [TSKindId.YieldExpressionDelegate], exact: true },
+		file: { ids: [TSKindId.Program], exact: true },
 		identifier: {
 			ids: [
 				TSKindId.Identifier,
@@ -2778,7 +2779,6 @@ const table: PortableTable = {
 		'modifier.visibility.private': { ids: [TSKindId.PrivateKeyword], exact: false },
 		'modifier.visibility.protected': { ids: [TSKindId.ProtectedKeyword], exact: false },
 		'modifier.visibility.public': { ids: [TSKindId.PublicKeyword], exact: false },
-		module: { ids: [TSKindId.Program], exact: true },
 		pattern: {
 			ids: [
 				TSKindId.ArrayPattern,
@@ -3921,7 +3921,7 @@ const table: PortableTable = {
 			{ path: 'modifier.visibility', within: [], test: [] }
 		],
 		[TSKindId.PrivatePropertyIdentifier]: [{ path: 'identifier.property', within: [], test: [] }],
-		[TSKindId.Program]: [{ path: 'module', within: [], test: [] }],
+		[TSKindId.Program]: [{ path: 'file', within: [], test: [] }],
 		[TSKindId.PropertyIdentifier]: [{ path: 'identifier.property', within: [], test: [] }],
 		[TSKindId.PropertySignature]: [
 			{

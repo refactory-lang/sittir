@@ -3,7 +3,7 @@
 import { bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "67a8d810c32fc34f55cf1bfe7d6662a2fd0f48ae29626322a23f182ed8298cb2",
+	hash: "023660ae33f06a7eca3124fb8f68025de9d11346fa4a19d48503e83ed76fb8ef",
 	patches: {
 		_number: { "1": field("value") },
 		_parameter_name: { "4": field("name") },
@@ -37,7 +37,7 @@ export default bindings({
 		variable_declarator_definite: { "1": field("definite") }
 	},
 	renames: [
-		rename("program", "module"),
+		rename("program", "file"),
 		rename("enum_assignment", "enum_member_declaration"),
 		rename("method_definition", "method_declaration"),
 		rename("method_signature", "signature_method_declaration"),
