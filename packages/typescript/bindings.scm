@@ -173,10 +173,18 @@
 (import_require_clause) @clause.import.require
 (namespace_import) @clause.import.namespace
 (import_specifier) @clause.import.specifier
+(import_specifier_name) @clause.import.specifier
+(import_specifier_name import_kind: "type" @typeOnly)
+(import_specifier_name import_kind: "typeof") @clause.import.specifier.typeof
+(import_specifier_as) @clause.import.specifier
+(import_specifier_as import_kind: "type" @typeOnly)
+(import_specifier_as import_kind: "typeof") @clause.import.specifier.typeof
 (import_attribute) @clause.import.attribute
 (import_alias) @clause.import.alias
 (namespace_export) @clause.export.namespace
 (export_specifier) @clause.export.specifier
+(export_specifier export_kind: "type" @typeOnly)
+(export_specifier export_kind: "typeof") @clause.export.specifier.typeof
 (mapped_type_clause) @clause.mapped_type
 ; type annotations are transparent wrappers: the annotated member takes the type
 (constraint) @clause.constraint
