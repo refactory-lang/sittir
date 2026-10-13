@@ -111,7 +111,7 @@ import {
 	type DelimiterSite
 } from './render-options-rs.ts';
 import { displayNameOf, displayedKinds } from '../compiler/model/display-name.ts';
-import { BLANK_KIND_ID, collectSitePreferences, hasBlankArm, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
+import { BLANK_KIND_ID, collectSitePreferences, hasBlankArm, type SitePreference } from '../compiler/model/site-preferences.ts';
 import { readOptionsBlock, type OptionsConfig } from '../dsl/wire/options-block.ts';
 import { addressTablesFor, EMPTY_ADDRESSES, type AddressTables } from './options.ts';
 import {
