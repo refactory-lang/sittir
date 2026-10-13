@@ -74,6 +74,12 @@ export interface StoredLayout {
 	readonly separators: number;
 }
 
+/** The work a tree's layout reads have done so far (`NativeEngineLike.layoutWork`). */
+export interface LayoutWork {
+	readonly regionNodes: number;
+	readonly siblingItems: number;
+}
+
 export interface BaselineRun {
 	readonly start: number;
 	readonly end: number;
@@ -182,6 +188,13 @@ export interface NativeEngineLike<TTransport = unknown> {
 	 * @throws when the tree is not live.
 	 */
 	storedLayout(treeId: number): StoredLayout;
+	/**
+	 * The work tree `treeId`'s layout reads have done so far: the nodes the region-depth walks entered
+	 * and the items the sibling lookups visited. A diagnostic, so a growth test compares counts, not times.
+	 *
+	 * @throws when the tree is not live.
+	 */
+	layoutWork(treeId: number): LayoutWork;
 	descendants(
 		from: string,
 		kinds: number[] | undefined | null,

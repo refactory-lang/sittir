@@ -232,11 +232,27 @@ The plan a `where` callback records for elements of one kind, cached per immutab
 
 ### `packages/common/src/query.ts::recorder`
 
-What a `where` callback receives: a Proxy whose members are the accessors of a kind, each a slot reference with `eq` and `match` that records the slot's parser routes (fields, and kinds under no field) from the kind's `querySlots` row. Any other key, an assignment and a call are refused. A view whose element kinds are not yet known checks the callback at the `where` call against every accessor of the grammar, recording no routes, so its shape is refused early and each kind's slots when it runs. A pattern crosses as its source; a flag has no native equivalent and is refused rather than dropped.
+What a `where` callback receives: a Proxy whose members are the accessors of a kind, each recording the slot's parser routes (fields, and kinds under no field) from the kind's `querySlots` row: a slot whose row names a keyword gets a presence member (`presenceRef`), any other slot a text member with `eq` and `match`. Each member of a known kind is named `<kind>.<slot>`, so a slot compared in the wrong form (a text on a boolean slot, a boolean on a text slot) is refused naming both, whether at the `where` call or when a view whose kinds were not known runs. Any other key, an assignment and a call are refused. A view whose element kinds are not yet known checks the callback at the `where` call against every accessor of the grammar (`everyAccessor`, each a `shapeRef`), recording no routes, so its shape is refused early and each kind's slots, and whether each takes a text or a boolean, when it runs. A pattern crosses as its source; a flag has no native equivalent and is refused rather than dropped.
+
+### `packages/common/src/query.ts::slotsOf`
+
+A kind's query slots by accessor, each its routes and the keyword its row names (`undefined` for a text slot), read once per table and kind.
+
+### `packages/common/src/query.ts::everyAccessor`
+
+Every accessor of the grammar, for the check a `where` runs before its view's kinds are known.
+
+### `packages/common/src/query.ts::shapeRef`
+
+An accessor's member in the check a `where` runs before its view's kinds are known: it takes `eq` of a text or a boolean, and `match`, and refuses any other argument. Whether the slot takes a text or a boolean is left to each kind's compilation when the view runs. A view narrowed by a type-guard `filter` has a static element type the recorder's type already checks, but no run-time kinds, and one accessor can be a boolean slot in one kind and a text slot in another (typescript's `type`), so a grammar-wide choice would refuse a query its type accepts.
+
+### `packages/common/src/query.ts::presenceRef`
+
+The member of a slot that holds a keyword's presence. `eq(true)` records a presence leaf over the slot's routes, and `eq(false)` its negation, so the leaf carries no boolean. A text, and `match`, are refused with a message naming `eq(true)` and `eq(false)`, never compiled to a text leaf that would match the keyword's spelling.
 
 ### `packages/common/src/query.ts::holds`
 
-The JavaScript evaluation of a plan over the texts a node's children have along each leaf's routes. It is the oracle the native evaluator is tested against, never an evaluator of its own.
+The JavaScript evaluation of a plan over the texts a node's children have along each leaf's routes; a presence leaf holds when any text is there. It is the oracle the native evaluator is tested against, never an evaluator of its own.
 
 ### `packages/common/src/engine-scope.ts::inTreeEngine`
 

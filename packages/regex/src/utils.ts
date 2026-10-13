@@ -33,10 +33,10 @@ export const querySlots: QuerySlots = Object.freeze({
 		['pattern', { fields: [], kinds: ['pattern'] }]
 	],
 	58: [
-		['negation', { fields: [], kinds: ['negation'] }],
-		['leading', { fields: ['leading'], kinds: [] }],
+		['negation', { fields: [], kinds: ['negation'] }, '^'],
+		['leading', { fields: ['leading'], kinds: [] }, '-'],
 		['classAtoms', { fields: ['class_atoms'], kinds: [] }],
-		['trailing', { fields: ['trailing'], kinds: [] }]
+		['trailing', { fields: ['trailing'], kinds: [] }, '-']
 	],
 	59: [['posixClassName', { fields: ['posix_class_name'], kinds: [] }]],
 	61: [
@@ -50,12 +50,12 @@ export const querySlots: QuerySlots = Object.freeze({
 		['pattern', { fields: ['pattern'], kinds: [] }]
 	],
 	64: [['pattern', { fields: ['pattern'], kinds: [] }]],
-	67: [['lazy', { fields: [], kinds: ['lazy'] }]],
-	68: [['lazy', { fields: [], kinds: ['lazy'] }]],
-	69: [['lazy', { fields: [], kinds: ['lazy'] }]],
+	67: [['lazy', { fields: [], kinds: ['lazy'] }, '?']],
+	68: [['lazy', { fields: [], kinds: ['lazy'] }, '?']],
+	69: [['lazy', { fields: [], kinds: ['lazy'] }, '?']],
 	70: [
 		['content', { fields: [], kinds: ['count_quantifier_arm', 'decimal_digits'] }],
-		['lazy', { fields: [], kinds: ['lazy'] }]
+		['lazy', { fields: [], kinds: ['lazy'] }, '?']
 	],
 	71: [['groupName', { fields: ['group_name'], kinds: [] }]],
 	72: [['groupName', { fields: ['group_name'], kinds: [] }]],
