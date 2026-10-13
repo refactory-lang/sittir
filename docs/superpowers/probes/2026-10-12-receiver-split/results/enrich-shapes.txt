@@ -22,3 +22,8 @@
   minted _layout = {"type":"CHOICE","members":[{"type":"SYMBOL","name":"_tight"}]}
   visible-group sources: ["parameters_elements_receiver_group"]
   hidden groups: []
+## two-arms
+  rewrote _parameters_elements_receiver = {"type":"CHOICE","members":[{"type":"SEQ","members":[{"type":"FIELD","name":"receiver","content":{"type":"SYMBOL","name":"lead"}},{"type":"OPTIONAL","content":{"type":"STRING","value":","}}],"annotations":{"variantOf":"_parameters_elements_receiver"}},{"type":"SEQ","members":[{"type":"FIELD","name":"receiver","content":{"type":"SYMBOL","name":"lead"}},{"type":"STRING","value":","},{"type":"FIELD","name":"elements","content":{"type":"SYMBOL","name":"parameters_elements"}}],"annotations":{"variantOf":"_parameters_elements_receiver"}}]}
+  minted _layout = {"type":"CHOICE","members":[{"type":"SYMBOL","name":"_tight"}]}
+  visible-group sources: []
+  hidden groups: []

@@ -585,7 +585,7 @@ The `$trivia` calls after a printed node: leading and trailing entries, then the
 
 ### `packages/tools/src/emit/factory-source.ts::seatTableSides`
 
-Seats each read node's sides (`sidesOf`: its tree's trivia table, through the source identity a materialized copy keeps) as the trivia the source emitter prints, walking the same storage keys every other tree walk does (`isStorageKey`). A side that holds an entry prints whole, its layout runs included: a written entry with no whitespace renders on its owner's line, so a run is what puts an own-line comment on its own line. A side holding only the `newline` member says what the seam default already writes and is dropped; a blank line and anything wider prints. A node left with nothing to print loses its trivia entirely, since an empty trivia block would stop the print collapsing a wrapper into its content.
+Seats each read node's sides (`sidesOf`: its tree's trivia table, through the source identity a materialized copy keeps) as the trivia the source emitter prints, walking the same storage keys every other tree walk does (`isStorageKey`). Printed builder code carries content, not format: every layout member (`TriviaFacts.layout`: whitespace, depth and continuation members) is left out of every side, and the code renders under the options. Comments are content and print. A side left with nothing prints nothing, and a node left with no side loses its trivia entirely, since an empty trivia block would stop the print collapsing a wrapper into its content.
 
 ### `packages/tools/src/emit/factory-source.ts::printedSource`
 

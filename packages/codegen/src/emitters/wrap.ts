@@ -1,5 +1,5 @@
 import { hasBlankArm } from '../compiler/model/site-preferences.ts';
-import { continuationTriviaKinds } from '../compiler/model/trivia.ts';
+import { continuationTriviaKinds, layoutTriviaKinds } from '../compiler/model/trivia.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNonterminal, storesNodes } from '../compiler/model/node-map.ts';
@@ -37,7 +37,15 @@ export function unitKindIds(nodeMap: NodeMap): number[] {
 }
 
 export function layoutMemberKindIds(nodeMap: NodeMap): number[] {
-	return continuationTriviaKinds(nodeMap)
+	return kindIdsOf(nodeMap, continuationTriviaKinds(nodeMap));
+}
+
+export function layoutTriviaKindIds(nodeMap: NodeMap): number[] {
+	return kindIdsOf(nodeMap, layoutTriviaKinds(nodeMap));
+}
+
+function kindIdsOf(nodeMap: NodeMap, kinds: readonly string[]): number[] {
+	return kinds
 		.flatMap((kind) => {
 			const id = nodeMap.nodes.get(kind)?.kindId;
 			return id === undefined ? [] : [id];

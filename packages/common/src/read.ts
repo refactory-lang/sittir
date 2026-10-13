@@ -23,6 +23,10 @@ export interface TreeHandle {
 	writeTriviaSide?(index: number, side: TriviaSideName, entries: readonly unknown[]): void;
 	/** The sides of the unit children of the node at descendant `index`, by slot and item (`TransportLayout.units`). */
 	unitSides?(index: number): unknown[];
+	/** The stored layout of each list slot of the node at descendant `index` that stores any (`TransportLayout.slots`). */
+	slotLayouts?(index: number): unknown[];
+	/** The separator before the node at descendant `index` as a list item, where it is not its slot's (`TransportLayout.separator`). */
+	separatorBefore?(index: number): number | undefined;
 	/** Whether a write replaced a side of a node under the node at descendant `index`, its own `inner` included, and its own leading and trailing too when `ownSides` is set. */
 	editedWithin?(index: number, ownSides: boolean): boolean;
 	/** Whether the node at descendant `index` is empty: no child of it has width. */

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { markEdited, detachCoordinates, carrySource, holdTree, PLAIN_KINDS, sideOf, sourceGapOf, toTransportData, treeHandleOf, type KindView } from '../src/transport-data.ts';
+import { markEdited, detachCoordinates, carrySource, holdTree, PLAIN_KINDS, sideOf, toTransportData, treeHandleOf, type KindView } from '../src/transport-data.ts';
 import { mintTreeToken, registerTree, treeTokenOf } from '../src/tree-token.ts';
 import type { Siblings } from '../src/read.ts';
 
@@ -249,7 +249,7 @@ describe('a built node rebuilt from a parsed one', () => {
 	});
 });
 
-describe('sourceGapOf', () => {
+describe("a rebuilt list item's changed edges", () => {
 	const ATTRIBUTED = 20;
 	const ALIAS_ENVELOPE = 21;
 	const OTHER = 30;
@@ -257,49 +257,32 @@ describe('sourceGapOf', () => {
 	const a = deep(1, 2, {});
 	const b = deep(3, 4, {});
 	const owner = deep(0, 5, {});
+	const other = deep(7, 8, {});
 	holdTree(a, token);
 	holdTree(b, token);
 	holdTree(owner, token);
+	holdTree(other, token);
 	const view: KindView = {
-		isWrapper: (kindId) => kindId === ATTRIBUTED || kindId === ALIAS_ENVELOPE,
-		isList: () => false
+		isWrapper: (kindId) => kindId === ATTRIBUTED || kindId === ALIAS_ENVELOPE
 	};
-	const gap = { $treeHandle: 3, $span: { start: 2, end: 3 } };
+	type Crossed = { $_layout?: { changed?: unknown }; _content?: Crossed; _name?: Crossed };
+	const second = (first: Record<string, unknown>, wrapper: Record<string, unknown>): Crossed =>
+		(toTransportData({ ...markEdited(owner), _item: [first, wrapper] } as never, view) as unknown as { _item: Crossed[] })._item[1]!;
 
 	it('judges a rebuilt group around one node by the node it holds', () => {
 		const wrapper = { $type: ATTRIBUTED, $source: 2, _attribute_item: [], _content: b };
-		expect(sourceGapOf(owner, [a, wrapper], 1, view)).toEqual(gap);
+		expect(second(a, wrapper)._content?.$_layout?.changed).toBeUndefined();
+		expect(second(other, wrapper)._content?.$_layout?.changed).toEqual({ leading: true, trailing: false });
 	});
 
 	it('judges a rebuilt alias envelope by the node it holds, whatever its slot is called', () => {
 		const wrapper = { $type: ALIAS_ENVELOPE, $source: 2, _name: b };
-		expect(sourceGapOf(owner, [a, wrapper], 1, view)).toEqual(gap);
-	});
-
-	it('does not look through a kind a rebuild does not mint around one node', () => {
-		const other = { $type: OTHER, $source: 2, _content: b };
-		expect(sourceGapOf(owner, [a, other], 1, view)).toBeUndefined();
-	});
-
-	it('withholds the gap of a list whose owner carries no source', () => {
-		const built = { $type: 4, $source: 2 };
-		expect(sourceGapOf(built, [a, b], 1, view)).toBeUndefined();
-		expect(sourceGapOf(owner, [a, b], 1, view)).toEqual(gap);
+		expect(second(a, wrapper)._name?.$_layout?.changed).toBeUndefined();
+		expect(second(other, wrapper)._name?.$_layout?.changed).toEqual({ leading: true, trailing: false });
 	});
 
 	it('names the changed edge on the content a rebuilt wrapper holds, not on the wrapper', () => {
-		const other = deep(7, 8, {});
-		holdTree(other, token);
-		const list = (first: Record<string, unknown>) => ({ ...markEdited(owner), _item: [first, { $type: ATTRIBUTED, $source: 2, _content: b }] });
-		const crossed = (first: Record<string, unknown>) =>
-			toTransportData(list(first) as never, view) as unknown as { _item: { $_layout?: unknown; _content: { $_layout?: { changed?: unknown } } }[] };
-		expect(crossed(a)._item[1]!._content.$_layout?.changed).toBeUndefined();
-		expect(crossed(other)._item[1]!._content.$_layout?.changed).toEqual({ leading: true, trailing: false });
-		expect(crossed(other)._item[1]!.$_layout).toBeUndefined();
-	});
-
-	it('does not look through a wrapper holding more than one node', () => {
-		const wrapper = { $type: ATTRIBUTED, $source: 2, _attribute_item: [a], _content: b };
-		expect(sourceGapOf(owner, [a, wrapper], 1, view)).toBeUndefined();
+		const wrapper = { $type: ATTRIBUTED, $source: 2, _content: b };
+		expect(second(other, wrapper).$_layout).toBeUndefined();
 	});
 });

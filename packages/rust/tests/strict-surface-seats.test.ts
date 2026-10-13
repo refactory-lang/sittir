@@ -20,18 +20,18 @@ const last = () =>
 
 describe('a group flattened into the parent config', () => {
 	it('renders with its arms and renders empty without the group', () => {
-		expect(rs.build.matchBlock.strict({ matchArm: [arm()], lastArm: last() }).$render()).toBe(
+		expect(rs.build.matchBlock.strict({ arms: [arm()], lastArm: last() }).$render()).toBe(
 			'{\n    x => {}\n    y => z\n}'
 		);
 		expect(rs.build.matchBlock.strict().$render()).toBe('{}');
 	});
 	it('refuses a partial group and a lone node where the seat takes an array', () => {
 		// @ts-expect-error the group's last arm is required once the group is given
-		const partial = () => rs.build.matchBlock.strict({ matchArm: [arm()] });
+		const partial = () => rs.build.matchBlock.strict({ arms: [arm()] });
 		const lone = () =>
 			rs.build.matchBlock.strict({
 				// @ts-expect-error a list seat takes an array
-				matchArm: arm(),
+				arms: arm(),
 				lastArm: last()
 			});
 		expect(partial).toBeDefined();

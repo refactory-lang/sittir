@@ -12,17 +12,20 @@ export const triviaFacts = Object.freeze({
 		'_dedent',
 		'_double_blankline',
 		'_indent',
+		'_layout',
 		'_newline',
 		'_space',
 		'_tab',
+		'_tight',
 		'comment'
 	]),
 	innerKinds: INNER_SITES,
 	rebuildWrappers: new Set<number>([54, 58, 61, 62, 63, 64]),
 	listKinds: new Set<number>([]),
+	layout: new Set<number>([25, 26, 27, 28, 29, 30, 31, 32]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:\s+))+)$/u,
-		kindIdByText: Object.freeze({ ' ': 26, '\t': 27, '\n': 28, '\n\n': 29, '\n\n\n': 30 })
+		kindIdByText: Object.freeze({ '': 25, ' ': 26, '\t': 27, '\n': 28, '\n\n': 29, '\n\n\n': 30 })
 	})
 } satisfies TriviaFacts);
 

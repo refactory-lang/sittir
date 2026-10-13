@@ -148,6 +148,16 @@ for q in tree:
     if '.' in q:
         children[q.rsplit('.', 1)[0]].add(q.rsplit('.', 1)[1])
 
+# ruled-kinds.txt
+with open(os.path.join(out, 'ruled-kinds.txt'), 'w') as f:
+    print('ruled path <- the census kinds it comes from (none: an added kind or a level the renames imply); claims per grammar', file=f)
+    for q in sorted(tree):
+        if owner_level(q):
+            continue
+        origin = tree[q]['from']
+        claims = ' '.join(sorted({claims_of(p) for p in origin if claims_of(p)}))
+        print(f"{q:48} <- {', '.join(sorted(origin)) or 'none'}  {claims}".rstrip(), file=f)
+
 
 def line(q):
     parts = q.split('.')

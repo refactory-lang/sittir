@@ -34,6 +34,7 @@ export type {
 	TriviaItem,
 	ErrorKindId,
 	ErrorNode,
+	TriviaFlanks,
 	ErrorRegion
 } from './core-types.ts';
 

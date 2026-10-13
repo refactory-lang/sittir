@@ -4342,13 +4342,13 @@
       ],
       "members": [
         {
-          "name": "extendsClauseSingles",
+          "name": "types",
           "route": "slot",
-          "slot": "extends_clause_single",
+          "slot": "types",
           "path": [
             {
               "owner": "extends_clause",
-              "slot": "extends_clause_single"
+              "slot": "types"
             }
           ]
         }

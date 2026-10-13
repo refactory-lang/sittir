@@ -12,6 +12,7 @@ export interface EnrichCtxInit {
 	readonly word: string | null;
 	readonly wordMatcher: RegExp | undefined;
 	readonly authoredGroupBodies: readonly RuntimeRule[];
+	readonly priorOrigins: ReadonlyMap<string, EnrichRuleOrigin>;
 }
 
 export function enrichSymbolSource(init: EnrichCtxInit, rules: Readonly<Record<string, Rule>>): SymbolSource {
@@ -37,6 +38,10 @@ export type EnrichRuleOrigin =
 	| { readonly kind: 'element-supertype'; readonly slot: string; readonly authoredSlot: boolean }
 	| { readonly kind: 'text'; readonly owners: readonly string[] };
 
+export function isMintOrigin(origin: EnrichRuleOrigin): boolean {
+	return origin.kind !== 'promoted-group';
+}
+
 export interface ClauseHoistState {
 	readonly separatedListNameCounts: ReadonlyMap<string, number>;
 	readonly hiddenListPromotionNames: Map<string, string>;
@@ -50,6 +55,8 @@ interface EnrichCtxFields extends EnrichCtxInit {
 	readonly clauseDedupeMap: Record<string, string>;
 	readonly groupDedupeMap: Record<string, string>;
 	readonly ruleOrigins: Map<string, EnrichRuleOrigin>;
+	readonly isTextToken: (name: string) => boolean;
+	readonly isPriorMint: (name: string) => boolean;
 	readonly hoist: ClauseHoistState | undefined;
 }
 
@@ -68,6 +75,9 @@ export class EnrichCtx implements EnrichCtxFields {
 	readonly clauseDedupeMap: Record<string, string>;
 	readonly groupDedupeMap: Record<string, string>;
 	readonly ruleOrigins: Map<string, EnrichRuleOrigin>;
+	readonly priorOrigins: ReadonlyMap<string, EnrichRuleOrigin>;
+	readonly isTextToken: (name: string) => boolean;
+	readonly isPriorMint: (name: string) => boolean;
 	readonly hoist: ClauseHoistState | undefined;
 
 	private constructor(fields: EnrichCtxFields) {
@@ -85,6 +95,9 @@ export class EnrichCtx implements EnrichCtxFields {
 		this.clauseDedupeMap = fields.clauseDedupeMap;
 		this.groupDedupeMap = fields.groupDedupeMap;
 		this.ruleOrigins = fields.ruleOrigins;
+		this.priorOrigins = fields.priorOrigins;
+		this.isTextToken = fields.isTextToken;
+		this.isPriorMint = fields.isPriorMint;
 		this.hoist = fields.hoist;
 	}
 
@@ -96,7 +109,12 @@ export class EnrichCtx implements EnrichCtxFields {
 			clauseGroupRules: {},
 			clauseDedupeMap: {},
 			groupDedupeMap: {},
-			ruleOrigins: new Map(),
+			ruleOrigins: new Map(init.priorOrigins),
+			isTextToken: (name) => init.priorOrigins.get(name)?.kind === 'text',
+			isPriorMint: (name) => {
+				const origin = init.priorOrigins.get(name);
+				return origin !== undefined && isMintOrigin(origin);
+			},
 			hoist: undefined
 		});
 	}

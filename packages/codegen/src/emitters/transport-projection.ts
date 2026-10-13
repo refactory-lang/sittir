@@ -350,8 +350,7 @@ function separatorCandidateIds(list: AssembledList, ctx: ReadFactsCtx): number[]
 export function separatorKindArgs(list: AssembledList, ctx: ReadFactsCtx): string | undefined {
 	if (list.separatorRule === undefined) return undefined;
 	const candidates = separatorCandidateIds(list, ctx).map((id) => tokenGroup(id, ctx));
-	const declared = list.resolvedSeparatorArm === undefined ? undefined : findKindEntry(ctx.kindEntries, list.resolvedSeparatorArm);
-	return `candidates = [${candidates.join(', ')}]${declared === undefined ? '' : `, default = ${ctx.names.kind(declared.id)}`}`;
+	return `candidates = [${candidates.join(', ')}]`;
 }
 
 export function enumKindArgs(ownId: number, ctx: ReadFactsCtx): string {

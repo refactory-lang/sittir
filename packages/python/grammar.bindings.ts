@@ -3,7 +3,7 @@
 import { alias, bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "2e69688629c07bb5b767cde8fcfb7c2577e221fff6322ae0fec14973ca087f17",
+	hash: "9c3db431c0428416a3d908b73259931ff1bfc784d97dab450dc67dfb2266e875",
 	patches: {
 		_expression_within_for_in_clause: { "-1": alias(sym("lambda_within_for_in_clause"), sym("lambda_expression")) },
 		assignment_eq: { "0": field("name"), "1/1": field("value") },
@@ -11,22 +11,15 @@ export default bindings({
 		assignment_typed: { "0": field("name"), "1/3": field("value") },
 		attribute: { "2": field("property") },
 		case_clause: { "1": field("case_patterns") },
-		case_list_pattern: { "1/0": field("list_pattern_case_patterns") },
-		case_tuple_pattern: { "1/0": field("list_pattern_case_patterns") },
 		class_definition: { "3": field("bases") },
 		conditional_expression: { "0": field("consequence") },
 		default_parameter: { "2": field("default") },
-		dictionary_comprehension: { "2": field("comprehension_clauses") },
 		expression: { "-5": alias(sym("lambda"), sym("lambda_expression")) },
-		generator_expression: { "2": field("comprehension_clauses") },
 		list: { "1/0": field("elements") },
-		list_comprehension: { "2": field("comprehension_clauses") },
 		list_pattern: { "1/0": field("elements") },
 		named_expression: { "0": field("left"), "2": field("right") },
-		print_statement_chevron: { "1": field("chevron") },
 		set: { "1": field("elements") },
-		set_comprehension: { "2": field("comprehension_clauses") },
-		string_content: { "0/0": alias(sym("escape_interpolation"), sym("escape_string_literal")), "0/1": alias(sym("escape_sequence"), sym("escape_string_literal")) },
+		string_content: { "0/0/0": alias(sym("escape_interpolation"), sym("escape_string_literal")), "0/0/1": alias(sym("escape_sequence"), sym("escape_string_literal")) },
 		subscript: { "0": field("object") },
 		try_statement: { "3": field("handlers"), "4/0": field("alternative"), "5/0": field("finalizer") },
 		type_parameter: { "1": field("types") },

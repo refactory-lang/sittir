@@ -8161,7 +8161,7 @@ export interface MatchBlock {
 		readonly $flat: FlatHint<
 			'matchBlockArms',
 			T.MatchBlockArms,
-			{ readonly matchArms: 'matchArms'; readonly lastArm: 'lastArm' },
+			{ readonly arms: 'arms'; readonly lastArm: 'lastArm' },
 			true,
 			'_match_block_arms'
 		>;
@@ -11639,13 +11639,13 @@ export interface TypeArgument {
 
 export interface MatchBlockArms {
 	readonly $type: TSKindId.MatchBlockArms;
-	readonly _match_arm: readonly MatchArm[];
+	readonly _arms: readonly MatchArm[];
 	readonly _last_arm: LastMatchArm;
 	readonly __slotHints__?: {
-		readonly matchArms: SlotHint<T.MatchArm[], true, true>;
+		readonly arms: SlotHint<T.MatchArm[], true, true>;
 		readonly lastArm: SlotHint<T.LastMatchArm>;
 	};
-	matchArms(): readonly MatchArm[];
+	arms(): readonly MatchArm[];
 	lastArm(): LastMatchArm;
 }
 
@@ -15274,14 +15274,14 @@ export namespace MatchBlockArms {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
-			readonly before?: LayoutKindId;
-			readonly matchArm?: {
+			readonly arms?: {
 				readonly end?: LayoutKindId;
 				readonly matchArmBlockEnding?: { readonly after?: LayoutKindId };
 				readonly matchArmWithComma?: { readonly after?: LayoutKindId };
 				readonly separator?: WhitespaceKindId;
 				readonly start?: LayoutKindId;
 			};
+			readonly before?: LayoutKindId;
 		};
 	}
 }
@@ -26510,17 +26510,7 @@ export interface RustTypeMap extends GrammarTypeMap {
 		| { readonly node: DelimTokenTreeBrace; readonly empty: EmptyDelimTokenTreeBrace }
 		| { readonly node: DelimTokenTreeBrace.Bound; readonly empty: EmptyDelimTokenTreeBrace }
 		| { readonly node: DelimTokenTreeBrace.Parsed; readonly empty: EmptyDelimTokenTreeBrace.Parsed };
-	readonly trivia:
-		| Blankline
-		| BlockComment
-		| Comment
-		| Dedent
-		| DoubleBlankline
-		| Indent
-		| LineComment
-		| Newline
-		| Space
-		| Tab;
+	readonly trivia: Comment | Layout;
 }
 
 export type NodeMethodsOf = NodeMethods<RustTypeMap['trivia']>;
