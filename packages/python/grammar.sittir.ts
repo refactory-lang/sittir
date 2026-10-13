@@ -415,12 +415,15 @@ export default sittirGrammar(base, {
 		// See docs/python-grammar-sittir-glossary.md::string_content
 		string_content: reauthored('alias-shape', ($) =>
 			prec.right(
-				repeat1(
-					choice(
-						$.escape_interpolation,
-						$.escape_sequence,
-						alias($._not_escape_sequence, $.not_escape_sequence),
-						alias($._string_content, $.string_fragment)
+				field(
+					'elements',
+					repeat1(
+						choice(
+							$.escape_interpolation,
+							$.escape_sequence,
+							alias($._not_escape_sequence, $.not_escape_sequence),
+							alias($._string_content, $.string_fragment)
+						)
 					)
 				)
 			)

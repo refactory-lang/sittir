@@ -4767,22 +4767,6 @@ describe('string_content', () => {
 	});
 });
 
-describe('string_content sub-factories', () => {
-	it('escapeInterpolation builds the escape_interpolation form', () => {
-		const node = ir.stringContent.escapeInterpolation('{{');
-		expect(node.$type).toBe(TSKindId.EscapeInterpolation);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('notEscapeSequence builds the not_escape_sequence form', () => {
-		expect(ir.stringContent.notEscapeSequence).toBe(TSKindId.NotEscapeSequence);
-	});
-	it('stringFragment builds the string_fragment form', () => {
-		const node = ir.stringContent.stringFragment('test');
-		expect(node.$type).toBe(TSKindId.StringFragment);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
 describe('interpolation', () => {
 	it('factory produces correct type', () => {
 		const node = ir.interpolation({

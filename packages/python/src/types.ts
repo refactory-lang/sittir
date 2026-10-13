@@ -4415,9 +4415,9 @@ export interface String {
 
 export interface StringContent {
 	readonly $type: TSKindId.StringContent;
-	readonly _content: NonEmptyArray<EscapeInterpolation | EscapeSequence | TSKindId.NotEscapeSequence | StringFragment>;
+	readonly _elements: NonEmptyArray<EscapeInterpolation | EscapeSequence | TSKindId.NotEscapeSequence | StringFragment>;
 	readonly __inputHints__?: {
-		readonly content: NonEmptyArray<
+		readonly elements: NonEmptyArray<
 			| KindEnum<'\\', TSKindId.NotEscapeSequence | TSKindId.Bslash>
 			| EscapeInterpolation
 			| EscapeSequence
@@ -4425,13 +4425,13 @@ export interface StringContent {
 		>;
 	};
 	readonly __slotHints__?: {
-		readonly contents: SlotHint<
+		readonly elements: SlotHint<
 			NonEmptyArray<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>,
 			false,
 			true
 		>;
 	};
-	contents(): NonEmptyArray<EscapeInterpolation | EscapeSequence | TSKindId.NotEscapeSequence | StringFragment>;
+	elements(): NonEmptyArray<EscapeInterpolation | EscapeSequence | TSKindId.NotEscapeSequence | StringFragment>;
 }
 
 export interface Interpolation {

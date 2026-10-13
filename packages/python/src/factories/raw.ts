@@ -4316,9 +4316,9 @@ export function buildStringContent(
 	>
 ): T.StringContent.Bound {
 	_assertNonEmpty(children, 'string_content.children');
-	const _content = rejectBareText(
+	const _elements = rejectBareText(
 		children,
-		'StringContent.content',
+		'StringContent.elements',
 		'buildEscapeInterpolation(…) / buildStringFragment(…)'
 	);
 	const handle = currentHandle();
@@ -4326,15 +4326,15 @@ export function buildStringContent(
 		$type: TSKindId.StringContent as const,
 		$source: 2 as const,
 		$named: true as const,
-		_content,
+		_elements,
 		$with: {
-			contents: (
+			elements: (
 				...vs: NonEmptyArray<
 					Admit<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>
 				>
-			) => rebuilt(node, handle, () => buildStringContent(...restItems('contents', vs)))
+			) => rebuilt(node, handle, () => buildStringContent(...restItems('elements', vs)))
 		},
-		contents: () => hydrateStoredSlots(node, '_content'),
+		elements: () => hydrateStoredSlots(node, '_elements'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),

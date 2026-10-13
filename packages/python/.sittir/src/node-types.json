@@ -3874,28 +3874,29 @@
   {
     "type": "string_content",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "escape_interpolation",
-          "named": true
-        },
-        {
-          "type": "escape_sequence",
-          "named": true
-        },
-        {
-          "type": "not_escape_sequence",
-          "named": true
-        },
-        {
-          "type": "string_fragment",
-          "named": true
-        }
-      ]
+    "fields": {
+      "elements": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "escape_interpolation",
+            "named": true
+          },
+          {
+            "type": "escape_sequence",
+            "named": true
+          },
+          {
+            "type": "not_escape_sequence",
+            "named": true
+          },
+          {
+            "type": "string_fragment",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {

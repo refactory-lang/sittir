@@ -5380,7 +5380,7 @@ export function coerceToString(input: T.String.Loose): ReturnType<typeof F.build
 export function coerceToStringContent(...input: T.StringContent.LooseArgs): ReturnType<typeof F.buildStringContent> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringContent)) {
 		const data = input[0];
-		const stored = (data as unknown as { _content?: unknown })._content;
+		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildStringContent(
 			...(coerceMixedEnumStorage(
@@ -5399,8 +5399,8 @@ export function coerceToStringContent(...input: T.StringContent.LooseArgs): Retu
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
 		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('content' in head)) return input;
-		const v = (head as Record<string, unknown>)['content'];
+		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('elements' in head)) return input;
+		const v = (head as Record<string, unknown>)['elements'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildStringContent(

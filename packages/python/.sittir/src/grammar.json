@@ -5531,37 +5531,44 @@
       "type": "PREC_RIGHT",
       "value": 0,
       "content": {
-        "type": "REPEAT1",
+        "type": "FIELD",
+        "name": "elements",
         "content": {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "escape_interpolation"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "escape_sequence"
-            },
-            {
-              "type": "ALIAS",
-              "content": {
+          "type": "REPEAT1",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
                 "type": "SYMBOL",
-                "name": "_not_escape_sequence"
+                "name": "escape_interpolation"
               },
-              "named": true,
-              "value": "not_escape_sequence"
-            },
-            {
-              "type": "ALIAS",
-              "content": {
+              {
                 "type": "SYMBOL",
-                "name": "_string_content"
+                "name": "escape_sequence"
               },
-              "named": true,
-              "value": "string_fragment"
-            }
-          ]
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_not_escape_sequence"
+                },
+                "named": true,
+                "value": "not_escape_sequence"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_string_content"
+                },
+                "named": true,
+                "value": "string_fragment"
+              }
+            ]
+          }
+        },
+        "metadata": {
+          "fieldSource": "override"
         }
       }
     },

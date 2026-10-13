@@ -3745,7 +3745,7 @@
 	"string_content": [
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "elements"
 		}
 	],
 	"subjects": [

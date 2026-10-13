@@ -730,26 +730,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['contents', { fields: ['content'], kinds: [] }],
 		['stringEnd', { fields: ['string_end'], kinds: [] }]
 	],
-	248: [
-		[
-			'contents',
-			{
-				fields: [],
-				kinds: [
-					'escape_interpolation',
-					'escape_sequence_unicode_fixed',
-					'escape_sequence_unicode_wide',
-					'escape_sequence_hex',
-					'escape_sequence_octal',
-					'escape_sequence_line_break',
-					'escape_sequence_simple',
-					'escape_sequence_named',
-					'not_escape_sequence',
-					'string_fragment'
-				]
-			}
-		]
-	],
+	248: [['elements', { fields: ['elements'], kinds: [] }]],
 	249: [
 		['expression', { fields: ['expression'], kinds: [] }],
 		['debug', { fields: ['debug'], kinds: [] }],

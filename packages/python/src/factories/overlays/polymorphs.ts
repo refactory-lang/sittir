@@ -3503,17 +3503,6 @@ export const type = Object.freeze({
 	};
 };
 
-export const stringContent = Object.freeze({
-	...B.stringContent,
-	escapeInterpolation: F.buildEscapeInterpolation,
-	notEscapeSequence: F.buildNotEscapeSequence,
-	stringFragment: F.buildStringFragment
-}) as unknown as typeof B.stringContent & {
-	escapeInterpolation: typeof F.buildEscapeInterpolation;
-	notEscapeSequence: typeof F.buildNotEscapeSequence;
-	stringFragment: typeof F.buildStringFragment;
-};
-
 export const simpleStatement: {
 	readonly futureImport: typeof futureImportStatement;
 	readonly import: typeof B.importStatement;

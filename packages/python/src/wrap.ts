@@ -3473,16 +3473,16 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 	const node = {
 		...data,
 		$type: TSKindId.StringContent as const,
-		contents() {
+		elements() {
 			return hydrateSlots<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>(
 				this,
-				'_content',
+				'_elements',
 				tree
 			);
 		},
 		$with: {
-			contents: (...v: NonEmptyArray<NonNullable<T.StringContent['_content']>[number]>) =>
-				rebuilt(node, handle, () => wrapStringContent({ ...$edited(data), _content: restItems('contents', v) }, tree))
+			elements: (...v: NonEmptyArray<NonNullable<T.StringContent['_elements']>[number]>) =>
+				rebuilt(node, handle, () => wrapStringContent({ ...$edited(data), _elements: restItems('elements', v) }, tree))
 		},
 		$render: () => renderText(handle, node),
 		$trivia: {

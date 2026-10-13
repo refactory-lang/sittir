@@ -207,15 +207,6 @@
         "member_type": "member_type"
       }
     },
-    "string_content": {
-      "definedBy": "override",
-      "childKind": {
-        "escape_interpolation": "escape_interpolation",
-        "escape_sequence": "escape_sequence",
-        "not_escape_sequence": "not_escape_sequence",
-        "string_fragment": "string_fragment"
-      }
-    },
     "print_statement_chevron": {
       "definedBy": "override",
       "childKind": {
@@ -1746,7 +1737,7 @@
       }
     },
     "string_content": {
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -7376,12 +7367,6 @@
       "builderPath": [
         "escapeInterpolation"
       ],
-      "builderPathAlternates": [
-        [
-          "stringContent",
-          "escapeInterpolation"
-        ]
-      ],
       "hidden": false,
       "pattern": "\\{\\{|\\}\\}",
       "leafPattern": "/^(?:(?:\\{\\{|\\}\\}))$/u",
@@ -12940,12 +12925,6 @@
       "builderPath": [
         "notEscapeSequence"
       ],
-      "builderPathAlternates": [
-        [
-          "stringContent",
-          "notEscapeSequence"
-        ]
-      ],
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"\\\\\" as const",
@@ -15339,9 +15318,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -15382,7 +15361,7 @@
       ],
       "factoryShape": "spread",
       "factoryFields": [
-        "content"
+        "elements"
       ]
     },
     {
@@ -15408,12 +15387,6 @@
       "irKey": "stringFragment",
       "builderPath": [
         "stringFragment"
-      ],
-      "builderPathAlternates": [
-        [
-          "stringContent",
-          "stringFragment"
-        ]
       ],
       "hidden": false,
       "pattern": "[\\s\\S]+",
