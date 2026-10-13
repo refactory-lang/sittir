@@ -76,6 +76,7 @@ import type * as syntacticMetaprogramming from './features/syntactic-metaprogram
 import type * as tuples from './features/tuples/index.ts';
 import type * as typeAliases from './features/type-aliases/index.ts';
 import type * as typeAnnotations from './features/type-annotations/index.ts';
+import type * as typeOnlyImports from './features/modules/type-only-imports/index.ts';
 import type * as typeclasses from './features/open-type-extension/typeclasses/index.ts';
 import type * as unsafeCode from './features/unsafe-code/index.ts';
 import type * as untaggedUnions from './features/untagged-unions/index.ts';
@@ -2562,7 +2563,9 @@ declare module './statement.ts' {
 		}
 		interface Debugger<G extends GrammarContext<G>> extends debuggerStatements.Statement.Debugger<G> {}
 		interface Exec<G extends GrammarContext<G>> extends execStatements.Statement.Exec<G> {}
-		interface Export<G extends GrammarContext<G>> extends modules.Statement.Export<G> {}
+		interface Export<G extends GrammarContext<G>> extends modules.Statement.Export<G> {
+			readonly typeOnly?: gate.In<G, features.TypeOnlyImports, typeOnlyImports.Statement.Export<G>['typeOnly']>;
+		}
 		namespace Export {
 			interface All<G extends GrammarContext<G>> extends modules.Statement.Export.All<G> {}
 			interface Default<G extends GrammarContext<G>> extends modules.Statement.Export.Default<G> {}
@@ -2572,7 +2575,9 @@ declare module './statement.ts' {
 				| V.Statement.Export.Default<G>;
 		}
 		interface Global<G extends GrammarContext<G>> extends scopeDeclarations.Statement.Global<G> {}
-		interface Import<G extends GrammarContext<G>> extends modules.Statement.Import<G> {}
+		interface Import<G extends GrammarContext<G>> extends modules.Statement.Import<G> {
+			readonly typeOnly?: gate.In<G, features.TypeOnlyImports, typeOnlyImports.Statement.Import<G>['typeOnly']>;
+		}
 		namespace Import {
 			interface Crate<G extends GrammarContext<G>> extends modules.Statement.Import.Crate<G> {}
 			namespace Crate {
@@ -2607,7 +2612,6 @@ declare module './statement.ts' {
 					| V.Statement.Import.Public.Internal<G>
 					| V.Statement.Import.Public.Restricted<G>;
 			}
-			interface Type<G extends GrammarContext<G>> extends modules.Statement.Import.Type<G> {}
 			interface Typeof<G extends GrammarContext<G>> extends modules.Statement.Import.Typeof<G> {}
 			type Any<G extends GrammarContext<G>> =
 				| V.Statement.Import<G>
@@ -2622,7 +2626,6 @@ declare module './statement.ts' {
 				| V.Statement.Import.Public<G>
 				| V.Statement.Import.Public.Internal<G>
 				| V.Statement.Import.Public.Restricted<G>
-				| V.Statement.Import.Type<G>
 				| V.Statement.Import.Typeof<G>;
 		}
 		interface Labeled<G extends GrammarContext<G>> extends labeledControlFlow.Statement.Labeled<G> {}
@@ -2689,7 +2692,6 @@ declare module './statement.ts' {
 			| V.Statement.Import.Public<G>
 			| V.Statement.Import.Public.Internal<G>
 			| V.Statement.Import.Public.Restricted<G>
-			| V.Statement.Import.Type<G>
 			| V.Statement.Import.Typeof<G>
 			| V.Statement.Labeled<G>
 			| V.Statement.Loop<G>

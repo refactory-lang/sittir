@@ -130,7 +130,7 @@
 (try_statement handler: (_)? @handlers) @statement.try
 (throw_statement) @statement.throw
 (import_statement) @statement.import
-(import_statement import_clause: "type") @statement.import.type
+(import_statement import_clause: "type" @typeOnly)
 (import_statement import_clause: "typeof") @statement.import.typeof
 (import_statement from_clause: (import_statement_clause_from source: (_) @source))
 (import_statement from_clause: (import_statement_clause_from (import_clause) @importClause))
