@@ -654,7 +654,22 @@ function narrowRef(edit: LeadEdit, ref: unknown, admits: readonly LeadMatch[], s
 		}
 		return rewrap(ref, { ...node, name: edit.mint(name, side, narrowed) });
 	}
+	const inside = admittedInside(edit, ref, new Set(admits.map((m) => m.kind)));
+	if (inside !== undefined) throw new LeadRefusal(`'${inside}' sits where the split cannot divide it`);
 	return side.lead ? undefined : ref;
+}
+
+function admittedInside(edit: LeadEdit, rule: unknown, admitted: ReadonlySet<string>, path: readonly string[] = []): string | undefined {
+	if (Array.isArray(rule)) return rule.map((r) => admittedInside(edit, r, admitted, path)).find((kind) => kind !== undefined);
+	if (!isRecord(rule)) return undefined;
+	const kind = refKind(rule);
+	if (kind !== undefined) return admitted.has(kind) ? kind : undefined;
+	if (rule.type === 'TOKEN' || rule.type === 'IMMEDIATE_TOKEN') return undefined;
+	if (rule.type === 'SYMBOL') {
+		const name = rule.name as string;
+		return name in edit.rules && !path.includes(name) ? admittedInside(edit, edit.rules[name], admitted, [...path, name]) : undefined;
+	}
+	return admittedInside(edit, rule.members, admitted, path) ?? admittedInside(edit, rule.content, admitted, path);
 }
 
 function narrowWithin(edit: LeadEdit, kind: string, body: unknown, within: LeadWithin, side: LeadSide, exclusive: boolean): unknown {
@@ -801,36 +816,22 @@ const NO_POSITIONS: ItemPositions = { counts: new Map(), holders: new Map() };
 function itemPositions(item: unknown, rules: GrammarRecord, supertypes: ReadonlySet<string>, reach: ReadonlySet<string>): ItemPositions {
 	const counts = new Map<string, number>();
 	const holders = new Map<string, Set<string>>();
-	const cyclic = new Set<string>();
 	const expands = (name: string): boolean => name in rules && (reach.has(name) || (isParserHiddenName(name) && !supertypes.has(name)));
-	const walk = (node: unknown, path: readonly string[], times: number, holder: string): void => {
-		if (Array.isArray(node)) for (const n of node) walk(n, path, times, holder);
+	const walk = (node: unknown, path: readonly string[], holder: string): void => {
+		if (Array.isArray(node)) for (const n of node) walk(n, path, holder);
 		else if (isRecord(node)) {
 			if (node.type === 'SYMBOL' && typeof node.name === 'string') {
 				const name = node.name;
-				counts.set(name, (counts.get(name) ?? 0) + times);
+				counts.set(name, (counts.get(name) ?? 0) + 1);
 				(holders.get(name) ?? holders.set(name, new Set()).get(name)!).add(holder);
-				if (!expands(name)) return;
-				if (path.includes(name)) cyclic.add(name);
-				else walk(rules[name], [...path, name], times, name);
+				if (expands(name) && !path.includes(name)) walk(rules[name], [...path, name], name);
 				return;
 			}
-			const repeated = node.type === 'REPEAT' || node.type === 'REPEAT1' ? 2 : 1;
-			walk(node.members, path, times * repeated, holder);
-			walk(node.content, path, times * repeated, holder);
+			walk(node.members, path, holder);
+			walk(node.content, path, holder);
 		}
 	};
-	walk(item, [], 1, 'the list item');
-	const recurring = new Set<string>();
-	const under = (name: string): void => {
-		for (const ref of symbolNames(rules[name])) {
-			if (recurring.has(ref)) continue;
-			recurring.add(ref);
-			if (expands(ref)) under(ref);
-		}
-	};
-	for (const rule of cyclic) under(rule);
-	for (const name of recurring) counts.set(name, (counts.get(name) ?? 0) + 1);
+	walk(item, [], 'the list item');
 	return { counts, holders };
 }
 

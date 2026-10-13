@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { lead, leadGrammar, leadIssue, LeadRefusal, match, type GrammarRecord } from '../bind.ts';
+import { lead, leadGrammar, leadIssue, LeadRefusal, match, type GrammarRecord, type Lead } from '../bind.ts';
 
 const BLANK = { type: 'BLANK' };
 const sym = (name: string) => ({ type: 'SYMBOL', name });
@@ -88,6 +88,48 @@ const RUST_LEAD = lead(
 const TS_LEAD = lead('formal_parameters_elements', 'item', 'receiver', match('required_parameter', { pattern: [match('this')] }, 'this_parameter'));
 
 const rulesOf = (grammar: GrammarRecord) => grammar.rules as Record<string, unknown>;
+
+type Node = { readonly type: string; readonly [key: string]: unknown };
+
+function language(rules: Record<string, unknown>, rule: unknown, depth = 0): Set<string> {
+	const node = rule as Node;
+	if (depth > 16) return new Set();
+	const join = (left: Set<string>, right: Set<string>): Set<string> => new Set([...left].flatMap((a) => [...right].map((b) => [a, b].filter(Boolean).join(' '))));
+	const inner = (r: unknown): Set<string> => language(rules, r, depth + 1);
+	switch (node.type) {
+		case 'STRING':
+			return new Set([node.value as string]);
+		case 'PATTERN':
+			return new Set([`<${node.value as string}>`]);
+		case 'BLANK':
+			return new Set(['']);
+		case 'SYMBOL':
+			return inner(rules[node.name as string]);
+		case 'CHOICE':
+			return new Set((node.members as unknown[]).flatMap((m) => [...inner(m)]));
+		case 'OPTIONAL':
+			return new Set(['', ...inner(node.content)]);
+		case 'SEQ':
+			return (node.members as unknown[]).reduce<Set<string>>((acc, m) => join(acc, inner(m)), new Set(['']));
+		case 'REPEAT':
+		case 'REPEAT1': {
+			const once = inner(node.content);
+			return new Set([...(node.type === 'REPEAT' ? [''] : []), ...once, ...join(once, once)]);
+		}
+		default:
+			return inner(node.content);
+	}
+}
+
+const itemOf = (list: unknown): unknown => ((list as { members: { content: unknown }[] }).members[0] as { content: unknown }).content;
+
+function expectPartition(before: GrammarRecord, after: GrammarRecord, list: string, field: string): void {
+	const original = language(rulesOf(before), itemOf(rulesOf(before)[list]));
+	const lead = language(rulesOf(after), itemOf(rulesOf(after)[`_${list}_${field}`]));
+	const rest = language(rulesOf(after), itemOf(rulesOf(after)[list]));
+	expect([...lead].filter((form) => rest.has(form))).toEqual([]);
+	expect(new Set([...lead, ...rest])).toEqual(original);
+}
 
 describe('leadGrammar', () => {
 	it('mints the receiver form, which holds the lead and then the plain list after the separator', () => {
@@ -292,9 +334,14 @@ describe('leadGrammar', () => {
 			expect(leadIssue(beside, [ROW_LEAD])).toBe("'atom' narrows in place, but the item holds it at 2 positions (in _other, row)");
 		});
 
-		it('under a recursive hidden rule', () => {
+		it('under a recursive hidden rule, which is a sequence the split cannot divide', () => {
 			const nested = rows(seq(field('right', sym('_nest'))), { _nest: choice(sym('atom'), seq(str('('), sym('_nest'), str(')'))) });
-			expect(leadIssue(nested, [ROW_LEAD])).toBe("'atom' narrows in place, but the item holds it at 2 positions (in _nest)");
+			expect(leadIssue(nested, [ROW_LEAD])).toBe("'atom' sits where the split cannot divide it");
+		});
+
+		it('inside itself, recursively', () => {
+			const recursive = rows(seq(field('right', sym('atom'))), { atom: field('value', choice(sym('self'), sym('other'), seq(str('('), sym('atom'), str(')')))) });
+			expect(leadIssue(recursive, [ROW_LEAD])).toBe("'atom' narrows in place, but the item holds it at 2 positions (in atom, row)");
 		});
 
 		it('in the item of a lead applied before it', () => {
@@ -314,6 +361,33 @@ describe('leadGrammar', () => {
 			];
 			expect(leadIssue(twoLists, leads)).toBe("'parameter' narrows in place, but the lead on 'method_params' holds it in its item");
 		});
+	});
+
+	describe('partitions the item\'s language exactly: the lead and the rest are disjoint, and together the original item', () => {
+		const cases: readonly [string, () => GrammarRecord, Lead][] = [
+			['rust', () => rust(), RUST_LEAD],
+			['rust, OPTIONAL spelling', () => rust(optional), RUST_LEAD],
+			['typescript', () => typescript(), TS_LEAD],
+			['a field beside another of one hidden rule', () => named(seq(field('qualifier', sym('_name')), str(':'), field('name', sym('_name')))), NAMED_LEAD],
+			['a field whose hidden rule narrows in place', () => named(seq(str('x:'), field('name', sym('_name')))), NAMED_LEAD],
+			['alternatives without the position', () => named(choice(seq(field('name', sym('_name')), str(':')), str('...'))), NAMED_LEAD],
+			['an optional position', () => named(seq(blankChoice(field('name', sym('_name'))), str(':'))), NAMED_LEAD]
+		];
+		it.each(cases)('%s', (_, grammar, entry) => {
+			expectPartition(grammar(), leadGrammar(grammar(), [entry]), entry.list, entry.field);
+		});
+	});
+
+	it('refuses an admitted kind inside a hidden sequence, which the split cannot divide', () => {
+		const prefixed = {
+			...named(field('name', sym('_name'))),
+			rules: {
+				...rulesOf(named(field('name', sym('_name')))),
+				_name: choice(sym('self'), sym('_prefixed_self'), sym('other')),
+				_prefixed_self: seq(blankChoice(str('&')), sym('self'))
+			}
+		};
+		expect(leadIssue(prefixed, [NAMED_LEAD])).toBe("'self' sits where the split cannot divide it");
 	});
 
 	it('leaves a grammar with no leads as it is', () => {
