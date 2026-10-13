@@ -810,8 +810,8 @@ export const querySlots: QuerySlots = Object.freeze({
 		['value', { fields: ['value'], kinds: [] }],
 		['alias', { fields: ['alias'], kinds: [] }]
 	],
-	273: [['listPatternCasePatterns', { fields: [], kinds: ['list_pattern_case_patterns'] }]],
-	274: [['listPatternCasePatterns', { fields: [], kinds: ['list_pattern_case_patterns'] }]],
+	273: [['elements', { fields: ['elements'], kinds: [] }]],
+	274: [['elements', { fields: ['elements'], kinds: [] }]],
 	275: [['items', { fields: ['item'], kinds: [] }]],
 	276: [['items', { fields: ['item'], kinds: [] }]],
 	277: [

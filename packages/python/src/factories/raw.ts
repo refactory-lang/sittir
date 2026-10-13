@@ -5372,19 +5372,19 @@ export function buildCaseTuplePattern(...args: unknown[]) {
 			);
 }
 function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.CaseTuplePattern.Bound {
-	const _list_pattern_case_patterns = hydrateStored(
-		rejectBareText(value, 'CaseTuplePattern.listPatternCasePatterns', 'a built ListPatternCasePatterns')
+	const _elements = hydrateStored(
+		rejectBareText(value, 'CaseTuplePattern.elements', 'a built ListPatternCasePatterns')
 	);
-	const listView = ownerView(_list_pattern_case_patterns, '_item');
-	if (listView.stored === undefined) refuseReadStub('_list_pattern_case_patterns');
+	const listView = ownerView(_elements, '_item');
+	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CaseTuplePattern as const,
 		$source: 2 as const,
 		$named: true as const,
-		_list_pattern_case_patterns,
+		_elements,
 		$with: {
-			listPatternCasePatterns: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -5393,10 +5393,10 @@ function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.Cas
 					)
 				)
 		},
-		listPatternCasePatterns: () => hydrateStoredSlot(node, '_list_pattern_case_patterns'),
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.listPatternCasePatterns(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -5443,19 +5443,17 @@ export function buildCaseListPattern(...args: unknown[]) {
 			);
 }
 function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.CaseListPattern.Bound {
-	const _list_pattern_case_patterns = hydrateStored(
-		rejectBareText(value, 'CaseListPattern.listPatternCasePatterns', 'a built ListPatternCasePatterns')
-	);
-	const listView = ownerView(_list_pattern_case_patterns, '_item');
-	if (listView.stored === undefined) refuseReadStub('_list_pattern_case_patterns');
+	const _elements = hydrateStored(rejectBareText(value, 'CaseListPattern.elements', 'a built ListPatternCasePatterns'));
+	const listView = ownerView(_elements, '_item');
+	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CaseListPattern as const,
 		$source: 2 as const,
 		$named: true as const,
-		_list_pattern_case_patterns,
+		_elements,
 		$with: {
-			listPatternCasePatterns: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -5464,10 +5462,10 @@ function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.Case
 					)
 				)
 		},
-		listPatternCasePatterns: () => hydrateStoredSlot(node, '_list_pattern_case_patterns'),
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.listPatternCasePatterns(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

@@ -18422,9 +18422,9 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionAsTransport {
 pub struct CaseTuplePatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_list_pattern_case_patterns")]
-    #[slot]
-    pub list_pattern_case_patterns: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS)]
+    pub elements: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for CaseTuplePatternTransport {
@@ -18451,7 +18451,7 @@ impl ::sittir_core::prepare::Prepare for CaseTuplePatternTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.list_pattern_case_patterns.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -18473,9 +18473,9 @@ impl ::sittir_core::prepare::Prepare for CaseTuplePatternTransport {
 pub struct CaseListPatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_list_pattern_case_patterns")]
-    #[slot]
-    pub list_pattern_case_patterns: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS)]
+    pub elements: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for CaseListPatternTransport {
@@ -18502,7 +18502,7 @@ impl ::sittir_core::prepare::Prepare for CaseListPatternTransport {
         let flank = self.layout.take_flank();
         ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.list_pattern_case_patterns.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
     fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
@@ -27341,12 +27341,12 @@ fn render_except_clause_exception_as(node: &ExceptClauseExceptionAsTransport, w:
 }
 
 fn render_case_tuple_pattern(node: &CaseTuplePatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let list_pattern_case_patterns = View::new(&node.list_pattern_case_patterns, "{}");
+    let elements = View::new(&node.elements, "{}");
     w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_CASE_TUPLE_PATTERN_LPAREN_AFTER);
     ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_list_pattern_case_patterns", 0, w, |w| list_pattern_case_patterns.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", 0, w, |w| elements.render(w))?;
     w.site_at(options::SITE_CASE_TUPLE_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -27354,12 +27354,12 @@ fn render_case_tuple_pattern(node: &CaseTuplePatternTransport, w: &mut dyn ::sit
 }
 
 fn render_case_list_pattern(node: &CaseListPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let list_pattern_case_patterns = View::new(&node.list_pattern_case_patterns, "{}");
+    let elements = View::new(&node.elements, "{}");
     w.edge(::sittir_core::types::KindId(274), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_CASE_LIST_PATTERN_LBRACK_AFTER);
     ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_list_pattern_case_patterns", 0, w, |w| list_pattern_case_patterns.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", 0, w, |w| elements.render(w))?;
     w.site_at(options::SITE_CASE_LIST_PATTERN_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(274), ::sittir_core::options::Side::After, node.layout.edges().after);

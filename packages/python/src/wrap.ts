@@ -4053,27 +4053,27 @@ export function wrapExceptClauseExceptionAs(
 
 export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle): T.CaseTuplePattern.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._list_pattern_case_patterns, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.CaseTuplePattern as const,
-		listPatternCasePatterns() {
-			return hydrateSlot<T.ListPatternCasePatterns | undefined>(this, '_list_pattern_case_patterns', tree);
+		elements() {
+			return hydrateSlot<T.ListPatternCasePatterns | undefined>(this, '_elements', tree);
 		},
 		$with: {
-			listPatternCasePatterns: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: RAW.buildListPatternCasePatterns },
-						(v: NonNullable<T.CaseTuplePattern['_list_pattern_case_patterns']>) =>
-							wrapCaseTuplePattern({ ...$edited(data), _list_pattern_case_patterns: v }, tree)
+						(v: NonNullable<T.CaseTuplePattern['_elements']>) =>
+							wrapCaseTuplePattern({ ...$edited(data), _elements: v }, tree)
 					)
 				)
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.listPatternCasePatterns(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -4095,27 +4095,27 @@ export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle)
 
 export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle): T.CaseListPattern.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(data._list_pattern_case_patterns, '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(data._elements, '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.CaseListPattern as const,
-		listPatternCasePatterns() {
-			return hydrateSlot<T.ListPatternCasePatterns | undefined>(this, '_list_pattern_case_patterns', tree);
+		elements() {
+			return hydrateSlot<T.ListPatternCasePatterns | undefined>(this, '_elements', tree);
 		},
 		$with: {
-			listPatternCasePatterns: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: RAW.buildListPatternCasePatterns },
-						(v: NonNullable<T.CaseListPattern['_list_pattern_case_patterns']>) =>
-							wrapCaseListPattern({ ...$edited(data), _list_pattern_case_patterns: v }, tree)
+						(v: NonNullable<T.CaseListPattern['_elements']>) =>
+							wrapCaseListPattern({ ...$edited(data), _elements: v }, tree)
 					)
 				)
 		},
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.listPatternCasePatterns(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,

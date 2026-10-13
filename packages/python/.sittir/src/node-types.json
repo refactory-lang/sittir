@@ -1146,16 +1146,17 @@
   {
     "type": "case_list_pattern",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "list_pattern_case_patterns",
-          "named": true
-        }
-      ]
+    "fields": {
+      "elements": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "list_pattern_case_patterns",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -1200,16 +1201,17 @@
   {
     "type": "case_tuple_pattern",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "list_pattern_case_patterns",
-          "named": true
-        }
-      ]
+    "fields": {
+      "elements": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "list_pattern_case_patterns",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {

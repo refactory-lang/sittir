@@ -1936,7 +1936,7 @@
       }
     },
     "case_tuple_pattern": {
-      "list_pattern_case_patterns": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1945,7 +1945,7 @@
       }
     },
     "case_list_pattern": {
-      "list_pattern_case_patterns": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4903,9 +4903,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "list_pattern_case_patterns",
-          "propertyName": "listPatternCasePatterns",
-          "paramName": "listPatternCasePatterns",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -4926,7 +4926,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "list_pattern_case_patterns",
       "factoryFields": [
-        "list_pattern_case_patterns"
+        "elements"
       ],
       "bareAccepts": [
         "_simple_pattern",
@@ -5091,9 +5091,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "list_pattern_case_patterns",
-          "propertyName": "listPatternCasePatterns",
-          "paramName": "listPatternCasePatterns",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -5114,7 +5114,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "list_pattern_case_patterns",
       "factoryFields": [
-        "list_pattern_case_patterns"
+        "elements"
       ],
       "bareAccepts": [
         "_simple_pattern",

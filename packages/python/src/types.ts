@@ -4685,40 +4685,34 @@ export interface ExceptClauseExceptionAs {
 
 export interface CaseTuplePattern {
 	readonly $type: TSKindId.CaseTuplePattern;
-	readonly _list_pattern_case_patterns?: ListPatternCasePatterns;
+	readonly _elements?: ListPatternCasePatterns;
 	readonly __looseHints__?: {
-		readonly list_pattern_case_patterns?: readonly CasePattern[];
+		readonly elements?: readonly CasePattern[];
 	};
 	readonly __slotHints__?: {
-		readonly listPatternCasePatterns: SlotHint<T.ListPatternCasePatterns, true>;
+		readonly elements: SlotHint<T.ListPatternCasePatterns, true>;
 		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
-			readonly listPatternCasePatterns: ListSlotHint<
-				T.CasePattern,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
-			>;
+			readonly elements: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	listPatternCasePatterns(): ListPatternCasePatterns | undefined;
+	elements(): ListPatternCasePatterns | undefined;
 }
 
 export interface CaseListPattern {
 	readonly $type: TSKindId.CaseListPattern;
-	readonly _list_pattern_case_patterns?: ListPatternCasePatterns;
+	readonly _elements?: ListPatternCasePatterns;
 	readonly __looseHints__?: {
-		readonly list_pattern_case_patterns?: readonly CasePattern[];
+		readonly elements?: readonly CasePattern[];
 	};
 	readonly __slotHints__?: {
-		readonly listPatternCasePatterns: SlotHint<T.ListPatternCasePatterns, true>;
+		readonly elements: SlotHint<T.ListPatternCasePatterns, true>;
 		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
-			readonly listPatternCasePatterns: ListSlotHint<
-				T.CasePattern,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
-			>;
+			readonly elements: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	listPatternCasePatterns(): ListPatternCasePatterns | undefined;
+	elements(): ListPatternCasePatterns | undefined;
 }
 
 export interface PrintArguments {
@@ -9462,7 +9456,7 @@ export interface CaseTuplePatternNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	CaseTuplePattern.Bound,
-	'list_pattern_case_patterns',
+	'elements',
 	TSKindId.CaseTuplePattern,
 	CaseTuplePattern.Parsed,
 	EmptyCaseTuplePattern
@@ -9476,7 +9470,7 @@ export interface CaseListPatternNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	CaseListPattern.Bound,
-	'list_pattern_case_patterns',
+	'elements',
 	TSKindId.CaseListPattern,
 	CaseListPattern.Parsed,
 	EmptyCaseListPattern

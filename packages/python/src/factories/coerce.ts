@@ -6182,9 +6182,9 @@ export function coerceToExceptClauseExceptionAs(
 	});
 }
 
-export function resolveCaseTuplePattern_listPatternCasePatterns(
-	value: T.CaseTuplePattern.LooseConfig['listPatternCasePatterns']
-): Admit<T.CaseTuplePattern['_list_pattern_case_patterns']> {
+export function resolveCaseTuplePattern_elements(
+	value: T.CaseTuplePattern.LooseConfig['elements']
+): Admit<T.CaseTuplePattern['_elements']> {
 	return _resolveOneBranch<T.ListPatternCasePatterns>(value, 'list_pattern_case_patterns', undefined, true);
 }
 
@@ -6203,7 +6203,7 @@ export function coerceToCaseTuplePattern(...args: unknown[]): ReturnType<typeof 
 		return input as unknown as ReturnType<typeof F.buildCaseTuplePattern>;
 	return F.buildCaseTuplePattern(
 		_resolveOneBranch<T.ListPatternCasePatterns>(
-			configFieldOr(input, 'listPatternCasePatterns', () => input),
+			configFieldOr(input, 'elements', () => input),
 			'list_pattern_case_patterns',
 			undefined,
 			true
@@ -6211,9 +6211,9 @@ export function coerceToCaseTuplePattern(...args: unknown[]): ReturnType<typeof 
 	);
 }
 
-export function resolveCaseListPattern_listPatternCasePatterns(
-	value: T.CaseListPattern.LooseConfig['listPatternCasePatterns']
-): Admit<T.CaseListPattern['_list_pattern_case_patterns']> {
+export function resolveCaseListPattern_elements(
+	value: T.CaseListPattern.LooseConfig['elements']
+): Admit<T.CaseListPattern['_elements']> {
 	return _resolveOneBranch<T.ListPatternCasePatterns>(value, 'list_pattern_case_patterns', undefined, true);
 }
 
@@ -6232,7 +6232,7 @@ export function coerceToCaseListPattern(...args: unknown[]): ReturnType<typeof F
 		return input as unknown as ReturnType<typeof F.buildCaseListPattern>;
 	return F.buildCaseListPattern(
 		_resolveOneBranch<T.ListPatternCasePatterns>(
-			configFieldOr(input, 'listPatternCasePatterns', () => input),
+			configFieldOr(input, 'elements', () => input),
 			'list_pattern_case_patterns',
 			undefined,
 			true

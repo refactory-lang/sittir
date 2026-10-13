@@ -542,11 +542,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "list_pattern_case_patterns",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "list_pattern_case_patterns"
+							"name": "elements"
 						}
 					]
 				}
@@ -594,11 +594,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "list_pattern_case_patterns",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "list_pattern_case_patterns"
+							"name": "elements"
 						}
 					]
 				}

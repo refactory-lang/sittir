@@ -431,8 +431,8 @@ export default sittirGrammar(base, {
 
 		// See docs/python-grammar-sittir-glossary.md::format_specifier
 		// See docs/python-grammar-sittir-glossary.md::case_tuple_pattern
-		case_tuple_pattern: vocabulary(($) => seq('(', optional($.list_pattern_case_patterns), ')')),
-		case_list_pattern: vocabulary(($) => seq('[', optional($.list_pattern_case_patterns), ']')),
+		case_tuple_pattern: vocabulary(($) => seq('(', optional(field('elements', $.list_pattern_case_patterns)), ')')),
+		case_list_pattern: vocabulary(($) => seq('[', optional(field('elements', $.list_pattern_case_patterns)), ']')),
 
 		_print_arguments: vocabulary(($) =>
 			seq(field('item', $.expression), repeat(seq(',', field('item', $.expression))), optional(','))
