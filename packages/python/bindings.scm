@@ -208,7 +208,7 @@
 (escape_interpolation) @literal.string.escape
 (string_fragment) @literal.string.text
 (concatenated_string) @literal.string.concatenated
-((string (string_start) @_p) @literal.string.f (#match? @_p "^[fF]"))
+((string (string_start) @_p) @literal.string.interpolated (#match? @_p "^[fF]"))
 ((string (string_start) @_p) @literal.string.bytes (#match? @_p "^[bB]"))
 ((string (string_start) @_p) @literal.string.raw (#match? @_p "^[rR]"))
 ((string (string_start) @_p) @literal.string.triple (#match? @_p "\"\"\"|'''"))

@@ -1288,9 +1288,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		readonly 'literal.string.raw': {
 			readonly content: unknown;
 		};
-		readonly 'literal.template': {
-			readonly elements: unknown | V.Expression.Interpolation<G> | V.Literal.String.Escape<G>;
-		};
 		readonly module: {
 			readonly statements:
 				| G['attribute']
@@ -1748,7 +1745,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly indexType: G['identifier'] | G['type'];
 			readonly type: G['identifier'] | G['type'];
 		};
-		readonly 'type.maybe': {
+		readonly 'type.nullable': {
 			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'type.object': {

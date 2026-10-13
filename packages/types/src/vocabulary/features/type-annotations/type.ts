@@ -116,11 +116,6 @@ export namespace Type {
 		readonly indexType: G['slots']['type.lookup']['indexType'];
 		readonly type: G['slots']['type.lookup']['type'];
 	}
-	export interface Maybe<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
-		// claimed by t
-		readonly $kind: 'type.maybe';
-		readonly type: G['slots']['type.maybe']['type'];
-	}
 	export interface Named<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		readonly $kind: 'type.named';
 	}

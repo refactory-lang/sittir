@@ -304,7 +304,7 @@ export interface PortableIds {
 		| TSKindId.EscapeSequenceSimple
 		| TSKindId.EscapeSequenceUnicodeFixed
 		| TSKindId.EscapeSequenceUnicodeWide;
-	'literal.string.f': TSKindId.String;
+	'literal.string.interpolated': TSKindId.String;
 	'literal.string.raw': TSKindId.String;
 	'literal.string.text': TSKindId.StringFragment;
 	'literal.string.triple': TSKindId.String;
@@ -874,7 +874,7 @@ export interface PortableKindsAt {
 		readonly bytes: PortableKindsAt['literal.string.bytes'];
 		readonly concatenated: PortableKindsAt['literal.string.concatenated'];
 		readonly escape: PortableKindsAt['literal.string.escape'];
-		readonly f: PortableKindsAt['literal.string.f'];
+		readonly interpolated: PortableKindsAt['literal.string.interpolated'];
 		readonly raw: PortableKindsAt['literal.string.raw'];
 		readonly text: PortableKindsAt['literal.string.text'];
 		readonly triple: PortableKindsAt['literal.string.triple'];
@@ -882,7 +882,7 @@ export interface PortableKindsAt {
 	'literal.string.bytes': { readonly $ids: readonly PortableIds['literal.string.bytes'][] };
 	'literal.string.concatenated': { readonly $ids: readonly PortableIds['literal.string.concatenated'][] };
 	'literal.string.escape': { readonly $ids: readonly PortableIds['literal.string.escape'][] };
-	'literal.string.f': { readonly $ids: readonly PortableIds['literal.string.f'][] };
+	'literal.string.interpolated': { readonly $ids: readonly PortableIds['literal.string.interpolated'][] };
 	'literal.string.raw': { readonly $ids: readonly PortableIds['literal.string.raw'][] };
 	'literal.string.text': { readonly $ids: readonly PortableIds['literal.string.text'][] };
 	'literal.string.triple': { readonly $ids: readonly PortableIds['literal.string.triple'][] };
@@ -1364,7 +1364,7 @@ export interface PortableIsAt {
 		readonly bytes: PortableIsAt['literal.string.bytes'];
 		readonly concatenated: PortableIsAt['literal.string.concatenated'];
 		readonly escape: PortableIsAt['literal.string.escape'];
-		readonly f: PortableIsAt['literal.string.f'];
+		readonly interpolated: PortableIsAt['literal.string.interpolated'];
 		readonly raw: PortableIsAt['literal.string.raw'];
 		readonly text: PortableIsAt['literal.string.text'];
 		readonly triple: PortableIsAt['literal.string.triple'];
@@ -1372,7 +1372,7 @@ export interface PortableIsAt {
 	'literal.string.bytes': PortableGuard<PortableIds['literal.string.bytes']> & {};
 	'literal.string.concatenated': PortableGuard<PortableIds['literal.string.concatenated']> & {};
 	'literal.string.escape': PortableGuard<PortableIds['literal.string.escape']> & {};
-	'literal.string.f': PortableGuard<PortableIds['literal.string.f']> & {};
+	'literal.string.interpolated': PortableGuard<PortableIds['literal.string.interpolated']> & {};
 	'literal.string.raw': PortableGuard<PortableIds['literal.string.raw']> & {};
 	'literal.string.text': PortableGuard<PortableIds['literal.string.text']> & {};
 	'literal.string.triple': PortableGuard<PortableIds['literal.string.triple']> & {};
@@ -1875,7 +1875,7 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
-		'literal.string.f': { ids: [TSKindId.String], exact: false },
+		'literal.string.interpolated': { ids: [TSKindId.String], exact: false },
 		'literal.string.raw': { ids: [TSKindId.String], exact: false },
 		'literal.string.text': { ids: [TSKindId.StringFragment], exact: true },
 		'literal.string.triple': { ids: [TSKindId.String], exact: false },
@@ -2532,7 +2532,7 @@ const table: PortableTable = {
 		[TSKindId.SplatType]: [{ path: 'type.splat', within: [], test: [] }],
 		[TSKindId.String]: [
 			{
-				path: 'literal.string.f',
+				path: 'literal.string.interpolated',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[fF]', fields: ['string_start'], kinds: [] } }]
 			},

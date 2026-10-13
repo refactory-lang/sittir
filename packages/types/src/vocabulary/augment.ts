@@ -53,6 +53,7 @@ import type * as multipleInheritance from './features/methods/classes/multiple-i
 import type * as multiwayBranch from './features/multiway-branch/index.ts';
 import type * as namedArguments from './features/named-arguments/index.ts';
 import type * as nonNullAssertions from './features/type-annotations/nullable-types/non-null-assertions/index.ts';
+import type * as nullableTypes from './features/type-annotations/nullable-types/index.ts';
 import type * as openTypeExtension from './features/open-type-extension/index.ts';
 import type * as optionalChaining from './features/optional-chaining/index.ts';
 import type * as optionalMembers from './features/type-annotations/optional-members/index.ts';
@@ -2347,19 +2348,18 @@ declare module './literal.ts' {
 		}
 		namespace String {
 			interface Bytes<G extends GrammarContext<G>> extends byteStrings.Literal.String.Bytes<G> {}
-			interface F<G extends GrammarContext<G>> extends stringInterpolation.Literal.String.F<G> {}
+			interface Interpolated<G extends GrammarContext<G>> extends stringInterpolation.Literal.String.Interpolated<G> {}
 			interface Raw<G extends GrammarContext<G>> extends rawStrings.Literal.String.Raw<G> {}
 			type Any<G extends GrammarContext<G>> =
 				| V.Literal.String<G>
 				| V.Literal.String.Bytes<G>
 				| V.Literal.String.Concatenated<G>
 				| V.Literal.String.Escape<G>
-				| V.Literal.String.F<G>
+				| V.Literal.String.Interpolated<G>
 				| V.Literal.String.Raw<G>
 				| V.Literal.String.Text<G>
 				| V.Literal.String.Triple<G>;
 		}
-		interface Template<G extends GrammarContext<G>> extends stringInterpolation.Literal.Template<G> {}
 		type Any<G extends GrammarContext<G>> =
 			| V.Literal<G>
 			| V.Literal.Boolean<G>
@@ -2390,11 +2390,10 @@ declare module './literal.ts' {
 			| V.Literal.String.Bytes<G>
 			| V.Literal.String.Concatenated<G>
 			| V.Literal.String.Escape<G>
-			| V.Literal.String.F<G>
+			| V.Literal.String.Interpolated<G>
 			| V.Literal.String.Raw<G>
 			| V.Literal.String.Text<G>
-			| V.Literal.String.Triple<G>
-			| V.Literal.Template<G>;
+			| V.Literal.String.Triple<G>;
 	}
 }
 
@@ -2793,12 +2792,12 @@ declare module './type.ts' {
 		interface Intersection<G extends GrammarContext<G>> extends typeAnnotations.Type.Intersection<G> {}
 		interface Literal<G extends GrammarContext<G>> extends typeAnnotations.Type.Literal<G> {}
 		interface Lookup<G extends GrammarContext<G>> extends typeAnnotations.Type.Lookup<G> {}
-		interface Maybe<G extends GrammarContext<G>> extends typeAnnotations.Type.Maybe<G> {}
 		interface Named<G extends GrammarContext<G>> extends typeAnnotations.Type.Named<G> {}
 		namespace Named {
 			interface Prelude<G extends GrammarContext<G>> extends typeAnnotations.Type.Named.Prelude<G> {}
 			type Any<G extends GrammarContext<G>> = V.Type.Named<G> | V.Type.Named.Prelude<G>;
 		}
+		interface Nullable<G extends GrammarContext<G>> extends nullableTypes.Type.Nullable<G> {}
 		interface Object<G extends GrammarContext<G>> extends typeAnnotations.Type.Object<G> {}
 		interface Optional<G extends GrammarContext<G>> extends typeAnnotations.Type.Optional<G> {}
 		interface Parenthesized<G extends GrammarContext<G>> extends typeAnnotations.Type.Parenthesized<G> {}
@@ -2852,9 +2851,9 @@ declare module './type.ts' {
 			| V.Type.Intersection<G>
 			| V.Type.Literal<G>
 			| V.Type.Lookup<G>
-			| V.Type.Maybe<G>
 			| V.Type.Named<G>
 			| V.Type.Named.Prelude<G>
+			| V.Type.Nullable<G>
 			| V.Type.Object<G>
 			| V.Type.Optional<G>
 			| V.Type.Parenthesized<G>

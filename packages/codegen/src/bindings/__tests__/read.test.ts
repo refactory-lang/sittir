@@ -53,7 +53,7 @@ describe('readBindings', () => {
 		const facts = await readBindings(
 			[
 				'((boolean) @literal.boolean.true (#eq? @literal.boolean.true "true"))',
-				'((string (string_start) @_p) @literal.string.f (#match? @_p "^[fF]"))',
+				'((string (string_start) @_p) @literal.string.interpolated (#match? @_p "^[fF]"))',
 				'((decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.static) (#eq? @_d "staticmethod"))'
 			].join('\n')
 		);

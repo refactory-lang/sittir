@@ -1,3 +1,5 @@
+export type * from './type.ts';
+
 import type { TypeAnnotations } from '../index.ts';
 
 /** Nullable types: a type that admits null. */

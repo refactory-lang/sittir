@@ -5938,7 +5938,7 @@
       "vocab": "literal.string",
       "read": [
         {
-          "vocab": "literal.string.f",
+          "vocab": "literal.string.interpolated",
           "toplevel": true,
           "within": [],
           "pins": [],

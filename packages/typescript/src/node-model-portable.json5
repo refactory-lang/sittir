@@ -4429,10 +4429,10 @@
       }
     },
     "flow_maybe_type": {
-      "vocab": "type.maybe",
+      "vocab": "type.nullable",
       "read": [
         {
-          "vocab": "type.maybe",
+          "vocab": "type.nullable",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -10998,10 +10998,10 @@
       }
     },
     "template_string": {
-      "vocab": "literal.template",
+      "vocab": "literal.string.interpolated",
       "read": [
         {
-          "vocab": "literal.template",
+          "vocab": "literal.string.interpolated",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12344,15 +12344,15 @@
       },
       {
         "depth": 2,
-        "paths": 111,
-        "kinds": 133,
+        "paths": 110,
+        "kinds": 132,
         "refinements": 8
       },
       {
         "depth": 3,
-        "paths": 96,
-        "kinds": 80,
-        "refinements": 68
+        "paths": 97,
+        "kinds": 81,
+        "refinements": 69
       },
       {
         "depth": 4,

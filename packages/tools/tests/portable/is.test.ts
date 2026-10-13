@@ -77,7 +77,7 @@ describe('portable is: python', async () => {
 	it('tests a string prefix through the hidden string_start capture', () => {
 		const [f, fc] = find('f"x"\n', 'string');
 		const [b, bc] = find('b"x"\n', 'string');
-		expect(at('literal.string.f')(f, fc)).toBe(true);
+		expect(at('literal.string.interpolated')(f, fc)).toBe(true);
 		expect(at('literal.string.bytes')(f, fc)).toBe(false);
 		expect(at('literal.string.bytes')(b, bc)).toBe(true);
 	});
@@ -254,6 +254,18 @@ describe('portable is: typescript', async () => {
 	it('reads a double-quoted string\'s fragment as its text', () => {
 		const [fragment, context] = find('let a = "x";\n', 'unescaped_double_string_fragment');
 		expect(at('literal.string.text')(fragment, context)).toBe(true);
+	});
+
+	it('reads a template string as an interpolated string, whether or not it substitutes', () => {
+		const SOURCE = 'let a = `x${y}`;\nlet b = `z`;\nlet c = "w";\n';
+		const strings = [find(SOURCE, 'template_string'), find(SOURCE, 'template_string', undefined, 1), find(SOURCE, 'string_double')];
+		expect(strings.map(([node, context]) => at('literal.string.interpolated')(node, context))).toEqual([true, true, false]);
+		expect(strings.map(([node, context]) => at('literal.string')(node, context))).toEqual([true, true, true]);
+	});
+
+	it('reads a maybe type as a nullable type', () => {
+		const [maybe, context] = find('let a: ?string;\n', 'flow_maybe_type');
+		expect(at('type.nullable')(maybe, context)).toBe(true);
 	});
 
 	it('keeps each path whose last segment a function owns', () => {

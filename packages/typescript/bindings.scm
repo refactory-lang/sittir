@@ -333,13 +333,13 @@
 (index_type_query) @type.index_query
 (asserts) @type.predicate.asserts
 (existential_type) @type.existential
-(flow_maybe_type) @type.maybe
+(flow_maybe_type) @type.nullable
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string) @literal.string
 (escape_sequence) @literal.string.escape
 (string_fragment) @literal.string.text
-(template_string) @literal.template
+(template_string) @literal.string.interpolated
 (regex) @literal.regex
 (number) @literal.number
 (literal_type_negative_number argument: (_) @value) @literal.number.negative
