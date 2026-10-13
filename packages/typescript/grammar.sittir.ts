@@ -679,11 +679,7 @@ export default sittirGrammar(base, {
 				$.index_signature,
 				$.method_signature
 			);
-			return seq(
-				optional(SEP()),
-				seq(field('item', member), repeat(seq(SEP(), field('item', member)))),
-				optional(SEP())
-			);
+			return seq(optional(SEP()), field('item', member), repeat(seq(SEP(), field('item', member))), optional(SEP()));
 		})
 	},
 	renderAs: (_$) => ({
