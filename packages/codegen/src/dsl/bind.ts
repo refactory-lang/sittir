@@ -572,7 +572,8 @@ interface LeadEdit {
 	readonly rules: GrammarRecord;
 	readonly supertypes: ReadonlySet<string>;
 	readonly sites: ReadonlyMap<string, number>;
-	readonly item: unknown;
+	readonly positions: ItemPositions;
+	readonly heldBy: ReadonlyMap<string, string>;
 	readonly reach: Set<string>;
 	readonly mint: (base: string, side: LeadSide, body: unknown) => string;
 }
@@ -621,11 +622,12 @@ function narrowRef(edit: LeadEdit, ref: unknown, admits: readonly LeadMatch[], s
 		const body = narrowWithin(edit, kind, edit.rules[name], admitted.within, side, inPlace);
 		if (side.lead) return aliasOf(edit.mint(name, side, body), admitted.as ?? `${kind}_${side.suffix}`);
 		if (inPlace && !isParserHiddenName(name)) {
-			const holders = reachHolders(edit, name);
-			if (holders.count > 1) throw new LeadRefusal(`'${kind}' narrows in place, but the item holds it at another position too (in ${holders.rules.join(', ')})`);
+			const count = edit.positions.counts.get(name) ?? 0;
+			const holders = [...(edit.positions.holders.get(name) ?? [])].sort();
+			if (count > 1) throw new LeadRefusal(`'${kind}' narrows in place, but the item holds it at ${count} positions (in ${holders.join(', ')})`);
 		}
 		if (inPlace) {
-			edit.rules[name] = body;
+			narrowInPlace(edit, name, body);
 			return ref;
 		}
 		const clone = edit.mint(name, side, body);
@@ -647,7 +649,7 @@ function narrowRef(edit: LeadEdit, ref: unknown, admits: readonly LeadMatch[], s
 		if (narrowed === undefined || narrowed === edit.rules[name]) return narrowed === undefined ? undefined : ref;
 		if (refRule(narrowed) !== undefined) return narrowed;
 		if (inPlace) {
-			edit.rules[name] = narrowed;
+			narrowInPlace(edit, name, narrowed);
 			return ref;
 		}
 		return rewrap(ref, { ...node, name: edit.mint(name, side, narrowed) });
@@ -707,7 +709,7 @@ function narrowWithin(edit: LeadEdit, kind: string, body: unknown, within: LeadW
 			const inner = narrowWithin(edit, kind, edit.rules[name], within, side, inPlace);
 			if (inner === edit.rules[name]) return node;
 			if (inPlace) {
-				edit.rules[name] = inner;
+				narrowInPlace(edit, name, inner);
 				return node;
 			}
 			return { ...node, name: edit.mint(name, side, inner) };
@@ -789,12 +791,53 @@ function referenceSites(rules: GrammarRecord, list: string, listParts: readonly 
 	return sites;
 }
 
-function reachHolders(edit: LeadEdit, name: string): { readonly count: number; readonly rules: readonly string[] } {
-	const held = [['the list item', edit.item] as const, ...[...edit.reach].map((rule) => [rule, edit.rules[rule]] as const)].flatMap(([holder, body]) => {
-		const count = countSymbols(body).get(name) ?? 0;
-		return count === 0 ? [] : [{ holder, count }];
-	});
-	return { count: held.reduce((sum, h) => sum + h.count, 0), rules: held.map((h) => h.holder).sort() };
+interface ItemPositions {
+	readonly counts: ReadonlyMap<string, number>;
+	readonly holders: ReadonlyMap<string, ReadonlySet<string>>;
+}
+
+const NO_POSITIONS: ItemPositions = { counts: new Map(), holders: new Map() };
+
+function itemPositions(item: unknown, rules: GrammarRecord, supertypes: ReadonlySet<string>, reach: ReadonlySet<string>): ItemPositions {
+	const counts = new Map<string, number>();
+	const holders = new Map<string, Set<string>>();
+	const cyclic = new Set<string>();
+	const expands = (name: string): boolean => name in rules && (reach.has(name) || (isParserHiddenName(name) && !supertypes.has(name)));
+	const walk = (node: unknown, path: readonly string[], times: number, holder: string): void => {
+		if (Array.isArray(node)) for (const n of node) walk(n, path, times, holder);
+		else if (isRecord(node)) {
+			if (node.type === 'SYMBOL' && typeof node.name === 'string') {
+				const name = node.name;
+				counts.set(name, (counts.get(name) ?? 0) + times);
+				(holders.get(name) ?? holders.set(name, new Set()).get(name)!).add(holder);
+				if (!expands(name)) return;
+				if (path.includes(name)) cyclic.add(name);
+				else walk(rules[name], [...path, name], times, name);
+				return;
+			}
+			const repeated = node.type === 'REPEAT' || node.type === 'REPEAT1' ? 2 : 1;
+			walk(node.members, path, times * repeated, holder);
+			walk(node.content, path, times * repeated, holder);
+		}
+	};
+	walk(item, [], 1, 'the list item');
+	const recurring = new Set<string>();
+	const under = (name: string): void => {
+		for (const ref of symbolNames(rules[name])) {
+			if (recurring.has(ref)) continue;
+			recurring.add(ref);
+			if (expands(ref)) under(ref);
+		}
+	};
+	for (const rule of cyclic) under(rule);
+	for (const name of recurring) counts.set(name, (counts.get(name) ?? 0) + 1);
+	return { counts, holders };
+}
+
+function narrowInPlace(edit: LeadEdit, name: string, body: unknown): void {
+	const holder = edit.heldBy.get(name);
+	if (holder !== undefined) throw new LeadRefusal(`'${name}' narrows in place, but the lead on '${holder}' holds it in its item`);
+	edit.rules[name] = body;
 }
 
 export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): GrammarRecord {
@@ -815,6 +858,7 @@ export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): Gra
 		return name;
 	};
 	const stop = supertypesOf(grammar);
+	const heldBy = new Map<string, string>();
 	const edit = ({ list, item, field, admits }: Lead): void => {
 		if (!(list in rules)) throw new LeadRefusal('the list is no rule of the grammar');
 		const shape = fieldedHeadListOf(rules[list] as Rule<'normalize'>, leadSymbols(grammar, rules, stop));
@@ -823,14 +867,10 @@ export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): Gra
 		if (shape.trailing === 'mandatory') throw new LeadRefusal('the list takes a mandatory trailing separator');
 		const element = shape.element as unknown as GrammarRecord;
 		const reach = new Set<string>();
-		const variant = (base: string, side: LeadSide, body: unknown): string => {
-			const name = mint(base, side, body);
-			reach.add(name);
-			return name;
-		};
-		const head = narrowRef({ rules, supertypes: stop, sites: new Map(), item: element.content, reach, mint: variant }, element.content, admits, { lead: true, suffix: field }, false);
+		const head = narrowRef({ rules, supertypes: stop, sites: new Map(), positions: NO_POSITIONS, heldBy, reach, mint }, element.content, admits, { lead: true, suffix: field }, false);
 		if (head === undefined) throw new LeadRefusal('it admits no item of the list');
-		const rest = narrowRef({ rules, supertypes: stop, sites: referenceSites(rules, list, [element.content, shape.separatorRule]), item: element.content, reach, mint }, element.content, admits, { lead: false, suffix: item }, true);
+		const positions = itemPositions(element.content, rules, stop, reach);
+		const rest = narrowRef({ rules, supertypes: stop, sites: referenceSites(rules, list, [element.content, shape.separatorRule]), positions, heldBy, reach, mint }, element.content, admits, { lead: false, suffix: item }, true);
 		if (rest === undefined) throw new LeadRefusal('it leaves the list no item');
 		if (rest !== element.content) rules[list] = replaceItems(rules[list], item, element.content, rest);
 		const owners = Object.keys(rules).filter((name) => name !== list && leadFrom[name] === undefined);
@@ -841,6 +881,7 @@ export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): Gra
 		const body = { type: 'SEQ', members: [{ ...element, name: field, content: head }, optional({ type: 'SEQ', members: [shape.separatorRule, shape.trailing === undefined ? sites[0] : optional(sites[0])] })] };
 		const receiverForm = aliasOf(mint(list, { lead: true, suffix: field }, body), `${list}_${field}`);
 		for (const owner of owners) rules[owner] = withReceiverForm(rules[owner], list, receiverForm);
+		for (const name of positions.counts.keys()) if (!heldBy.has(name)) heldBy.set(name, list);
 	};
 	for (const l of leads) {
 		try {

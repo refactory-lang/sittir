@@ -255,26 +255,65 @@ describe('leadGrammar', () => {
 		expect(leadIssue(withList(seq(item, repeat(seq(str(','), item)), str(','))), [NAMED_LEAD])).toBe('the list takes a mandatory trailing separator');
 	});
 
-	it('refuses narrowing a visible kind in place when the item holds it at another position too, since the item would lose forms on both sides', () => {
-		const rows: GrammarRecord = {
+	describe('refuses narrowing a visible kind in place where the item holds it at another position too, since the item would lose forms on both sides', () => {
+		const rows = (row: unknown, extra: Record<string, unknown> = {}): GrammarRecord => ({
 			name: 'rows',
 			rules: {
 				source_file: repeat(sym('table')),
 				table: seq(str('{'), field('rows', sym('rows')), str('}')),
 				rows: separatedList(sym('row')),
-				row: seq(field('left', sym('atom')), str(':'), field('right', sym('atom'))),
+				row,
 				atom: field('value', choice(sym('self'), sym('other'))),
 				self: str('self'),
-				other: str('other')
+				other: str('other'),
+				filler: str('x'),
+				...extra
 			},
 			extras: [],
 			externals: [],
 			supertypes: [],
 			inline: []
-		};
-		expect(leadIssue(rows, [lead('rows', 'item', 'receiver', match('row', { right: [match('atom', { value: [match('self')] })] }))])).toBe(
-			"'atom' narrows in place, but the item holds it at another position too (in _row_receiver, row)"
-		);
+		});
+		const ROW_LEAD = lead('rows', 'item', 'receiver', match('row', { right: [match('atom', { value: [match('self')] })] }));
+
+		it('at a second field of the kind that holds the restriction', () => {
+			expect(leadIssue(rows(seq(field('left', sym('atom')), str(':'), field('right', sym('atom')))), [ROW_LEAD])).toBe(
+				"'atom' narrows in place, but the item holds it at 2 positions (in row)"
+			);
+		});
+
+		it('through a hidden rule the item holds at two positions', () => {
+			const slots = rows(seq(field('left', sym('_slot')), str(':'), field('right', sym('_slot'))), { _slot: choice(sym('atom'), sym('filler')) });
+			expect(leadIssue(slots, [ROW_LEAD])).toBe("'atom' narrows in place, but the item holds it at 2 positions (in _slot)");
+		});
+
+		it('through a hidden rule the narrowing does not walk', () => {
+			const beside = rows(seq(field('left', sym('_other')), str(':'), field('right', sym('atom'))), { _other: seq(str('<'), sym('atom'), str('>')) });
+			expect(leadIssue(beside, [ROW_LEAD])).toBe("'atom' narrows in place, but the item holds it at 2 positions (in _other, row)");
+		});
+
+		it('under a recursive hidden rule', () => {
+			const nested = rows(seq(field('right', sym('_nest'))), { _nest: choice(sym('atom'), seq(str('('), sym('_nest'), str(')'))) });
+			expect(leadIssue(nested, [ROW_LEAD])).toBe("'atom' narrows in place, but the item holds it at 2 positions (in _nest)");
+		});
+
+		it('in the item of a lead applied before it', () => {
+			const twoLists: GrammarRecord = {
+				...named(field('name', choice(sym('self'), sym('other'), sym('plain')))),
+				rules: {
+					...rulesOf(named(field('name', choice(sym('self'), sym('other'), sym('plain'))))),
+					source_file: repeat(choice(sym('function_item'), sym('method_item'))),
+					method_item: seq(str('m'), field('parameters', sym('method_params'))),
+					method_params: separatedList(sym('parameter')),
+					plain: str('plain')
+				}
+			};
+			const leads = [
+				lead('method_params', 'item', 'receiver', match('parameter', { name: [match('self')] })),
+				lead('params', 'item', 'context', match('parameter', { name: [match('other')] }))
+			];
+			expect(leadIssue(twoLists, leads)).toBe("'parameter' narrows in place, but the lead on 'method_params' holds it in its item");
+		});
 	});
 
 	it('leaves a grammar with no leads as it is', () => {
