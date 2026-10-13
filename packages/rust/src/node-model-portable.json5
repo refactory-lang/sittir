@@ -1926,7 +1926,7 @@
       ]
     },
     "captured_pattern": {
-      "vocab": "pattern.captured",
+      "vocab": "pattern.as",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -1938,7 +1938,7 @@
           "test": []
         },
         {
-          "vocab": "pattern.captured",
+          "vocab": "pattern.as",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15308,7 +15308,7 @@
       ]
     },
     "slice_pattern": {
-      "vocab": "pattern.slice",
+      "vocab": "pattern.list",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -15320,7 +15320,7 @@
           "test": []
         },
         {
-          "vocab": "pattern.slice",
+          "vocab": "pattern.list",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15329,7 +15329,7 @@
       ],
       "members": [
         {
-          "name": "patterns",
+          "name": "elements",
           "route": "slot",
           "slot": "patterns",
           "path": [

@@ -2479,12 +2479,10 @@ declare module './modifier.ts' {
 
 declare module './pattern.ts' {
 	namespace Pattern {
-		interface Array<G extends GrammarContext<G>> extends destructuring.Pattern.Array<G> {}
+		interface As<G extends GrammarContext<G>> extends matchExpressions.Pattern.As<G> {}
 		interface Assignment<G extends GrammarContext<G>> extends destructuring.Pattern.Assignment<G> {}
-		interface Captured<G extends GrammarContext<G>> extends matchExpressions.Pattern.Captured<G> {}
 		interface Case<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case<G> {}
 		namespace Case {
-			interface As<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.As<G> {}
 			interface Class<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Class<G> {}
 			interface Complex<G extends GrammarContext<G>> extends complexNumbers.Pattern.Case.Complex<G> {}
 			interface Dictionary<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Dictionary<G> {}
@@ -2495,7 +2493,6 @@ declare module './pattern.ts' {
 			interface Tuple<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Tuple<G> {}
 			type Any<G extends GrammarContext<G>> =
 				| V.Pattern.Case<G>
-				| V.Pattern.Case.As<G>
 				| V.Pattern.Case.Class<G>
 				| V.Pattern.Case.Complex<G>
 				| V.Pattern.Case.Dictionary<G>
@@ -2535,11 +2532,9 @@ declare module './pattern.ts' {
 			type Any<G extends GrammarContext<G>> = V.Pattern.Reference<G> | V.Pattern.Reference.Value<G>;
 		}
 		interface Rest<G extends GrammarContext<G>> extends destructuring.Pattern.Rest<G> {}
-		interface Slice<G extends GrammarContext<G>> extends destructuring.Pattern.Slice<G> {}
-		interface Splat<G extends GrammarContext<G>> extends destructuring.Pattern.Splat<G> {}
-		namespace Splat {
-			interface Dictionary<G extends GrammarContext<G>> extends destructuring.Pattern.Splat.Dictionary<G> {}
-			type Any<G extends GrammarContext<G>> = V.Pattern.Splat<G> | V.Pattern.Splat.Dictionary<G>;
+		namespace Rest {
+			interface Map<G extends GrammarContext<G>> extends destructuring.Pattern.Rest.Map<G> {}
+			type Any<G extends GrammarContext<G>> = V.Pattern.Rest<G> | V.Pattern.Rest.Map<G>;
 		}
 		interface Struct<G extends GrammarContext<G>> extends structs.Pattern.Struct<G> {}
 		namespace Struct {
@@ -2559,12 +2554,9 @@ declare module './pattern.ts' {
 		interface Wildcard<G extends GrammarContext<G>> extends destructuring.Pattern.Wildcard<G> {}
 		type Any<G extends GrammarContext<G>> =
 			| V.Pattern<G>
-			| V.Pattern.Array<G>
 			| V.Pattern.As<G>
 			| V.Pattern.Assignment<G>
-			| V.Pattern.Captured<G>
 			| V.Pattern.Case<G>
-			| V.Pattern.Case.As<G>
 			| V.Pattern.Case.Class<G>
 			| V.Pattern.Case.Complex<G>
 			| V.Pattern.Case.Dictionary<G>
@@ -2587,9 +2579,7 @@ declare module './pattern.ts' {
 			| V.Pattern.Reference<G>
 			| V.Pattern.Reference.Value<G>
 			| V.Pattern.Rest<G>
-			| V.Pattern.Slice<G>
-			| V.Pattern.Splat<G>
-			| V.Pattern.Splat.Dictionary<G>
+			| V.Pattern.Rest.Map<G>
 			| V.Pattern.Struct<G>
 			| V.Pattern.Struct.Field<G>
 			| V.Pattern.Struct.Rest<G>
@@ -2859,7 +2849,10 @@ declare module './type.ts' {
 			readonly lifetime?: gate.In<G, features.Lifetimes, lifetimes.Type.Reference<G>['lifetime']>;
 		}
 		interface Rest<G extends GrammarContext<G>> extends typeAnnotations.Type.Rest<G> {}
-		interface Splat<G extends GrammarContext<G>> extends typeAnnotations.Type.Splat<G> {}
+		namespace Rest {
+			interface Map<G extends GrammarContext<G>> extends typeAnnotations.Type.Rest.Map<G> {}
+			type Any<G extends GrammarContext<G>> = V.Type.Rest<G> | V.Type.Rest.Map<G>;
+		}
 		interface Template<G extends GrammarContext<G>> extends typeAnnotations.Type.Template<G> {}
 		interface Tuple<G extends GrammarContext<G>> extends typeAnnotations.Type.Tuple<G> {}
 		interface Union<G extends GrammarContext<G>> extends typeAnnotations.Type.Union<G> {}
@@ -2901,7 +2894,7 @@ declare module './type.ts' {
 			| V.Type.Readonly<G>
 			| V.Type.Reference<G>
 			| V.Type.Rest<G>
-			| V.Type.Splat<G>
+			| V.Type.Rest.Map<G>
 			| V.Type.Template<G>
 			| V.Type.Tuple<G>
 			| V.Type.Union<G>

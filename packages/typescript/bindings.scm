@@ -304,8 +304,9 @@
 (object_assignment_pattern) @pattern.object.assignment
 (pair_pattern) @pattern.object.pair
 (pair_pattern key: (computed_property_name) @key @computed)
-(array_pattern) @pattern.array
+(array_pattern) @pattern.list
 (rest_pattern) @pattern.rest
+(rest_pattern (_) @pattern)
 (assignment_pattern) @pattern.assignment
 
 ; ── type ───────────────────────────────────────────────────────────────────────

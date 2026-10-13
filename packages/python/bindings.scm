@@ -67,6 +67,8 @@
 (case_clause) @clause.case.match
 (with_clause with_items: (_)? @items) @clause.resource
 (with_item) @clause.resource.item
+(with_item value: (as_pattern expression: (_) @value))
+(with_item value: (as_pattern alias: (_) @name))
 (for_in_clause) @clause.comprehension.for
 (if_clause) @clause.comprehension.if
 (chevron) @clause.print.chevron
@@ -180,9 +182,10 @@
 (tuple_pattern) @pattern.tuple
 (pattern_list) @pattern.tuple.bare
 (list_pattern (patterns)? @elements) @pattern.list
-(list_splat_pattern) @pattern.splat
-(dictionary_splat_pattern) @pattern.splat.dictionary
-(as_pattern) @pattern.as
+(list_splat_pattern) @pattern.rest
+(list_splat_pattern target: (_) @pattern)
+(dictionary_splat_pattern) @pattern.rest.map
+(dictionary_splat_pattern target: (_) @pattern)
 (case_pattern) @pattern.case
 (union_pattern) @pattern.case.or
 (dict_pattern) @pattern.case.dictionary
@@ -192,7 +195,9 @@
 (complex_pattern) @pattern.case.complex
 (case_tuple_pattern) @pattern.case.tuple
 (case_list_pattern) @pattern.case.list
-(case_as_pattern) @pattern.case.as
+(case_as_pattern) @pattern.as
+(case_as_pattern (case_pattern) @pattern)
+(case_as_pattern (identifier) @name)
 
 ; ── type ───────────────────────────────────────────────────────────────────────
 (type) @type
@@ -200,7 +205,9 @@
 (union_type) @type.union
 (constrained_type) @type.constrained
 (member_type) @type.path
-(splat_type) @type.splat
+(splat_type) @type.rest
+(splat_type name: (_) @type)
+(splat_type operator: "**") @type.rest.map
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string [(interpolation) (string_content)]* @elements) @literal.string

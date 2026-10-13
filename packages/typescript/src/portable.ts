@@ -475,8 +475,8 @@ export interface PortableIds {
 		| TSKindId.ObjectPattern
 		| TSKindId.PairPattern
 		| TSKindId.RestPattern;
-	'pattern.array': TSKindId.ArrayPattern;
 	'pattern.assignment': TSKindId.AssignmentPattern;
+	'pattern.list': TSKindId.ArrayPattern;
 	'pattern.object': TSKindId.ObjectAssignmentPattern | TSKindId.ObjectPattern | TSKindId.PairPattern;
 	'pattern.object.assignment': TSKindId.ObjectAssignmentPattern;
 	'pattern.object.pair': TSKindId.PairPattern;
@@ -1319,13 +1319,13 @@ export interface PortableKindsAt {
 	'modifier.visibility.public': { readonly $ids: readonly PortableIds['modifier.visibility.public'][] };
 	pattern: {
 		readonly $ids: readonly PortableIds['pattern'][];
-		readonly array: PortableKindsAt['pattern.array'];
 		readonly assignment: PortableKindsAt['pattern.assignment'];
+		readonly list: PortableKindsAt['pattern.list'];
 		readonly object: PortableKindsAt['pattern.object'];
 		readonly rest: PortableKindsAt['pattern.rest'];
 	};
-	'pattern.array': { readonly $ids: readonly PortableIds['pattern.array'][] };
 	'pattern.assignment': { readonly $ids: readonly PortableIds['pattern.assignment'][] };
+	'pattern.list': { readonly $ids: readonly PortableIds['pattern.list'][] };
 	'pattern.object': {
 		readonly $ids: readonly PortableIds['pattern.object'][];
 		readonly assignment: PortableKindsAt['pattern.object.assignment'];
@@ -2054,13 +2054,13 @@ export interface PortableIsAt {
 	'modifier.visibility.protected': PortableGuard<PortableIds['modifier.visibility.protected']> & {};
 	'modifier.visibility.public': PortableGuard<PortableIds['modifier.visibility.public']> & {};
 	pattern: PortableGuard<PortableIds['pattern']> & {
-		readonly array: PortableIsAt['pattern.array'];
 		readonly assignment: PortableIsAt['pattern.assignment'];
+		readonly list: PortableIsAt['pattern.list'];
 		readonly object: PortableIsAt['pattern.object'];
 		readonly rest: PortableIsAt['pattern.rest'];
 	};
-	'pattern.array': PortableGuard<PortableIds['pattern.array']> & {};
 	'pattern.assignment': PortableGuard<PortableIds['pattern.assignment']> & {};
+	'pattern.list': PortableGuard<PortableIds['pattern.list']> & {};
 	'pattern.object': PortableGuard<PortableIds['pattern.object']> & {
 		readonly assignment: PortableIsAt['pattern.object.assignment'];
 		readonly pair: PortableIsAt['pattern.object.pair'];
@@ -2792,8 +2792,8 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
-		'pattern.array': { ids: [TSKindId.ArrayPattern], exact: true },
 		'pattern.assignment': { ids: [TSKindId.AssignmentPattern], exact: true },
+		'pattern.list': { ids: [TSKindId.ArrayPattern], exact: true },
 		'pattern.object': {
 			ids: [TSKindId.ObjectAssignmentPattern, TSKindId.ObjectPattern, TSKindId.PairPattern],
 			exact: true
@@ -3082,7 +3082,7 @@ const table: PortableTable = {
 		[TSKindId.AmbientDeclarationModule]: [{ path: 'declaration.module_property', within: [], test: [] }],
 		[TSKindId.AnyKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
 		[TSKindId.Array]: [{ path: 'expression.collection.list', within: [], test: [] }],
-		[TSKindId.ArrayPattern]: [{ path: 'pattern.array', within: [], test: [] }],
+		[TSKindId.ArrayPattern]: [{ path: 'pattern.list', within: [], test: [] }],
 		[TSKindId.ArrayType]: [{ path: 'type.array', within: [], test: [] }],
 		[TSKindId.ArrowFunction]: [{ path: 'expression.lambda', within: [], test: [] }],
 		[TSKindId.AsExpression]: [{ path: 'expression.cast.as', within: [], test: [] }],

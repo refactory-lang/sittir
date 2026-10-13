@@ -317,7 +317,7 @@
 (struct_pattern) @pattern.struct
 (field_pattern ref: _? @byReference) @pattern.struct.field
 (remaining_field_pattern) @pattern.struct.rest
-(slice_pattern) @pattern.slice
+(slice_pattern (patterns)? @elements) @pattern.list
 (or_pattern) @pattern.or
 (range_pattern) @pattern.range
 (range_pattern_prefix) @pattern.range
@@ -333,7 +333,7 @@
 (reference_pattern) @pattern.reference.value
 (reference_pattern (mutable_specifier) @exclusive)
 (mut_pattern) @pattern.mutable
-(captured_pattern) @pattern.captured
+(captured_pattern) @pattern.as
 (generic_pattern) @pattern.generic
 (wildcard_pattern) @pattern.wildcard
 

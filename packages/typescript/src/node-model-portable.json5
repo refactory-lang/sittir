@@ -939,10 +939,10 @@
       }
     },
     "array_pattern": {
-      "vocab": "pattern.array",
+      "vocab": "pattern.list",
       "read": [
         {
-          "vocab": "pattern.array",
+          "vocab": "pattern.list",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -10451,7 +10451,7 @@
       ],
       "members": [
         {
-          "name": "lhsExpression",
+          "name": "pattern",
           "route": "slot",
           "slot": "lhs_expression",
           "path": [

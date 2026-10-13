@@ -719,8 +719,9 @@ export interface PortableIds {
 		| TSKindId.TuplePattern
 		| TSKindId.TupleStructPattern
 		| TSKindId.WildcardPattern;
-	'pattern.captured': TSKindId.CapturedPattern;
+	'pattern.as': TSKindId.CapturedPattern;
 	'pattern.generic': TSKindId.GenericPattern;
+	'pattern.list': TSKindId.SlicePattern;
 	'pattern.match': TSKindId.MatchPattern;
 	'pattern.mutable': TSKindId.MutPattern;
 	'pattern.or': TSKindId.OrPattern | TSKindId.OrPatternBinary | TSKindId.OrPatternPrefix;
@@ -729,7 +730,6 @@ export interface PortableIds {
 	'pattern.range.inclusive': TSKindId.RangePatternPrefix | TSKindId.RangePatternWithLeft;
 	'pattern.reference': TSKindId.RefPattern | TSKindId.ReferencePattern;
 	'pattern.reference.value': TSKindId.ReferencePattern;
-	'pattern.slice': TSKindId.SlicePattern;
 	'pattern.struct':
 		| TSKindId.FieldPattern
 		| TSKindId.FieldPatternNamed
@@ -1657,20 +1657,21 @@ export interface PortableKindsAt {
 	};
 	pattern: {
 		readonly $ids: readonly PortableIds['pattern'][];
-		readonly captured: PortableKindsAt['pattern.captured'];
+		readonly as: PortableKindsAt['pattern.as'];
 		readonly generic: PortableKindsAt['pattern.generic'];
+		readonly list: PortableKindsAt['pattern.list'];
 		readonly match: PortableKindsAt['pattern.match'];
 		readonly mutable: PortableKindsAt['pattern.mutable'];
 		readonly or: PortableKindsAt['pattern.or'];
 		readonly range: PortableKindsAt['pattern.range'];
 		readonly reference: PortableKindsAt['pattern.reference'];
-		readonly slice: PortableKindsAt['pattern.slice'];
 		readonly struct: PortableKindsAt['pattern.struct'];
 		readonly tuple: PortableKindsAt['pattern.tuple'];
 		readonly wildcard: PortableKindsAt['pattern.wildcard'];
 	};
-	'pattern.captured': { readonly $ids: readonly PortableIds['pattern.captured'][] };
+	'pattern.as': { readonly $ids: readonly PortableIds['pattern.as'][] };
 	'pattern.generic': { readonly $ids: readonly PortableIds['pattern.generic'][] };
+	'pattern.list': { readonly $ids: readonly PortableIds['pattern.list'][] };
 	'pattern.match': { readonly $ids: readonly PortableIds['pattern.match'][] };
 	'pattern.mutable': { readonly $ids: readonly PortableIds['pattern.mutable'][] };
 	'pattern.or': { readonly $ids: readonly PortableIds['pattern.or'][] };
@@ -1686,7 +1687,6 @@ export interface PortableKindsAt {
 		readonly value: PortableKindsAt['pattern.reference.value'];
 	};
 	'pattern.reference.value': { readonly $ids: readonly PortableIds['pattern.reference.value'][] };
-	'pattern.slice': { readonly $ids: readonly PortableIds['pattern.slice'][] };
 	'pattern.struct': {
 		readonly $ids: readonly PortableIds['pattern.struct'][];
 		readonly field: PortableKindsAt['pattern.struct.field'];
@@ -2447,20 +2447,21 @@ export interface PortableIsAt {
 	'modifier.visibility.public.internal': PortableGuard<PortableIds['modifier.visibility.public.internal']> & {};
 	'modifier.visibility.public.restricted': PortableGuard<PortableIds['modifier.visibility.public.restricted']> & {};
 	pattern: PortableGuard<PortableIds['pattern']> & {
-		readonly captured: PortableIsAt['pattern.captured'];
+		readonly as: PortableIsAt['pattern.as'];
 		readonly generic: PortableIsAt['pattern.generic'];
+		readonly list: PortableIsAt['pattern.list'];
 		readonly match: PortableIsAt['pattern.match'];
 		readonly mutable: PortableIsAt['pattern.mutable'];
 		readonly or: PortableIsAt['pattern.or'];
 		readonly range: PortableIsAt['pattern.range'];
 		readonly reference: PortableIsAt['pattern.reference'];
-		readonly slice: PortableIsAt['pattern.slice'];
 		readonly struct: PortableIsAt['pattern.struct'];
 		readonly tuple: PortableIsAt['pattern.tuple'];
 		readonly wildcard: PortableIsAt['pattern.wildcard'];
 	};
-	'pattern.captured': PortableGuard<PortableIds['pattern.captured']> & {};
+	'pattern.as': PortableGuard<PortableIds['pattern.as']> & {};
 	'pattern.generic': PortableGuard<PortableIds['pattern.generic']> & {};
+	'pattern.list': PortableGuard<PortableIds['pattern.list']> & {};
 	'pattern.match': PortableGuard<PortableIds['pattern.match']> & {};
 	'pattern.mutable': PortableGuard<PortableIds['pattern.mutable']> & {};
 	'pattern.or': PortableGuard<PortableIds['pattern.or']> & {};
@@ -2474,7 +2475,6 @@ export interface PortableIsAt {
 		readonly value: PortableIsAt['pattern.reference.value'];
 	};
 	'pattern.reference.value': PortableGuard<PortableIds['pattern.reference.value']> & {};
-	'pattern.slice': PortableGuard<PortableIds['pattern.slice']> & {};
 	'pattern.struct': PortableGuard<PortableIds['pattern.struct']> & {
 		readonly field: PortableIsAt['pattern.struct.field'];
 		readonly rest: PortableIsAt['pattern.struct.rest'];
@@ -3466,8 +3466,9 @@ const table: PortableTable = {
 			],
 			exact: false
 		},
-		'pattern.captured': { ids: [TSKindId.CapturedPattern], exact: false },
+		'pattern.as': { ids: [TSKindId.CapturedPattern], exact: false },
 		'pattern.generic': { ids: [TSKindId.GenericPattern], exact: false },
+		'pattern.list': { ids: [TSKindId.SlicePattern], exact: false },
 		'pattern.match': { ids: [TSKindId.MatchPattern], exact: true },
 		'pattern.mutable': { ids: [TSKindId.MutPattern], exact: false },
 		'pattern.or': { ids: [TSKindId.OrPattern, TSKindId.OrPatternBinary, TSKindId.OrPatternPrefix], exact: false },
@@ -3479,7 +3480,6 @@ const table: PortableTable = {
 		'pattern.range.inclusive': { ids: [TSKindId.RangePatternPrefix, TSKindId.RangePatternWithLeft], exact: false },
 		'pattern.reference': { ids: [TSKindId.RefPattern, TSKindId.ReferencePattern], exact: false },
 		'pattern.reference.value': { ids: [TSKindId.ReferencePattern], exact: false },
-		'pattern.slice': { ids: [TSKindId.SlicePattern], exact: false },
 		'pattern.struct': {
 			ids: [
 				TSKindId.FieldPattern,
@@ -3912,7 +3912,7 @@ const table: PortableTable = {
 		],
 		[TSKindId.CapturedPattern]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
-			{ path: 'pattern.captured', within: [], test: [] }
+			{ path: 'pattern.as', within: [], test: [] }
 		],
 		[TSKindId.CharKeyword]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
@@ -6422,7 +6422,7 @@ const table: PortableTable = {
 		[TSKindId.ShorthandFieldInitializer]: [{ path: 'element.struct.field', within: [], test: [] }],
 		[TSKindId.SlicePattern]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
-			{ path: 'pattern.slice', within: [], test: [] }
+			{ path: 'pattern.list', within: [], test: [] }
 		],
 		[TSKindId.SourceFile]: [{ path: 'file', within: [], test: [] }],
 		[TSKindId.StaticItem]: [

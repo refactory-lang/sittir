@@ -211,15 +211,16 @@ export namespace Type {
 		readonly type: G['slots']['type.reference']['type'];
 	}
 	export interface Rest<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
-		// claimed by t
+		// claimed by pt
 		readonly $kind: 'type.rest';
+		readonly operator?: G['slots']['type.rest']['operator'];
 		readonly type: G['slots']['type.rest']['type'];
 	}
-	export interface Splat<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
-		// claimed by p
-		readonly $kind: 'type.splat';
-		readonly name: G['identifier'];
-		readonly operator: G['slots']['type.splat']['operator'];
+	export namespace Rest {
+		export interface Map<G extends GrammarContext<G>> extends SubKindOf<V.Type.Rest<G>> {
+			// claimed by p
+			readonly $kind: 'type.rest.map';
+		}
 	}
 	export interface Template<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t

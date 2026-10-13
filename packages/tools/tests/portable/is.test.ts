@@ -133,6 +133,28 @@ describe('portable is: python', async () => {
 		expect(at('literal.string.raw')(rf, context)).toBe(true);
 	});
 
+	it('reads a splat as a rest pattern or type, and a double splat as its map refinement', () => {
+		const SOURCE = 'def f(*a, **k): pass\ndef g(a: *Ts, b: **P): pass\n';
+		const [rest, restContext] = find(SOURCE, 'list_splat_pattern');
+		const [map, mapContext] = find(SOURCE, 'dictionary_splat_pattern');
+		const [restType, restTypeContext] = find(SOURCE, 'splat_type');
+		const [mapType, mapTypeContext] = find(SOURCE, 'splat_type', undefined, 1);
+		expect(at('pattern.rest')(rest, restContext)).toBe(true);
+		expect(at('pattern.rest.map')(rest, restContext)).toBe(false);
+		expect(at('pattern.rest.map')(map, mapContext)).toBe(true);
+		expect(at('type.rest')(restType, restTypeContext)).toBe(true);
+		expect(at('type.rest.map')(restType, restTypeContext)).toBe(false);
+		expect(at('type.rest.map')(mapType, mapTypeContext)).toBe(true);
+	});
+
+	it('reads a case as-pattern as the as-pattern, and a with item\'s as as no pattern', () => {
+		const SOURCE = 'match x:\n    case [1] as y: pass\nwith open(p) as h: pass\n';
+		const [caseAs, caseContext] = find(SOURCE, 'case_as_pattern');
+		const [withAs, withContext] = find(SOURCE, 'as_pattern');
+		expect(at('pattern.as')(caseAs, caseContext)).toBe(true);
+		expect(at('pattern')(withAs, withContext)).toBe(false);
+	});
+
 	it('reads a comparison of one comparator by its operator, and of two or more as a chain, as tree-sitter matches the claims', () => {
 		const COMPARISONS = 'a < b\na < b == c\na in b\n';
 		const [less] = find(COMPARISONS, 'comparison_operator', 'a < b');
@@ -170,6 +192,14 @@ describe('portable is: rust', async () => {
 		const [receiver, receiverContext] = find(SOURCE, 'self', undefined, 1);
 		expect(at('declaration.parameter.receiver')(parameter, parameterContext)).toBe(true);
 		expect(at('identifier.receiver')(receiver, receiverContext)).toBe(true);
+	});
+
+	it('reads a captured pattern as the as-pattern and a slice pattern as the list pattern', () => {
+		const SOURCE = 'fn f(x: [u8; 2]) { match x { [n @ 1, _] => 1, _ => 0 }; }\n';
+		const [captured, capturedContext] = find(SOURCE, 'captured_pattern');
+		const [slice, sliceContext] = find(SOURCE, 'slice_pattern');
+		expect(at('pattern.as')(captured, capturedContext)).toBe(true);
+		expect(at('pattern.list')(slice, sliceContext)).toBe(true);
 	});
 
 	it('reads a kind-id leaf in the asking engine\'s language, on the low-level surface too', () => {
@@ -326,6 +356,16 @@ describe('portable is: typescript', async () => {
 	it('reads a maybe type as a nullable type', () => {
 		const [maybe, context] = find('let a: ?string;\n', 'flow_maybe_type');
 		expect(at('type.nullable')(maybe, context)).toBe(true);
+	});
+
+	it('reads an array pattern as the list pattern, and its rest as the rest pattern', () => {
+		const SOURCE = 'const [a, ...b] = c;\ntype T = [...U];\n';
+		const [list, listContext] = find(SOURCE, 'array_pattern');
+		const [rest, restContext] = find(SOURCE, 'rest_pattern');
+		const [restType, restTypeContext] = find(SOURCE, 'rest_type');
+		expect(at('pattern.list')(list, listContext)).toBe(true);
+		expect(at('pattern.rest')(rest, restContext)).toBe(true);
+		expect(at('type.rest')(restType, restTypeContext)).toBe(true);
 	});
 
 	it('reads this as the receiver', () => {

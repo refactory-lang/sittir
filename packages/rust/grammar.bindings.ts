@@ -3,7 +3,7 @@
 import { alias, bindings, field, rename, split } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "d442a6df63022f31eb0d7c885206c6f5af0b08cfa08b813e6593f1bedfcd2062",
+	hash: "1385903efdaea22cd8f19a5d3d94047bdc87bc2606df14ac4465c58b1cfcb7ba",
 	patches: {
 		attribute_item: { "2": field("content") },
 		block_comment: { "1/0/2": alias(sym("block_comment_regular"), sym("text_comment")) },
@@ -24,7 +24,7 @@ export default bindings({
 		reference_pattern: { "1/0": field("exclusive") },
 		reference_type: { "2/0": field("exclusive") },
 		shorthand_field_initializer: { "1": field("field") },
-		slice_pattern: { "1/0": field("patterns") },
+		slice_pattern: { "1/0": field("elements") },
 		static_item: { "2/0": field("by_reference") },
 		struct_item_brace: { "4/0/0": field("where_clause") },
 		struct_item_tuple: { "4/1/0": field("where_clause") },
@@ -121,9 +121,11 @@ export default bindings({
 		rename("tuple_struct_pattern", "struct_tuple_pattern"),
 		rename("field_pattern", "field_struct_pattern"),
 		rename("remaining_field_pattern", "rest_struct_pattern"),
+		rename("slice_pattern", "list_pattern"),
 		rename("ref_pattern", "reference_pattern"),
 		rename("reference_pattern", "value_reference_pattern"),
 		rename("mut_pattern", "mutable_pattern"),
+		rename("captured_pattern", "as_pattern"),
 		rename("generic_type_with_turbofish", "turbofish_generic_type"),
 		rename("never_type", "never_primitive_type"),
 		rename("scoped_type_identifier", "path_type"),

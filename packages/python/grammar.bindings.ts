@@ -3,7 +3,7 @@
 import { alias, bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "d755f0b39800304cfaea538481ad444b389c02380ae499dfe682d5b59a027385",
+	hash: "81e289d035aafa761f4c30fe66b5786a31d531c56f4c67f557cdc41ec0591929",
 	patches: {
 		_expression_within_for_in_clause: { "-1": alias(sym("lambda_within_for_in_clause"), sym("lambda_expression")) },
 		assignment_eq: { "0": field("name"), "1/1": field("value") },
@@ -14,11 +14,14 @@ export default bindings({
 		class_definition: { "3": field("bases") },
 		conditional_expression: { "0": field("consequence") },
 		default_parameter: { "2": field("default") },
+		dictionary_splat_pattern: { "1": field("pattern") },
 		expression: { "-5": alias(sym("lambda"), sym("lambda_expression")) },
 		list: { "1/0": field("elements") },
 		list_pattern: { "1/0": field("elements") },
+		list_splat_pattern: { "1": field("pattern") },
 		named_expression: { "0": field("left"), "2": field("right") },
 		set: { "1": field("elements") },
+		splat_type: { "1": field("type") },
 		string_content: { "0/0/0": alias(sym("escape_interpolation"), sym("escape_string_literal")), "0/0/1": alias(sym("escape_sequence"), sym("escape_string_literal")) },
 		subscript: { "0": field("object") },
 		try_statement: { "3": field("handlers"), "4/0": field("alternative"), "5/0": field("finalizer") },
@@ -86,7 +89,8 @@ export default bindings({
 		rename("format_specifier", "format_interpolation_expression"),
 		rename("type_conversion", "conversion_interpolation_expression"),
 		rename("pattern_list", "bare_tuple_pattern"),
-		rename("list_splat_pattern", "splat_pattern"),
+		rename("list_splat_pattern", "rest_pattern"),
+		rename("dictionary_splat_pattern", "map_rest_pattern"),
 		rename("union_pattern", "or_case_pattern"),
 		rename("dict_pattern", "dictionary_case_pattern"),
 		rename("keyword_pattern", "keyword_case_pattern"),
@@ -96,6 +100,7 @@ export default bindings({
 		rename("case_tuple_pattern", "tuple_case_pattern"),
 		rename("case_list_pattern", "list_case_pattern"),
 		rename("member_type", "path_type"),
+		rename("splat_type", "rest_type"),
 		rename("string", "string_literal"),
 		rename("concatenated_string", "concatenated_string_literal"),
 		rename("integer_decimal_plain", "integer_number_literal"),
