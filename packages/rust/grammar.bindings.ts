@@ -3,7 +3,7 @@
 import { alias, bindings, field, rename, split } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "aab0fe7e0bea27c35a52274e432f18afdcfb059148fb38e2c13186b4efc5bbd2",
+	hash: "6665b4c39e036b3866923965b54dadb0ccc7d0f86c910850bc07766401c69406",
 	patches: {
 		attribute_item: { "2": field("content") },
 		block_comment: { "1/0/2": alias(sym("block_comment_regular"), sym("text_comment")) },
@@ -33,9 +33,11 @@ export default bindings({
 		tuple_expression: { "2": field("elements") },
 		tuple_struct_pattern: { "2/0": field("patterns") },
 		tuple_type: { "1": field("types") },
+		type_cast_expression: { "0": field("expression") },
 		type_item: { "6": field("value") },
 		type_parameter: { "1/0": field("constraint"), "2/0/1": field("default") },
 		unary_expression: { "1": field("argument") },
+		use_as_clause: { "0": field("name") },
 		use_list: { "1/0": field("use_clauses") },
 		use_wildcard: { "0/0": field("use_wildcard_group") },
 		where_clause: { "1/0": field("where_predicates") }
@@ -80,7 +82,7 @@ export default bindings({
 		rename("let_condition", "let_clause"),
 		rename("match_arm", "arm_match_clause"),
 		rename("last_match_arm", "last_arm_match_clause"),
-		rename("use_as_clause", "as_import_clause"),
+		rename("use_as_clause", "alias_import_clause"),
 		rename("use_list", "list_import_clause"),
 		rename("scoped_use_list", "scoped_list_import_clause"),
 		rename("use_wildcard", "wildcard_import_clause"),
@@ -107,7 +109,7 @@ export default bindings({
 		rename("index_expression", "subscript_expression"),
 		rename("closure_expression", "lambda_expression"),
 		rename("range_expression_postfix", "exclusive_range_expression"),
-		rename("type_cast_expression", "as_cast_expression"),
+		rename("type_cast_expression", "conversion_cast_expression"),
 		rename("tuple_expression", "tuple_collection_expression"),
 		rename("array_expression", "list_collection_expression"),
 		rename("array_expression_semi", "repeat_list_collection_expression"),

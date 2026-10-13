@@ -206,7 +206,8 @@
 (let_chain) @clause.let.chain
 (match_arm) @clause.match.arm
 (last_match_arm) @clause.match.arm.last
-(use_as_clause) @clause.import.as
+(use_as_clause) @clause.import.alias
+(use_as_clause path: (_) @name)
 (use_list) @clause.import.list
 (scoped_use_list) @clause.import.list.scoped
 (use_wildcard) @clause.import.wildcard
@@ -295,7 +296,8 @@
 (range_expression_postfix) @expression.range.exclusive
 (range_expression_prefix) @expression.range.exclusive
 (range_expression_bare) @expression.range.exclusive
-(type_cast_expression) @expression.cast.as
+(type_cast_expression) @expression.cast.conversion
+(type_cast_expression value: (_) @expression)
 (parenthesized_expression) @expression.parenthesized
 (tuple_expression (expressions) @elements) @expression.collection.tuple
 (array_expression) @expression.collection.list

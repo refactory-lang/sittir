@@ -155,6 +155,11 @@ describe('portable is: python', async () => {
 		expect(at('type.rest.map')(mapType, mapTypeContext)).toBe(true);
 	});
 
+	it('reads a renamed import as the import alias', () => {
+		const [alias, context] = find('import a.b as c\n', 'aliased_import');
+		expect(at('clause.import.alias')(alias, context)).toBe(true);
+	});
+
 	it('reads a case as-pattern as the as-pattern, and a with item\'s as as no pattern', () => {
 		const SOURCE = 'match x:\n    case [1] as y: pass\nwith open(p) as h: pass\n';
 		const [caseAs, caseContext] = find(SOURCE, 'case_as_pattern');
@@ -208,6 +213,14 @@ describe('portable is: rust', async () => {
 		const [slice, sliceContext] = find(SOURCE, 'slice_pattern');
 		expect(at('pattern.as')(captured, capturedContext)).toBe(true);
 		expect(at('pattern.list')(slice, sliceContext)).toBe(true);
+	});
+
+	it('reads a numeric cast as the conversion and a renamed use as the import alias', () => {
+		const SOURCE = 'use a::b as c;\nfn f() -> u8 { 1 as u8 }\n';
+		const [alias, aliasContext] = find(SOURCE, 'use_as_clause');
+		const [cast, castContext] = find(SOURCE, 'type_cast_expression');
+		expect(at('clause.import.alias')(alias, aliasContext)).toBe(true);
+		expect(at('expression.cast.conversion')(cast, castContext)).toBe(true);
 	});
 
 	it('reads a kind-id leaf in the asking engine\'s language, on the low-level surface too', () => {
@@ -374,6 +387,19 @@ describe('portable is: typescript', async () => {
 		expect(at('pattern.list')(list, listContext)).toBe(true);
 		expect(at('pattern.rest')(rest, restContext)).toBe(true);
 		expect(at('type.rest')(restType, restTypeContext)).toBe(true);
+	});
+
+	it('reads both assertions as the assertion, the angle-bracket one by its refinement, and import-equals as the import alias statement', () => {
+		const SOURCE = 'let a = x as T;\nlet b = <T>x;\nlet c = x satisfies T;\nimport A = N.B;\n';
+		const [as, asContext] = find(SOURCE, 'as_expression');
+		const [angle, angleContext] = find(SOURCE, 'type_assertion');
+		const [satisfies, satisfiesContext] = find(SOURCE, 'satisfies_expression');
+		const [alias, aliasContext] = find(SOURCE, 'import_alias');
+		expect(at('expression.cast.assertion')(as, asContext)).toBe(true);
+		expect(at('expression.cast.assertion.angle_bracket')(as, asContext)).toBe(false);
+		expect(at('expression.cast.assertion.angle_bracket')(angle, angleContext)).toBe(true);
+		expect(at('expression.cast.satisfies')(satisfies, satisfiesContext)).toBe(true);
+		expect(at('statement.import.alias')(alias, aliasContext)).toBe(true);
 	});
 
 	it('reads this as the receiver', () => {

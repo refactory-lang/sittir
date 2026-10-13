@@ -39,7 +39,7 @@ export interface PortableIds {
 	'clause.bounds.use': TSKindId.UseBounds;
 	'clause.else': TSKindId.ElseClause;
 	'clause.import': TSKindId.ScopedUseList | TSKindId.UseAsClause | TSKindId.UseList | TSKindId.UseWildcard;
-	'clause.import.as': TSKindId.UseAsClause;
+	'clause.import.alias': TSKindId.UseAsClause;
 	'clause.import.list': TSKindId.ScopedUseList | TSKindId.UseList;
 	'clause.import.list.scoped': TSKindId.ScopedUseList;
 	'clause.import.wildcard': TSKindId.UseWildcard;
@@ -552,7 +552,7 @@ export interface PortableIds {
 	'expression.call.member': TSKindId.CallExpression;
 	'expression.call.qualified': TSKindId.CallExpression;
 	'expression.cast': TSKindId.TypeCastExpression;
-	'expression.cast.as': TSKindId.TypeCastExpression;
+	'expression.cast.conversion': TSKindId.TypeCastExpression;
 	'expression.collection':
 		| TSKindId.ArrayExpression
 		| TSKindId.ArrayExpressionList
@@ -883,11 +883,11 @@ export interface PortableKindsAt {
 	'clause.else': { readonly $ids: readonly PortableIds['clause.else'][] };
 	'clause.import': {
 		readonly $ids: readonly PortableIds['clause.import'][];
-		readonly as: PortableKindsAt['clause.import.as'];
+		readonly alias: PortableKindsAt['clause.import.alias'];
 		readonly list: PortableKindsAt['clause.import.list'];
 		readonly wildcard: PortableKindsAt['clause.import.wildcard'];
 	};
-	'clause.import.as': { readonly $ids: readonly PortableIds['clause.import.as'][] };
+	'clause.import.alias': { readonly $ids: readonly PortableIds['clause.import.alias'][] };
 	'clause.import.list': {
 		readonly $ids: readonly PortableIds['clause.import.list'][];
 		readonly scoped: PortableKindsAt['clause.import.list.scoped'];
@@ -1522,9 +1522,9 @@ export interface PortableKindsAt {
 	'expression.call.qualified': { readonly $ids: readonly PortableIds['expression.call.qualified'][] };
 	'expression.cast': {
 		readonly $ids: readonly PortableIds['expression.cast'][];
-		readonly as: PortableKindsAt['expression.cast.as'];
+		readonly conversion: PortableKindsAt['expression.cast.conversion'];
 	};
-	'expression.cast.as': { readonly $ids: readonly PortableIds['expression.cast.as'][] };
+	'expression.cast.conversion': { readonly $ids: readonly PortableIds['expression.cast.conversion'][] };
 	'expression.collection': {
 		readonly $ids: readonly PortableIds['expression.collection'][];
 		readonly list: PortableKindsAt['expression.collection.list'];
@@ -1837,11 +1837,11 @@ export interface PortableIsAt {
 	'clause.bounds.use': PortableGuard<PortableIds['clause.bounds.use']> & {};
 	'clause.else': PortableGuard<PortableIds['clause.else']> & {};
 	'clause.import': PortableGuard<PortableIds['clause.import']> & {
-		readonly as: PortableIsAt['clause.import.as'];
+		readonly alias: PortableIsAt['clause.import.alias'];
 		readonly list: PortableIsAt['clause.import.list'];
 		readonly wildcard: PortableIsAt['clause.import.wildcard'];
 	};
-	'clause.import.as': PortableGuard<PortableIds['clause.import.as']> & {};
+	'clause.import.alias': PortableGuard<PortableIds['clause.import.alias']> & {};
 	'clause.import.list': PortableGuard<PortableIds['clause.import.list']> & {
 		readonly scoped: PortableIsAt['clause.import.list.scoped'];
 	};
@@ -2331,9 +2331,9 @@ export interface PortableIsAt {
 	'expression.call.member': PortableGuard<PortableIds['expression.call.member']> & {};
 	'expression.call.qualified': PortableGuard<PortableIds['expression.call.qualified']> & {};
 	'expression.cast': PortableGuard<PortableIds['expression.cast']> & {
-		readonly as: PortableIsAt['expression.cast.as'];
+		readonly conversion: PortableIsAt['expression.cast.conversion'];
 	};
-	'expression.cast.as': PortableGuard<PortableIds['expression.cast.as']> & {};
+	'expression.cast.conversion': PortableGuard<PortableIds['expression.cast.conversion']> & {};
 	'expression.collection': PortableGuard<PortableIds['expression.collection']> & {
 		readonly list: PortableIsAt['expression.collection.list'];
 		readonly struct: PortableIsAt['expression.collection.struct'];
@@ -2654,7 +2654,7 @@ const table: PortableTable = {
 			ids: [TSKindId.ScopedUseList, TSKindId.UseAsClause, TSKindId.UseList, TSKindId.UseWildcard],
 			exact: true
 		},
-		'clause.import.as': { ids: [TSKindId.UseAsClause], exact: true },
+		'clause.import.alias': { ids: [TSKindId.UseAsClause], exact: true },
 		'clause.import.list': { ids: [TSKindId.ScopedUseList, TSKindId.UseList], exact: true },
 		'clause.import.list.scoped': { ids: [TSKindId.ScopedUseList], exact: true },
 		'clause.import.wildcard': { ids: [TSKindId.UseWildcard], exact: true },
@@ -3245,7 +3245,7 @@ const table: PortableTable = {
 		'expression.call.member': { ids: [TSKindId.CallExpression], exact: false },
 		'expression.call.qualified': { ids: [TSKindId.CallExpression], exact: false },
 		'expression.cast': { ids: [TSKindId.TypeCastExpression], exact: true },
-		'expression.cast.as': { ids: [TSKindId.TypeCastExpression], exact: true },
+		'expression.cast.conversion': { ids: [TSKindId.TypeCastExpression], exact: true },
 		'expression.collection': {
 			ids: [
 				TSKindId.ArrayExpression,
@@ -7084,7 +7084,7 @@ const table: PortableTable = {
 		[TSKindId.TyKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.TypeArgument]: [{ path: 'element.type_argument', within: [], test: [] }],
 		[TSKindId.TypeBinding]: [{ path: 'element.type_binding', within: [], test: [] }],
-		[TSKindId.TypeCastExpression]: [{ path: 'expression.cast.as', within: [], test: [] }],
+		[TSKindId.TypeCastExpression]: [{ path: 'expression.cast.conversion', within: [], test: [] }],
 		[TSKindId.TypeIdentifier]: [
 			{
 				path: 'type.named.prelude',
@@ -7384,7 +7384,7 @@ const table: PortableTable = {
 		[TSKindId.UnitExpression]: [{ path: 'expression.unit', within: [], test: [] }],
 		[TSKindId.UnitType]: [{ path: 'type.unit', within: [], test: [] }],
 		[TSKindId.UnsafeBlock]: [{ path: 'expression.block.unsafe', within: [], test: [] }],
-		[TSKindId.UseAsClause]: [{ path: 'clause.import.as', within: [], test: [] }],
+		[TSKindId.UseAsClause]: [{ path: 'clause.import.alias', within: [], test: [] }],
 		[TSKindId.UseBounds]: [{ path: 'clause.bounds.use', within: [], test: [] }],
 		[TSKindId.UseDeclaration]: [
 			{

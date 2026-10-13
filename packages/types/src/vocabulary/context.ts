@@ -97,13 +97,13 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['type'];
 		};
 		readonly 'clause.case.default': {
-			readonly bodies: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly bodies: G['declaration'] | G['statement'];
 		};
 		readonly 'clause.case.match': {
 			readonly consequence: V.Declaration.TypeAlias<G> | G['statement'];
 		};
 		readonly 'clause.case.switch': {
-			readonly bodies: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly bodies: G['declaration'] | G['statement'];
 			readonly value:
 				| V.Declaration.Module<G>
 				| G['expression']
@@ -148,7 +148,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'clause.else': {
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly body: G['declaration'] | G['statement'];
 		};
 		readonly 'clause.else_if': {
 			readonly condition:
@@ -176,6 +176,9 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'clause.implements': {
 			readonly types: G['identifier'] | G['type'];
+		};
+		readonly 'clause.import.alias': {
+			readonly name: G['identifier'] | string;
 		};
 		readonly 'clause.import.attribute': {
 			readonly attributeKind: string;
@@ -285,7 +288,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'declaration.ambient': {
 			readonly content:
-				| V.Clause.Import.Alias<G>
 				| G['declaration']
 				| V.Statement.Block<G>;
 		};
@@ -887,7 +889,15 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['identifier']
 				| G['literal'];
 		};
-		readonly 'expression.cast.as': {
+		readonly 'expression.cast.assertion': {
+			readonly expression:
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
+			readonly type: G['identifier'] | string | G['type'];
+		};
+		readonly 'expression.cast.conversion': {
 			readonly expression:
 				| V.Declaration.Module<G>
 				| G['expression']
@@ -898,20 +908,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
-			readonly typeAnnotation: G['identifier'] | string | G['type'];
-			readonly value:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['statement'];
-		};
-		readonly 'expression.cast.assertion': {
-			readonly expression:
-				| V.Declaration.Module<G>
-				| G['expression']
-				| G['identifier']
-				| G['literal'];
-			readonly typeArguments: G['identifier'] | G['type'];
 		};
 		readonly 'expression.cast.non_null': {
 			readonly expression:
@@ -926,7 +922,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal'];
-			readonly typeAnnotation: G['identifier'] | G['type'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'expression.class': {
 			readonly body: G['declaration'] | V.Statement.Block.Static<G>;
@@ -1207,7 +1203,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		readonly file: {
 			readonly statements:
 				| G['attribute']
-				| V.Clause.Import.Alias<G>
 				| G['declaration']
 				| V.Expression.Call.Macro<G>
 				| G['statement'];
@@ -1439,7 +1434,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		readonly 'statement.block': {
 			readonly statements:
 				| G['attribute']
-				| V.Clause.Import.Alias<G>
 				| G['declaration']
 				| V.Expression.Call.Macro<G>
 				| G['statement'];
@@ -1472,7 +1466,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['pattern'];
 		};
 		readonly 'statement.export': {
-			readonly declaration: V.Clause.Import.Alias<G> | G['declaration'];
+			readonly declaration: G['declaration'];
 			readonly value:
 				| V.Declaration.Module<G>
 				| G['expression']
@@ -1503,21 +1497,24 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['pattern']
 				| V.Clause.Let.Any<G>
 				| G['statement'];
-			readonly consequence: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly consequence: G['declaration'] | G['statement'];
 		};
 		readonly 'statement.import': {
 			readonly argument: G['identifier'] | V.Clause.Import.Any<G> | string;
 			readonly fromClause: V.Clause.Import.Require<G> | V.Literal.String<G>;
 		};
+		readonly 'statement.import.alias': {
+			readonly value: G['identifier'];
+		};
 		readonly 'statement.labeled': {
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly body: G['declaration'] | G['statement'];
 			readonly label: V.Identifier.Label<G> | string;
 		};
 		readonly 'statement.loop': {
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly body: G['declaration'] | G['statement'];
 		};
 		readonly 'statement.loop.counted': {
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly body: G['declaration'] | G['statement'];
 			readonly condition:
 				| V.Declaration.Module<G>
 				| G['expression']
@@ -1537,10 +1534,10 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Statement.Empty<G>;
 		};
 		readonly 'statement.loop.do_while': {
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly body: G['declaration'] | G['statement'];
 		};
 		readonly 'statement.loop.for_each': {
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly body: G['declaration'] | G['statement'];
 			readonly forHeader: unknown;
 			readonly left: unknown | G['expression'] | G['identifier'] | G['pattern'];
 			readonly right:
@@ -1551,7 +1548,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'statement.loop.while': {
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly body: G['declaration'] | G['statement'];
 			readonly condition:
 				| G['expression']
 				| G['identifier']
@@ -1596,7 +1593,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'statement.scope': {
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly body: G['declaration'] | G['statement'];
 		};
 		readonly 'statement.throw': {
 			readonly cause:

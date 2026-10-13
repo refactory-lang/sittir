@@ -18787,10 +18787,10 @@
       ]
     },
     "type_cast_expression": {
-      "vocab": "expression.cast.as",
+      "vocab": "expression.cast.conversion",
       "read": [
         {
-          "vocab": "expression.cast.as",
+          "vocab": "expression.cast.conversion",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -18799,7 +18799,7 @@
       ],
       "members": [
         {
-          "name": "value",
+          "name": "expression",
           "route": "slot",
           "slot": "value",
           "path": [
@@ -20199,10 +20199,10 @@
       }
     },
     "use_as_clause": {
-      "vocab": "clause.import.as",
+      "vocab": "clause.import.alias",
       "read": [
         {
-          "vocab": "clause.import.as",
+          "vocab": "clause.import.alias",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -20211,7 +20211,7 @@
       ],
       "members": [
         {
-          "name": "path",
+          "name": "name",
           "route": "slot",
           "slot": "path",
           "path": [

@@ -182,7 +182,7 @@
 (import_specifier_as import_kind: "type" @typeOnly)
 (import_specifier_as import_kind: "typeof") @clause.import.specifier.typeof
 (import_attribute) @clause.import.attribute
-(import_alias) @clause.import.alias
+(import_alias) @statement.import.alias
 (namespace_export) @clause.export.namespace
 (export_specifier) @clause.export.specifier
 (export_specifier export_kind: "type" @typeOnly)
@@ -287,10 +287,13 @@
 (sequence_expression) @expression.sequence
 (object) @expression.collection.object
 (array) @expression.collection.list
-(as_expression) @expression.cast.as
+(as_expression) @expression.cast.assertion
+(as_expression type_annotation: (_) @type)
 (satisfies_expression) @expression.cast.satisfies
+(satisfies_expression type_annotation: (_) @type)
 (non_null_expression) @expression.cast.non_null
-(type_assertion) @expression.cast.assertion
+(type_assertion) @expression.cast.assertion.angle_bracket
+(type_assertion (type_arguments (_) @type))
 (instantiation_expression) @expression.instantiation
 (import) @expression.call.import
 (meta_property) @expression.meta

@@ -183,7 +183,6 @@ declare module './clause.ts' {
 		interface Import<G extends GrammarContext<G>> extends modules.Clause.Import<G> {}
 		namespace Import {
 			interface Alias<G extends GrammarContext<G>> extends modules.Clause.Import.Alias<G> {}
-			interface As<G extends GrammarContext<G>> extends modules.Clause.Import.As<G> {}
 			interface Attribute<G extends GrammarContext<G>> extends modules.Clause.Import.Attribute<G> {}
 			interface List<G extends GrammarContext<G>> extends modules.Clause.Import.List<G> {}
 			namespace List {
@@ -213,7 +212,6 @@ declare module './clause.ts' {
 			type Any<G extends GrammarContext<G>> =
 				| V.Clause.Import<G>
 				| V.Clause.Import.Alias<G>
-				| V.Clause.Import.As<G>
 				| V.Clause.Import.Attribute<G>
 				| V.Clause.Import.List<G>
 				| V.Clause.Import.List.Scoped<G>
@@ -294,7 +292,6 @@ declare module './clause.ts' {
 			| V.Clause.Implements<G>
 			| V.Clause.Import<G>
 			| V.Clause.Import.Alias<G>
-			| V.Clause.Import.As<G>
 			| V.Clause.Import.Attribute<G>
 			| V.Clause.Import.List<G>
 			| V.Clause.Import.List.Scoped<G>
@@ -1934,14 +1931,22 @@ declare module './expression.ts' {
 		}
 		interface Cast<G extends GrammarContext<G>> extends typeAnnotations.Expression.Cast<G> {}
 		namespace Cast {
-			interface As<G extends GrammarContext<G>> extends typeAnnotations.Expression.Cast.As<G> {}
 			interface Assertion<G extends GrammarContext<G>> extends typeAnnotations.Expression.Cast.Assertion<G> {}
+			namespace Assertion {
+				interface AngleBracket<G extends GrammarContext<G>> extends typeAnnotations.Expression.Cast.Assertion
+					.AngleBracket<G> {}
+				type Any<G extends GrammarContext<G>> =
+					| V.Expression.Cast.Assertion<G>
+					| V.Expression.Cast.Assertion.AngleBracket<G>;
+			}
+			interface Conversion<G extends GrammarContext<G>> extends typeAnnotations.Expression.Cast.Conversion<G> {}
 			interface NonNull<G extends GrammarContext<G>> extends nonNullAssertions.Expression.Cast.NonNull<G> {}
 			interface Satisfies<G extends GrammarContext<G>> extends typeAnnotations.Expression.Cast.Satisfies<G> {}
 			type Any<G extends GrammarContext<G>> =
 				| V.Expression.Cast<G>
-				| V.Expression.Cast.As<G>
 				| V.Expression.Cast.Assertion<G>
+				| V.Expression.Cast.Assertion.AngleBracket<G>
+				| V.Expression.Cast.Conversion<G>
 				| V.Expression.Cast.NonNull<G>
 				| V.Expression.Cast.Satisfies<G>;
 		}
@@ -2154,8 +2159,9 @@ declare module './expression.ts' {
 			| V.Expression.Call.Qualified<G>
 			| V.Expression.Call.Template<G>
 			| V.Expression.Cast<G>
-			| V.Expression.Cast.As<G>
 			| V.Expression.Cast.Assertion<G>
+			| V.Expression.Cast.Assertion.AngleBracket<G>
+			| V.Expression.Cast.Conversion<G>
 			| V.Expression.Cast.NonNull<G>
 			| V.Expression.Cast.Satisfies<G>
 			| V.Expression.Class<G>
@@ -2622,6 +2628,7 @@ declare module './statement.ts' {
 			readonly typeOnly?: gate.In<G, features.TypeOnlyImports, typeOnlyImports.Statement.Import<G>['typeOnly']>;
 		}
 		namespace Import {
+			interface Alias<G extends GrammarContext<G>> extends modules.Statement.Import.Alias<G> {}
 			interface From<G extends GrammarContext<G>> extends modules.Statement.Import.From<G> {}
 			interface Future<G extends GrammarContext<G>> extends modules.Statement.Import.Future<G> {}
 			interface Package<G extends GrammarContext<G>> extends modules.Statement.Import.Package<G> {}
@@ -2658,6 +2665,7 @@ declare module './statement.ts' {
 			interface Typeof<G extends GrammarContext<G>> extends modules.Statement.Import.Typeof<G> {}
 			type Any<G extends GrammarContext<G>> =
 				| V.Statement.Import<G>
+				| V.Statement.Import.Alias<G>
 				| V.Statement.Import.From<G>
 				| V.Statement.Import.Future<G>
 				| V.Statement.Import.Package<G>
@@ -2724,6 +2732,7 @@ declare module './statement.ts' {
 			| V.Statement.Global<G>
 			| V.Statement.If<G>
 			| V.Statement.Import<G>
+			| V.Statement.Import.Alias<G>
 			| V.Statement.Import.From<G>
 			| V.Statement.Import.Future<G>
 			| V.Statement.Import.Package<G>
