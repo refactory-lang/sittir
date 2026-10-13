@@ -101,10 +101,12 @@ describe('portable is: python', async () => {
 
 	it('reads a prefix letter wherever it stands, and a template string as interpolated', () => {
 		const STRINGS = 'a = rf"{x}"\nb = Fr"{x}"\nc = t"{x}"\nd = Rb"x"\ne = R"x"\n';
-		const [rf, fr, t, rb, r] = [0, 1, 2, 3, 4].map((nth) => find(STRINGS, 'string', undefined, nth));
-		expect([rf, fr, t, rb, r].map(([node, context]) => at('literal.string.interpolated')(node, context))).toEqual([true, true, true, false, false]);
-		expect(at('literal.string.bytes')(...rb)).toBe(true);
-		expect(at('literal.string.raw')(...r)).toBe(true);
+		const strings = [0, 1, 2, 3, 4].map((nth) => find(STRINGS, 'string', undefined, nth));
+		expect(strings.map(([node, context]) => at('literal.string.interpolated')(node, context))).toEqual([true, true, true, false, false]);
+		const [rb, rbContext] = find(STRINGS, 'string', undefined, 3);
+		const [r, rContext] = find(STRINGS, 'string', undefined, 4);
+		expect(at('literal.string.bytes')(rb, rbContext)).toBe(true);
+		expect(at('literal.string.raw')(r, rContext)).toBe(true);
 	});
 
 	it('reads a comparison of one comparator by its operator, and of two or more as a chain, as tree-sitter matches the claims', () => {
