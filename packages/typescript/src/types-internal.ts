@@ -18,28 +18,6 @@ import type {
 	PropertyIdentifier,
 	Identifier,
 	Undefined,
-	TypeKeyword,
-	LetKeyword,
-	DeclareKeyword,
-	NamespaceKeyword,
-	PublicKeyword,
-	PrivateKeyword,
-	ProtectedKeyword,
-	OverrideKeyword,
-	ReadonlyKeyword,
-	ModuleKeyword,
-	AnyKeyword,
-	NumberKeyword,
-	BooleanKeyword,
-	StringKeyword,
-	SymbolKeyword,
-	ExportKeyword,
-	ObjectKeyword,
-	NewKeyword,
-	GetKeyword,
-	SetKeyword,
-	AsyncKeyword,
-	StaticKeyword,
 	ParenthesizedExpression,
 	Expression,
 	String,
@@ -58,28 +36,6 @@ export type FormalParameter = RequiredParameter | OptionalParameter;
 export type AugmentedAssignmentLhs =
 	| MemberExpression
 	| SubscriptExpression
-	| DeclareKeyword
-	| NamespaceKeyword
-	| TypeKeyword
-	| PublicKeyword
-	| PrivateKeyword
-	| ProtectedKeyword
-	| OverrideKeyword
-	| ReadonlyKeyword
-	| ModuleKeyword
-	| AnyKeyword
-	| NumberKeyword
-	| BooleanKeyword
-	| StringKeyword
-	| SymbolKeyword
-	| ExportKeyword
-	| ObjectKeyword
-	| NewKeyword
-	| GetKeyword
-	| SetKeyword
-	| AsyncKeyword
-	| StaticKeyword
-	| LetKeyword
 	| Identifier
 	| ParenthesizedExpression
 	| NonNullExpression;
@@ -89,8 +45,6 @@ export type DestructuringPattern = ObjectPattern | ArrayPattern;
 export type _Identifier = Undefined | Identifier;
 
 export type PropertyName = PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
-
-export type ImportIdentifier = Identifier | TypeKeyword;
 
 export type TupleTypeMember = TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type;
 
@@ -120,10 +74,6 @@ export namespace _Identifier {
 
 export namespace PropertyName {
 	export type Kind = '_property_name';
-}
-
-export namespace ImportIdentifier {
-	export type Kind = '_import_identifier';
 }
 
 export namespace TupleTypeMember {

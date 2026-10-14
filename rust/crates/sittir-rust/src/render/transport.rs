@@ -273,7 +273,7 @@ pub enum AnyTransport {
     LineComment(LineCommentTransport),
     #[kind(kind::BLOCK_COMMENT)]
     BlockComment(BlockCommentTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SHEBANG)]
     Shebang(ShebangTransport),
@@ -628,50 +628,12 @@ pub enum AnyTransport {
     Rbrack,
     #[kind(kind::BANG, folded(kind::BANG2))]
     Bang,
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
     #[kind(kind::LBRACE)]
     Lbrace,
     #[kind(kind::RBRACE)]
     Rbrace,
+    #[kind(kind::UNION_KEYWORD)]
+    UnionKeyword,
     #[kind(kind::ENUM_KEYWORD)]
     EnumKeyword,
     #[kind(kind::EQ)]
@@ -694,6 +656,8 @@ pub enum AnyTransport {
     DashGt,
     #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
+    #[kind(kind::DEFAULT_KEYWORD)]
+    DefaultKeyword,
     #[kind(kind::UNSAFE_KEYWORD)]
     UnsafeKeyword,
     #[kind(kind::WHERE_KEYWORD)]
@@ -798,6 +762,8 @@ pub enum AnyTransport {
     AwaitKeyword,
     #[kind(kind::MOVE_KEYWORD)]
     MoveKeyword,
+    #[kind(kind::GEN_KEYWORD)]
+    GenKeyword,
     #[kind(kind::TRY_KEYWORD)]
     TryKeyword,
     #[kind(kind::AT)]
@@ -814,6 +780,40 @@ pub enum AnyTransport {
     SlashStar,
     #[kind(kind::STAR_SLASH)]
     StarSlash,
+    #[kind(kind::U8_KEYWORD)]
+    U8Keyword,
+    #[kind(kind::I8_KEYWORD)]
+    I8Keyword,
+    #[kind(kind::U16_KEYWORD)]
+    U16Keyword,
+    #[kind(kind::I16_KEYWORD)]
+    I16Keyword,
+    #[kind(kind::U32_KEYWORD)]
+    U32Keyword,
+    #[kind(kind::I32_KEYWORD)]
+    I32Keyword,
+    #[kind(kind::U64_KEYWORD)]
+    U64Keyword,
+    #[kind(kind::I64_KEYWORD)]
+    I64Keyword,
+    #[kind(kind::U128_KEYWORD)]
+    U128Keyword,
+    #[kind(kind::I128_KEYWORD)]
+    I128Keyword,
+    #[kind(kind::ISIZE_KEYWORD)]
+    IsizeKeyword,
+    #[kind(kind::USIZE_KEYWORD)]
+    UsizeKeyword,
+    #[kind(kind::F32_KEYWORD)]
+    F32Keyword,
+    #[kind(kind::F64_KEYWORD)]
+    F64Keyword,
+    #[kind(kind::BOOL_KEYWORD)]
+    BoolKeyword,
+    #[kind(kind::STR_KEYWORD)]
+    StrKeyword,
+    #[kind(kind::CHAR_KEYWORD)]
+    CharKeyword,
     #[kind(kind::UNDERSCORE)]
     Underscore,
     #[kind(kind::DOT_DOT_EQ)]
@@ -1134,28 +1134,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Lbrack => Ok(()),
             AnyTransport::Rbrack => Ok(()),
             AnyTransport::Bang => Ok(()),
-            AnyTransport::U8Keyword => Ok(()),
-            AnyTransport::I8Keyword => Ok(()),
-            AnyTransport::U16Keyword => Ok(()),
-            AnyTransport::I16Keyword => Ok(()),
-            AnyTransport::U32Keyword => Ok(()),
-            AnyTransport::I32Keyword => Ok(()),
-            AnyTransport::U64Keyword => Ok(()),
-            AnyTransport::I64Keyword => Ok(()),
-            AnyTransport::U128Keyword => Ok(()),
-            AnyTransport::I128Keyword => Ok(()),
-            AnyTransport::IsizeKeyword => Ok(()),
-            AnyTransport::UsizeKeyword => Ok(()),
-            AnyTransport::F32Keyword => Ok(()),
-            AnyTransport::F64Keyword => Ok(()),
-            AnyTransport::BoolKeyword => Ok(()),
-            AnyTransport::StrKeyword => Ok(()),
-            AnyTransport::CharKeyword => Ok(()),
-            AnyTransport::DefaultKeyword => Ok(()),
-            AnyTransport::UnionKeyword => Ok(()),
-            AnyTransport::GenKeyword => Ok(()),
             AnyTransport::Lbrace => Ok(()),
             AnyTransport::Rbrace => Ok(()),
+            AnyTransport::UnionKeyword => Ok(()),
             AnyTransport::EnumKeyword => Ok(()),
             AnyTransport::Eq => Ok(()),
             AnyTransport::ExternKeyword => Ok(()),
@@ -1167,6 +1148,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::FnKeyword => Ok(()),
             AnyTransport::DashGt => Ok(()),
             AnyTransport::AsyncKeyword => Ok(()),
+            AnyTransport::DefaultKeyword => Ok(()),
             AnyTransport::UnsafeKeyword => Ok(()),
             AnyTransport::WhereKeyword => Ok(()),
             AnyTransport::TraitKeyword => Ok(()),
@@ -1219,6 +1201,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Dot => Ok(()),
             AnyTransport::AwaitKeyword => Ok(()),
             AnyTransport::MoveKeyword => Ok(()),
+            AnyTransport::GenKeyword => Ok(()),
             AnyTransport::TryKeyword => Ok(()),
             AnyTransport::At => Ok(()),
             AnyTransport::Dquote => Ok(()),
@@ -1227,6 +1210,23 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::SlashSlash => Ok(()),
             AnyTransport::SlashStar => Ok(()),
             AnyTransport::StarSlash => Ok(()),
+            AnyTransport::U8Keyword => Ok(()),
+            AnyTransport::I8Keyword => Ok(()),
+            AnyTransport::U16Keyword => Ok(()),
+            AnyTransport::I16Keyword => Ok(()),
+            AnyTransport::U32Keyword => Ok(()),
+            AnyTransport::I32Keyword => Ok(()),
+            AnyTransport::U64Keyword => Ok(()),
+            AnyTransport::I64Keyword => Ok(()),
+            AnyTransport::U128Keyword => Ok(()),
+            AnyTransport::I128Keyword => Ok(()),
+            AnyTransport::IsizeKeyword => Ok(()),
+            AnyTransport::UsizeKeyword => Ok(()),
+            AnyTransport::F32Keyword => Ok(()),
+            AnyTransport::F64Keyword => Ok(()),
+            AnyTransport::BoolKeyword => Ok(()),
+            AnyTransport::StrKeyword => Ok(()),
+            AnyTransport::CharKeyword => Ok(()),
             AnyTransport::Underscore => Ok(()),
             AnyTransport::DotDotEq => Ok(()),
             AnyTransport::ModKeyword => Ok(()),
@@ -1538,28 +1538,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Lbrack => None,
             AnyTransport::Rbrack => None,
             AnyTransport::Bang => None,
-            AnyTransport::U8Keyword => None,
-            AnyTransport::I8Keyword => None,
-            AnyTransport::U16Keyword => None,
-            AnyTransport::I16Keyword => None,
-            AnyTransport::U32Keyword => None,
-            AnyTransport::I32Keyword => None,
-            AnyTransport::U64Keyword => None,
-            AnyTransport::I64Keyword => None,
-            AnyTransport::U128Keyword => None,
-            AnyTransport::I128Keyword => None,
-            AnyTransport::IsizeKeyword => None,
-            AnyTransport::UsizeKeyword => None,
-            AnyTransport::F32Keyword => None,
-            AnyTransport::F64Keyword => None,
-            AnyTransport::BoolKeyword => None,
-            AnyTransport::StrKeyword => None,
-            AnyTransport::CharKeyword => None,
-            AnyTransport::DefaultKeyword => None,
-            AnyTransport::UnionKeyword => None,
-            AnyTransport::GenKeyword => None,
             AnyTransport::Lbrace => None,
             AnyTransport::Rbrace => None,
+            AnyTransport::UnionKeyword => None,
             AnyTransport::EnumKeyword => None,
             AnyTransport::Eq => None,
             AnyTransport::ExternKeyword => None,
@@ -1571,6 +1552,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::FnKeyword => None,
             AnyTransport::DashGt => None,
             AnyTransport::AsyncKeyword => None,
+            AnyTransport::DefaultKeyword => None,
             AnyTransport::UnsafeKeyword => None,
             AnyTransport::WhereKeyword => None,
             AnyTransport::TraitKeyword => None,
@@ -1623,6 +1605,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Dot => None,
             AnyTransport::AwaitKeyword => None,
             AnyTransport::MoveKeyword => None,
+            AnyTransport::GenKeyword => None,
             AnyTransport::TryKeyword => None,
             AnyTransport::At => None,
             AnyTransport::Dquote => None,
@@ -1631,6 +1614,23 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::SlashSlash => None,
             AnyTransport::SlashStar => None,
             AnyTransport::StarSlash => None,
+            AnyTransport::U8Keyword => None,
+            AnyTransport::I8Keyword => None,
+            AnyTransport::U16Keyword => None,
+            AnyTransport::I16Keyword => None,
+            AnyTransport::U32Keyword => None,
+            AnyTransport::I32Keyword => None,
+            AnyTransport::U64Keyword => None,
+            AnyTransport::I64Keyword => None,
+            AnyTransport::U128Keyword => None,
+            AnyTransport::I128Keyword => None,
+            AnyTransport::IsizeKeyword => None,
+            AnyTransport::UsizeKeyword => None,
+            AnyTransport::F32Keyword => None,
+            AnyTransport::F64Keyword => None,
+            AnyTransport::BoolKeyword => None,
+            AnyTransport::StrKeyword => None,
+            AnyTransport::CharKeyword => None,
             AnyTransport::Underscore => None,
             AnyTransport::DotDotEq => None,
             AnyTransport::ModKeyword => None,
@@ -1942,28 +1942,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Lbrack => None,
             AnyTransport::Rbrack => None,
             AnyTransport::Bang => None,
-            AnyTransport::U8Keyword => None,
-            AnyTransport::I8Keyword => None,
-            AnyTransport::U16Keyword => None,
-            AnyTransport::I16Keyword => None,
-            AnyTransport::U32Keyword => None,
-            AnyTransport::I32Keyword => None,
-            AnyTransport::U64Keyword => None,
-            AnyTransport::I64Keyword => None,
-            AnyTransport::U128Keyword => None,
-            AnyTransport::I128Keyword => None,
-            AnyTransport::IsizeKeyword => None,
-            AnyTransport::UsizeKeyword => None,
-            AnyTransport::F32Keyword => None,
-            AnyTransport::F64Keyword => None,
-            AnyTransport::BoolKeyword => None,
-            AnyTransport::StrKeyword => None,
-            AnyTransport::CharKeyword => None,
-            AnyTransport::DefaultKeyword => None,
-            AnyTransport::UnionKeyword => None,
-            AnyTransport::GenKeyword => None,
             AnyTransport::Lbrace => None,
             AnyTransport::Rbrace => None,
+            AnyTransport::UnionKeyword => None,
             AnyTransport::EnumKeyword => None,
             AnyTransport::Eq => None,
             AnyTransport::ExternKeyword => None,
@@ -1975,6 +1956,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::FnKeyword => None,
             AnyTransport::DashGt => None,
             AnyTransport::AsyncKeyword => None,
+            AnyTransport::DefaultKeyword => None,
             AnyTransport::UnsafeKeyword => None,
             AnyTransport::WhereKeyword => None,
             AnyTransport::TraitKeyword => None,
@@ -2027,6 +2009,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Dot => None,
             AnyTransport::AwaitKeyword => None,
             AnyTransport::MoveKeyword => None,
+            AnyTransport::GenKeyword => None,
             AnyTransport::TryKeyword => None,
             AnyTransport::At => None,
             AnyTransport::Dquote => None,
@@ -2035,6 +2018,23 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::SlashSlash => None,
             AnyTransport::SlashStar => None,
             AnyTransport::StarSlash => None,
+            AnyTransport::U8Keyword => None,
+            AnyTransport::I8Keyword => None,
+            AnyTransport::U16Keyword => None,
+            AnyTransport::I16Keyword => None,
+            AnyTransport::U32Keyword => None,
+            AnyTransport::I32Keyword => None,
+            AnyTransport::U64Keyword => None,
+            AnyTransport::I64Keyword => None,
+            AnyTransport::U128Keyword => None,
+            AnyTransport::I128Keyword => None,
+            AnyTransport::IsizeKeyword => None,
+            AnyTransport::UsizeKeyword => None,
+            AnyTransport::F32Keyword => None,
+            AnyTransport::F64Keyword => None,
+            AnyTransport::BoolKeyword => None,
+            AnyTransport::StrKeyword => None,
+            AnyTransport::CharKeyword => None,
             AnyTransport::Underscore => None,
             AnyTransport::DotDotEq => None,
             AnyTransport::ModKeyword => None,
@@ -2346,28 +2346,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Lbrack => None,
             AnyTransport::Rbrack => None,
             AnyTransport::Bang => None,
-            AnyTransport::U8Keyword => None,
-            AnyTransport::I8Keyword => None,
-            AnyTransport::U16Keyword => None,
-            AnyTransport::I16Keyword => None,
-            AnyTransport::U32Keyword => None,
-            AnyTransport::I32Keyword => None,
-            AnyTransport::U64Keyword => None,
-            AnyTransport::I64Keyword => None,
-            AnyTransport::U128Keyword => None,
-            AnyTransport::I128Keyword => None,
-            AnyTransport::IsizeKeyword => None,
-            AnyTransport::UsizeKeyword => None,
-            AnyTransport::F32Keyword => None,
-            AnyTransport::F64Keyword => None,
-            AnyTransport::BoolKeyword => None,
-            AnyTransport::StrKeyword => None,
-            AnyTransport::CharKeyword => None,
-            AnyTransport::DefaultKeyword => None,
-            AnyTransport::UnionKeyword => None,
-            AnyTransport::GenKeyword => None,
             AnyTransport::Lbrace => None,
             AnyTransport::Rbrace => None,
+            AnyTransport::UnionKeyword => None,
             AnyTransport::EnumKeyword => None,
             AnyTransport::Eq => None,
             AnyTransport::ExternKeyword => None,
@@ -2379,6 +2360,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::FnKeyword => None,
             AnyTransport::DashGt => None,
             AnyTransport::AsyncKeyword => None,
+            AnyTransport::DefaultKeyword => None,
             AnyTransport::UnsafeKeyword => None,
             AnyTransport::WhereKeyword => None,
             AnyTransport::TraitKeyword => None,
@@ -2431,6 +2413,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Dot => None,
             AnyTransport::AwaitKeyword => None,
             AnyTransport::MoveKeyword => None,
+            AnyTransport::GenKeyword => None,
             AnyTransport::TryKeyword => None,
             AnyTransport::At => None,
             AnyTransport::Dquote => None,
@@ -2439,6 +2422,23 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::SlashSlash => None,
             AnyTransport::SlashStar => None,
             AnyTransport::StarSlash => None,
+            AnyTransport::U8Keyword => None,
+            AnyTransport::I8Keyword => None,
+            AnyTransport::U16Keyword => None,
+            AnyTransport::I16Keyword => None,
+            AnyTransport::U32Keyword => None,
+            AnyTransport::I32Keyword => None,
+            AnyTransport::U64Keyword => None,
+            AnyTransport::I64Keyword => None,
+            AnyTransport::U128Keyword => None,
+            AnyTransport::I128Keyword => None,
+            AnyTransport::IsizeKeyword => None,
+            AnyTransport::UsizeKeyword => None,
+            AnyTransport::F32Keyword => None,
+            AnyTransport::F64Keyword => None,
+            AnyTransport::BoolKeyword => None,
+            AnyTransport::StrKeyword => None,
+            AnyTransport::CharKeyword => None,
             AnyTransport::Underscore => None,
             AnyTransport::DotDotEq => None,
             AnyTransport::ModKeyword => None,
@@ -3718,48 +3718,8 @@ pub enum ExpressionTransport {
     IntegerLiteral(IntegerLiteralTransport),
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
     #[kind(kind::SELF)]
     #[transport(edged)]
     Self_(::sittir_core::options::Edges),
@@ -3842,26 +3802,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionTransport {
             ExpressionTransport::IntegerLiteral(t) => t.prepare(ctx),
             ExpressionTransport::FloatLiteral(t) => t.prepare(ctx),
             ExpressionTransport::Identifier(t) => t.prepare(ctx),
-            ExpressionTransport::U8Keyword => Ok(()),
-            ExpressionTransport::I8Keyword => Ok(()),
-            ExpressionTransport::U16Keyword => Ok(()),
-            ExpressionTransport::I16Keyword => Ok(()),
-            ExpressionTransport::U32Keyword => Ok(()),
-            ExpressionTransport::I32Keyword => Ok(()),
-            ExpressionTransport::U64Keyword => Ok(()),
-            ExpressionTransport::I64Keyword => Ok(()),
-            ExpressionTransport::U128Keyword => Ok(()),
-            ExpressionTransport::I128Keyword => Ok(()),
-            ExpressionTransport::IsizeKeyword => Ok(()),
-            ExpressionTransport::UsizeKeyword => Ok(()),
-            ExpressionTransport::F32Keyword => Ok(()),
-            ExpressionTransport::F64Keyword => Ok(()),
-            ExpressionTransport::BoolKeyword => Ok(()),
-            ExpressionTransport::StrKeyword => Ok(()),
-            ExpressionTransport::CharKeyword => Ok(()),
-            ExpressionTransport::DefaultKeyword => Ok(()),
-            ExpressionTransport::UnionKeyword => Ok(()),
-            ExpressionTransport::GenKeyword => Ok(()),
             ExpressionTransport::Self_(_) => Ok(()),
             ExpressionTransport::ScopedIdentifier(t) => t.prepare(ctx),
             ExpressionTransport::GenericFunction(t) => t.prepare(ctx),
@@ -3912,26 +3852,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionTransport {
             ExpressionTransport::IntegerLiteral(t) => t.gap_edges(),
             ExpressionTransport::FloatLiteral(t) => t.gap_edges(),
             ExpressionTransport::Identifier(t) => t.gap_edges(),
-            ExpressionTransport::U8Keyword => None,
-            ExpressionTransport::I8Keyword => None,
-            ExpressionTransport::U16Keyword => None,
-            ExpressionTransport::I16Keyword => None,
-            ExpressionTransport::U32Keyword => None,
-            ExpressionTransport::I32Keyword => None,
-            ExpressionTransport::U64Keyword => None,
-            ExpressionTransport::I64Keyword => None,
-            ExpressionTransport::U128Keyword => None,
-            ExpressionTransport::I128Keyword => None,
-            ExpressionTransport::IsizeKeyword => None,
-            ExpressionTransport::UsizeKeyword => None,
-            ExpressionTransport::F32Keyword => None,
-            ExpressionTransport::F64Keyword => None,
-            ExpressionTransport::BoolKeyword => None,
-            ExpressionTransport::StrKeyword => None,
-            ExpressionTransport::CharKeyword => None,
-            ExpressionTransport::DefaultKeyword => None,
-            ExpressionTransport::UnionKeyword => None,
-            ExpressionTransport::GenKeyword => None,
             ExpressionTransport::Self_(edges) => Some(edges),
             ExpressionTransport::ScopedIdentifier(t) => t.gap_edges(),
             ExpressionTransport::GenericFunction(t) => t.gap_edges(),
@@ -3982,26 +3902,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionTransport {
             ExpressionTransport::IntegerLiteral(t) => t.snapshot_edge(),
             ExpressionTransport::FloatLiteral(t) => t.snapshot_edge(),
             ExpressionTransport::Identifier(t) => t.snapshot_edge(),
-            ExpressionTransport::U8Keyword => None,
-            ExpressionTransport::I8Keyword => None,
-            ExpressionTransport::U16Keyword => None,
-            ExpressionTransport::I16Keyword => None,
-            ExpressionTransport::U32Keyword => None,
-            ExpressionTransport::I32Keyword => None,
-            ExpressionTransport::U64Keyword => None,
-            ExpressionTransport::I64Keyword => None,
-            ExpressionTransport::U128Keyword => None,
-            ExpressionTransport::I128Keyword => None,
-            ExpressionTransport::IsizeKeyword => None,
-            ExpressionTransport::UsizeKeyword => None,
-            ExpressionTransport::F32Keyword => None,
-            ExpressionTransport::F64Keyword => None,
-            ExpressionTransport::BoolKeyword => None,
-            ExpressionTransport::StrKeyword => None,
-            ExpressionTransport::CharKeyword => None,
-            ExpressionTransport::DefaultKeyword => None,
-            ExpressionTransport::UnionKeyword => None,
-            ExpressionTransport::GenKeyword => None,
             ExpressionTransport::Self_(_) => None,
             ExpressionTransport::ScopedIdentifier(t) => t.snapshot_edge(),
             ExpressionTransport::GenericFunction(t) => t.snapshot_edge(),
@@ -4052,26 +3952,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionTransport {
             ExpressionTransport::IntegerLiteral(t) => t.source_separator(ctx),
             ExpressionTransport::FloatLiteral(t) => t.source_separator(ctx),
             ExpressionTransport::Identifier(t) => t.source_separator(ctx),
-            ExpressionTransport::U8Keyword => None,
-            ExpressionTransport::I8Keyword => None,
-            ExpressionTransport::U16Keyword => None,
-            ExpressionTransport::I16Keyword => None,
-            ExpressionTransport::U32Keyword => None,
-            ExpressionTransport::I32Keyword => None,
-            ExpressionTransport::U64Keyword => None,
-            ExpressionTransport::I64Keyword => None,
-            ExpressionTransport::U128Keyword => None,
-            ExpressionTransport::I128Keyword => None,
-            ExpressionTransport::IsizeKeyword => None,
-            ExpressionTransport::UsizeKeyword => None,
-            ExpressionTransport::F32Keyword => None,
-            ExpressionTransport::F64Keyword => None,
-            ExpressionTransport::BoolKeyword => None,
-            ExpressionTransport::StrKeyword => None,
-            ExpressionTransport::CharKeyword => None,
-            ExpressionTransport::DefaultKeyword => None,
-            ExpressionTransport::UnionKeyword => None,
-            ExpressionTransport::GenKeyword => None,
             ExpressionTransport::Self_(_) => None,
             ExpressionTransport::ScopedIdentifier(t) => t.source_separator(ctx),
             ExpressionTransport::GenericFunction(t) => t.source_separator(ctx),
@@ -4128,26 +4008,6 @@ impl ::sittir_core::view::KindOf for ExpressionTransport {
             Self::IntegerLiteral(inner) => inner.kind_in(kinds),
             Self::FloatLiteral(inner) => inner.kind_in(kinds),
             Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
             Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
             Self::GenericFunction(inner) => inner.kind_in(kinds),
@@ -4583,41 +4443,7 @@ impl ::sittir_core::render::Render for ClosureExpressionTransport {
 pub enum PatternTransport {
     #[kind(kind::STRING_LITERAL, kind::RAW_STRING_LITERAL, kind::CHAR_LITERAL_ESCAPED_SIMPLE, kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED, kind::CHAR_LITERAL_ESCAPED_UNICODE_BRACED, kind::CHAR_LITERAL_ESCAPED_HEX, kind::CHAR_LITERAL_PLAIN, kind::CHAR_LITERAL_EMPTY, kind::BOOLEAN_LITERAL, kind::INTEGER_LITERAL_DECIMAL, kind::INTEGER_LITERAL_HEX, kind::INTEGER_LITERAL_BINARY, kind::INTEGER_LITERAL_OCTAL, kind::FLOAT_LITERAL, kind::NEGATIVE_LITERAL, kind::_LITERAL_PATTERN, kind::CHAR_LITERAL, kind::INTEGER_LITERAL, kind::TRUE_KEYWORD, kind::FALSE_KEYWORD)]
     LiteralPattern(LiteralPatternTransport),
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -4629,12 +4455,6 @@ pub enum PatternTransport {
     TupleStructPattern(TupleStructPatternTransport),
     #[kind(kind::STRUCT_PATTERN)]
     StructPattern(StructPatternTransport),
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
     #[kind(kind::REF_PATTERN)]
     RefPattern(RefPatternTransport),
     #[kind(kind::SLICE_PATTERN)]
@@ -4667,32 +4487,12 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             PatternTransport::LiteralPattern(t) => t.prepare(ctx),
-            PatternTransport::U8Keyword => Ok(()),
-            PatternTransport::I8Keyword => Ok(()),
-            PatternTransport::U16Keyword => Ok(()),
-            PatternTransport::I16Keyword => Ok(()),
-            PatternTransport::U32Keyword => Ok(()),
-            PatternTransport::I32Keyword => Ok(()),
-            PatternTransport::U64Keyword => Ok(()),
-            PatternTransport::I64Keyword => Ok(()),
-            PatternTransport::U128Keyword => Ok(()),
-            PatternTransport::I128Keyword => Ok(()),
-            PatternTransport::IsizeKeyword => Ok(()),
-            PatternTransport::UsizeKeyword => Ok(()),
-            PatternTransport::F32Keyword => Ok(()),
-            PatternTransport::F64Keyword => Ok(()),
-            PatternTransport::BoolKeyword => Ok(()),
-            PatternTransport::StrKeyword => Ok(()),
-            PatternTransport::CharKeyword => Ok(()),
             PatternTransport::Identifier(t) => t.prepare(ctx),
             PatternTransport::ScopedIdentifier(t) => t.prepare(ctx),
             PatternTransport::GenericPattern(t) => t.prepare(ctx),
             PatternTransport::TuplePattern(t) => t.prepare(ctx),
             PatternTransport::TupleStructPattern(t) => t.prepare(ctx),
             PatternTransport::StructPattern(t) => t.prepare(ctx),
-            PatternTransport::DefaultKeyword => Ok(()),
-            PatternTransport::UnionKeyword => Ok(()),
-            PatternTransport::GenKeyword => Ok(()),
             PatternTransport::RefPattern(t) => t.prepare(ctx),
             PatternTransport::SlicePattern(t) => t.prepare(ctx),
             PatternTransport::CapturedPattern(t) => t.prepare(ctx),
@@ -4710,32 +4510,12 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             PatternTransport::LiteralPattern(t) => t.gap_edges(),
-            PatternTransport::U8Keyword => None,
-            PatternTransport::I8Keyword => None,
-            PatternTransport::U16Keyword => None,
-            PatternTransport::I16Keyword => None,
-            PatternTransport::U32Keyword => None,
-            PatternTransport::I32Keyword => None,
-            PatternTransport::U64Keyword => None,
-            PatternTransport::I64Keyword => None,
-            PatternTransport::U128Keyword => None,
-            PatternTransport::I128Keyword => None,
-            PatternTransport::IsizeKeyword => None,
-            PatternTransport::UsizeKeyword => None,
-            PatternTransport::F32Keyword => None,
-            PatternTransport::F64Keyword => None,
-            PatternTransport::BoolKeyword => None,
-            PatternTransport::StrKeyword => None,
-            PatternTransport::CharKeyword => None,
             PatternTransport::Identifier(t) => t.gap_edges(),
             PatternTransport::ScopedIdentifier(t) => t.gap_edges(),
             PatternTransport::GenericPattern(t) => t.gap_edges(),
             PatternTransport::TuplePattern(t) => t.gap_edges(),
             PatternTransport::TupleStructPattern(t) => t.gap_edges(),
             PatternTransport::StructPattern(t) => t.gap_edges(),
-            PatternTransport::DefaultKeyword => None,
-            PatternTransport::UnionKeyword => None,
-            PatternTransport::GenKeyword => None,
             PatternTransport::RefPattern(t) => t.gap_edges(),
             PatternTransport::SlicePattern(t) => t.gap_edges(),
             PatternTransport::CapturedPattern(t) => t.gap_edges(),
@@ -4753,32 +4533,12 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
             PatternTransport::LiteralPattern(t) => t.snapshot_edge(),
-            PatternTransport::U8Keyword => None,
-            PatternTransport::I8Keyword => None,
-            PatternTransport::U16Keyword => None,
-            PatternTransport::I16Keyword => None,
-            PatternTransport::U32Keyword => None,
-            PatternTransport::I32Keyword => None,
-            PatternTransport::U64Keyword => None,
-            PatternTransport::I64Keyword => None,
-            PatternTransport::U128Keyword => None,
-            PatternTransport::I128Keyword => None,
-            PatternTransport::IsizeKeyword => None,
-            PatternTransport::UsizeKeyword => None,
-            PatternTransport::F32Keyword => None,
-            PatternTransport::F64Keyword => None,
-            PatternTransport::BoolKeyword => None,
-            PatternTransport::StrKeyword => None,
-            PatternTransport::CharKeyword => None,
             PatternTransport::Identifier(t) => t.snapshot_edge(),
             PatternTransport::ScopedIdentifier(t) => t.snapshot_edge(),
             PatternTransport::GenericPattern(t) => t.snapshot_edge(),
             PatternTransport::TuplePattern(t) => t.snapshot_edge(),
             PatternTransport::TupleStructPattern(t) => t.snapshot_edge(),
             PatternTransport::StructPattern(t) => t.snapshot_edge(),
-            PatternTransport::DefaultKeyword => None,
-            PatternTransport::UnionKeyword => None,
-            PatternTransport::GenKeyword => None,
             PatternTransport::RefPattern(t) => t.snapshot_edge(),
             PatternTransport::SlicePattern(t) => t.snapshot_edge(),
             PatternTransport::CapturedPattern(t) => t.snapshot_edge(),
@@ -4796,32 +4556,12 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
             PatternTransport::LiteralPattern(t) => t.source_separator(ctx),
-            PatternTransport::U8Keyword => None,
-            PatternTransport::I8Keyword => None,
-            PatternTransport::U16Keyword => None,
-            PatternTransport::I16Keyword => None,
-            PatternTransport::U32Keyword => None,
-            PatternTransport::I32Keyword => None,
-            PatternTransport::U64Keyword => None,
-            PatternTransport::I64Keyword => None,
-            PatternTransport::U128Keyword => None,
-            PatternTransport::I128Keyword => None,
-            PatternTransport::IsizeKeyword => None,
-            PatternTransport::UsizeKeyword => None,
-            PatternTransport::F32Keyword => None,
-            PatternTransport::F64Keyword => None,
-            PatternTransport::BoolKeyword => None,
-            PatternTransport::StrKeyword => None,
-            PatternTransport::CharKeyword => None,
             PatternTransport::Identifier(t) => t.source_separator(ctx),
             PatternTransport::ScopedIdentifier(t) => t.source_separator(ctx),
             PatternTransport::GenericPattern(t) => t.source_separator(ctx),
             PatternTransport::TuplePattern(t) => t.source_separator(ctx),
             PatternTransport::TupleStructPattern(t) => t.source_separator(ctx),
             PatternTransport::StructPattern(t) => t.source_separator(ctx),
-            PatternTransport::DefaultKeyword => None,
-            PatternTransport::UnionKeyword => None,
-            PatternTransport::GenKeyword => None,
             PatternTransport::RefPattern(t) => t.source_separator(ctx),
             PatternTransport::SlicePattern(t) => t.source_separator(ctx),
             PatternTransport::CapturedPattern(t) => t.source_separator(ctx),
@@ -4845,32 +4585,12 @@ impl ::sittir_core::view::KindOf for PatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::LiteralPattern(inner) => inner.kind_in(kinds),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
             Self::Identifier(inner) => inner.kind_in(kinds),
             Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
             Self::GenericPattern(inner) => inner.kind_in(kinds),
             Self::TuplePattern(inner) => inner.kind_in(kinds),
             Self::TupleStructPattern(inner) => inner.kind_in(kinds),
             Self::StructPattern(inner) => inner.kind_in(kinds),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::RefPattern(inner) => inner.kind_in(kinds),
             Self::SlicePattern(inner) => inner.kind_in(kinds),
             Self::CapturedPattern(inner) => inner.kind_in(kinds),
@@ -5828,7 +5548,7 @@ pub enum NonSpecialTokenContentTransportSlot {
     IntegerLiteralOctal(IntegerLiteralOctalTransport),
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::_PRIMITIVE_TYPE, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD)]
     PrimitiveType(PrimitiveTypeEnum),
@@ -6030,59 +5750,19 @@ impl ::sittir_core::render::Render for NonSpecialTokenContentTransportSlot {
 pub enum AttributePathTransportSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::SELF)]
     #[transport(edged)]
     Self_(::sittir_core::options::Edges),
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
     #[kind(kind::SUPER)]
     #[transport(edged)]
     Super(::sittir_core::options::Edges),
     #[kind(kind::CRATE)]
     #[transport(edged)]
     Crate(::sittir_core::options::Edges),
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -6094,28 +5774,8 @@ impl ::sittir_core::prepare::Prepare for AttributePathTransportSlot {
             AttributePathTransportSlot::Identifier(t) => t.prepare(ctx),
             AttributePathTransportSlot::ScopedIdentifier(t) => t.prepare(ctx),
             AttributePathTransportSlot::Self_(_) => Ok(()),
-            AttributePathTransportSlot::U8Keyword => Ok(()),
-            AttributePathTransportSlot::I8Keyword => Ok(()),
-            AttributePathTransportSlot::U16Keyword => Ok(()),
-            AttributePathTransportSlot::I16Keyword => Ok(()),
-            AttributePathTransportSlot::U32Keyword => Ok(()),
-            AttributePathTransportSlot::I32Keyword => Ok(()),
-            AttributePathTransportSlot::U64Keyword => Ok(()),
-            AttributePathTransportSlot::I64Keyword => Ok(()),
-            AttributePathTransportSlot::U128Keyword => Ok(()),
-            AttributePathTransportSlot::I128Keyword => Ok(()),
-            AttributePathTransportSlot::IsizeKeyword => Ok(()),
-            AttributePathTransportSlot::UsizeKeyword => Ok(()),
-            AttributePathTransportSlot::F32Keyword => Ok(()),
-            AttributePathTransportSlot::F64Keyword => Ok(()),
-            AttributePathTransportSlot::BoolKeyword => Ok(()),
-            AttributePathTransportSlot::StrKeyword => Ok(()),
-            AttributePathTransportSlot::CharKeyword => Ok(()),
             AttributePathTransportSlot::Super(_) => Ok(()),
             AttributePathTransportSlot::Crate(_) => Ok(()),
-            AttributePathTransportSlot::DefaultKeyword => Ok(()),
-            AttributePathTransportSlot::UnionKeyword => Ok(()),
-            AttributePathTransportSlot::GenKeyword => Ok(()),
             AttributePathTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -6125,28 +5785,8 @@ impl ::sittir_core::prepare::Prepare for AttributePathTransportSlot {
             AttributePathTransportSlot::Identifier(t) => t.gap_edges(),
             AttributePathTransportSlot::ScopedIdentifier(t) => t.gap_edges(),
             AttributePathTransportSlot::Self_(edges) => Some(edges),
-            AttributePathTransportSlot::U8Keyword => None,
-            AttributePathTransportSlot::I8Keyword => None,
-            AttributePathTransportSlot::U16Keyword => None,
-            AttributePathTransportSlot::I16Keyword => None,
-            AttributePathTransportSlot::U32Keyword => None,
-            AttributePathTransportSlot::I32Keyword => None,
-            AttributePathTransportSlot::U64Keyword => None,
-            AttributePathTransportSlot::I64Keyword => None,
-            AttributePathTransportSlot::U128Keyword => None,
-            AttributePathTransportSlot::I128Keyword => None,
-            AttributePathTransportSlot::IsizeKeyword => None,
-            AttributePathTransportSlot::UsizeKeyword => None,
-            AttributePathTransportSlot::F32Keyword => None,
-            AttributePathTransportSlot::F64Keyword => None,
-            AttributePathTransportSlot::BoolKeyword => None,
-            AttributePathTransportSlot::StrKeyword => None,
-            AttributePathTransportSlot::CharKeyword => None,
             AttributePathTransportSlot::Super(edges) => Some(edges),
             AttributePathTransportSlot::Crate(edges) => Some(edges),
-            AttributePathTransportSlot::DefaultKeyword => None,
-            AttributePathTransportSlot::UnionKeyword => None,
-            AttributePathTransportSlot::GenKeyword => None,
             AttributePathTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -6156,28 +5796,8 @@ impl ::sittir_core::prepare::Prepare for AttributePathTransportSlot {
             AttributePathTransportSlot::Identifier(t) => t.snapshot_edge(),
             AttributePathTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
             AttributePathTransportSlot::Self_(_) => None,
-            AttributePathTransportSlot::U8Keyword => None,
-            AttributePathTransportSlot::I8Keyword => None,
-            AttributePathTransportSlot::U16Keyword => None,
-            AttributePathTransportSlot::I16Keyword => None,
-            AttributePathTransportSlot::U32Keyword => None,
-            AttributePathTransportSlot::I32Keyword => None,
-            AttributePathTransportSlot::U64Keyword => None,
-            AttributePathTransportSlot::I64Keyword => None,
-            AttributePathTransportSlot::U128Keyword => None,
-            AttributePathTransportSlot::I128Keyword => None,
-            AttributePathTransportSlot::IsizeKeyword => None,
-            AttributePathTransportSlot::UsizeKeyword => None,
-            AttributePathTransportSlot::F32Keyword => None,
-            AttributePathTransportSlot::F64Keyword => None,
-            AttributePathTransportSlot::BoolKeyword => None,
-            AttributePathTransportSlot::StrKeyword => None,
-            AttributePathTransportSlot::CharKeyword => None,
             AttributePathTransportSlot::Super(_) => None,
             AttributePathTransportSlot::Crate(_) => None,
-            AttributePathTransportSlot::DefaultKeyword => None,
-            AttributePathTransportSlot::UnionKeyword => None,
-            AttributePathTransportSlot::GenKeyword => None,
             AttributePathTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -6187,28 +5807,8 @@ impl ::sittir_core::prepare::Prepare for AttributePathTransportSlot {
             AttributePathTransportSlot::Identifier(t) => t.source_separator(ctx),
             AttributePathTransportSlot::ScopedIdentifier(t) => t.source_separator(ctx),
             AttributePathTransportSlot::Self_(_) => None,
-            AttributePathTransportSlot::U8Keyword => None,
-            AttributePathTransportSlot::I8Keyword => None,
-            AttributePathTransportSlot::U16Keyword => None,
-            AttributePathTransportSlot::I16Keyword => None,
-            AttributePathTransportSlot::U32Keyword => None,
-            AttributePathTransportSlot::I32Keyword => None,
-            AttributePathTransportSlot::U64Keyword => None,
-            AttributePathTransportSlot::I64Keyword => None,
-            AttributePathTransportSlot::U128Keyword => None,
-            AttributePathTransportSlot::I128Keyword => None,
-            AttributePathTransportSlot::IsizeKeyword => None,
-            AttributePathTransportSlot::UsizeKeyword => None,
-            AttributePathTransportSlot::F32Keyword => None,
-            AttributePathTransportSlot::F64Keyword => None,
-            AttributePathTransportSlot::BoolKeyword => None,
-            AttributePathTransportSlot::StrKeyword => None,
-            AttributePathTransportSlot::CharKeyword => None,
             AttributePathTransportSlot::Super(_) => None,
             AttributePathTransportSlot::Crate(_) => None,
-            AttributePathTransportSlot::DefaultKeyword => None,
-            AttributePathTransportSlot::UnionKeyword => None,
-            AttributePathTransportSlot::GenKeyword => None,
             AttributePathTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
@@ -6224,28 +5824,8 @@ impl ::sittir_core::view::KindOf for AttributePathTransportSlot {
             Self::Identifier(inner) => inner.kind_in(kinds),
             Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
             Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
             Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -6258,28 +5838,8 @@ impl ::sittir_core::render::Render for AttributePathTransportSlot {
             AttributePathTransportSlot::Identifier(inner) => inner.render(w),
             AttributePathTransportSlot::ScopedIdentifier(inner) => inner.render(w),
             AttributePathTransportSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
-            AttributePathTransportSlot::U8Keyword => render_u8_keyword(w),
-            AttributePathTransportSlot::I8Keyword => render_i8_keyword(w),
-            AttributePathTransportSlot::U16Keyword => render_u16_keyword(w),
-            AttributePathTransportSlot::I16Keyword => render_i16_keyword(w),
-            AttributePathTransportSlot::U32Keyword => render_u32_keyword(w),
-            AttributePathTransportSlot::I32Keyword => render_i32_keyword(w),
-            AttributePathTransportSlot::U64Keyword => render_u64_keyword(w),
-            AttributePathTransportSlot::I64Keyword => render_i64_keyword(w),
-            AttributePathTransportSlot::U128Keyword => render_u128_keyword(w),
-            AttributePathTransportSlot::I128Keyword => render_i128_keyword(w),
-            AttributePathTransportSlot::IsizeKeyword => render_isize_keyword(w),
-            AttributePathTransportSlot::UsizeKeyword => render_usize_keyword(w),
-            AttributePathTransportSlot::F32Keyword => render_f32_keyword(w),
-            AttributePathTransportSlot::F64Keyword => render_f64_keyword(w),
-            AttributePathTransportSlot::BoolKeyword => render_bool_keyword(w),
-            AttributePathTransportSlot::StrKeyword => render_str_keyword(w),
-            AttributePathTransportSlot::CharKeyword => render_char_keyword(w),
             AttributePathTransportSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
             AttributePathTransportSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
-            AttributePathTransportSlot::DefaultKeyword => render_default_keyword(w),
-            AttributePathTransportSlot::UnionKeyword => render_union_keyword(w),
-            AttributePathTransportSlot::GenKeyword => render_gen_keyword(w),
             AttributePathTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -6345,7 +5905,7 @@ impl ::sittir_core::render::Render for EnumVariantBodyTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum FunctionItemNameTransportSlot {
-    #[kind(kind::IDENTIFIER, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD, kind::DEFAULT_KEYWORD, kind::UNION_KEYWORD, kind::GEN_KEYWORD)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
@@ -6825,7 +6385,7 @@ impl ::sittir_core::render::Render for TraitBoundsBoundsTransportSlot {
 pub enum ConstParameterValueTransportSlot {
     #[kind(kind::BLOCK)]
     Block(BlockTransport),
-    #[kind(kind::IDENTIFIER, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD, kind::DEFAULT_KEYWORD, kind::UNION_KEYWORD, kind::GEN_KEYWORD)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING_LITERAL)]
     StringLiteral(StringLiteralTransport),
@@ -7010,7 +6570,7 @@ impl ::sittir_core::render::Render for ConstParameterValueTransportSlot {
 pub enum UseDeclarationArgumentTransportSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -7025,52 +6585,12 @@ pub enum UseDeclarationArgumentTransportSlot {
     #[kind(kind::SELF)]
     #[transport(edged)]
     Self_(::sittir_core::options::Edges),
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
     #[kind(kind::SUPER)]
     #[transport(edged)]
     Super(::sittir_core::options::Edges),
     #[kind(kind::CRATE)]
     #[transport(edged)]
     Crate(::sittir_core::options::Edges),
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -7086,28 +6606,8 @@ impl ::sittir_core::prepare::Prepare for UseDeclarationArgumentTransportSlot {
             UseDeclarationArgumentTransportSlot::ScopedUseList(t) => t.prepare(ctx),
             UseDeclarationArgumentTransportSlot::UseWildcard(t) => t.prepare(ctx),
             UseDeclarationArgumentTransportSlot::Self_(_) => Ok(()),
-            UseDeclarationArgumentTransportSlot::U8Keyword => Ok(()),
-            UseDeclarationArgumentTransportSlot::I8Keyword => Ok(()),
-            UseDeclarationArgumentTransportSlot::U16Keyword => Ok(()),
-            UseDeclarationArgumentTransportSlot::I16Keyword => Ok(()),
-            UseDeclarationArgumentTransportSlot::U32Keyword => Ok(()),
-            UseDeclarationArgumentTransportSlot::I32Keyword => Ok(()),
-            UseDeclarationArgumentTransportSlot::U64Keyword => Ok(()),
-            UseDeclarationArgumentTransportSlot::I64Keyword => Ok(()),
-            UseDeclarationArgumentTransportSlot::U128Keyword => Ok(()),
-            UseDeclarationArgumentTransportSlot::I128Keyword => Ok(()),
-            UseDeclarationArgumentTransportSlot::IsizeKeyword => Ok(()),
-            UseDeclarationArgumentTransportSlot::UsizeKeyword => Ok(()),
-            UseDeclarationArgumentTransportSlot::F32Keyword => Ok(()),
-            UseDeclarationArgumentTransportSlot::F64Keyword => Ok(()),
-            UseDeclarationArgumentTransportSlot::BoolKeyword => Ok(()),
-            UseDeclarationArgumentTransportSlot::StrKeyword => Ok(()),
-            UseDeclarationArgumentTransportSlot::CharKeyword => Ok(()),
             UseDeclarationArgumentTransportSlot::Super(_) => Ok(()),
             UseDeclarationArgumentTransportSlot::Crate(_) => Ok(()),
-            UseDeclarationArgumentTransportSlot::DefaultKeyword => Ok(()),
-            UseDeclarationArgumentTransportSlot::UnionKeyword => Ok(()),
-            UseDeclarationArgumentTransportSlot::GenKeyword => Ok(()),
             UseDeclarationArgumentTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -7121,28 +6621,8 @@ impl ::sittir_core::prepare::Prepare for UseDeclarationArgumentTransportSlot {
             UseDeclarationArgumentTransportSlot::ScopedUseList(t) => t.gap_edges(),
             UseDeclarationArgumentTransportSlot::UseWildcard(t) => t.gap_edges(),
             UseDeclarationArgumentTransportSlot::Self_(edges) => Some(edges),
-            UseDeclarationArgumentTransportSlot::U8Keyword => None,
-            UseDeclarationArgumentTransportSlot::I8Keyword => None,
-            UseDeclarationArgumentTransportSlot::U16Keyword => None,
-            UseDeclarationArgumentTransportSlot::I16Keyword => None,
-            UseDeclarationArgumentTransportSlot::U32Keyword => None,
-            UseDeclarationArgumentTransportSlot::I32Keyword => None,
-            UseDeclarationArgumentTransportSlot::U64Keyword => None,
-            UseDeclarationArgumentTransportSlot::I64Keyword => None,
-            UseDeclarationArgumentTransportSlot::U128Keyword => None,
-            UseDeclarationArgumentTransportSlot::I128Keyword => None,
-            UseDeclarationArgumentTransportSlot::IsizeKeyword => None,
-            UseDeclarationArgumentTransportSlot::UsizeKeyword => None,
-            UseDeclarationArgumentTransportSlot::F32Keyword => None,
-            UseDeclarationArgumentTransportSlot::F64Keyword => None,
-            UseDeclarationArgumentTransportSlot::BoolKeyword => None,
-            UseDeclarationArgumentTransportSlot::StrKeyword => None,
-            UseDeclarationArgumentTransportSlot::CharKeyword => None,
             UseDeclarationArgumentTransportSlot::Super(edges) => Some(edges),
             UseDeclarationArgumentTransportSlot::Crate(edges) => Some(edges),
-            UseDeclarationArgumentTransportSlot::DefaultKeyword => None,
-            UseDeclarationArgumentTransportSlot::UnionKeyword => None,
-            UseDeclarationArgumentTransportSlot::GenKeyword => None,
             UseDeclarationArgumentTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -7156,28 +6636,8 @@ impl ::sittir_core::prepare::Prepare for UseDeclarationArgumentTransportSlot {
             UseDeclarationArgumentTransportSlot::ScopedUseList(t) => t.snapshot_edge(),
             UseDeclarationArgumentTransportSlot::UseWildcard(t) => t.snapshot_edge(),
             UseDeclarationArgumentTransportSlot::Self_(_) => None,
-            UseDeclarationArgumentTransportSlot::U8Keyword => None,
-            UseDeclarationArgumentTransportSlot::I8Keyword => None,
-            UseDeclarationArgumentTransportSlot::U16Keyword => None,
-            UseDeclarationArgumentTransportSlot::I16Keyword => None,
-            UseDeclarationArgumentTransportSlot::U32Keyword => None,
-            UseDeclarationArgumentTransportSlot::I32Keyword => None,
-            UseDeclarationArgumentTransportSlot::U64Keyword => None,
-            UseDeclarationArgumentTransportSlot::I64Keyword => None,
-            UseDeclarationArgumentTransportSlot::U128Keyword => None,
-            UseDeclarationArgumentTransportSlot::I128Keyword => None,
-            UseDeclarationArgumentTransportSlot::IsizeKeyword => None,
-            UseDeclarationArgumentTransportSlot::UsizeKeyword => None,
-            UseDeclarationArgumentTransportSlot::F32Keyword => None,
-            UseDeclarationArgumentTransportSlot::F64Keyword => None,
-            UseDeclarationArgumentTransportSlot::BoolKeyword => None,
-            UseDeclarationArgumentTransportSlot::StrKeyword => None,
-            UseDeclarationArgumentTransportSlot::CharKeyword => None,
             UseDeclarationArgumentTransportSlot::Super(_) => None,
             UseDeclarationArgumentTransportSlot::Crate(_) => None,
-            UseDeclarationArgumentTransportSlot::DefaultKeyword => None,
-            UseDeclarationArgumentTransportSlot::UnionKeyword => None,
-            UseDeclarationArgumentTransportSlot::GenKeyword => None,
             UseDeclarationArgumentTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -7191,28 +6651,8 @@ impl ::sittir_core::prepare::Prepare for UseDeclarationArgumentTransportSlot {
             UseDeclarationArgumentTransportSlot::ScopedUseList(t) => t.source_separator(ctx),
             UseDeclarationArgumentTransportSlot::UseWildcard(t) => t.source_separator(ctx),
             UseDeclarationArgumentTransportSlot::Self_(_) => None,
-            UseDeclarationArgumentTransportSlot::U8Keyword => None,
-            UseDeclarationArgumentTransportSlot::I8Keyword => None,
-            UseDeclarationArgumentTransportSlot::U16Keyword => None,
-            UseDeclarationArgumentTransportSlot::I16Keyword => None,
-            UseDeclarationArgumentTransportSlot::U32Keyword => None,
-            UseDeclarationArgumentTransportSlot::I32Keyword => None,
-            UseDeclarationArgumentTransportSlot::U64Keyword => None,
-            UseDeclarationArgumentTransportSlot::I64Keyword => None,
-            UseDeclarationArgumentTransportSlot::U128Keyword => None,
-            UseDeclarationArgumentTransportSlot::I128Keyword => None,
-            UseDeclarationArgumentTransportSlot::IsizeKeyword => None,
-            UseDeclarationArgumentTransportSlot::UsizeKeyword => None,
-            UseDeclarationArgumentTransportSlot::F32Keyword => None,
-            UseDeclarationArgumentTransportSlot::F64Keyword => None,
-            UseDeclarationArgumentTransportSlot::BoolKeyword => None,
-            UseDeclarationArgumentTransportSlot::StrKeyword => None,
-            UseDeclarationArgumentTransportSlot::CharKeyword => None,
             UseDeclarationArgumentTransportSlot::Super(_) => None,
             UseDeclarationArgumentTransportSlot::Crate(_) => None,
-            UseDeclarationArgumentTransportSlot::DefaultKeyword => None,
-            UseDeclarationArgumentTransportSlot::UnionKeyword => None,
-            UseDeclarationArgumentTransportSlot::GenKeyword => None,
             UseDeclarationArgumentTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
@@ -7232,28 +6672,8 @@ impl ::sittir_core::view::KindOf for UseDeclarationArgumentTransportSlot {
             Self::ScopedUseList(inner) => inner.kind_in(kinds),
             Self::UseWildcard(inner) => inner.kind_in(kinds),
             Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
             Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -7270,28 +6690,8 @@ impl ::sittir_core::render::Render for UseDeclarationArgumentTransportSlot {
             UseDeclarationArgumentTransportSlot::ScopedUseList(inner) => inner.render(w),
             UseDeclarationArgumentTransportSlot::UseWildcard(inner) => inner.render(w),
             UseDeclarationArgumentTransportSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
-            UseDeclarationArgumentTransportSlot::U8Keyword => render_u8_keyword(w),
-            UseDeclarationArgumentTransportSlot::I8Keyword => render_i8_keyword(w),
-            UseDeclarationArgumentTransportSlot::U16Keyword => render_u16_keyword(w),
-            UseDeclarationArgumentTransportSlot::I16Keyword => render_i16_keyword(w),
-            UseDeclarationArgumentTransportSlot::U32Keyword => render_u32_keyword(w),
-            UseDeclarationArgumentTransportSlot::I32Keyword => render_i32_keyword(w),
-            UseDeclarationArgumentTransportSlot::U64Keyword => render_u64_keyword(w),
-            UseDeclarationArgumentTransportSlot::I64Keyword => render_i64_keyword(w),
-            UseDeclarationArgumentTransportSlot::U128Keyword => render_u128_keyword(w),
-            UseDeclarationArgumentTransportSlot::I128Keyword => render_i128_keyword(w),
-            UseDeclarationArgumentTransportSlot::IsizeKeyword => render_isize_keyword(w),
-            UseDeclarationArgumentTransportSlot::UsizeKeyword => render_usize_keyword(w),
-            UseDeclarationArgumentTransportSlot::F32Keyword => render_f32_keyword(w),
-            UseDeclarationArgumentTransportSlot::F64Keyword => render_f64_keyword(w),
-            UseDeclarationArgumentTransportSlot::BoolKeyword => render_bool_keyword(w),
-            UseDeclarationArgumentTransportSlot::StrKeyword => render_str_keyword(w),
-            UseDeclarationArgumentTransportSlot::CharKeyword => render_char_keyword(w),
             UseDeclarationArgumentTransportSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
             UseDeclarationArgumentTransportSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
-            UseDeclarationArgumentTransportSlot::DefaultKeyword => render_default_keyword(w),
-            UseDeclarationArgumentTransportSlot::UnionKeyword => render_union_keyword(w),
-            UseDeclarationArgumentTransportSlot::GenKeyword => render_gen_keyword(w),
             UseDeclarationArgumentTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -7330,7 +6730,7 @@ pub enum ParameterNameTransportSlot {
     FloatLiteral(FloatLiteralTransport),
     #[kind(kind::NEGATIVE_LITERAL)]
     NegativeLiteral(NegativeLiteralTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -7364,46 +6764,6 @@ pub enum ParameterNameTransportSlot {
     ConstBlock(ConstBlockTransport),
     #[kind(kind::MACRO_INVOCATION)]
     MacroInvocation(MacroInvocationTransport),
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
     #[kind(kind::REMAINING_FIELD_PATTERN)]
     #[transport(edged)]
     RemainingFieldPattern(::sittir_core::options::Edges),
@@ -7452,26 +6812,6 @@ impl ::sittir_core::prepare::Prepare for ParameterNameTransportSlot {
             ParameterNameTransportSlot::OrPatternPrefix(t) => t.prepare(ctx),
             ParameterNameTransportSlot::ConstBlock(t) => t.prepare(ctx),
             ParameterNameTransportSlot::MacroInvocation(t) => t.prepare(ctx),
-            ParameterNameTransportSlot::U8Keyword => Ok(()),
-            ParameterNameTransportSlot::I8Keyword => Ok(()),
-            ParameterNameTransportSlot::U16Keyword => Ok(()),
-            ParameterNameTransportSlot::I16Keyword => Ok(()),
-            ParameterNameTransportSlot::U32Keyword => Ok(()),
-            ParameterNameTransportSlot::I32Keyword => Ok(()),
-            ParameterNameTransportSlot::U64Keyword => Ok(()),
-            ParameterNameTransportSlot::I64Keyword => Ok(()),
-            ParameterNameTransportSlot::U128Keyword => Ok(()),
-            ParameterNameTransportSlot::I128Keyword => Ok(()),
-            ParameterNameTransportSlot::IsizeKeyword => Ok(()),
-            ParameterNameTransportSlot::UsizeKeyword => Ok(()),
-            ParameterNameTransportSlot::F32Keyword => Ok(()),
-            ParameterNameTransportSlot::F64Keyword => Ok(()),
-            ParameterNameTransportSlot::BoolKeyword => Ok(()),
-            ParameterNameTransportSlot::StrKeyword => Ok(()),
-            ParameterNameTransportSlot::CharKeyword => Ok(()),
-            ParameterNameTransportSlot::DefaultKeyword => Ok(()),
-            ParameterNameTransportSlot::UnionKeyword => Ok(()),
-            ParameterNameTransportSlot::GenKeyword => Ok(()),
             ParameterNameTransportSlot::RemainingFieldPattern(_) => Ok(()),
             ParameterNameTransportSlot::WildcardPattern(_) => Ok(()),
             ParameterNameTransportSlot::Self_(_) => Ok(()),
@@ -7512,26 +6852,6 @@ impl ::sittir_core::prepare::Prepare for ParameterNameTransportSlot {
             ParameterNameTransportSlot::OrPatternPrefix(t) => t.gap_edges(),
             ParameterNameTransportSlot::ConstBlock(t) => t.gap_edges(),
             ParameterNameTransportSlot::MacroInvocation(t) => t.gap_edges(),
-            ParameterNameTransportSlot::U8Keyword => None,
-            ParameterNameTransportSlot::I8Keyword => None,
-            ParameterNameTransportSlot::U16Keyword => None,
-            ParameterNameTransportSlot::I16Keyword => None,
-            ParameterNameTransportSlot::U32Keyword => None,
-            ParameterNameTransportSlot::I32Keyword => None,
-            ParameterNameTransportSlot::U64Keyword => None,
-            ParameterNameTransportSlot::I64Keyword => None,
-            ParameterNameTransportSlot::U128Keyword => None,
-            ParameterNameTransportSlot::I128Keyword => None,
-            ParameterNameTransportSlot::IsizeKeyword => None,
-            ParameterNameTransportSlot::UsizeKeyword => None,
-            ParameterNameTransportSlot::F32Keyword => None,
-            ParameterNameTransportSlot::F64Keyword => None,
-            ParameterNameTransportSlot::BoolKeyword => None,
-            ParameterNameTransportSlot::StrKeyword => None,
-            ParameterNameTransportSlot::CharKeyword => None,
-            ParameterNameTransportSlot::DefaultKeyword => None,
-            ParameterNameTransportSlot::UnionKeyword => None,
-            ParameterNameTransportSlot::GenKeyword => None,
             ParameterNameTransportSlot::RemainingFieldPattern(edges) => Some(edges),
             ParameterNameTransportSlot::WildcardPattern(edges) => Some(edges),
             ParameterNameTransportSlot::Self_(edges) => Some(edges),
@@ -7572,26 +6892,6 @@ impl ::sittir_core::prepare::Prepare for ParameterNameTransportSlot {
             ParameterNameTransportSlot::OrPatternPrefix(t) => t.snapshot_edge(),
             ParameterNameTransportSlot::ConstBlock(t) => t.snapshot_edge(),
             ParameterNameTransportSlot::MacroInvocation(t) => t.snapshot_edge(),
-            ParameterNameTransportSlot::U8Keyword => None,
-            ParameterNameTransportSlot::I8Keyword => None,
-            ParameterNameTransportSlot::U16Keyword => None,
-            ParameterNameTransportSlot::I16Keyword => None,
-            ParameterNameTransportSlot::U32Keyword => None,
-            ParameterNameTransportSlot::I32Keyword => None,
-            ParameterNameTransportSlot::U64Keyword => None,
-            ParameterNameTransportSlot::I64Keyword => None,
-            ParameterNameTransportSlot::U128Keyword => None,
-            ParameterNameTransportSlot::I128Keyword => None,
-            ParameterNameTransportSlot::IsizeKeyword => None,
-            ParameterNameTransportSlot::UsizeKeyword => None,
-            ParameterNameTransportSlot::F32Keyword => None,
-            ParameterNameTransportSlot::F64Keyword => None,
-            ParameterNameTransportSlot::BoolKeyword => None,
-            ParameterNameTransportSlot::StrKeyword => None,
-            ParameterNameTransportSlot::CharKeyword => None,
-            ParameterNameTransportSlot::DefaultKeyword => None,
-            ParameterNameTransportSlot::UnionKeyword => None,
-            ParameterNameTransportSlot::GenKeyword => None,
             ParameterNameTransportSlot::RemainingFieldPattern(_) => None,
             ParameterNameTransportSlot::WildcardPattern(_) => None,
             ParameterNameTransportSlot::Self_(_) => None,
@@ -7632,26 +6932,6 @@ impl ::sittir_core::prepare::Prepare for ParameterNameTransportSlot {
             ParameterNameTransportSlot::OrPatternPrefix(t) => t.source_separator(ctx),
             ParameterNameTransportSlot::ConstBlock(t) => t.source_separator(ctx),
             ParameterNameTransportSlot::MacroInvocation(t) => t.source_separator(ctx),
-            ParameterNameTransportSlot::U8Keyword => None,
-            ParameterNameTransportSlot::I8Keyword => None,
-            ParameterNameTransportSlot::U16Keyword => None,
-            ParameterNameTransportSlot::I16Keyword => None,
-            ParameterNameTransportSlot::U32Keyword => None,
-            ParameterNameTransportSlot::I32Keyword => None,
-            ParameterNameTransportSlot::U64Keyword => None,
-            ParameterNameTransportSlot::I64Keyword => None,
-            ParameterNameTransportSlot::U128Keyword => None,
-            ParameterNameTransportSlot::I128Keyword => None,
-            ParameterNameTransportSlot::IsizeKeyword => None,
-            ParameterNameTransportSlot::UsizeKeyword => None,
-            ParameterNameTransportSlot::F32Keyword => None,
-            ParameterNameTransportSlot::F64Keyword => None,
-            ParameterNameTransportSlot::BoolKeyword => None,
-            ParameterNameTransportSlot::StrKeyword => None,
-            ParameterNameTransportSlot::CharKeyword => None,
-            ParameterNameTransportSlot::DefaultKeyword => None,
-            ParameterNameTransportSlot::UnionKeyword => None,
-            ParameterNameTransportSlot::GenKeyword => None,
             ParameterNameTransportSlot::RemainingFieldPattern(_) => None,
             ParameterNameTransportSlot::WildcardPattern(_) => None,
             ParameterNameTransportSlot::Self_(_) => None,
@@ -7698,26 +6978,6 @@ impl ::sittir_core::view::KindOf for ParameterNameTransportSlot {
             Self::OrPatternPrefix(inner) => inner.kind_in(kinds),
             Self::ConstBlock(inner) => inner.kind_in(kinds),
             Self::MacroInvocation(inner) => inner.kind_in(kinds),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::RemainingFieldPattern(_) => [::sittir_core::types::KindId(321)].iter().any(|k| kinds.contains(k)),
             Self::WildcardPattern(_) => [::sittir_core::types::KindId(426)].iter().any(|k| kinds.contains(k)),
             Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
@@ -7761,26 +7021,6 @@ impl ::sittir_core::render::Render for ParameterNameTransportSlot {
             ParameterNameTransportSlot::OrPatternPrefix(inner) => inner.render(w),
             ParameterNameTransportSlot::ConstBlock(inner) => inner.render(w),
             ParameterNameTransportSlot::MacroInvocation(inner) => inner.render(w),
-            ParameterNameTransportSlot::U8Keyword => render_u8_keyword(w),
-            ParameterNameTransportSlot::I8Keyword => render_i8_keyword(w),
-            ParameterNameTransportSlot::U16Keyword => render_u16_keyword(w),
-            ParameterNameTransportSlot::I16Keyword => render_i16_keyword(w),
-            ParameterNameTransportSlot::U32Keyword => render_u32_keyword(w),
-            ParameterNameTransportSlot::I32Keyword => render_i32_keyword(w),
-            ParameterNameTransportSlot::U64Keyword => render_u64_keyword(w),
-            ParameterNameTransportSlot::I64Keyword => render_i64_keyword(w),
-            ParameterNameTransportSlot::U128Keyword => render_u128_keyword(w),
-            ParameterNameTransportSlot::I128Keyword => render_i128_keyword(w),
-            ParameterNameTransportSlot::IsizeKeyword => render_isize_keyword(w),
-            ParameterNameTransportSlot::UsizeKeyword => render_usize_keyword(w),
-            ParameterNameTransportSlot::F32Keyword => render_f32_keyword(w),
-            ParameterNameTransportSlot::F64Keyword => render_f64_keyword(w),
-            ParameterNameTransportSlot::BoolKeyword => render_bool_keyword(w),
-            ParameterNameTransportSlot::StrKeyword => render_str_keyword(w),
-            ParameterNameTransportSlot::CharKeyword => render_char_keyword(w),
-            ParameterNameTransportSlot::DefaultKeyword => render_default_keyword(w),
-            ParameterNameTransportSlot::UnionKeyword => render_union_keyword(w),
-            ParameterNameTransportSlot::GenKeyword => render_gen_keyword(w),
             ParameterNameTransportSlot::RemainingFieldPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(321), edges, w, render_remaining_field_pattern),
             ParameterNameTransportSlot::WildcardPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(426), edges, w, render_wildcard_pattern),
             ParameterNameTransportSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
@@ -8102,7 +7342,7 @@ impl ::sittir_core::render::Render for FunctionTypeContentTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum GenericFunctionFunctionTransportSlot {
-    #[kind(kind::IDENTIFIER, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD, kind::DEFAULT_KEYWORD, kind::UNION_KEYWORD, kind::GEN_KEYWORD)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -8177,51 +7417,45 @@ impl ::sittir_core::render::Render for GenericFunctionFunctionTransportSlot {
 pub enum GenericTypeTypeTransportSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierTransport),
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
     ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
+    #[transport(verbatim)]
+    Verbatim(VerbatimTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for GenericTypeTypeTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             GenericTypeTypeTransportSlot::TypeIdentifier(t) => t.prepare(ctx),
+            GenericTypeTypeTransportSlot::Identifier(t) => t.prepare(ctx),
             GenericTypeTypeTransportSlot::ScopedTypeIdentifier(t) => t.prepare(ctx),
-            GenericTypeTypeTransportSlot::DefaultKeyword => Ok(()),
-            GenericTypeTypeTransportSlot::UnionKeyword => Ok(()),
-            GenericTypeTypeTransportSlot::GenKeyword => Ok(()),
+            GenericTypeTypeTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             GenericTypeTypeTransportSlot::TypeIdentifier(t) => t.gap_edges(),
+            GenericTypeTypeTransportSlot::Identifier(t) => t.gap_edges(),
             GenericTypeTypeTransportSlot::ScopedTypeIdentifier(t) => t.gap_edges(),
-            GenericTypeTypeTransportSlot::DefaultKeyword => None,
-            GenericTypeTypeTransportSlot::UnionKeyword => None,
-            GenericTypeTypeTransportSlot::GenKeyword => None,
+            GenericTypeTypeTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
             GenericTypeTypeTransportSlot::TypeIdentifier(t) => t.snapshot_edge(),
+            GenericTypeTypeTransportSlot::Identifier(t) => t.snapshot_edge(),
             GenericTypeTypeTransportSlot::ScopedTypeIdentifier(t) => t.snapshot_edge(),
-            GenericTypeTypeTransportSlot::DefaultKeyword => None,
-            GenericTypeTypeTransportSlot::UnionKeyword => None,
-            GenericTypeTypeTransportSlot::GenKeyword => None,
+            GenericTypeTypeTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
             GenericTypeTypeTransportSlot::TypeIdentifier(t) => t.source_separator(ctx),
+            GenericTypeTypeTransportSlot::Identifier(t) => t.source_separator(ctx),
             GenericTypeTypeTransportSlot::ScopedTypeIdentifier(t) => t.source_separator(ctx),
-            GenericTypeTypeTransportSlot::DefaultKeyword => None,
-            GenericTypeTypeTransportSlot::UnionKeyword => None,
-            GenericTypeTypeTransportSlot::GenKeyword => None,
+            GenericTypeTypeTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -8233,10 +7467,9 @@ impl ::sittir_core::view::KindOf for GenericTypeTypeTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::TypeIdentifier(inner) => inner.kind_in(kinds),
+            Self::Identifier(inner) => inner.kind_in(kinds),
             Self::ScopedTypeIdentifier(inner) => inner.kind_in(kinds),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -8245,10 +7478,9 @@ impl ::sittir_core::render::Render for GenericTypeTypeTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             GenericTypeTypeTransportSlot::TypeIdentifier(inner) => inner.render(w),
+            GenericTypeTypeTransportSlot::Identifier(inner) => inner.render(w),
             GenericTypeTypeTransportSlot::ScopedTypeIdentifier(inner) => inner.render(w),
-            GenericTypeTypeTransportSlot::DefaultKeyword => render_default_keyword(w),
-            GenericTypeTypeTransportSlot::UnionKeyword => render_union_keyword(w),
-            GenericTypeTypeTransportSlot::GenKeyword => render_gen_keyword(w),
+            GenericTypeTypeTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -8704,14 +7936,8 @@ impl ::sittir_core::render::Render for DynamicTypeTraitTransportSlot {
 pub enum MacroInvocationMacroTransportSlot {
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
-    #[kind(kind::IDENTIFIER, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -8721,9 +7947,6 @@ impl ::sittir_core::prepare::Prepare for MacroInvocationMacroTransportSlot {
         match self {
             MacroInvocationMacroTransportSlot::ScopedIdentifier(t) => t.prepare(ctx),
             MacroInvocationMacroTransportSlot::Identifier(t) => t.prepare(ctx),
-            MacroInvocationMacroTransportSlot::DefaultKeyword => Ok(()),
-            MacroInvocationMacroTransportSlot::UnionKeyword => Ok(()),
-            MacroInvocationMacroTransportSlot::GenKeyword => Ok(()),
             MacroInvocationMacroTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -8731,9 +7954,6 @@ impl ::sittir_core::prepare::Prepare for MacroInvocationMacroTransportSlot {
         match self {
             MacroInvocationMacroTransportSlot::ScopedIdentifier(t) => t.gap_edges(),
             MacroInvocationMacroTransportSlot::Identifier(t) => t.gap_edges(),
-            MacroInvocationMacroTransportSlot::DefaultKeyword => None,
-            MacroInvocationMacroTransportSlot::UnionKeyword => None,
-            MacroInvocationMacroTransportSlot::GenKeyword => None,
             MacroInvocationMacroTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -8741,9 +7961,6 @@ impl ::sittir_core::prepare::Prepare for MacroInvocationMacroTransportSlot {
         match self {
             MacroInvocationMacroTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
             MacroInvocationMacroTransportSlot::Identifier(t) => t.snapshot_edge(),
-            MacroInvocationMacroTransportSlot::DefaultKeyword => None,
-            MacroInvocationMacroTransportSlot::UnionKeyword => None,
-            MacroInvocationMacroTransportSlot::GenKeyword => None,
             MacroInvocationMacroTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -8751,9 +7968,6 @@ impl ::sittir_core::prepare::Prepare for MacroInvocationMacroTransportSlot {
         match self {
             MacroInvocationMacroTransportSlot::ScopedIdentifier(t) => t.source_separator(ctx),
             MacroInvocationMacroTransportSlot::Identifier(t) => t.source_separator(ctx),
-            MacroInvocationMacroTransportSlot::DefaultKeyword => None,
-            MacroInvocationMacroTransportSlot::UnionKeyword => None,
-            MacroInvocationMacroTransportSlot::GenKeyword => None,
             MacroInvocationMacroTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
@@ -8767,9 +7981,6 @@ impl ::sittir_core::view::KindOf for MacroInvocationMacroTransportSlot {
         match self {
             Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
             Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -8780,9 +7991,6 @@ impl ::sittir_core::render::Render for MacroInvocationMacroTransportSlot {
         match self {
             MacroInvocationMacroTransportSlot::ScopedIdentifier(inner) => inner.render(w),
             MacroInvocationMacroTransportSlot::Identifier(inner) => inner.render(w),
-            MacroInvocationMacroTransportSlot::DefaultKeyword => render_default_keyword(w),
-            MacroInvocationMacroTransportSlot::UnionKeyword => render_union_keyword(w),
-            MacroInvocationMacroTransportSlot::GenKeyword => render_gen_keyword(w),
             MacroInvocationMacroTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -8793,7 +8001,7 @@ impl ::sittir_core::render::Render for MacroInvocationMacroTransportSlot {
 pub enum ScopedIdentifierPathTransportSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -8804,52 +8012,12 @@ pub enum ScopedIdentifierPathTransportSlot {
     #[kind(kind::SELF)]
     #[transport(edged)]
     Self_(::sittir_core::options::Edges),
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
     #[kind(kind::SUPER)]
     #[transport(edged)]
     Super(::sittir_core::options::Edges),
     #[kind(kind::CRATE)]
     #[transport(edged)]
     Crate(::sittir_core::options::Edges),
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -8863,28 +8031,8 @@ impl ::sittir_core::prepare::Prepare for ScopedIdentifierPathTransportSlot {
             ScopedIdentifierPathTransportSlot::BracketedType(t) => t.prepare(ctx),
             ScopedIdentifierPathTransportSlot::GenericTypeWithTurbofish(t) => t.prepare(ctx),
             ScopedIdentifierPathTransportSlot::Self_(_) => Ok(()),
-            ScopedIdentifierPathTransportSlot::U8Keyword => Ok(()),
-            ScopedIdentifierPathTransportSlot::I8Keyword => Ok(()),
-            ScopedIdentifierPathTransportSlot::U16Keyword => Ok(()),
-            ScopedIdentifierPathTransportSlot::I16Keyword => Ok(()),
-            ScopedIdentifierPathTransportSlot::U32Keyword => Ok(()),
-            ScopedIdentifierPathTransportSlot::I32Keyword => Ok(()),
-            ScopedIdentifierPathTransportSlot::U64Keyword => Ok(()),
-            ScopedIdentifierPathTransportSlot::I64Keyword => Ok(()),
-            ScopedIdentifierPathTransportSlot::U128Keyword => Ok(()),
-            ScopedIdentifierPathTransportSlot::I128Keyword => Ok(()),
-            ScopedIdentifierPathTransportSlot::IsizeKeyword => Ok(()),
-            ScopedIdentifierPathTransportSlot::UsizeKeyword => Ok(()),
-            ScopedIdentifierPathTransportSlot::F32Keyword => Ok(()),
-            ScopedIdentifierPathTransportSlot::F64Keyword => Ok(()),
-            ScopedIdentifierPathTransportSlot::BoolKeyword => Ok(()),
-            ScopedIdentifierPathTransportSlot::StrKeyword => Ok(()),
-            ScopedIdentifierPathTransportSlot::CharKeyword => Ok(()),
             ScopedIdentifierPathTransportSlot::Super(_) => Ok(()),
             ScopedIdentifierPathTransportSlot::Crate(_) => Ok(()),
-            ScopedIdentifierPathTransportSlot::DefaultKeyword => Ok(()),
-            ScopedIdentifierPathTransportSlot::UnionKeyword => Ok(()),
-            ScopedIdentifierPathTransportSlot::GenKeyword => Ok(()),
             ScopedIdentifierPathTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -8896,28 +8044,8 @@ impl ::sittir_core::prepare::Prepare for ScopedIdentifierPathTransportSlot {
             ScopedIdentifierPathTransportSlot::BracketedType(t) => t.gap_edges(),
             ScopedIdentifierPathTransportSlot::GenericTypeWithTurbofish(t) => t.gap_edges(),
             ScopedIdentifierPathTransportSlot::Self_(edges) => Some(edges),
-            ScopedIdentifierPathTransportSlot::U8Keyword => None,
-            ScopedIdentifierPathTransportSlot::I8Keyword => None,
-            ScopedIdentifierPathTransportSlot::U16Keyword => None,
-            ScopedIdentifierPathTransportSlot::I16Keyword => None,
-            ScopedIdentifierPathTransportSlot::U32Keyword => None,
-            ScopedIdentifierPathTransportSlot::I32Keyword => None,
-            ScopedIdentifierPathTransportSlot::U64Keyword => None,
-            ScopedIdentifierPathTransportSlot::I64Keyword => None,
-            ScopedIdentifierPathTransportSlot::U128Keyword => None,
-            ScopedIdentifierPathTransportSlot::I128Keyword => None,
-            ScopedIdentifierPathTransportSlot::IsizeKeyword => None,
-            ScopedIdentifierPathTransportSlot::UsizeKeyword => None,
-            ScopedIdentifierPathTransportSlot::F32Keyword => None,
-            ScopedIdentifierPathTransportSlot::F64Keyword => None,
-            ScopedIdentifierPathTransportSlot::BoolKeyword => None,
-            ScopedIdentifierPathTransportSlot::StrKeyword => None,
-            ScopedIdentifierPathTransportSlot::CharKeyword => None,
             ScopedIdentifierPathTransportSlot::Super(edges) => Some(edges),
             ScopedIdentifierPathTransportSlot::Crate(edges) => Some(edges),
-            ScopedIdentifierPathTransportSlot::DefaultKeyword => None,
-            ScopedIdentifierPathTransportSlot::UnionKeyword => None,
-            ScopedIdentifierPathTransportSlot::GenKeyword => None,
             ScopedIdentifierPathTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -8929,28 +8057,8 @@ impl ::sittir_core::prepare::Prepare for ScopedIdentifierPathTransportSlot {
             ScopedIdentifierPathTransportSlot::BracketedType(t) => t.snapshot_edge(),
             ScopedIdentifierPathTransportSlot::GenericTypeWithTurbofish(t) => t.snapshot_edge(),
             ScopedIdentifierPathTransportSlot::Self_(_) => None,
-            ScopedIdentifierPathTransportSlot::U8Keyword => None,
-            ScopedIdentifierPathTransportSlot::I8Keyword => None,
-            ScopedIdentifierPathTransportSlot::U16Keyword => None,
-            ScopedIdentifierPathTransportSlot::I16Keyword => None,
-            ScopedIdentifierPathTransportSlot::U32Keyword => None,
-            ScopedIdentifierPathTransportSlot::I32Keyword => None,
-            ScopedIdentifierPathTransportSlot::U64Keyword => None,
-            ScopedIdentifierPathTransportSlot::I64Keyword => None,
-            ScopedIdentifierPathTransportSlot::U128Keyword => None,
-            ScopedIdentifierPathTransportSlot::I128Keyword => None,
-            ScopedIdentifierPathTransportSlot::IsizeKeyword => None,
-            ScopedIdentifierPathTransportSlot::UsizeKeyword => None,
-            ScopedIdentifierPathTransportSlot::F32Keyword => None,
-            ScopedIdentifierPathTransportSlot::F64Keyword => None,
-            ScopedIdentifierPathTransportSlot::BoolKeyword => None,
-            ScopedIdentifierPathTransportSlot::StrKeyword => None,
-            ScopedIdentifierPathTransportSlot::CharKeyword => None,
             ScopedIdentifierPathTransportSlot::Super(_) => None,
             ScopedIdentifierPathTransportSlot::Crate(_) => None,
-            ScopedIdentifierPathTransportSlot::DefaultKeyword => None,
-            ScopedIdentifierPathTransportSlot::UnionKeyword => None,
-            ScopedIdentifierPathTransportSlot::GenKeyword => None,
             ScopedIdentifierPathTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -8962,28 +8070,8 @@ impl ::sittir_core::prepare::Prepare for ScopedIdentifierPathTransportSlot {
             ScopedIdentifierPathTransportSlot::BracketedType(t) => t.source_separator(ctx),
             ScopedIdentifierPathTransportSlot::GenericTypeWithTurbofish(t) => t.source_separator(ctx),
             ScopedIdentifierPathTransportSlot::Self_(_) => None,
-            ScopedIdentifierPathTransportSlot::U8Keyword => None,
-            ScopedIdentifierPathTransportSlot::I8Keyword => None,
-            ScopedIdentifierPathTransportSlot::U16Keyword => None,
-            ScopedIdentifierPathTransportSlot::I16Keyword => None,
-            ScopedIdentifierPathTransportSlot::U32Keyword => None,
-            ScopedIdentifierPathTransportSlot::I32Keyword => None,
-            ScopedIdentifierPathTransportSlot::U64Keyword => None,
-            ScopedIdentifierPathTransportSlot::I64Keyword => None,
-            ScopedIdentifierPathTransportSlot::U128Keyword => None,
-            ScopedIdentifierPathTransportSlot::I128Keyword => None,
-            ScopedIdentifierPathTransportSlot::IsizeKeyword => None,
-            ScopedIdentifierPathTransportSlot::UsizeKeyword => None,
-            ScopedIdentifierPathTransportSlot::F32Keyword => None,
-            ScopedIdentifierPathTransportSlot::F64Keyword => None,
-            ScopedIdentifierPathTransportSlot::BoolKeyword => None,
-            ScopedIdentifierPathTransportSlot::StrKeyword => None,
-            ScopedIdentifierPathTransportSlot::CharKeyword => None,
             ScopedIdentifierPathTransportSlot::Super(_) => None,
             ScopedIdentifierPathTransportSlot::Crate(_) => None,
-            ScopedIdentifierPathTransportSlot::DefaultKeyword => None,
-            ScopedIdentifierPathTransportSlot::UnionKeyword => None,
-            ScopedIdentifierPathTransportSlot::GenKeyword => None,
             ScopedIdentifierPathTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
@@ -9001,28 +8089,8 @@ impl ::sittir_core::view::KindOf for ScopedIdentifierPathTransportSlot {
             Self::BracketedType(inner) => inner.kind_in(kinds),
             Self::GenericTypeWithTurbofish(inner) => inner.kind_in(kinds),
             Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
             Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -9037,28 +8105,8 @@ impl ::sittir_core::render::Render for ScopedIdentifierPathTransportSlot {
             ScopedIdentifierPathTransportSlot::BracketedType(inner) => inner.render(w),
             ScopedIdentifierPathTransportSlot::GenericTypeWithTurbofish(inner) => inner.render(w),
             ScopedIdentifierPathTransportSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
-            ScopedIdentifierPathTransportSlot::U8Keyword => render_u8_keyword(w),
-            ScopedIdentifierPathTransportSlot::I8Keyword => render_i8_keyword(w),
-            ScopedIdentifierPathTransportSlot::U16Keyword => render_u16_keyword(w),
-            ScopedIdentifierPathTransportSlot::I16Keyword => render_i16_keyword(w),
-            ScopedIdentifierPathTransportSlot::U32Keyword => render_u32_keyword(w),
-            ScopedIdentifierPathTransportSlot::I32Keyword => render_i32_keyword(w),
-            ScopedIdentifierPathTransportSlot::U64Keyword => render_u64_keyword(w),
-            ScopedIdentifierPathTransportSlot::I64Keyword => render_i64_keyword(w),
-            ScopedIdentifierPathTransportSlot::U128Keyword => render_u128_keyword(w),
-            ScopedIdentifierPathTransportSlot::I128Keyword => render_i128_keyword(w),
-            ScopedIdentifierPathTransportSlot::IsizeKeyword => render_isize_keyword(w),
-            ScopedIdentifierPathTransportSlot::UsizeKeyword => render_usize_keyword(w),
-            ScopedIdentifierPathTransportSlot::F32Keyword => render_f32_keyword(w),
-            ScopedIdentifierPathTransportSlot::F64Keyword => render_f64_keyword(w),
-            ScopedIdentifierPathTransportSlot::BoolKeyword => render_bool_keyword(w),
-            ScopedIdentifierPathTransportSlot::StrKeyword => render_str_keyword(w),
-            ScopedIdentifierPathTransportSlot::CharKeyword => render_char_keyword(w),
             ScopedIdentifierPathTransportSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
             ScopedIdentifierPathTransportSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
-            ScopedIdentifierPathTransportSlot::DefaultKeyword => render_default_keyword(w),
-            ScopedIdentifierPathTransportSlot::UnionKeyword => render_union_keyword(w),
-            ScopedIdentifierPathTransportSlot::GenKeyword => render_gen_keyword(w),
             ScopedIdentifierPathTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -9067,7 +8115,7 @@ impl ::sittir_core::render::Render for ScopedIdentifierPathTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum ScopedIdentifierNameTransportSlot {
-    #[kind(kind::IDENTIFIER, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD, kind::DEFAULT_KEYWORD, kind::UNION_KEYWORD, kind::GEN_KEYWORD)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SUPER)]
     #[transport(edged)]
@@ -9135,7 +8183,7 @@ impl ::sittir_core::render::Render for ScopedIdentifierNameTransportSlot {
 pub enum ScopedTypeIdentifierInExpressionPositionPathTransportSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -9144,52 +8192,12 @@ pub enum ScopedTypeIdentifierInExpressionPositionPathTransportSlot {
     #[kind(kind::SELF)]
     #[transport(edged)]
     Self_(::sittir_core::options::Edges),
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
     #[kind(kind::SUPER)]
     #[transport(edged)]
     Super(::sittir_core::options::Edges),
     #[kind(kind::CRATE)]
     #[transport(edged)]
     Crate(::sittir_core::options::Edges),
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -9202,28 +8210,8 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierInExpressionPositio
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::ScopedIdentifier(t) => t.prepare(ctx),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::GenericTypeWithTurbofish(t) => t.prepare(ctx),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Self_(_) => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U8Keyword => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I8Keyword => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U16Keyword => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I16Keyword => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U32Keyword => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I32Keyword => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U64Keyword => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I64Keyword => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U128Keyword => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I128Keyword => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::IsizeKeyword => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::UsizeKeyword => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::F32Keyword => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::F64Keyword => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::BoolKeyword => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::StrKeyword => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::CharKeyword => Ok(()),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Super(_) => Ok(()),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Crate(_) => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::DefaultKeyword => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::UnionKeyword => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::GenKeyword => Ok(()),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -9234,28 +8222,8 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierInExpressionPositio
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::ScopedIdentifier(t) => t.gap_edges(),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::GenericTypeWithTurbofish(t) => t.gap_edges(),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Self_(edges) => Some(edges),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U8Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I8Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U16Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I16Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U32Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I32Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U64Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I64Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U128Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I128Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::IsizeKeyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::UsizeKeyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::F32Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::F64Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::BoolKeyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::StrKeyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::CharKeyword => None,
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Super(edges) => Some(edges),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Crate(edges) => Some(edges),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::DefaultKeyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::UnionKeyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::GenKeyword => None,
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -9266,28 +8234,8 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierInExpressionPositio
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::GenericTypeWithTurbofish(t) => t.snapshot_edge(),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Self_(_) => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U8Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I8Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U16Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I16Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U32Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I32Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U64Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I64Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U128Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I128Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::IsizeKeyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::UsizeKeyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::F32Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::F64Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::BoolKeyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::StrKeyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::CharKeyword => None,
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Super(_) => None,
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Crate(_) => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::DefaultKeyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::UnionKeyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::GenKeyword => None,
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -9298,28 +8246,8 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierInExpressionPositio
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::ScopedIdentifier(t) => t.source_separator(ctx),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::GenericTypeWithTurbofish(t) => t.source_separator(ctx),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Self_(_) => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U8Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I8Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U16Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I16Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U32Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I32Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U64Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I64Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U128Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I128Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::IsizeKeyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::UsizeKeyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::F32Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::F64Keyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::BoolKeyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::StrKeyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::CharKeyword => None,
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Super(_) => None,
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Crate(_) => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::DefaultKeyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::UnionKeyword => None,
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::GenKeyword => None,
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
@@ -9336,28 +8264,8 @@ impl ::sittir_core::view::KindOf for ScopedTypeIdentifierInExpressionPositionPat
             Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
             Self::GenericTypeWithTurbofish(inner) => inner.kind_in(kinds),
             Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
             Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -9371,28 +8279,8 @@ impl ::sittir_core::render::Render for ScopedTypeIdentifierInExpressionPositionP
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::ScopedIdentifier(inner) => inner.render(w),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::GenericTypeWithTurbofish(inner) => inner.render(w),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U8Keyword => render_u8_keyword(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I8Keyword => render_i8_keyword(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U16Keyword => render_u16_keyword(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I16Keyword => render_i16_keyword(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U32Keyword => render_u32_keyword(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I32Keyword => render_i32_keyword(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U64Keyword => render_u64_keyword(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I64Keyword => render_i64_keyword(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::U128Keyword => render_u128_keyword(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::I128Keyword => render_i128_keyword(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::IsizeKeyword => render_isize_keyword(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::UsizeKeyword => render_usize_keyword(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::F32Keyword => render_f32_keyword(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::F64Keyword => render_f64_keyword(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::BoolKeyword => render_bool_keyword(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::StrKeyword => render_str_keyword(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::CharKeyword => render_char_keyword(w),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::DefaultKeyword => render_default_keyword(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::UnionKeyword => render_union_keyword(w),
-            ScopedTypeIdentifierInExpressionPositionPathTransportSlot::GenKeyword => render_gen_keyword(w),
             ScopedTypeIdentifierInExpressionPositionPathTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -9403,7 +8291,7 @@ impl ::sittir_core::render::Render for ScopedTypeIdentifierInExpressionPositionP
 pub enum ScopedTypeIdentifierPathTransportSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -9416,52 +8304,12 @@ pub enum ScopedTypeIdentifierPathTransportSlot {
     #[kind(kind::SELF)]
     #[transport(edged)]
     Self_(::sittir_core::options::Edges),
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
     #[kind(kind::SUPER)]
     #[transport(edged)]
     Super(::sittir_core::options::Edges),
     #[kind(kind::CRATE)]
     #[transport(edged)]
     Crate(::sittir_core::options::Edges),
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -9476,28 +8324,8 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierPathTransportSlot {
             ScopedTypeIdentifierPathTransportSlot::BracketedType(t) => t.prepare(ctx),
             ScopedTypeIdentifierPathTransportSlot::GenericType(t) => t.prepare(ctx),
             ScopedTypeIdentifierPathTransportSlot::Self_(_) => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::U8Keyword => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::I8Keyword => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::U16Keyword => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::I16Keyword => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::U32Keyword => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::I32Keyword => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::U64Keyword => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::I64Keyword => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::U128Keyword => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::I128Keyword => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::IsizeKeyword => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::UsizeKeyword => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::F32Keyword => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::F64Keyword => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::BoolKeyword => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::StrKeyword => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::CharKeyword => Ok(()),
             ScopedTypeIdentifierPathTransportSlot::Super(_) => Ok(()),
             ScopedTypeIdentifierPathTransportSlot::Crate(_) => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::DefaultKeyword => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::UnionKeyword => Ok(()),
-            ScopedTypeIdentifierPathTransportSlot::GenKeyword => Ok(()),
             ScopedTypeIdentifierPathTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -9510,28 +8338,8 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierPathTransportSlot {
             ScopedTypeIdentifierPathTransportSlot::BracketedType(t) => t.gap_edges(),
             ScopedTypeIdentifierPathTransportSlot::GenericType(t) => t.gap_edges(),
             ScopedTypeIdentifierPathTransportSlot::Self_(edges) => Some(edges),
-            ScopedTypeIdentifierPathTransportSlot::U8Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::I8Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::U16Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::I16Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::U32Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::I32Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::U64Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::I64Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::U128Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::I128Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::IsizeKeyword => None,
-            ScopedTypeIdentifierPathTransportSlot::UsizeKeyword => None,
-            ScopedTypeIdentifierPathTransportSlot::F32Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::F64Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::BoolKeyword => None,
-            ScopedTypeIdentifierPathTransportSlot::StrKeyword => None,
-            ScopedTypeIdentifierPathTransportSlot::CharKeyword => None,
             ScopedTypeIdentifierPathTransportSlot::Super(edges) => Some(edges),
             ScopedTypeIdentifierPathTransportSlot::Crate(edges) => Some(edges),
-            ScopedTypeIdentifierPathTransportSlot::DefaultKeyword => None,
-            ScopedTypeIdentifierPathTransportSlot::UnionKeyword => None,
-            ScopedTypeIdentifierPathTransportSlot::GenKeyword => None,
             ScopedTypeIdentifierPathTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -9544,28 +8352,8 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierPathTransportSlot {
             ScopedTypeIdentifierPathTransportSlot::BracketedType(t) => t.snapshot_edge(),
             ScopedTypeIdentifierPathTransportSlot::GenericType(t) => t.snapshot_edge(),
             ScopedTypeIdentifierPathTransportSlot::Self_(_) => None,
-            ScopedTypeIdentifierPathTransportSlot::U8Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::I8Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::U16Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::I16Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::U32Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::I32Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::U64Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::I64Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::U128Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::I128Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::IsizeKeyword => None,
-            ScopedTypeIdentifierPathTransportSlot::UsizeKeyword => None,
-            ScopedTypeIdentifierPathTransportSlot::F32Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::F64Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::BoolKeyword => None,
-            ScopedTypeIdentifierPathTransportSlot::StrKeyword => None,
-            ScopedTypeIdentifierPathTransportSlot::CharKeyword => None,
             ScopedTypeIdentifierPathTransportSlot::Super(_) => None,
             ScopedTypeIdentifierPathTransportSlot::Crate(_) => None,
-            ScopedTypeIdentifierPathTransportSlot::DefaultKeyword => None,
-            ScopedTypeIdentifierPathTransportSlot::UnionKeyword => None,
-            ScopedTypeIdentifierPathTransportSlot::GenKeyword => None,
             ScopedTypeIdentifierPathTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -9578,28 +8366,8 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierPathTransportSlot {
             ScopedTypeIdentifierPathTransportSlot::BracketedType(t) => t.source_separator(ctx),
             ScopedTypeIdentifierPathTransportSlot::GenericType(t) => t.source_separator(ctx),
             ScopedTypeIdentifierPathTransportSlot::Self_(_) => None,
-            ScopedTypeIdentifierPathTransportSlot::U8Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::I8Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::U16Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::I16Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::U32Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::I32Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::U64Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::I64Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::U128Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::I128Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::IsizeKeyword => None,
-            ScopedTypeIdentifierPathTransportSlot::UsizeKeyword => None,
-            ScopedTypeIdentifierPathTransportSlot::F32Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::F64Keyword => None,
-            ScopedTypeIdentifierPathTransportSlot::BoolKeyword => None,
-            ScopedTypeIdentifierPathTransportSlot::StrKeyword => None,
-            ScopedTypeIdentifierPathTransportSlot::CharKeyword => None,
             ScopedTypeIdentifierPathTransportSlot::Super(_) => None,
             ScopedTypeIdentifierPathTransportSlot::Crate(_) => None,
-            ScopedTypeIdentifierPathTransportSlot::DefaultKeyword => None,
-            ScopedTypeIdentifierPathTransportSlot::UnionKeyword => None,
-            ScopedTypeIdentifierPathTransportSlot::GenKeyword => None,
             ScopedTypeIdentifierPathTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
@@ -9618,28 +8386,8 @@ impl ::sittir_core::view::KindOf for ScopedTypeIdentifierPathTransportSlot {
             Self::BracketedType(inner) => inner.kind_in(kinds),
             Self::GenericType(inner) => inner.kind_in(kinds),
             Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
             Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -9655,28 +8403,8 @@ impl ::sittir_core::render::Render for ScopedTypeIdentifierPathTransportSlot {
             ScopedTypeIdentifierPathTransportSlot::BracketedType(inner) => inner.render(w),
             ScopedTypeIdentifierPathTransportSlot::GenericType(inner) => inner.render(w),
             ScopedTypeIdentifierPathTransportSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
-            ScopedTypeIdentifierPathTransportSlot::U8Keyword => render_u8_keyword(w),
-            ScopedTypeIdentifierPathTransportSlot::I8Keyword => render_i8_keyword(w),
-            ScopedTypeIdentifierPathTransportSlot::U16Keyword => render_u16_keyword(w),
-            ScopedTypeIdentifierPathTransportSlot::I16Keyword => render_i16_keyword(w),
-            ScopedTypeIdentifierPathTransportSlot::U32Keyword => render_u32_keyword(w),
-            ScopedTypeIdentifierPathTransportSlot::I32Keyword => render_i32_keyword(w),
-            ScopedTypeIdentifierPathTransportSlot::U64Keyword => render_u64_keyword(w),
-            ScopedTypeIdentifierPathTransportSlot::I64Keyword => render_i64_keyword(w),
-            ScopedTypeIdentifierPathTransportSlot::U128Keyword => render_u128_keyword(w),
-            ScopedTypeIdentifierPathTransportSlot::I128Keyword => render_i128_keyword(w),
-            ScopedTypeIdentifierPathTransportSlot::IsizeKeyword => render_isize_keyword(w),
-            ScopedTypeIdentifierPathTransportSlot::UsizeKeyword => render_usize_keyword(w),
-            ScopedTypeIdentifierPathTransportSlot::F32Keyword => render_f32_keyword(w),
-            ScopedTypeIdentifierPathTransportSlot::F64Keyword => render_f64_keyword(w),
-            ScopedTypeIdentifierPathTransportSlot::BoolKeyword => render_bool_keyword(w),
-            ScopedTypeIdentifierPathTransportSlot::StrKeyword => render_str_keyword(w),
-            ScopedTypeIdentifierPathTransportSlot::CharKeyword => render_char_keyword(w),
             ScopedTypeIdentifierPathTransportSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
             ScopedTypeIdentifierPathTransportSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
-            ScopedTypeIdentifierPathTransportSlot::DefaultKeyword => render_default_keyword(w),
-            ScopedTypeIdentifierPathTransportSlot::UnionKeyword => render_union_keyword(w),
-            ScopedTypeIdentifierPathTransportSlot::GenKeyword => render_gen_keyword(w),
             ScopedTypeIdentifierPathTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -9996,7 +8724,7 @@ pub enum CallExpressionFunctionTransportSlot {
     IntegerLiteralOctal(IntegerLiteralOctalTransport),
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -10052,46 +8780,6 @@ pub enum CallExpressionFunctionTransportSlot {
     ForExpression(ForExpressionTransport),
     #[kind(kind::CONST_BLOCK)]
     ConstBlock(ConstBlockTransport),
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
     #[kind(kind::SELF)]
     #[transport(edged)]
     Self_(::sittir_core::options::Edges),
@@ -10160,26 +8848,6 @@ impl ::sittir_core::prepare::Prepare for CallExpressionFunctionTransportSlot {
             CallExpressionFunctionTransportSlot::LoopExpression(t) => t.prepare(ctx),
             CallExpressionFunctionTransportSlot::ForExpression(t) => t.prepare(ctx),
             CallExpressionFunctionTransportSlot::ConstBlock(t) => t.prepare(ctx),
-            CallExpressionFunctionTransportSlot::U8Keyword => Ok(()),
-            CallExpressionFunctionTransportSlot::I8Keyword => Ok(()),
-            CallExpressionFunctionTransportSlot::U16Keyword => Ok(()),
-            CallExpressionFunctionTransportSlot::I16Keyword => Ok(()),
-            CallExpressionFunctionTransportSlot::U32Keyword => Ok(()),
-            CallExpressionFunctionTransportSlot::I32Keyword => Ok(()),
-            CallExpressionFunctionTransportSlot::U64Keyword => Ok(()),
-            CallExpressionFunctionTransportSlot::I64Keyword => Ok(()),
-            CallExpressionFunctionTransportSlot::U128Keyword => Ok(()),
-            CallExpressionFunctionTransportSlot::I128Keyword => Ok(()),
-            CallExpressionFunctionTransportSlot::IsizeKeyword => Ok(()),
-            CallExpressionFunctionTransportSlot::UsizeKeyword => Ok(()),
-            CallExpressionFunctionTransportSlot::F32Keyword => Ok(()),
-            CallExpressionFunctionTransportSlot::F64Keyword => Ok(()),
-            CallExpressionFunctionTransportSlot::BoolKeyword => Ok(()),
-            CallExpressionFunctionTransportSlot::StrKeyword => Ok(()),
-            CallExpressionFunctionTransportSlot::CharKeyword => Ok(()),
-            CallExpressionFunctionTransportSlot::DefaultKeyword => Ok(()),
-            CallExpressionFunctionTransportSlot::UnionKeyword => Ok(()),
-            CallExpressionFunctionTransportSlot::GenKeyword => Ok(()),
             CallExpressionFunctionTransportSlot::Self_(_) => Ok(()),
             CallExpressionFunctionTransportSlot::UnitExpression(_) => Ok(()),
             CallExpressionFunctionTransportSlot::Verbatim(t) => t.prepare(ctx),
@@ -10242,26 +8910,6 @@ impl ::sittir_core::prepare::Prepare for CallExpressionFunctionTransportSlot {
             CallExpressionFunctionTransportSlot::LoopExpression(t) => t.gap_edges(),
             CallExpressionFunctionTransportSlot::ForExpression(t) => t.gap_edges(),
             CallExpressionFunctionTransportSlot::ConstBlock(t) => t.gap_edges(),
-            CallExpressionFunctionTransportSlot::U8Keyword => None,
-            CallExpressionFunctionTransportSlot::I8Keyword => None,
-            CallExpressionFunctionTransportSlot::U16Keyword => None,
-            CallExpressionFunctionTransportSlot::I16Keyword => None,
-            CallExpressionFunctionTransportSlot::U32Keyword => None,
-            CallExpressionFunctionTransportSlot::I32Keyword => None,
-            CallExpressionFunctionTransportSlot::U64Keyword => None,
-            CallExpressionFunctionTransportSlot::I64Keyword => None,
-            CallExpressionFunctionTransportSlot::U128Keyword => None,
-            CallExpressionFunctionTransportSlot::I128Keyword => None,
-            CallExpressionFunctionTransportSlot::IsizeKeyword => None,
-            CallExpressionFunctionTransportSlot::UsizeKeyword => None,
-            CallExpressionFunctionTransportSlot::F32Keyword => None,
-            CallExpressionFunctionTransportSlot::F64Keyword => None,
-            CallExpressionFunctionTransportSlot::BoolKeyword => None,
-            CallExpressionFunctionTransportSlot::StrKeyword => None,
-            CallExpressionFunctionTransportSlot::CharKeyword => None,
-            CallExpressionFunctionTransportSlot::DefaultKeyword => None,
-            CallExpressionFunctionTransportSlot::UnionKeyword => None,
-            CallExpressionFunctionTransportSlot::GenKeyword => None,
             CallExpressionFunctionTransportSlot::Self_(edges) => Some(edges),
             CallExpressionFunctionTransportSlot::UnitExpression(edges) => Some(edges),
             CallExpressionFunctionTransportSlot::Verbatim(t) => t.gap_edges(),
@@ -10324,26 +8972,6 @@ impl ::sittir_core::prepare::Prepare for CallExpressionFunctionTransportSlot {
             CallExpressionFunctionTransportSlot::LoopExpression(t) => t.snapshot_edge(),
             CallExpressionFunctionTransportSlot::ForExpression(t) => t.snapshot_edge(),
             CallExpressionFunctionTransportSlot::ConstBlock(t) => t.snapshot_edge(),
-            CallExpressionFunctionTransportSlot::U8Keyword => None,
-            CallExpressionFunctionTransportSlot::I8Keyword => None,
-            CallExpressionFunctionTransportSlot::U16Keyword => None,
-            CallExpressionFunctionTransportSlot::I16Keyword => None,
-            CallExpressionFunctionTransportSlot::U32Keyword => None,
-            CallExpressionFunctionTransportSlot::I32Keyword => None,
-            CallExpressionFunctionTransportSlot::U64Keyword => None,
-            CallExpressionFunctionTransportSlot::I64Keyword => None,
-            CallExpressionFunctionTransportSlot::U128Keyword => None,
-            CallExpressionFunctionTransportSlot::I128Keyword => None,
-            CallExpressionFunctionTransportSlot::IsizeKeyword => None,
-            CallExpressionFunctionTransportSlot::UsizeKeyword => None,
-            CallExpressionFunctionTransportSlot::F32Keyword => None,
-            CallExpressionFunctionTransportSlot::F64Keyword => None,
-            CallExpressionFunctionTransportSlot::BoolKeyword => None,
-            CallExpressionFunctionTransportSlot::StrKeyword => None,
-            CallExpressionFunctionTransportSlot::CharKeyword => None,
-            CallExpressionFunctionTransportSlot::DefaultKeyword => None,
-            CallExpressionFunctionTransportSlot::UnionKeyword => None,
-            CallExpressionFunctionTransportSlot::GenKeyword => None,
             CallExpressionFunctionTransportSlot::Self_(_) => None,
             CallExpressionFunctionTransportSlot::UnitExpression(_) => None,
             CallExpressionFunctionTransportSlot::Verbatim(t) => t.snapshot_edge(),
@@ -10406,26 +9034,6 @@ impl ::sittir_core::prepare::Prepare for CallExpressionFunctionTransportSlot {
             CallExpressionFunctionTransportSlot::LoopExpression(t) => t.source_separator(ctx),
             CallExpressionFunctionTransportSlot::ForExpression(t) => t.source_separator(ctx),
             CallExpressionFunctionTransportSlot::ConstBlock(t) => t.source_separator(ctx),
-            CallExpressionFunctionTransportSlot::U8Keyword => None,
-            CallExpressionFunctionTransportSlot::I8Keyword => None,
-            CallExpressionFunctionTransportSlot::U16Keyword => None,
-            CallExpressionFunctionTransportSlot::I16Keyword => None,
-            CallExpressionFunctionTransportSlot::U32Keyword => None,
-            CallExpressionFunctionTransportSlot::I32Keyword => None,
-            CallExpressionFunctionTransportSlot::U64Keyword => None,
-            CallExpressionFunctionTransportSlot::I64Keyword => None,
-            CallExpressionFunctionTransportSlot::U128Keyword => None,
-            CallExpressionFunctionTransportSlot::I128Keyword => None,
-            CallExpressionFunctionTransportSlot::IsizeKeyword => None,
-            CallExpressionFunctionTransportSlot::UsizeKeyword => None,
-            CallExpressionFunctionTransportSlot::F32Keyword => None,
-            CallExpressionFunctionTransportSlot::F64Keyword => None,
-            CallExpressionFunctionTransportSlot::BoolKeyword => None,
-            CallExpressionFunctionTransportSlot::StrKeyword => None,
-            CallExpressionFunctionTransportSlot::CharKeyword => None,
-            CallExpressionFunctionTransportSlot::DefaultKeyword => None,
-            CallExpressionFunctionTransportSlot::UnionKeyword => None,
-            CallExpressionFunctionTransportSlot::GenKeyword => None,
             CallExpressionFunctionTransportSlot::Self_(_) => None,
             CallExpressionFunctionTransportSlot::UnitExpression(_) => None,
             CallExpressionFunctionTransportSlot::Verbatim(t) => t.source_separator(ctx),
@@ -10494,26 +9102,6 @@ impl ::sittir_core::view::KindOf for CallExpressionFunctionTransportSlot {
             Self::LoopExpression(inner) => inner.kind_in(kinds),
             Self::ForExpression(inner) => inner.kind_in(kinds),
             Self::ConstBlock(inner) => inner.kind_in(kinds),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
             Self::UnitExpression(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
@@ -10579,26 +9167,6 @@ impl ::sittir_core::render::Render for CallExpressionFunctionTransportSlot {
             CallExpressionFunctionTransportSlot::LoopExpression(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::ForExpression(inner) => inner.render(w),
             CallExpressionFunctionTransportSlot::ConstBlock(inner) => inner.render(w),
-            CallExpressionFunctionTransportSlot::U8Keyword => render_u8_keyword(w),
-            CallExpressionFunctionTransportSlot::I8Keyword => render_i8_keyword(w),
-            CallExpressionFunctionTransportSlot::U16Keyword => render_u16_keyword(w),
-            CallExpressionFunctionTransportSlot::I16Keyword => render_i16_keyword(w),
-            CallExpressionFunctionTransportSlot::U32Keyword => render_u32_keyword(w),
-            CallExpressionFunctionTransportSlot::I32Keyword => render_i32_keyword(w),
-            CallExpressionFunctionTransportSlot::U64Keyword => render_u64_keyword(w),
-            CallExpressionFunctionTransportSlot::I64Keyword => render_i64_keyword(w),
-            CallExpressionFunctionTransportSlot::U128Keyword => render_u128_keyword(w),
-            CallExpressionFunctionTransportSlot::I128Keyword => render_i128_keyword(w),
-            CallExpressionFunctionTransportSlot::IsizeKeyword => render_isize_keyword(w),
-            CallExpressionFunctionTransportSlot::UsizeKeyword => render_usize_keyword(w),
-            CallExpressionFunctionTransportSlot::F32Keyword => render_f32_keyword(w),
-            CallExpressionFunctionTransportSlot::F64Keyword => render_f64_keyword(w),
-            CallExpressionFunctionTransportSlot::BoolKeyword => render_bool_keyword(w),
-            CallExpressionFunctionTransportSlot::StrKeyword => render_str_keyword(w),
-            CallExpressionFunctionTransportSlot::CharKeyword => render_char_keyword(w),
-            CallExpressionFunctionTransportSlot::DefaultKeyword => render_default_keyword(w),
-            CallExpressionFunctionTransportSlot::UnionKeyword => render_union_keyword(w),
-            CallExpressionFunctionTransportSlot::GenKeyword => render_gen_keyword(w),
             CallExpressionFunctionTransportSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
             CallExpressionFunctionTransportSlot::UnitExpression(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_unit_expression),
             CallExpressionFunctionTransportSlot::Verbatim(inner) => inner.render(w),
@@ -10809,7 +9377,7 @@ pub enum IfExpressionConditionTransportSlot {
     IntegerLiteralOctal(IntegerLiteralOctalTransport),
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -10877,46 +9445,6 @@ pub enum IfExpressionConditionTransportSlot {
     LetCondition(LetConditionTransport),
     #[kind(kind::_LET_CHAIN, kind::LET_CHAIN)]
     LetChain(LetChainTransport),
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
     #[kind(kind::SELF)]
     #[transport(edged)]
     Self_(::sittir_core::options::Edges),
@@ -10991,26 +9519,6 @@ impl ::sittir_core::prepare::Prepare for IfExpressionConditionTransportSlot {
             IfExpressionConditionTransportSlot::RangeExpressionBare(t) => t.prepare(ctx),
             IfExpressionConditionTransportSlot::LetCondition(t) => t.prepare(ctx),
             IfExpressionConditionTransportSlot::LetChain(t) => t.prepare(ctx),
-            IfExpressionConditionTransportSlot::U8Keyword => Ok(()),
-            IfExpressionConditionTransportSlot::I8Keyword => Ok(()),
-            IfExpressionConditionTransportSlot::U16Keyword => Ok(()),
-            IfExpressionConditionTransportSlot::I16Keyword => Ok(()),
-            IfExpressionConditionTransportSlot::U32Keyword => Ok(()),
-            IfExpressionConditionTransportSlot::I32Keyword => Ok(()),
-            IfExpressionConditionTransportSlot::U64Keyword => Ok(()),
-            IfExpressionConditionTransportSlot::I64Keyword => Ok(()),
-            IfExpressionConditionTransportSlot::U128Keyword => Ok(()),
-            IfExpressionConditionTransportSlot::I128Keyword => Ok(()),
-            IfExpressionConditionTransportSlot::IsizeKeyword => Ok(()),
-            IfExpressionConditionTransportSlot::UsizeKeyword => Ok(()),
-            IfExpressionConditionTransportSlot::F32Keyword => Ok(()),
-            IfExpressionConditionTransportSlot::F64Keyword => Ok(()),
-            IfExpressionConditionTransportSlot::BoolKeyword => Ok(()),
-            IfExpressionConditionTransportSlot::StrKeyword => Ok(()),
-            IfExpressionConditionTransportSlot::CharKeyword => Ok(()),
-            IfExpressionConditionTransportSlot::DefaultKeyword => Ok(()),
-            IfExpressionConditionTransportSlot::UnionKeyword => Ok(()),
-            IfExpressionConditionTransportSlot::GenKeyword => Ok(()),
             IfExpressionConditionTransportSlot::Self_(_) => Ok(()),
             IfExpressionConditionTransportSlot::UnitExpression(_) => Ok(()),
             IfExpressionConditionTransportSlot::Verbatim(t) => t.prepare(ctx),
@@ -11079,26 +9587,6 @@ impl ::sittir_core::prepare::Prepare for IfExpressionConditionTransportSlot {
             IfExpressionConditionTransportSlot::RangeExpressionBare(t) => t.gap_edges(),
             IfExpressionConditionTransportSlot::LetCondition(t) => t.gap_edges(),
             IfExpressionConditionTransportSlot::LetChain(t) => t.gap_edges(),
-            IfExpressionConditionTransportSlot::U8Keyword => None,
-            IfExpressionConditionTransportSlot::I8Keyword => None,
-            IfExpressionConditionTransportSlot::U16Keyword => None,
-            IfExpressionConditionTransportSlot::I16Keyword => None,
-            IfExpressionConditionTransportSlot::U32Keyword => None,
-            IfExpressionConditionTransportSlot::I32Keyword => None,
-            IfExpressionConditionTransportSlot::U64Keyword => None,
-            IfExpressionConditionTransportSlot::I64Keyword => None,
-            IfExpressionConditionTransportSlot::U128Keyword => None,
-            IfExpressionConditionTransportSlot::I128Keyword => None,
-            IfExpressionConditionTransportSlot::IsizeKeyword => None,
-            IfExpressionConditionTransportSlot::UsizeKeyword => None,
-            IfExpressionConditionTransportSlot::F32Keyword => None,
-            IfExpressionConditionTransportSlot::F64Keyword => None,
-            IfExpressionConditionTransportSlot::BoolKeyword => None,
-            IfExpressionConditionTransportSlot::StrKeyword => None,
-            IfExpressionConditionTransportSlot::CharKeyword => None,
-            IfExpressionConditionTransportSlot::DefaultKeyword => None,
-            IfExpressionConditionTransportSlot::UnionKeyword => None,
-            IfExpressionConditionTransportSlot::GenKeyword => None,
             IfExpressionConditionTransportSlot::Self_(edges) => Some(edges),
             IfExpressionConditionTransportSlot::UnitExpression(edges) => Some(edges),
             IfExpressionConditionTransportSlot::Verbatim(t) => t.gap_edges(),
@@ -11167,26 +9655,6 @@ impl ::sittir_core::prepare::Prepare for IfExpressionConditionTransportSlot {
             IfExpressionConditionTransportSlot::RangeExpressionBare(t) => t.snapshot_edge(),
             IfExpressionConditionTransportSlot::LetCondition(t) => t.snapshot_edge(),
             IfExpressionConditionTransportSlot::LetChain(t) => t.snapshot_edge(),
-            IfExpressionConditionTransportSlot::U8Keyword => None,
-            IfExpressionConditionTransportSlot::I8Keyword => None,
-            IfExpressionConditionTransportSlot::U16Keyword => None,
-            IfExpressionConditionTransportSlot::I16Keyword => None,
-            IfExpressionConditionTransportSlot::U32Keyword => None,
-            IfExpressionConditionTransportSlot::I32Keyword => None,
-            IfExpressionConditionTransportSlot::U64Keyword => None,
-            IfExpressionConditionTransportSlot::I64Keyword => None,
-            IfExpressionConditionTransportSlot::U128Keyword => None,
-            IfExpressionConditionTransportSlot::I128Keyword => None,
-            IfExpressionConditionTransportSlot::IsizeKeyword => None,
-            IfExpressionConditionTransportSlot::UsizeKeyword => None,
-            IfExpressionConditionTransportSlot::F32Keyword => None,
-            IfExpressionConditionTransportSlot::F64Keyword => None,
-            IfExpressionConditionTransportSlot::BoolKeyword => None,
-            IfExpressionConditionTransportSlot::StrKeyword => None,
-            IfExpressionConditionTransportSlot::CharKeyword => None,
-            IfExpressionConditionTransportSlot::DefaultKeyword => None,
-            IfExpressionConditionTransportSlot::UnionKeyword => None,
-            IfExpressionConditionTransportSlot::GenKeyword => None,
             IfExpressionConditionTransportSlot::Self_(_) => None,
             IfExpressionConditionTransportSlot::UnitExpression(_) => None,
             IfExpressionConditionTransportSlot::Verbatim(t) => t.snapshot_edge(),
@@ -11255,26 +9723,6 @@ impl ::sittir_core::prepare::Prepare for IfExpressionConditionTransportSlot {
             IfExpressionConditionTransportSlot::RangeExpressionBare(t) => t.source_separator(ctx),
             IfExpressionConditionTransportSlot::LetCondition(t) => t.source_separator(ctx),
             IfExpressionConditionTransportSlot::LetChain(t) => t.source_separator(ctx),
-            IfExpressionConditionTransportSlot::U8Keyword => None,
-            IfExpressionConditionTransportSlot::I8Keyword => None,
-            IfExpressionConditionTransportSlot::U16Keyword => None,
-            IfExpressionConditionTransportSlot::I16Keyword => None,
-            IfExpressionConditionTransportSlot::U32Keyword => None,
-            IfExpressionConditionTransportSlot::I32Keyword => None,
-            IfExpressionConditionTransportSlot::U64Keyword => None,
-            IfExpressionConditionTransportSlot::I64Keyword => None,
-            IfExpressionConditionTransportSlot::U128Keyword => None,
-            IfExpressionConditionTransportSlot::I128Keyword => None,
-            IfExpressionConditionTransportSlot::IsizeKeyword => None,
-            IfExpressionConditionTransportSlot::UsizeKeyword => None,
-            IfExpressionConditionTransportSlot::F32Keyword => None,
-            IfExpressionConditionTransportSlot::F64Keyword => None,
-            IfExpressionConditionTransportSlot::BoolKeyword => None,
-            IfExpressionConditionTransportSlot::StrKeyword => None,
-            IfExpressionConditionTransportSlot::CharKeyword => None,
-            IfExpressionConditionTransportSlot::DefaultKeyword => None,
-            IfExpressionConditionTransportSlot::UnionKeyword => None,
-            IfExpressionConditionTransportSlot::GenKeyword => None,
             IfExpressionConditionTransportSlot::Self_(_) => None,
             IfExpressionConditionTransportSlot::UnitExpression(_) => None,
             IfExpressionConditionTransportSlot::Verbatim(t) => t.source_separator(ctx),
@@ -11349,26 +9797,6 @@ impl ::sittir_core::view::KindOf for IfExpressionConditionTransportSlot {
             Self::RangeExpressionBare(inner) => inner.kind_in(kinds),
             Self::LetCondition(inner) => inner.kind_in(kinds),
             Self::LetChain(inner) => inner.kind_in(kinds),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
             Self::UnitExpression(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
@@ -11440,26 +9868,6 @@ impl ::sittir_core::render::Render for IfExpressionConditionTransportSlot {
             IfExpressionConditionTransportSlot::RangeExpressionBare(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::LetCondition(inner) => inner.render(w),
             IfExpressionConditionTransportSlot::LetChain(inner) => inner.render(w),
-            IfExpressionConditionTransportSlot::U8Keyword => render_u8_keyword(w),
-            IfExpressionConditionTransportSlot::I8Keyword => render_i8_keyword(w),
-            IfExpressionConditionTransportSlot::U16Keyword => render_u16_keyword(w),
-            IfExpressionConditionTransportSlot::I16Keyword => render_i16_keyword(w),
-            IfExpressionConditionTransportSlot::U32Keyword => render_u32_keyword(w),
-            IfExpressionConditionTransportSlot::I32Keyword => render_i32_keyword(w),
-            IfExpressionConditionTransportSlot::U64Keyword => render_u64_keyword(w),
-            IfExpressionConditionTransportSlot::I64Keyword => render_i64_keyword(w),
-            IfExpressionConditionTransportSlot::U128Keyword => render_u128_keyword(w),
-            IfExpressionConditionTransportSlot::I128Keyword => render_i128_keyword(w),
-            IfExpressionConditionTransportSlot::IsizeKeyword => render_isize_keyword(w),
-            IfExpressionConditionTransportSlot::UsizeKeyword => render_usize_keyword(w),
-            IfExpressionConditionTransportSlot::F32Keyword => render_f32_keyword(w),
-            IfExpressionConditionTransportSlot::F64Keyword => render_f64_keyword(w),
-            IfExpressionConditionTransportSlot::BoolKeyword => render_bool_keyword(w),
-            IfExpressionConditionTransportSlot::StrKeyword => render_str_keyword(w),
-            IfExpressionConditionTransportSlot::CharKeyword => render_char_keyword(w),
-            IfExpressionConditionTransportSlot::DefaultKeyword => render_default_keyword(w),
-            IfExpressionConditionTransportSlot::UnionKeyword => render_union_keyword(w),
-            IfExpressionConditionTransportSlot::GenKeyword => render_gen_keyword(w),
             IfExpressionConditionTransportSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
             IfExpressionConditionTransportSlot::UnitExpression(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_unit_expression),
             IfExpressionConditionTransportSlot::Verbatim(inner) => inner.render(w),
@@ -11528,7 +9936,7 @@ pub enum LetChainLeftTransportSlot {
     IntegerLiteralOctal(IntegerLiteralOctalTransport),
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -11592,46 +10000,6 @@ pub enum LetChainLeftTransportSlot {
     RangeExpressionPrefix(RangeExpressionPrefixTransport),
     #[kind(kind::RANGE_EXPRESSION_BARE)]
     RangeExpressionBare(RangeExpressionBareTransport),
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
     #[kind(kind::SELF)]
     #[transport(edged)]
     Self_(::sittir_core::options::Edges),
@@ -11706,26 +10074,6 @@ impl ::sittir_core::prepare::Prepare for LetChainLeftTransportSlot {
             LetChainLeftTransportSlot::RangeExpressionPostfix(t) => t.prepare(ctx),
             LetChainLeftTransportSlot::RangeExpressionPrefix(t) => t.prepare(ctx),
             LetChainLeftTransportSlot::RangeExpressionBare(t) => t.prepare(ctx),
-            LetChainLeftTransportSlot::U8Keyword => Ok(()),
-            LetChainLeftTransportSlot::I8Keyword => Ok(()),
-            LetChainLeftTransportSlot::U16Keyword => Ok(()),
-            LetChainLeftTransportSlot::I16Keyword => Ok(()),
-            LetChainLeftTransportSlot::U32Keyword => Ok(()),
-            LetChainLeftTransportSlot::I32Keyword => Ok(()),
-            LetChainLeftTransportSlot::U64Keyword => Ok(()),
-            LetChainLeftTransportSlot::I64Keyword => Ok(()),
-            LetChainLeftTransportSlot::U128Keyword => Ok(()),
-            LetChainLeftTransportSlot::I128Keyword => Ok(()),
-            LetChainLeftTransportSlot::IsizeKeyword => Ok(()),
-            LetChainLeftTransportSlot::UsizeKeyword => Ok(()),
-            LetChainLeftTransportSlot::F32Keyword => Ok(()),
-            LetChainLeftTransportSlot::F64Keyword => Ok(()),
-            LetChainLeftTransportSlot::BoolKeyword => Ok(()),
-            LetChainLeftTransportSlot::StrKeyword => Ok(()),
-            LetChainLeftTransportSlot::CharKeyword => Ok(()),
-            LetChainLeftTransportSlot::DefaultKeyword => Ok(()),
-            LetChainLeftTransportSlot::UnionKeyword => Ok(()),
-            LetChainLeftTransportSlot::GenKeyword => Ok(()),
             LetChainLeftTransportSlot::Self_(_) => Ok(()),
             LetChainLeftTransportSlot::UnitExpression(_) => Ok(()),
             LetChainLeftTransportSlot::Verbatim(t) => t.prepare(ctx),
@@ -11794,26 +10142,6 @@ impl ::sittir_core::prepare::Prepare for LetChainLeftTransportSlot {
             LetChainLeftTransportSlot::RangeExpressionPostfix(t) => t.gap_edges(),
             LetChainLeftTransportSlot::RangeExpressionPrefix(t) => t.gap_edges(),
             LetChainLeftTransportSlot::RangeExpressionBare(t) => t.gap_edges(),
-            LetChainLeftTransportSlot::U8Keyword => None,
-            LetChainLeftTransportSlot::I8Keyword => None,
-            LetChainLeftTransportSlot::U16Keyword => None,
-            LetChainLeftTransportSlot::I16Keyword => None,
-            LetChainLeftTransportSlot::U32Keyword => None,
-            LetChainLeftTransportSlot::I32Keyword => None,
-            LetChainLeftTransportSlot::U64Keyword => None,
-            LetChainLeftTransportSlot::I64Keyword => None,
-            LetChainLeftTransportSlot::U128Keyword => None,
-            LetChainLeftTransportSlot::I128Keyword => None,
-            LetChainLeftTransportSlot::IsizeKeyword => None,
-            LetChainLeftTransportSlot::UsizeKeyword => None,
-            LetChainLeftTransportSlot::F32Keyword => None,
-            LetChainLeftTransportSlot::F64Keyword => None,
-            LetChainLeftTransportSlot::BoolKeyword => None,
-            LetChainLeftTransportSlot::StrKeyword => None,
-            LetChainLeftTransportSlot::CharKeyword => None,
-            LetChainLeftTransportSlot::DefaultKeyword => None,
-            LetChainLeftTransportSlot::UnionKeyword => None,
-            LetChainLeftTransportSlot::GenKeyword => None,
             LetChainLeftTransportSlot::Self_(edges) => Some(edges),
             LetChainLeftTransportSlot::UnitExpression(edges) => Some(edges),
             LetChainLeftTransportSlot::Verbatim(t) => t.gap_edges(),
@@ -11882,26 +10210,6 @@ impl ::sittir_core::prepare::Prepare for LetChainLeftTransportSlot {
             LetChainLeftTransportSlot::RangeExpressionPostfix(t) => t.snapshot_edge(),
             LetChainLeftTransportSlot::RangeExpressionPrefix(t) => t.snapshot_edge(),
             LetChainLeftTransportSlot::RangeExpressionBare(t) => t.snapshot_edge(),
-            LetChainLeftTransportSlot::U8Keyword => None,
-            LetChainLeftTransportSlot::I8Keyword => None,
-            LetChainLeftTransportSlot::U16Keyword => None,
-            LetChainLeftTransportSlot::I16Keyword => None,
-            LetChainLeftTransportSlot::U32Keyword => None,
-            LetChainLeftTransportSlot::I32Keyword => None,
-            LetChainLeftTransportSlot::U64Keyword => None,
-            LetChainLeftTransportSlot::I64Keyword => None,
-            LetChainLeftTransportSlot::U128Keyword => None,
-            LetChainLeftTransportSlot::I128Keyword => None,
-            LetChainLeftTransportSlot::IsizeKeyword => None,
-            LetChainLeftTransportSlot::UsizeKeyword => None,
-            LetChainLeftTransportSlot::F32Keyword => None,
-            LetChainLeftTransportSlot::F64Keyword => None,
-            LetChainLeftTransportSlot::BoolKeyword => None,
-            LetChainLeftTransportSlot::StrKeyword => None,
-            LetChainLeftTransportSlot::CharKeyword => None,
-            LetChainLeftTransportSlot::DefaultKeyword => None,
-            LetChainLeftTransportSlot::UnionKeyword => None,
-            LetChainLeftTransportSlot::GenKeyword => None,
             LetChainLeftTransportSlot::Self_(_) => None,
             LetChainLeftTransportSlot::UnitExpression(_) => None,
             LetChainLeftTransportSlot::Verbatim(t) => t.snapshot_edge(),
@@ -11970,26 +10278,6 @@ impl ::sittir_core::prepare::Prepare for LetChainLeftTransportSlot {
             LetChainLeftTransportSlot::RangeExpressionPostfix(t) => t.source_separator(ctx),
             LetChainLeftTransportSlot::RangeExpressionPrefix(t) => t.source_separator(ctx),
             LetChainLeftTransportSlot::RangeExpressionBare(t) => t.source_separator(ctx),
-            LetChainLeftTransportSlot::U8Keyword => None,
-            LetChainLeftTransportSlot::I8Keyword => None,
-            LetChainLeftTransportSlot::U16Keyword => None,
-            LetChainLeftTransportSlot::I16Keyword => None,
-            LetChainLeftTransportSlot::U32Keyword => None,
-            LetChainLeftTransportSlot::I32Keyword => None,
-            LetChainLeftTransportSlot::U64Keyword => None,
-            LetChainLeftTransportSlot::I64Keyword => None,
-            LetChainLeftTransportSlot::U128Keyword => None,
-            LetChainLeftTransportSlot::I128Keyword => None,
-            LetChainLeftTransportSlot::IsizeKeyword => None,
-            LetChainLeftTransportSlot::UsizeKeyword => None,
-            LetChainLeftTransportSlot::F32Keyword => None,
-            LetChainLeftTransportSlot::F64Keyword => None,
-            LetChainLeftTransportSlot::BoolKeyword => None,
-            LetChainLeftTransportSlot::StrKeyword => None,
-            LetChainLeftTransportSlot::CharKeyword => None,
-            LetChainLeftTransportSlot::DefaultKeyword => None,
-            LetChainLeftTransportSlot::UnionKeyword => None,
-            LetChainLeftTransportSlot::GenKeyword => None,
             LetChainLeftTransportSlot::Self_(_) => None,
             LetChainLeftTransportSlot::UnitExpression(_) => None,
             LetChainLeftTransportSlot::Verbatim(t) => t.source_separator(ctx),
@@ -12064,26 +10352,6 @@ impl ::sittir_core::view::KindOf for LetChainLeftTransportSlot {
             Self::RangeExpressionPostfix(inner) => inner.kind_in(kinds),
             Self::RangeExpressionPrefix(inner) => inner.kind_in(kinds),
             Self::RangeExpressionBare(inner) => inner.kind_in(kinds),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
             Self::UnitExpression(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
@@ -12155,26 +10423,6 @@ impl ::sittir_core::render::Render for LetChainLeftTransportSlot {
             LetChainLeftTransportSlot::RangeExpressionPostfix(inner) => inner.render(w),
             LetChainLeftTransportSlot::RangeExpressionPrefix(inner) => inner.render(w),
             LetChainLeftTransportSlot::RangeExpressionBare(inner) => inner.render(w),
-            LetChainLeftTransportSlot::U8Keyword => render_u8_keyword(w),
-            LetChainLeftTransportSlot::I8Keyword => render_i8_keyword(w),
-            LetChainLeftTransportSlot::U16Keyword => render_u16_keyword(w),
-            LetChainLeftTransportSlot::I16Keyword => render_i16_keyword(w),
-            LetChainLeftTransportSlot::U32Keyword => render_u32_keyword(w),
-            LetChainLeftTransportSlot::I32Keyword => render_i32_keyword(w),
-            LetChainLeftTransportSlot::U64Keyword => render_u64_keyword(w),
-            LetChainLeftTransportSlot::I64Keyword => render_i64_keyword(w),
-            LetChainLeftTransportSlot::U128Keyword => render_u128_keyword(w),
-            LetChainLeftTransportSlot::I128Keyword => render_i128_keyword(w),
-            LetChainLeftTransportSlot::IsizeKeyword => render_isize_keyword(w),
-            LetChainLeftTransportSlot::UsizeKeyword => render_usize_keyword(w),
-            LetChainLeftTransportSlot::F32Keyword => render_f32_keyword(w),
-            LetChainLeftTransportSlot::F64Keyword => render_f64_keyword(w),
-            LetChainLeftTransportSlot::BoolKeyword => render_bool_keyword(w),
-            LetChainLeftTransportSlot::StrKeyword => render_str_keyword(w),
-            LetChainLeftTransportSlot::CharKeyword => render_char_keyword(w),
-            LetChainLeftTransportSlot::DefaultKeyword => render_default_keyword(w),
-            LetChainLeftTransportSlot::UnionKeyword => render_union_keyword(w),
-            LetChainLeftTransportSlot::GenKeyword => render_gen_keyword(w),
             LetChainLeftTransportSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
             LetChainLeftTransportSlot::UnitExpression(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_unit_expression),
             LetChainLeftTransportSlot::Verbatim(inner) => inner.render(w),
@@ -12241,7 +10489,7 @@ pub enum LetChainRightTransportSlot {
     IntegerLiteralOctal(IntegerLiteralOctalTransport),
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -12305,46 +10553,6 @@ pub enum LetChainRightTransportSlot {
     RangeExpressionPrefix(RangeExpressionPrefixTransport),
     #[kind(kind::RANGE_EXPRESSION_BARE)]
     RangeExpressionBare(RangeExpressionBareTransport),
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
     #[kind(kind::SELF)]
     #[transport(edged)]
     Self_(::sittir_core::options::Edges),
@@ -12418,26 +10626,6 @@ impl ::sittir_core::prepare::Prepare for LetChainRightTransportSlot {
             LetChainRightTransportSlot::RangeExpressionPostfix(t) => t.prepare(ctx),
             LetChainRightTransportSlot::RangeExpressionPrefix(t) => t.prepare(ctx),
             LetChainRightTransportSlot::RangeExpressionBare(t) => t.prepare(ctx),
-            LetChainRightTransportSlot::U8Keyword => Ok(()),
-            LetChainRightTransportSlot::I8Keyword => Ok(()),
-            LetChainRightTransportSlot::U16Keyword => Ok(()),
-            LetChainRightTransportSlot::I16Keyword => Ok(()),
-            LetChainRightTransportSlot::U32Keyword => Ok(()),
-            LetChainRightTransportSlot::I32Keyword => Ok(()),
-            LetChainRightTransportSlot::U64Keyword => Ok(()),
-            LetChainRightTransportSlot::I64Keyword => Ok(()),
-            LetChainRightTransportSlot::U128Keyword => Ok(()),
-            LetChainRightTransportSlot::I128Keyword => Ok(()),
-            LetChainRightTransportSlot::IsizeKeyword => Ok(()),
-            LetChainRightTransportSlot::UsizeKeyword => Ok(()),
-            LetChainRightTransportSlot::F32Keyword => Ok(()),
-            LetChainRightTransportSlot::F64Keyword => Ok(()),
-            LetChainRightTransportSlot::BoolKeyword => Ok(()),
-            LetChainRightTransportSlot::StrKeyword => Ok(()),
-            LetChainRightTransportSlot::CharKeyword => Ok(()),
-            LetChainRightTransportSlot::DefaultKeyword => Ok(()),
-            LetChainRightTransportSlot::UnionKeyword => Ok(()),
-            LetChainRightTransportSlot::GenKeyword => Ok(()),
             LetChainRightTransportSlot::Self_(_) => Ok(()),
             LetChainRightTransportSlot::UnitExpression(_) => Ok(()),
             LetChainRightTransportSlot::Verbatim(t) => t.prepare(ctx),
@@ -12505,26 +10693,6 @@ impl ::sittir_core::prepare::Prepare for LetChainRightTransportSlot {
             LetChainRightTransportSlot::RangeExpressionPostfix(t) => t.gap_edges(),
             LetChainRightTransportSlot::RangeExpressionPrefix(t) => t.gap_edges(),
             LetChainRightTransportSlot::RangeExpressionBare(t) => t.gap_edges(),
-            LetChainRightTransportSlot::U8Keyword => None,
-            LetChainRightTransportSlot::I8Keyword => None,
-            LetChainRightTransportSlot::U16Keyword => None,
-            LetChainRightTransportSlot::I16Keyword => None,
-            LetChainRightTransportSlot::U32Keyword => None,
-            LetChainRightTransportSlot::I32Keyword => None,
-            LetChainRightTransportSlot::U64Keyword => None,
-            LetChainRightTransportSlot::I64Keyword => None,
-            LetChainRightTransportSlot::U128Keyword => None,
-            LetChainRightTransportSlot::I128Keyword => None,
-            LetChainRightTransportSlot::IsizeKeyword => None,
-            LetChainRightTransportSlot::UsizeKeyword => None,
-            LetChainRightTransportSlot::F32Keyword => None,
-            LetChainRightTransportSlot::F64Keyword => None,
-            LetChainRightTransportSlot::BoolKeyword => None,
-            LetChainRightTransportSlot::StrKeyword => None,
-            LetChainRightTransportSlot::CharKeyword => None,
-            LetChainRightTransportSlot::DefaultKeyword => None,
-            LetChainRightTransportSlot::UnionKeyword => None,
-            LetChainRightTransportSlot::GenKeyword => None,
             LetChainRightTransportSlot::Self_(edges) => Some(edges),
             LetChainRightTransportSlot::UnitExpression(edges) => Some(edges),
             LetChainRightTransportSlot::Verbatim(t) => t.gap_edges(),
@@ -12592,26 +10760,6 @@ impl ::sittir_core::prepare::Prepare for LetChainRightTransportSlot {
             LetChainRightTransportSlot::RangeExpressionPostfix(t) => t.snapshot_edge(),
             LetChainRightTransportSlot::RangeExpressionPrefix(t) => t.snapshot_edge(),
             LetChainRightTransportSlot::RangeExpressionBare(t) => t.snapshot_edge(),
-            LetChainRightTransportSlot::U8Keyword => None,
-            LetChainRightTransportSlot::I8Keyword => None,
-            LetChainRightTransportSlot::U16Keyword => None,
-            LetChainRightTransportSlot::I16Keyword => None,
-            LetChainRightTransportSlot::U32Keyword => None,
-            LetChainRightTransportSlot::I32Keyword => None,
-            LetChainRightTransportSlot::U64Keyword => None,
-            LetChainRightTransportSlot::I64Keyword => None,
-            LetChainRightTransportSlot::U128Keyword => None,
-            LetChainRightTransportSlot::I128Keyword => None,
-            LetChainRightTransportSlot::IsizeKeyword => None,
-            LetChainRightTransportSlot::UsizeKeyword => None,
-            LetChainRightTransportSlot::F32Keyword => None,
-            LetChainRightTransportSlot::F64Keyword => None,
-            LetChainRightTransportSlot::BoolKeyword => None,
-            LetChainRightTransportSlot::StrKeyword => None,
-            LetChainRightTransportSlot::CharKeyword => None,
-            LetChainRightTransportSlot::DefaultKeyword => None,
-            LetChainRightTransportSlot::UnionKeyword => None,
-            LetChainRightTransportSlot::GenKeyword => None,
             LetChainRightTransportSlot::Self_(_) => None,
             LetChainRightTransportSlot::UnitExpression(_) => None,
             LetChainRightTransportSlot::Verbatim(t) => t.snapshot_edge(),
@@ -12679,26 +10827,6 @@ impl ::sittir_core::prepare::Prepare for LetChainRightTransportSlot {
             LetChainRightTransportSlot::RangeExpressionPostfix(t) => t.source_separator(ctx),
             LetChainRightTransportSlot::RangeExpressionPrefix(t) => t.source_separator(ctx),
             LetChainRightTransportSlot::RangeExpressionBare(t) => t.source_separator(ctx),
-            LetChainRightTransportSlot::U8Keyword => None,
-            LetChainRightTransportSlot::I8Keyword => None,
-            LetChainRightTransportSlot::U16Keyword => None,
-            LetChainRightTransportSlot::I16Keyword => None,
-            LetChainRightTransportSlot::U32Keyword => None,
-            LetChainRightTransportSlot::I32Keyword => None,
-            LetChainRightTransportSlot::U64Keyword => None,
-            LetChainRightTransportSlot::I64Keyword => None,
-            LetChainRightTransportSlot::U128Keyword => None,
-            LetChainRightTransportSlot::I128Keyword => None,
-            LetChainRightTransportSlot::IsizeKeyword => None,
-            LetChainRightTransportSlot::UsizeKeyword => None,
-            LetChainRightTransportSlot::F32Keyword => None,
-            LetChainRightTransportSlot::F64Keyword => None,
-            LetChainRightTransportSlot::BoolKeyword => None,
-            LetChainRightTransportSlot::StrKeyword => None,
-            LetChainRightTransportSlot::CharKeyword => None,
-            LetChainRightTransportSlot::DefaultKeyword => None,
-            LetChainRightTransportSlot::UnionKeyword => None,
-            LetChainRightTransportSlot::GenKeyword => None,
             LetChainRightTransportSlot::Self_(_) => None,
             LetChainRightTransportSlot::UnitExpression(_) => None,
             LetChainRightTransportSlot::Verbatim(t) => t.source_separator(ctx),
@@ -12772,26 +10900,6 @@ impl ::sittir_core::view::KindOf for LetChainRightTransportSlot {
             Self::RangeExpressionPostfix(inner) => inner.kind_in(kinds),
             Self::RangeExpressionPrefix(inner) => inner.kind_in(kinds),
             Self::RangeExpressionBare(inner) => inner.kind_in(kinds),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
             Self::UnitExpression(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
@@ -12862,26 +10970,6 @@ impl ::sittir_core::render::Render for LetChainRightTransportSlot {
             LetChainRightTransportSlot::RangeExpressionPostfix(inner) => inner.render(w),
             LetChainRightTransportSlot::RangeExpressionPrefix(inner) => inner.render(w),
             LetChainRightTransportSlot::RangeExpressionBare(inner) => inner.render(w),
-            LetChainRightTransportSlot::U8Keyword => render_u8_keyword(w),
-            LetChainRightTransportSlot::I8Keyword => render_i8_keyword(w),
-            LetChainRightTransportSlot::U16Keyword => render_u16_keyword(w),
-            LetChainRightTransportSlot::I16Keyword => render_i16_keyword(w),
-            LetChainRightTransportSlot::U32Keyword => render_u32_keyword(w),
-            LetChainRightTransportSlot::I32Keyword => render_i32_keyword(w),
-            LetChainRightTransportSlot::U64Keyword => render_u64_keyword(w),
-            LetChainRightTransportSlot::I64Keyword => render_i64_keyword(w),
-            LetChainRightTransportSlot::U128Keyword => render_u128_keyword(w),
-            LetChainRightTransportSlot::I128Keyword => render_i128_keyword(w),
-            LetChainRightTransportSlot::IsizeKeyword => render_isize_keyword(w),
-            LetChainRightTransportSlot::UsizeKeyword => render_usize_keyword(w),
-            LetChainRightTransportSlot::F32Keyword => render_f32_keyword(w),
-            LetChainRightTransportSlot::F64Keyword => render_f64_keyword(w),
-            LetChainRightTransportSlot::BoolKeyword => render_bool_keyword(w),
-            LetChainRightTransportSlot::StrKeyword => render_str_keyword(w),
-            LetChainRightTransportSlot::CharKeyword => render_char_keyword(w),
-            LetChainRightTransportSlot::DefaultKeyword => render_default_keyword(w),
-            LetChainRightTransportSlot::UnionKeyword => render_union_keyword(w),
-            LetChainRightTransportSlot::GenKeyword => render_gen_keyword(w),
             LetChainRightTransportSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
             LetChainRightTransportSlot::UnitExpression(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_unit_expression),
             LetChainRightTransportSlot::Verbatim(inner) => inner.render(w),
@@ -13036,7 +11124,7 @@ pub enum ClosureParametersParametersTransportSlot {
     FloatLiteral(FloatLiteralTransport),
     #[kind(kind::NEGATIVE_LITERAL)]
     NegativeLiteral(NegativeLiteralTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -13072,46 +11160,6 @@ pub enum ClosureParametersParametersTransportSlot {
     MacroInvocation(MacroInvocationTransport),
     #[kind(kind::PARAMETER)]
     Parameter(Box<ParameterTransport>),
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
     #[kind(kind::REMAINING_FIELD_PATTERN)]
     #[transport(edged)]
     RemainingFieldPattern(::sittir_core::options::Edges),
@@ -13158,26 +11206,6 @@ impl ::sittir_core::prepare::Prepare for ClosureParametersParametersTransportSlo
             ClosureParametersParametersTransportSlot::ConstBlock(t) => t.prepare(ctx),
             ClosureParametersParametersTransportSlot::MacroInvocation(t) => t.prepare(ctx),
             ClosureParametersParametersTransportSlot::Parameter(t) => t.prepare(ctx),
-            ClosureParametersParametersTransportSlot::U8Keyword => Ok(()),
-            ClosureParametersParametersTransportSlot::I8Keyword => Ok(()),
-            ClosureParametersParametersTransportSlot::U16Keyword => Ok(()),
-            ClosureParametersParametersTransportSlot::I16Keyword => Ok(()),
-            ClosureParametersParametersTransportSlot::U32Keyword => Ok(()),
-            ClosureParametersParametersTransportSlot::I32Keyword => Ok(()),
-            ClosureParametersParametersTransportSlot::U64Keyword => Ok(()),
-            ClosureParametersParametersTransportSlot::I64Keyword => Ok(()),
-            ClosureParametersParametersTransportSlot::U128Keyword => Ok(()),
-            ClosureParametersParametersTransportSlot::I128Keyword => Ok(()),
-            ClosureParametersParametersTransportSlot::IsizeKeyword => Ok(()),
-            ClosureParametersParametersTransportSlot::UsizeKeyword => Ok(()),
-            ClosureParametersParametersTransportSlot::F32Keyword => Ok(()),
-            ClosureParametersParametersTransportSlot::F64Keyword => Ok(()),
-            ClosureParametersParametersTransportSlot::BoolKeyword => Ok(()),
-            ClosureParametersParametersTransportSlot::StrKeyword => Ok(()),
-            ClosureParametersParametersTransportSlot::CharKeyword => Ok(()),
-            ClosureParametersParametersTransportSlot::DefaultKeyword => Ok(()),
-            ClosureParametersParametersTransportSlot::UnionKeyword => Ok(()),
-            ClosureParametersParametersTransportSlot::GenKeyword => Ok(()),
             ClosureParametersParametersTransportSlot::RemainingFieldPattern(_) => Ok(()),
             ClosureParametersParametersTransportSlot::WildcardPattern(_) => Ok(()),
             ClosureParametersParametersTransportSlot::Verbatim(t) => t.prepare(ctx),
@@ -13218,26 +11246,6 @@ impl ::sittir_core::prepare::Prepare for ClosureParametersParametersTransportSlo
             ClosureParametersParametersTransportSlot::ConstBlock(t) => t.gap_edges(),
             ClosureParametersParametersTransportSlot::MacroInvocation(t) => t.gap_edges(),
             ClosureParametersParametersTransportSlot::Parameter(t) => t.gap_edges(),
-            ClosureParametersParametersTransportSlot::U8Keyword => None,
-            ClosureParametersParametersTransportSlot::I8Keyword => None,
-            ClosureParametersParametersTransportSlot::U16Keyword => None,
-            ClosureParametersParametersTransportSlot::I16Keyword => None,
-            ClosureParametersParametersTransportSlot::U32Keyword => None,
-            ClosureParametersParametersTransportSlot::I32Keyword => None,
-            ClosureParametersParametersTransportSlot::U64Keyword => None,
-            ClosureParametersParametersTransportSlot::I64Keyword => None,
-            ClosureParametersParametersTransportSlot::U128Keyword => None,
-            ClosureParametersParametersTransportSlot::I128Keyword => None,
-            ClosureParametersParametersTransportSlot::IsizeKeyword => None,
-            ClosureParametersParametersTransportSlot::UsizeKeyword => None,
-            ClosureParametersParametersTransportSlot::F32Keyword => None,
-            ClosureParametersParametersTransportSlot::F64Keyword => None,
-            ClosureParametersParametersTransportSlot::BoolKeyword => None,
-            ClosureParametersParametersTransportSlot::StrKeyword => None,
-            ClosureParametersParametersTransportSlot::CharKeyword => None,
-            ClosureParametersParametersTransportSlot::DefaultKeyword => None,
-            ClosureParametersParametersTransportSlot::UnionKeyword => None,
-            ClosureParametersParametersTransportSlot::GenKeyword => None,
             ClosureParametersParametersTransportSlot::RemainingFieldPattern(edges) => Some(edges),
             ClosureParametersParametersTransportSlot::WildcardPattern(edges) => Some(edges),
             ClosureParametersParametersTransportSlot::Verbatim(t) => t.gap_edges(),
@@ -13278,26 +11286,6 @@ impl ::sittir_core::prepare::Prepare for ClosureParametersParametersTransportSlo
             ClosureParametersParametersTransportSlot::ConstBlock(t) => t.snapshot_edge(),
             ClosureParametersParametersTransportSlot::MacroInvocation(t) => t.snapshot_edge(),
             ClosureParametersParametersTransportSlot::Parameter(t) => t.snapshot_edge(),
-            ClosureParametersParametersTransportSlot::U8Keyword => None,
-            ClosureParametersParametersTransportSlot::I8Keyword => None,
-            ClosureParametersParametersTransportSlot::U16Keyword => None,
-            ClosureParametersParametersTransportSlot::I16Keyword => None,
-            ClosureParametersParametersTransportSlot::U32Keyword => None,
-            ClosureParametersParametersTransportSlot::I32Keyword => None,
-            ClosureParametersParametersTransportSlot::U64Keyword => None,
-            ClosureParametersParametersTransportSlot::I64Keyword => None,
-            ClosureParametersParametersTransportSlot::U128Keyword => None,
-            ClosureParametersParametersTransportSlot::I128Keyword => None,
-            ClosureParametersParametersTransportSlot::IsizeKeyword => None,
-            ClosureParametersParametersTransportSlot::UsizeKeyword => None,
-            ClosureParametersParametersTransportSlot::F32Keyword => None,
-            ClosureParametersParametersTransportSlot::F64Keyword => None,
-            ClosureParametersParametersTransportSlot::BoolKeyword => None,
-            ClosureParametersParametersTransportSlot::StrKeyword => None,
-            ClosureParametersParametersTransportSlot::CharKeyword => None,
-            ClosureParametersParametersTransportSlot::DefaultKeyword => None,
-            ClosureParametersParametersTransportSlot::UnionKeyword => None,
-            ClosureParametersParametersTransportSlot::GenKeyword => None,
             ClosureParametersParametersTransportSlot::RemainingFieldPattern(_) => None,
             ClosureParametersParametersTransportSlot::WildcardPattern(_) => None,
             ClosureParametersParametersTransportSlot::Verbatim(t) => t.snapshot_edge(),
@@ -13338,26 +11326,6 @@ impl ::sittir_core::prepare::Prepare for ClosureParametersParametersTransportSlo
             ClosureParametersParametersTransportSlot::ConstBlock(t) => t.source_separator(ctx),
             ClosureParametersParametersTransportSlot::MacroInvocation(t) => t.source_separator(ctx),
             ClosureParametersParametersTransportSlot::Parameter(t) => t.source_separator(ctx),
-            ClosureParametersParametersTransportSlot::U8Keyword => None,
-            ClosureParametersParametersTransportSlot::I8Keyword => None,
-            ClosureParametersParametersTransportSlot::U16Keyword => None,
-            ClosureParametersParametersTransportSlot::I16Keyword => None,
-            ClosureParametersParametersTransportSlot::U32Keyword => None,
-            ClosureParametersParametersTransportSlot::I32Keyword => None,
-            ClosureParametersParametersTransportSlot::U64Keyword => None,
-            ClosureParametersParametersTransportSlot::I64Keyword => None,
-            ClosureParametersParametersTransportSlot::U128Keyword => None,
-            ClosureParametersParametersTransportSlot::I128Keyword => None,
-            ClosureParametersParametersTransportSlot::IsizeKeyword => None,
-            ClosureParametersParametersTransportSlot::UsizeKeyword => None,
-            ClosureParametersParametersTransportSlot::F32Keyword => None,
-            ClosureParametersParametersTransportSlot::F64Keyword => None,
-            ClosureParametersParametersTransportSlot::BoolKeyword => None,
-            ClosureParametersParametersTransportSlot::StrKeyword => None,
-            ClosureParametersParametersTransportSlot::CharKeyword => None,
-            ClosureParametersParametersTransportSlot::DefaultKeyword => None,
-            ClosureParametersParametersTransportSlot::UnionKeyword => None,
-            ClosureParametersParametersTransportSlot::GenKeyword => None,
             ClosureParametersParametersTransportSlot::RemainingFieldPattern(_) => None,
             ClosureParametersParametersTransportSlot::WildcardPattern(_) => None,
             ClosureParametersParametersTransportSlot::Verbatim(t) => t.source_separator(ctx),
@@ -13404,26 +11372,6 @@ impl ::sittir_core::view::KindOf for ClosureParametersParametersTransportSlot {
             Self::ConstBlock(inner) => inner.kind_in(kinds),
             Self::MacroInvocation(inner) => inner.kind_in(kinds),
             Self::Parameter(inner) => inner.kind_in(kinds),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::RemainingFieldPattern(_) => [::sittir_core::types::KindId(321)].iter().any(|k| kinds.contains(k)),
             Self::WildcardPattern(_) => [::sittir_core::types::KindId(426)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
@@ -13467,26 +11415,6 @@ impl ::sittir_core::render::Render for ClosureParametersParametersTransportSlot 
             ClosureParametersParametersTransportSlot::ConstBlock(inner) => inner.render(w),
             ClosureParametersParametersTransportSlot::MacroInvocation(inner) => inner.render(w),
             ClosureParametersParametersTransportSlot::Parameter(inner) => inner.as_ref().render(w),
-            ClosureParametersParametersTransportSlot::U8Keyword => render_u8_keyword(w),
-            ClosureParametersParametersTransportSlot::I8Keyword => render_i8_keyword(w),
-            ClosureParametersParametersTransportSlot::U16Keyword => render_u16_keyword(w),
-            ClosureParametersParametersTransportSlot::I16Keyword => render_i16_keyword(w),
-            ClosureParametersParametersTransportSlot::U32Keyword => render_u32_keyword(w),
-            ClosureParametersParametersTransportSlot::I32Keyword => render_i32_keyword(w),
-            ClosureParametersParametersTransportSlot::U64Keyword => render_u64_keyword(w),
-            ClosureParametersParametersTransportSlot::I64Keyword => render_i64_keyword(w),
-            ClosureParametersParametersTransportSlot::U128Keyword => render_u128_keyword(w),
-            ClosureParametersParametersTransportSlot::I128Keyword => render_i128_keyword(w),
-            ClosureParametersParametersTransportSlot::IsizeKeyword => render_isize_keyword(w),
-            ClosureParametersParametersTransportSlot::UsizeKeyword => render_usize_keyword(w),
-            ClosureParametersParametersTransportSlot::F32Keyword => render_f32_keyword(w),
-            ClosureParametersParametersTransportSlot::F64Keyword => render_f64_keyword(w),
-            ClosureParametersParametersTransportSlot::BoolKeyword => render_bool_keyword(w),
-            ClosureParametersParametersTransportSlot::StrKeyword => render_str_keyword(w),
-            ClosureParametersParametersTransportSlot::CharKeyword => render_char_keyword(w),
-            ClosureParametersParametersTransportSlot::DefaultKeyword => render_default_keyword(w),
-            ClosureParametersParametersTransportSlot::UnionKeyword => render_union_keyword(w),
-            ClosureParametersParametersTransportSlot::GenKeyword => render_gen_keyword(w),
             ClosureParametersParametersTransportSlot::RemainingFieldPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(321), edges, w, render_remaining_field_pattern),
             ClosureParametersParametersTransportSlot::WildcardPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(426), edges, w, render_wildcard_pattern),
             ClosureParametersParametersTransportSlot::Verbatim(inner) => inner.render(w),
@@ -13497,7 +11425,7 @@ impl ::sittir_core::render::Render for ClosureParametersParametersTransportSlot 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum GenericPatternNameTransportSlot {
-    #[kind(kind::IDENTIFIER, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD, kind::DEFAULT_KEYWORD, kind::UNION_KEYWORD, kind::GEN_KEYWORD)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -13562,7 +11490,7 @@ impl ::sittir_core::render::Render for GenericPatternNameTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum TupleStructPatternTypeTransportSlot {
-    #[kind(kind::IDENTIFIER, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD, kind::DEFAULT_KEYWORD, kind::UNION_KEYWORD, kind::GEN_KEYWORD)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -14176,7 +12104,7 @@ pub enum TuplePatternElementsItemTransportSlot {
     FloatLiteral(FloatLiteralTransport),
     #[kind(kind::NEGATIVE_LITERAL)]
     NegativeLiteral(NegativeLiteralTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -14214,46 +12142,6 @@ pub enum TuplePatternElementsItemTransportSlot {
     ClosureExpressionBlock(ClosureExpressionBlockTransport),
     #[kind(kind::CLOSURE_EXPRESSION_EXPR)]
     ClosureExpressionExpr(ClosureExpressionExprTransport),
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
     #[kind(kind::REMAINING_FIELD_PATTERN)]
     #[transport(edged)]
     RemainingFieldPattern(::sittir_core::options::Edges),
@@ -14301,26 +12189,6 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsItemTransportSlot {
             TuplePatternElementsItemTransportSlot::MacroInvocation(t) => t.prepare(ctx),
             TuplePatternElementsItemTransportSlot::ClosureExpressionBlock(t) => t.prepare(ctx),
             TuplePatternElementsItemTransportSlot::ClosureExpressionExpr(t) => t.prepare(ctx),
-            TuplePatternElementsItemTransportSlot::U8Keyword => Ok(()),
-            TuplePatternElementsItemTransportSlot::I8Keyword => Ok(()),
-            TuplePatternElementsItemTransportSlot::U16Keyword => Ok(()),
-            TuplePatternElementsItemTransportSlot::I16Keyword => Ok(()),
-            TuplePatternElementsItemTransportSlot::U32Keyword => Ok(()),
-            TuplePatternElementsItemTransportSlot::I32Keyword => Ok(()),
-            TuplePatternElementsItemTransportSlot::U64Keyword => Ok(()),
-            TuplePatternElementsItemTransportSlot::I64Keyword => Ok(()),
-            TuplePatternElementsItemTransportSlot::U128Keyword => Ok(()),
-            TuplePatternElementsItemTransportSlot::I128Keyword => Ok(()),
-            TuplePatternElementsItemTransportSlot::IsizeKeyword => Ok(()),
-            TuplePatternElementsItemTransportSlot::UsizeKeyword => Ok(()),
-            TuplePatternElementsItemTransportSlot::F32Keyword => Ok(()),
-            TuplePatternElementsItemTransportSlot::F64Keyword => Ok(()),
-            TuplePatternElementsItemTransportSlot::BoolKeyword => Ok(()),
-            TuplePatternElementsItemTransportSlot::StrKeyword => Ok(()),
-            TuplePatternElementsItemTransportSlot::CharKeyword => Ok(()),
-            TuplePatternElementsItemTransportSlot::DefaultKeyword => Ok(()),
-            TuplePatternElementsItemTransportSlot::UnionKeyword => Ok(()),
-            TuplePatternElementsItemTransportSlot::GenKeyword => Ok(()),
             TuplePatternElementsItemTransportSlot::RemainingFieldPattern(_) => Ok(()),
             TuplePatternElementsItemTransportSlot::WildcardPattern(_) => Ok(()),
             TuplePatternElementsItemTransportSlot::Verbatim(t) => t.prepare(ctx),
@@ -14362,26 +12230,6 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsItemTransportSlot {
             TuplePatternElementsItemTransportSlot::MacroInvocation(t) => t.gap_edges(),
             TuplePatternElementsItemTransportSlot::ClosureExpressionBlock(t) => t.gap_edges(),
             TuplePatternElementsItemTransportSlot::ClosureExpressionExpr(t) => t.gap_edges(),
-            TuplePatternElementsItemTransportSlot::U8Keyword => None,
-            TuplePatternElementsItemTransportSlot::I8Keyword => None,
-            TuplePatternElementsItemTransportSlot::U16Keyword => None,
-            TuplePatternElementsItemTransportSlot::I16Keyword => None,
-            TuplePatternElementsItemTransportSlot::U32Keyword => None,
-            TuplePatternElementsItemTransportSlot::I32Keyword => None,
-            TuplePatternElementsItemTransportSlot::U64Keyword => None,
-            TuplePatternElementsItemTransportSlot::I64Keyword => None,
-            TuplePatternElementsItemTransportSlot::U128Keyword => None,
-            TuplePatternElementsItemTransportSlot::I128Keyword => None,
-            TuplePatternElementsItemTransportSlot::IsizeKeyword => None,
-            TuplePatternElementsItemTransportSlot::UsizeKeyword => None,
-            TuplePatternElementsItemTransportSlot::F32Keyword => None,
-            TuplePatternElementsItemTransportSlot::F64Keyword => None,
-            TuplePatternElementsItemTransportSlot::BoolKeyword => None,
-            TuplePatternElementsItemTransportSlot::StrKeyword => None,
-            TuplePatternElementsItemTransportSlot::CharKeyword => None,
-            TuplePatternElementsItemTransportSlot::DefaultKeyword => None,
-            TuplePatternElementsItemTransportSlot::UnionKeyword => None,
-            TuplePatternElementsItemTransportSlot::GenKeyword => None,
             TuplePatternElementsItemTransportSlot::RemainingFieldPattern(edges) => Some(edges),
             TuplePatternElementsItemTransportSlot::WildcardPattern(edges) => Some(edges),
             TuplePatternElementsItemTransportSlot::Verbatim(t) => t.gap_edges(),
@@ -14423,26 +12271,6 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsItemTransportSlot {
             TuplePatternElementsItemTransportSlot::MacroInvocation(t) => t.snapshot_edge(),
             TuplePatternElementsItemTransportSlot::ClosureExpressionBlock(t) => t.snapshot_edge(),
             TuplePatternElementsItemTransportSlot::ClosureExpressionExpr(t) => t.snapshot_edge(),
-            TuplePatternElementsItemTransportSlot::U8Keyword => None,
-            TuplePatternElementsItemTransportSlot::I8Keyword => None,
-            TuplePatternElementsItemTransportSlot::U16Keyword => None,
-            TuplePatternElementsItemTransportSlot::I16Keyword => None,
-            TuplePatternElementsItemTransportSlot::U32Keyword => None,
-            TuplePatternElementsItemTransportSlot::I32Keyword => None,
-            TuplePatternElementsItemTransportSlot::U64Keyword => None,
-            TuplePatternElementsItemTransportSlot::I64Keyword => None,
-            TuplePatternElementsItemTransportSlot::U128Keyword => None,
-            TuplePatternElementsItemTransportSlot::I128Keyword => None,
-            TuplePatternElementsItemTransportSlot::IsizeKeyword => None,
-            TuplePatternElementsItemTransportSlot::UsizeKeyword => None,
-            TuplePatternElementsItemTransportSlot::F32Keyword => None,
-            TuplePatternElementsItemTransportSlot::F64Keyword => None,
-            TuplePatternElementsItemTransportSlot::BoolKeyword => None,
-            TuplePatternElementsItemTransportSlot::StrKeyword => None,
-            TuplePatternElementsItemTransportSlot::CharKeyword => None,
-            TuplePatternElementsItemTransportSlot::DefaultKeyword => None,
-            TuplePatternElementsItemTransportSlot::UnionKeyword => None,
-            TuplePatternElementsItemTransportSlot::GenKeyword => None,
             TuplePatternElementsItemTransportSlot::RemainingFieldPattern(_) => None,
             TuplePatternElementsItemTransportSlot::WildcardPattern(_) => None,
             TuplePatternElementsItemTransportSlot::Verbatim(t) => t.snapshot_edge(),
@@ -14484,26 +12312,6 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsItemTransportSlot {
             TuplePatternElementsItemTransportSlot::MacroInvocation(t) => t.source_separator(ctx),
             TuplePatternElementsItemTransportSlot::ClosureExpressionBlock(t) => t.source_separator(ctx),
             TuplePatternElementsItemTransportSlot::ClosureExpressionExpr(t) => t.source_separator(ctx),
-            TuplePatternElementsItemTransportSlot::U8Keyword => None,
-            TuplePatternElementsItemTransportSlot::I8Keyword => None,
-            TuplePatternElementsItemTransportSlot::U16Keyword => None,
-            TuplePatternElementsItemTransportSlot::I16Keyword => None,
-            TuplePatternElementsItemTransportSlot::U32Keyword => None,
-            TuplePatternElementsItemTransportSlot::I32Keyword => None,
-            TuplePatternElementsItemTransportSlot::U64Keyword => None,
-            TuplePatternElementsItemTransportSlot::I64Keyword => None,
-            TuplePatternElementsItemTransportSlot::U128Keyword => None,
-            TuplePatternElementsItemTransportSlot::I128Keyword => None,
-            TuplePatternElementsItemTransportSlot::IsizeKeyword => None,
-            TuplePatternElementsItemTransportSlot::UsizeKeyword => None,
-            TuplePatternElementsItemTransportSlot::F32Keyword => None,
-            TuplePatternElementsItemTransportSlot::F64Keyword => None,
-            TuplePatternElementsItemTransportSlot::BoolKeyword => None,
-            TuplePatternElementsItemTransportSlot::StrKeyword => None,
-            TuplePatternElementsItemTransportSlot::CharKeyword => None,
-            TuplePatternElementsItemTransportSlot::DefaultKeyword => None,
-            TuplePatternElementsItemTransportSlot::UnionKeyword => None,
-            TuplePatternElementsItemTransportSlot::GenKeyword => None,
             TuplePatternElementsItemTransportSlot::RemainingFieldPattern(_) => None,
             TuplePatternElementsItemTransportSlot::WildcardPattern(_) => None,
             TuplePatternElementsItemTransportSlot::Verbatim(t) => t.source_separator(ctx),
@@ -14551,26 +12359,6 @@ impl ::sittir_core::view::KindOf for TuplePatternElementsItemTransportSlot {
             Self::MacroInvocation(inner) => inner.kind_in(kinds),
             Self::ClosureExpressionBlock(inner) => inner.kind_in(kinds),
             Self::ClosureExpressionExpr(inner) => inner.kind_in(kinds),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::RemainingFieldPattern(_) => [::sittir_core::types::KindId(321)].iter().any(|k| kinds.contains(k)),
             Self::WildcardPattern(_) => [::sittir_core::types::KindId(426)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
@@ -14615,26 +12403,6 @@ impl ::sittir_core::render::Render for TuplePatternElementsItemTransportSlot {
             TuplePatternElementsItemTransportSlot::MacroInvocation(inner) => inner.render(w),
             TuplePatternElementsItemTransportSlot::ClosureExpressionBlock(inner) => inner.render(w),
             TuplePatternElementsItemTransportSlot::ClosureExpressionExpr(inner) => inner.render(w),
-            TuplePatternElementsItemTransportSlot::U8Keyword => render_u8_keyword(w),
-            TuplePatternElementsItemTransportSlot::I8Keyword => render_i8_keyword(w),
-            TuplePatternElementsItemTransportSlot::U16Keyword => render_u16_keyword(w),
-            TuplePatternElementsItemTransportSlot::I16Keyword => render_i16_keyword(w),
-            TuplePatternElementsItemTransportSlot::U32Keyword => render_u32_keyword(w),
-            TuplePatternElementsItemTransportSlot::I32Keyword => render_i32_keyword(w),
-            TuplePatternElementsItemTransportSlot::U64Keyword => render_u64_keyword(w),
-            TuplePatternElementsItemTransportSlot::I64Keyword => render_i64_keyword(w),
-            TuplePatternElementsItemTransportSlot::U128Keyword => render_u128_keyword(w),
-            TuplePatternElementsItemTransportSlot::I128Keyword => render_i128_keyword(w),
-            TuplePatternElementsItemTransportSlot::IsizeKeyword => render_isize_keyword(w),
-            TuplePatternElementsItemTransportSlot::UsizeKeyword => render_usize_keyword(w),
-            TuplePatternElementsItemTransportSlot::F32Keyword => render_f32_keyword(w),
-            TuplePatternElementsItemTransportSlot::F64Keyword => render_f64_keyword(w),
-            TuplePatternElementsItemTransportSlot::BoolKeyword => render_bool_keyword(w),
-            TuplePatternElementsItemTransportSlot::StrKeyword => render_str_keyword(w),
-            TuplePatternElementsItemTransportSlot::CharKeyword => render_char_keyword(w),
-            TuplePatternElementsItemTransportSlot::DefaultKeyword => render_default_keyword(w),
-            TuplePatternElementsItemTransportSlot::UnionKeyword => render_union_keyword(w),
-            TuplePatternElementsItemTransportSlot::GenKeyword => render_gen_keyword(w),
             TuplePatternElementsItemTransportSlot::RemainingFieldPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(321), edges, w, render_remaining_field_pattern),
             TuplePatternElementsItemTransportSlot::WildcardPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(426), edges, w, render_wildcard_pattern),
             TuplePatternElementsItemTransportSlot::Verbatim(inner) => inner.render(w),
@@ -14765,7 +12533,7 @@ pub enum ClosureExpressionExprBodyTransportSlot {
     IntegerLiteralOctal(IntegerLiteralOctalTransport),
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -14829,46 +12597,6 @@ pub enum ClosureExpressionExprBodyTransportSlot {
     RangeExpressionPrefix(RangeExpressionPrefixTransport),
     #[kind(kind::RANGE_EXPRESSION_BARE)]
     RangeExpressionBare(RangeExpressionBareTransport),
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
     #[kind(kind::SELF)]
     #[transport(edged)]
     Self_(::sittir_core::options::Edges),
@@ -14943,26 +12671,6 @@ impl ::sittir_core::prepare::Prepare for ClosureExpressionExprBodyTransportSlot 
             ClosureExpressionExprBodyTransportSlot::RangeExpressionPostfix(t) => t.prepare(ctx),
             ClosureExpressionExprBodyTransportSlot::RangeExpressionPrefix(t) => t.prepare(ctx),
             ClosureExpressionExprBodyTransportSlot::RangeExpressionBare(t) => t.prepare(ctx),
-            ClosureExpressionExprBodyTransportSlot::U8Keyword => Ok(()),
-            ClosureExpressionExprBodyTransportSlot::I8Keyword => Ok(()),
-            ClosureExpressionExprBodyTransportSlot::U16Keyword => Ok(()),
-            ClosureExpressionExprBodyTransportSlot::I16Keyword => Ok(()),
-            ClosureExpressionExprBodyTransportSlot::U32Keyword => Ok(()),
-            ClosureExpressionExprBodyTransportSlot::I32Keyword => Ok(()),
-            ClosureExpressionExprBodyTransportSlot::U64Keyword => Ok(()),
-            ClosureExpressionExprBodyTransportSlot::I64Keyword => Ok(()),
-            ClosureExpressionExprBodyTransportSlot::U128Keyword => Ok(()),
-            ClosureExpressionExprBodyTransportSlot::I128Keyword => Ok(()),
-            ClosureExpressionExprBodyTransportSlot::IsizeKeyword => Ok(()),
-            ClosureExpressionExprBodyTransportSlot::UsizeKeyword => Ok(()),
-            ClosureExpressionExprBodyTransportSlot::F32Keyword => Ok(()),
-            ClosureExpressionExprBodyTransportSlot::F64Keyword => Ok(()),
-            ClosureExpressionExprBodyTransportSlot::BoolKeyword => Ok(()),
-            ClosureExpressionExprBodyTransportSlot::StrKeyword => Ok(()),
-            ClosureExpressionExprBodyTransportSlot::CharKeyword => Ok(()),
-            ClosureExpressionExprBodyTransportSlot::DefaultKeyword => Ok(()),
-            ClosureExpressionExprBodyTransportSlot::UnionKeyword => Ok(()),
-            ClosureExpressionExprBodyTransportSlot::GenKeyword => Ok(()),
             ClosureExpressionExprBodyTransportSlot::Self_(_) => Ok(()),
             ClosureExpressionExprBodyTransportSlot::UnitExpression(_) => Ok(()),
             ClosureExpressionExprBodyTransportSlot::Underscore => Ok(()),
@@ -15030,26 +12738,6 @@ impl ::sittir_core::prepare::Prepare for ClosureExpressionExprBodyTransportSlot 
             ClosureExpressionExprBodyTransportSlot::RangeExpressionPostfix(t) => t.gap_edges(),
             ClosureExpressionExprBodyTransportSlot::RangeExpressionPrefix(t) => t.gap_edges(),
             ClosureExpressionExprBodyTransportSlot::RangeExpressionBare(t) => t.gap_edges(),
-            ClosureExpressionExprBodyTransportSlot::U8Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::I8Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::U16Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::I16Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::U32Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::I32Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::U64Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::I64Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::U128Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::I128Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::IsizeKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::UsizeKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::F32Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::F64Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::BoolKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::StrKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::CharKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::DefaultKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::UnionKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::GenKeyword => None,
             ClosureExpressionExprBodyTransportSlot::Self_(edges) => Some(edges),
             ClosureExpressionExprBodyTransportSlot::UnitExpression(edges) => Some(edges),
             ClosureExpressionExprBodyTransportSlot::Underscore => None,
@@ -15117,26 +12805,6 @@ impl ::sittir_core::prepare::Prepare for ClosureExpressionExprBodyTransportSlot 
             ClosureExpressionExprBodyTransportSlot::RangeExpressionPostfix(t) => t.snapshot_edge(),
             ClosureExpressionExprBodyTransportSlot::RangeExpressionPrefix(t) => t.snapshot_edge(),
             ClosureExpressionExprBodyTransportSlot::RangeExpressionBare(t) => t.snapshot_edge(),
-            ClosureExpressionExprBodyTransportSlot::U8Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::I8Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::U16Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::I16Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::U32Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::I32Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::U64Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::I64Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::U128Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::I128Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::IsizeKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::UsizeKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::F32Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::F64Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::BoolKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::StrKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::CharKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::DefaultKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::UnionKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::GenKeyword => None,
             ClosureExpressionExprBodyTransportSlot::Self_(_) => None,
             ClosureExpressionExprBodyTransportSlot::UnitExpression(_) => None,
             ClosureExpressionExprBodyTransportSlot::Underscore => None,
@@ -15204,26 +12872,6 @@ impl ::sittir_core::prepare::Prepare for ClosureExpressionExprBodyTransportSlot 
             ClosureExpressionExprBodyTransportSlot::RangeExpressionPostfix(t) => t.source_separator(ctx),
             ClosureExpressionExprBodyTransportSlot::RangeExpressionPrefix(t) => t.source_separator(ctx),
             ClosureExpressionExprBodyTransportSlot::RangeExpressionBare(t) => t.source_separator(ctx),
-            ClosureExpressionExprBodyTransportSlot::U8Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::I8Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::U16Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::I16Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::U32Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::I32Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::U64Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::I64Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::U128Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::I128Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::IsizeKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::UsizeKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::F32Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::F64Keyword => None,
-            ClosureExpressionExprBodyTransportSlot::BoolKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::StrKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::CharKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::DefaultKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::UnionKeyword => None,
-            ClosureExpressionExprBodyTransportSlot::GenKeyword => None,
             ClosureExpressionExprBodyTransportSlot::Self_(_) => None,
             ClosureExpressionExprBodyTransportSlot::UnitExpression(_) => None,
             ClosureExpressionExprBodyTransportSlot::Underscore => None,
@@ -15297,26 +12945,6 @@ impl ::sittir_core::view::KindOf for ClosureExpressionExprBodyTransportSlot {
             Self::RangeExpressionPostfix(inner) => inner.kind_in(kinds),
             Self::RangeExpressionPrefix(inner) => inner.kind_in(kinds),
             Self::RangeExpressionBare(inner) => inner.kind_in(kinds),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
             Self::UnitExpression(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
             Self::Underscore => [::sittir_core::types::KindId(136)].iter().any(|k| kinds.contains(k)),
@@ -15387,26 +13015,6 @@ impl ::sittir_core::render::Render for ClosureExpressionExprBodyTransportSlot {
             ClosureExpressionExprBodyTransportSlot::RangeExpressionPostfix(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::RangeExpressionPrefix(inner) => inner.render(w),
             ClosureExpressionExprBodyTransportSlot::RangeExpressionBare(inner) => inner.render(w),
-            ClosureExpressionExprBodyTransportSlot::U8Keyword => render_u8_keyword(w),
-            ClosureExpressionExprBodyTransportSlot::I8Keyword => render_i8_keyword(w),
-            ClosureExpressionExprBodyTransportSlot::U16Keyword => render_u16_keyword(w),
-            ClosureExpressionExprBodyTransportSlot::I16Keyword => render_i16_keyword(w),
-            ClosureExpressionExprBodyTransportSlot::U32Keyword => render_u32_keyword(w),
-            ClosureExpressionExprBodyTransportSlot::I32Keyword => render_i32_keyword(w),
-            ClosureExpressionExprBodyTransportSlot::U64Keyword => render_u64_keyword(w),
-            ClosureExpressionExprBodyTransportSlot::I64Keyword => render_i64_keyword(w),
-            ClosureExpressionExprBodyTransportSlot::U128Keyword => render_u128_keyword(w),
-            ClosureExpressionExprBodyTransportSlot::I128Keyword => render_i128_keyword(w),
-            ClosureExpressionExprBodyTransportSlot::IsizeKeyword => render_isize_keyword(w),
-            ClosureExpressionExprBodyTransportSlot::UsizeKeyword => render_usize_keyword(w),
-            ClosureExpressionExprBodyTransportSlot::F32Keyword => render_f32_keyword(w),
-            ClosureExpressionExprBodyTransportSlot::F64Keyword => render_f64_keyword(w),
-            ClosureExpressionExprBodyTransportSlot::BoolKeyword => render_bool_keyword(w),
-            ClosureExpressionExprBodyTransportSlot::StrKeyword => render_str_keyword(w),
-            ClosureExpressionExprBodyTransportSlot::CharKeyword => render_char_keyword(w),
-            ClosureExpressionExprBodyTransportSlot::DefaultKeyword => render_default_keyword(w),
-            ClosureExpressionExprBodyTransportSlot::UnionKeyword => render_union_keyword(w),
-            ClosureExpressionExprBodyTransportSlot::GenKeyword => render_gen_keyword(w),
             ClosureExpressionExprBodyTransportSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
             ClosureExpressionExprBodyTransportSlot::UnitExpression(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_unit_expression),
             ClosureExpressionExprBodyTransportSlot::Underscore => {
@@ -15874,87 +13482,6 @@ impl ::sittir_core::render::Render for DelimTokenTreeParenDelimTokensTransportSl
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum MacroDefinitionParenNameTransportSlot {
-    #[kind(kind::IDENTIFIER, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD)]
-    Identifier(IdentifierTransport),
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
-    #[transport(verbatim)]
-    Verbatim(VerbatimTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for MacroDefinitionParenNameTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            MacroDefinitionParenNameTransportSlot::Identifier(t) => t.prepare(ctx),
-            MacroDefinitionParenNameTransportSlot::DefaultKeyword => Ok(()),
-            MacroDefinitionParenNameTransportSlot::UnionKeyword => Ok(()),
-            MacroDefinitionParenNameTransportSlot::GenKeyword => Ok(()),
-            MacroDefinitionParenNameTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            MacroDefinitionParenNameTransportSlot::Identifier(t) => t.gap_edges(),
-            MacroDefinitionParenNameTransportSlot::DefaultKeyword => None,
-            MacroDefinitionParenNameTransportSlot::UnionKeyword => None,
-            MacroDefinitionParenNameTransportSlot::GenKeyword => None,
-            MacroDefinitionParenNameTransportSlot::Verbatim(t) => t.gap_edges(),
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            MacroDefinitionParenNameTransportSlot::Identifier(t) => t.snapshot_edge(),
-            MacroDefinitionParenNameTransportSlot::DefaultKeyword => None,
-            MacroDefinitionParenNameTransportSlot::UnionKeyword => None,
-            MacroDefinitionParenNameTransportSlot::GenKeyword => None,
-            MacroDefinitionParenNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
-        match self {
-            MacroDefinitionParenNameTransportSlot::Identifier(t) => t.source_separator(ctx),
-            MacroDefinitionParenNameTransportSlot::DefaultKeyword => None,
-            MacroDefinitionParenNameTransportSlot::UnionKeyword => None,
-            MacroDefinitionParenNameTransportSlot::GenKeyword => None,
-            MacroDefinitionParenNameTransportSlot::Verbatim(t) => t.source_separator(ctx),
-        }
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::view::KindOf for MacroDefinitionParenNameTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for MacroDefinitionParenNameTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            MacroDefinitionParenNameTransportSlot::Identifier(inner) => inner.render(w),
-            MacroDefinitionParenNameTransportSlot::DefaultKeyword => render_default_keyword(w),
-            MacroDefinitionParenNameTransportSlot::UnionKeyword => render_union_keyword(w),
-            MacroDefinitionParenNameTransportSlot::GenKeyword => render_gen_keyword(w),
-            MacroDefinitionParenNameTransportSlot::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
 pub enum RangePatternPrefixRightTransportSlot {
     #[kind(kind::STRING_LITERAL)]
     StringLiteral(StringLiteralTransport),
@@ -15988,59 +13515,19 @@ pub enum RangePatternPrefixRightTransportSlot {
     NegativeLiteral(NegativeLiteralTransport),
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
     #[kind(kind::SELF)]
     #[transport(edged)]
     Self_(::sittir_core::options::Edges),
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
     #[kind(kind::SUPER)]
     #[transport(edged)]
     Super(::sittir_core::options::Edges),
     #[kind(kind::CRATE)]
     #[transport(edged)]
     Crate(::sittir_core::options::Edges),
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -16067,28 +13554,8 @@ impl ::sittir_core::prepare::Prepare for RangePatternPrefixRightTransportSlot {
             RangePatternPrefixRightTransportSlot::Identifier(t) => t.prepare(ctx),
             RangePatternPrefixRightTransportSlot::ScopedIdentifier(t) => t.prepare(ctx),
             RangePatternPrefixRightTransportSlot::Self_(_) => Ok(()),
-            RangePatternPrefixRightTransportSlot::U8Keyword => Ok(()),
-            RangePatternPrefixRightTransportSlot::I8Keyword => Ok(()),
-            RangePatternPrefixRightTransportSlot::U16Keyword => Ok(()),
-            RangePatternPrefixRightTransportSlot::I16Keyword => Ok(()),
-            RangePatternPrefixRightTransportSlot::U32Keyword => Ok(()),
-            RangePatternPrefixRightTransportSlot::I32Keyword => Ok(()),
-            RangePatternPrefixRightTransportSlot::U64Keyword => Ok(()),
-            RangePatternPrefixRightTransportSlot::I64Keyword => Ok(()),
-            RangePatternPrefixRightTransportSlot::U128Keyword => Ok(()),
-            RangePatternPrefixRightTransportSlot::I128Keyword => Ok(()),
-            RangePatternPrefixRightTransportSlot::IsizeKeyword => Ok(()),
-            RangePatternPrefixRightTransportSlot::UsizeKeyword => Ok(()),
-            RangePatternPrefixRightTransportSlot::F32Keyword => Ok(()),
-            RangePatternPrefixRightTransportSlot::F64Keyword => Ok(()),
-            RangePatternPrefixRightTransportSlot::BoolKeyword => Ok(()),
-            RangePatternPrefixRightTransportSlot::StrKeyword => Ok(()),
-            RangePatternPrefixRightTransportSlot::CharKeyword => Ok(()),
             RangePatternPrefixRightTransportSlot::Super(_) => Ok(()),
             RangePatternPrefixRightTransportSlot::Crate(_) => Ok(()),
-            RangePatternPrefixRightTransportSlot::DefaultKeyword => Ok(()),
-            RangePatternPrefixRightTransportSlot::UnionKeyword => Ok(()),
-            RangePatternPrefixRightTransportSlot::GenKeyword => Ok(()),
             RangePatternPrefixRightTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -16113,28 +13580,8 @@ impl ::sittir_core::prepare::Prepare for RangePatternPrefixRightTransportSlot {
             RangePatternPrefixRightTransportSlot::Identifier(t) => t.gap_edges(),
             RangePatternPrefixRightTransportSlot::ScopedIdentifier(t) => t.gap_edges(),
             RangePatternPrefixRightTransportSlot::Self_(edges) => Some(edges),
-            RangePatternPrefixRightTransportSlot::U8Keyword => None,
-            RangePatternPrefixRightTransportSlot::I8Keyword => None,
-            RangePatternPrefixRightTransportSlot::U16Keyword => None,
-            RangePatternPrefixRightTransportSlot::I16Keyword => None,
-            RangePatternPrefixRightTransportSlot::U32Keyword => None,
-            RangePatternPrefixRightTransportSlot::I32Keyword => None,
-            RangePatternPrefixRightTransportSlot::U64Keyword => None,
-            RangePatternPrefixRightTransportSlot::I64Keyword => None,
-            RangePatternPrefixRightTransportSlot::U128Keyword => None,
-            RangePatternPrefixRightTransportSlot::I128Keyword => None,
-            RangePatternPrefixRightTransportSlot::IsizeKeyword => None,
-            RangePatternPrefixRightTransportSlot::UsizeKeyword => None,
-            RangePatternPrefixRightTransportSlot::F32Keyword => None,
-            RangePatternPrefixRightTransportSlot::F64Keyword => None,
-            RangePatternPrefixRightTransportSlot::BoolKeyword => None,
-            RangePatternPrefixRightTransportSlot::StrKeyword => None,
-            RangePatternPrefixRightTransportSlot::CharKeyword => None,
             RangePatternPrefixRightTransportSlot::Super(edges) => Some(edges),
             RangePatternPrefixRightTransportSlot::Crate(edges) => Some(edges),
-            RangePatternPrefixRightTransportSlot::DefaultKeyword => None,
-            RangePatternPrefixRightTransportSlot::UnionKeyword => None,
-            RangePatternPrefixRightTransportSlot::GenKeyword => None,
             RangePatternPrefixRightTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -16159,28 +13606,8 @@ impl ::sittir_core::prepare::Prepare for RangePatternPrefixRightTransportSlot {
             RangePatternPrefixRightTransportSlot::Identifier(t) => t.snapshot_edge(),
             RangePatternPrefixRightTransportSlot::ScopedIdentifier(t) => t.snapshot_edge(),
             RangePatternPrefixRightTransportSlot::Self_(_) => None,
-            RangePatternPrefixRightTransportSlot::U8Keyword => None,
-            RangePatternPrefixRightTransportSlot::I8Keyword => None,
-            RangePatternPrefixRightTransportSlot::U16Keyword => None,
-            RangePatternPrefixRightTransportSlot::I16Keyword => None,
-            RangePatternPrefixRightTransportSlot::U32Keyword => None,
-            RangePatternPrefixRightTransportSlot::I32Keyword => None,
-            RangePatternPrefixRightTransportSlot::U64Keyword => None,
-            RangePatternPrefixRightTransportSlot::I64Keyword => None,
-            RangePatternPrefixRightTransportSlot::U128Keyword => None,
-            RangePatternPrefixRightTransportSlot::I128Keyword => None,
-            RangePatternPrefixRightTransportSlot::IsizeKeyword => None,
-            RangePatternPrefixRightTransportSlot::UsizeKeyword => None,
-            RangePatternPrefixRightTransportSlot::F32Keyword => None,
-            RangePatternPrefixRightTransportSlot::F64Keyword => None,
-            RangePatternPrefixRightTransportSlot::BoolKeyword => None,
-            RangePatternPrefixRightTransportSlot::StrKeyword => None,
-            RangePatternPrefixRightTransportSlot::CharKeyword => None,
             RangePatternPrefixRightTransportSlot::Super(_) => None,
             RangePatternPrefixRightTransportSlot::Crate(_) => None,
-            RangePatternPrefixRightTransportSlot::DefaultKeyword => None,
-            RangePatternPrefixRightTransportSlot::UnionKeyword => None,
-            RangePatternPrefixRightTransportSlot::GenKeyword => None,
             RangePatternPrefixRightTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -16205,28 +13632,8 @@ impl ::sittir_core::prepare::Prepare for RangePatternPrefixRightTransportSlot {
             RangePatternPrefixRightTransportSlot::Identifier(t) => t.source_separator(ctx),
             RangePatternPrefixRightTransportSlot::ScopedIdentifier(t) => t.source_separator(ctx),
             RangePatternPrefixRightTransportSlot::Self_(_) => None,
-            RangePatternPrefixRightTransportSlot::U8Keyword => None,
-            RangePatternPrefixRightTransportSlot::I8Keyword => None,
-            RangePatternPrefixRightTransportSlot::U16Keyword => None,
-            RangePatternPrefixRightTransportSlot::I16Keyword => None,
-            RangePatternPrefixRightTransportSlot::U32Keyword => None,
-            RangePatternPrefixRightTransportSlot::I32Keyword => None,
-            RangePatternPrefixRightTransportSlot::U64Keyword => None,
-            RangePatternPrefixRightTransportSlot::I64Keyword => None,
-            RangePatternPrefixRightTransportSlot::U128Keyword => None,
-            RangePatternPrefixRightTransportSlot::I128Keyword => None,
-            RangePatternPrefixRightTransportSlot::IsizeKeyword => None,
-            RangePatternPrefixRightTransportSlot::UsizeKeyword => None,
-            RangePatternPrefixRightTransportSlot::F32Keyword => None,
-            RangePatternPrefixRightTransportSlot::F64Keyword => None,
-            RangePatternPrefixRightTransportSlot::BoolKeyword => None,
-            RangePatternPrefixRightTransportSlot::StrKeyword => None,
-            RangePatternPrefixRightTransportSlot::CharKeyword => None,
             RangePatternPrefixRightTransportSlot::Super(_) => None,
             RangePatternPrefixRightTransportSlot::Crate(_) => None,
-            RangePatternPrefixRightTransportSlot::DefaultKeyword => None,
-            RangePatternPrefixRightTransportSlot::UnionKeyword => None,
-            RangePatternPrefixRightTransportSlot::GenKeyword => None,
             RangePatternPrefixRightTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
@@ -16257,28 +13664,8 @@ impl ::sittir_core::view::KindOf for RangePatternPrefixRightTransportSlot {
             Self::Identifier(inner) => inner.kind_in(kinds),
             Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
             Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
             Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -16306,28 +13693,8 @@ impl ::sittir_core::render::Render for RangePatternPrefixRightTransportSlot {
             RangePatternPrefixRightTransportSlot::Identifier(inner) => inner.render(w),
             RangePatternPrefixRightTransportSlot::ScopedIdentifier(inner) => inner.render(w),
             RangePatternPrefixRightTransportSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
-            RangePatternPrefixRightTransportSlot::U8Keyword => render_u8_keyword(w),
-            RangePatternPrefixRightTransportSlot::I8Keyword => render_i8_keyword(w),
-            RangePatternPrefixRightTransportSlot::U16Keyword => render_u16_keyword(w),
-            RangePatternPrefixRightTransportSlot::I16Keyword => render_i16_keyword(w),
-            RangePatternPrefixRightTransportSlot::U32Keyword => render_u32_keyword(w),
-            RangePatternPrefixRightTransportSlot::I32Keyword => render_i32_keyword(w),
-            RangePatternPrefixRightTransportSlot::U64Keyword => render_u64_keyword(w),
-            RangePatternPrefixRightTransportSlot::I64Keyword => render_i64_keyword(w),
-            RangePatternPrefixRightTransportSlot::U128Keyword => render_u128_keyword(w),
-            RangePatternPrefixRightTransportSlot::I128Keyword => render_i128_keyword(w),
-            RangePatternPrefixRightTransportSlot::IsizeKeyword => render_isize_keyword(w),
-            RangePatternPrefixRightTransportSlot::UsizeKeyword => render_usize_keyword(w),
-            RangePatternPrefixRightTransportSlot::F32Keyword => render_f32_keyword(w),
-            RangePatternPrefixRightTransportSlot::F64Keyword => render_f64_keyword(w),
-            RangePatternPrefixRightTransportSlot::BoolKeyword => render_bool_keyword(w),
-            RangePatternPrefixRightTransportSlot::StrKeyword => render_str_keyword(w),
-            RangePatternPrefixRightTransportSlot::CharKeyword => render_char_keyword(w),
             RangePatternPrefixRightTransportSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
             RangePatternPrefixRightTransportSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
-            RangePatternPrefixRightTransportSlot::DefaultKeyword => render_default_keyword(w),
-            RangePatternPrefixRightTransportSlot::UnionKeyword => render_union_keyword(w),
-            RangePatternPrefixRightTransportSlot::GenKeyword => render_gen_keyword(w),
             RangePatternPrefixRightTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -24303,7 +21670,7 @@ impl ::sittir_core::prepare::Prepare for BlockCommentTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::IDENTIFIER, text)]
+#[transport(kind = kind::IDENTIFIER, folded = [kind::DEFAULT_KEYWORD, kind::UNION_KEYWORD, kind::GEN_KEYWORD, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD], text)]
 pub struct IdentifierTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -27768,7 +25135,7 @@ impl ::sittir_core::prepare::Prepare for ImplItemSemiTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH, layout = [kind::IN_KEYWORD, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD, kind::DEFAULT_KEYWORD, kind::UNION_KEYWORD, kind::GEN_KEYWORD])]
+#[transport(kind = kind::VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH, layout = [kind::IN_KEYWORD])]
 pub struct VisibilityModifierPubScopeInPathTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -29748,7 +27115,7 @@ pub struct MacroDefinitionParenTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
-    pub name: ::sittir_core::SlotValue<MacroDefinitionParenNameTransportSlot>,
+    pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[wire(key = "_macro_rules")]
     #[slot]
     pub macro_rules: Option<::sittir_core::SlotValue<MacroRulesTransport>>,
@@ -29801,7 +27168,7 @@ pub struct MacroDefinitionBracketTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
-    pub name: ::sittir_core::SlotValue<MacroDefinitionParenNameTransportSlot>,
+    pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[wire(key = "_macro_rules")]
     #[slot]
     pub macro_rules: Option<::sittir_core::SlotValue<MacroRulesTransport>>,
@@ -29854,7 +27221,7 @@ pub struct MacroDefinitionBraceTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
-    pub name: ::sittir_core::SlotValue<MacroDefinitionParenNameTransportSlot>,
+    pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[wire(key = "_macro_rules")]
     #[slot]
     pub macro_rules: Option<::sittir_core::SlotValue<MacroRulesTransport>>,
@@ -32363,566 +29730,6 @@ impl ::sittir_core::render::Render for BangTransport {
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum U8KeywordTransport {
-    #[kind(kind::U8_KEYWORD)]
-    U8Keyword,
-}
-
-impl ::sittir_core::view::KindOf for U8KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for U8KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for U8KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_u8_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum I8KeywordTransport {
-    #[kind(kind::I8_KEYWORD)]
-    I8Keyword,
-}
-
-impl ::sittir_core::view::KindOf for I8KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for I8KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for I8KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_i8_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum U16KeywordTransport {
-    #[kind(kind::U16_KEYWORD)]
-    U16Keyword,
-}
-
-impl ::sittir_core::view::KindOf for U16KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for U16KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for U16KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_u16_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum I16KeywordTransport {
-    #[kind(kind::I16_KEYWORD)]
-    I16Keyword,
-}
-
-impl ::sittir_core::view::KindOf for I16KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for I16KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for I16KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_i16_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum U32KeywordTransport {
-    #[kind(kind::U32_KEYWORD)]
-    U32Keyword,
-}
-
-impl ::sittir_core::view::KindOf for U32KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for U32KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for U32KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_u32_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum I32KeywordTransport {
-    #[kind(kind::I32_KEYWORD)]
-    I32Keyword,
-}
-
-impl ::sittir_core::view::KindOf for I32KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for I32KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for I32KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_i32_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum U64KeywordTransport {
-    #[kind(kind::U64_KEYWORD)]
-    U64Keyword,
-}
-
-impl ::sittir_core::view::KindOf for U64KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for U64KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for U64KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_u64_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum I64KeywordTransport {
-    #[kind(kind::I64_KEYWORD)]
-    I64Keyword,
-}
-
-impl ::sittir_core::view::KindOf for I64KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for I64KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for I64KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_i64_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum U128KeywordTransport {
-    #[kind(kind::U128_KEYWORD)]
-    U128Keyword,
-}
-
-impl ::sittir_core::view::KindOf for U128KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for U128KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for U128KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_u128_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum I128KeywordTransport {
-    #[kind(kind::I128_KEYWORD)]
-    I128Keyword,
-}
-
-impl ::sittir_core::view::KindOf for I128KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for I128KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for I128KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_i128_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum IsizeKeywordTransport {
-    #[kind(kind::ISIZE_KEYWORD)]
-    IsizeKeyword,
-}
-
-impl ::sittir_core::view::KindOf for IsizeKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for IsizeKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for IsizeKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_isize_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum UsizeKeywordTransport {
-    #[kind(kind::USIZE_KEYWORD)]
-    UsizeKeyword,
-}
-
-impl ::sittir_core::view::KindOf for UsizeKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for UsizeKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for UsizeKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_usize_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum F32KeywordTransport {
-    #[kind(kind::F32_KEYWORD)]
-    F32Keyword,
-}
-
-impl ::sittir_core::view::KindOf for F32KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for F32KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for F32KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_f32_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum F64KeywordTransport {
-    #[kind(kind::F64_KEYWORD)]
-    F64Keyword,
-}
-
-impl ::sittir_core::view::KindOf for F64KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for F64KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for F64KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_f64_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum BoolKeywordTransport {
-    #[kind(kind::BOOL_KEYWORD)]
-    BoolKeyword,
-}
-
-impl ::sittir_core::view::KindOf for BoolKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for BoolKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for BoolKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_bool_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum StrKeywordTransport {
-    #[kind(kind::STR_KEYWORD)]
-    StrKeyword,
-}
-
-impl ::sittir_core::view::KindOf for StrKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for StrKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for StrKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_str_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum CharKeywordTransport {
-    #[kind(kind::CHAR_KEYWORD)]
-    CharKeyword,
-}
-
-impl ::sittir_core::view::KindOf for CharKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for CharKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for CharKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_char_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum DefaultKeywordTransport {
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-}
-
-impl ::sittir_core::view::KindOf for DefaultKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for DefaultKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for DefaultKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_default_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum UnionKeywordTransport {
-    #[kind(kind::UNION_KEYWORD)]
-    UnionKeyword,
-}
-
-impl ::sittir_core::view::KindOf for UnionKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for UnionKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for UnionKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_union_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum GenKeywordTransport {
-    #[kind(kind::GEN_KEYWORD)]
-    GenKeyword,
-}
-
-impl ::sittir_core::view::KindOf for GenKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for GenKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for GenKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_gen_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
 pub enum LbraceTransport {
     #[kind(kind::LBRACE)]
     Lbrace,
@@ -32974,6 +29781,34 @@ impl ::sittir_core::prepare::Prepare for RbraceTransport {
 impl ::sittir_core::render::Render for RbraceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_rbrace(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum UnionKeywordTransport {
+    #[kind(kind::UNION_KEYWORD)]
+    UnionKeyword,
+}
+
+impl ::sittir_core::view::KindOf for UnionKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for UnionKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for UnionKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_union_keyword(w)
     }
 }
 
@@ -33282,6 +30117,34 @@ impl ::sittir_core::prepare::Prepare for AsyncKeywordTransport {
 impl ::sittir_core::render::Render for AsyncKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_async_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum DefaultKeywordTransport {
+    #[kind(kind::DEFAULT_KEYWORD)]
+    DefaultKeyword,
+}
+
+impl ::sittir_core::view::KindOf for DefaultKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for DefaultKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for DefaultKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_default_keyword(w)
     }
 }
 
@@ -34743,6 +31606,34 @@ impl ::sittir_core::render::Render for MoveKeywordTransport {
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
+pub enum GenKeywordTransport {
+    #[kind(kind::GEN_KEYWORD)]
+    GenKeyword,
+}
+
+impl ::sittir_core::view::KindOf for GenKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for GenKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for GenKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_gen_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum TryKeywordTransport {
     #[kind(kind::TRY_KEYWORD)]
     TryKeyword,
@@ -34962,6 +31853,482 @@ impl ::sittir_core::prepare::Prepare for StarSlashTransport {
 impl ::sittir_core::render::Render for StarSlashTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_star_slash(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum U8KeywordTransport {
+    #[kind(kind::U8_KEYWORD)]
+    U8Keyword,
+}
+
+impl ::sittir_core::view::KindOf for U8KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for U8KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for U8KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_u8_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum I8KeywordTransport {
+    #[kind(kind::I8_KEYWORD)]
+    I8Keyword,
+}
+
+impl ::sittir_core::view::KindOf for I8KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for I8KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for I8KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_i8_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum U16KeywordTransport {
+    #[kind(kind::U16_KEYWORD)]
+    U16Keyword,
+}
+
+impl ::sittir_core::view::KindOf for U16KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for U16KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for U16KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_u16_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum I16KeywordTransport {
+    #[kind(kind::I16_KEYWORD)]
+    I16Keyword,
+}
+
+impl ::sittir_core::view::KindOf for I16KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for I16KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for I16KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_i16_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum U32KeywordTransport {
+    #[kind(kind::U32_KEYWORD)]
+    U32Keyword,
+}
+
+impl ::sittir_core::view::KindOf for U32KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for U32KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for U32KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_u32_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum I32KeywordTransport {
+    #[kind(kind::I32_KEYWORD)]
+    I32Keyword,
+}
+
+impl ::sittir_core::view::KindOf for I32KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for I32KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for I32KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_i32_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum U64KeywordTransport {
+    #[kind(kind::U64_KEYWORD)]
+    U64Keyword,
+}
+
+impl ::sittir_core::view::KindOf for U64KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for U64KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for U64KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_u64_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum I64KeywordTransport {
+    #[kind(kind::I64_KEYWORD)]
+    I64Keyword,
+}
+
+impl ::sittir_core::view::KindOf for I64KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for I64KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for I64KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_i64_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum U128KeywordTransport {
+    #[kind(kind::U128_KEYWORD)]
+    U128Keyword,
+}
+
+impl ::sittir_core::view::KindOf for U128KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for U128KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for U128KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_u128_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum I128KeywordTransport {
+    #[kind(kind::I128_KEYWORD)]
+    I128Keyword,
+}
+
+impl ::sittir_core::view::KindOf for I128KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for I128KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for I128KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_i128_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum IsizeKeywordTransport {
+    #[kind(kind::ISIZE_KEYWORD)]
+    IsizeKeyword,
+}
+
+impl ::sittir_core::view::KindOf for IsizeKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for IsizeKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for IsizeKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_isize_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum UsizeKeywordTransport {
+    #[kind(kind::USIZE_KEYWORD)]
+    UsizeKeyword,
+}
+
+impl ::sittir_core::view::KindOf for UsizeKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for UsizeKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for UsizeKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_usize_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum F32KeywordTransport {
+    #[kind(kind::F32_KEYWORD)]
+    F32Keyword,
+}
+
+impl ::sittir_core::view::KindOf for F32KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for F32KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for F32KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_f32_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum F64KeywordTransport {
+    #[kind(kind::F64_KEYWORD)]
+    F64Keyword,
+}
+
+impl ::sittir_core::view::KindOf for F64KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for F64KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for F64KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_f64_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum BoolKeywordTransport {
+    #[kind(kind::BOOL_KEYWORD)]
+    BoolKeyword,
+}
+
+impl ::sittir_core::view::KindOf for BoolKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for BoolKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for BoolKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_bool_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum StrKeywordTransport {
+    #[kind(kind::STR_KEYWORD)]
+    StrKeyword,
+}
+
+impl ::sittir_core::view::KindOf for StrKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for StrKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for StrKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_str_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum CharKeywordTransport {
+    #[kind(kind::CHAR_KEYWORD)]
+    CharKeyword,
+}
+
+impl ::sittir_core::view::KindOf for CharKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for CharKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for CharKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_char_keyword(w)
     }
 }
 
@@ -41890,92 +39257,16 @@ fn render_bang(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::
     TransportLayout::render(None, Some(::sittir_core::types::KindId(29)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("!"))
 }
 
-fn render_u8_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(58)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u8"))
-}
-
-fn render_i8_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(59)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i8"))
-}
-
-fn render_u16_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(60)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u16"))
-}
-
-fn render_i16_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(61)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i16"))
-}
-
-fn render_u32_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(62)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u32"))
-}
-
-fn render_i32_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(63)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i32"))
-}
-
-fn render_u64_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(64)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u64"))
-}
-
-fn render_i64_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(65)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i64"))
-}
-
-fn render_u128_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(66)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u128"))
-}
-
-fn render_i128_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(67)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i128"))
-}
-
-fn render_isize_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(68)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("isize"))
-}
-
-fn render_usize_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(69)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("usize"))
-}
-
-fn render_f32_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(70)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("f32"))
-}
-
-fn render_f64_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(71)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("f64"))
-}
-
-fn render_bool_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(72)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("bool"))
-}
-
-fn render_str_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(73)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("str"))
-}
-
-fn render_char_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(74)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("char"))
-}
-
-fn render_default_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(51)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("default"))
-}
-
-fn render_union_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(32)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("union"))
-}
-
-fn render_gen_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(52)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("gen"))
-}
-
 fn render_lbrace(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(30)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("{"))
 }
 
 fn render_rbrace(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(31)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("}"))
+}
+
+fn render_union_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(32)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("union"))
 }
 
 fn render_enum_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -42020,6 +39311,10 @@ fn render_dash_gt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_cor
 
 fn render_async_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(112)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("async"))
+}
+
+fn render_default_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(51)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("default"))
 }
 
 fn render_unsafe_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -42230,6 +39525,10 @@ fn render_move_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sitti
     TransportLayout::render(None, Some(::sittir_core::types::KindId(129)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("move"))
 }
 
+fn render_gen_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(52)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("gen"))
+}
+
 fn render_try_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(113)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("try"))
 }
@@ -42260,6 +39559,74 @@ fn render_slash_star(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_
 
 fn render_star_slash(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(123)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("*/"))
+}
+
+fn render_u8_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(58)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u8"))
+}
+
+fn render_i8_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(59)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i8"))
+}
+
+fn render_u16_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(60)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u16"))
+}
+
+fn render_i16_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(61)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i16"))
+}
+
+fn render_u32_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(62)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u32"))
+}
+
+fn render_i32_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(63)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i32"))
+}
+
+fn render_u64_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(64)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u64"))
+}
+
+fn render_i64_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(65)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i64"))
+}
+
+fn render_u128_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(66)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u128"))
+}
+
+fn render_i128_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(67)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i128"))
+}
+
+fn render_isize_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(68)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("isize"))
+}
+
+fn render_usize_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(69)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("usize"))
+}
+
+fn render_f32_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(70)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("f32"))
+}
+
+fn render_f64_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(71)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("f64"))
+}
+
+fn render_bool_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(72)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("bool"))
+}
+
+fn render_str_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(73)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("str"))
+}
+
+fn render_char_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(74)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("char"))
 }
 
 fn render_underscore(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -42445,26 +39812,6 @@ fn render_expression(t: &ExpressionTransport, w: &mut dyn ::sittir_core::render:
         ExpressionTransport::IntegerLiteral(inner) => inner.render(w),
         ExpressionTransport::FloatLiteral(inner) => inner.render(w),
         ExpressionTransport::Identifier(inner) => inner.render(w),
-        ExpressionTransport::U8Keyword => render_u8_keyword(w),
-        ExpressionTransport::I8Keyword => render_i8_keyword(w),
-        ExpressionTransport::U16Keyword => render_u16_keyword(w),
-        ExpressionTransport::I16Keyword => render_i16_keyword(w),
-        ExpressionTransport::U32Keyword => render_u32_keyword(w),
-        ExpressionTransport::I32Keyword => render_i32_keyword(w),
-        ExpressionTransport::U64Keyword => render_u64_keyword(w),
-        ExpressionTransport::I64Keyword => render_i64_keyword(w),
-        ExpressionTransport::U128Keyword => render_u128_keyword(w),
-        ExpressionTransport::I128Keyword => render_i128_keyword(w),
-        ExpressionTransport::IsizeKeyword => render_isize_keyword(w),
-        ExpressionTransport::UsizeKeyword => render_usize_keyword(w),
-        ExpressionTransport::F32Keyword => render_f32_keyword(w),
-        ExpressionTransport::F64Keyword => render_f64_keyword(w),
-        ExpressionTransport::BoolKeyword => render_bool_keyword(w),
-        ExpressionTransport::StrKeyword => render_str_keyword(w),
-        ExpressionTransport::CharKeyword => render_char_keyword(w),
-        ExpressionTransport::DefaultKeyword => render_default_keyword(w),
-        ExpressionTransport::UnionKeyword => render_union_keyword(w),
-        ExpressionTransport::GenKeyword => render_gen_keyword(w),
         ExpressionTransport::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
         ExpressionTransport::ScopedIdentifier(inner) => inner.render(w),
         ExpressionTransport::GenericFunction(inner) => inner.render(w),
@@ -42547,32 +39894,12 @@ fn render_closure_expression(t: &ClosureExpressionTransport, w: &mut dyn ::sitti
 fn render_pattern(t: &PatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         PatternTransport::LiteralPattern(inner) => inner.render(w),
-        PatternTransport::U8Keyword => render_u8_keyword(w),
-        PatternTransport::I8Keyword => render_i8_keyword(w),
-        PatternTransport::U16Keyword => render_u16_keyword(w),
-        PatternTransport::I16Keyword => render_i16_keyword(w),
-        PatternTransport::U32Keyword => render_u32_keyword(w),
-        PatternTransport::I32Keyword => render_i32_keyword(w),
-        PatternTransport::U64Keyword => render_u64_keyword(w),
-        PatternTransport::I64Keyword => render_i64_keyword(w),
-        PatternTransport::U128Keyword => render_u128_keyword(w),
-        PatternTransport::I128Keyword => render_i128_keyword(w),
-        PatternTransport::IsizeKeyword => render_isize_keyword(w),
-        PatternTransport::UsizeKeyword => render_usize_keyword(w),
-        PatternTransport::F32Keyword => render_f32_keyword(w),
-        PatternTransport::F64Keyword => render_f64_keyword(w),
-        PatternTransport::BoolKeyword => render_bool_keyword(w),
-        PatternTransport::StrKeyword => render_str_keyword(w),
-        PatternTransport::CharKeyword => render_char_keyword(w),
         PatternTransport::Identifier(inner) => inner.render(w),
         PatternTransport::ScopedIdentifier(inner) => inner.render(w),
         PatternTransport::GenericPattern(inner) => inner.render(w),
         PatternTransport::TuplePattern(inner) => inner.render(w),
         PatternTransport::TupleStructPattern(inner) => inner.render(w),
         PatternTransport::StructPattern(inner) => inner.render(w),
-        PatternTransport::DefaultKeyword => render_default_keyword(w),
-        PatternTransport::UnionKeyword => render_union_keyword(w),
-        PatternTransport::GenKeyword => render_gen_keyword(w),
         PatternTransport::RefPattern(inner) => inner.render(w),
         PatternTransport::SlicePattern(inner) => inner.render(w),
         PatternTransport::CapturedPattern(inner) => inner.render(w),
@@ -42966,28 +40293,9 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::Lbrack => [::sittir_core::types::KindId(27)].iter().any(|k| kinds.contains(k)),
             Self::Rbrack => [::sittir_core::types::KindId(28)].iter().any(|k| kinds.contains(k)),
             Self::Bang => [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k)),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::Lbrace => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
             Self::Rbrace => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
+            Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
             Self::EnumKeyword => [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k)),
             Self::Eq => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
             Self::ExternKeyword => [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k)),
@@ -42999,6 +40307,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::FnKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
             Self::DashGt => [::sittir_core::types::KindId(131)].iter().any(|k| kinds.contains(k)),
             Self::AsyncKeyword => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
+            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
             Self::UnsafeKeyword => [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k)),
             Self::WhereKeyword => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
             Self::TraitKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
@@ -43051,6 +40360,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::Dot => [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k)),
             Self::AwaitKeyword => [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k)),
             Self::MoveKeyword => [::sittir_core::types::KindId(129)].iter().any(|k| kinds.contains(k)),
+            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::TryKeyword => [::sittir_core::types::KindId(113)].iter().any(|k| kinds.contains(k)),
             Self::At => [::sittir_core::types::KindId(115)].iter().any(|k| kinds.contains(k)),
             Self::Dquote => [::sittir_core::types::KindId(116)].iter().any(|k| kinds.contains(k)),
@@ -43059,6 +40369,23 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::SlashSlash => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
             Self::SlashStar => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
             Self::StarSlash => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
+            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
+            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
+            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
+            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
+            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
+            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
+            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
+            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
+            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
+            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
+            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
+            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
+            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
+            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
+            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
+            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
+            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
             Self::Underscore => [::sittir_core::types::KindId(136)].iter().any(|k| kinds.contains(k)),
             Self::DotDotEq => [::sittir_core::types::KindId(137)].iter().any(|k| kinds.contains(k)),
             Self::ModKeyword => [::sittir_core::types::KindId(138)].iter().any(|k| kinds.contains(k)),
@@ -43373,28 +40700,9 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Lbrack => render_lbrack(w),
             AnyTransport::Rbrack => render_rbrack(w),
             AnyTransport::Bang => render_bang(w),
-            AnyTransport::U8Keyword => render_u8_keyword(w),
-            AnyTransport::I8Keyword => render_i8_keyword(w),
-            AnyTransport::U16Keyword => render_u16_keyword(w),
-            AnyTransport::I16Keyword => render_i16_keyword(w),
-            AnyTransport::U32Keyword => render_u32_keyword(w),
-            AnyTransport::I32Keyword => render_i32_keyword(w),
-            AnyTransport::U64Keyword => render_u64_keyword(w),
-            AnyTransport::I64Keyword => render_i64_keyword(w),
-            AnyTransport::U128Keyword => render_u128_keyword(w),
-            AnyTransport::I128Keyword => render_i128_keyword(w),
-            AnyTransport::IsizeKeyword => render_isize_keyword(w),
-            AnyTransport::UsizeKeyword => render_usize_keyword(w),
-            AnyTransport::F32Keyword => render_f32_keyword(w),
-            AnyTransport::F64Keyword => render_f64_keyword(w),
-            AnyTransport::BoolKeyword => render_bool_keyword(w),
-            AnyTransport::StrKeyword => render_str_keyword(w),
-            AnyTransport::CharKeyword => render_char_keyword(w),
-            AnyTransport::DefaultKeyword => render_default_keyword(w),
-            AnyTransport::UnionKeyword => render_union_keyword(w),
-            AnyTransport::GenKeyword => render_gen_keyword(w),
             AnyTransport::Lbrace => render_lbrace(w),
             AnyTransport::Rbrace => render_rbrace(w),
+            AnyTransport::UnionKeyword => render_union_keyword(w),
             AnyTransport::EnumKeyword => render_enum_keyword(w),
             AnyTransport::Eq => render_eq(w),
             AnyTransport::ExternKeyword => render_extern_keyword(w),
@@ -43406,6 +40714,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::FnKeyword => render_fn_keyword(w),
             AnyTransport::DashGt => render_dash_gt(w),
             AnyTransport::AsyncKeyword => render_async_keyword(w),
+            AnyTransport::DefaultKeyword => render_default_keyword(w),
             AnyTransport::UnsafeKeyword => render_unsafe_keyword(w),
             AnyTransport::WhereKeyword => render_where_keyword(w),
             AnyTransport::TraitKeyword => render_trait_keyword(w),
@@ -43458,6 +40767,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Dot => render_dot(w),
             AnyTransport::AwaitKeyword => render_await_keyword(w),
             AnyTransport::MoveKeyword => render_move_keyword(w),
+            AnyTransport::GenKeyword => render_gen_keyword(w),
             AnyTransport::TryKeyword => render_try_keyword(w),
             AnyTransport::At => render_at(w),
             AnyTransport::Dquote => render_dquote(w),
@@ -43466,6 +40776,23 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::SlashSlash => render_slash_slash(w),
             AnyTransport::SlashStar => render_slash_star(w),
             AnyTransport::StarSlash => render_star_slash(w),
+            AnyTransport::U8Keyword => render_u8_keyword(w),
+            AnyTransport::I8Keyword => render_i8_keyword(w),
+            AnyTransport::U16Keyword => render_u16_keyword(w),
+            AnyTransport::I16Keyword => render_i16_keyword(w),
+            AnyTransport::U32Keyword => render_u32_keyword(w),
+            AnyTransport::I32Keyword => render_i32_keyword(w),
+            AnyTransport::U64Keyword => render_u64_keyword(w),
+            AnyTransport::I64Keyword => render_i64_keyword(w),
+            AnyTransport::U128Keyword => render_u128_keyword(w),
+            AnyTransport::I128Keyword => render_i128_keyword(w),
+            AnyTransport::IsizeKeyword => render_isize_keyword(w),
+            AnyTransport::UsizeKeyword => render_usize_keyword(w),
+            AnyTransport::F32Keyword => render_f32_keyword(w),
+            AnyTransport::F64Keyword => render_f64_keyword(w),
+            AnyTransport::BoolKeyword => render_bool_keyword(w),
+            AnyTransport::StrKeyword => render_str_keyword(w),
+            AnyTransport::CharKeyword => render_char_keyword(w),
             AnyTransport::Underscore => render_underscore(w),
             AnyTransport::DotDotEq => render_dot_dot_eq(w),
             AnyTransport::ModKeyword => render_mod_keyword(w),
@@ -43759,4 +41086,4 @@ const _: () = assert!(::core::mem::size_of::<WherePredicatesTransport>() <= 256,
 const _: () = assert!(::core::mem::size_of::<WhileExpressionTransport>() <= 256, "WhileExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionTransport>() <= 256, "YieldExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 
-::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, StatementTransport, DeclarationStatementTransport, MacroDefinitionTransport, TokenTreePatternTransport, TokenTreeTransport, ModItemTransport, ForeignModItemTransport, StructItemTransport, ImplItemTransport, TypeTransport, PointerTypeTransport, ExpressionTransport, DelimTokenTreeTransport, RangeExpressionTransport, ReferenceExpressionTransport, ArrayExpressionTransport, MatchArmTransport, ClosureExpressionTransport, PatternTransport, RangePatternTransport, OrPatternTransport, LiteralPatternTransport, IntegerLiteralTransport, CharLiteralTransport, CharLiteralEscapedTransport, ExpressionStatementContentTransportSlot, TokenRepetitionPatternTokenPatternsTransportSlot, TokenRepetitionPatternOperatorTransportSlot, TokenRepetitionTokensTransportSlot, TokenRepetitionOperatorTransportSlot, NonSpecialTokenContentTransportSlot, AttributePathTransportSlot, EnumVariantBodyTransportSlot, FunctionItemNameTransportSlot, FunctionModifiersModifierTransportSlot, WherePredicateLeftTransportSlot, TraitBoundsBoundsTransportSlot, ConstParameterValueTransportSlot, UseDeclarationArgumentTransportSlot, ParameterNameTransportSlot, VisibilityModifierContentTransportSlot, BracketedTypeTypeTransportSlot, FunctionTypeContentTransportSlot, GenericFunctionFunctionTransportSlot, GenericTypeTypeTransportSlot, GenericTypeWithTurbofishTypeTransportSlot, BoundedTypeLeftTransportSlot, AbstractTypeTraitTransportSlot, DynamicTypeTraitTransportSlot, MacroInvocationMacroTransportSlot, ScopedIdentifierPathTransportSlot, ScopedIdentifierNameTransportSlot, ScopedTypeIdentifierInExpressionPositionPathTransportSlot, ScopedTypeIdentifierPathTransportSlot, UnaryExpressionOperatorTransportSlot, BinaryExpressionOperatorTransportSlot, CompoundAssignmentExprOperatorTransportSlot, CallExpressionFunctionTransportSlot, StructExpressionNameTransportSlot, FieldInitializerFieldTransportSlot, IfExpressionConditionTransportSlot, LetChainLeftTransportSlot, LetChainRightTransportSlot, ElseClauseBodyTransportSlot, LastMatchArmAttributesTransportSlot, ClosureParametersParametersTransportSlot, GenericPatternNameTransportSlot, TupleStructPatternTypeTransportSlot, StructPatternTypeTransportSlot, NegativeLiteralValueTransportSlot, StringLiteralElementsTransportSlot, LineCommentContentTransportSlot, BlockCommentContentTransportSlot, UseBoundsElementsItemTransportSlot, FieldInitializerListElementsItemTransportSlot, TuplePatternElementsItemTransportSlot, StructPatternElementsItemTransportSlot, ClosureExpressionExprBodyTransportSlot, ImplItemPositiveClauseTraitTransportSlot, ImplItemBodyTraitClauseTransportSlot, VisibilityModifierPubScopeContentTransportSlot, RangeExpressionBinaryOperatorTransportSlot, MatchArmBlockEndingValueTransportSlot, DelimTokenTreeParenDelimTokensTransportSlot, MacroDefinitionParenNameTransportSlot, RangePatternPrefixRightTransportSlot, RangePatternPrefixContentTransportSlot, RangePatternWithLeftWithRightContentTransportSlot, RangePatternWithLeftContentTransportSlot, AttributedParameterContentTransportSlot, AttributedTypeParameterContentTransportSlot, TypeArgumentContentTransportSlot, SourceFileTransport, EmptyStatementTransport, ExpressionStatementTransport, MacroRuleTransport, TokenBindingPatternTransport, TokenRepetitionPatternTransport, FragmentSpecifierEnum, TokenRepetitionTransport, NonSpecialTokenTransport, AttributeItemTransport, InnerAttributeItemTransport, AttributeTransport, DeclarationListTransport, UnionItemTransport, EnumItemTransport, EnumVariantListTransport, EnumVariantTransport, FieldDeclarationListTransport, FieldDeclarationTransport, OrderedFieldDeclarationListTransport, ExternCrateDeclarationTransport, ConstItemTransport, StaticItemTransport, TypeItemTransport, FunctionItemTransport, FunctionSignatureItemTransport, FunctionModifiersTransport, WhereClauseTransport, WherePredicateTransport, TraitItemTransport, AssociatedTypeTransport, TraitBoundsTransport, HigherRankedTraitBoundTransport, RemovedTraitBoundTransport, TypeParametersTransport, ConstParameterTransport, TypeParameterTransport, LifetimeParameterTransport, LetDeclarationTransport, UseDeclarationTransport, ScopedUseListTransport, UseListTransport, UseAsClauseTransport, UseWildcardTransport, ParametersTransport, SelfParameterTransport, VariadicParameterTransport, ParameterTransport, ExternModifierTransport, VisibilityModifierTransport, BracketedTypeTransport, QualifiedTypeTransport, LifetimeTransport, ArrayTypeTransport, ForLifetimesTransport, FunctionTypeTransport, TupleTypeTransport, UnitTypeTransport, GenericFunctionTransport, GenericTypeTransport, GenericTypeWithTurbofishTransport, BoundedTypeTransport, UseBoundsTransport, TypeArgumentsTransport, TypeBindingTransport, ReferenceTypeTransport, NeverTypeTransport, AbstractTypeTransport, DynamicTypeTransport, MutableSpecifierTransport, MacroInvocationTransport, ScopedIdentifierTransport, ScopedTypeIdentifierInExpressionPositionTransport, ScopedTypeIdentifierTransport, UnaryExpressionTransport, TryExpressionTransport, BinaryExpressionTransport, AssignmentExpressionTransport, CompoundAssignmentExprTransport, TypeCastExpressionTransport, ReturnExpressionTransport, YieldExpressionTransport, CallExpressionTransport, ArgumentsTransport, ParenthesizedExpressionTransport, TupleExpressionTransport, UnitExpressionTransport, StructExpressionTransport, FieldInitializerListTransport, ShorthandFieldInitializerTransport, FieldInitializerTransport, BaseFieldInitializerTransport, IfExpressionTransport, LetConditionTransport, LetChainTransport, ElseClauseTransport, MatchExpressionTransport, MatchBlockTransport, LastMatchArmTransport, MatchPatternTransport, WhileExpressionTransport, LoopExpressionTransport, ForExpressionTransport, ConstBlockTransport, ClosureParametersTransport, LabelTransport, BreakExpressionTransport, ContinueExpressionTransport, IndexExpressionTransport, AwaitExpressionTransport, FieldExpressionTransport, UnsafeBlockTransport, AsyncBlockTransport, GenBlockTransport, TryBlockTransport, BlockTransport, GenericPatternTransport, TuplePatternTransport, SlicePatternTransport, TupleStructPatternTransport, StructPatternTransport, RemainingFieldPatternTransport, MutPatternTransport, RefPatternTransport, CapturedPatternTransport, ReferencePatternTransport, NegativeLiteralTransport, StringLiteralTransport, RawStringLiteralTransport, BooleanLiteralEnum, LineCommentTransport, InnerLineDocCommentMarkerTransport, OuterLineDocCommentMarkerTransport, BlockCommentTransport, IdentifierTransport, ShebangTransport, Self_Transport, SuperTransport, CrateTransport, MetavariableTransport, PrimitiveTypeEnum, MacroRulesTransport, EnumVariantListElementsTransport, FieldDeclarationListElementsTransport, OrderedFieldDeclarationListElementsTransport, WherePredicatesTransport, TypeParametersElementsTransport, UseClausesTransport, ParametersElementsTransport, LifetimesTransport, TypesTransport, UseBoundsElementsTransport, TypeArgumentsElementsTransport, ArgumentsElementsTransport, ExpressionsTransport, FieldInitializerListElementsTransport, TuplePatternElementsTransport, PatternsTransport, StructPatternElementsTransport, UseWildcardGroupTransport, TokenRepetitionPatternTextTransport, StringOpenTransport, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareTransport, ImplItemUnsafeMarkerTransport, IntegerLiteralDecimalTransport, IntegerLiteralHexTransport, IntegerLiteralBinaryTransport, IntegerLiteralOctalTransport, CharLiteralPlainTransport, CharLiteralEmptyTransport, CharLiteralEscapedSimpleTransport, CharLiteralEscapedUnicodeFixedTransport, CharLiteralEscapedUnicodeBracedTransport, CharLiteralEscapedHexTransport, EscapeSequenceSimpleTransport, EscapeSequenceUnicodeFixedTransport, EscapeSequenceUnicodeBracedTransport, EscapeSequenceHexTransport, ArrayExpressionSemiTransport, ArrayExpressionListTransport, AttributeInputTransport, ClosureExpressionBlockTransport, ClosureExpressionExprTransport, ReferenceExpressionRawConstTransport, ReferenceExpressionRawMutTransport, ReferenceExpressionMutTransport, ReferenceExpressionBareTransport, ImplItemPositiveClauseTransport, ImplItemNegativeClauseTransport, ImplItemBodyTransport, ImplItemSemiTransport, VisibilityModifierPubScopeInPathTransport, VisibilityModifierPubScopeTransport, VisibilityModifierPubTransport, FunctionTypeTraitFormTransport, FunctionTypeFnFormTransport, ModItemExternalTransport, ModItemInlineTransport, OrPatternBinaryTransport, OrPatternPrefixTransport, PointerTypeConstTransport, PointerTypeMutTransport, RangeExpressionBinaryTransport, RangeExpressionPostfixTransport, RangeExpressionPrefixTransport, RangeExpressionBareTransport, ExpressionStatementWithSemiTransport, ForeignModItemSemiTransport, ForeignModItemBodyTransport, MatchArmWithCommaTransport, MatchArmBlockEndingTransport, LineCommentExtraSlashesTransport, LineCommentDocOuterTransport, LineCommentDocInnerTransport, LineCommentRegularTransport, BlockCommentDocOuterTransport, BlockCommentDocInnerTransport, BlockCommentRegularTransport, TokenTreePatternParenTransport, TokenTreePatternBracketTransport, TokenTreePatternBraceTransport, TokenTreeParenTransport, TokenTreeBracketTransport, TokenTreeBraceTransport, DelimTokenTreeParenTransport, DelimTokenTreeBracketTransport, DelimTokenTreeBraceTransport, FieldPatternShorthandTransport, FieldPatternNamedTransport, MacroDefinitionParenTransport, MacroDefinitionBracketTransport, MacroDefinitionBraceTransport, RangePatternPrefixTransport, RangePatternWithLeftWithRightTransport, RangePatternWithLeftBareTransport, RangePatternWithLeftTransport, StructItemBraceTransport, StructItemTupleTransport, StructItemUnitTransport, WildcardPatternTransport, AttributedFieldDeclarationTransport, AttributedEnumVariantTransport, AttributedParameterTransport, AttributedTypeParameterTransport, AttributedArgumentTransport, AttributedOrderedFieldTransport, TypeArgumentTransport, MatchBlockArmsTransport, FloatLiteralTransport, StringContentTransport, RawStringLiteralContentTransport, OuterDocCommentMarkerTransport, InnerDocCommentMarkerTransport, RawStringLiteralStartTransport, RawStringLiteralEndTransport, DocCommentTransport, BlockCommentContentTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, IndentTransport, DedentTransport, ErrorSentinelTransport, TypeIdentifierTransport, FieldIdentifierTransport, ShorthandFieldIdentifierTransport, SemiTransport, EqGtTransport, ColonTransport, DollarTransport, LparenTransport, RparenTransport, PlusTransport, StarTransport, QmarkTransport, BlockKeywordTransport, ExprKeywordTransport, Expr2021KeywordTransport, IdentKeywordTransport, ItemKeywordTransport, LifetimeKeywordTransport, LiteralKeywordTransport, MetaKeywordTransport, PatKeywordTransport, PatParamKeywordTransport, PathKeywordTransport, StmtKeywordTransport, TtKeywordTransport, TyKeywordTransport, VisKeywordTransport, PoundTransport, LbrackTransport, RbrackTransport, BangTransport, U8KeywordTransport, I8KeywordTransport, U16KeywordTransport, I16KeywordTransport, U32KeywordTransport, I32KeywordTransport, U64KeywordTransport, I64KeywordTransport, U128KeywordTransport, I128KeywordTransport, IsizeKeywordTransport, UsizeKeywordTransport, F32KeywordTransport, F64KeywordTransport, BoolKeywordTransport, StrKeywordTransport, CharKeywordTransport, DefaultKeywordTransport, UnionKeywordTransport, GenKeywordTransport, LbraceTransport, RbraceTransport, EnumKeywordTransport, EqTransport, ExternKeywordTransport, AsKeywordTransport, ConstKeywordTransport, StaticKeywordTransport, RefKeywordTransport, TypeKeywordTransport, FnKeywordTransport, DashGtTransport, AsyncKeywordTransport, UnsafeKeywordTransport, WhereKeywordTransport, TraitKeywordTransport, ForKeywordTransport, LtTransport, GtTransport, LetKeywordTransport, ElseKeywordTransport, UseKeywordTransport, ColonColonTransport, AmpTransport, DotDotDotTransport, SquoteTransport, ImplKeywordTransport, DynKeywordTransport, DashTransport, AmpAmpTransport, PipePipeTransport, PipeTransport, CaretTransport, EqEqTransport, BangEqTransport, LtEqTransport, GtEqTransport, LtLtTransport, GtGtTransport, SlashTransport, PercentTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, PercentEqTransport, AmpEqTransport, PipeEqTransport, CaretEqTransport, LtLtEqTransport, GtGtEqTransport, ReturnKeywordTransport, YieldKeywordTransport, DotDotTransport, IfKeywordTransport, MatchKeywordTransport, CommaTransport, WhileKeywordTransport, LoopKeywordTransport, InKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, DotTransport, AwaitKeywordTransport, MoveKeywordTransport, TryKeywordTransport, AtTransport, DquoteTransport, TrueKeywordTransport, FalseKeywordTransport, SlashSlashTransport, SlashStarTransport, StarSlashTransport, UnderscoreTransport, DotDotEqTransport, ModKeywordTransport, PubKeywordTransport, StructKeywordTransport, RawKeywordTransport, MacroRulesBangTransport, TriviaTransport);
+::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, StatementTransport, DeclarationStatementTransport, MacroDefinitionTransport, TokenTreePatternTransport, TokenTreeTransport, ModItemTransport, ForeignModItemTransport, StructItemTransport, ImplItemTransport, TypeTransport, PointerTypeTransport, ExpressionTransport, DelimTokenTreeTransport, RangeExpressionTransport, ReferenceExpressionTransport, ArrayExpressionTransport, MatchArmTransport, ClosureExpressionTransport, PatternTransport, RangePatternTransport, OrPatternTransport, LiteralPatternTransport, IntegerLiteralTransport, CharLiteralTransport, CharLiteralEscapedTransport, ExpressionStatementContentTransportSlot, TokenRepetitionPatternTokenPatternsTransportSlot, TokenRepetitionPatternOperatorTransportSlot, TokenRepetitionTokensTransportSlot, TokenRepetitionOperatorTransportSlot, NonSpecialTokenContentTransportSlot, AttributePathTransportSlot, EnumVariantBodyTransportSlot, FunctionItemNameTransportSlot, FunctionModifiersModifierTransportSlot, WherePredicateLeftTransportSlot, TraitBoundsBoundsTransportSlot, ConstParameterValueTransportSlot, UseDeclarationArgumentTransportSlot, ParameterNameTransportSlot, VisibilityModifierContentTransportSlot, BracketedTypeTypeTransportSlot, FunctionTypeContentTransportSlot, GenericFunctionFunctionTransportSlot, GenericTypeTypeTransportSlot, GenericTypeWithTurbofishTypeTransportSlot, BoundedTypeLeftTransportSlot, AbstractTypeTraitTransportSlot, DynamicTypeTraitTransportSlot, MacroInvocationMacroTransportSlot, ScopedIdentifierPathTransportSlot, ScopedIdentifierNameTransportSlot, ScopedTypeIdentifierInExpressionPositionPathTransportSlot, ScopedTypeIdentifierPathTransportSlot, UnaryExpressionOperatorTransportSlot, BinaryExpressionOperatorTransportSlot, CompoundAssignmentExprOperatorTransportSlot, CallExpressionFunctionTransportSlot, StructExpressionNameTransportSlot, FieldInitializerFieldTransportSlot, IfExpressionConditionTransportSlot, LetChainLeftTransportSlot, LetChainRightTransportSlot, ElseClauseBodyTransportSlot, LastMatchArmAttributesTransportSlot, ClosureParametersParametersTransportSlot, GenericPatternNameTransportSlot, TupleStructPatternTypeTransportSlot, StructPatternTypeTransportSlot, NegativeLiteralValueTransportSlot, StringLiteralElementsTransportSlot, LineCommentContentTransportSlot, BlockCommentContentTransportSlot, UseBoundsElementsItemTransportSlot, FieldInitializerListElementsItemTransportSlot, TuplePatternElementsItemTransportSlot, StructPatternElementsItemTransportSlot, ClosureExpressionExprBodyTransportSlot, ImplItemPositiveClauseTraitTransportSlot, ImplItemBodyTraitClauseTransportSlot, VisibilityModifierPubScopeContentTransportSlot, RangeExpressionBinaryOperatorTransportSlot, MatchArmBlockEndingValueTransportSlot, DelimTokenTreeParenDelimTokensTransportSlot, RangePatternPrefixRightTransportSlot, RangePatternPrefixContentTransportSlot, RangePatternWithLeftWithRightContentTransportSlot, RangePatternWithLeftContentTransportSlot, AttributedParameterContentTransportSlot, AttributedTypeParameterContentTransportSlot, TypeArgumentContentTransportSlot, SourceFileTransport, EmptyStatementTransport, ExpressionStatementTransport, MacroRuleTransport, TokenBindingPatternTransport, TokenRepetitionPatternTransport, FragmentSpecifierEnum, TokenRepetitionTransport, NonSpecialTokenTransport, AttributeItemTransport, InnerAttributeItemTransport, AttributeTransport, DeclarationListTransport, UnionItemTransport, EnumItemTransport, EnumVariantListTransport, EnumVariantTransport, FieldDeclarationListTransport, FieldDeclarationTransport, OrderedFieldDeclarationListTransport, ExternCrateDeclarationTransport, ConstItemTransport, StaticItemTransport, TypeItemTransport, FunctionItemTransport, FunctionSignatureItemTransport, FunctionModifiersTransport, WhereClauseTransport, WherePredicateTransport, TraitItemTransport, AssociatedTypeTransport, TraitBoundsTransport, HigherRankedTraitBoundTransport, RemovedTraitBoundTransport, TypeParametersTransport, ConstParameterTransport, TypeParameterTransport, LifetimeParameterTransport, LetDeclarationTransport, UseDeclarationTransport, ScopedUseListTransport, UseListTransport, UseAsClauseTransport, UseWildcardTransport, ParametersTransport, SelfParameterTransport, VariadicParameterTransport, ParameterTransport, ExternModifierTransport, VisibilityModifierTransport, BracketedTypeTransport, QualifiedTypeTransport, LifetimeTransport, ArrayTypeTransport, ForLifetimesTransport, FunctionTypeTransport, TupleTypeTransport, UnitTypeTransport, GenericFunctionTransport, GenericTypeTransport, GenericTypeWithTurbofishTransport, BoundedTypeTransport, UseBoundsTransport, TypeArgumentsTransport, TypeBindingTransport, ReferenceTypeTransport, NeverTypeTransport, AbstractTypeTransport, DynamicTypeTransport, MutableSpecifierTransport, MacroInvocationTransport, ScopedIdentifierTransport, ScopedTypeIdentifierInExpressionPositionTransport, ScopedTypeIdentifierTransport, UnaryExpressionTransport, TryExpressionTransport, BinaryExpressionTransport, AssignmentExpressionTransport, CompoundAssignmentExprTransport, TypeCastExpressionTransport, ReturnExpressionTransport, YieldExpressionTransport, CallExpressionTransport, ArgumentsTransport, ParenthesizedExpressionTransport, TupleExpressionTransport, UnitExpressionTransport, StructExpressionTransport, FieldInitializerListTransport, ShorthandFieldInitializerTransport, FieldInitializerTransport, BaseFieldInitializerTransport, IfExpressionTransport, LetConditionTransport, LetChainTransport, ElseClauseTransport, MatchExpressionTransport, MatchBlockTransport, LastMatchArmTransport, MatchPatternTransport, WhileExpressionTransport, LoopExpressionTransport, ForExpressionTransport, ConstBlockTransport, ClosureParametersTransport, LabelTransport, BreakExpressionTransport, ContinueExpressionTransport, IndexExpressionTransport, AwaitExpressionTransport, FieldExpressionTransport, UnsafeBlockTransport, AsyncBlockTransport, GenBlockTransport, TryBlockTransport, BlockTransport, GenericPatternTransport, TuplePatternTransport, SlicePatternTransport, TupleStructPatternTransport, StructPatternTransport, RemainingFieldPatternTransport, MutPatternTransport, RefPatternTransport, CapturedPatternTransport, ReferencePatternTransport, NegativeLiteralTransport, StringLiteralTransport, RawStringLiteralTransport, BooleanLiteralEnum, LineCommentTransport, InnerLineDocCommentMarkerTransport, OuterLineDocCommentMarkerTransport, BlockCommentTransport, IdentifierTransport, ShebangTransport, Self_Transport, SuperTransport, CrateTransport, MetavariableTransport, PrimitiveTypeEnum, MacroRulesTransport, EnumVariantListElementsTransport, FieldDeclarationListElementsTransport, OrderedFieldDeclarationListElementsTransport, WherePredicatesTransport, TypeParametersElementsTransport, UseClausesTransport, ParametersElementsTransport, LifetimesTransport, TypesTransport, UseBoundsElementsTransport, TypeArgumentsElementsTransport, ArgumentsElementsTransport, ExpressionsTransport, FieldInitializerListElementsTransport, TuplePatternElementsTransport, PatternsTransport, StructPatternElementsTransport, UseWildcardGroupTransport, TokenRepetitionPatternTextTransport, StringOpenTransport, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareTransport, ImplItemUnsafeMarkerTransport, IntegerLiteralDecimalTransport, IntegerLiteralHexTransport, IntegerLiteralBinaryTransport, IntegerLiteralOctalTransport, CharLiteralPlainTransport, CharLiteralEmptyTransport, CharLiteralEscapedSimpleTransport, CharLiteralEscapedUnicodeFixedTransport, CharLiteralEscapedUnicodeBracedTransport, CharLiteralEscapedHexTransport, EscapeSequenceSimpleTransport, EscapeSequenceUnicodeFixedTransport, EscapeSequenceUnicodeBracedTransport, EscapeSequenceHexTransport, ArrayExpressionSemiTransport, ArrayExpressionListTransport, AttributeInputTransport, ClosureExpressionBlockTransport, ClosureExpressionExprTransport, ReferenceExpressionRawConstTransport, ReferenceExpressionRawMutTransport, ReferenceExpressionMutTransport, ReferenceExpressionBareTransport, ImplItemPositiveClauseTransport, ImplItemNegativeClauseTransport, ImplItemBodyTransport, ImplItemSemiTransport, VisibilityModifierPubScopeInPathTransport, VisibilityModifierPubScopeTransport, VisibilityModifierPubTransport, FunctionTypeTraitFormTransport, FunctionTypeFnFormTransport, ModItemExternalTransport, ModItemInlineTransport, OrPatternBinaryTransport, OrPatternPrefixTransport, PointerTypeConstTransport, PointerTypeMutTransport, RangeExpressionBinaryTransport, RangeExpressionPostfixTransport, RangeExpressionPrefixTransport, RangeExpressionBareTransport, ExpressionStatementWithSemiTransport, ForeignModItemSemiTransport, ForeignModItemBodyTransport, MatchArmWithCommaTransport, MatchArmBlockEndingTransport, LineCommentExtraSlashesTransport, LineCommentDocOuterTransport, LineCommentDocInnerTransport, LineCommentRegularTransport, BlockCommentDocOuterTransport, BlockCommentDocInnerTransport, BlockCommentRegularTransport, TokenTreePatternParenTransport, TokenTreePatternBracketTransport, TokenTreePatternBraceTransport, TokenTreeParenTransport, TokenTreeBracketTransport, TokenTreeBraceTransport, DelimTokenTreeParenTransport, DelimTokenTreeBracketTransport, DelimTokenTreeBraceTransport, FieldPatternShorthandTransport, FieldPatternNamedTransport, MacroDefinitionParenTransport, MacroDefinitionBracketTransport, MacroDefinitionBraceTransport, RangePatternPrefixTransport, RangePatternWithLeftWithRightTransport, RangePatternWithLeftBareTransport, RangePatternWithLeftTransport, StructItemBraceTransport, StructItemTupleTransport, StructItemUnitTransport, WildcardPatternTransport, AttributedFieldDeclarationTransport, AttributedEnumVariantTransport, AttributedParameterTransport, AttributedTypeParameterTransport, AttributedArgumentTransport, AttributedOrderedFieldTransport, TypeArgumentTransport, MatchBlockArmsTransport, FloatLiteralTransport, StringContentTransport, RawStringLiteralContentTransport, OuterDocCommentMarkerTransport, InnerDocCommentMarkerTransport, RawStringLiteralStartTransport, RawStringLiteralEndTransport, DocCommentTransport, BlockCommentContentTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, IndentTransport, DedentTransport, ErrorSentinelTransport, TypeIdentifierTransport, FieldIdentifierTransport, ShorthandFieldIdentifierTransport, SemiTransport, EqGtTransport, ColonTransport, DollarTransport, LparenTransport, RparenTransport, PlusTransport, StarTransport, QmarkTransport, BlockKeywordTransport, ExprKeywordTransport, Expr2021KeywordTransport, IdentKeywordTransport, ItemKeywordTransport, LifetimeKeywordTransport, LiteralKeywordTransport, MetaKeywordTransport, PatKeywordTransport, PatParamKeywordTransport, PathKeywordTransport, StmtKeywordTransport, TtKeywordTransport, TyKeywordTransport, VisKeywordTransport, PoundTransport, LbrackTransport, RbrackTransport, BangTransport, LbraceTransport, RbraceTransport, UnionKeywordTransport, EnumKeywordTransport, EqTransport, ExternKeywordTransport, AsKeywordTransport, ConstKeywordTransport, StaticKeywordTransport, RefKeywordTransport, TypeKeywordTransport, FnKeywordTransport, DashGtTransport, AsyncKeywordTransport, DefaultKeywordTransport, UnsafeKeywordTransport, WhereKeywordTransport, TraitKeywordTransport, ForKeywordTransport, LtTransport, GtTransport, LetKeywordTransport, ElseKeywordTransport, UseKeywordTransport, ColonColonTransport, AmpTransport, DotDotDotTransport, SquoteTransport, ImplKeywordTransport, DynKeywordTransport, DashTransport, AmpAmpTransport, PipePipeTransport, PipeTransport, CaretTransport, EqEqTransport, BangEqTransport, LtEqTransport, GtEqTransport, LtLtTransport, GtGtTransport, SlashTransport, PercentTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, PercentEqTransport, AmpEqTransport, PipeEqTransport, CaretEqTransport, LtLtEqTransport, GtGtEqTransport, ReturnKeywordTransport, YieldKeywordTransport, DotDotTransport, IfKeywordTransport, MatchKeywordTransport, CommaTransport, WhileKeywordTransport, LoopKeywordTransport, InKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, DotTransport, AwaitKeywordTransport, MoveKeywordTransport, GenKeywordTransport, TryKeywordTransport, AtTransport, DquoteTransport, TrueKeywordTransport, FalseKeywordTransport, SlashSlashTransport, SlashStarTransport, StarSlashTransport, U8KeywordTransport, I8KeywordTransport, U16KeywordTransport, I16KeywordTransport, U32KeywordTransport, I32KeywordTransport, U64KeywordTransport, I64KeywordTransport, U128KeywordTransport, I128KeywordTransport, IsizeKeywordTransport, UsizeKeywordTransport, F32KeywordTransport, F64KeywordTransport, BoolKeywordTransport, StrKeywordTransport, CharKeywordTransport, UnderscoreTransport, DotDotEqTransport, ModKeywordTransport, PubKeywordTransport, StructKeywordTransport, RawKeywordTransport, MacroRulesBangTransport, TriviaTransport);

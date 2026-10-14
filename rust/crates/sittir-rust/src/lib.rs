@@ -54,6 +54,10 @@ impl EngineGrammar for RustGrammar {
         <AnyTransport as sittir_core::read::ReadTransport>::shows
     }
 
+    fn relaxes(self) -> fn(sittir_core::types::KindId, sittir_core::types::KindId) -> bool {
+        render::kind_ids::relaxes
+    }
+
     type Trivia = render::transport::TriviaTransport;
 
     fn whitespace(self) -> (&'static sittir_core::render::WhitespaceTable, &'static [u16]) {
