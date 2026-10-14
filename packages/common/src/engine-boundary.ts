@@ -3,6 +3,7 @@ export { hostPlatform, nativeLoadFailure, platformSuffix, targetSuffix } from '.
 export type { HostPlatform, NativeBindingSpec } from './native-binding.ts';
 export type {
 	BaselineRun,
+	LayoutWork,
 	StoredLayout,
 	ParseEngine,
 	RenderOptions,

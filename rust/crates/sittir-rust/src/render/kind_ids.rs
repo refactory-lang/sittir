@@ -492,6 +492,14 @@ pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_co
 /// The grammar's root kinds: a render whose root is one of them is a document.
 pub const ROOT_KINDS: &[KindId] = &[KindId(176)];
 
+/// The keyword tokens the grammar aliases to its word rule: a node of one of them, displayed as the word rule, reads as the word rule.
+pub const RELAXED_KEYWORDS: &[KindId] = &[KindId(51), KindId(32), KindId(52), KindId(58), KindId(59), KindId(60), KindId(61), KindId(62), KindId(63), KindId(64), KindId(65), KindId(66), KindId(67), KindId(68), KindId(69), KindId(70), KindId(71), KindId(72), KindId(73), KindId(74)];
+
+/// Whether a node with this grammar id and display id is a relaxed keyword (`ReadCtx::relaxes`).
+pub fn relaxes(grammar: KindId, display: KindId) -> bool {
+    display.0 == 1 && RELAXED_KEYWORDS.contains(&grammar)
+}
+
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
 pub fn kind_name_from_id(id: KindId) -> &'static str {

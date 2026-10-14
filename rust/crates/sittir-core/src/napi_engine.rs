@@ -365,6 +365,14 @@ macro_rules! napi_engine {
                 with_live_node(tree_id, 0.0, |parsed, _| Ok(parsed.stored_layout()))
             }
 
+            /// The work the live tree `treeId`'s layout reads have done so far
+            /// (`ParsedTree::layout_work`): `{ regionNodes, siblingItems }`. A
+            /// diagnostic. Refuses a tree that is not live.
+            #[::napi_derive::napi(ts_return_type = "{ regionNodes: number; siblingItems: number }")]
+            pub fn layout_work(&self, tree_id: f64) -> ::napi::Result<$crate::layout::LayoutWork> {
+                with_live_node(tree_id, 0.0, |parsed, _| Ok(parsed.layout_work()))
+            }
+
             /// One batch of a pre-order walk of the named descendants under
             /// the node `from` names (JSON, see `query::Address`), filtered to
             /// `kinds` when given and to the `where` plan (JSON, see

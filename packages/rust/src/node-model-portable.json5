@@ -1744,15 +1744,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -1987,15 +1978,6 @@
     "char_keyword": {
       "vocab": "type.primitive",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -3367,20 +3349,6 @@
         "terminals": [],
         "list": true
       }
-    },
-    "default_keyword": {
-      "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "delim_token_tree": {
       "vocab": "element.macro.token_tree.delimited",
@@ -6270,15 +6238,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -6291,15 +6250,6 @@
     "f64_keyword": {
       "vocab": "type.primitive",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -10912,20 +10862,6 @@
         }
       ]
     },
-    "gen_keyword": {
-      "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "generic_function": {
       "vocab": "expression.instantiation",
       "read": [
@@ -11119,15 +11055,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -11140,15 +11067,6 @@
     "i16_keyword": {
       "vocab": "type.primitive",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -11163,15 +11081,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -11185,15 +11094,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -11206,15 +11106,6 @@
     "i8_keyword": {
       "vocab": "type.primitive",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -11746,15 +11637,6 @@
     "isize_keyword": {
       "vocab": "type.primitive",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -15911,15 +15793,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -19506,15 +19379,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -19527,15 +19391,6 @@
     "u16_keyword": {
       "vocab": "type.primitive",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -19550,15 +19405,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -19572,15 +19418,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -19593,15 +19430,6 @@
     "u8_keyword": {
       "vocab": "type.primitive",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -20196,20 +20024,6 @@
         }
       ]
     },
-    "union_keyword": {
-      "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "unit_expression": {
       "vocab": "expression.unit",
       "read": [
@@ -20350,10 +20164,10 @@
       "container": {
         "kinds": [
           "self",
-          "identifier",
           "metavariable",
           "super",
           "crate",
+          "identifier",
           "scoped_identifier",
           "use_as_clause",
           "use_list",
@@ -20880,15 +20694,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -21244,28 +21049,7 @@
           "identifier",
           "scoped_identifier"
         ],
-        "terminals": [
-          "u8",
-          "i8",
-          "u16",
-          "i16",
-          "u32",
-          "i32",
-          "u64",
-          "i64",
-          "u128",
-          "i128",
-          "isize",
-          "usize",
-          "f32",
-          "f64",
-          "bool",
-          "str",
-          "char",
-          "default",
-          "union",
-          "gen"
-        ],
+        "terminals": [],
         "list": false
       }
     },
@@ -21473,7 +21257,7 @@
       {
         "depth": 2,
         "paths": 103,
-        "kinds": 155,
+        "kinds": 152,
         "refinements": 12
       },
       {

@@ -6056,7 +6056,10 @@
                     "$type": 1,
                     "$text": "printer"
                   },
-                  "_value": 67
+                  "_value": {
+                    "$type": 1,
+                    "$text": "print"
+                  }
                 }
               ],
               "_delimiter": 0
@@ -6108,7 +6111,10 @@
               "_item": [
                 {
                   "$type": 200,
-                  "_target": 67
+                  "_target": {
+                    "$type": 1,
+                    "$text": "print"
+                  }
                 }
               ],
               "_delimiter": 0
@@ -6160,7 +6166,10 @@
               "_item": [
                 {
                   "$type": 201,
-                  "_target": 67
+                  "_target": {
+                    "$type": 1,
+                    "$text": "print"
+                  }
                 }
               ],
               "_delimiter": 0
@@ -6356,7 +6365,10 @@
                 "$type": 1,
                 "$text": "printer"
               },
-              "_value": 67
+              "_value": {
+                "$type": 1,
+                "$text": "print"
+              }
             }
           ],
           "_delimiter": 0
@@ -6426,7 +6438,10 @@
           "_item": [
             {
               "$type": 200,
-              "_target": 67
+              "_target": {
+                "$type": 1,
+                "$text": "print"
+              }
             }
           ],
           "_delimiter": 0
@@ -6496,7 +6511,10 @@
           "_item": [
             {
               "$type": 201,
-              "_target": 67
+              "_target": {
+                "$type": 1,
+                "$text": "print"
+              }
             }
           ],
           "_delimiter": 0
@@ -6661,7 +6679,10 @@
               "$type": 1,
               "$text": "printer"
             },
-            "_value": 67
+            "_value": {
+              "$type": 1,
+              "$text": "print"
+            }
           }
         ],
         "_delimiter": 0
@@ -6699,7 +6720,10 @@
         "_item": [
           {
             "$type": 200,
-            "_target": 67
+            "_target": {
+              "$type": 1,
+              "$text": "print"
+            }
           }
         ],
         "_delimiter": 0
@@ -6737,7 +6761,10 @@
         "_item": [
           {
             "$type": 201,
-            "_target": 67
+            "_target": {
+              "$type": 1,
+              "$text": "print"
+            }
           }
         ],
         "_delimiter": 0
@@ -6840,7 +6867,10 @@
             "$type": 1,
             "$text": "printer"
           },
-          "_value": 67
+          "_value": {
+            "$type": 1,
+            "$text": "print"
+          }
         }
       ],
       "_delimiter": 0
@@ -6875,7 +6905,10 @@
       "_item": [
         {
           "$type": 200,
-          "_target": 67
+          "_target": {
+            "$type": 1,
+            "$text": "print"
+          }
         }
       ],
       "_delimiter": 0
@@ -6910,7 +6943,10 @@
       "_item": [
         {
           "$type": 201,
-          "_target": 67
+          "_target": {
+            "$type": 1,
+            "$text": "print"
+          }
         }
       ],
       "_delimiter": 0
@@ -7976,7 +8012,10 @@
         "$type": 1,
         "$text": "printer"
       },
-      "_value": 67
+      "_value": {
+        "$type": 1,
+        "$text": "print"
+      }
     },
     "expectedOutput": "printer=print",
     "options": {
@@ -8005,7 +8044,10 @@
     "pattern": "list_splat_pattern",
     "input": {
       "$type": 200,
-      "_target": 67
+      "_target": {
+        "$type": 1,
+        "$text": "print"
+      }
     },
     "expectedOutput": "*print",
     "options": {
@@ -8034,7 +8076,10 @@
     "pattern": "dictionary_splat_pattern",
     "input": {
       "$type": 201,
-      "_target": 67
+      "_target": {
+        "$type": 1,
+        "$text": "print"
+      }
     },
     "expectedOutput": "**print",
     "options": {
@@ -8073,7 +8118,10 @@
                 "$type": 141,
                 "_content": {
                   "$type": 223,
-                  "_function": 38,
+                  "_function": {
+                    "$type": 1,
+                    "$text": "exec"
+                  },
                   "_arguments": {
                     "$type": 176,
                     "_arguments": {
@@ -8182,7 +8230,10 @@
                 "$type": 141,
                 "_content": {
                   "$type": 223,
-                  "_function": 38,
+                  "_function": {
+                    "$type": 1,
+                    "$text": "exec"
+                  },
                   "_arguments": {
                     "$type": 176,
                     "_arguments": {
@@ -8254,7 +8305,10 @@
             "$type": 141,
             "_content": {
               "$type": 223,
-              "_function": 38,
+              "_function": {
+                "$type": 1,
+                "$text": "exec"
+              },
               "_arguments": {
                 "$type": 176,
                 "_arguments": {
@@ -8385,7 +8439,10 @@
             "$type": 141,
             "_content": {
               "$type": 223,
-              "_function": 38,
+              "_function": {
+                "$type": 1,
+                "$text": "exec"
+              },
               "_arguments": {
                 "$type": 176,
                 "_arguments": {
@@ -8452,7 +8509,10 @@
           "$type": 141,
           "_content": {
             "$type": 223,
-            "_function": 38,
+            "_function": {
+              "$type": 1,
+              "$text": "exec"
+            },
             "_arguments": {
               "$type": 176,
               "_arguments": {
@@ -8580,7 +8640,10 @@
           "$type": 141,
           "_content": {
             "$type": 223,
-            "_function": 38,
+            "_function": {
+              "$type": 1,
+              "$text": "exec"
+            },
             "_arguments": {
               "$type": 176,
               "_arguments": {
@@ -8643,7 +8706,10 @@
       "$type": 141,
       "_content": {
         "$type": 223,
-        "_function": 38,
+        "_function": {
+          "$type": 1,
+          "$text": "exec"
+        },
         "_arguments": {
           "$type": 176,
           "_arguments": {
@@ -8765,7 +8831,10 @@
       "$type": 141,
       "_content": {
         "$type": 223,
-        "_function": 38,
+        "_function": {
+          "$type": 1,
+          "$text": "exec"
+        },
         "_arguments": {
           "$type": 176,
           "_arguments": {
@@ -8823,7 +8892,10 @@
     "pattern": "call",
     "input": {
       "$type": 223,
-      "_function": 38,
+      "_function": {
+        "$type": 1,
+        "$text": "exec"
+      },
       "_arguments": {
         "$type": 176,
         "_arguments": {
@@ -8942,7 +9014,10 @@
     "pattern": "call",
     "input": {
       "$type": 223,
-      "_function": 38,
+      "_function": {
+        "$type": 1,
+        "$text": "exec"
+      },
       "_arguments": {
         "$type": 176,
         "_arguments": {
@@ -9667,7 +9742,10 @@
                 "$type": 141,
                 "_content": {
                   "$type": 286,
-                  "_left": 68,
+                  "_left": {
+                    "$type": 1,
+                    "$text": "async"
+                  },
                   "_right": {
                     "$type": 95,
                     "$text": "4"
@@ -9687,7 +9765,10 @@
                 "$type": 141,
                 "_content": {
                   "$type": 286,
-                  "_left": 69,
+                  "_left": {
+                    "$type": 1,
+                    "$text": "await"
+                  },
                   "_right": {
                     "$type": 95,
                     "$text": "5"
@@ -9710,18 +9791,16 @@
                   "_print_arguments": {
                     "$type": 275,
                     "_item": [
-                      68,
-                      69
+                      {
+                        "$type": 1,
+                        "$text": "async"
+                      },
+                      {
+                        "$type": 1,
+                        "$text": "await"
+                      }
                     ],
-                    "_delimiter": 0,
-                    "$_layout": {
-                      "slots": [
-                        {
-                          "slot": "_item",
-                          "separator": 6
-                        }
-                      ]
-                    }
+                    "_delimiter": 0
                   }
                 }
               }
@@ -9763,7 +9842,10 @@
             "$type": 141,
             "_content": {
               "$type": 286,
-              "_left": 68,
+              "_left": {
+                "$type": 1,
+                "$text": "async"
+              },
               "_right": {
                 "$type": 95,
                 "$text": "4"
@@ -9805,7 +9887,10 @@
             "$type": 141,
             "_content": {
               "$type": 286,
-              "_left": 69,
+              "_left": {
+                "$type": 1,
+                "$text": "await"
+              },
               "_right": {
                 "$type": 95,
                 "$text": "5"
@@ -9850,18 +9935,16 @@
               "_print_arguments": {
                 "$type": 275,
                 "_item": [
-                  68,
-                  69
+                  {
+                    "$type": 1,
+                    "$text": "async"
+                  },
+                  {
+                    "$type": 1,
+                    "$text": "await"
+                  }
                 ],
-                "_delimiter": 0,
-                "$_layout": {
-                  "slots": [
-                    {
-                      "slot": "_item",
-                      "separator": 6
-                    }
-                  ]
-                }
+                "_delimiter": 0
               }
             }
           }
@@ -9898,7 +9981,10 @@
           "$type": 141,
           "_content": {
             "$type": 286,
-            "_left": 68,
+            "_left": {
+              "$type": 1,
+              "$text": "async"
+            },
             "_right": {
               "$type": 95,
               "$text": "4"
@@ -9937,7 +10023,10 @@
           "$type": 141,
           "_content": {
             "$type": 286,
-            "_left": 69,
+            "_left": {
+              "$type": 1,
+              "$text": "await"
+            },
             "_right": {
               "$type": 95,
               "$text": "5"
@@ -9979,18 +10068,16 @@
             "_print_arguments": {
               "$type": 275,
               "_item": [
-                68,
-                69
+                {
+                  "$type": 1,
+                  "$text": "async"
+                },
+                {
+                  "$type": 1,
+                  "$text": "await"
+                }
               ],
-              "_delimiter": 0,
-              "$_layout": {
-                "slots": [
-                  {
-                    "slot": "_item",
-                    "separator": 6
-                  }
-                ]
-              }
+              "_delimiter": 0
             }
           }
         }
@@ -10023,7 +10110,10 @@
       "$type": 141,
       "_content": {
         "$type": 286,
-        "_left": 68,
+        "_left": {
+          "$type": 1,
+          "$text": "async"
+        },
         "_right": {
           "$type": 95,
           "$text": "4"
@@ -10056,7 +10146,10 @@
       "$type": 141,
       "_content": {
         "$type": 286,
-        "_left": 69,
+        "_left": {
+          "$type": 1,
+          "$text": "await"
+        },
         "_right": {
           "$type": 95,
           "$text": "5"
@@ -10087,7 +10180,10 @@
     "pattern": "assignment_eq",
     "input": {
       "$type": 286,
-      "_left": 68,
+      "_left": {
+        "$type": 1,
+        "$text": "async"
+      },
       "_right": {
         "$type": 95,
         "$text": "4"
@@ -10117,7 +10213,10 @@
     "pattern": "assignment_eq",
     "input": {
       "$type": 286,
-      "_left": 69,
+      "_left": {
+        "$type": 1,
+        "$text": "await"
+      },
       "_right": {
         "$type": 95,
         "$text": "5"
@@ -10152,18 +10251,16 @@
         "_print_arguments": {
           "$type": 275,
           "_item": [
-            68,
-            69
+            {
+              "$type": 1,
+              "$text": "async"
+            },
+            {
+              "$type": 1,
+              "$text": "await"
+            }
           ],
-          "_delimiter": 0,
-          "$_layout": {
-            "slots": [
-              {
-                "slot": "_item",
-                "separator": 6
-              }
-            ]
-          }
+          "_delimiter": 0
         }
       }
     },
@@ -10194,18 +10291,16 @@
       "_print_arguments": {
         "$type": 275,
         "_item": [
-          68,
-          69
+          {
+            "$type": 1,
+            "$text": "async"
+          },
+          {
+            "$type": 1,
+            "$text": "await"
+          }
         ],
-        "_delimiter": 0,
-        "$_layout": {
-          "slots": [
-            {
-              "slot": "_item",
-              "separator": 6
-            }
-          ]
-        }
+        "_delimiter": 0
       }
     },
     "expectedOutput": "print async, await",
@@ -10233,18 +10328,16 @@
     "input": {
       "$type": 275,
       "_item": [
-        68,
-        69
+        {
+          "$type": 1,
+          "$text": "async"
+        },
+        {
+          "$type": 1,
+          "$text": "await"
+        }
       ],
-      "_delimiter": 0,
-      "$_layout": {
-        "slots": [
-          {
-            "slot": "_item",
-            "separator": 6
-          }
-        ]
-      }
+      "_delimiter": 0
     },
     "expectedOutput": "async, await",
     "options": {
@@ -40886,7 +40979,10 @@
                 "$type": 141,
                 "_content": {
                   "$type": 223,
-                  "_function": 22,
+                  "_function": {
+                    "$type": 1,
+                    "$text": "match"
+                  },
                   "_arguments": {
                     "$type": 176,
                     "_arguments": {
@@ -40948,7 +41044,10 @@
             "$type": 141,
             "_content": {
               "$type": 223,
-              "_function": 22,
+              "_function": {
+                "$type": 1,
+                "$text": "match"
+              },
               "_arguments": {
                 "$type": 176,
                 "_arguments": {
@@ -41005,7 +41104,10 @@
           "$type": 141,
           "_content": {
             "$type": 223,
-            "_function": 22,
+            "_function": {
+              "$type": 1,
+              "$text": "match"
+            },
             "_arguments": {
               "$type": 176,
               "_arguments": {
@@ -41058,7 +41160,10 @@
       "$type": 141,
       "_content": {
         "$type": 223,
-        "_function": 22,
+        "_function": {
+          "$type": 1,
+          "$text": "match"
+        },
         "_arguments": {
           "$type": 176,
           "_arguments": {
@@ -41106,7 +41211,10 @@
     "pattern": "call",
     "input": {
       "$type": 223,
-      "_function": 22,
+      "_function": {
+        "$type": 1,
+        "$text": "match"
+      },
       "_arguments": {
         "$type": 176,
         "_arguments": {
@@ -41312,7 +41420,10 @@
                     "$type": 225,
                     "_content": {
                       "$type": 227,
-                      "_name": 39,
+                      "_name": {
+                        "$type": 1,
+                        "$text": "type"
+                      },
                       "_type_parameter": {
                         "$type": 174,
                         "_types": {
@@ -41463,7 +41574,10 @@
                 "$type": 225,
                 "_content": {
                   "$type": 227,
-                  "_name": 39,
+                  "_name": {
+                    "$type": 1,
+                    "$text": "type"
+                  },
                   "_type_parameter": {
                     "$type": 174,
                     "_types": {
@@ -41606,7 +41720,10 @@
               "$type": 225,
               "_content": {
                 "$type": 227,
-                "_name": 39,
+                "_name": {
+                  "$type": 1,
+                  "$text": "type"
+                },
                 "_type_parameter": {
                   "$type": 174,
                   "_types": {
@@ -41739,7 +41856,10 @@
           "$type": 225,
           "_content": {
             "$type": 227,
-            "_name": 39,
+            "_name": {
+              "$type": 1,
+              "$text": "type"
+            },
             "_type_parameter": {
               "$type": 174,
               "_types": {
@@ -42025,7 +42145,10 @@
       "$type": 225,
       "_content": {
         "$type": 227,
-        "_name": 39,
+        "_name": {
+          "$type": 1,
+          "$text": "type"
+        },
         "_type_parameter": {
           "$type": 174,
           "_types": {
@@ -42200,7 +42323,10 @@
     "pattern": "generic_type",
     "input": {
       "$type": 227,
-      "_name": 39,
+      "_name": {
+        "$type": 1,
+        "$text": "type"
+      },
       "_type_parameter": {
         "$type": 174,
         "_types": {
@@ -42396,7 +42522,10 @@
         "$type": 225,
         "_content": {
           "$type": 227,
-          "_name": 39,
+          "_name": {
+            "$type": 1,
+            "$text": "type"
+          },
           "_type_parameter": {
             "$type": 174,
             "_types": {
@@ -80198,18 +80327,16 @@
                   "_elements": {
                     "$type": 271,
                     "_item": [
-                      67,
-                      38
+                      {
+                        "$type": 1,
+                        "$text": "print"
+                      },
+                      {
+                        "$type": 1,
+                        "$text": "exec"
+                      }
                     ],
-                    "_delimiter": 0,
-                    "$_layout": {
-                      "slots": [
-                        {
-                          "slot": "_item",
-                          "separator": 6
-                        }
-                      ]
-                    }
+                    "_delimiter": 0
                   }
                 }
               }
@@ -80397,18 +80524,16 @@
               "_elements": {
                 "$type": 271,
                 "_item": [
-                  67,
-                  38
+                  {
+                    "$type": 1,
+                    "$text": "print"
+                  },
+                  {
+                    "$type": 1,
+                    "$text": "exec"
+                  }
                 ],
-                "_delimiter": 0,
-                "$_layout": {
-                  "slots": [
-                    {
-                      "slot": "_item",
-                      "separator": 6
-                    }
-                  ]
-                }
+                "_delimiter": 0
               }
             }
           }
@@ -80582,18 +80707,16 @@
             "_elements": {
               "$type": 271,
               "_item": [
-                67,
-                38
+                {
+                  "$type": 1,
+                  "$text": "print"
+                },
+                {
+                  "$type": 1,
+                  "$text": "exec"
+                }
               ],
-              "_delimiter": 0,
-              "$_layout": {
-                "slots": [
-                  {
-                    "slot": "_item",
-                    "separator": 6
-                  }
-                ]
-              }
+              "_delimiter": 0
             }
           }
         }
@@ -80745,18 +80868,16 @@
         "_elements": {
           "$type": 271,
           "_item": [
-            67,
-            38
+            {
+              "$type": 1,
+              "$text": "print"
+            },
+            {
+              "$type": 1,
+              "$text": "exec"
+            }
           ],
-          "_delimiter": 0,
-          "$_layout": {
-            "slots": [
-              {
-                "slot": "_item",
-                "separator": 6
-              }
-            ]
-          }
+          "_delimiter": 0
         }
       }
     },
@@ -80894,18 +81015,16 @@
       "_elements": {
         "$type": 271,
         "_item": [
-          67,
-          38
+          {
+            "$type": 1,
+            "$text": "print"
+          },
+          {
+            "$type": 1,
+            "$text": "exec"
+          }
         ],
-        "_delimiter": 0,
-        "$_layout": {
-          "slots": [
-            {
-              "slot": "_item",
-              "separator": 6
-            }
-          ]
-        }
+        "_delimiter": 0
       }
     },
     "expectedOutput": "(print, exec)",
@@ -81009,18 +81128,16 @@
     "input": {
       "$type": 271,
       "_item": [
-        67,
-        38
+        {
+          "$type": 1,
+          "$text": "print"
+        },
+        {
+          "$type": 1,
+          "$text": "exec"
+        }
       ],
-      "_delimiter": 0,
-      "$_layout": {
-        "slots": [
-          {
-            "slot": "_item",
-            "separator": 6
-          }
-        ]
-      }
+      "_delimiter": 0
     },
     "expectedOutput": "print, exec",
     "options": {
@@ -109628,7 +109745,10 @@
                 "$type": 141,
                 "_content": {
                   "$type": 286,
-                  "_left": 22,
+                  "_left": {
+                    "$type": 1,
+                    "$text": "match"
+                  },
                   "_right": {
                     "$type": 95,
                     "$text": "2"
@@ -109651,21 +109771,16 @@
                   "_left": {
                     "$type": 217,
                     "_item": [
-                      22,
+                      {
+                        "$type": 1,
+                        "$text": "match"
+                      },
                       {
                         "$type": 1,
                         "$text": "a"
                       }
                     ],
-                    "_delimiter": 0,
-                    "$_layout": {
-                      "slots": [
-                        {
-                          "slot": "_item",
-                          "separator": 6
-                        }
-                      ]
-                    }
+                    "_delimiter": 0
                   },
                   "_right": {
                     "$type": 180,
@@ -109696,7 +109811,10 @@
                 "$type": 141,
                 "_content": {
                   "$type": 288,
-                  "_left": 22,
+                  "_left": {
+                    "$type": 1,
+                    "$text": "match"
+                  },
                   "_type": {
                     "$type": 225,
                     "_content": {
@@ -109730,17 +109848,12 @@
                         "$type": 1,
                         "$text": "x"
                       },
-                      22
+                      {
+                        "$type": 1,
+                        "$text": "match"
+                      }
                     ],
-                    "_delimiter": 0,
-                    "$_layout": {
-                      "slots": [
-                        {
-                          "slot": "_item",
-                          "separator": 6
-                        }
-                      ]
-                    }
+                    "_delimiter": 0
                   },
                   "_right": {
                     "$type": 180,
@@ -109794,7 +109907,10 @@
                     "_item": [
                       {
                         "$type": 200,
-                        "_target": 22
+                        "_target": {
+                          "$type": 1,
+                          "$text": "match"
+                        }
                       },
                       {
                         "$type": 1,
@@ -109844,7 +109960,10 @@
               "_item": [
                 {
                   "$type": 201,
-                  "_target": 22
+                  "_target": {
+                    "$type": 1,
+                    "$text": "match"
+                  }
                 }
               ],
               "_delimiter": 0
@@ -109895,7 +110014,10 @@
             "$type": 141,
             "_content": {
               "$type": 286,
-              "_left": 22,
+              "_left": {
+                "$type": 1,
+                "$text": "match"
+              },
               "_right": {
                 "$type": 95,
                 "$text": "2"
@@ -109940,21 +110062,16 @@
               "_left": {
                 "$type": 217,
                 "_item": [
-                  22,
+                  {
+                    "$type": 1,
+                    "$text": "match"
+                  },
                   {
                     "$type": 1,
                     "$text": "a"
                   }
                 ],
-                "_delimiter": 0,
-                "$_layout": {
-                  "slots": [
-                    {
-                      "slot": "_item",
-                      "separator": 6
-                    }
-                  ]
-                }
+                "_delimiter": 0
               },
               "_right": {
                 "$type": 180,
@@ -110007,7 +110124,10 @@
             "$type": 141,
             "_content": {
               "$type": 288,
-              "_left": 22,
+              "_left": {
+                "$type": 1,
+                "$text": "match"
+              },
               "_type": {
                 "$type": 225,
                 "_content": {
@@ -110063,17 +110183,12 @@
                     "$type": 1,
                     "$text": "x"
                   },
-                  22
+                  {
+                    "$type": 1,
+                    "$text": "match"
+                  }
                 ],
-                "_delimiter": 0,
-                "$_layout": {
-                  "slots": [
-                    {
-                      "slot": "_item",
-                      "separator": 6
-                    }
-                  ]
-                }
+                "_delimiter": 0
               },
               "_right": {
                 "$type": 180,
@@ -110149,7 +110264,10 @@
                 "_item": [
                   {
                     "$type": 200,
-                    "_target": 22
+                    "_target": {
+                      "$type": 1,
+                      "$text": "match"
+                    }
                   },
                   {
                     "$type": 1,
@@ -110214,7 +110332,10 @@
           "$type": 141,
           "_content": {
             "$type": 286,
-            "_left": 22,
+            "_left": {
+              "$type": 1,
+              "$text": "match"
+            },
             "_right": {
               "$type": 95,
               "$text": "2"
@@ -110256,21 +110377,16 @@
             "_left": {
               "$type": 217,
               "_item": [
-                22,
+                {
+                  "$type": 1,
+                  "$text": "match"
+                },
                 {
                   "$type": 1,
                   "$text": "a"
                 }
               ],
-              "_delimiter": 0,
-              "$_layout": {
-                "slots": [
-                  {
-                    "slot": "_item",
-                    "separator": 6
-                  }
-                ]
-              }
+              "_delimiter": 0
             },
             "_right": {
               "$type": 180,
@@ -110320,7 +110436,10 @@
           "$type": 141,
           "_content": {
             "$type": 288,
-            "_left": 22,
+            "_left": {
+              "$type": 1,
+              "$text": "match"
+            },
             "_type": {
               "$type": 225,
               "_content": {
@@ -110373,17 +110492,12 @@
                   "$type": 1,
                   "$text": "x"
                 },
-                22
+                {
+                  "$type": 1,
+                  "$text": "match"
+                }
               ],
-              "_delimiter": 0,
-              "$_layout": {
-                "slots": [
-                  {
-                    "slot": "_item",
-                    "separator": 6
-                  }
-                ]
-              }
+              "_delimiter": 0
             },
             "_right": {
               "$type": 180,
@@ -110456,7 +110570,10 @@
               "_item": [
                 {
                   "$type": 200,
-                  "_target": 22
+                  "_target": {
+                    "$type": 1,
+                    "$text": "match"
+                  }
                 },
                 {
                   "$type": 1,
@@ -110546,7 +110663,10 @@
       "$type": 141,
       "_content": {
         "$type": 286,
-        "_left": 22,
+        "_left": {
+          "$type": 1,
+          "$text": "match"
+        },
         "_right": {
           "$type": 95,
           "$text": "2"
@@ -110582,21 +110702,16 @@
         "_left": {
           "$type": 217,
           "_item": [
-            22,
+            {
+              "$type": 1,
+              "$text": "match"
+            },
             {
               "$type": 1,
               "$text": "a"
             }
           ],
-          "_delimiter": 0,
-          "$_layout": {
-            "slots": [
-              {
-                "slot": "_item",
-                "separator": 6
-              }
-            ]
-          }
+          "_delimiter": 0
         },
         "_right": {
           "$type": 180,
@@ -110640,7 +110755,10 @@
       "$type": 141,
       "_content": {
         "$type": 288,
-        "_left": 22,
+        "_left": {
+          "$type": 1,
+          "$text": "match"
+        },
         "_type": {
           "$type": 225,
           "_content": {
@@ -110687,17 +110805,12 @@
               "$type": 1,
               "$text": "x"
             },
-            22
+            {
+              "$type": 1,
+              "$text": "match"
+            }
           ],
-          "_delimiter": 0,
-          "$_layout": {
-            "slots": [
-              {
-                "slot": "_item",
-                "separator": 6
-              }
-            ]
-          }
+          "_delimiter": 0
         },
         "_right": {
           "$type": 180,
@@ -110764,7 +110877,10 @@
           "_item": [
             {
               "$type": 200,
-              "_target": 22
+              "_target": {
+                "$type": 1,
+                "$text": "match"
+              }
             },
             {
               "$type": 1,
@@ -110820,7 +110936,10 @@
     "pattern": "assignment_eq",
     "input": {
       "$type": 286,
-      "_left": 22,
+      "_left": {
+        "$type": 1,
+        "$text": "match"
+      },
       "_right": {
         "$type": 95,
         "$text": "2"
@@ -110853,21 +110972,16 @@
       "_left": {
         "$type": 217,
         "_item": [
-          22,
+          {
+            "$type": 1,
+            "$text": "match"
+          },
           {
             "$type": 1,
             "$text": "a"
           }
         ],
-        "_delimiter": 0,
-        "$_layout": {
-          "slots": [
-            {
-              "slot": "_item",
-              "separator": 6
-            }
-          ]
-        }
+        "_delimiter": 0
       },
       "_right": {
         "$type": 180,
@@ -110915,17 +111029,12 @@
             "$type": 1,
             "$text": "x"
           },
-          22
+          {
+            "$type": 1,
+            "$text": "match"
+          }
         ],
-        "_delimiter": 0,
-        "$_layout": {
-          "slots": [
-            {
-              "slot": "_item",
-              "separator": 6
-            }
-          ]
-        }
+        "_delimiter": 0
       },
       "_right": {
         "$type": 180,
@@ -110989,7 +111098,10 @@
         "_item": [
           {
             "$type": 200,
-            "_target": 22
+            "_target": {
+              "$type": 1,
+              "$text": "match"
+            }
           },
           {
             "$type": 1,
@@ -111045,21 +111157,16 @@
     "input": {
       "$type": 217,
       "_item": [
-        22,
+        {
+          "$type": 1,
+          "$text": "match"
+        },
         {
           "$type": 1,
           "$text": "a"
         }
       ],
-      "_delimiter": 0,
-      "$_layout": {
-        "slots": [
-          {
-            "slot": "_item",
-            "separator": 6
-          }
-        ]
-      }
+      "_delimiter": 0
     },
     "expectedOutput": "match, a",
     "options": {
@@ -111090,17 +111197,12 @@
           "$type": 1,
           "$text": "x"
         },
-        22
+        {
+          "$type": 1,
+          "$text": "match"
+        }
       ],
-      "_delimiter": 0,
-      "$_layout": {
-        "slots": [
-          {
-            "slot": "_item",
-            "separator": 6
-          }
-        ]
-      }
+      "_delimiter": 0
     },
     "expectedOutput": "x, match",
     "options": {
@@ -111129,7 +111231,10 @@
       "_item": [
         {
           "$type": 200,
-          "_target": 22
+          "_target": {
+            "$type": 1,
+            "$text": "match"
+          }
         },
         {
           "$type": 1,
@@ -111252,7 +111357,10 @@
     "pattern": "assignment_typed",
     "input": {
       "$type": 288,
-      "_left": 22,
+      "_left": {
+        "$type": 1,
+        "$text": "match"
+      },
       "_type": {
         "$type": 225,
         "_content": {
@@ -111362,7 +111470,10 @@
     "pattern": "list_splat_pattern",
     "input": {
       "$type": 200,
-      "_target": 22
+      "_target": {
+        "$type": 1,
+        "$text": "match"
+      }
     },
     "expectedOutput": "*match",
     "options": {
@@ -111483,7 +111594,10 @@
           "_item": [
             {
               "$type": 201,
-              "_target": 22
+              "_target": {
+                "$type": 1,
+                "$text": "match"
+              }
             }
           ],
           "_delimiter": 0
@@ -111529,7 +111643,10 @@
         "_item": [
           {
             "$type": 201,
-            "_target": 22
+            "_target": {
+              "$type": 1,
+              "$text": "match"
+            }
           }
         ],
         "_delimiter": 0
@@ -111562,7 +111679,10 @@
       "_item": [
         {
           "$type": 201,
-          "_target": 22
+          "_target": {
+            "$type": 1,
+            "$text": "match"
+          }
         }
       ],
       "_delimiter": 0
@@ -111591,7 +111711,10 @@
     "pattern": "dictionary_splat_pattern",
     "input": {
       "$type": 201,
-      "_target": 22
+      "_target": {
+        "$type": 1,
+        "$text": "match"
+      }
     },
     "expectedOutput": "**match",
     "options": {
@@ -111668,7 +111791,10 @@
                     "_collection_elements": {
                       "$type": 242,
                       "_item": [
-                        22
+                        {
+                          "$type": 1,
+                          "$text": "match"
+                        }
                       ],
                       "_delimiter": 0
                     }
@@ -111688,13 +111814,19 @@
                 "$type": 141,
                 "_content": {
                   "$type": 286,
-                  "_left": 22,
+                  "_left": {
+                    "$type": 1,
+                    "$text": "match"
+                  },
                   "_right": {
                     "$type": 232,
                     "_collection_elements": {
                       "$type": 242,
                       "_item": [
-                        22
+                        {
+                          "$type": 1,
+                          "$text": "match"
+                        }
                       ],
                       "_delimiter": 0
                     }
@@ -111748,7 +111880,10 @@
                 "_collection_elements": {
                   "$type": 242,
                   "_item": [
-                    22
+                    {
+                      "$type": 1,
+                      "$text": "match"
+                    }
                   ],
                   "_delimiter": 0
                 }
@@ -111790,13 +111925,19 @@
             "$type": 141,
             "_content": {
               "$type": 286,
-              "_left": 22,
+              "_left": {
+                "$type": 1,
+                "$text": "match"
+              },
               "_right": {
                 "$type": 232,
                 "_collection_elements": {
                   "$type": 242,
                   "_item": [
-                    22
+                    {
+                      "$type": 1,
+                      "$text": "match"
+                    }
                   ],
                   "_delimiter": 0
                 }
@@ -111845,7 +111986,10 @@
               "_collection_elements": {
                 "$type": 242,
                 "_item": [
-                  22
+                  {
+                    "$type": 1,
+                    "$text": "match"
+                  }
                 ],
                 "_delimiter": 0
               }
@@ -111884,13 +112028,19 @@
           "$type": 141,
           "_content": {
             "$type": 286,
-            "_left": 22,
+            "_left": {
+              "$type": 1,
+              "$text": "match"
+            },
             "_right": {
               "$type": 232,
               "_collection_elements": {
                 "$type": 242,
                 "_item": [
-                  22
+                  {
+                    "$type": 1,
+                    "$text": "match"
+                  }
                 ],
                 "_delimiter": 0
               }
@@ -111935,7 +112085,10 @@
           "_collection_elements": {
             "$type": 242,
             "_item": [
-              22
+              {
+                "$type": 1,
+                "$text": "match"
+              }
             ],
             "_delimiter": 0
           }
@@ -111968,13 +112121,19 @@
       "$type": 141,
       "_content": {
         "$type": 286,
-        "_left": 22,
+        "_left": {
+          "$type": 1,
+          "$text": "match"
+        },
         "_right": {
           "$type": 232,
           "_collection_elements": {
             "$type": 242,
             "_item": [
-              22
+              {
+                "$type": 1,
+                "$text": "match"
+              }
             ],
             "_delimiter": 0
           }
@@ -112014,7 +112173,10 @@
         "_collection_elements": {
           "$type": 242,
           "_item": [
-            22
+            {
+              "$type": 1,
+              "$text": "match"
+            }
           ],
           "_delimiter": 0
         }
@@ -112044,13 +112206,19 @@
     "pattern": "assignment_eq",
     "input": {
       "$type": 286,
-      "_left": 22,
+      "_left": {
+        "$type": 1,
+        "$text": "match"
+      },
       "_right": {
         "$type": 232,
         "_collection_elements": {
           "$type": 242,
           "_item": [
-            22
+            {
+              "$type": 1,
+              "$text": "match"
+            }
           ],
           "_delimiter": 0
         }
@@ -112083,7 +112251,10 @@
       "_collection_elements": {
         "$type": 242,
         "_item": [
-          22
+          {
+            "$type": 1,
+            "$text": "match"
+          }
         ],
         "_delimiter": 0
       }
@@ -112115,7 +112286,10 @@
       "_collection_elements": {
         "$type": 242,
         "_item": [
-          22
+          {
+            "$type": 1,
+            "$text": "match"
+          }
         ],
         "_delimiter": 0
       }
@@ -112145,7 +112319,10 @@
     "input": {
       "$type": 242,
       "_item": [
-        22
+        {
+          "$type": 1,
+          "$text": "match"
+        }
       ],
       "_delimiter": 0
     },
@@ -112174,7 +112351,10 @@
     "input": {
       "$type": 242,
       "_item": [
-        22
+        {
+          "$type": 1,
+          "$text": "match"
+        }
       ],
       "_delimiter": 0
     },
@@ -112229,7 +112409,10 @@
                         "_item": [
                           {
                             "$type": 231,
-                            "_name": 22,
+                            "_name": {
+                              "$type": 1,
+                              "$text": "match"
+                            },
                             "_value": {
                               "$type": 247,
                               "_string_start": {
@@ -112315,7 +112498,10 @@
                     "_item": [
                       {
                         "$type": 231,
-                        "_name": 22,
+                        "_name": {
+                          "$type": 1,
+                          "$text": "match"
+                        },
                         "_value": {
                           "$type": 247,
                           "_string_start": {
@@ -112396,7 +112582,10 @@
                   "_item": [
                     {
                       "$type": 231,
-                      "_name": 22,
+                      "_name": {
+                        "$type": 1,
+                        "$text": "match"
+                      },
                       "_value": {
                         "$type": 247,
                         "_string_start": {
@@ -112473,7 +112662,10 @@
               "_item": [
                 {
                   "$type": 231,
-                  "_name": 22,
+                  "_name": {
+                    "$type": 1,
+                    "$text": "match"
+                  },
                   "_value": {
                     "$type": 247,
                     "_string_start": {
@@ -112545,7 +112737,10 @@
             "_item": [
               {
                 "$type": 231,
-                "_name": 22,
+                "_name": {
+                  "$type": 1,
+                  "$text": "match"
+                },
                 "_value": {
                   "$type": 247,
                   "_string_start": {
@@ -112610,7 +112805,10 @@
           "_item": [
             {
               "$type": 231,
-              "_name": 22,
+              "_name": {
+                "$type": 1,
+                "$text": "match"
+              },
               "_value": {
                 "$type": 247,
                 "_string_start": {
@@ -112668,7 +112866,10 @@
         "_item": [
           {
             "$type": 231,
-            "_name": 22,
+            "_name": {
+              "$type": 1,
+              "$text": "match"
+            },
             "_value": {
               "$type": 247,
               "_string_start": {
@@ -112723,7 +112924,10 @@
       "_item": [
         {
           "$type": 231,
-          "_name": 22,
+          "_name": {
+            "$type": 1,
+            "$text": "match"
+          },
           "_value": {
             "$type": 247,
             "_string_start": {
@@ -112774,7 +112978,10 @@
     "pattern": "keyword_argument",
     "input": {
       "$type": 231,
-      "_name": 22,
+      "_name": {
+        "$type": 1,
+        "$text": "match"
+      },
       "_value": {
         "$type": 247,
         "_string_start": {
@@ -112882,7 +113089,10 @@
                   },
                   "_right": {
                     "$type": 223,
-                    "_function": 22,
+                    "_function": {
+                      "$type": 1,
+                      "$text": "match"
+                    },
                     "_arguments": {
                       "$type": 176,
                       "_arguments": {
@@ -112890,20 +113100,21 @@
                         "_item": [
                           {
                             "$type": 231,
-                            "_name": 22,
-                            "_value": 22
-                          },
-                          22
-                        ],
-                        "_delimiter": 0,
-                        "$_layout": {
-                          "slots": [
-                            {
-                              "slot": "_item",
-                              "separator": 6
+                            "_name": {
+                              "$type": 1,
+                              "$text": "match"
+                            },
+                            "_value": {
+                              "$type": 1,
+                              "$text": "match"
                             }
-                          ]
-                        }
+                          },
+                          {
+                            "$type": 1,
+                            "$text": "match"
+                          }
+                        ],
+                        "_delimiter": 0
                       }
                     }
                   }
@@ -112953,7 +113164,10 @@
               },
               "_right": {
                 "$type": 223,
-                "_function": 22,
+                "_function": {
+                  "$type": 1,
+                  "$text": "match"
+                },
                 "_arguments": {
                   "$type": 176,
                   "_arguments": {
@@ -112961,20 +113175,21 @@
                     "_item": [
                       {
                         "$type": 231,
-                        "_name": 22,
-                        "_value": 22
-                      },
-                      22
-                    ],
-                    "_delimiter": 0,
-                    "$_layout": {
-                      "slots": [
-                        {
-                          "slot": "_item",
-                          "separator": 6
+                        "_name": {
+                          "$type": 1,
+                          "$text": "match"
+                        },
+                        "_value": {
+                          "$type": 1,
+                          "$text": "match"
                         }
-                      ]
-                    }
+                      },
+                      {
+                        "$type": 1,
+                        "$text": "match"
+                      }
+                    ],
+                    "_delimiter": 0
                   }
                 }
               }
@@ -113019,7 +113234,10 @@
             },
             "_right": {
               "$type": 223,
-              "_function": 22,
+              "_function": {
+                "$type": 1,
+                "$text": "match"
+              },
               "_arguments": {
                 "$type": 176,
                 "_arguments": {
@@ -113027,20 +113245,21 @@
                   "_item": [
                     {
                       "$type": 231,
-                      "_name": 22,
-                      "_value": 22
-                    },
-                    22
-                  ],
-                  "_delimiter": 0,
-                  "$_layout": {
-                    "slots": [
-                      {
-                        "slot": "_item",
-                        "separator": 6
+                      "_name": {
+                        "$type": 1,
+                        "$text": "match"
+                      },
+                      "_value": {
+                        "$type": 1,
+                        "$text": "match"
                       }
-                    ]
-                  }
+                    },
+                    {
+                      "$type": 1,
+                      "$text": "match"
+                    }
+                  ],
+                  "_delimiter": 0
                 }
               }
             }
@@ -113081,7 +113300,10 @@
         },
         "_right": {
           "$type": 223,
-          "_function": 22,
+          "_function": {
+            "$type": 1,
+            "$text": "match"
+          },
           "_arguments": {
             "$type": 176,
             "_arguments": {
@@ -113089,20 +113311,21 @@
               "_item": [
                 {
                   "$type": 231,
-                  "_name": 22,
-                  "_value": 22
-                },
-                22
-              ],
-              "_delimiter": 0,
-              "$_layout": {
-                "slots": [
-                  {
-                    "slot": "_item",
-                    "separator": 6
+                  "_name": {
+                    "$type": 1,
+                    "$text": "match"
+                  },
+                  "_value": {
+                    "$type": 1,
+                    "$text": "match"
                   }
-                ]
-              }
+                },
+                {
+                  "$type": 1,
+                  "$text": "match"
+                }
+              ],
+              "_delimiter": 0
             }
           }
         }
@@ -113138,7 +113361,10 @@
       },
       "_right": {
         "$type": 223,
-        "_function": 22,
+        "_function": {
+          "$type": 1,
+          "$text": "match"
+        },
         "_arguments": {
           "$type": 176,
           "_arguments": {
@@ -113146,20 +113372,21 @@
             "_item": [
               {
                 "$type": 231,
-                "_name": 22,
-                "_value": 22
-              },
-              22
-            ],
-            "_delimiter": 0,
-            "$_layout": {
-              "slots": [
-                {
-                  "slot": "_item",
-                  "separator": 6
+                "_name": {
+                  "$type": 1,
+                  "$text": "match"
+                },
+                "_value": {
+                  "$type": 1,
+                  "$text": "match"
                 }
-              ]
-            }
+              },
+              {
+                "$type": 1,
+                "$text": "match"
+              }
+            ],
+            "_delimiter": 0
           }
         }
       }
@@ -113188,7 +113415,10 @@
     "pattern": "call",
     "input": {
       "$type": 223,
-      "_function": 22,
+      "_function": {
+        "$type": 1,
+        "$text": "match"
+      },
       "_arguments": {
         "$type": 176,
         "_arguments": {
@@ -113196,20 +113426,21 @@
           "_item": [
             {
               "$type": 231,
-              "_name": 22,
-              "_value": 22
-            },
-            22
-          ],
-          "_delimiter": 0,
-          "$_layout": {
-            "slots": [
-              {
-                "slot": "_item",
-                "separator": 6
+              "_name": {
+                "$type": 1,
+                "$text": "match"
+              },
+              "_value": {
+                "$type": 1,
+                "$text": "match"
               }
-            ]
-          }
+            },
+            {
+              "$type": 1,
+              "$text": "match"
+            }
+          ],
+          "_delimiter": 0
         }
       }
     },
@@ -113242,20 +113473,21 @@
         "_item": [
           {
             "$type": 231,
-            "_name": 22,
-            "_value": 22
-          },
-          22
-        ],
-        "_delimiter": 0,
-        "$_layout": {
-          "slots": [
-            {
-              "slot": "_item",
-              "separator": 6
+            "_name": {
+              "$type": 1,
+              "$text": "match"
+            },
+            "_value": {
+              "$type": 1,
+              "$text": "match"
             }
-          ]
-        }
+          },
+          {
+            "$type": 1,
+            "$text": "match"
+          }
+        ],
+        "_delimiter": 0
       }
     },
     "expectedOutput": "(match=match, match)",
@@ -113285,20 +113517,21 @@
       "_item": [
         {
           "$type": 231,
-          "_name": 22,
-          "_value": 22
-        },
-        22
-      ],
-      "_delimiter": 0,
-      "$_layout": {
-        "slots": [
-          {
-            "slot": "_item",
-            "separator": 6
+          "_name": {
+            "$type": 1,
+            "$text": "match"
+          },
+          "_value": {
+            "$type": 1,
+            "$text": "match"
           }
-        ]
-      }
+        },
+        {
+          "$type": 1,
+          "$text": "match"
+        }
+      ],
+      "_delimiter": 0
     },
     "expectedOutput": "match=match, match",
     "options": {
@@ -113324,8 +113557,14 @@
     "pattern": "keyword_argument",
     "input": {
       "$type": 231,
-      "_name": 22,
-      "_value": 22
+      "_name": {
+        "$type": 1,
+        "$text": "match"
+      },
+      "_value": {
+        "$type": 1,
+        "$text": "match"
+      }
     },
     "expectedOutput": "match=match",
     "options": {
@@ -124627,7 +124866,10 @@
                 "$type": 141,
                 "_content": {
                   "$type": 286,
-                  "_left": 22,
+                  "_left": {
+                    "$type": 1,
+                    "$text": "match"
+                  },
                   "_right": {
                     "$type": 286,
                     "_left": {
@@ -124650,7 +124892,10 @@
           "_subjects": {
             "$type": 260,
             "_subject": [
-              22
+              {
+                "$type": 1,
+                "$text": "match"
+              }
             ],
             "_delimiter": 0
           },
@@ -124753,7 +124998,10 @@
             "$type": 141,
             "_content": {
               "$type": 286,
-              "_left": 22,
+              "_left": {
+                "$type": 1,
+                "$text": "match"
+              },
               "_right": {
                 "$type": 286,
                 "_left": {
@@ -124847,7 +125095,10 @@
           "$type": 141,
           "_content": {
             "$type": 286,
-            "_left": 22,
+            "_left": {
+              "$type": 1,
+              "$text": "match"
+            },
             "_right": {
               "$type": 286,
               "_left": {
@@ -124934,7 +125185,10 @@
       "$type": 141,
       "_content": {
         "$type": 286,
-        "_left": 22,
+        "_left": {
+          "$type": 1,
+          "$text": "match"
+        },
         "_right": {
           "$type": 286,
           "_left": {
@@ -125010,7 +125264,10 @@
     "pattern": "assignment_eq",
     "input": {
       "$type": 286,
-      "_left": 22,
+      "_left": {
+        "$type": 1,
+        "$text": "match"
+      },
       "_right": {
         "$type": 286,
         "_left": {
@@ -125119,7 +125376,10 @@
       "_subjects": {
         "$type": 260,
         "_subject": [
-          22
+          {
+            "$type": 1,
+            "$text": "match"
+          }
         ],
         "_delimiter": 0
       },
@@ -125213,7 +125473,10 @@
     "input": {
       "$type": 260,
       "_subject": [
-        22
+        {
+          "$type": 1,
+          "$text": "match"
+        }
       ],
       "_delimiter": 0
     },
@@ -125748,7 +126011,10 @@
           "$type": 150,
           "_condition": {
             "$type": 142,
-            "_name": 22,
+            "_name": {
+              "$type": 1,
+              "$text": "match"
+            },
             "_value": {
               "$type": 223,
               "_function": {
@@ -125872,7 +126138,10 @@
       "$type": 150,
       "_condition": {
         "$type": 142,
-        "_name": 22,
+        "_name": {
+          "$type": 1,
+          "$text": "match"
+        },
         "_value": {
           "$type": 223,
           "_function": {
@@ -125991,7 +126260,10 @@
     "pattern": "named_expression",
     "input": {
       "$type": 142,
-      "_name": 22,
+      "_name": {
+        "$type": 1,
+        "$text": "match"
+      },
       "_value": {
         "$type": 223,
         "_function": {

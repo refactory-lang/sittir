@@ -1,6 +1,15 @@
 {
   "grammar": "python",
   "kinds": {
+    "_named_expression_lhs": {
+      "container": {
+        "kinds": [
+          "identifier"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
     "_simple_pattern": {
       "container": {
         "kinds": [

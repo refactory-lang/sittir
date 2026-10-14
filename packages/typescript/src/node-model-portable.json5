@@ -12,30 +12,7 @@
           "array_pattern",
           "non_null_expression"
         ],
-        "terminals": [
-          "declare",
-          "namespace",
-          "type",
-          "public",
-          "private",
-          "protected",
-          "override",
-          "readonly",
-          "module",
-          "any",
-          "number",
-          "boolean",
-          "string",
-          "symbol",
-          "export",
-          "object",
-          "new",
-          "get",
-          "set",
-          "async",
-          "static",
-          "let"
-        ],
+        "terminals": [],
         "list": false
       }
     },
@@ -1088,6 +1065,15 @@
           ]
         }
       ]
+    },
+    "arrow_function_parameter": {
+      "container": {
+        "kinds": [
+          "identifier"
+        ],
+        "terminals": [],
+        "list": false
+      }
     },
     "as_expression": {
       "vocab": "expression.cast.assertion",
@@ -10480,30 +10466,7 @@
           "array_pattern",
           "non_null_expression"
         ],
-        "terminals": [
-          "declare",
-          "namespace",
-          "type",
-          "public",
-          "private",
-          "protected",
-          "override",
-          "readonly",
-          "module",
-          "any",
-          "number",
-          "boolean",
-          "string",
-          "symbol",
-          "export",
-          "object",
-          "new",
-          "get",
-          "set",
-          "async",
-          "static",
-          "let"
-        ],
+        "terminals": [],
         "list": false
       }
     },

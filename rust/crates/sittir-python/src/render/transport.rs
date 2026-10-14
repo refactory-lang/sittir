@@ -49,6 +49,8 @@ pub enum AnyTransport {
     ExpressionStatement(ExpressionStatementTransport),
     #[kind(kind::NAMED_EXPRESSION)]
     NamedExpression(NamedExpressionTransport),
+    #[kind(kind::_NAMED_EXPRESSION_LHS)]
+    NamedExpressionLhs(NamedExpressionLhsTransport),
     #[kind(kind::RETURN_STATEMENT)]
     ReturnStatement(ReturnStatementTransport),
     #[kind(kind::DELETE_STATEMENT)]
@@ -239,7 +241,7 @@ pub enum AnyTransport {
     FormatSpecifier(FormatSpecifierTransport),
     #[kind(kind::TYPE_CONVERSION)]
     TypeConversion(TypeConversionTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::AWAIT)]
     Await(AwaitTransport),
@@ -439,18 +441,6 @@ pub enum AnyTransport {
     GtGt,
     #[kind(kind::ASSERT_KEYWORD)]
     AssertKeyword,
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::COLON_EQ)]
     ColonEq,
     #[kind(kind::RETURN_KEYWORD)]
@@ -473,8 +463,12 @@ pub enum AnyTransport {
     ElifKeyword,
     #[kind(kind::ELSE_KEYWORD)]
     ElseKeyword,
+    #[kind(kind::MATCH_KEYWORD)]
+    MatchKeyword,
     #[kind(kind::CASE_KEYWORD)]
     CaseKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
+    AsyncKeyword,
     #[kind(kind::FOR_KEYWORD)]
     ForKeyword,
     #[kind(kind::IN_KEYWORD)]
@@ -503,6 +497,10 @@ pub enum AnyTransport {
     GlobalKeyword,
     #[kind(kind::NONLOCAL_KEYWORD)]
     NonlocalKeyword,
+    #[kind(kind::EXEC_KEYWORD)]
+    ExecKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
+    TypeKeyword,
     #[kind(kind::EQ)]
     Eq,
     #[kind(kind::CLASS_KEYWORD)]
@@ -579,6 +577,10 @@ pub enum AnyTransport {
     Comma,
     #[kind(kind::BSLASH)]
     Bslash,
+    #[kind(kind::AWAIT_KEYWORD)]
+    AwaitKeyword,
+    #[kind(kind::PRINT_KEYWORD)]
+    PrintKeyword,
     #[kind(kind::LT)]
     Lt,
     #[kind(kind::LT_EQ)]
@@ -620,6 +622,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::AssertStatement(t) => t.prepare(ctx),
             AnyTransport::ExpressionStatement(t) => t.prepare(ctx),
             AnyTransport::NamedExpression(t) => t.prepare(ctx),
+            AnyTransport::NamedExpressionLhs(t) => t.prepare(ctx),
             AnyTransport::ReturnStatement(t) => t.prepare(ctx),
             AnyTransport::DeleteStatement(t) => t.prepare(ctx),
             AnyTransport::RaiseStatement(t) => t.prepare(ctx),
@@ -810,12 +813,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Star => Ok(()),
             AnyTransport::GtGt => Ok(()),
             AnyTransport::AssertKeyword => Ok(()),
-            AnyTransport::PrintKeyword => Ok(()),
-            AnyTransport::ExecKeyword => Ok(()),
-            AnyTransport::AsyncKeyword => Ok(()),
-            AnyTransport::AwaitKeyword => Ok(()),
-            AnyTransport::TypeKeyword => Ok(()),
-            AnyTransport::MatchKeyword => Ok(()),
             AnyTransport::ColonEq => Ok(()),
             AnyTransport::ReturnKeyword => Ok(()),
             AnyTransport::DelKeyword => Ok(()),
@@ -827,7 +824,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Colon => Ok(()),
             AnyTransport::ElifKeyword => Ok(()),
             AnyTransport::ElseKeyword => Ok(()),
+            AnyTransport::MatchKeyword => Ok(()),
             AnyTransport::CaseKeyword => Ok(()),
+            AnyTransport::AsyncKeyword => Ok(()),
             AnyTransport::ForKeyword => Ok(()),
             AnyTransport::InKeyword => Ok(()),
             AnyTransport::WhileKeyword => Ok(()),
@@ -842,6 +841,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::StarStar => Ok(()),
             AnyTransport::GlobalKeyword => Ok(()),
             AnyTransport::NonlocalKeyword => Ok(()),
+            AnyTransport::ExecKeyword => Ok(()),
+            AnyTransport::TypeKeyword => Ok(()),
             AnyTransport::Eq => Ok(()),
             AnyTransport::ClassKeyword => Ok(()),
             AnyTransport::Lbrack => Ok(()),
@@ -880,6 +881,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::YieldKeyword => Ok(()),
             AnyTransport::Comma => Ok(()),
             AnyTransport::Bslash => Ok(()),
+            AnyTransport::AwaitKeyword => Ok(()),
+            AnyTransport::PrintKeyword => Ok(()),
             AnyTransport::Lt => Ok(()),
             AnyTransport::LtEq => Ok(()),
             AnyTransport::EqEq => Ok(()),
@@ -909,6 +912,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::AssertStatement(t) => t.gap_edges(),
             AnyTransport::ExpressionStatement(t) => t.gap_edges(),
             AnyTransport::NamedExpression(t) => t.gap_edges(),
+            AnyTransport::NamedExpressionLhs(t) => t.gap_edges(),
             AnyTransport::ReturnStatement(t) => t.gap_edges(),
             AnyTransport::DeleteStatement(t) => t.gap_edges(),
             AnyTransport::RaiseStatement(t) => t.gap_edges(),
@@ -1099,12 +1103,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Star => None,
             AnyTransport::GtGt => None,
             AnyTransport::AssertKeyword => None,
-            AnyTransport::PrintKeyword => None,
-            AnyTransport::ExecKeyword => None,
-            AnyTransport::AsyncKeyword => None,
-            AnyTransport::AwaitKeyword => None,
-            AnyTransport::TypeKeyword => None,
-            AnyTransport::MatchKeyword => None,
             AnyTransport::ColonEq => None,
             AnyTransport::ReturnKeyword => None,
             AnyTransport::DelKeyword => None,
@@ -1116,7 +1114,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Colon => None,
             AnyTransport::ElifKeyword => None,
             AnyTransport::ElseKeyword => None,
+            AnyTransport::MatchKeyword => None,
             AnyTransport::CaseKeyword => None,
+            AnyTransport::AsyncKeyword => None,
             AnyTransport::ForKeyword => None,
             AnyTransport::InKeyword => None,
             AnyTransport::WhileKeyword => None,
@@ -1131,6 +1131,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::StarStar => None,
             AnyTransport::GlobalKeyword => None,
             AnyTransport::NonlocalKeyword => None,
+            AnyTransport::ExecKeyword => None,
+            AnyTransport::TypeKeyword => None,
             AnyTransport::Eq => None,
             AnyTransport::ClassKeyword => None,
             AnyTransport::Lbrack => None,
@@ -1169,6 +1171,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::YieldKeyword => None,
             AnyTransport::Comma => None,
             AnyTransport::Bslash => None,
+            AnyTransport::AwaitKeyword => None,
+            AnyTransport::PrintKeyword => None,
             AnyTransport::Lt => None,
             AnyTransport::LtEq => None,
             AnyTransport::EqEq => None,
@@ -1198,6 +1202,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::AssertStatement(t) => t.snapshot_edge(),
             AnyTransport::ExpressionStatement(t) => t.snapshot_edge(),
             AnyTransport::NamedExpression(t) => t.snapshot_edge(),
+            AnyTransport::NamedExpressionLhs(t) => t.snapshot_edge(),
             AnyTransport::ReturnStatement(t) => t.snapshot_edge(),
             AnyTransport::DeleteStatement(t) => t.snapshot_edge(),
             AnyTransport::RaiseStatement(t) => t.snapshot_edge(),
@@ -1388,12 +1393,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Star => None,
             AnyTransport::GtGt => None,
             AnyTransport::AssertKeyword => None,
-            AnyTransport::PrintKeyword => None,
-            AnyTransport::ExecKeyword => None,
-            AnyTransport::AsyncKeyword => None,
-            AnyTransport::AwaitKeyword => None,
-            AnyTransport::TypeKeyword => None,
-            AnyTransport::MatchKeyword => None,
             AnyTransport::ColonEq => None,
             AnyTransport::ReturnKeyword => None,
             AnyTransport::DelKeyword => None,
@@ -1405,7 +1404,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Colon => None,
             AnyTransport::ElifKeyword => None,
             AnyTransport::ElseKeyword => None,
+            AnyTransport::MatchKeyword => None,
             AnyTransport::CaseKeyword => None,
+            AnyTransport::AsyncKeyword => None,
             AnyTransport::ForKeyword => None,
             AnyTransport::InKeyword => None,
             AnyTransport::WhileKeyword => None,
@@ -1420,6 +1421,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::StarStar => None,
             AnyTransport::GlobalKeyword => None,
             AnyTransport::NonlocalKeyword => None,
+            AnyTransport::ExecKeyword => None,
+            AnyTransport::TypeKeyword => None,
             AnyTransport::Eq => None,
             AnyTransport::ClassKeyword => None,
             AnyTransport::Lbrack => None,
@@ -1458,6 +1461,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::YieldKeyword => None,
             AnyTransport::Comma => None,
             AnyTransport::Bslash => None,
+            AnyTransport::AwaitKeyword => None,
+            AnyTransport::PrintKeyword => None,
             AnyTransport::Lt => None,
             AnyTransport::LtEq => None,
             AnyTransport::EqEq => None,
@@ -1487,6 +1492,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::AssertStatement(t) => t.source_separator(ctx),
             AnyTransport::ExpressionStatement(t) => t.source_separator(ctx),
             AnyTransport::NamedExpression(t) => t.source_separator(ctx),
+            AnyTransport::NamedExpressionLhs(t) => t.source_separator(ctx),
             AnyTransport::ReturnStatement(t) => t.source_separator(ctx),
             AnyTransport::DeleteStatement(t) => t.source_separator(ctx),
             AnyTransport::RaiseStatement(t) => t.source_separator(ctx),
@@ -1677,12 +1683,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Star => None,
             AnyTransport::GtGt => None,
             AnyTransport::AssertKeyword => None,
-            AnyTransport::PrintKeyword => None,
-            AnyTransport::ExecKeyword => None,
-            AnyTransport::AsyncKeyword => None,
-            AnyTransport::AwaitKeyword => None,
-            AnyTransport::TypeKeyword => None,
-            AnyTransport::MatchKeyword => None,
             AnyTransport::ColonEq => None,
             AnyTransport::ReturnKeyword => None,
             AnyTransport::DelKeyword => None,
@@ -1694,7 +1694,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Colon => None,
             AnyTransport::ElifKeyword => None,
             AnyTransport::ElseKeyword => None,
+            AnyTransport::MatchKeyword => None,
             AnyTransport::CaseKeyword => None,
+            AnyTransport::AsyncKeyword => None,
             AnyTransport::ForKeyword => None,
             AnyTransport::InKeyword => None,
             AnyTransport::WhileKeyword => None,
@@ -1709,6 +1711,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::StarStar => None,
             AnyTransport::GlobalKeyword => None,
             AnyTransport::NonlocalKeyword => None,
+            AnyTransport::ExecKeyword => None,
+            AnyTransport::TypeKeyword => None,
             AnyTransport::Eq => None,
             AnyTransport::ClassKeyword => None,
             AnyTransport::Lbrack => None,
@@ -1747,6 +1751,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::YieldKeyword => None,
             AnyTransport::Comma => None,
             AnyTransport::Bslash => None,
+            AnyTransport::AwaitKeyword => None,
+            AnyTransport::PrintKeyword => None,
             AnyTransport::Lt => None,
             AnyTransport::LtEq => None,
             AnyTransport::EqEq => None,
@@ -2442,7 +2448,7 @@ impl ::sittir_core::render::Render for SuiteTransport {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum ParameterTransport {
-    #[kind(kind::IDENTIFIER, kind::TYPE_KEYWORD, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::MATCH_KEYWORD)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::TYPED_PARAMETER)]
     TypedParameter(TypedParameterTransport),
@@ -2554,20 +2560,8 @@ impl ::sittir_core::render::Render for ParameterTransport {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum PatternTransport {
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::SUBSCRIPT)]
     Subscript(SubscriptTransport),
     #[kind(kind::ATTRIBUTE)]
@@ -2586,12 +2580,6 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             PatternTransport::Identifier(t) => t.prepare(ctx),
-            PatternTransport::PrintKeyword => Ok(()),
-            PatternTransport::ExecKeyword => Ok(()),
-            PatternTransport::AsyncKeyword => Ok(()),
-            PatternTransport::AwaitKeyword => Ok(()),
-            PatternTransport::TypeKeyword => Ok(()),
-            PatternTransport::MatchKeyword => Ok(()),
             PatternTransport::Subscript(t) => t.prepare(ctx),
             PatternTransport::Attribute(t) => t.prepare(ctx),
             PatternTransport::ListSplatPattern(t) => t.prepare(ctx),
@@ -2603,12 +2591,6 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             PatternTransport::Identifier(t) => t.gap_edges(),
-            PatternTransport::PrintKeyword => None,
-            PatternTransport::ExecKeyword => None,
-            PatternTransport::AsyncKeyword => None,
-            PatternTransport::AwaitKeyword => None,
-            PatternTransport::TypeKeyword => None,
-            PatternTransport::MatchKeyword => None,
             PatternTransport::Subscript(t) => t.gap_edges(),
             PatternTransport::Attribute(t) => t.gap_edges(),
             PatternTransport::ListSplatPattern(t) => t.gap_edges(),
@@ -2620,12 +2602,6 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
             PatternTransport::Identifier(t) => t.snapshot_edge(),
-            PatternTransport::PrintKeyword => None,
-            PatternTransport::ExecKeyword => None,
-            PatternTransport::AsyncKeyword => None,
-            PatternTransport::AwaitKeyword => None,
-            PatternTransport::TypeKeyword => None,
-            PatternTransport::MatchKeyword => None,
             PatternTransport::Subscript(t) => t.snapshot_edge(),
             PatternTransport::Attribute(t) => t.snapshot_edge(),
             PatternTransport::ListSplatPattern(t) => t.snapshot_edge(),
@@ -2637,12 +2613,6 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
             PatternTransport::Identifier(t) => t.source_separator(ctx),
-            PatternTransport::PrintKeyword => None,
-            PatternTransport::ExecKeyword => None,
-            PatternTransport::AsyncKeyword => None,
-            PatternTransport::AwaitKeyword => None,
-            PatternTransport::TypeKeyword => None,
-            PatternTransport::MatchKeyword => None,
             PatternTransport::Subscript(t) => t.source_separator(ctx),
             PatternTransport::Attribute(t) => t.source_separator(ctx),
             PatternTransport::ListSplatPattern(t) => t.source_separator(ctx),
@@ -2660,12 +2630,6 @@ impl ::sittir_core::view::KindOf for PatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::Subscript(inner) => inner.kind_in(kinds),
             Self::Attribute(inner) => inner.kind_in(kinds),
             Self::ListSplatPattern(inner) => inner.kind_in(kinds),
@@ -2693,7 +2657,7 @@ pub enum ExpressionTransport {
     BooleanOperator(BooleanOperatorTransport),
     #[kind(kind::LAMBDA)]
     Lambda(LambdaTransport),
-    #[kind(kind::AWAIT, kind::BINARY_OPERATOR, kind::IDENTIFIER, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::TYPE_KEYWORD, kind::MATCH_KEYWORD, kind::STRING, kind::CONCATENATED_STRING, kind::INTEGER_HEX, kind::INTEGER_OCTAL, kind::INTEGER_BINARY, kind::INTEGER_DECIMAL_LONG, kind::INTEGER_DECIMAL_IMAGINARY, kind::INTEGER_DECIMAL_PLAIN, kind::FLOAT_POINT, kind::FLOAT_LEADING_POINT, kind::FLOAT_SCIENTIFIC, kind::TRUE, kind::FALSE, kind::NONE, kind::UNARY_OPERATOR, kind::ATTRIBUTE, kind::SUBSCRIPT, kind::CALL, kind::LIST, kind::LIST_COMPREHENSION, kind::DICTIONARY, kind::DICTIONARY_COMPREHENSION, kind::SET, kind::SET_COMPREHENSION, kind::TUPLE, kind::PARENTHESIZED_EXPRESSION, kind::GENERATOR_EXPRESSION, kind::ELLIPSIS, kind::LIST_SPLAT_PATTERN, kind::PRIMARY_EXPRESSION, kind::INTEGER, kind::FLOAT)]
+    #[kind(kind::AWAIT, kind::BINARY_OPERATOR, kind::IDENTIFIER, kind::STRING, kind::CONCATENATED_STRING, kind::INTEGER_HEX, kind::INTEGER_OCTAL, kind::INTEGER_BINARY, kind::INTEGER_DECIMAL_LONG, kind::INTEGER_DECIMAL_IMAGINARY, kind::INTEGER_DECIMAL_PLAIN, kind::FLOAT_POINT, kind::FLOAT_LEADING_POINT, kind::FLOAT_SCIENTIFIC, kind::TRUE, kind::FALSE, kind::NONE, kind::UNARY_OPERATOR, kind::ATTRIBUTE, kind::SUBSCRIPT, kind::CALL, kind::LIST, kind::LIST_COMPREHENSION, kind::DICTIONARY, kind::DICTIONARY_COMPREHENSION, kind::SET, kind::SET_COMPREHENSION, kind::TUPLE, kind::PARENTHESIZED_EXPRESSION, kind::GENERATOR_EXPRESSION, kind::ELLIPSIS, kind::LIST_SPLAT_PATTERN, kind::PRIMARY_EXPRESSION, kind::INTEGER, kind::FLOAT, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     PrimaryExpression(PrimaryExpressionTransport),
     #[kind(kind::CONDITIONAL_EXPRESSION)]
     ConditionalExpression(ConditionalExpressionTransport),
@@ -2792,20 +2756,8 @@ pub enum PrimaryExpressionTransport {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::STRING)]
     String(StringTransport),
     #[kind(kind::CONCATENATED_STRING)]
@@ -2864,12 +2816,6 @@ impl ::sittir_core::prepare::Prepare for PrimaryExpressionTransport {
             PrimaryExpressionTransport::Await(t) => t.prepare(ctx),
             PrimaryExpressionTransport::BinaryOperator(t) => t.prepare(ctx),
             PrimaryExpressionTransport::Identifier(t) => t.prepare(ctx),
-            PrimaryExpressionTransport::PrintKeyword => Ok(()),
-            PrimaryExpressionTransport::ExecKeyword => Ok(()),
-            PrimaryExpressionTransport::AsyncKeyword => Ok(()),
-            PrimaryExpressionTransport::AwaitKeyword => Ok(()),
-            PrimaryExpressionTransport::TypeKeyword => Ok(()),
-            PrimaryExpressionTransport::MatchKeyword => Ok(()),
             PrimaryExpressionTransport::String(t) => t.prepare(ctx),
             PrimaryExpressionTransport::ConcatenatedString(t) => t.prepare(ctx),
             PrimaryExpressionTransport::Integer(t) => t.prepare(ctx),
@@ -2900,12 +2846,6 @@ impl ::sittir_core::prepare::Prepare for PrimaryExpressionTransport {
             PrimaryExpressionTransport::Await(t) => t.gap_edges(),
             PrimaryExpressionTransport::BinaryOperator(t) => t.gap_edges(),
             PrimaryExpressionTransport::Identifier(t) => t.gap_edges(),
-            PrimaryExpressionTransport::PrintKeyword => None,
-            PrimaryExpressionTransport::ExecKeyword => None,
-            PrimaryExpressionTransport::AsyncKeyword => None,
-            PrimaryExpressionTransport::AwaitKeyword => None,
-            PrimaryExpressionTransport::TypeKeyword => None,
-            PrimaryExpressionTransport::MatchKeyword => None,
             PrimaryExpressionTransport::String(t) => t.gap_edges(),
             PrimaryExpressionTransport::ConcatenatedString(t) => t.gap_edges(),
             PrimaryExpressionTransport::Integer(t) => t.gap_edges(),
@@ -2936,12 +2876,6 @@ impl ::sittir_core::prepare::Prepare for PrimaryExpressionTransport {
             PrimaryExpressionTransport::Await(t) => t.snapshot_edge(),
             PrimaryExpressionTransport::BinaryOperator(t) => t.snapshot_edge(),
             PrimaryExpressionTransport::Identifier(t) => t.snapshot_edge(),
-            PrimaryExpressionTransport::PrintKeyword => None,
-            PrimaryExpressionTransport::ExecKeyword => None,
-            PrimaryExpressionTransport::AsyncKeyword => None,
-            PrimaryExpressionTransport::AwaitKeyword => None,
-            PrimaryExpressionTransport::TypeKeyword => None,
-            PrimaryExpressionTransport::MatchKeyword => None,
             PrimaryExpressionTransport::String(t) => t.snapshot_edge(),
             PrimaryExpressionTransport::ConcatenatedString(t) => t.snapshot_edge(),
             PrimaryExpressionTransport::Integer(t) => t.snapshot_edge(),
@@ -2972,12 +2906,6 @@ impl ::sittir_core::prepare::Prepare for PrimaryExpressionTransport {
             PrimaryExpressionTransport::Await(t) => t.source_separator(ctx),
             PrimaryExpressionTransport::BinaryOperator(t) => t.source_separator(ctx),
             PrimaryExpressionTransport::Identifier(t) => t.source_separator(ctx),
-            PrimaryExpressionTransport::PrintKeyword => None,
-            PrimaryExpressionTransport::ExecKeyword => None,
-            PrimaryExpressionTransport::AsyncKeyword => None,
-            PrimaryExpressionTransport::AwaitKeyword => None,
-            PrimaryExpressionTransport::TypeKeyword => None,
-            PrimaryExpressionTransport::MatchKeyword => None,
             PrimaryExpressionTransport::String(t) => t.source_separator(ctx),
             PrimaryExpressionTransport::ConcatenatedString(t) => t.source_separator(ctx),
             PrimaryExpressionTransport::Integer(t) => t.source_separator(ctx),
@@ -3014,12 +2942,6 @@ impl ::sittir_core::view::KindOf for PrimaryExpressionTransport {
             Self::Await(inner) => inner.kind_in(kinds),
             Self::BinaryOperator(inner) => inner.kind_in(kinds),
             Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::String(inner) => inner.kind_in(kinds),
             Self::ConcatenatedString(inner) => inner.kind_in(kinds),
             Self::Integer(inner) => inner.kind_in(kinds),
@@ -3052,12 +2974,6 @@ fn primary_expression_transport_to_any(t: PrimaryExpressionTransport) -> AnyTran
         PrimaryExpressionTransport::Await(inner) => AnyTransport::Await(inner),
         PrimaryExpressionTransport::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
         PrimaryExpressionTransport::Identifier(inner) => AnyTransport::Identifier(inner),
-        PrimaryExpressionTransport::PrintKeyword => AnyTransport::PrintKeyword,
-        PrimaryExpressionTransport::ExecKeyword => AnyTransport::ExecKeyword,
-        PrimaryExpressionTransport::AsyncKeyword => AnyTransport::AsyncKeyword,
-        PrimaryExpressionTransport::AwaitKeyword => AnyTransport::AwaitKeyword,
-        PrimaryExpressionTransport::TypeKeyword => AnyTransport::TypeKeyword,
-        PrimaryExpressionTransport::MatchKeyword => AnyTransport::MatchKeyword,
         PrimaryExpressionTransport::String(inner) => AnyTransport::String(inner),
         PrimaryExpressionTransport::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
         PrimaryExpressionTransport::Integer(inner) => integer_transport_to_any(inner),
@@ -3635,7 +3551,7 @@ pub enum ExpressionStatementContentTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -3705,18 +3621,6 @@ pub enum ExpressionStatementContentTransportSlot {
     AugmentedAssignment(AugmentedAssignmentTransport),
     #[kind(kind::YIELD)]
     Yield(YieldTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -3777,12 +3681,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementContentTransportSlot
             ExpressionStatementContentTransportSlot::AssignmentTyped(t) => t.prepare(ctx),
             ExpressionStatementContentTransportSlot::AugmentedAssignment(t) => t.prepare(ctx),
             ExpressionStatementContentTransportSlot::Yield(t) => t.prepare(ctx),
-            ExpressionStatementContentTransportSlot::PrintKeyword => Ok(()),
-            ExpressionStatementContentTransportSlot::ExecKeyword => Ok(()),
-            ExpressionStatementContentTransportSlot::AsyncKeyword => Ok(()),
-            ExpressionStatementContentTransportSlot::AwaitKeyword => Ok(()),
-            ExpressionStatementContentTransportSlot::TypeKeyword => Ok(()),
-            ExpressionStatementContentTransportSlot::MatchKeyword => Ok(()),
             ExpressionStatementContentTransportSlot::True(_) => Ok(()),
             ExpressionStatementContentTransportSlot::False(_) => Ok(()),
             ExpressionStatementContentTransportSlot::None(_) => Ok(()),
@@ -3833,12 +3731,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementContentTransportSlot
             ExpressionStatementContentTransportSlot::AssignmentTyped(t) => t.gap_edges(),
             ExpressionStatementContentTransportSlot::AugmentedAssignment(t) => t.gap_edges(),
             ExpressionStatementContentTransportSlot::Yield(t) => t.gap_edges(),
-            ExpressionStatementContentTransportSlot::PrintKeyword => None,
-            ExpressionStatementContentTransportSlot::ExecKeyword => None,
-            ExpressionStatementContentTransportSlot::AsyncKeyword => None,
-            ExpressionStatementContentTransportSlot::AwaitKeyword => None,
-            ExpressionStatementContentTransportSlot::TypeKeyword => None,
-            ExpressionStatementContentTransportSlot::MatchKeyword => None,
             ExpressionStatementContentTransportSlot::True(edges) => Some(edges),
             ExpressionStatementContentTransportSlot::False(edges) => Some(edges),
             ExpressionStatementContentTransportSlot::None(edges) => Some(edges),
@@ -3889,12 +3781,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementContentTransportSlot
             ExpressionStatementContentTransportSlot::AssignmentTyped(t) => t.snapshot_edge(),
             ExpressionStatementContentTransportSlot::AugmentedAssignment(t) => t.snapshot_edge(),
             ExpressionStatementContentTransportSlot::Yield(t) => t.snapshot_edge(),
-            ExpressionStatementContentTransportSlot::PrintKeyword => None,
-            ExpressionStatementContentTransportSlot::ExecKeyword => None,
-            ExpressionStatementContentTransportSlot::AsyncKeyword => None,
-            ExpressionStatementContentTransportSlot::AwaitKeyword => None,
-            ExpressionStatementContentTransportSlot::TypeKeyword => None,
-            ExpressionStatementContentTransportSlot::MatchKeyword => None,
             ExpressionStatementContentTransportSlot::True(_) => None,
             ExpressionStatementContentTransportSlot::False(_) => None,
             ExpressionStatementContentTransportSlot::None(_) => None,
@@ -3945,12 +3831,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementContentTransportSlot
             ExpressionStatementContentTransportSlot::AssignmentTyped(t) => t.source_separator(ctx),
             ExpressionStatementContentTransportSlot::AugmentedAssignment(t) => t.source_separator(ctx),
             ExpressionStatementContentTransportSlot::Yield(t) => t.source_separator(ctx),
-            ExpressionStatementContentTransportSlot::PrintKeyword => None,
-            ExpressionStatementContentTransportSlot::ExecKeyword => None,
-            ExpressionStatementContentTransportSlot::AsyncKeyword => None,
-            ExpressionStatementContentTransportSlot::AwaitKeyword => None,
-            ExpressionStatementContentTransportSlot::TypeKeyword => None,
-            ExpressionStatementContentTransportSlot::MatchKeyword => None,
             ExpressionStatementContentTransportSlot::True(_) => None,
             ExpressionStatementContentTransportSlot::False(_) => None,
             ExpressionStatementContentTransportSlot::None(_) => None,
@@ -4007,12 +3887,6 @@ impl ::sittir_core::view::KindOf for ExpressionStatementContentTransportSlot {
             Self::AssignmentTyped(inner) => inner.kind_in(kinds),
             Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -4066,122 +3940,11 @@ impl ::sittir_core::render::Render for ExpressionStatementContentTransportSlot {
             ExpressionStatementContentTransportSlot::AssignmentTyped(inner) => inner.render(w),
             ExpressionStatementContentTransportSlot::AugmentedAssignment(inner) => inner.render(w),
             ExpressionStatementContentTransportSlot::Yield(inner) => inner.render(w),
-            ExpressionStatementContentTransportSlot::PrintKeyword => render_print_keyword(w),
-            ExpressionStatementContentTransportSlot::ExecKeyword => render_exec_keyword(w),
-            ExpressionStatementContentTransportSlot::AsyncKeyword => render_async_keyword(w),
-            ExpressionStatementContentTransportSlot::AwaitKeyword => render_await_keyword(w),
-            ExpressionStatementContentTransportSlot::TypeKeyword => render_type_keyword(w),
-            ExpressionStatementContentTransportSlot::MatchKeyword => render_match_keyword(w),
             ExpressionStatementContentTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             ExpressionStatementContentTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             ExpressionStatementContentTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
             ExpressionStatementContentTransportSlot::Ellipsis(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(64), edges, w, render_ellipsis),
             ExpressionStatementContentTransportSlot::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum NamedExpressionNameTransportSlot {
-    #[kind(kind::IDENTIFIER)]
-    Identifier(IdentifierTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
-    #[transport(verbatim)]
-    Verbatim(VerbatimTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for NamedExpressionNameTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            NamedExpressionNameTransportSlot::Identifier(t) => t.prepare(ctx),
-            NamedExpressionNameTransportSlot::PrintKeyword => Ok(()),
-            NamedExpressionNameTransportSlot::ExecKeyword => Ok(()),
-            NamedExpressionNameTransportSlot::AsyncKeyword => Ok(()),
-            NamedExpressionNameTransportSlot::AwaitKeyword => Ok(()),
-            NamedExpressionNameTransportSlot::TypeKeyword => Ok(()),
-            NamedExpressionNameTransportSlot::MatchKeyword => Ok(()),
-            NamedExpressionNameTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            NamedExpressionNameTransportSlot::Identifier(t) => t.gap_edges(),
-            NamedExpressionNameTransportSlot::PrintKeyword => None,
-            NamedExpressionNameTransportSlot::ExecKeyword => None,
-            NamedExpressionNameTransportSlot::AsyncKeyword => None,
-            NamedExpressionNameTransportSlot::AwaitKeyword => None,
-            NamedExpressionNameTransportSlot::TypeKeyword => None,
-            NamedExpressionNameTransportSlot::MatchKeyword => None,
-            NamedExpressionNameTransportSlot::Verbatim(t) => t.gap_edges(),
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            NamedExpressionNameTransportSlot::Identifier(t) => t.snapshot_edge(),
-            NamedExpressionNameTransportSlot::PrintKeyword => None,
-            NamedExpressionNameTransportSlot::ExecKeyword => None,
-            NamedExpressionNameTransportSlot::AsyncKeyword => None,
-            NamedExpressionNameTransportSlot::AwaitKeyword => None,
-            NamedExpressionNameTransportSlot::TypeKeyword => None,
-            NamedExpressionNameTransportSlot::MatchKeyword => None,
-            NamedExpressionNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
-        match self {
-            NamedExpressionNameTransportSlot::Identifier(t) => t.source_separator(ctx),
-            NamedExpressionNameTransportSlot::PrintKeyword => None,
-            NamedExpressionNameTransportSlot::ExecKeyword => None,
-            NamedExpressionNameTransportSlot::AsyncKeyword => None,
-            NamedExpressionNameTransportSlot::AwaitKeyword => None,
-            NamedExpressionNameTransportSlot::TypeKeyword => None,
-            NamedExpressionNameTransportSlot::MatchKeyword => None,
-            NamedExpressionNameTransportSlot::Verbatim(t) => t.source_separator(ctx),
-        }
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::view::KindOf for NamedExpressionNameTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for NamedExpressionNameTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            NamedExpressionNameTransportSlot::Identifier(inner) => inner.render(w),
-            NamedExpressionNameTransportSlot::PrintKeyword => render_print_keyword(w),
-            NamedExpressionNameTransportSlot::ExecKeyword => render_exec_keyword(w),
-            NamedExpressionNameTransportSlot::AsyncKeyword => render_async_keyword(w),
-            NamedExpressionNameTransportSlot::AwaitKeyword => render_await_keyword(w),
-            NamedExpressionNameTransportSlot::TypeKeyword => render_type_keyword(w),
-            NamedExpressionNameTransportSlot::MatchKeyword => render_match_keyword(w),
-            NamedExpressionNameTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -4201,7 +3964,7 @@ pub enum ReturnStatementExpressionsTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -4261,18 +4024,6 @@ pub enum ReturnStatementExpressionsTransportSlot {
     AsPattern(AsPatternTransport),
     #[kind(kind::EXPRESSION_LIST)]
     ExpressionList(ExpressionListTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -4328,12 +4079,6 @@ impl ::sittir_core::prepare::Prepare for ReturnStatementExpressionsTransportSlot
             ReturnStatementExpressionsTransportSlot::NamedExpression(t) => t.prepare(ctx),
             ReturnStatementExpressionsTransportSlot::AsPattern(t) => t.prepare(ctx),
             ReturnStatementExpressionsTransportSlot::ExpressionList(t) => t.prepare(ctx),
-            ReturnStatementExpressionsTransportSlot::PrintKeyword => Ok(()),
-            ReturnStatementExpressionsTransportSlot::ExecKeyword => Ok(()),
-            ReturnStatementExpressionsTransportSlot::AsyncKeyword => Ok(()),
-            ReturnStatementExpressionsTransportSlot::AwaitKeyword => Ok(()),
-            ReturnStatementExpressionsTransportSlot::TypeKeyword => Ok(()),
-            ReturnStatementExpressionsTransportSlot::MatchKeyword => Ok(()),
             ReturnStatementExpressionsTransportSlot::True(_) => Ok(()),
             ReturnStatementExpressionsTransportSlot::False(_) => Ok(()),
             ReturnStatementExpressionsTransportSlot::None(_) => Ok(()),
@@ -4379,12 +4124,6 @@ impl ::sittir_core::prepare::Prepare for ReturnStatementExpressionsTransportSlot
             ReturnStatementExpressionsTransportSlot::NamedExpression(t) => t.gap_edges(),
             ReturnStatementExpressionsTransportSlot::AsPattern(t) => t.gap_edges(),
             ReturnStatementExpressionsTransportSlot::ExpressionList(t) => t.gap_edges(),
-            ReturnStatementExpressionsTransportSlot::PrintKeyword => None,
-            ReturnStatementExpressionsTransportSlot::ExecKeyword => None,
-            ReturnStatementExpressionsTransportSlot::AsyncKeyword => None,
-            ReturnStatementExpressionsTransportSlot::AwaitKeyword => None,
-            ReturnStatementExpressionsTransportSlot::TypeKeyword => None,
-            ReturnStatementExpressionsTransportSlot::MatchKeyword => None,
             ReturnStatementExpressionsTransportSlot::True(edges) => Some(edges),
             ReturnStatementExpressionsTransportSlot::False(edges) => Some(edges),
             ReturnStatementExpressionsTransportSlot::None(edges) => Some(edges),
@@ -4430,12 +4169,6 @@ impl ::sittir_core::prepare::Prepare for ReturnStatementExpressionsTransportSlot
             ReturnStatementExpressionsTransportSlot::NamedExpression(t) => t.snapshot_edge(),
             ReturnStatementExpressionsTransportSlot::AsPattern(t) => t.snapshot_edge(),
             ReturnStatementExpressionsTransportSlot::ExpressionList(t) => t.snapshot_edge(),
-            ReturnStatementExpressionsTransportSlot::PrintKeyword => None,
-            ReturnStatementExpressionsTransportSlot::ExecKeyword => None,
-            ReturnStatementExpressionsTransportSlot::AsyncKeyword => None,
-            ReturnStatementExpressionsTransportSlot::AwaitKeyword => None,
-            ReturnStatementExpressionsTransportSlot::TypeKeyword => None,
-            ReturnStatementExpressionsTransportSlot::MatchKeyword => None,
             ReturnStatementExpressionsTransportSlot::True(_) => None,
             ReturnStatementExpressionsTransportSlot::False(_) => None,
             ReturnStatementExpressionsTransportSlot::None(_) => None,
@@ -4481,12 +4214,6 @@ impl ::sittir_core::prepare::Prepare for ReturnStatementExpressionsTransportSlot
             ReturnStatementExpressionsTransportSlot::NamedExpression(t) => t.source_separator(ctx),
             ReturnStatementExpressionsTransportSlot::AsPattern(t) => t.source_separator(ctx),
             ReturnStatementExpressionsTransportSlot::ExpressionList(t) => t.source_separator(ctx),
-            ReturnStatementExpressionsTransportSlot::PrintKeyword => None,
-            ReturnStatementExpressionsTransportSlot::ExecKeyword => None,
-            ReturnStatementExpressionsTransportSlot::AsyncKeyword => None,
-            ReturnStatementExpressionsTransportSlot::AwaitKeyword => None,
-            ReturnStatementExpressionsTransportSlot::TypeKeyword => None,
-            ReturnStatementExpressionsTransportSlot::MatchKeyword => None,
             ReturnStatementExpressionsTransportSlot::True(_) => None,
             ReturnStatementExpressionsTransportSlot::False(_) => None,
             ReturnStatementExpressionsTransportSlot::None(_) => None,
@@ -4538,12 +4265,6 @@ impl ::sittir_core::view::KindOf for ReturnStatementExpressionsTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::ExpressionList(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -4592,12 +4313,6 @@ impl ::sittir_core::render::Render for ReturnStatementExpressionsTransportSlot {
             ReturnStatementExpressionsTransportSlot::NamedExpression(inner) => inner.render(w),
             ReturnStatementExpressionsTransportSlot::AsPattern(inner) => inner.render(w),
             ReturnStatementExpressionsTransportSlot::ExpressionList(inner) => inner.render(w),
-            ReturnStatementExpressionsTransportSlot::PrintKeyword => render_print_keyword(w),
-            ReturnStatementExpressionsTransportSlot::ExecKeyword => render_exec_keyword(w),
-            ReturnStatementExpressionsTransportSlot::AsyncKeyword => render_async_keyword(w),
-            ReturnStatementExpressionsTransportSlot::AwaitKeyword => render_await_keyword(w),
-            ReturnStatementExpressionsTransportSlot::TypeKeyword => render_type_keyword(w),
-            ReturnStatementExpressionsTransportSlot::MatchKeyword => render_match_keyword(w),
             ReturnStatementExpressionsTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             ReturnStatementExpressionsTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             ReturnStatementExpressionsTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -4724,7 +4439,7 @@ impl ::sittir_core::render::Render for MatchBlockContentTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum ForStatementLeftTransportSlot {
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SUBSCRIPT)]
     Subscript(SubscriptTransport),
@@ -4738,18 +4453,6 @@ pub enum ForStatementLeftTransportSlot {
     ListPattern(ListPatternTransport),
     #[kind(kind::PATTERN_LIST)]
     PatternList(PatternListTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -4764,12 +4467,6 @@ impl ::sittir_core::prepare::Prepare for ForStatementLeftTransportSlot {
             ForStatementLeftTransportSlot::TuplePattern(t) => t.prepare(ctx),
             ForStatementLeftTransportSlot::ListPattern(t) => t.prepare(ctx),
             ForStatementLeftTransportSlot::PatternList(t) => t.prepare(ctx),
-            ForStatementLeftTransportSlot::PrintKeyword => Ok(()),
-            ForStatementLeftTransportSlot::ExecKeyword => Ok(()),
-            ForStatementLeftTransportSlot::AsyncKeyword => Ok(()),
-            ForStatementLeftTransportSlot::AwaitKeyword => Ok(()),
-            ForStatementLeftTransportSlot::TypeKeyword => Ok(()),
-            ForStatementLeftTransportSlot::MatchKeyword => Ok(()),
             ForStatementLeftTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -4782,12 +4479,6 @@ impl ::sittir_core::prepare::Prepare for ForStatementLeftTransportSlot {
             ForStatementLeftTransportSlot::TuplePattern(t) => t.gap_edges(),
             ForStatementLeftTransportSlot::ListPattern(t) => t.gap_edges(),
             ForStatementLeftTransportSlot::PatternList(t) => t.gap_edges(),
-            ForStatementLeftTransportSlot::PrintKeyword => None,
-            ForStatementLeftTransportSlot::ExecKeyword => None,
-            ForStatementLeftTransportSlot::AsyncKeyword => None,
-            ForStatementLeftTransportSlot::AwaitKeyword => None,
-            ForStatementLeftTransportSlot::TypeKeyword => None,
-            ForStatementLeftTransportSlot::MatchKeyword => None,
             ForStatementLeftTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -4800,12 +4491,6 @@ impl ::sittir_core::prepare::Prepare for ForStatementLeftTransportSlot {
             ForStatementLeftTransportSlot::TuplePattern(t) => t.snapshot_edge(),
             ForStatementLeftTransportSlot::ListPattern(t) => t.snapshot_edge(),
             ForStatementLeftTransportSlot::PatternList(t) => t.snapshot_edge(),
-            ForStatementLeftTransportSlot::PrintKeyword => None,
-            ForStatementLeftTransportSlot::ExecKeyword => None,
-            ForStatementLeftTransportSlot::AsyncKeyword => None,
-            ForStatementLeftTransportSlot::AwaitKeyword => None,
-            ForStatementLeftTransportSlot::TypeKeyword => None,
-            ForStatementLeftTransportSlot::MatchKeyword => None,
             ForStatementLeftTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -4818,12 +4503,6 @@ impl ::sittir_core::prepare::Prepare for ForStatementLeftTransportSlot {
             ForStatementLeftTransportSlot::TuplePattern(t) => t.source_separator(ctx),
             ForStatementLeftTransportSlot::ListPattern(t) => t.source_separator(ctx),
             ForStatementLeftTransportSlot::PatternList(t) => t.source_separator(ctx),
-            ForStatementLeftTransportSlot::PrintKeyword => None,
-            ForStatementLeftTransportSlot::ExecKeyword => None,
-            ForStatementLeftTransportSlot::AsyncKeyword => None,
-            ForStatementLeftTransportSlot::AwaitKeyword => None,
-            ForStatementLeftTransportSlot::TypeKeyword => None,
-            ForStatementLeftTransportSlot::MatchKeyword => None,
             ForStatementLeftTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
@@ -4842,12 +4521,6 @@ impl ::sittir_core::view::KindOf for ForStatementLeftTransportSlot {
             Self::TuplePattern(inner) => inner.kind_in(kinds),
             Self::ListPattern(inner) => inner.kind_in(kinds),
             Self::PatternList(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -4863,12 +4536,6 @@ impl ::sittir_core::render::Render for ForStatementLeftTransportSlot {
             ForStatementLeftTransportSlot::TuplePattern(inner) => inner.render(w),
             ForStatementLeftTransportSlot::ListPattern(inner) => inner.render(w),
             ForStatementLeftTransportSlot::PatternList(inner) => inner.render(w),
-            ForStatementLeftTransportSlot::PrintKeyword => render_print_keyword(w),
-            ForStatementLeftTransportSlot::ExecKeyword => render_exec_keyword(w),
-            ForStatementLeftTransportSlot::AsyncKeyword => render_async_keyword(w),
-            ForStatementLeftTransportSlot::AwaitKeyword => render_await_keyword(w),
-            ForStatementLeftTransportSlot::TypeKeyword => render_type_keyword(w),
-            ForStatementLeftTransportSlot::MatchKeyword => render_match_keyword(w),
             ForStatementLeftTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -4879,7 +4546,7 @@ impl ::sittir_core::render::Render for ForStatementLeftTransportSlot {
 pub enum ExecStatementCodeTransportSlot {
     #[kind(kind::STRING)]
     String(StringTransport),
-    #[kind(kind::IDENTIFIER, kind::TYPE_KEYWORD, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::MATCH_KEYWORD)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
@@ -5335,7 +5002,7 @@ impl ::sittir_core::render::Render for SplatPatternOperatorTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum SplatPatternNameTransportSlot {
-    #[kind(kind::IDENTIFIER, kind::TYPE_KEYWORD, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::MATCH_KEYWORD)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::UNDERSCORE)]
     Underscore,
@@ -5565,7 +5232,7 @@ impl ::sittir_core::render::Render for ComplexPatternOperatorTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum DefaultParameterNameTransportSlot {
-    #[kind(kind::IDENTIFIER, kind::TYPE_KEYWORD, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::MATCH_KEYWORD)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::TUPLE_PATTERN)]
     TuplePattern(TuplePatternTransport),
@@ -5630,24 +5297,12 @@ impl ::sittir_core::render::Render for DefaultParameterNameTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum ListSplatPatternTargetTransportSlot {
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SUBSCRIPT)]
     Subscript(SubscriptTransport),
     #[kind(kind::ATTRIBUTE)]
     Attribute(AttributeTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -5658,12 +5313,6 @@ impl ::sittir_core::prepare::Prepare for ListSplatPatternTargetTransportSlot {
             ListSplatPatternTargetTransportSlot::Identifier(t) => t.prepare(ctx),
             ListSplatPatternTargetTransportSlot::Subscript(t) => t.prepare(ctx),
             ListSplatPatternTargetTransportSlot::Attribute(t) => t.prepare(ctx),
-            ListSplatPatternTargetTransportSlot::PrintKeyword => Ok(()),
-            ListSplatPatternTargetTransportSlot::ExecKeyword => Ok(()),
-            ListSplatPatternTargetTransportSlot::AsyncKeyword => Ok(()),
-            ListSplatPatternTargetTransportSlot::AwaitKeyword => Ok(()),
-            ListSplatPatternTargetTransportSlot::TypeKeyword => Ok(()),
-            ListSplatPatternTargetTransportSlot::MatchKeyword => Ok(()),
             ListSplatPatternTargetTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -5672,12 +5321,6 @@ impl ::sittir_core::prepare::Prepare for ListSplatPatternTargetTransportSlot {
             ListSplatPatternTargetTransportSlot::Identifier(t) => t.gap_edges(),
             ListSplatPatternTargetTransportSlot::Subscript(t) => t.gap_edges(),
             ListSplatPatternTargetTransportSlot::Attribute(t) => t.gap_edges(),
-            ListSplatPatternTargetTransportSlot::PrintKeyword => None,
-            ListSplatPatternTargetTransportSlot::ExecKeyword => None,
-            ListSplatPatternTargetTransportSlot::AsyncKeyword => None,
-            ListSplatPatternTargetTransportSlot::AwaitKeyword => None,
-            ListSplatPatternTargetTransportSlot::TypeKeyword => None,
-            ListSplatPatternTargetTransportSlot::MatchKeyword => None,
             ListSplatPatternTargetTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -5686,12 +5329,6 @@ impl ::sittir_core::prepare::Prepare for ListSplatPatternTargetTransportSlot {
             ListSplatPatternTargetTransportSlot::Identifier(t) => t.snapshot_edge(),
             ListSplatPatternTargetTransportSlot::Subscript(t) => t.snapshot_edge(),
             ListSplatPatternTargetTransportSlot::Attribute(t) => t.snapshot_edge(),
-            ListSplatPatternTargetTransportSlot::PrintKeyword => None,
-            ListSplatPatternTargetTransportSlot::ExecKeyword => None,
-            ListSplatPatternTargetTransportSlot::AsyncKeyword => None,
-            ListSplatPatternTargetTransportSlot::AwaitKeyword => None,
-            ListSplatPatternTargetTransportSlot::TypeKeyword => None,
-            ListSplatPatternTargetTransportSlot::MatchKeyword => None,
             ListSplatPatternTargetTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -5700,12 +5337,6 @@ impl ::sittir_core::prepare::Prepare for ListSplatPatternTargetTransportSlot {
             ListSplatPatternTargetTransportSlot::Identifier(t) => t.source_separator(ctx),
             ListSplatPatternTargetTransportSlot::Subscript(t) => t.source_separator(ctx),
             ListSplatPatternTargetTransportSlot::Attribute(t) => t.source_separator(ctx),
-            ListSplatPatternTargetTransportSlot::PrintKeyword => None,
-            ListSplatPatternTargetTransportSlot::ExecKeyword => None,
-            ListSplatPatternTargetTransportSlot::AsyncKeyword => None,
-            ListSplatPatternTargetTransportSlot::AwaitKeyword => None,
-            ListSplatPatternTargetTransportSlot::TypeKeyword => None,
-            ListSplatPatternTargetTransportSlot::MatchKeyword => None,
             ListSplatPatternTargetTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
@@ -5720,12 +5351,6 @@ impl ::sittir_core::view::KindOf for ListSplatPatternTargetTransportSlot {
             Self::Identifier(inner) => inner.kind_in(kinds),
             Self::Subscript(inner) => inner.kind_in(kinds),
             Self::Attribute(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -5737,12 +5362,6 @@ impl ::sittir_core::render::Render for ListSplatPatternTargetTransportSlot {
             ListSplatPatternTargetTransportSlot::Identifier(inner) => inner.render(w),
             ListSplatPatternTargetTransportSlot::Subscript(inner) => inner.render(w),
             ListSplatPatternTargetTransportSlot::Attribute(inner) => inner.render(w),
-            ListSplatPatternTargetTransportSlot::PrintKeyword => render_print_keyword(w),
-            ListSplatPatternTargetTransportSlot::ExecKeyword => render_exec_keyword(w),
-            ListSplatPatternTargetTransportSlot::AsyncKeyword => render_async_keyword(w),
-            ListSplatPatternTargetTransportSlot::AwaitKeyword => render_await_keyword(w),
-            ListSplatPatternTargetTransportSlot::TypeKeyword => render_type_keyword(w),
-            ListSplatPatternTargetTransportSlot::MatchKeyword => render_match_keyword(w),
             ListSplatPatternTargetTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -5955,7 +5574,7 @@ pub enum LambdaWithinForInClauseBodyTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -6015,18 +5634,6 @@ pub enum LambdaWithinForInClauseBodyTransportSlot {
     AsPattern(AsPatternTransport),
     #[kind(kind::LAMBDA_WITHIN_FOR_IN_CLAUSE)]
     LambdaWithinForInClause(LambdaWithinForInClauseTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -6082,12 +5689,6 @@ impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseBodyTransportSlo
             LambdaWithinForInClauseBodyTransportSlot::NamedExpression(t) => t.prepare(ctx),
             LambdaWithinForInClauseBodyTransportSlot::AsPattern(t) => t.prepare(ctx),
             LambdaWithinForInClauseBodyTransportSlot::LambdaWithinForInClause(t) => t.prepare(ctx),
-            LambdaWithinForInClauseBodyTransportSlot::PrintKeyword => Ok(()),
-            LambdaWithinForInClauseBodyTransportSlot::ExecKeyword => Ok(()),
-            LambdaWithinForInClauseBodyTransportSlot::AsyncKeyword => Ok(()),
-            LambdaWithinForInClauseBodyTransportSlot::AwaitKeyword => Ok(()),
-            LambdaWithinForInClauseBodyTransportSlot::TypeKeyword => Ok(()),
-            LambdaWithinForInClauseBodyTransportSlot::MatchKeyword => Ok(()),
             LambdaWithinForInClauseBodyTransportSlot::True(_) => Ok(()),
             LambdaWithinForInClauseBodyTransportSlot::False(_) => Ok(()),
             LambdaWithinForInClauseBodyTransportSlot::None(_) => Ok(()),
@@ -6133,12 +5734,6 @@ impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseBodyTransportSlo
             LambdaWithinForInClauseBodyTransportSlot::NamedExpression(t) => t.gap_edges(),
             LambdaWithinForInClauseBodyTransportSlot::AsPattern(t) => t.gap_edges(),
             LambdaWithinForInClauseBodyTransportSlot::LambdaWithinForInClause(t) => t.gap_edges(),
-            LambdaWithinForInClauseBodyTransportSlot::PrintKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::ExecKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::AsyncKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::AwaitKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::TypeKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::MatchKeyword => None,
             LambdaWithinForInClauseBodyTransportSlot::True(edges) => Some(edges),
             LambdaWithinForInClauseBodyTransportSlot::False(edges) => Some(edges),
             LambdaWithinForInClauseBodyTransportSlot::None(edges) => Some(edges),
@@ -6184,12 +5779,6 @@ impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseBodyTransportSlo
             LambdaWithinForInClauseBodyTransportSlot::NamedExpression(t) => t.snapshot_edge(),
             LambdaWithinForInClauseBodyTransportSlot::AsPattern(t) => t.snapshot_edge(),
             LambdaWithinForInClauseBodyTransportSlot::LambdaWithinForInClause(t) => t.snapshot_edge(),
-            LambdaWithinForInClauseBodyTransportSlot::PrintKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::ExecKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::AsyncKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::AwaitKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::TypeKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::MatchKeyword => None,
             LambdaWithinForInClauseBodyTransportSlot::True(_) => None,
             LambdaWithinForInClauseBodyTransportSlot::False(_) => None,
             LambdaWithinForInClauseBodyTransportSlot::None(_) => None,
@@ -6235,12 +5824,6 @@ impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseBodyTransportSlo
             LambdaWithinForInClauseBodyTransportSlot::NamedExpression(t) => t.source_separator(ctx),
             LambdaWithinForInClauseBodyTransportSlot::AsPattern(t) => t.source_separator(ctx),
             LambdaWithinForInClauseBodyTransportSlot::LambdaWithinForInClause(t) => t.source_separator(ctx),
-            LambdaWithinForInClauseBodyTransportSlot::PrintKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::ExecKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::AsyncKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::AwaitKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::TypeKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::MatchKeyword => None,
             LambdaWithinForInClauseBodyTransportSlot::True(_) => None,
             LambdaWithinForInClauseBodyTransportSlot::False(_) => None,
             LambdaWithinForInClauseBodyTransportSlot::None(_) => None,
@@ -6292,12 +5875,6 @@ impl ::sittir_core::view::KindOf for LambdaWithinForInClauseBodyTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::LambdaWithinForInClause(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -6346,12 +5923,6 @@ impl ::sittir_core::render::Render for LambdaWithinForInClauseBodyTransportSlot 
             LambdaWithinForInClauseBodyTransportSlot::NamedExpression(inner) => inner.render(w),
             LambdaWithinForInClauseBodyTransportSlot::AsPattern(inner) => inner.render(w),
             LambdaWithinForInClauseBodyTransportSlot::LambdaWithinForInClause(inner) => inner.render(w),
-            LambdaWithinForInClauseBodyTransportSlot::PrintKeyword => render_print_keyword(w),
-            LambdaWithinForInClauseBodyTransportSlot::ExecKeyword => render_exec_keyword(w),
-            LambdaWithinForInClauseBodyTransportSlot::AsyncKeyword => render_async_keyword(w),
-            LambdaWithinForInClauseBodyTransportSlot::AwaitKeyword => render_await_keyword(w),
-            LambdaWithinForInClauseBodyTransportSlot::TypeKeyword => render_type_keyword(w),
-            LambdaWithinForInClauseBodyTransportSlot::MatchKeyword => render_match_keyword(w),
             LambdaWithinForInClauseBodyTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             LambdaWithinForInClauseBodyTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             LambdaWithinForInClauseBodyTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -6470,7 +6041,7 @@ pub enum AugmentedAssignmentRightTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -6542,18 +6113,6 @@ pub enum AugmentedAssignmentRightTransportSlot {
     PatternList(PatternListTransport),
     #[kind(kind::YIELD)]
     Yield(YieldTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -6615,12 +6174,6 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightTransportSlot {
             AugmentedAssignmentRightTransportSlot::AugmentedAssignment(t) => t.prepare(ctx),
             AugmentedAssignmentRightTransportSlot::PatternList(t) => t.prepare(ctx),
             AugmentedAssignmentRightTransportSlot::Yield(t) => t.prepare(ctx),
-            AugmentedAssignmentRightTransportSlot::PrintKeyword => Ok(()),
-            AugmentedAssignmentRightTransportSlot::ExecKeyword => Ok(()),
-            AugmentedAssignmentRightTransportSlot::AsyncKeyword => Ok(()),
-            AugmentedAssignmentRightTransportSlot::AwaitKeyword => Ok(()),
-            AugmentedAssignmentRightTransportSlot::TypeKeyword => Ok(()),
-            AugmentedAssignmentRightTransportSlot::MatchKeyword => Ok(()),
             AugmentedAssignmentRightTransportSlot::True(_) => Ok(()),
             AugmentedAssignmentRightTransportSlot::False(_) => Ok(()),
             AugmentedAssignmentRightTransportSlot::None(_) => Ok(()),
@@ -6672,12 +6225,6 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightTransportSlot {
             AugmentedAssignmentRightTransportSlot::AugmentedAssignment(t) => t.gap_edges(),
             AugmentedAssignmentRightTransportSlot::PatternList(t) => t.gap_edges(),
             AugmentedAssignmentRightTransportSlot::Yield(t) => t.gap_edges(),
-            AugmentedAssignmentRightTransportSlot::PrintKeyword => None,
-            AugmentedAssignmentRightTransportSlot::ExecKeyword => None,
-            AugmentedAssignmentRightTransportSlot::AsyncKeyword => None,
-            AugmentedAssignmentRightTransportSlot::AwaitKeyword => None,
-            AugmentedAssignmentRightTransportSlot::TypeKeyword => None,
-            AugmentedAssignmentRightTransportSlot::MatchKeyword => None,
             AugmentedAssignmentRightTransportSlot::True(edges) => Some(edges),
             AugmentedAssignmentRightTransportSlot::False(edges) => Some(edges),
             AugmentedAssignmentRightTransportSlot::None(edges) => Some(edges),
@@ -6729,12 +6276,6 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightTransportSlot {
             AugmentedAssignmentRightTransportSlot::AugmentedAssignment(t) => t.snapshot_edge(),
             AugmentedAssignmentRightTransportSlot::PatternList(t) => t.snapshot_edge(),
             AugmentedAssignmentRightTransportSlot::Yield(t) => t.snapshot_edge(),
-            AugmentedAssignmentRightTransportSlot::PrintKeyword => None,
-            AugmentedAssignmentRightTransportSlot::ExecKeyword => None,
-            AugmentedAssignmentRightTransportSlot::AsyncKeyword => None,
-            AugmentedAssignmentRightTransportSlot::AwaitKeyword => None,
-            AugmentedAssignmentRightTransportSlot::TypeKeyword => None,
-            AugmentedAssignmentRightTransportSlot::MatchKeyword => None,
             AugmentedAssignmentRightTransportSlot::True(_) => None,
             AugmentedAssignmentRightTransportSlot::False(_) => None,
             AugmentedAssignmentRightTransportSlot::None(_) => None,
@@ -6786,12 +6327,6 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightTransportSlot {
             AugmentedAssignmentRightTransportSlot::AugmentedAssignment(t) => t.source_separator(ctx),
             AugmentedAssignmentRightTransportSlot::PatternList(t) => t.source_separator(ctx),
             AugmentedAssignmentRightTransportSlot::Yield(t) => t.source_separator(ctx),
-            AugmentedAssignmentRightTransportSlot::PrintKeyword => None,
-            AugmentedAssignmentRightTransportSlot::ExecKeyword => None,
-            AugmentedAssignmentRightTransportSlot::AsyncKeyword => None,
-            AugmentedAssignmentRightTransportSlot::AwaitKeyword => None,
-            AugmentedAssignmentRightTransportSlot::TypeKeyword => None,
-            AugmentedAssignmentRightTransportSlot::MatchKeyword => None,
             AugmentedAssignmentRightTransportSlot::True(_) => None,
             AugmentedAssignmentRightTransportSlot::False(_) => None,
             AugmentedAssignmentRightTransportSlot::None(_) => None,
@@ -6849,12 +6384,6 @@ impl ::sittir_core::view::KindOf for AugmentedAssignmentRightTransportSlot {
             Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
             Self::PatternList(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -6909,12 +6438,6 @@ impl ::sittir_core::render::Render for AugmentedAssignmentRightTransportSlot {
             AugmentedAssignmentRightTransportSlot::AugmentedAssignment(inner) => inner.render(w),
             AugmentedAssignmentRightTransportSlot::PatternList(inner) => inner.render(w),
             AugmentedAssignmentRightTransportSlot::Yield(inner) => inner.render(w),
-            AugmentedAssignmentRightTransportSlot::PrintKeyword => render_print_keyword(w),
-            AugmentedAssignmentRightTransportSlot::ExecKeyword => render_exec_keyword(w),
-            AugmentedAssignmentRightTransportSlot::AsyncKeyword => render_async_keyword(w),
-            AugmentedAssignmentRightTransportSlot::AwaitKeyword => render_await_keyword(w),
-            AugmentedAssignmentRightTransportSlot::TypeKeyword => render_type_keyword(w),
-            AugmentedAssignmentRightTransportSlot::MatchKeyword => render_match_keyword(w),
             AugmentedAssignmentRightTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             AugmentedAssignmentRightTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             AugmentedAssignmentRightTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -6941,7 +6464,7 @@ pub enum YieldContentTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -7001,18 +6524,6 @@ pub enum YieldContentTransportSlot {
     AsPattern(AsPatternTransport),
     #[kind(kind::EXPRESSION_LIST)]
     ExpressionList(ExpressionListTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -7069,12 +6580,6 @@ impl ::sittir_core::prepare::Prepare for YieldContentTransportSlot {
             YieldContentTransportSlot::NamedExpression(t) => t.prepare(ctx),
             YieldContentTransportSlot::AsPattern(t) => t.prepare(ctx),
             YieldContentTransportSlot::ExpressionList(t) => t.prepare(ctx),
-            YieldContentTransportSlot::PrintKeyword => Ok(()),
-            YieldContentTransportSlot::ExecKeyword => Ok(()),
-            YieldContentTransportSlot::AsyncKeyword => Ok(()),
-            YieldContentTransportSlot::AwaitKeyword => Ok(()),
-            YieldContentTransportSlot::TypeKeyword => Ok(()),
-            YieldContentTransportSlot::MatchKeyword => Ok(()),
             YieldContentTransportSlot::True(_) => Ok(()),
             YieldContentTransportSlot::False(_) => Ok(()),
             YieldContentTransportSlot::None(_) => Ok(()),
@@ -7121,12 +6626,6 @@ impl ::sittir_core::prepare::Prepare for YieldContentTransportSlot {
             YieldContentTransportSlot::NamedExpression(t) => t.gap_edges(),
             YieldContentTransportSlot::AsPattern(t) => t.gap_edges(),
             YieldContentTransportSlot::ExpressionList(t) => t.gap_edges(),
-            YieldContentTransportSlot::PrintKeyword => None,
-            YieldContentTransportSlot::ExecKeyword => None,
-            YieldContentTransportSlot::AsyncKeyword => None,
-            YieldContentTransportSlot::AwaitKeyword => None,
-            YieldContentTransportSlot::TypeKeyword => None,
-            YieldContentTransportSlot::MatchKeyword => None,
             YieldContentTransportSlot::True(edges) => Some(edges),
             YieldContentTransportSlot::False(edges) => Some(edges),
             YieldContentTransportSlot::None(edges) => Some(edges),
@@ -7173,12 +6672,6 @@ impl ::sittir_core::prepare::Prepare for YieldContentTransportSlot {
             YieldContentTransportSlot::NamedExpression(t) => t.snapshot_edge(),
             YieldContentTransportSlot::AsPattern(t) => t.snapshot_edge(),
             YieldContentTransportSlot::ExpressionList(t) => t.snapshot_edge(),
-            YieldContentTransportSlot::PrintKeyword => None,
-            YieldContentTransportSlot::ExecKeyword => None,
-            YieldContentTransportSlot::AsyncKeyword => None,
-            YieldContentTransportSlot::AwaitKeyword => None,
-            YieldContentTransportSlot::TypeKeyword => None,
-            YieldContentTransportSlot::MatchKeyword => None,
             YieldContentTransportSlot::True(_) => None,
             YieldContentTransportSlot::False(_) => None,
             YieldContentTransportSlot::None(_) => None,
@@ -7225,12 +6718,6 @@ impl ::sittir_core::prepare::Prepare for YieldContentTransportSlot {
             YieldContentTransportSlot::NamedExpression(t) => t.source_separator(ctx),
             YieldContentTransportSlot::AsPattern(t) => t.source_separator(ctx),
             YieldContentTransportSlot::ExpressionList(t) => t.source_separator(ctx),
-            YieldContentTransportSlot::PrintKeyword => None,
-            YieldContentTransportSlot::ExecKeyword => None,
-            YieldContentTransportSlot::AsyncKeyword => None,
-            YieldContentTransportSlot::AwaitKeyword => None,
-            YieldContentTransportSlot::TypeKeyword => None,
-            YieldContentTransportSlot::MatchKeyword => None,
             YieldContentTransportSlot::True(_) => None,
             YieldContentTransportSlot::False(_) => None,
             YieldContentTransportSlot::None(_) => None,
@@ -7283,12 +6770,6 @@ impl ::sittir_core::view::KindOf for YieldContentTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::ExpressionList(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -7338,12 +6819,6 @@ impl ::sittir_core::render::Render for YieldContentTransportSlot {
             YieldContentTransportSlot::NamedExpression(inner) => inner.render(w),
             YieldContentTransportSlot::AsPattern(inner) => inner.render(w),
             YieldContentTransportSlot::ExpressionList(inner) => inner.render(w),
-            YieldContentTransportSlot::PrintKeyword => render_print_keyword(w),
-            YieldContentTransportSlot::ExecKeyword => render_exec_keyword(w),
-            YieldContentTransportSlot::AsyncKeyword => render_async_keyword(w),
-            YieldContentTransportSlot::AwaitKeyword => render_await_keyword(w),
-            YieldContentTransportSlot::TypeKeyword => render_type_keyword(w),
-            YieldContentTransportSlot::MatchKeyword => render_match_keyword(w),
             YieldContentTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             YieldContentTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             YieldContentTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -7413,7 +6888,7 @@ impl ::sittir_core::render::Render for CallArgumentsTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum TypedParameterNameTransportSlot {
-    #[kind(kind::IDENTIFIER, kind::TYPE_KEYWORD, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::MATCH_KEYWORD)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::LIST_SPLAT_PATTERN)]
     ListSplatPattern(ListSplatPatternTransport),
@@ -7498,7 +6973,7 @@ pub enum TypeContentTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -7566,18 +7041,6 @@ pub enum TypeContentTransportSlot {
     ConstrainedType(ConstrainedTypeTransport),
     #[kind(kind::MEMBER_TYPE)]
     MemberType(MemberTypeTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -7637,12 +7100,6 @@ impl ::sittir_core::prepare::Prepare for TypeContentTransportSlot {
             TypeContentTransportSlot::UnionType(t) => t.prepare(ctx),
             TypeContentTransportSlot::ConstrainedType(t) => t.prepare(ctx),
             TypeContentTransportSlot::MemberType(t) => t.prepare(ctx),
-            TypeContentTransportSlot::PrintKeyword => Ok(()),
-            TypeContentTransportSlot::ExecKeyword => Ok(()),
-            TypeContentTransportSlot::AsyncKeyword => Ok(()),
-            TypeContentTransportSlot::AwaitKeyword => Ok(()),
-            TypeContentTransportSlot::TypeKeyword => Ok(()),
-            TypeContentTransportSlot::MatchKeyword => Ok(()),
             TypeContentTransportSlot::True(_) => Ok(()),
             TypeContentTransportSlot::False(_) => Ok(()),
             TypeContentTransportSlot::None(_) => Ok(()),
@@ -7692,12 +7149,6 @@ impl ::sittir_core::prepare::Prepare for TypeContentTransportSlot {
             TypeContentTransportSlot::UnionType(t) => t.gap_edges(),
             TypeContentTransportSlot::ConstrainedType(t) => t.gap_edges(),
             TypeContentTransportSlot::MemberType(t) => t.gap_edges(),
-            TypeContentTransportSlot::PrintKeyword => None,
-            TypeContentTransportSlot::ExecKeyword => None,
-            TypeContentTransportSlot::AsyncKeyword => None,
-            TypeContentTransportSlot::AwaitKeyword => None,
-            TypeContentTransportSlot::TypeKeyword => None,
-            TypeContentTransportSlot::MatchKeyword => None,
             TypeContentTransportSlot::True(edges) => Some(edges),
             TypeContentTransportSlot::False(edges) => Some(edges),
             TypeContentTransportSlot::None(edges) => Some(edges),
@@ -7747,12 +7198,6 @@ impl ::sittir_core::prepare::Prepare for TypeContentTransportSlot {
             TypeContentTransportSlot::UnionType(t) => t.snapshot_edge(),
             TypeContentTransportSlot::ConstrainedType(t) => t.snapshot_edge(),
             TypeContentTransportSlot::MemberType(t) => t.snapshot_edge(),
-            TypeContentTransportSlot::PrintKeyword => None,
-            TypeContentTransportSlot::ExecKeyword => None,
-            TypeContentTransportSlot::AsyncKeyword => None,
-            TypeContentTransportSlot::AwaitKeyword => None,
-            TypeContentTransportSlot::TypeKeyword => None,
-            TypeContentTransportSlot::MatchKeyword => None,
             TypeContentTransportSlot::True(_) => None,
             TypeContentTransportSlot::False(_) => None,
             TypeContentTransportSlot::None(_) => None,
@@ -7802,12 +7247,6 @@ impl ::sittir_core::prepare::Prepare for TypeContentTransportSlot {
             TypeContentTransportSlot::UnionType(t) => t.source_separator(ctx),
             TypeContentTransportSlot::ConstrainedType(t) => t.source_separator(ctx),
             TypeContentTransportSlot::MemberType(t) => t.source_separator(ctx),
-            TypeContentTransportSlot::PrintKeyword => None,
-            TypeContentTransportSlot::ExecKeyword => None,
-            TypeContentTransportSlot::AsyncKeyword => None,
-            TypeContentTransportSlot::AwaitKeyword => None,
-            TypeContentTransportSlot::TypeKeyword => None,
-            TypeContentTransportSlot::MatchKeyword => None,
             TypeContentTransportSlot::True(_) => None,
             TypeContentTransportSlot::False(_) => None,
             TypeContentTransportSlot::None(_) => None,
@@ -7863,12 +7302,6 @@ impl ::sittir_core::view::KindOf for TypeContentTransportSlot {
             Self::UnionType(inner) => inner.kind_in(kinds),
             Self::ConstrainedType(inner) => inner.kind_in(kinds),
             Self::MemberType(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -7921,12 +7354,6 @@ impl ::sittir_core::render::Render for TypeContentTransportSlot {
             TypeContentTransportSlot::UnionType(inner) => inner.render(w),
             TypeContentTransportSlot::ConstrainedType(inner) => inner.render(w),
             TypeContentTransportSlot::MemberType(inner) => inner.render(w),
-            TypeContentTransportSlot::PrintKeyword => render_print_keyword(w),
-            TypeContentTransportSlot::ExecKeyword => render_exec_keyword(w),
-            TypeContentTransportSlot::AsyncKeyword => render_async_keyword(w),
-            TypeContentTransportSlot::AwaitKeyword => render_await_keyword(w),
-            TypeContentTransportSlot::TypeKeyword => render_type_keyword(w),
-            TypeContentTransportSlot::MatchKeyword => render_match_keyword(w),
             TypeContentTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             TypeContentTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             TypeContentTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -7987,71 +7414,6 @@ impl ::sittir_core::render::Render for SplatTypeOperatorTransportSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum GenericTypeNameTransportSlot {
-    #[kind(kind::IDENTIFIER, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::MATCH_KEYWORD)]
-    Identifier(IdentifierTransport),
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[transport(verbatim)]
-    Verbatim(VerbatimTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for GenericTypeNameTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            GenericTypeNameTransportSlot::Identifier(t) => t.prepare(ctx),
-            GenericTypeNameTransportSlot::TypeKeyword => Ok(()),
-            GenericTypeNameTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            GenericTypeNameTransportSlot::Identifier(t) => t.gap_edges(),
-            GenericTypeNameTransportSlot::TypeKeyword => None,
-            GenericTypeNameTransportSlot::Verbatim(t) => t.gap_edges(),
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            GenericTypeNameTransportSlot::Identifier(t) => t.snapshot_edge(),
-            GenericTypeNameTransportSlot::TypeKeyword => None,
-            GenericTypeNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
-        match self {
-            GenericTypeNameTransportSlot::Identifier(t) => t.source_separator(ctx),
-            GenericTypeNameTransportSlot::TypeKeyword => None,
-            GenericTypeNameTransportSlot::Verbatim(t) => t.source_separator(ctx),
-        }
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::view::KindOf for GenericTypeNameTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for GenericTypeNameTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            GenericTypeNameTransportSlot::Identifier(inner) => inner.render(w),
-            GenericTypeNameTransportSlot::TypeKeyword => render_type_keyword(w),
-            GenericTypeNameTransportSlot::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
 pub enum ParenthesizedExpressionExpressionTransportSlot {
     #[kind(kind::COMPARISON_OPERATOR)]
     ComparisonOperator(ComparisonOperatorTransport),
@@ -8065,7 +7427,7 @@ pub enum ParenthesizedExpressionExpressionTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -8125,18 +7487,6 @@ pub enum ParenthesizedExpressionExpressionTransportSlot {
     AsPattern(AsPatternTransport),
     #[kind(kind::YIELD)]
     Yield(YieldTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -8192,12 +7542,6 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionExpressionTransp
             ParenthesizedExpressionExpressionTransportSlot::NamedExpression(t) => t.prepare(ctx),
             ParenthesizedExpressionExpressionTransportSlot::AsPattern(t) => t.prepare(ctx),
             ParenthesizedExpressionExpressionTransportSlot::Yield(t) => t.prepare(ctx),
-            ParenthesizedExpressionExpressionTransportSlot::PrintKeyword => Ok(()),
-            ParenthesizedExpressionExpressionTransportSlot::ExecKeyword => Ok(()),
-            ParenthesizedExpressionExpressionTransportSlot::AsyncKeyword => Ok(()),
-            ParenthesizedExpressionExpressionTransportSlot::AwaitKeyword => Ok(()),
-            ParenthesizedExpressionExpressionTransportSlot::TypeKeyword => Ok(()),
-            ParenthesizedExpressionExpressionTransportSlot::MatchKeyword => Ok(()),
             ParenthesizedExpressionExpressionTransportSlot::True(_) => Ok(()),
             ParenthesizedExpressionExpressionTransportSlot::False(_) => Ok(()),
             ParenthesizedExpressionExpressionTransportSlot::None(_) => Ok(()),
@@ -8243,12 +7587,6 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionExpressionTransp
             ParenthesizedExpressionExpressionTransportSlot::NamedExpression(t) => t.gap_edges(),
             ParenthesizedExpressionExpressionTransportSlot::AsPattern(t) => t.gap_edges(),
             ParenthesizedExpressionExpressionTransportSlot::Yield(t) => t.gap_edges(),
-            ParenthesizedExpressionExpressionTransportSlot::PrintKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::ExecKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::AsyncKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::AwaitKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::TypeKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::MatchKeyword => None,
             ParenthesizedExpressionExpressionTransportSlot::True(edges) => Some(edges),
             ParenthesizedExpressionExpressionTransportSlot::False(edges) => Some(edges),
             ParenthesizedExpressionExpressionTransportSlot::None(edges) => Some(edges),
@@ -8294,12 +7632,6 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionExpressionTransp
             ParenthesizedExpressionExpressionTransportSlot::NamedExpression(t) => t.snapshot_edge(),
             ParenthesizedExpressionExpressionTransportSlot::AsPattern(t) => t.snapshot_edge(),
             ParenthesizedExpressionExpressionTransportSlot::Yield(t) => t.snapshot_edge(),
-            ParenthesizedExpressionExpressionTransportSlot::PrintKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::ExecKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::AsyncKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::AwaitKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::TypeKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::MatchKeyword => None,
             ParenthesizedExpressionExpressionTransportSlot::True(_) => None,
             ParenthesizedExpressionExpressionTransportSlot::False(_) => None,
             ParenthesizedExpressionExpressionTransportSlot::None(_) => None,
@@ -8345,12 +7677,6 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionExpressionTransp
             ParenthesizedExpressionExpressionTransportSlot::NamedExpression(t) => t.source_separator(ctx),
             ParenthesizedExpressionExpressionTransportSlot::AsPattern(t) => t.source_separator(ctx),
             ParenthesizedExpressionExpressionTransportSlot::Yield(t) => t.source_separator(ctx),
-            ParenthesizedExpressionExpressionTransportSlot::PrintKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::ExecKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::AsyncKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::AwaitKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::TypeKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::MatchKeyword => None,
             ParenthesizedExpressionExpressionTransportSlot::True(_) => None,
             ParenthesizedExpressionExpressionTransportSlot::False(_) => None,
             ParenthesizedExpressionExpressionTransportSlot::None(_) => None,
@@ -8402,12 +7728,6 @@ impl ::sittir_core::view::KindOf for ParenthesizedExpressionExpressionTransportS
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -8456,12 +7776,6 @@ impl ::sittir_core::render::Render for ParenthesizedExpressionExpressionTranspor
             ParenthesizedExpressionExpressionTransportSlot::NamedExpression(inner) => inner.render(w),
             ParenthesizedExpressionExpressionTransportSlot::AsPattern(inner) => inner.render(w),
             ParenthesizedExpressionExpressionTransportSlot::Yield(inner) => inner.render(w),
-            ParenthesizedExpressionExpressionTransportSlot::PrintKeyword => render_print_keyword(w),
-            ParenthesizedExpressionExpressionTransportSlot::ExecKeyword => render_exec_keyword(w),
-            ParenthesizedExpressionExpressionTransportSlot::AsyncKeyword => render_async_keyword(w),
-            ParenthesizedExpressionExpressionTransportSlot::AwaitKeyword => render_await_keyword(w),
-            ParenthesizedExpressionExpressionTransportSlot::TypeKeyword => render_type_keyword(w),
-            ParenthesizedExpressionExpressionTransportSlot::MatchKeyword => render_match_keyword(w),
             ParenthesizedExpressionExpressionTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             ParenthesizedExpressionExpressionTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             ParenthesizedExpressionExpressionTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -8486,7 +7800,7 @@ pub enum CollectionElementsItemTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -8550,18 +7864,6 @@ pub enum CollectionElementsItemTransportSlot {
     ListSplat(ListSplatTransport),
     #[kind(kind::PARENTHESIZED_LIST_SPLAT)]
     ParenthesizedListSplat(ParenthesizedListSplatTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -8619,12 +7921,6 @@ impl ::sittir_core::prepare::Prepare for CollectionElementsItemTransportSlot {
             CollectionElementsItemTransportSlot::Yield(t) => t.prepare(ctx),
             CollectionElementsItemTransportSlot::ListSplat(t) => t.prepare(ctx),
             CollectionElementsItemTransportSlot::ParenthesizedListSplat(t) => t.prepare(ctx),
-            CollectionElementsItemTransportSlot::PrintKeyword => Ok(()),
-            CollectionElementsItemTransportSlot::ExecKeyword => Ok(()),
-            CollectionElementsItemTransportSlot::AsyncKeyword => Ok(()),
-            CollectionElementsItemTransportSlot::AwaitKeyword => Ok(()),
-            CollectionElementsItemTransportSlot::TypeKeyword => Ok(()),
-            CollectionElementsItemTransportSlot::MatchKeyword => Ok(()),
             CollectionElementsItemTransportSlot::True(_) => Ok(()),
             CollectionElementsItemTransportSlot::False(_) => Ok(()),
             CollectionElementsItemTransportSlot::None(_) => Ok(()),
@@ -8672,12 +7968,6 @@ impl ::sittir_core::prepare::Prepare for CollectionElementsItemTransportSlot {
             CollectionElementsItemTransportSlot::Yield(t) => t.gap_edges(),
             CollectionElementsItemTransportSlot::ListSplat(t) => t.gap_edges(),
             CollectionElementsItemTransportSlot::ParenthesizedListSplat(t) => t.gap_edges(),
-            CollectionElementsItemTransportSlot::PrintKeyword => None,
-            CollectionElementsItemTransportSlot::ExecKeyword => None,
-            CollectionElementsItemTransportSlot::AsyncKeyword => None,
-            CollectionElementsItemTransportSlot::AwaitKeyword => None,
-            CollectionElementsItemTransportSlot::TypeKeyword => None,
-            CollectionElementsItemTransportSlot::MatchKeyword => None,
             CollectionElementsItemTransportSlot::True(edges) => Some(edges),
             CollectionElementsItemTransportSlot::False(edges) => Some(edges),
             CollectionElementsItemTransportSlot::None(edges) => Some(edges),
@@ -8725,12 +8015,6 @@ impl ::sittir_core::prepare::Prepare for CollectionElementsItemTransportSlot {
             CollectionElementsItemTransportSlot::Yield(t) => t.snapshot_edge(),
             CollectionElementsItemTransportSlot::ListSplat(t) => t.snapshot_edge(),
             CollectionElementsItemTransportSlot::ParenthesizedListSplat(t) => t.snapshot_edge(),
-            CollectionElementsItemTransportSlot::PrintKeyword => None,
-            CollectionElementsItemTransportSlot::ExecKeyword => None,
-            CollectionElementsItemTransportSlot::AsyncKeyword => None,
-            CollectionElementsItemTransportSlot::AwaitKeyword => None,
-            CollectionElementsItemTransportSlot::TypeKeyword => None,
-            CollectionElementsItemTransportSlot::MatchKeyword => None,
             CollectionElementsItemTransportSlot::True(_) => None,
             CollectionElementsItemTransportSlot::False(_) => None,
             CollectionElementsItemTransportSlot::None(_) => None,
@@ -8778,12 +8062,6 @@ impl ::sittir_core::prepare::Prepare for CollectionElementsItemTransportSlot {
             CollectionElementsItemTransportSlot::Yield(t) => t.source_separator(ctx),
             CollectionElementsItemTransportSlot::ListSplat(t) => t.source_separator(ctx),
             CollectionElementsItemTransportSlot::ParenthesizedListSplat(t) => t.source_separator(ctx),
-            CollectionElementsItemTransportSlot::PrintKeyword => None,
-            CollectionElementsItemTransportSlot::ExecKeyword => None,
-            CollectionElementsItemTransportSlot::AsyncKeyword => None,
-            CollectionElementsItemTransportSlot::AwaitKeyword => None,
-            CollectionElementsItemTransportSlot::TypeKeyword => None,
-            CollectionElementsItemTransportSlot::MatchKeyword => None,
             CollectionElementsItemTransportSlot::True(_) => None,
             CollectionElementsItemTransportSlot::False(_) => None,
             CollectionElementsItemTransportSlot::None(_) => None,
@@ -8837,12 +8115,6 @@ impl ::sittir_core::view::KindOf for CollectionElementsItemTransportSlot {
             Self::Yield(inner) => inner.kind_in(kinds),
             Self::ListSplat(inner) => inner.kind_in(kinds),
             Self::ParenthesizedListSplat(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -8893,12 +8165,6 @@ impl ::sittir_core::render::Render for CollectionElementsItemTransportSlot {
             CollectionElementsItemTransportSlot::Yield(inner) => inner.render(w),
             CollectionElementsItemTransportSlot::ListSplat(inner) => inner.render(w),
             CollectionElementsItemTransportSlot::ParenthesizedListSplat(inner) => inner.render(w),
-            CollectionElementsItemTransportSlot::PrintKeyword => render_print_keyword(w),
-            CollectionElementsItemTransportSlot::ExecKeyword => render_exec_keyword(w),
-            CollectionElementsItemTransportSlot::AsyncKeyword => render_async_keyword(w),
-            CollectionElementsItemTransportSlot::AwaitKeyword => render_await_keyword(w),
-            CollectionElementsItemTransportSlot::TypeKeyword => render_type_keyword(w),
-            CollectionElementsItemTransportSlot::MatchKeyword => render_match_keyword(w),
             CollectionElementsItemTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             CollectionElementsItemTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             CollectionElementsItemTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -9109,7 +8375,7 @@ pub enum InterpolationExpressionTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -9173,18 +8439,6 @@ pub enum InterpolationExpressionTransportSlot {
     PatternList(PatternListTransport),
     #[kind(kind::YIELD)]
     Yield(YieldTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -9242,12 +8496,6 @@ impl ::sittir_core::prepare::Prepare for InterpolationExpressionTransportSlot {
             InterpolationExpressionTransportSlot::ExpressionList(t) => t.prepare(ctx),
             InterpolationExpressionTransportSlot::PatternList(t) => t.prepare(ctx),
             InterpolationExpressionTransportSlot::Yield(t) => t.prepare(ctx),
-            InterpolationExpressionTransportSlot::PrintKeyword => Ok(()),
-            InterpolationExpressionTransportSlot::ExecKeyword => Ok(()),
-            InterpolationExpressionTransportSlot::AsyncKeyword => Ok(()),
-            InterpolationExpressionTransportSlot::AwaitKeyword => Ok(()),
-            InterpolationExpressionTransportSlot::TypeKeyword => Ok(()),
-            InterpolationExpressionTransportSlot::MatchKeyword => Ok(()),
             InterpolationExpressionTransportSlot::True(_) => Ok(()),
             InterpolationExpressionTransportSlot::False(_) => Ok(()),
             InterpolationExpressionTransportSlot::None(_) => Ok(()),
@@ -9295,12 +8543,6 @@ impl ::sittir_core::prepare::Prepare for InterpolationExpressionTransportSlot {
             InterpolationExpressionTransportSlot::ExpressionList(t) => t.gap_edges(),
             InterpolationExpressionTransportSlot::PatternList(t) => t.gap_edges(),
             InterpolationExpressionTransportSlot::Yield(t) => t.gap_edges(),
-            InterpolationExpressionTransportSlot::PrintKeyword => None,
-            InterpolationExpressionTransportSlot::ExecKeyword => None,
-            InterpolationExpressionTransportSlot::AsyncKeyword => None,
-            InterpolationExpressionTransportSlot::AwaitKeyword => None,
-            InterpolationExpressionTransportSlot::TypeKeyword => None,
-            InterpolationExpressionTransportSlot::MatchKeyword => None,
             InterpolationExpressionTransportSlot::True(edges) => Some(edges),
             InterpolationExpressionTransportSlot::False(edges) => Some(edges),
             InterpolationExpressionTransportSlot::None(edges) => Some(edges),
@@ -9348,12 +8590,6 @@ impl ::sittir_core::prepare::Prepare for InterpolationExpressionTransportSlot {
             InterpolationExpressionTransportSlot::ExpressionList(t) => t.snapshot_edge(),
             InterpolationExpressionTransportSlot::PatternList(t) => t.snapshot_edge(),
             InterpolationExpressionTransportSlot::Yield(t) => t.snapshot_edge(),
-            InterpolationExpressionTransportSlot::PrintKeyword => None,
-            InterpolationExpressionTransportSlot::ExecKeyword => None,
-            InterpolationExpressionTransportSlot::AsyncKeyword => None,
-            InterpolationExpressionTransportSlot::AwaitKeyword => None,
-            InterpolationExpressionTransportSlot::TypeKeyword => None,
-            InterpolationExpressionTransportSlot::MatchKeyword => None,
             InterpolationExpressionTransportSlot::True(_) => None,
             InterpolationExpressionTransportSlot::False(_) => None,
             InterpolationExpressionTransportSlot::None(_) => None,
@@ -9401,12 +8637,6 @@ impl ::sittir_core::prepare::Prepare for InterpolationExpressionTransportSlot {
             InterpolationExpressionTransportSlot::ExpressionList(t) => t.source_separator(ctx),
             InterpolationExpressionTransportSlot::PatternList(t) => t.source_separator(ctx),
             InterpolationExpressionTransportSlot::Yield(t) => t.source_separator(ctx),
-            InterpolationExpressionTransportSlot::PrintKeyword => None,
-            InterpolationExpressionTransportSlot::ExecKeyword => None,
-            InterpolationExpressionTransportSlot::AsyncKeyword => None,
-            InterpolationExpressionTransportSlot::AwaitKeyword => None,
-            InterpolationExpressionTransportSlot::TypeKeyword => None,
-            InterpolationExpressionTransportSlot::MatchKeyword => None,
             InterpolationExpressionTransportSlot::True(_) => None,
             InterpolationExpressionTransportSlot::False(_) => None,
             InterpolationExpressionTransportSlot::None(_) => None,
@@ -9460,12 +8690,6 @@ impl ::sittir_core::view::KindOf for InterpolationExpressionTransportSlot {
             Self::ExpressionList(inner) => inner.kind_in(kinds),
             Self::PatternList(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -9516,12 +8740,6 @@ impl ::sittir_core::render::Render for InterpolationExpressionTransportSlot {
             InterpolationExpressionTransportSlot::ExpressionList(inner) => inner.render(w),
             InterpolationExpressionTransportSlot::PatternList(inner) => inner.render(w),
             InterpolationExpressionTransportSlot::Yield(inner) => inner.render(w),
-            InterpolationExpressionTransportSlot::PrintKeyword => render_print_keyword(w),
-            InterpolationExpressionTransportSlot::ExecKeyword => render_exec_keyword(w),
-            InterpolationExpressionTransportSlot::AsyncKeyword => render_async_keyword(w),
-            InterpolationExpressionTransportSlot::AwaitKeyword => render_await_keyword(w),
-            InterpolationExpressionTransportSlot::TypeKeyword => render_type_keyword(w),
-            InterpolationExpressionTransportSlot::MatchKeyword => render_match_keyword(w),
             InterpolationExpressionTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             InterpolationExpressionTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             InterpolationExpressionTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -9611,7 +8829,7 @@ pub enum ArgumentListElementsItemTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -9677,18 +8895,6 @@ pub enum ArgumentListElementsItemTransportSlot {
     ParenthesizedListSplat(ParenthesizedListSplatTransport),
     #[kind(kind::KEYWORD_ARGUMENT)]
     KeywordArgument(KeywordArgumentTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -9747,12 +8953,6 @@ impl ::sittir_core::prepare::Prepare for ArgumentListElementsItemTransportSlot {
             ArgumentListElementsItemTransportSlot::DictionarySplat(t) => t.prepare(ctx),
             ArgumentListElementsItemTransportSlot::ParenthesizedListSplat(t) => t.prepare(ctx),
             ArgumentListElementsItemTransportSlot::KeywordArgument(t) => t.prepare(ctx),
-            ArgumentListElementsItemTransportSlot::PrintKeyword => Ok(()),
-            ArgumentListElementsItemTransportSlot::ExecKeyword => Ok(()),
-            ArgumentListElementsItemTransportSlot::AsyncKeyword => Ok(()),
-            ArgumentListElementsItemTransportSlot::AwaitKeyword => Ok(()),
-            ArgumentListElementsItemTransportSlot::TypeKeyword => Ok(()),
-            ArgumentListElementsItemTransportSlot::MatchKeyword => Ok(()),
             ArgumentListElementsItemTransportSlot::True(_) => Ok(()),
             ArgumentListElementsItemTransportSlot::False(_) => Ok(()),
             ArgumentListElementsItemTransportSlot::None(_) => Ok(()),
@@ -9801,12 +9001,6 @@ impl ::sittir_core::prepare::Prepare for ArgumentListElementsItemTransportSlot {
             ArgumentListElementsItemTransportSlot::DictionarySplat(t) => t.gap_edges(),
             ArgumentListElementsItemTransportSlot::ParenthesizedListSplat(t) => t.gap_edges(),
             ArgumentListElementsItemTransportSlot::KeywordArgument(t) => t.gap_edges(),
-            ArgumentListElementsItemTransportSlot::PrintKeyword => None,
-            ArgumentListElementsItemTransportSlot::ExecKeyword => None,
-            ArgumentListElementsItemTransportSlot::AsyncKeyword => None,
-            ArgumentListElementsItemTransportSlot::AwaitKeyword => None,
-            ArgumentListElementsItemTransportSlot::TypeKeyword => None,
-            ArgumentListElementsItemTransportSlot::MatchKeyword => None,
             ArgumentListElementsItemTransportSlot::True(edges) => Some(edges),
             ArgumentListElementsItemTransportSlot::False(edges) => Some(edges),
             ArgumentListElementsItemTransportSlot::None(edges) => Some(edges),
@@ -9855,12 +9049,6 @@ impl ::sittir_core::prepare::Prepare for ArgumentListElementsItemTransportSlot {
             ArgumentListElementsItemTransportSlot::DictionarySplat(t) => t.snapshot_edge(),
             ArgumentListElementsItemTransportSlot::ParenthesizedListSplat(t) => t.snapshot_edge(),
             ArgumentListElementsItemTransportSlot::KeywordArgument(t) => t.snapshot_edge(),
-            ArgumentListElementsItemTransportSlot::PrintKeyword => None,
-            ArgumentListElementsItemTransportSlot::ExecKeyword => None,
-            ArgumentListElementsItemTransportSlot::AsyncKeyword => None,
-            ArgumentListElementsItemTransportSlot::AwaitKeyword => None,
-            ArgumentListElementsItemTransportSlot::TypeKeyword => None,
-            ArgumentListElementsItemTransportSlot::MatchKeyword => None,
             ArgumentListElementsItemTransportSlot::True(_) => None,
             ArgumentListElementsItemTransportSlot::False(_) => None,
             ArgumentListElementsItemTransportSlot::None(_) => None,
@@ -9909,12 +9097,6 @@ impl ::sittir_core::prepare::Prepare for ArgumentListElementsItemTransportSlot {
             ArgumentListElementsItemTransportSlot::DictionarySplat(t) => t.source_separator(ctx),
             ArgumentListElementsItemTransportSlot::ParenthesizedListSplat(t) => t.source_separator(ctx),
             ArgumentListElementsItemTransportSlot::KeywordArgument(t) => t.source_separator(ctx),
-            ArgumentListElementsItemTransportSlot::PrintKeyword => None,
-            ArgumentListElementsItemTransportSlot::ExecKeyword => None,
-            ArgumentListElementsItemTransportSlot::AsyncKeyword => None,
-            ArgumentListElementsItemTransportSlot::AwaitKeyword => None,
-            ArgumentListElementsItemTransportSlot::TypeKeyword => None,
-            ArgumentListElementsItemTransportSlot::MatchKeyword => None,
             ArgumentListElementsItemTransportSlot::True(_) => None,
             ArgumentListElementsItemTransportSlot::False(_) => None,
             ArgumentListElementsItemTransportSlot::None(_) => None,
@@ -9969,12 +9151,6 @@ impl ::sittir_core::view::KindOf for ArgumentListElementsItemTransportSlot {
             Self::DictionarySplat(inner) => inner.kind_in(kinds),
             Self::ParenthesizedListSplat(inner) => inner.kind_in(kinds),
             Self::KeywordArgument(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -10026,12 +9202,6 @@ impl ::sittir_core::render::Render for ArgumentListElementsItemTransportSlot {
             ArgumentListElementsItemTransportSlot::DictionarySplat(inner) => inner.render(w),
             ArgumentListElementsItemTransportSlot::ParenthesizedListSplat(inner) => inner.render(w),
             ArgumentListElementsItemTransportSlot::KeywordArgument(inner) => inner.render(w),
-            ArgumentListElementsItemTransportSlot::PrintKeyword => render_print_keyword(w),
-            ArgumentListElementsItemTransportSlot::ExecKeyword => render_exec_keyword(w),
-            ArgumentListElementsItemTransportSlot::AsyncKeyword => render_async_keyword(w),
-            ArgumentListElementsItemTransportSlot::AwaitKeyword => render_await_keyword(w),
-            ArgumentListElementsItemTransportSlot::TypeKeyword => render_type_keyword(w),
-            ArgumentListElementsItemTransportSlot::MatchKeyword => render_match_keyword(w),
             ArgumentListElementsItemTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             ArgumentListElementsItemTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             ArgumentListElementsItemTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -10113,7 +9283,7 @@ pub enum SubscriptsSubscriptTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -10173,18 +9343,6 @@ pub enum SubscriptsSubscriptTransportSlot {
     AsPattern(AsPatternTransport),
     #[kind(kind::SLICE)]
     Slice(Box<SliceTransport>),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -10240,12 +9398,6 @@ impl ::sittir_core::prepare::Prepare for SubscriptsSubscriptTransportSlot {
             SubscriptsSubscriptTransportSlot::NamedExpression(t) => t.prepare(ctx),
             SubscriptsSubscriptTransportSlot::AsPattern(t) => t.prepare(ctx),
             SubscriptsSubscriptTransportSlot::Slice(t) => t.prepare(ctx),
-            SubscriptsSubscriptTransportSlot::PrintKeyword => Ok(()),
-            SubscriptsSubscriptTransportSlot::ExecKeyword => Ok(()),
-            SubscriptsSubscriptTransportSlot::AsyncKeyword => Ok(()),
-            SubscriptsSubscriptTransportSlot::AwaitKeyword => Ok(()),
-            SubscriptsSubscriptTransportSlot::TypeKeyword => Ok(()),
-            SubscriptsSubscriptTransportSlot::MatchKeyword => Ok(()),
             SubscriptsSubscriptTransportSlot::True(_) => Ok(()),
             SubscriptsSubscriptTransportSlot::False(_) => Ok(()),
             SubscriptsSubscriptTransportSlot::None(_) => Ok(()),
@@ -10291,12 +9443,6 @@ impl ::sittir_core::prepare::Prepare for SubscriptsSubscriptTransportSlot {
             SubscriptsSubscriptTransportSlot::NamedExpression(t) => t.gap_edges(),
             SubscriptsSubscriptTransportSlot::AsPattern(t) => t.gap_edges(),
             SubscriptsSubscriptTransportSlot::Slice(t) => t.gap_edges(),
-            SubscriptsSubscriptTransportSlot::PrintKeyword => None,
-            SubscriptsSubscriptTransportSlot::ExecKeyword => None,
-            SubscriptsSubscriptTransportSlot::AsyncKeyword => None,
-            SubscriptsSubscriptTransportSlot::AwaitKeyword => None,
-            SubscriptsSubscriptTransportSlot::TypeKeyword => None,
-            SubscriptsSubscriptTransportSlot::MatchKeyword => None,
             SubscriptsSubscriptTransportSlot::True(edges) => Some(edges),
             SubscriptsSubscriptTransportSlot::False(edges) => Some(edges),
             SubscriptsSubscriptTransportSlot::None(edges) => Some(edges),
@@ -10342,12 +9488,6 @@ impl ::sittir_core::prepare::Prepare for SubscriptsSubscriptTransportSlot {
             SubscriptsSubscriptTransportSlot::NamedExpression(t) => t.snapshot_edge(),
             SubscriptsSubscriptTransportSlot::AsPattern(t) => t.snapshot_edge(),
             SubscriptsSubscriptTransportSlot::Slice(t) => t.snapshot_edge(),
-            SubscriptsSubscriptTransportSlot::PrintKeyword => None,
-            SubscriptsSubscriptTransportSlot::ExecKeyword => None,
-            SubscriptsSubscriptTransportSlot::AsyncKeyword => None,
-            SubscriptsSubscriptTransportSlot::AwaitKeyword => None,
-            SubscriptsSubscriptTransportSlot::TypeKeyword => None,
-            SubscriptsSubscriptTransportSlot::MatchKeyword => None,
             SubscriptsSubscriptTransportSlot::True(_) => None,
             SubscriptsSubscriptTransportSlot::False(_) => None,
             SubscriptsSubscriptTransportSlot::None(_) => None,
@@ -10393,12 +9533,6 @@ impl ::sittir_core::prepare::Prepare for SubscriptsSubscriptTransportSlot {
             SubscriptsSubscriptTransportSlot::NamedExpression(t) => t.source_separator(ctx),
             SubscriptsSubscriptTransportSlot::AsPattern(t) => t.source_separator(ctx),
             SubscriptsSubscriptTransportSlot::Slice(t) => t.source_separator(ctx),
-            SubscriptsSubscriptTransportSlot::PrintKeyword => None,
-            SubscriptsSubscriptTransportSlot::ExecKeyword => None,
-            SubscriptsSubscriptTransportSlot::AsyncKeyword => None,
-            SubscriptsSubscriptTransportSlot::AwaitKeyword => None,
-            SubscriptsSubscriptTransportSlot::TypeKeyword => None,
-            SubscriptsSubscriptTransportSlot::MatchKeyword => None,
             SubscriptsSubscriptTransportSlot::True(_) => None,
             SubscriptsSubscriptTransportSlot::False(_) => None,
             SubscriptsSubscriptTransportSlot::None(_) => None,
@@ -10450,12 +9584,6 @@ impl ::sittir_core::view::KindOf for SubscriptsSubscriptTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::Slice(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -10504,12 +9632,6 @@ impl ::sittir_core::render::Render for SubscriptsSubscriptTransportSlot {
             SubscriptsSubscriptTransportSlot::NamedExpression(inner) => inner.render(w),
             SubscriptsSubscriptTransportSlot::AsPattern(inner) => inner.render(w),
             SubscriptsSubscriptTransportSlot::Slice(inner) => inner.as_ref().render(w),
-            SubscriptsSubscriptTransportSlot::PrintKeyword => render_print_keyword(w),
-            SubscriptsSubscriptTransportSlot::ExecKeyword => render_exec_keyword(w),
-            SubscriptsSubscriptTransportSlot::AsyncKeyword => render_async_keyword(w),
-            SubscriptsSubscriptTransportSlot::AwaitKeyword => render_await_keyword(w),
-            SubscriptsSubscriptTransportSlot::TypeKeyword => render_type_keyword(w),
-            SubscriptsSubscriptTransportSlot::MatchKeyword => render_match_keyword(w),
             SubscriptsSubscriptTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             SubscriptsSubscriptTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             SubscriptsSubscriptTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -11601,7 +10723,7 @@ pub struct NamedExpressionTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
-    pub name: ::sittir_core::SlotValue<NamedExpressionNameTransportSlot>,
+    pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -11631,6 +10753,54 @@ impl ::sittir_core::prepare::Prepare for NamedExpressionTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.value.prepare(ctx)?;
+        Ok(())
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_NAMED_EXPRESSION_LHS)]
+pub struct NamedExpressionLhsTransport {
+    #[wire(key = "$_layout")]
+    pub layout: Option<Box<TransportLayout>>,
+    #[wire(key = "_identifier")]
+    #[slot]
+    pub identifier: ::sittir_core::SlotValue<IdentifierTransport>,
+}
+
+impl ::sittir_core::view::KindOf for NamedExpressionLhsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(143)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for NamedExpressionLhsTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(143) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for NamedExpressionLhsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(143)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_expression_lhs(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for NamedExpressionLhsTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.layout.prepare(ctx)?;
+        self.identifier.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -15626,7 +14796,7 @@ pub struct GenericTypeTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
-    pub name: ::sittir_core::SlotValue<GenericTypeNameTransportSlot>,
+    pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[wire(key = "_type_parameter")]
     #[slot(field = field::TYPE_PARAMETER)]
     pub type_parameter: ::sittir_core::SlotValue<TypeParameterTransport>,
@@ -15838,7 +15008,7 @@ pub struct KeywordArgumentTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
-    pub name: ::sittir_core::SlotValue<NamedExpressionNameTransportSlot>,
+    pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
@@ -16976,7 +16146,7 @@ impl ::sittir_core::prepare::Prepare for TypeConversionTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::IDENTIFIER, text)]
+#[transport(kind = kind::IDENTIFIER, folded = [kind::TYPE_KEYWORD, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::MATCH_KEYWORD], text)]
 pub struct IdentifierTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -21204,174 +20374,6 @@ impl ::sittir_core::render::Render for AssertKeywordTransport {
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum PrintKeywordTransport {
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-}
-
-impl ::sittir_core::view::KindOf for PrintKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for PrintKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for PrintKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_print_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum ExecKeywordTransport {
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-}
-
-impl ::sittir_core::view::KindOf for ExecKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for ExecKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for ExecKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_exec_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum AsyncKeywordTransport {
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-}
-
-impl ::sittir_core::view::KindOf for AsyncKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for AsyncKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for AsyncKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_async_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum AwaitKeywordTransport {
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-}
-
-impl ::sittir_core::view::KindOf for AwaitKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for AwaitKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for AwaitKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_await_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum TypeKeywordTransport {
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-}
-
-impl ::sittir_core::view::KindOf for TypeKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for TypeKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for TypeKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_type_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum MatchKeywordTransport {
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
-}
-
-impl ::sittir_core::view::KindOf for MatchKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for MatchKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for MatchKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_match_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
 pub enum ColonEqTransport {
     #[kind(kind::COLON_EQ)]
     ColonEq,
@@ -21680,6 +20682,34 @@ impl ::sittir_core::render::Render for ElseKeywordTransport {
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
+pub enum MatchKeywordTransport {
+    #[kind(kind::MATCH_KEYWORD)]
+    MatchKeyword,
+}
+
+impl ::sittir_core::view::KindOf for MatchKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for MatchKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for MatchKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_match_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum CaseKeywordTransport {
     #[kind(kind::CASE_KEYWORD)]
     CaseKeyword,
@@ -21703,6 +20733,34 @@ impl ::sittir_core::prepare::Prepare for CaseKeywordTransport {
 impl ::sittir_core::render::Render for CaseKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_case_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum AsyncKeywordTransport {
+    #[kind(kind::ASYNC_KEYWORD)]
+    AsyncKeyword,
+}
+
+impl ::sittir_core::view::KindOf for AsyncKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for AsyncKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for AsyncKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_async_keyword(w)
     }
 }
 
@@ -22095,6 +21153,62 @@ impl ::sittir_core::prepare::Prepare for NonlocalKeywordTransport {
 impl ::sittir_core::render::Render for NonlocalKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_nonlocal_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum ExecKeywordTransport {
+    #[kind(kind::EXEC_KEYWORD)]
+    ExecKeyword,
+}
+
+impl ::sittir_core::view::KindOf for ExecKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for ExecKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for ExecKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_exec_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum TypeKeywordTransport {
+    #[kind(kind::TYPE_KEYWORD)]
+    TypeKeyword,
+}
+
+impl ::sittir_core::view::KindOf for TypeKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for TypeKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for TypeKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_type_keyword(w)
     }
 }
 
@@ -23159,6 +22273,62 @@ impl ::sittir_core::prepare::Prepare for BslashTransport {
 impl ::sittir_core::render::Render for BslashTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_bslash(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum AwaitKeywordTransport {
+    #[kind(kind::AWAIT_KEYWORD)]
+    AwaitKeyword,
+}
+
+impl ::sittir_core::view::KindOf for AwaitKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for AwaitKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for AwaitKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_await_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum PrintKeywordTransport {
+    #[kind(kind::PRINT_KEYWORD)]
+    PrintKeyword,
+}
+
+impl ::sittir_core::view::KindOf for PrintKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for PrintKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for PrintKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_print_keyword(w)
     }
 }
 
@@ -25476,6 +24646,11 @@ fn render_named_expression(node: &NamedExpressionTransport, w: &mut dyn ::sittir
     w.site_at(options::SITE_NAMED_EXPRESSION_COLON_EQ_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", 0, w, |w| value.render(w))?;
     w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::After, node.layout.edges().after);
+    Ok(())
+}
+
+fn render_named_expression_lhs(node: &NamedExpressionLhsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    if let Some(v) = node.identifier.transport_or_write(w)? { render_identifier(v, w)?; }
     Ok(())
 }
 
@@ -27847,30 +27022,6 @@ fn render_assert_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sit
     TransportLayout::render(None, Some(::sittir_core::types::KindId(10)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("assert"))
 }
 
-fn render_print_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(67)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("print"))
-}
-
-fn render_exec_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(38)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("exec"))
-}
-
-fn render_async_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(68)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("async"))
-}
-
-fn render_await_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(69)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("await"))
-}
-
-fn render_type_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(39)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("type"))
-}
-
-fn render_match_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(22)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("match"))
-}
-
 fn render_colon_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(11)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(":="))
 }
@@ -27915,8 +27066,16 @@ fn render_else_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sitti
     TransportLayout::render(None, Some(::sittir_core::types::KindId(21)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("else"))
 }
 
+fn render_match_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(22)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("match"))
+}
+
 fn render_case_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(23)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("case"))
+}
+
+fn render_async_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(68)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("async"))
 }
 
 fn render_for_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -27973,6 +27132,14 @@ fn render_global_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sit
 
 fn render_nonlocal_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(37)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("nonlocal"))
+}
+
+fn render_exec_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(38)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("exec"))
+}
+
+fn render_type_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(39)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("type"))
 }
 
 fn render_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -28127,6 +27294,14 @@ fn render_bslash(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core
     TransportLayout::render(None, Some(::sittir_core::types::KindId(65)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("\\"))
 }
 
+fn render_await_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(69)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("await"))
+}
+
+fn render_print_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(67)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("print"))
+}
+
 fn render_lt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(108)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<"))
 }
@@ -28251,12 +27426,6 @@ fn render_parameter(t: &ParameterTransport, w: &mut dyn ::sittir_core::render::R
 fn render_pattern(t: &PatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         PatternTransport::Identifier(inner) => inner.render(w),
-        PatternTransport::PrintKeyword => render_print_keyword(w),
-        PatternTransport::ExecKeyword => render_exec_keyword(w),
-        PatternTransport::AsyncKeyword => render_async_keyword(w),
-        PatternTransport::AwaitKeyword => render_await_keyword(w),
-        PatternTransport::TypeKeyword => render_type_keyword(w),
-        PatternTransport::MatchKeyword => render_match_keyword(w),
         PatternTransport::Subscript(inner) => inner.render(w),
         PatternTransport::Attribute(inner) => inner.render(w),
         PatternTransport::ListSplatPattern(inner) => inner.render(w),
@@ -28285,12 +27454,6 @@ fn render_primary_expression(t: &PrimaryExpressionTransport, w: &mut dyn ::sitti
         PrimaryExpressionTransport::Await(inner) => inner.render(w),
         PrimaryExpressionTransport::BinaryOperator(inner) => inner.render(w),
         PrimaryExpressionTransport::Identifier(inner) => inner.render(w),
-        PrimaryExpressionTransport::PrintKeyword => render_print_keyword(w),
-        PrimaryExpressionTransport::ExecKeyword => render_exec_keyword(w),
-        PrimaryExpressionTransport::AsyncKeyword => render_async_keyword(w),
-        PrimaryExpressionTransport::AwaitKeyword => render_await_keyword(w),
-        PrimaryExpressionTransport::TypeKeyword => render_type_keyword(w),
-        PrimaryExpressionTransport::MatchKeyword => render_match_keyword(w),
         PrimaryExpressionTransport::String(inner) => inner.render(w),
         PrimaryExpressionTransport::ConcatenatedString(inner) => inner.render(w),
         PrimaryExpressionTransport::Integer(inner) => inner.render(w),
@@ -28383,6 +27546,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::AssertStatement(inner) => inner.kind_in(kinds),
             Self::ExpressionStatement(inner) => inner.kind_in(kinds),
             Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpressionLhs(inner) => inner.kind_in(kinds),
             Self::ReturnStatement(inner) => inner.kind_in(kinds),
             Self::DeleteStatement(inner) => inner.kind_in(kinds),
             Self::RaiseStatement(inner) => inner.kind_in(kinds),
@@ -28573,12 +27737,6 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::Star => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
             Self::GtGt => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
             Self::AssertKeyword => [::sittir_core::types::KindId(10)].iter().any(|k| kinds.contains(k)),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::ColonEq => [::sittir_core::types::KindId(11)].iter().any(|k| kinds.contains(k)),
             Self::ReturnKeyword => [::sittir_core::types::KindId(12)].iter().any(|k| kinds.contains(k)),
             Self::DelKeyword => [::sittir_core::types::KindId(13)].iter().any(|k| kinds.contains(k)),
@@ -28590,7 +27748,9 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::Colon => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
             Self::ElifKeyword => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
             Self::ElseKeyword => [::sittir_core::types::KindId(21)].iter().any(|k| kinds.contains(k)),
+            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::CaseKeyword => [::sittir_core::types::KindId(23)].iter().any(|k| kinds.contains(k)),
+            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
             Self::ForKeyword => [::sittir_core::types::KindId(24)].iter().any(|k| kinds.contains(k)),
             Self::InKeyword => [::sittir_core::types::KindId(25)].iter().any(|k| kinds.contains(k)),
             Self::WhileKeyword => [::sittir_core::types::KindId(26)].iter().any(|k| kinds.contains(k)),
@@ -28605,6 +27765,8 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::StarStar => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
             Self::GlobalKeyword => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
             Self::NonlocalKeyword => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
+            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
+            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
             Self::Eq => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
             Self::ClassKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
             Self::Lbrack => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
@@ -28643,6 +27805,8 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::YieldKeyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
             Self::Comma => [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k)),
             Self::Bslash => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
+            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
+            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
             Self::Lt => [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k)),
             Self::LtEq => [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k)),
             Self::EqEq => [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k)),
@@ -28675,6 +27839,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::AssertStatement(t) => t.render(w),
             AnyTransport::ExpressionStatement(t) => t.render(w),
             AnyTransport::NamedExpression(t) => t.render(w),
+            AnyTransport::NamedExpressionLhs(t) => t.render(w),
             AnyTransport::ReturnStatement(t) => t.render(w),
             AnyTransport::DeleteStatement(t) => t.render(w),
             AnyTransport::RaiseStatement(t) => t.render(w),
@@ -28865,12 +28030,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Star => render_star(w),
             AnyTransport::GtGt => render_gt_gt(w),
             AnyTransport::AssertKeyword => render_assert_keyword(w),
-            AnyTransport::PrintKeyword => render_print_keyword(w),
-            AnyTransport::ExecKeyword => render_exec_keyword(w),
-            AnyTransport::AsyncKeyword => render_async_keyword(w),
-            AnyTransport::AwaitKeyword => render_await_keyword(w),
-            AnyTransport::TypeKeyword => render_type_keyword(w),
-            AnyTransport::MatchKeyword => render_match_keyword(w),
             AnyTransport::ColonEq => render_colon_eq(w),
             AnyTransport::ReturnKeyword => render_return_keyword(w),
             AnyTransport::DelKeyword => render_del_keyword(w),
@@ -28882,7 +28041,9 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Colon => render_colon(w),
             AnyTransport::ElifKeyword => render_elif_keyword(w),
             AnyTransport::ElseKeyword => render_else_keyword(w),
+            AnyTransport::MatchKeyword => render_match_keyword(w),
             AnyTransport::CaseKeyword => render_case_keyword(w),
+            AnyTransport::AsyncKeyword => render_async_keyword(w),
             AnyTransport::ForKeyword => render_for_keyword(w),
             AnyTransport::InKeyword => render_in_keyword(w),
             AnyTransport::WhileKeyword => render_while_keyword(w),
@@ -28897,6 +28058,8 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::StarStar => render_star_star(w),
             AnyTransport::GlobalKeyword => render_global_keyword(w),
             AnyTransport::NonlocalKeyword => render_nonlocal_keyword(w),
+            AnyTransport::ExecKeyword => render_exec_keyword(w),
+            AnyTransport::TypeKeyword => render_type_keyword(w),
             AnyTransport::Eq => render_eq(w),
             AnyTransport::ClassKeyword => render_class_keyword(w),
             AnyTransport::Lbrack => render_lbrack(w),
@@ -28935,6 +28098,8 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::YieldKeyword => render_yield_keyword(w),
             AnyTransport::Comma => render_comma(w),
             AnyTransport::Bslash => render_bslash(w),
+            AnyTransport::AwaitKeyword => render_await_keyword(w),
+            AnyTransport::PrintKeyword => render_print_keyword(w),
             AnyTransport::Lt => render_lt(w),
             AnyTransport::LtEq => render_lt_eq(w),
             AnyTransport::EqEq => render_eq_eq(w),
@@ -29082,6 +28247,7 @@ const _: () = assert!(::core::mem::size_of::<MatchBlockTransport>() <= 256, "Mat
 const _: () = assert!(::core::mem::size_of::<MatchStatementTransport>() <= 256, "MatchStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<MemberTypeTransport>() <= 256, "MemberTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ModuleTransport>() <= 256, "ModuleTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NamedExpressionLhsTransport>() <= 256, "NamedExpressionLhsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<NamedExpressionTransport>() <= 256, "NamedExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<NamesTransport>() <= 256, "NamesTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<NonlocalStatementTransport>() <= 256, "NonlocalStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -29148,4 +28314,4 @@ const _: () = assert!(::core::mem::size_of::<WithStatementTransport>() <= 256, "
 const _: () = assert!(::core::mem::size_of::<YieldFromClauseTransport>() <= 256, "YieldFromClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<YieldTransport>() <= 256, "YieldTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 
-::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, StatementTransport, SimpleStatementTransport, CompoundStatementTransport, WithClauseTransport, SuiteTransport, ParameterTransport, PatternTransport, ExpressionTransport, PrimaryExpressionTransport, IntegerTransport, FloatTransport, IntegerDecimalTransport, FutureImportStatementContentTransportSlot, ImportFromStatementModuleNameTransportSlot, ImportFromStatementContentTransportSlot, ImportListNameTransportSlot, PrintStatementContentTransportSlot, ExpressionStatementContentTransportSlot, NamedExpressionNameTransportSlot, ReturnStatementExpressionsTransportSlot, IfStatementAlternativeTransportSlot, MatchBlockContentTransportSlot, ForStatementLeftTransportSlot, ExecStatementCodeTransportSlot, ParenthesizedListSplatContentTransportSlot, DecoratedDefinitionDefinitionTransportSlot, CasePatternContentTransportSlot, SimplePatternContentTransportSlot, SplatPatternOperatorTransportSlot, SplatPatternNameTransportSlot, ComplexPatternRealTransportSlot, ComplexPatternOperatorTransportSlot, DefaultParameterNameTransportSlot, ListSplatPatternTargetTransportSlot, BooleanOperatorOperatorTransportSlot, BinaryOperatorOperatorTransportSlot, UnaryOperatorOperatorTransportSlot, LambdaWithinForInClauseBodyTransportSlot, AugmentedAssignmentOperatorTransportSlot, AugmentedAssignmentRightTransportSlot, YieldContentTransportSlot, CallArgumentsTransportSlot, TypedParameterNameTransportSlot, TypeContentTransportSlot, SplatTypeOperatorTransportSlot, GenericTypeNameTransportSlot, ParenthesizedExpressionExpressionTransportSlot, CollectionElementsItemTransportSlot, StringContentTransportSlot, StringContentElementsTransportSlot, InterpolationExpressionTransportSlot, FormatSpecifierElementsTransportSlot, ArgumentListElementsItemTransportSlot, DictPatternElementsItemTransportSlot, SubscriptsSubscriptTransportSlot, DictionaryElementsItemTransportSlot, PrintStatementChevronPrintChevronArgumentsTransportSlot, ComprehensionClausesContentTransportSlot, ExceptClauseExceptionContentTransportSlot, ComparisonOperatorComparatorOperatorsTransportSlot, ModuleTransport, SimpleStatementsTransport, ImportStatementTransport, ImportPrefixTransport, RelativeImportTransport, FutureImportStatementTransport, ImportFromStatementTransport, ImportListTransport, AliasedImportTransport, WildcardImportTransport, PrintStatementTransport, ChevronTransport, AssertStatementTransport, ExpressionStatementTransport, NamedExpressionTransport, ReturnStatementTransport, DeleteStatementTransport, RaiseStatementTransport, PassStatementTransport, BreakStatementTransport, ContinueStatementTransport, IfStatementTransport, ElifClauseTransport, ElseClauseTransport, MatchStatementTransport, MatchBlockTransport, CaseClauseTransport, ForStatementTransport, WhileStatementTransport, TryStatementTransport, ExceptClauseTransport, FinallyClauseTransport, WithStatementTransport, WithItemTransport, FunctionDefinitionTransport, ParametersTransport, LambdaParametersTransport, ListSplatTransport, DictionarySplatTransport, GlobalStatementTransport, NonlocalStatementTransport, ExecStatementTransport, TypeAliasStatementTransport, ClassDefinitionTransport, TypeParameterTransport, ParenthesizedListSplatTransport, ArgumentListTransport, DecoratedDefinitionTransport, DecoratorTransport, BlockTransport, ExpressionListTransport, DottedNameTransport, CasePatternTransport, SimplePatternTransport, CaseAsPatternTransport, UnionPatternTransport, DictPatternTransport, KeyValuePatternTransport, KeywordPatternTransport, SplatPatternTransport, ClassPatternTransport, ComplexPatternTransport, ParametersElementsTransport, PatternsTransport, TuplePatternTransport, ListPatternTransport, DefaultParameterTransport, TypedDefaultParameterTransport, ListSplatPatternTransport, DictionarySplatPatternTransport, AsPatternTransport, NotOperatorTransport, BooleanOperatorTransport, BinaryOperatorTransport, UnaryOperatorTransport, ComparisonOperatorTransport, LambdaTransport, LambdaWithinForInClauseTransport, AugmentedAssignmentTransport, PatternListTransport, YieldTransport, AttributeTransport, SubscriptTransport, SliceTransport, EllipsisTransport, CallTransport, TypedParameterTransport, TypeTransport, SplatTypeTransport, GenericTypeTransport, UnionTypeTransport, ConstrainedTypeTransport, MemberTypeTransport, KeywordArgumentTransport, ListTransport, SetTransport, TupleTransport, DictionaryTransport, PairTransport, ListComprehensionTransport, DictionaryComprehensionTransport, SetComprehensionTransport, GeneratorExpressionTransport, ParenthesizedExpressionTransport, CollectionElementsTransport, ForInClauseTransport, IfClauseTransport, ConditionalExpressionTransport, ConcatenatedStringTransport, StringTransport, StringContentTransport, InterpolationTransport, NotEscapeSequenceTransport, FormatSpecifierTransport, TypeConversionTransport, IdentifierTransport, TrueTransport, FalseTransport, NoneTransport, AwaitTransport, CommentTransport, PositionalSeparatorTransport, KeywordSeparatorTransport, SimpleStatementsElementsTransport, SubjectsTransport, CasePatternsTransport, WithClauseWithItemsTransport, TypesTransport, ArgumentListElementsTransport, ListPatternCasePatternsTransport, DictPatternElementsTransport, SubscriptsTransport, DictionaryElementsTransport, SliceGroupTransport, FormatSpecifierTextTransport, TuplePatternElementsTransport, TupleElementsTransport, ExceptClauseExceptionAsTransport, CaseTuplePatternTransport, CaseListPatternTransport, PrintArgumentsTransport, PrintChevronArgumentsTransport, PrintStatementChevronTransport, PrintStatementPlainTransport, WildcardPatternTransport, ParenthesizedImportListTransport, ComprehensionClausesTransport, IntegerHexTransport, IntegerOctalTransport, IntegerBinaryTransport, IntegerDecimalLongTransport, IntegerDecimalImaginaryTransport, IntegerDecimalPlainTransport, FloatPointTransport, FloatLeadingPointTransport, FloatScientificTransport, EscapeSequenceUnicodeFixedTransport, EscapeSequenceUnicodeWideTransport, EscapeSequenceHexTransport, EscapeSequenceOctalTransport, EscapeSequenceLineBreakTransport, EscapeSequenceSimpleTransport, EscapeSequenceNamedTransport, LineContinuationNewlineTransport, LineContinuationNulTransport, SimplePatternNegativeTransport, ExceptClauseExceptionListTransport, ExceptClauseExceptionTransport, AssignmentEqTransport, AssignmentTypeTransport, AssignmentTypedTransport, ExpressionStatementTupleTransport, WithClauseBareTransport, WithClauseParenTransport, MatchBlockBlockTransport, MatchBlockEmptyTransport, SuiteInlineTransport, SuiteBlockTransport, SuiteEmptyTransport, ComparisonOperatorComparatorTransport, YieldFromClauseTransport, StringStartTransport, StringFragmentTransport, EscapeInterpolationTransport, StringEndTransport, IndentTransport, DedentTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, NamesTransport, AsPatternTargetTransport, FormatExpressionTransport, ImportKeywordTransport, DotTransport, FromKeywordTransport, FutureUKeywordTransport, AsKeywordTransport, StarTransport, GtGtTransport, AssertKeywordTransport, PrintKeywordTransport, ExecKeywordTransport, AsyncKeywordTransport, AwaitKeywordTransport, TypeKeywordTransport, MatchKeywordTransport, ColonEqTransport, ReturnKeywordTransport, DelKeywordTransport, RaiseKeywordTransport, PassKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, IfKeywordTransport, ColonTransport, ElifKeywordTransport, ElseKeywordTransport, CaseKeywordTransport, ForKeywordTransport, InKeywordTransport, WhileKeywordTransport, TryKeywordTransport, ExceptKeywordTransport, FinallyKeywordTransport, WithKeywordTransport, DefKeywordTransport, DashGtTransport, LparenTransport, RparenTransport, StarStarTransport, GlobalKeywordTransport, NonlocalKeywordTransport, EqTransport, ClassKeywordTransport, LbrackTransport, RbrackTransport, AtTransport, LbraceTransport, RbraceTransport, UnderscoreTransport, DashTransport, PlusTransport, NotKeywordTransport, AndKeywordTransport, OrKeywordTransport, SlashTransport, PercentTransport, SlashSlashTransport, PipeTransport, AmpTransport, CaretTransport, LtLtTransport, TildeTransport, LambdaKeywordTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, AtEqTransport, SlashSlashEqTransport, PercentEqTransport, StarStarEqTransport, GtGtEqTransport, LtLtEqTransport, AmpEqTransport, CaretEqTransport, PipeEqTransport, YieldKeywordTransport, CommaTransport, BslashTransport, LtTransport, LtEqTransport, EqEqTransport, BangEqTransport, GtEqTransport, GtTransport, LtGtTransport, NotInTransport, IsKeywordTransport, IsNotTransport, TriviaTransport);
+::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, StatementTransport, SimpleStatementTransport, CompoundStatementTransport, WithClauseTransport, SuiteTransport, ParameterTransport, PatternTransport, ExpressionTransport, PrimaryExpressionTransport, IntegerTransport, FloatTransport, IntegerDecimalTransport, FutureImportStatementContentTransportSlot, ImportFromStatementModuleNameTransportSlot, ImportFromStatementContentTransportSlot, ImportListNameTransportSlot, PrintStatementContentTransportSlot, ExpressionStatementContentTransportSlot, ReturnStatementExpressionsTransportSlot, IfStatementAlternativeTransportSlot, MatchBlockContentTransportSlot, ForStatementLeftTransportSlot, ExecStatementCodeTransportSlot, ParenthesizedListSplatContentTransportSlot, DecoratedDefinitionDefinitionTransportSlot, CasePatternContentTransportSlot, SimplePatternContentTransportSlot, SplatPatternOperatorTransportSlot, SplatPatternNameTransportSlot, ComplexPatternRealTransportSlot, ComplexPatternOperatorTransportSlot, DefaultParameterNameTransportSlot, ListSplatPatternTargetTransportSlot, BooleanOperatorOperatorTransportSlot, BinaryOperatorOperatorTransportSlot, UnaryOperatorOperatorTransportSlot, LambdaWithinForInClauseBodyTransportSlot, AugmentedAssignmentOperatorTransportSlot, AugmentedAssignmentRightTransportSlot, YieldContentTransportSlot, CallArgumentsTransportSlot, TypedParameterNameTransportSlot, TypeContentTransportSlot, SplatTypeOperatorTransportSlot, ParenthesizedExpressionExpressionTransportSlot, CollectionElementsItemTransportSlot, StringContentTransportSlot, StringContentElementsTransportSlot, InterpolationExpressionTransportSlot, FormatSpecifierElementsTransportSlot, ArgumentListElementsItemTransportSlot, DictPatternElementsItemTransportSlot, SubscriptsSubscriptTransportSlot, DictionaryElementsItemTransportSlot, PrintStatementChevronPrintChevronArgumentsTransportSlot, ComprehensionClausesContentTransportSlot, ExceptClauseExceptionContentTransportSlot, ComparisonOperatorComparatorOperatorsTransportSlot, ModuleTransport, SimpleStatementsTransport, ImportStatementTransport, ImportPrefixTransport, RelativeImportTransport, FutureImportStatementTransport, ImportFromStatementTransport, ImportListTransport, AliasedImportTransport, WildcardImportTransport, PrintStatementTransport, ChevronTransport, AssertStatementTransport, ExpressionStatementTransport, NamedExpressionTransport, NamedExpressionLhsTransport, ReturnStatementTransport, DeleteStatementTransport, RaiseStatementTransport, PassStatementTransport, BreakStatementTransport, ContinueStatementTransport, IfStatementTransport, ElifClauseTransport, ElseClauseTransport, MatchStatementTransport, MatchBlockTransport, CaseClauseTransport, ForStatementTransport, WhileStatementTransport, TryStatementTransport, ExceptClauseTransport, FinallyClauseTransport, WithStatementTransport, WithItemTransport, FunctionDefinitionTransport, ParametersTransport, LambdaParametersTransport, ListSplatTransport, DictionarySplatTransport, GlobalStatementTransport, NonlocalStatementTransport, ExecStatementTransport, TypeAliasStatementTransport, ClassDefinitionTransport, TypeParameterTransport, ParenthesizedListSplatTransport, ArgumentListTransport, DecoratedDefinitionTransport, DecoratorTransport, BlockTransport, ExpressionListTransport, DottedNameTransport, CasePatternTransport, SimplePatternTransport, CaseAsPatternTransport, UnionPatternTransport, DictPatternTransport, KeyValuePatternTransport, KeywordPatternTransport, SplatPatternTransport, ClassPatternTransport, ComplexPatternTransport, ParametersElementsTransport, PatternsTransport, TuplePatternTransport, ListPatternTransport, DefaultParameterTransport, TypedDefaultParameterTransport, ListSplatPatternTransport, DictionarySplatPatternTransport, AsPatternTransport, NotOperatorTransport, BooleanOperatorTransport, BinaryOperatorTransport, UnaryOperatorTransport, ComparisonOperatorTransport, LambdaTransport, LambdaWithinForInClauseTransport, AugmentedAssignmentTransport, PatternListTransport, YieldTransport, AttributeTransport, SubscriptTransport, SliceTransport, EllipsisTransport, CallTransport, TypedParameterTransport, TypeTransport, SplatTypeTransport, GenericTypeTransport, UnionTypeTransport, ConstrainedTypeTransport, MemberTypeTransport, KeywordArgumentTransport, ListTransport, SetTransport, TupleTransport, DictionaryTransport, PairTransport, ListComprehensionTransport, DictionaryComprehensionTransport, SetComprehensionTransport, GeneratorExpressionTransport, ParenthesizedExpressionTransport, CollectionElementsTransport, ForInClauseTransport, IfClauseTransport, ConditionalExpressionTransport, ConcatenatedStringTransport, StringTransport, StringContentTransport, InterpolationTransport, NotEscapeSequenceTransport, FormatSpecifierTransport, TypeConversionTransport, IdentifierTransport, TrueTransport, FalseTransport, NoneTransport, AwaitTransport, CommentTransport, PositionalSeparatorTransport, KeywordSeparatorTransport, SimpleStatementsElementsTransport, SubjectsTransport, CasePatternsTransport, WithClauseWithItemsTransport, TypesTransport, ArgumentListElementsTransport, ListPatternCasePatternsTransport, DictPatternElementsTransport, SubscriptsTransport, DictionaryElementsTransport, SliceGroupTransport, FormatSpecifierTextTransport, TuplePatternElementsTransport, TupleElementsTransport, ExceptClauseExceptionAsTransport, CaseTuplePatternTransport, CaseListPatternTransport, PrintArgumentsTransport, PrintChevronArgumentsTransport, PrintStatementChevronTransport, PrintStatementPlainTransport, WildcardPatternTransport, ParenthesizedImportListTransport, ComprehensionClausesTransport, IntegerHexTransport, IntegerOctalTransport, IntegerBinaryTransport, IntegerDecimalLongTransport, IntegerDecimalImaginaryTransport, IntegerDecimalPlainTransport, FloatPointTransport, FloatLeadingPointTransport, FloatScientificTransport, EscapeSequenceUnicodeFixedTransport, EscapeSequenceUnicodeWideTransport, EscapeSequenceHexTransport, EscapeSequenceOctalTransport, EscapeSequenceLineBreakTransport, EscapeSequenceSimpleTransport, EscapeSequenceNamedTransport, LineContinuationNewlineTransport, LineContinuationNulTransport, SimplePatternNegativeTransport, ExceptClauseExceptionListTransport, ExceptClauseExceptionTransport, AssignmentEqTransport, AssignmentTypeTransport, AssignmentTypedTransport, ExpressionStatementTupleTransport, WithClauseBareTransport, WithClauseParenTransport, MatchBlockBlockTransport, MatchBlockEmptyTransport, SuiteInlineTransport, SuiteBlockTransport, SuiteEmptyTransport, ComparisonOperatorComparatorTransport, YieldFromClauseTransport, StringStartTransport, StringFragmentTransport, EscapeInterpolationTransport, StringEndTransport, IndentTransport, DedentTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, NamesTransport, AsPatternTargetTransport, FormatExpressionTransport, ImportKeywordTransport, DotTransport, FromKeywordTransport, FutureUKeywordTransport, AsKeywordTransport, StarTransport, GtGtTransport, AssertKeywordTransport, ColonEqTransport, ReturnKeywordTransport, DelKeywordTransport, RaiseKeywordTransport, PassKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, IfKeywordTransport, ColonTransport, ElifKeywordTransport, ElseKeywordTransport, MatchKeywordTransport, CaseKeywordTransport, AsyncKeywordTransport, ForKeywordTransport, InKeywordTransport, WhileKeywordTransport, TryKeywordTransport, ExceptKeywordTransport, FinallyKeywordTransport, WithKeywordTransport, DefKeywordTransport, DashGtTransport, LparenTransport, RparenTransport, StarStarTransport, GlobalKeywordTransport, NonlocalKeywordTransport, ExecKeywordTransport, TypeKeywordTransport, EqTransport, ClassKeywordTransport, LbrackTransport, RbrackTransport, AtTransport, LbraceTransport, RbraceTransport, UnderscoreTransport, DashTransport, PlusTransport, NotKeywordTransport, AndKeywordTransport, OrKeywordTransport, SlashTransport, PercentTransport, SlashSlashTransport, PipeTransport, AmpTransport, CaretTransport, LtLtTransport, TildeTransport, LambdaKeywordTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, AtEqTransport, SlashSlashEqTransport, PercentEqTransport, StarStarEqTransport, GtGtEqTransport, LtLtEqTransport, AmpEqTransport, CaretEqTransport, PipeEqTransport, YieldKeywordTransport, CommaTransport, BslashTransport, AwaitKeywordTransport, PrintKeywordTransport, LtTransport, LtEqTransport, EqEqTransport, BangEqTransport, GtEqTransport, GtTransport, LtGtTransport, NotInTransport, IsKeywordTransport, IsNotTransport, TriviaTransport);

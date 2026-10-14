@@ -125,6 +125,12 @@ export declare class SittirEngine {
    */
 storedLayout(treeId: number): { deviations: number; slots: number; separators: number }
 /**
+ * The work the live tree `treeId`'s layout reads have done so far
+ * (`ParsedTree::layout_work`): `{ regionNodes, siblingItems }`. A
+ * diagnostic. Refuses a tree that is not live.
+ */
+layoutWork(treeId: number): { regionNodes: number; siblingItems: number }
+/**
  * One batch of a pre-order walk of the named descendants under
  * the node `from` names (JSON, see `query::Address`), filtered to
  * `kinds` when given and to the `where` plan (JSON, see
