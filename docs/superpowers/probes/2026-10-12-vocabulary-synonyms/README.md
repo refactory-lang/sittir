@@ -300,7 +300,7 @@ The maintainer ruled each question on 2026-10-12. Where a ruling went beyond the
 - **NO2 – NO11.** The collapses in §2's table. *Ruled:* each as the table gives it, with the members of §2's second table. Beyond the options:
   - NO2: typescript's catch group is hoisted, as its low-level `catchClause` hoists it.
   - NO5: the rest pattern's operand is `pattern`, and `**` is the `.map` refinement, which adds `type.rest.map`.
-  - NO6: the bounds clause is hoisted into its owners, whose `bounds` is the list of bounds itself.
+  - NO6: the bounds clause is hoisted into its owners, whose `bounds` is the list of bounds itself. A trait's `extends` also exposes the bounds list directly; the member keeps its name. Read directly, `clause.bounds` remains a clause with its `bounds` list.
   - NO7: an arm holds one `pattern`, and python's several patterns are one tuple pattern without parentheses. Rust's match pattern and python's `if` guard are hoisted.
   - NO8: the with item names its binding `name`, as the catch clause does.
   - NO9 (a): python's class and keyword patterns become `pattern.struct` and `pattern.struct.field`. `pattern.or` takes pairs, and rust's tuple-struct pattern joins `pattern.struct`.
