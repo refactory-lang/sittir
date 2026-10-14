@@ -121,8 +121,8 @@ describe('readTestOf', () => {
 	});
 
 	it('compares a hidden capture under the claimed node through the slot that holds it', async () => {
-		expect(await testsOf('((string (string_start) @_p) @literal.string.f (#match? @_p "^[fF]"))', 'string')).toEqual([
-			['literal.string.f', [{ up: 0, via: [], plan: { op: 'match', pattern: '^[fF]', fields: [], kinds: ['string_start'] } }]]
+		expect(await testsOf('((string (string_start) @_p) @literal.string.interpolated (#match? @_p "^[a-zA-Z]*[fFtT]"))', 'string')).toEqual([
+			['literal.string.interpolated', [{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[fFtT]', fields: [], kinds: ['string_start'] } }]]
 		]);
 	});
 
@@ -183,17 +183,17 @@ describe('readTestOf', () => {
 	});
 
 	it('tests a child the pattern names by the type of its kind, once though a predicate restates it', async () => {
-		expect(await testsOf('(param (self)) @declaration.parameter.self', 'param')).toEqual([
-			['declaration.parameter.self', [{ up: 0, via: [], plan: { op: 'is', types: [31], ...ROUTES['param.element'] } }]]
+		expect(await testsOf('(param (self)) @declaration.parameter.receiver', 'param')).toEqual([
+			['declaration.parameter.receiver', [{ up: 0, via: [], plan: { op: 'is', types: [31], ...ROUTES['param.element'] } }]]
 		]);
-		expect(await testsOf('((param (self) @r) @declaration.parameter.self (#kind-eq? @r "self"))', 'param')).toEqual([
-			['declaration.parameter.self', [{ up: 0, via: [], plan: { op: 'is', types: [31], ...ROUTES['param.element'] } }]]
+		expect(await testsOf('((param (self) @r) @declaration.parameter.receiver (#kind-eq? @r "self"))', 'param')).toEqual([
+			['declaration.parameter.receiver', [{ up: 0, via: [], plan: { op: 'is', types: [31], ...ROUTES['param.element'] } }]]
 		]);
 	});
 
 	it('tests a member capture on an optional slot as holding no node of another kind', async () => {
 		const model = new Map([...MODEL, ['opt', node('opt', [slot('element', ['self', 'plain'], { required: false })])]]);
-		const input: GrammarInput = { grammar: 'g', bindings: await readBindings('(opt (self) @receiver) @declaration.parameter.self'), model, textTokens: new Set(), layoutSlots: [] };
+		const input: GrammarInput = { grammar: 'g', bindings: await readBindings('(opt (self) @receiver) @declaration.parameter.receiver'), model, textTokens: new Set(), layoutSlots: [] };
 		const [entry] = resolveRoutes(input).readEntries.get('opt') ?? [];
 		expect(readTestOf(entry!, model, (owner, name) => (owner === 'opt' ? ROUTES['param.element'] : ROUTES[`${owner}.${name}`]), presenceKeywordOf, (kind) => TYPES[kind])).toEqual([
 			{ up: 0, via: [], plan: { op: 'not', of: { op: 'is', types: [32], ...ROUTES['param.element'] } } }

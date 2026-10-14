@@ -91,42 +91,6 @@
         "list": true
       }
     },
-    "as_pattern": {
-      "vocab": "pattern.as",
-      "read": [
-        {
-          "vocab": "pattern.as",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "expression",
-          "route": "slot",
-          "slot": "expression",
-          "path": [
-            {
-              "owner": "as_pattern",
-              "slot": "expression"
-            }
-          ]
-        },
-        {
-          "name": "alias",
-          "route": "slot",
-          "slot": "alias",
-          "path": [
-            {
-              "owner": "as_pattern",
-              "slot": "alias"
-            }
-          ]
-        }
-      ]
-    },
     "as_pattern_target": {
       "container": {
         "kinds": [
@@ -1397,10 +1361,10 @@
       ]
     },
     "case_as_pattern": {
-      "vocab": "pattern.case.as",
+      "vocab": "pattern.as",
       "read": [
         {
-          "vocab": "pattern.case.as",
+          "vocab": "pattern.as",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1409,7 +1373,7 @@
       ],
       "members": [
         {
-          "name": "casePattern",
+          "name": "pattern",
           "route": "slot",
           "slot": "case_pattern",
           "path": [
@@ -1420,7 +1384,7 @@
           ]
         },
         {
-          "name": "identifier",
+          "name": "name",
           "route": "slot",
           "slot": "identifier",
           "path": [
@@ -2991,10 +2955,10 @@
       }
     },
     "dictionary_splat_pattern": {
-      "vocab": "pattern.splat.dictionary",
+      "vocab": "pattern.rest.map",
       "read": [
         {
-          "vocab": "pattern.splat.dictionary",
+          "vocab": "pattern.rest.map",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3003,7 +2967,7 @@
       ],
       "members": [
         {
-          "name": "target",
+          "name": "pattern",
           "route": "slot",
           "slot": "target",
           "path": [
@@ -5058,10 +5022,10 @@
       }
     },
     "list_splat_pattern": {
-      "vocab": "pattern.splat",
+      "vocab": "pattern.rest",
       "read": [
         {
-          "vocab": "pattern.splat",
+          "vocab": "pattern.rest",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5070,7 +5034,7 @@
       ],
       "members": [
         {
-          "name": "target",
+          "name": "pattern",
           "route": "slot",
           "slot": "target",
           "path": [
@@ -5899,10 +5863,36 @@
       ]
     },
     "splat_type": {
-      "vocab": "type.splat",
+      "vocab": "type.rest",
       "read": [
         {
-          "vocab": "type.splat",
+          "vocab": "type.rest.map",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operator",
+              "slot": "operator",
+              "text": "**"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "**",
+                "fields": [
+                  "operator"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "type.rest",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5922,7 +5912,7 @@
           ]
         },
         {
-          "name": "name",
+          "name": "type",
           "route": "slot",
           "slot": "name",
           "path": [
@@ -5938,7 +5928,7 @@
       "vocab": "literal.string",
       "read": [
         {
-          "vocab": "literal.string.f",
+          "vocab": "literal.string.interpolated.raw.multiline",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5948,7 +5938,255 @@
               "via": [],
               "plan": {
                 "op": "match",
-                "pattern": "^[fF]",
+                "pattern": "^[a-zA-Z]*[fFtT]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[rR]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "\"\"\"|'''",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.bytes.raw.multiline",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[bB]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[rR]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "\"\"\"|'''",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.interpolated.raw",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[fFtT]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[rR]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.interpolated.multiline",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[fFtT]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "\"\"\"|'''",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.bytes.raw",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[bB]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[rR]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.bytes.multiline",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[bB]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "\"\"\"|'''",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.raw.multiline",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[rR]",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "\"\"\"|'''",
+                "fields": [
+                  "string_start"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.interpolated",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^[a-zA-Z]*[fFtT]",
                 "fields": [
                   "string_start"
                 ],
@@ -5968,7 +6206,7 @@
               "via": [],
               "plan": {
                 "op": "match",
-                "pattern": "^[bB]",
+                "pattern": "^[a-zA-Z]*[bB]",
                 "fields": [
                   "string_start"
                 ],
@@ -5988,7 +6226,7 @@
               "via": [],
               "plan": {
                 "op": "match",
-                "pattern": "^[rR]",
+                "pattern": "^[a-zA-Z]*[rR]",
                 "fields": [
                   "string_start"
                 ],
@@ -6879,6 +7117,56 @@
               "slot": "value"
             }
           ]
+        },
+        {
+          "name": "value",
+          "route": "nested",
+          "via": [
+            {
+              "field": "value",
+              "kind": "as_pattern",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "as_pattern",
+          "slot": "expression",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "with_item",
+              "slot": "value"
+            },
+            {
+              "owner": "as_pattern",
+              "slot": "expression"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "nested",
+          "via": [
+            {
+              "field": "value",
+              "kind": "as_pattern",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "as_pattern",
+          "slot": "alias",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "with_item",
+              "slot": "value"
+            },
+            {
+              "owner": "as_pattern",
+              "slot": "alias"
+            }
+          ]
         }
       ],
       "container": {
@@ -7025,9 +7313,15 @@
       },
       {
         "depth": 4,
-        "paths": 57,
-        "kinds": 14,
-        "refinements": 24
+        "paths": 62,
+        "kinds": 15,
+        "refinements": 29
+      },
+      {
+        "depth": 5,
+        "paths": 2,
+        "kinds": 1,
+        "refinements": 2
       }
     ]
   }

@@ -128,10 +128,13 @@ describe('deriveVocabulary', () => {
 		expect(d.untargeted).toEqual([]);
 		expect(d.uncaptured).toEqual([]);
 	});
-	it('keeps the bounds of a type argument (`Iterator<Item: Copy>`), a wrapper claimed as a kind of its own', () => {
+	it('keeps the bounds of a type argument (`Iterator<Item: Copy>`), a wrapper claimed as a kind of its own, as the list of bounds its clause holds', () => {
 		const argument = d.members.get('element.type_argument');
-		expect(argument?.get('constraint')?.kinds).toEqual(new Set(['clause.bounds']));
-		expect(argument?.get('constraint')?.optional).toBe(true);
+		expect(argument?.has('constraint')).toBe(false);
+		expect(argument?.get('bounds')?.kinds.has('identifier.type')).toBe(true);
+		expect(argument?.get('bounds')?.kinds.has('clause.bounds')).toBe(false);
+		expect(argument?.get('bounds')?.multiple).toBe(true);
+		expect(argument?.get('bounds')?.optional).toBe(true);
 		expect(argument?.get('content')?.kinds.has('element.type_binding')).toBe(true);
 		expect(d.members.get('type.generic.turbofish')?.get('typeArguments')?.kinds).toEqual(
 			new Set(['element.type_argument'])

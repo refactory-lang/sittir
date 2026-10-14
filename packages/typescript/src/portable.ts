@@ -30,7 +30,6 @@ export interface PortableIds {
 		| TSKindId.ExtendsTypeClause
 		| TSKindId.FinallyClause
 		| TSKindId.ImplementsClause
-		| TSKindId.ImportAlias
 		| TSKindId.ImportAttribute
 		| TSKindId.ImportClause
 		| TSKindId.ImportRequireClause
@@ -42,11 +41,11 @@ export interface PortableIds {
 		| TSKindId.NamespaceImport
 		| TSKindId.SwitchCase
 		| TSKindId.SwitchDefault;
+	'clause.bounds': TSKindId.Constraint;
 	'clause.case': TSKindId.SwitchCase | TSKindId.SwitchDefault;
 	'clause.case.default': TSKindId.SwitchDefault;
 	'clause.case.switch': TSKindId.SwitchCase;
 	'clause.catch': TSKindId.CatchClause;
-	'clause.constraint': TSKindId.Constraint;
 	'clause.default': TSKindId.DefaultType;
 	'clause.else': TSKindId.ElseClause;
 	'clause.export': TSKindId.ExportClause | TSKindId.ExportSpecifier | TSKindId.NamespaceExport;
@@ -58,7 +57,6 @@ export interface PortableIds {
 	'clause.finally': TSKindId.FinallyClause;
 	'clause.implements': TSKindId.ImplementsClause;
 	'clause.import':
-		| TSKindId.ImportAlias
 		| TSKindId.ImportAttribute
 		| TSKindId.ImportClause
 		| TSKindId.ImportRequireClause
@@ -66,7 +64,6 @@ export interface PortableIds {
 		| TSKindId.ImportSpecifierAs
 		| TSKindId.ImportSpecifierName
 		| TSKindId.NamespaceImport;
-	'clause.import.alias': TSKindId.ImportAlias;
 	'clause.import.attribute': TSKindId.ImportAttribute;
 	'clause.import.names': TSKindId.ImportClause;
 	'clause.import.namespace': TSKindId.NamespaceImport;
@@ -314,8 +311,8 @@ export interface PortableIds {
 		| TSKindId.NonNullExpression
 		| TSKindId.SatisfiesExpression
 		| TSKindId.TypeAssertion;
-	'expression.cast.as': TSKindId.AsExpression;
-	'expression.cast.assertion': TSKindId.TypeAssertion;
+	'expression.cast.assertion': TSKindId.AsExpression | TSKindId.TypeAssertion;
+	'expression.cast.assertion.angle_bracket': TSKindId.TypeAssertion;
 	'expression.cast.non_null': TSKindId.NonNullExpression;
 	'expression.cast.satisfies': TSKindId.SatisfiesExpression;
 	'expression.class': TSKindId.Class;
@@ -368,7 +365,7 @@ export interface PortableIds {
 		| TSKindId.ShorthandPropertyIdentifier
 		| TSKindId.ShorthandPropertyIdentifierPattern;
 	'identifier.property.shorthand': TSKindId.ShorthandPropertyIdentifier | TSKindId.ShorthandPropertyIdentifierPattern;
-	'identifier.self': TSKindId.This;
+	'identifier.receiver': TSKindId.This;
 	'identifier.super': TSKindId.Super;
 	'identifier.type': TSKindId.TypeIdentifier;
 	literal:
@@ -455,13 +452,14 @@ export interface PortableIds {
 		| TSKindId.StringDouble
 		| TSKindId.UnescapedDoubleStringFragment
 		| TSKindId.StringSingle
+		| TSKindId.TemplateString
 		| TSKindId.UnescapedSingleStringFragment;
 	'literal.string.escape': TSKindId.EscapeSequence;
+	'literal.string.interpolated': TSKindId.TemplateString;
 	'literal.string.text':
 		| TSKindId.TemplateChars
 		| TSKindId.UnescapedDoubleStringFragment
 		| TSKindId.UnescapedSingleStringFragment;
-	'literal.template': TSKindId.TemplateString;
 	modifier: TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword | TSKindId.PublicKeyword;
 	'modifier.visibility': TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword | TSKindId.PublicKeyword;
 	'modifier.visibility.private': TSKindId.PrivateKeyword;
@@ -474,8 +472,8 @@ export interface PortableIds {
 		| TSKindId.ObjectPattern
 		| TSKindId.PairPattern
 		| TSKindId.RestPattern;
-	'pattern.array': TSKindId.ArrayPattern;
 	'pattern.assignment': TSKindId.AssignmentPattern;
+	'pattern.list': TSKindId.ArrayPattern;
 	'pattern.object': TSKindId.ObjectAssignmentPattern | TSKindId.ObjectPattern | TSKindId.PairPattern;
 	'pattern.object.assignment': TSKindId.ObjectAssignmentPattern;
 	'pattern.object.pair': TSKindId.PairPattern;
@@ -497,6 +495,7 @@ export interface PortableIds {
 		| TSKindId.ForInStatement
 		| TSKindId.ForStatement
 		| TSKindId.IfStatement
+		| TSKindId.ImportAlias
 		| TSKindId.ImportStatement
 		| TSKindId.LabeledStatement
 		| TSKindId.ReturnStatement
@@ -523,7 +522,8 @@ export interface PortableIds {
 	'statement.export.default': TSKindId.ExportStatementDefaultDeclaration;
 	'statement.expression': TSKindId.ExpressionStatement;
 	'statement.if': TSKindId.IfStatement;
-	'statement.import': TSKindId.ImportStatement;
+	'statement.import': TSKindId.ImportAlias | TSKindId.ImportStatement;
+	'statement.import.alias': TSKindId.ImportAlias;
 	'statement.import.typeof': TSKindId.ImportStatement;
 	'statement.labeled': TSKindId.LabeledStatement;
 	'statement.loop': TSKindId.DoStatement | TSKindId.ForInStatement | TSKindId.ForStatement | TSKindId.WhileStatement;
@@ -582,7 +582,7 @@ export interface PortableIds {
 	'type.intersection': TSKindId.IntersectionType;
 	'type.literal': TSKindId.LiteralType;
 	'type.lookup': TSKindId.LookupType;
-	'type.maybe': TSKindId.FlowMaybeType;
+	'type.nullable': TSKindId.FlowMaybeType;
 	'type.object': TSKindId.ObjectType;
 	'type.optional': TSKindId.OptionalType;
 	'type.parenthesized': TSKindId.ParenthesizedType;
@@ -627,9 +627,9 @@ export interface PortableKindsAt {
 	'attribute.decorator': { readonly $ids: readonly PortableIds['attribute.decorator'][] };
 	clause: {
 		readonly $ids: readonly PortableIds['clause'][];
+		readonly bounds: PortableKindsAt['clause.bounds'];
 		readonly case: PortableKindsAt['clause.case'];
 		readonly catch: PortableKindsAt['clause.catch'];
-		readonly constraint: PortableKindsAt['clause.constraint'];
 		readonly default: PortableKindsAt['clause.default'];
 		readonly else: PortableKindsAt['clause.else'];
 		readonly export: PortableKindsAt['clause.export'];
@@ -639,6 +639,7 @@ export interface PortableKindsAt {
 		readonly import: PortableKindsAt['clause.import'];
 		readonly mapped_type: PortableKindsAt['clause.mapped_type'];
 	};
+	'clause.bounds': { readonly $ids: readonly PortableIds['clause.bounds'][] };
 	'clause.case': {
 		readonly $ids: readonly PortableIds['clause.case'][];
 		readonly default: PortableKindsAt['clause.case.default'];
@@ -647,7 +648,6 @@ export interface PortableKindsAt {
 	'clause.case.default': { readonly $ids: readonly PortableIds['clause.case.default'][] };
 	'clause.case.switch': { readonly $ids: readonly PortableIds['clause.case.switch'][] };
 	'clause.catch': { readonly $ids: readonly PortableIds['clause.catch'][] };
-	'clause.constraint': { readonly $ids: readonly PortableIds['clause.constraint'][] };
 	'clause.default': { readonly $ids: readonly PortableIds['clause.default'][] };
 	'clause.else': { readonly $ids: readonly PortableIds['clause.else'][] };
 	'clause.export': {
@@ -670,14 +670,12 @@ export interface PortableKindsAt {
 	'clause.implements': { readonly $ids: readonly PortableIds['clause.implements'][] };
 	'clause.import': {
 		readonly $ids: readonly PortableIds['clause.import'][];
-		readonly alias: PortableKindsAt['clause.import.alias'];
 		readonly attribute: PortableKindsAt['clause.import.attribute'];
 		readonly names: PortableKindsAt['clause.import.names'];
 		readonly namespace: PortableKindsAt['clause.import.namespace'];
 		readonly require: PortableKindsAt['clause.import.require'];
 		readonly specifier: PortableKindsAt['clause.import.specifier'];
 	};
-	'clause.import.alias': { readonly $ids: readonly PortableIds['clause.import.alias'][] };
 	'clause.import.attribute': { readonly $ids: readonly PortableIds['clause.import.attribute'][] };
 	'clause.import.names': { readonly $ids: readonly PortableIds['clause.import.names'][] };
 	'clause.import.namespace': { readonly $ids: readonly PortableIds['clause.import.namespace'][] };
@@ -1158,13 +1156,17 @@ export interface PortableKindsAt {
 	'expression.call.template': { readonly $ids: readonly PortableIds['expression.call.template'][] };
 	'expression.cast': {
 		readonly $ids: readonly PortableIds['expression.cast'][];
-		readonly as: PortableKindsAt['expression.cast.as'];
 		readonly assertion: PortableKindsAt['expression.cast.assertion'];
 		readonly non_null: PortableKindsAt['expression.cast.non_null'];
 		readonly satisfies: PortableKindsAt['expression.cast.satisfies'];
 	};
-	'expression.cast.as': { readonly $ids: readonly PortableIds['expression.cast.as'][] };
-	'expression.cast.assertion': { readonly $ids: readonly PortableIds['expression.cast.assertion'][] };
+	'expression.cast.assertion': {
+		readonly $ids: readonly PortableIds['expression.cast.assertion'][];
+		readonly angle_bracket: PortableKindsAt['expression.cast.assertion.angle_bracket'];
+	};
+	'expression.cast.assertion.angle_bracket': {
+		readonly $ids: readonly PortableIds['expression.cast.assertion.angle_bracket'][];
+	};
 	'expression.cast.non_null': { readonly $ids: readonly PortableIds['expression.cast.non_null'][] };
 	'expression.cast.satisfies': { readonly $ids: readonly PortableIds['expression.cast.satisfies'][] };
 	'expression.class': { readonly $ids: readonly PortableIds['expression.class'][] };
@@ -1220,7 +1222,7 @@ export interface PortableKindsAt {
 		readonly label: PortableKindsAt['identifier.label'];
 		readonly nested: PortableKindsAt['identifier.nested'];
 		readonly property: PortableKindsAt['identifier.property'];
-		readonly self: PortableKindsAt['identifier.self'];
+		readonly receiver: PortableKindsAt['identifier.receiver'];
 		readonly super: PortableKindsAt['identifier.super'];
 		readonly type: PortableKindsAt['identifier.type'];
 	};
@@ -1231,7 +1233,7 @@ export interface PortableKindsAt {
 		readonly shorthand: PortableKindsAt['identifier.property.shorthand'];
 	};
 	'identifier.property.shorthand': { readonly $ids: readonly PortableIds['identifier.property.shorthand'][] };
-	'identifier.self': { readonly $ids: readonly PortableIds['identifier.self'][] };
+	'identifier.receiver': { readonly $ids: readonly PortableIds['identifier.receiver'][] };
 	'identifier.super': { readonly $ids: readonly PortableIds['identifier.super'][] };
 	'identifier.type': { readonly $ids: readonly PortableIds['identifier.type'][] };
 	literal: {
@@ -1241,7 +1243,6 @@ export interface PortableKindsAt {
 		readonly number: PortableKindsAt['literal.number'];
 		readonly regex: PortableKindsAt['literal.regex'];
 		readonly string: PortableKindsAt['literal.string'];
-		readonly template: PortableKindsAt['literal.template'];
 	};
 	'literal.boolean': {
 		readonly $ids: readonly PortableIds['literal.boolean'][];
@@ -1298,11 +1299,12 @@ export interface PortableKindsAt {
 	'literal.string': {
 		readonly $ids: readonly PortableIds['literal.string'][];
 		readonly escape: PortableKindsAt['literal.string.escape'];
+		readonly interpolated: PortableKindsAt['literal.string.interpolated'];
 		readonly text: PortableKindsAt['literal.string.text'];
 	};
 	'literal.string.escape': { readonly $ids: readonly PortableIds['literal.string.escape'][] };
+	'literal.string.interpolated': { readonly $ids: readonly PortableIds['literal.string.interpolated'][] };
 	'literal.string.text': { readonly $ids: readonly PortableIds['literal.string.text'][] };
-	'literal.template': { readonly $ids: readonly PortableIds['literal.template'][] };
 	modifier: {
 		readonly $ids: readonly PortableIds['modifier'][];
 		readonly visibility: PortableKindsAt['modifier.visibility'];
@@ -1318,13 +1320,13 @@ export interface PortableKindsAt {
 	'modifier.visibility.public': { readonly $ids: readonly PortableIds['modifier.visibility.public'][] };
 	pattern: {
 		readonly $ids: readonly PortableIds['pattern'][];
-		readonly array: PortableKindsAt['pattern.array'];
 		readonly assignment: PortableKindsAt['pattern.assignment'];
+		readonly list: PortableKindsAt['pattern.list'];
 		readonly object: PortableKindsAt['pattern.object'];
 		readonly rest: PortableKindsAt['pattern.rest'];
 	};
-	'pattern.array': { readonly $ids: readonly PortableIds['pattern.array'][] };
 	'pattern.assignment': { readonly $ids: readonly PortableIds['pattern.assignment'][] };
+	'pattern.list': { readonly $ids: readonly PortableIds['pattern.list'][] };
 	'pattern.object': {
 		readonly $ids: readonly PortableIds['pattern.object'][];
 		readonly assignment: PortableKindsAt['pattern.object.assignment'];
@@ -1372,8 +1374,10 @@ export interface PortableKindsAt {
 	'statement.if': { readonly $ids: readonly PortableIds['statement.if'][] };
 	'statement.import': {
 		readonly $ids: readonly PortableIds['statement.import'][];
+		readonly alias: PortableKindsAt['statement.import.alias'];
 		readonly typeof: PortableKindsAt['statement.import.typeof'];
 	};
+	'statement.import.alias': { readonly $ids: readonly PortableIds['statement.import.alias'][] };
 	'statement.import.typeof': { readonly $ids: readonly PortableIds['statement.import.typeof'][] };
 	'statement.labeled': { readonly $ids: readonly PortableIds['statement.labeled'][] };
 	'statement.loop': {
@@ -1404,7 +1408,7 @@ export interface PortableKindsAt {
 		readonly intersection: PortableKindsAt['type.intersection'];
 		readonly literal: PortableKindsAt['type.literal'];
 		readonly lookup: PortableKindsAt['type.lookup'];
-		readonly maybe: PortableKindsAt['type.maybe'];
+		readonly nullable: PortableKindsAt['type.nullable'];
 		readonly object: PortableKindsAt['type.object'];
 		readonly optional: PortableKindsAt['type.optional'];
 		readonly parenthesized: PortableKindsAt['type.parenthesized'];
@@ -1432,7 +1436,7 @@ export interface PortableKindsAt {
 	'type.intersection': { readonly $ids: readonly PortableIds['type.intersection'][] };
 	'type.literal': { readonly $ids: readonly PortableIds['type.literal'][] };
 	'type.lookup': { readonly $ids: readonly PortableIds['type.lookup'][] };
-	'type.maybe': { readonly $ids: readonly PortableIds['type.maybe'][] };
+	'type.nullable': { readonly $ids: readonly PortableIds['type.nullable'][] };
 	'type.object': { readonly $ids: readonly PortableIds['type.object'][] };
 	'type.optional': { readonly $ids: readonly PortableIds['type.optional'][] };
 	'type.parenthesized': { readonly $ids: readonly PortableIds['type.parenthesized'][] };
@@ -1470,9 +1474,9 @@ export interface PortableIsAt {
 	'attribute.content.parenthesized': PortableGuard<PortableIds['attribute.content.parenthesized']> & {};
 	'attribute.decorator': PortableGuard<PortableIds['attribute.decorator']> & {};
 	clause: PortableGuard<PortableIds['clause']> & {
+		readonly bounds: PortableIsAt['clause.bounds'];
 		readonly case: PortableIsAt['clause.case'];
 		readonly catch: PortableIsAt['clause.catch'];
-		readonly constraint: PortableIsAt['clause.constraint'];
 		readonly default: PortableIsAt['clause.default'];
 		readonly else: PortableIsAt['clause.else'];
 		readonly export: PortableIsAt['clause.export'];
@@ -1482,6 +1486,7 @@ export interface PortableIsAt {
 		readonly import: PortableIsAt['clause.import'];
 		readonly mapped_type: PortableIsAt['clause.mapped_type'];
 	};
+	'clause.bounds': PortableGuard<PortableIds['clause.bounds']> & {};
 	'clause.case': PortableGuard<PortableIds['clause.case']> & {
 		readonly default: PortableIsAt['clause.case.default'];
 		readonly switch: PortableIsAt['clause.case.switch'];
@@ -1489,7 +1494,6 @@ export interface PortableIsAt {
 	'clause.case.default': PortableGuard<PortableIds['clause.case.default']> & {};
 	'clause.case.switch': PortableGuard<PortableIds['clause.case.switch']> & {};
 	'clause.catch': PortableGuard<PortableIds['clause.catch']> & {};
-	'clause.constraint': PortableGuard<PortableIds['clause.constraint']> & {};
 	'clause.default': PortableGuard<PortableIds['clause.default']> & {};
 	'clause.else': PortableGuard<PortableIds['clause.else']> & {};
 	'clause.export': PortableGuard<PortableIds['clause.export']> & {
@@ -1508,14 +1512,12 @@ export interface PortableIsAt {
 	'clause.finally': PortableGuard<PortableIds['clause.finally']> & {};
 	'clause.implements': PortableGuard<PortableIds['clause.implements']> & {};
 	'clause.import': PortableGuard<PortableIds['clause.import']> & {
-		readonly alias: PortableIsAt['clause.import.alias'];
 		readonly attribute: PortableIsAt['clause.import.attribute'];
 		readonly names: PortableIsAt['clause.import.names'];
 		readonly namespace: PortableIsAt['clause.import.namespace'];
 		readonly require: PortableIsAt['clause.import.require'];
 		readonly specifier: PortableIsAt['clause.import.specifier'];
 	};
-	'clause.import.alias': PortableGuard<PortableIds['clause.import.alias']> & {};
 	'clause.import.attribute': PortableGuard<PortableIds['clause.import.attribute']> & {};
 	'clause.import.names': PortableGuard<PortableIds['clause.import.names']> & {};
 	'clause.import.namespace': PortableGuard<PortableIds['clause.import.namespace']> & {};
@@ -1913,13 +1915,14 @@ export interface PortableIsAt {
 	'expression.call.member': PortableGuard<PortableIds['expression.call.member']> & {};
 	'expression.call.template': PortableGuard<PortableIds['expression.call.template']> & {};
 	'expression.cast': PortableGuard<PortableIds['expression.cast']> & {
-		readonly as: PortableIsAt['expression.cast.as'];
 		readonly assertion: PortableIsAt['expression.cast.assertion'];
 		readonly non_null: PortableIsAt['expression.cast.non_null'];
 		readonly satisfies: PortableIsAt['expression.cast.satisfies'];
 	};
-	'expression.cast.as': PortableGuard<PortableIds['expression.cast.as']> & {};
-	'expression.cast.assertion': PortableGuard<PortableIds['expression.cast.assertion']> & {};
+	'expression.cast.assertion': PortableGuard<PortableIds['expression.cast.assertion']> & {
+		readonly angle_bracket: PortableIsAt['expression.cast.assertion.angle_bracket'];
+	};
+	'expression.cast.assertion.angle_bracket': PortableGuard<PortableIds['expression.cast.assertion.angle_bracket']> & {};
 	'expression.cast.non_null': PortableGuard<PortableIds['expression.cast.non_null']> & {};
 	'expression.cast.satisfies': PortableGuard<PortableIds['expression.cast.satisfies']> & {};
 	'expression.class': PortableGuard<PortableIds['expression.class']> & {};
@@ -1970,7 +1973,7 @@ export interface PortableIsAt {
 		readonly label: PortableIsAt['identifier.label'];
 		readonly nested: PortableIsAt['identifier.nested'];
 		readonly property: PortableIsAt['identifier.property'];
-		readonly self: PortableIsAt['identifier.self'];
+		readonly receiver: PortableIsAt['identifier.receiver'];
 		readonly super: PortableIsAt['identifier.super'];
 		readonly type: PortableIsAt['identifier.type'];
 	};
@@ -1980,7 +1983,7 @@ export interface PortableIsAt {
 		readonly shorthand: PortableIsAt['identifier.property.shorthand'];
 	};
 	'identifier.property.shorthand': PortableGuard<PortableIds['identifier.property.shorthand']> & {};
-	'identifier.self': PortableGuard<PortableIds['identifier.self']> & {};
+	'identifier.receiver': PortableGuard<PortableIds['identifier.receiver']> & {};
 	'identifier.super': PortableGuard<PortableIds['identifier.super']> & {};
 	'identifier.type': PortableGuard<PortableIds['identifier.type']> & {};
 	literal: PortableGuard<PortableIds['literal']> & {
@@ -1989,7 +1992,6 @@ export interface PortableIsAt {
 		readonly number: PortableIsAt['literal.number'];
 		readonly regex: PortableIsAt['literal.regex'];
 		readonly string: PortableIsAt['literal.string'];
-		readonly template: PortableIsAt['literal.template'];
 	};
 	'literal.boolean': PortableGuard<PortableIds['literal.boolean']> & {
 		readonly false: PortableIsAt['literal.boolean.false'];
@@ -2038,11 +2040,12 @@ export interface PortableIsAt {
 	'literal.regex.pattern': PortableGuard<PortableIds['literal.regex.pattern']> & {};
 	'literal.string': PortableGuard<PortableIds['literal.string']> & {
 		readonly escape: PortableIsAt['literal.string.escape'];
+		readonly interpolated: PortableIsAt['literal.string.interpolated'];
 		readonly text: PortableIsAt['literal.string.text'];
 	};
 	'literal.string.escape': PortableGuard<PortableIds['literal.string.escape']> & {};
+	'literal.string.interpolated': PortableGuard<PortableIds['literal.string.interpolated']> & {};
 	'literal.string.text': PortableGuard<PortableIds['literal.string.text']> & {};
-	'literal.template': PortableGuard<PortableIds['literal.template']> & {};
 	modifier: PortableGuard<PortableIds['modifier']> & { readonly visibility: PortableIsAt['modifier.visibility'] };
 	'modifier.visibility': PortableGuard<PortableIds['modifier.visibility']> & {
 		readonly private: PortableIsAt['modifier.visibility.private'];
@@ -2053,13 +2056,13 @@ export interface PortableIsAt {
 	'modifier.visibility.protected': PortableGuard<PortableIds['modifier.visibility.protected']> & {};
 	'modifier.visibility.public': PortableGuard<PortableIds['modifier.visibility.public']> & {};
 	pattern: PortableGuard<PortableIds['pattern']> & {
-		readonly array: PortableIsAt['pattern.array'];
 		readonly assignment: PortableIsAt['pattern.assignment'];
+		readonly list: PortableIsAt['pattern.list'];
 		readonly object: PortableIsAt['pattern.object'];
 		readonly rest: PortableIsAt['pattern.rest'];
 	};
-	'pattern.array': PortableGuard<PortableIds['pattern.array']> & {};
 	'pattern.assignment': PortableGuard<PortableIds['pattern.assignment']> & {};
+	'pattern.list': PortableGuard<PortableIds['pattern.list']> & {};
 	'pattern.object': PortableGuard<PortableIds['pattern.object']> & {
 		readonly assignment: PortableIsAt['pattern.object.assignment'];
 		readonly pair: PortableIsAt['pattern.object.pair'];
@@ -2102,8 +2105,10 @@ export interface PortableIsAt {
 	'statement.expression': PortableGuard<PortableIds['statement.expression']> & {};
 	'statement.if': PortableGuard<PortableIds['statement.if']> & {};
 	'statement.import': PortableGuard<PortableIds['statement.import']> & {
+		readonly alias: PortableIsAt['statement.import.alias'];
 		readonly typeof: PortableIsAt['statement.import.typeof'];
 	};
+	'statement.import.alias': PortableGuard<PortableIds['statement.import.alias']> & {};
 	'statement.import.typeof': PortableGuard<PortableIds['statement.import.typeof']> & {};
 	'statement.labeled': PortableGuard<PortableIds['statement.labeled']> & {};
 	'statement.loop': PortableGuard<PortableIds['statement.loop']> & {
@@ -2132,7 +2137,7 @@ export interface PortableIsAt {
 		readonly intersection: PortableIsAt['type.intersection'];
 		readonly literal: PortableIsAt['type.literal'];
 		readonly lookup: PortableIsAt['type.lookup'];
-		readonly maybe: PortableIsAt['type.maybe'];
+		readonly nullable: PortableIsAt['type.nullable'];
 		readonly object: PortableIsAt['type.object'];
 		readonly optional: PortableIsAt['type.optional'];
 		readonly parenthesized: PortableIsAt['type.parenthesized'];
@@ -2159,7 +2164,7 @@ export interface PortableIsAt {
 	'type.intersection': PortableGuard<PortableIds['type.intersection']> & {};
 	'type.literal': PortableGuard<PortableIds['type.literal']> & {};
 	'type.lookup': PortableGuard<PortableIds['type.lookup']> & {};
-	'type.maybe': PortableGuard<PortableIds['type.maybe']> & {};
+	'type.nullable': PortableGuard<PortableIds['type.nullable']> & {};
 	'type.object': PortableGuard<PortableIds['type.object']> & {};
 	'type.optional': PortableGuard<PortableIds['type.optional']> & {};
 	'type.parenthesized': PortableGuard<PortableIds['type.parenthesized']> & {};
@@ -2247,7 +2252,6 @@ const table: PortableTable = {
 				TSKindId.ExtendsTypeClause,
 				TSKindId.FinallyClause,
 				TSKindId.ImplementsClause,
-				TSKindId.ImportAlias,
 				TSKindId.ImportAttribute,
 				TSKindId.ImportClause,
 				TSKindId.ImportRequireClause,
@@ -2262,11 +2266,11 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
+		'clause.bounds': { ids: [TSKindId.Constraint], exact: true },
 		'clause.case': { ids: [TSKindId.SwitchCase, TSKindId.SwitchDefault], exact: true },
 		'clause.case.default': { ids: [TSKindId.SwitchDefault], exact: true },
 		'clause.case.switch': { ids: [TSKindId.SwitchCase], exact: true },
 		'clause.catch': { ids: [TSKindId.CatchClause], exact: true },
-		'clause.constraint': { ids: [TSKindId.Constraint], exact: true },
 		'clause.default': { ids: [TSKindId.DefaultType], exact: true },
 		'clause.else': { ids: [TSKindId.ElseClause], exact: true },
 		'clause.export': { ids: [TSKindId.ExportClause, TSKindId.ExportSpecifier, TSKindId.NamespaceExport], exact: true },
@@ -2279,7 +2283,6 @@ const table: PortableTable = {
 		'clause.implements': { ids: [TSKindId.ImplementsClause], exact: true },
 		'clause.import': {
 			ids: [
-				TSKindId.ImportAlias,
 				TSKindId.ImportAttribute,
 				TSKindId.ImportClause,
 				TSKindId.ImportRequireClause,
@@ -2290,7 +2293,6 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
-		'clause.import.alias': { ids: [TSKindId.ImportAlias], exact: true },
 		'clause.import.attribute': { ids: [TSKindId.ImportAttribute], exact: true },
 		'clause.import.names': { ids: [TSKindId.ImportClause], exact: true },
 		'clause.import.namespace': { ids: [TSKindId.NamespaceImport], exact: true },
@@ -2576,8 +2578,8 @@ const table: PortableTable = {
 			ids: [TSKindId.AsExpression, TSKindId.NonNullExpression, TSKindId.SatisfiesExpression, TSKindId.TypeAssertion],
 			exact: true
 		},
-		'expression.cast.as': { ids: [TSKindId.AsExpression], exact: true },
-		'expression.cast.assertion': { ids: [TSKindId.TypeAssertion], exact: true },
+		'expression.cast.assertion': { ids: [TSKindId.AsExpression, TSKindId.TypeAssertion], exact: true },
+		'expression.cast.assertion.angle_bracket': { ids: [TSKindId.TypeAssertion], exact: true },
 		'expression.cast.non_null': { ids: [TSKindId.NonNullExpression], exact: true },
 		'expression.cast.satisfies': { ids: [TSKindId.SatisfiesExpression], exact: true },
 		'expression.class': { ids: [TSKindId.Class], exact: true },
@@ -2654,7 +2656,7 @@ const table: PortableTable = {
 			ids: [TSKindId.ShorthandPropertyIdentifier, TSKindId.ShorthandPropertyIdentifierPattern],
 			exact: true
 		},
-		'identifier.self': { ids: [TSKindId.This], exact: true },
+		'identifier.receiver': { ids: [TSKindId.This], exact: true },
 		'identifier.super': { ids: [TSKindId.Super], exact: true },
 		'identifier.type': { ids: [TSKindId.TypeIdentifier], exact: true },
 		literal: {
@@ -2761,16 +2763,17 @@ const table: PortableTable = {
 				TSKindId.StringDouble,
 				TSKindId.UnescapedDoubleStringFragment,
 				TSKindId.StringSingle,
+				TSKindId.TemplateString,
 				TSKindId.UnescapedSingleStringFragment
 			],
 			exact: true
 		},
 		'literal.string.escape': { ids: [TSKindId.EscapeSequence], exact: true },
+		'literal.string.interpolated': { ids: [TSKindId.TemplateString], exact: true },
 		'literal.string.text': {
 			ids: [TSKindId.TemplateChars, TSKindId.UnescapedDoubleStringFragment, TSKindId.UnescapedSingleStringFragment],
 			exact: true
 		},
-		'literal.template': { ids: [TSKindId.TemplateString], exact: true },
 		modifier: { ids: [TSKindId.PrivateKeyword, TSKindId.ProtectedKeyword, TSKindId.PublicKeyword], exact: true },
 		'modifier.visibility': {
 			ids: [TSKindId.PrivateKeyword, TSKindId.ProtectedKeyword, TSKindId.PublicKeyword],
@@ -2790,8 +2793,8 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
-		'pattern.array': { ids: [TSKindId.ArrayPattern], exact: true },
 		'pattern.assignment': { ids: [TSKindId.AssignmentPattern], exact: true },
+		'pattern.list': { ids: [TSKindId.ArrayPattern], exact: true },
 		'pattern.object': {
 			ids: [TSKindId.ObjectAssignmentPattern, TSKindId.ObjectPattern, TSKindId.PairPattern],
 			exact: true
@@ -2817,6 +2820,7 @@ const table: PortableTable = {
 				TSKindId.ForInStatement,
 				TSKindId.ForStatement,
 				TSKindId.IfStatement,
+				TSKindId.ImportAlias,
 				TSKindId.ImportStatement,
 				TSKindId.LabeledStatement,
 				TSKindId.ReturnStatement,
@@ -2850,7 +2854,8 @@ const table: PortableTable = {
 		'statement.export.default': { ids: [TSKindId.ExportStatementDefaultDeclaration], exact: false },
 		'statement.expression': { ids: [TSKindId.ExpressionStatement], exact: true },
 		'statement.if': { ids: [TSKindId.IfStatement], exact: true },
-		'statement.import': { ids: [TSKindId.ImportStatement], exact: true },
+		'statement.import': { ids: [TSKindId.ImportAlias, TSKindId.ImportStatement], exact: true },
+		'statement.import.alias': { ids: [TSKindId.ImportAlias], exact: true },
 		'statement.import.typeof': { ids: [TSKindId.ImportStatement], exact: false },
 		'statement.labeled': { ids: [TSKindId.LabeledStatement], exact: true },
 		'statement.loop': {
@@ -2916,7 +2921,7 @@ const table: PortableTable = {
 		'type.intersection': { ids: [TSKindId.IntersectionType], exact: true },
 		'type.literal': { ids: [TSKindId.LiteralType], exact: true },
 		'type.lookup': { ids: [TSKindId.LookupType], exact: true },
-		'type.maybe': { ids: [TSKindId.FlowMaybeType], exact: true },
+		'type.nullable': { ids: [TSKindId.FlowMaybeType], exact: true },
 		'type.object': { ids: [TSKindId.ObjectType], exact: true },
 		'type.optional': { ids: [TSKindId.OptionalType], exact: true },
 		'type.parenthesized': { ids: [TSKindId.ParenthesizedType], exact: true },
@@ -3080,10 +3085,10 @@ const table: PortableTable = {
 		[TSKindId.AmbientDeclarationModule]: [{ path: 'declaration.module_property', within: [], test: [] }],
 		[TSKindId.AnyKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
 		[TSKindId.Array]: [{ path: 'expression.collection.list', within: [], test: [] }],
-		[TSKindId.ArrayPattern]: [{ path: 'pattern.array', within: [], test: [] }],
+		[TSKindId.ArrayPattern]: [{ path: 'pattern.list', within: [], test: [] }],
 		[TSKindId.ArrayType]: [{ path: 'type.array', within: [], test: [] }],
 		[TSKindId.ArrowFunction]: [{ path: 'expression.lambda', within: [], test: [] }],
-		[TSKindId.AsExpression]: [{ path: 'expression.cast.as', within: [], test: [] }],
+		[TSKindId.AsExpression]: [{ path: 'expression.cast.assertion', within: [], test: [] }],
 		[TSKindId.Asserts]: [{ path: 'type.predicate.asserts', within: [], test: [] }],
 		[TSKindId.AssignmentExpression]: [{ path: 'expression.assignment', within: [], test: [] }],
 		[TSKindId.AssignmentPattern]: [{ path: 'pattern.assignment', within: [], test: [] }],
@@ -3333,7 +3338,7 @@ const table: PortableTable = {
 			{ path: 'comment', within: [], test: [] }
 		],
 		[TSKindId.ConditionalType]: [{ path: 'type.conditional', within: [], test: [] }],
-		[TSKindId.Constraint]: [{ path: 'clause.constraint', within: [], test: [] }],
+		[TSKindId.Constraint]: [{ path: 'clause.bounds', within: [], test: [] }],
 		[TSKindId.ConstructSignature]: [{ path: 'declaration.signature.construct', within: [], test: [] }],
 		[TSKindId.ConstructorType]: [{ path: 'type.function.constructor', within: [], test: [] }],
 		[TSKindId.ContinueStatement]: [{ path: 'statement.continue', within: [], test: [] }],
@@ -3427,7 +3432,7 @@ const table: PortableTable = {
 		[TSKindId.ExtendsTypeClause]: [{ path: 'clause.extends.type', within: [], test: [] }],
 		[TSKindId.False]: [{ path: 'literal.boolean.false', within: [], test: [] }],
 		[TSKindId.FinallyClause]: [{ path: 'clause.finally', within: [], test: [] }],
-		[TSKindId.FlowMaybeType]: [{ path: 'type.maybe', within: [], test: [] }],
+		[TSKindId.FlowMaybeType]: [{ path: 'type.nullable', within: [], test: [] }],
 		[TSKindId.ForInStatement]: [{ path: 'statement.loop.for_each', within: [], test: [] }],
 		[TSKindId.ForStatement]: [{ path: 'statement.loop.counted', within: [], test: [] }],
 		[TSKindId.FunctionDeclaration]: [{ path: 'declaration.function', within: [], test: [] }],
@@ -3442,7 +3447,7 @@ const table: PortableTable = {
 		[TSKindId.IfStatement]: [{ path: 'statement.if', within: [], test: [] }],
 		[TSKindId.ImplementsClause]: [{ path: 'clause.implements', within: [], test: [] }],
 		[TSKindId.Import]: [{ path: 'expression.call.import', within: [], test: [] }],
-		[TSKindId.ImportAlias]: [{ path: 'clause.import.alias', within: [], test: [] }],
+		[TSKindId.ImportAlias]: [{ path: 'statement.import.alias', within: [], test: [] }],
 		[TSKindId.ImportAttribute]: [{ path: 'clause.import.attribute', within: [], test: [] }],
 		[TSKindId.ImportClause]: [{ path: 'clause.import.names', within: [], test: [] }],
 		[TSKindId.ImportRequireClause]: [{ path: 'clause.import.require', within: [], test: [] }],
@@ -4074,18 +4079,18 @@ const table: PortableTable = {
 		[TSKindId.SwitchStatement]: [{ path: 'statement.switch', within: [], test: [] }],
 		[TSKindId.SymbolKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
 		[TSKindId.TemplateLiteralType]: [{ path: 'type.template', within: [], test: [] }],
-		[TSKindId.TemplateString]: [{ path: 'literal.template', within: [], test: [] }],
+		[TSKindId.TemplateString]: [{ path: 'literal.string.interpolated', within: [], test: [] }],
 		[TSKindId.TemplateSubstitution]: [{ path: 'expression.interpolation', within: [], test: [] }],
 		[TSKindId.TemplateType]: [{ path: 'element.template.substitution', within: [], test: [] }],
 		[TSKindId.TernaryExpression]: [{ path: 'expression.conditional', within: [], test: [] }],
-		[TSKindId.This]: [{ path: 'identifier.self', within: [], test: [] }],
+		[TSKindId.This]: [{ path: 'identifier.receiver', within: [], test: [] }],
 		[TSKindId.ThrowStatement]: [{ path: 'statement.throw', within: [], test: [] }],
 		[TSKindId.True]: [{ path: 'literal.boolean.true', within: [], test: [] }],
 		[TSKindId.TryStatement]: [{ path: 'statement.try', within: [], test: [] }],
 		[TSKindId.TupleParameter]: [{ path: 'element.tuple.member', within: [], test: [] }],
 		[TSKindId.TupleType]: [{ path: 'type.tuple', within: [], test: [] }],
 		[TSKindId.TypeAliasDeclaration]: [{ path: 'declaration.type_alias', within: [], test: [] }],
-		[TSKindId.TypeAssertion]: [{ path: 'expression.cast.assertion', within: [], test: [] }],
+		[TSKindId.TypeAssertion]: [{ path: 'expression.cast.assertion.angle_bracket', within: [], test: [] }],
 		[TSKindId.TypeIdentifier]: [{ path: 'identifier.type', within: [], test: [] }],
 		[TSKindId.TypeParameter]: [{ path: 'declaration.type_parameter', within: [], test: [] }],
 		[TSKindId.TypePredicate]: [{ path: 'type.predicate', within: [], test: [] }],

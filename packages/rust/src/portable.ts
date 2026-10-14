@@ -39,7 +39,7 @@ export interface PortableIds {
 	'clause.bounds.use': TSKindId.UseBounds;
 	'clause.else': TSKindId.ElseClause;
 	'clause.import': TSKindId.ScopedUseList | TSKindId.UseAsClause | TSKindId.UseList | TSKindId.UseWildcard;
-	'clause.import.as': TSKindId.UseAsClause;
+	'clause.import.alias': TSKindId.UseAsClause;
 	'clause.import.list': TSKindId.ScopedUseList | TSKindId.UseList;
 	'clause.import.list.scoped': TSKindId.ScopedUseList;
 	'clause.import.wildcard': TSKindId.UseWildcard;
@@ -306,7 +306,7 @@ export interface PortableIds {
 		| TSKindId.UsizeKeyword
 		| TSKindId.VariadicParameter
 		| TSKindId.WildcardPattern;
-	'declaration.parameter.self': TSKindId.SelfParameter;
+	'declaration.parameter.receiver': TSKindId.SelfParameter;
 	'declaration.parameter.variadic': TSKindId.VariadicParameter;
 	'declaration.struct':
 		| TSKindId.StructItem
@@ -552,7 +552,7 @@ export interface PortableIds {
 	'expression.call.member': TSKindId.CallExpression;
 	'expression.call.qualified': TSKindId.CallExpression;
 	'expression.cast': TSKindId.TypeCastExpression;
-	'expression.cast.as': TSKindId.TypeCastExpression;
+	'expression.cast.conversion': TSKindId.TypeCastExpression;
 	'expression.collection':
 		| TSKindId.ArrayExpression
 		| TSKindId.ArrayExpressionList
@@ -613,8 +613,8 @@ export interface PortableIds {
 	'identifier.metavariable': TSKindId.Metavariable;
 	'identifier.property': TSKindId.ShorthandFieldIdentifier;
 	'identifier.property.shorthand': TSKindId.ShorthandFieldIdentifier;
+	'identifier.receiver': TSKindId.Self;
 	'identifier.scoped': TSKindId.ScopedIdentifier;
-	'identifier.self': TSKindId.Self;
 	'identifier.super': TSKindId.Super;
 	'identifier.type': TSKindId.TypeIdentifier;
 	literal:
@@ -719,8 +719,9 @@ export interface PortableIds {
 		| TSKindId.TuplePattern
 		| TSKindId.TupleStructPattern
 		| TSKindId.WildcardPattern;
-	'pattern.captured': TSKindId.CapturedPattern;
+	'pattern.as': TSKindId.CapturedPattern;
 	'pattern.generic': TSKindId.GenericPattern;
+	'pattern.list': TSKindId.SlicePattern;
 	'pattern.match': TSKindId.MatchPattern;
 	'pattern.mutable': TSKindId.MutPattern;
 	'pattern.or': TSKindId.OrPattern | TSKindId.OrPatternBinary | TSKindId.OrPatternPrefix;
@@ -729,7 +730,6 @@ export interface PortableIds {
 	'pattern.range.inclusive': TSKindId.RangePatternPrefix | TSKindId.RangePatternWithLeft;
 	'pattern.reference': TSKindId.RefPattern | TSKindId.ReferencePattern;
 	'pattern.reference.value': TSKindId.ReferencePattern;
-	'pattern.slice': TSKindId.SlicePattern;
 	'pattern.struct':
 		| TSKindId.FieldPattern
 		| TSKindId.FieldPatternNamed
@@ -883,11 +883,11 @@ export interface PortableKindsAt {
 	'clause.else': { readonly $ids: readonly PortableIds['clause.else'][] };
 	'clause.import': {
 		readonly $ids: readonly PortableIds['clause.import'][];
-		readonly as: PortableKindsAt['clause.import.as'];
+		readonly alias: PortableKindsAt['clause.import.alias'];
 		readonly list: PortableKindsAt['clause.import.list'];
 		readonly wildcard: PortableKindsAt['clause.import.wildcard'];
 	};
-	'clause.import.as': { readonly $ids: readonly PortableIds['clause.import.as'][] };
+	'clause.import.alias': { readonly $ids: readonly PortableIds['clause.import.alias'][] };
 	'clause.import.list': {
 		readonly $ids: readonly PortableIds['clause.import.list'][];
 		readonly scoped: PortableKindsAt['clause.import.list.scoped'];
@@ -1201,10 +1201,10 @@ export interface PortableKindsAt {
 	};
 	'declaration.parameter': {
 		readonly $ids: readonly PortableIds['declaration.parameter'][];
-		readonly self: PortableKindsAt['declaration.parameter.self'];
+		readonly receiver: PortableKindsAt['declaration.parameter.receiver'];
 		readonly variadic: PortableKindsAt['declaration.parameter.variadic'];
 	};
-	'declaration.parameter.self': { readonly $ids: readonly PortableIds['declaration.parameter.self'][] };
+	'declaration.parameter.receiver': { readonly $ids: readonly PortableIds['declaration.parameter.receiver'][] };
 	'declaration.parameter.variadic': { readonly $ids: readonly PortableIds['declaration.parameter.variadic'][] };
 	'declaration.struct': {
 		readonly $ids: readonly PortableIds['declaration.struct'][];
@@ -1522,9 +1522,9 @@ export interface PortableKindsAt {
 	'expression.call.qualified': { readonly $ids: readonly PortableIds['expression.call.qualified'][] };
 	'expression.cast': {
 		readonly $ids: readonly PortableIds['expression.cast'][];
-		readonly as: PortableKindsAt['expression.cast.as'];
+		readonly conversion: PortableKindsAt['expression.cast.conversion'];
 	};
-	'expression.cast.as': { readonly $ids: readonly PortableIds['expression.cast.as'][] };
+	'expression.cast.conversion': { readonly $ids: readonly PortableIds['expression.cast.conversion'][] };
 	'expression.collection': {
 		readonly $ids: readonly PortableIds['expression.collection'][];
 		readonly list: PortableKindsAt['expression.collection.list'];
@@ -1572,8 +1572,8 @@ export interface PortableKindsAt {
 		readonly lifetime: PortableKindsAt['identifier.lifetime'];
 		readonly metavariable: PortableKindsAt['identifier.metavariable'];
 		readonly property: PortableKindsAt['identifier.property'];
+		readonly receiver: PortableKindsAt['identifier.receiver'];
 		readonly scoped: PortableKindsAt['identifier.scoped'];
-		readonly self: PortableKindsAt['identifier.self'];
 		readonly super: PortableKindsAt['identifier.super'];
 		readonly type: PortableKindsAt['identifier.type'];
 	};
@@ -1587,8 +1587,8 @@ export interface PortableKindsAt {
 		readonly shorthand: PortableKindsAt['identifier.property.shorthand'];
 	};
 	'identifier.property.shorthand': { readonly $ids: readonly PortableIds['identifier.property.shorthand'][] };
+	'identifier.receiver': { readonly $ids: readonly PortableIds['identifier.receiver'][] };
 	'identifier.scoped': { readonly $ids: readonly PortableIds['identifier.scoped'][] };
-	'identifier.self': { readonly $ids: readonly PortableIds['identifier.self'][] };
 	'identifier.super': { readonly $ids: readonly PortableIds['identifier.super'][] };
 	'identifier.type': { readonly $ids: readonly PortableIds['identifier.type'][] };
 	literal: {
@@ -1657,20 +1657,21 @@ export interface PortableKindsAt {
 	};
 	pattern: {
 		readonly $ids: readonly PortableIds['pattern'][];
-		readonly captured: PortableKindsAt['pattern.captured'];
+		readonly as: PortableKindsAt['pattern.as'];
 		readonly generic: PortableKindsAt['pattern.generic'];
+		readonly list: PortableKindsAt['pattern.list'];
 		readonly match: PortableKindsAt['pattern.match'];
 		readonly mutable: PortableKindsAt['pattern.mutable'];
 		readonly or: PortableKindsAt['pattern.or'];
 		readonly range: PortableKindsAt['pattern.range'];
 		readonly reference: PortableKindsAt['pattern.reference'];
-		readonly slice: PortableKindsAt['pattern.slice'];
 		readonly struct: PortableKindsAt['pattern.struct'];
 		readonly tuple: PortableKindsAt['pattern.tuple'];
 		readonly wildcard: PortableKindsAt['pattern.wildcard'];
 	};
-	'pattern.captured': { readonly $ids: readonly PortableIds['pattern.captured'][] };
+	'pattern.as': { readonly $ids: readonly PortableIds['pattern.as'][] };
 	'pattern.generic': { readonly $ids: readonly PortableIds['pattern.generic'][] };
+	'pattern.list': { readonly $ids: readonly PortableIds['pattern.list'][] };
 	'pattern.match': { readonly $ids: readonly PortableIds['pattern.match'][] };
 	'pattern.mutable': { readonly $ids: readonly PortableIds['pattern.mutable'][] };
 	'pattern.or': { readonly $ids: readonly PortableIds['pattern.or'][] };
@@ -1686,7 +1687,6 @@ export interface PortableKindsAt {
 		readonly value: PortableKindsAt['pattern.reference.value'];
 	};
 	'pattern.reference.value': { readonly $ids: readonly PortableIds['pattern.reference.value'][] };
-	'pattern.slice': { readonly $ids: readonly PortableIds['pattern.slice'][] };
 	'pattern.struct': {
 		readonly $ids: readonly PortableIds['pattern.struct'][];
 		readonly field: PortableKindsAt['pattern.struct.field'];
@@ -1837,11 +1837,11 @@ export interface PortableIsAt {
 	'clause.bounds.use': PortableGuard<PortableIds['clause.bounds.use']> & {};
 	'clause.else': PortableGuard<PortableIds['clause.else']> & {};
 	'clause.import': PortableGuard<PortableIds['clause.import']> & {
-		readonly as: PortableIsAt['clause.import.as'];
+		readonly alias: PortableIsAt['clause.import.alias'];
 		readonly list: PortableIsAt['clause.import.list'];
 		readonly wildcard: PortableIsAt['clause.import.wildcard'];
 	};
-	'clause.import.as': PortableGuard<PortableIds['clause.import.as']> & {};
+	'clause.import.alias': PortableGuard<PortableIds['clause.import.alias']> & {};
 	'clause.import.list': PortableGuard<PortableIds['clause.import.list']> & {
 		readonly scoped: PortableIsAt['clause.import.list.scoped'];
 	};
@@ -2078,10 +2078,10 @@ export interface PortableIsAt {
 	'declaration.module.public.internal': PortableGuard<PortableIds['declaration.module.public.internal']> & {};
 	'declaration.module.public.restricted': PortableGuard<PortableIds['declaration.module.public.restricted']> & {};
 	'declaration.parameter': PortableGuard<PortableIds['declaration.parameter']> & {
-		readonly self: PortableIsAt['declaration.parameter.self'];
+		readonly receiver: PortableIsAt['declaration.parameter.receiver'];
 		readonly variadic: PortableIsAt['declaration.parameter.variadic'];
 	};
-	'declaration.parameter.self': PortableGuard<PortableIds['declaration.parameter.self']> & {};
+	'declaration.parameter.receiver': PortableGuard<PortableIds['declaration.parameter.receiver']> & {};
 	'declaration.parameter.variadic': PortableGuard<PortableIds['declaration.parameter.variadic']> & {};
 	'declaration.struct': PortableGuard<PortableIds['declaration.struct']> & {
 		readonly private: PortableIsAt['declaration.struct.private'];
@@ -2331,9 +2331,9 @@ export interface PortableIsAt {
 	'expression.call.member': PortableGuard<PortableIds['expression.call.member']> & {};
 	'expression.call.qualified': PortableGuard<PortableIds['expression.call.qualified']> & {};
 	'expression.cast': PortableGuard<PortableIds['expression.cast']> & {
-		readonly as: PortableIsAt['expression.cast.as'];
+		readonly conversion: PortableIsAt['expression.cast.conversion'];
 	};
-	'expression.cast.as': PortableGuard<PortableIds['expression.cast.as']> & {};
+	'expression.cast.conversion': PortableGuard<PortableIds['expression.cast.conversion']> & {};
 	'expression.collection': PortableGuard<PortableIds['expression.collection']> & {
 		readonly list: PortableIsAt['expression.collection.list'];
 		readonly struct: PortableIsAt['expression.collection.struct'];
@@ -2376,8 +2376,8 @@ export interface PortableIsAt {
 		readonly lifetime: PortableIsAt['identifier.lifetime'];
 		readonly metavariable: PortableIsAt['identifier.metavariable'];
 		readonly property: PortableIsAt['identifier.property'];
+		readonly receiver: PortableIsAt['identifier.receiver'];
 		readonly scoped: PortableIsAt['identifier.scoped'];
-		readonly self: PortableIsAt['identifier.self'];
 		readonly super: PortableIsAt['identifier.super'];
 		readonly type: PortableIsAt['identifier.type'];
 	};
@@ -2390,8 +2390,8 @@ export interface PortableIsAt {
 		readonly shorthand: PortableIsAt['identifier.property.shorthand'];
 	};
 	'identifier.property.shorthand': PortableGuard<PortableIds['identifier.property.shorthand']> & {};
+	'identifier.receiver': PortableGuard<PortableIds['identifier.receiver']> & {};
 	'identifier.scoped': PortableGuard<PortableIds['identifier.scoped']> & {};
-	'identifier.self': PortableGuard<PortableIds['identifier.self']> & {};
 	'identifier.super': PortableGuard<PortableIds['identifier.super']> & {};
 	'identifier.type': PortableGuard<PortableIds['identifier.type']> & {};
 	literal: PortableGuard<PortableIds['literal']> & {
@@ -2447,20 +2447,21 @@ export interface PortableIsAt {
 	'modifier.visibility.public.internal': PortableGuard<PortableIds['modifier.visibility.public.internal']> & {};
 	'modifier.visibility.public.restricted': PortableGuard<PortableIds['modifier.visibility.public.restricted']> & {};
 	pattern: PortableGuard<PortableIds['pattern']> & {
-		readonly captured: PortableIsAt['pattern.captured'];
+		readonly as: PortableIsAt['pattern.as'];
 		readonly generic: PortableIsAt['pattern.generic'];
+		readonly list: PortableIsAt['pattern.list'];
 		readonly match: PortableIsAt['pattern.match'];
 		readonly mutable: PortableIsAt['pattern.mutable'];
 		readonly or: PortableIsAt['pattern.or'];
 		readonly range: PortableIsAt['pattern.range'];
 		readonly reference: PortableIsAt['pattern.reference'];
-		readonly slice: PortableIsAt['pattern.slice'];
 		readonly struct: PortableIsAt['pattern.struct'];
 		readonly tuple: PortableIsAt['pattern.tuple'];
 		readonly wildcard: PortableIsAt['pattern.wildcard'];
 	};
-	'pattern.captured': PortableGuard<PortableIds['pattern.captured']> & {};
+	'pattern.as': PortableGuard<PortableIds['pattern.as']> & {};
 	'pattern.generic': PortableGuard<PortableIds['pattern.generic']> & {};
+	'pattern.list': PortableGuard<PortableIds['pattern.list']> & {};
 	'pattern.match': PortableGuard<PortableIds['pattern.match']> & {};
 	'pattern.mutable': PortableGuard<PortableIds['pattern.mutable']> & {};
 	'pattern.or': PortableGuard<PortableIds['pattern.or']> & {};
@@ -2474,7 +2475,6 @@ export interface PortableIsAt {
 		readonly value: PortableIsAt['pattern.reference.value'];
 	};
 	'pattern.reference.value': PortableGuard<PortableIds['pattern.reference.value']> & {};
-	'pattern.slice': PortableGuard<PortableIds['pattern.slice']> & {};
 	'pattern.struct': PortableGuard<PortableIds['pattern.struct']> & {
 		readonly field: PortableIsAt['pattern.struct.field'];
 		readonly rest: PortableIsAt['pattern.struct.rest'];
@@ -2654,7 +2654,7 @@ const table: PortableTable = {
 			ids: [TSKindId.ScopedUseList, TSKindId.UseAsClause, TSKindId.UseList, TSKindId.UseWildcard],
 			exact: true
 		},
-		'clause.import.as': { ids: [TSKindId.UseAsClause], exact: true },
+		'clause.import.alias': { ids: [TSKindId.UseAsClause], exact: true },
 		'clause.import.list': { ids: [TSKindId.ScopedUseList, TSKindId.UseList], exact: true },
 		'clause.import.list.scoped': { ids: [TSKindId.ScopedUseList], exact: true },
 		'clause.import.wildcard': { ids: [TSKindId.UseWildcard], exact: true },
@@ -2968,7 +2968,7 @@ const table: PortableTable = {
 			],
 			exact: false
 		},
-		'declaration.parameter.self': { ids: [TSKindId.SelfParameter], exact: true },
+		'declaration.parameter.receiver': { ids: [TSKindId.SelfParameter], exact: true },
 		'declaration.parameter.variadic': { ids: [TSKindId.VariadicParameter], exact: true },
 		'declaration.struct': {
 			ids: [TSKindId.StructItem, TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
@@ -3245,7 +3245,7 @@ const table: PortableTable = {
 		'expression.call.member': { ids: [TSKindId.CallExpression], exact: false },
 		'expression.call.qualified': { ids: [TSKindId.CallExpression], exact: false },
 		'expression.cast': { ids: [TSKindId.TypeCastExpression], exact: true },
-		'expression.cast.as': { ids: [TSKindId.TypeCastExpression], exact: true },
+		'expression.cast.conversion': { ids: [TSKindId.TypeCastExpression], exact: true },
 		'expression.collection': {
 			ids: [
 				TSKindId.ArrayExpression,
@@ -3332,8 +3332,8 @@ const table: PortableTable = {
 		'identifier.metavariable': { ids: [TSKindId.Metavariable], exact: true },
 		'identifier.property': { ids: [TSKindId.ShorthandFieldIdentifier], exact: true },
 		'identifier.property.shorthand': { ids: [TSKindId.ShorthandFieldIdentifier], exact: true },
+		'identifier.receiver': { ids: [TSKindId.Self], exact: true },
 		'identifier.scoped': { ids: [TSKindId.ScopedIdentifier], exact: false },
-		'identifier.self': { ids: [TSKindId.Self], exact: true },
 		'identifier.super': { ids: [TSKindId.Super], exact: true },
 		'identifier.type': { ids: [TSKindId.TypeIdentifier], exact: false },
 		literal: {
@@ -3466,8 +3466,9 @@ const table: PortableTable = {
 			],
 			exact: false
 		},
-		'pattern.captured': { ids: [TSKindId.CapturedPattern], exact: false },
+		'pattern.as': { ids: [TSKindId.CapturedPattern], exact: false },
 		'pattern.generic': { ids: [TSKindId.GenericPattern], exact: false },
+		'pattern.list': { ids: [TSKindId.SlicePattern], exact: false },
 		'pattern.match': { ids: [TSKindId.MatchPattern], exact: true },
 		'pattern.mutable': { ids: [TSKindId.MutPattern], exact: false },
 		'pattern.or': { ids: [TSKindId.OrPattern, TSKindId.OrPatternBinary, TSKindId.OrPatternPrefix], exact: false },
@@ -3479,7 +3480,6 @@ const table: PortableTable = {
 		'pattern.range.inclusive': { ids: [TSKindId.RangePatternPrefix, TSKindId.RangePatternWithLeft], exact: false },
 		'pattern.reference': { ids: [TSKindId.RefPattern, TSKindId.ReferencePattern], exact: false },
 		'pattern.reference.value': { ids: [TSKindId.ReferencePattern], exact: false },
-		'pattern.slice': { ids: [TSKindId.SlicePattern], exact: false },
 		'pattern.struct': {
 			ids: [
 				TSKindId.FieldPattern,
@@ -3912,7 +3912,7 @@ const table: PortableTable = {
 		],
 		[TSKindId.CapturedPattern]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
-			{ path: 'pattern.captured', within: [], test: [] }
+			{ path: 'pattern.as', within: [], test: [] }
 		],
 		[TSKindId.CharKeyword]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
@@ -6416,13 +6416,13 @@ const table: PortableTable = {
 		[TSKindId.ScopedTypeIdentifier]: [{ path: 'type.path', within: [], test: [] }],
 		[TSKindId.ScopedTypeIdentifierInExpressionPosition]: [{ path: 'type.path.expression', within: [], test: [] }],
 		[TSKindId.ScopedUseList]: [{ path: 'clause.import.list.scoped', within: [], test: [] }],
-		[TSKindId.Self]: [{ path: 'identifier.self', within: [], test: [] }],
-		[TSKindId.SelfParameter]: [{ path: 'declaration.parameter.self', within: [], test: [] }],
+		[TSKindId.Self]: [{ path: 'identifier.receiver', within: [], test: [] }],
+		[TSKindId.SelfParameter]: [{ path: 'declaration.parameter.receiver', within: [], test: [] }],
 		[TSKindId.ShorthandFieldIdentifier]: [{ path: 'identifier.property.shorthand', within: [], test: [] }],
 		[TSKindId.ShorthandFieldInitializer]: [{ path: 'element.struct.field', within: [], test: [] }],
 		[TSKindId.SlicePattern]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
-			{ path: 'pattern.slice', within: [], test: [] }
+			{ path: 'pattern.list', within: [], test: [] }
 		],
 		[TSKindId.SourceFile]: [{ path: 'file', within: [], test: [] }],
 		[TSKindId.StaticItem]: [
@@ -7084,7 +7084,7 @@ const table: PortableTable = {
 		[TSKindId.TyKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.TypeArgument]: [{ path: 'element.type_argument', within: [], test: [] }],
 		[TSKindId.TypeBinding]: [{ path: 'element.type_binding', within: [], test: [] }],
-		[TSKindId.TypeCastExpression]: [{ path: 'expression.cast.as', within: [], test: [] }],
+		[TSKindId.TypeCastExpression]: [{ path: 'expression.cast.conversion', within: [], test: [] }],
 		[TSKindId.TypeIdentifier]: [
 			{
 				path: 'type.named.prelude',
@@ -7384,7 +7384,7 @@ const table: PortableTable = {
 		[TSKindId.UnitExpression]: [{ path: 'expression.unit', within: [], test: [] }],
 		[TSKindId.UnitType]: [{ path: 'type.unit', within: [], test: [] }],
 		[TSKindId.UnsafeBlock]: [{ path: 'expression.block.unsafe', within: [], test: [] }],
-		[TSKindId.UseAsClause]: [{ path: 'clause.import.as', within: [], test: [] }],
+		[TSKindId.UseAsClause]: [{ path: 'clause.import.alias', within: [], test: [] }],
 		[TSKindId.UseBounds]: [{ path: 'clause.bounds.use', within: [], test: [] }],
 		[TSKindId.UseDeclaration]: [
 			{

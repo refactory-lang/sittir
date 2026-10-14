@@ -107,6 +107,7 @@
 (type_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.type_alias.public.internal
 (type_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.type_alias.public.restricted
 (associated_type) @declaration.type_alias.associated
+(associated_type bounds: (trait_bounds bounds: (_) @bounds))
 (mod_item) @declaration.module
 (mod_item_external) @declaration.module
 (mod_item_external (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.module.private
@@ -169,14 +170,16 @@
 (macro_definition name: (_) (_)? @rules) @declaration.macro
 (parameter name: (_) @name) @declaration.parameter
 (parameter (mutable_specifier) @mutable)
-(self_parameter) @declaration.parameter.self
+(self_parameter) @declaration.parameter.receiver
 (self_parameter (mutable_specifier) @mutable)
 (variadic_parameter) @declaration.parameter.variadic
 (closure_parameters (_) @declaration.parameter)
 ((attributed_parameter (attribute_item)? @dropped (_) @element) (#set! reason "the element admits the _type supertype, so an attributes capture would reach only some of the kinds it holds"))
-(type_parameter bounds: (_)? @constraint default_type: (_)? @default) @declaration.type_parameter
+(type_parameter default_type: (_)? @default) @declaration.type_parameter
+(type_parameter bounds: (trait_bounds bounds: (_) @bounds))
 (const_parameter value: (_)? @default) @declaration.type_parameter.value
 (lifetime_parameter) @declaration.type_parameter.lifetime
+(lifetime_parameter bounds: (trait_bounds bounds: (_) @bounds))
 (attributed_type_parameter (attribute_item)* @attributes (_) @element)
 
 ; ── statement ──────────────────────────────────────────────────────────────────
@@ -201,12 +204,14 @@
 ; ── clause ─────────────────────────────────────────────────────────────────────
 (where_clause) @clause.where
 (where_predicate) @clause.where.predicate
+(where_predicate bounds: (trait_bounds bounds: (_) @bounds))
 (else_clause) @clause.else
 (let_condition) @clause.let
 (let_chain) @clause.let.chain
 (match_arm) @clause.match.arm
 (last_match_arm) @clause.match.arm.last
-(use_as_clause) @clause.import.as
+(use_as_clause) @clause.import.alias
+(use_as_clause path: (_) @name)
 (use_list) @clause.import.list
 (scoped_use_list) @clause.import.list.scoped
 (use_wildcard) @clause.import.wildcard
@@ -295,7 +300,8 @@
 (range_expression_postfix) @expression.range.exclusive
 (range_expression_prefix) @expression.range.exclusive
 (range_expression_bare) @expression.range.exclusive
-(type_cast_expression) @expression.cast.as
+(type_cast_expression) @expression.cast.conversion
+(type_cast_expression value: (_) @expression)
 (parenthesized_expression) @expression.parenthesized
 (tuple_expression (expressions) @elements) @expression.collection.tuple
 (array_expression) @expression.collection.list
@@ -317,7 +323,7 @@
 (struct_pattern) @pattern.struct
 (field_pattern ref: _? @byReference) @pattern.struct.field
 (remaining_field_pattern) @pattern.struct.rest
-(slice_pattern) @pattern.slice
+(slice_pattern (patterns)? @elements) @pattern.list
 (or_pattern) @pattern.or
 (range_pattern) @pattern.range
 (range_pattern_prefix) @pattern.range
@@ -333,7 +339,7 @@
 (reference_pattern) @pattern.reference.value
 (reference_pattern (mutable_specifier) @exclusive)
 (mut_pattern) @pattern.mutable
-(captured_pattern) @pattern.captured
+(captured_pattern) @pattern.as
 (generic_pattern) @pattern.generic
 (wildcard_pattern) @pattern.wildcard
 
@@ -341,7 +347,8 @@
 (primitive_type) @type.primitive
 (generic_type) @type.generic
 (generic_type_with_turbofish) @type.generic.turbofish
-(type_argument (trait_bounds)? @constraint) @element.type_argument
+(type_argument) @element.type_argument
+(type_argument (trait_bounds bounds: (_) @bounds))
 (reference_type) @type.reference
 (reference_type (mutable_specifier) @exclusive)
 (pointer_type) @type.pointer
@@ -387,7 +394,7 @@
 (metavariable) @identifier.metavariable
 (lifetime) @identifier.lifetime
 (label) @identifier.label
-(self) @identifier.self
+(self) @identifier.receiver
 (super) @identifier.super
 (crate) @identifier.crate
 

@@ -307,17 +307,6 @@
           ]
         },
         {
-          "name": "bounds",
-          "route": "slot",
-          "slot": "bounds",
-          "path": [
-            {
-              "owner": "associated_type",
-              "slot": "bounds"
-            }
-          ]
-        },
-        {
           "name": "whereClause",
           "route": "slot",
           "slot": "where_clause",
@@ -325,6 +314,31 @@
             {
               "owner": "associated_type",
               "slot": "where_clause"
+            }
+          ]
+        },
+        {
+          "name": "bounds",
+          "route": "nested",
+          "via": [
+            {
+              "field": "bounds",
+              "kind": "trait_bounds",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "trait_bounds",
+          "slot": "bounds",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "associated_type",
+              "slot": "bounds"
+            },
+            {
+              "owner": "trait_bounds",
+              "slot": "bounds"
             }
           ]
         }
@@ -1926,7 +1940,7 @@
       ]
     },
     "captured_pattern": {
-      "vocab": "pattern.captured",
+      "vocab": "pattern.as",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -1938,7 +1952,7 @@
           "test": []
         },
         {
-          "vocab": "pattern.captured",
+          "vocab": "pattern.as",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12065,11 +12079,25 @@
         },
         {
           "name": "bounds",
-          "route": "slot",
+          "route": "nested",
+          "via": [
+            {
+              "field": "bounds",
+              "kind": "trait_bounds",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "trait_bounds",
           "slot": "bounds",
+          "multiple": false,
           "path": [
             {
               "owner": "lifetime_parameter",
+              "slot": "bounds"
+            },
+            {
+              "owner": "trait_bounds",
               "slot": "bounds"
             }
           ]
@@ -15192,10 +15220,10 @@
       ]
     },
     "self": {
-      "vocab": "identifier.self",
+      "vocab": "identifier.receiver",
       "read": [
         {
-          "vocab": "identifier.self",
+          "vocab": "identifier.receiver",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15205,10 +15233,10 @@
       "members": []
     },
     "self_parameter": {
-      "vocab": "declaration.parameter.self",
+      "vocab": "declaration.parameter.receiver",
       "read": [
         {
-          "vocab": "declaration.parameter.self",
+          "vocab": "declaration.parameter.receiver",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15308,7 +15336,7 @@
       ]
     },
     "slice_pattern": {
-      "vocab": "pattern.slice",
+      "vocab": "pattern.list",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -15320,7 +15348,7 @@
           "test": []
         },
         {
-          "vocab": "pattern.slice",
+          "vocab": "pattern.list",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15329,7 +15357,7 @@
       ],
       "members": [
         {
-          "name": "patterns",
+          "name": "elements",
           "route": "slot",
           "slot": "patterns",
           "path": [
@@ -18709,13 +18737,27 @@
           ]
         },
         {
-          "name": "constraint",
-          "route": "slot",
-          "slot": "trait_bounds",
+          "name": "bounds",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "trait_bounds",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "trait_bounds",
+          "slot": "bounds",
+          "multiple": false,
           "path": [
             {
               "owner": "type_argument",
               "slot": "trait_bounds"
+            },
+            {
+              "owner": "trait_bounds",
+              "slot": "bounds"
             }
           ]
         }
@@ -18787,10 +18829,10 @@
       ]
     },
     "type_cast_expression": {
-      "vocab": "expression.cast.as",
+      "vocab": "expression.cast.conversion",
       "read": [
         {
-          "vocab": "expression.cast.as",
+          "vocab": "expression.cast.conversion",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -18799,7 +18841,7 @@
       ],
       "members": [
         {
-          "name": "value",
+          "name": "expression",
           "route": "slot",
           "slot": "value",
           "path": [
@@ -19382,17 +19424,6 @@
           ]
         },
         {
-          "name": "constraint",
-          "route": "slot",
-          "slot": "bounds",
-          "path": [
-            {
-              "owner": "type_parameter",
-              "slot": "bounds"
-            }
-          ]
-        },
-        {
           "name": "default",
           "route": "slot",
           "slot": "default_type",
@@ -19400,6 +19431,31 @@
             {
               "owner": "type_parameter",
               "slot": "default_type"
+            }
+          ]
+        },
+        {
+          "name": "bounds",
+          "route": "nested",
+          "via": [
+            {
+              "field": "bounds",
+              "kind": "trait_bounds",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "trait_bounds",
+          "slot": "bounds",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "type_parameter",
+              "slot": "bounds"
+            },
+            {
+              "owner": "trait_bounds",
+              "slot": "bounds"
             }
           ]
         }
@@ -20199,10 +20255,10 @@
       }
     },
     "use_as_clause": {
-      "vocab": "clause.import.as",
+      "vocab": "clause.import.alias",
       "read": [
         {
-          "vocab": "clause.import.as",
+          "vocab": "clause.import.alias",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -20211,7 +20267,7 @@
       ],
       "members": [
         {
-          "name": "path",
+          "name": "name",
           "route": "slot",
           "slot": "path",
           "path": [
@@ -21256,11 +21312,25 @@
         },
         {
           "name": "bounds",
-          "route": "slot",
+          "route": "nested",
+          "via": [
+            {
+              "field": "bounds",
+              "kind": "trait_bounds",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "trait_bounds",
           "slot": "bounds",
+          "multiple": false,
           "path": [
             {
               "owner": "where_predicate",
+              "slot": "bounds"
+            },
+            {
+              "owner": "trait_bounds",
               "slot": "bounds"
             }
           ]

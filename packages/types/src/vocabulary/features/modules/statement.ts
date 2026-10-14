@@ -39,6 +39,12 @@ export namespace Statement {
 		// t only
 	}
 	export namespace Import {
+		export interface Alias<G extends GrammarContext<G>> extends SubKindOf<V.Statement.Import<G>> {
+			// claimed by t
+			readonly $kind: 'statement.import.alias';
+			readonly name: G['identifier'];
+			readonly value: G['slots']['statement.import.alias']['value'];
+		}
 		export interface From<G extends GrammarContext<G>> extends SubKindOf<V.Statement.Import<G>> {
 			// claimed by p
 			readonly $kind: 'statement.import.from';

@@ -40,12 +40,12 @@ describe('readBindings', () => {
 	});
 	it('keeps every predicate with its operator, capture and arguments, and leaves directives out', async () => {
 		const facts = await readBindings(
-			'((identifier) @identifier.self (#match? @identifier.self "^self$") (#lua-match? @identifier.self "%a") (#eq? @identifier.self @identifier.self) (#set! reason "x"))'
+			'((identifier) @identifier.receiver (#match? @identifier.receiver "^self$") (#lua-match? @identifier.receiver "%a") (#eq? @identifier.receiver @identifier.receiver) (#set! reason "x"))'
 		);
 		expect(facts.claims[0]?.predicates).toEqual([
-			{ operator: 'match', capture: 'identifier.self', arguments: [{ text: '^self$' }], subject: { up: 0, down: [] } },
-			{ operator: 'lua-match', capture: 'identifier.self', arguments: [{ text: '%a' }], subject: { up: 0, down: [] } },
-			{ operator: 'eq', capture: 'identifier.self', arguments: [{ capture: 'identifier.self' }], subject: { up: 0, down: [] } }
+			{ operator: 'match', capture: 'identifier.receiver', arguments: [{ text: '^self$' }], subject: { up: 0, down: [] } },
+			{ operator: 'lua-match', capture: 'identifier.receiver', arguments: [{ text: '%a' }], subject: { up: 0, down: [] } },
+			{ operator: 'eq', capture: 'identifier.receiver', arguments: [{ capture: 'identifier.receiver' }], subject: { up: 0, down: [] } }
 		]);
 	});
 
@@ -53,7 +53,7 @@ describe('readBindings', () => {
 		const facts = await readBindings(
 			[
 				'((boolean) @literal.boolean.true (#eq? @literal.boolean.true "true"))',
-				'((string (string_start) @_p) @literal.string.f (#match? @_p "^[fF]"))',
+				'((string (string_start) @_p) @literal.string.interpolated (#match? @_p "^[a-zA-Z]*[fFtT]"))',
 				'((decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.static) (#eq? @_d "staticmethod"))'
 			].join('\n')
 		);
@@ -379,10 +379,10 @@ describe('readBindings', () => {
 	});
 
 	it.each([
-		['the claimed node', '(parameters (parameters_elements . (identifier) @declaration.parameter.self))'],
+		['the claimed node', '(parameters (parameters_elements . (identifier) @declaration.parameter.receiver))'],
 		['a node enclosing the claim', '(block . (expression_statement (identifier) @identifier.statement))']
 	])('refuses an anchor on %s: an anchor constrains only a step below the claim', async (_where, pattern) => {
-		await expect(readBindings(`(module) @file\n${pattern}`)).rejects.toThrow(/line 2: .*anchor.*@(declaration\.parameter\.self|identifier\.statement)/);
+		await expect(readBindings(`(module) @file\n${pattern}`)).rejects.toThrow(/line 2: .*anchor.*@(declaration\.parameter\.receiver|identifier\.statement)/);
 	});
 
 	it('pins a child anchored on both sides to its parent\'s only named child', async () => {

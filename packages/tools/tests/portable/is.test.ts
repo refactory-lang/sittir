@@ -77,7 +77,7 @@ describe('portable is: python', async () => {
 	it('tests a string prefix through the hidden string_start capture', () => {
 		const [f, fc] = find('f"x"\n', 'string');
 		const [b, bc] = find('b"x"\n', 'string');
-		expect(at('literal.string.f')(f, fc)).toBe(true);
+		expect(at('literal.string.interpolated')(f, fc)).toBe(true);
 		expect(at('literal.string.bytes')(f, fc)).toBe(false);
 		expect(at('literal.string.bytes')(b, bc)).toBe(true);
 	});
@@ -105,6 +105,67 @@ describe('portable is: python', async () => {
 		expect(at('declaration.constructor')).not.toBe(Function.prototype.constructor);
 		expect(at('declaration.constructor')(init, context)).toBe(true);
 		expect(at('expression.call')).not.toBe(Function.prototype.call);
+	});
+
+	it('reads a prefix letter wherever it stands, and a template string as interpolated', () => {
+		const STRINGS = 'a = rf"{x}"\nb = Fr"{x}"\nc = t"{x}"\nd = Rb"x"\ne = R"x"\n';
+		const strings = [0, 1, 2, 3, 4].map((nth) => find(STRINGS, 'string', undefined, nth));
+		expect(strings.map(([node, context]) => at('literal.string.interpolated')(node, context))).toEqual([true, true, true, false, false]);
+		const [rb, rbContext] = find(STRINGS, 'string', undefined, 3);
+		const [r, rContext] = find(STRINGS, 'string', undefined, 4);
+		expect(at('literal.string.bytes')(rb, rbContext)).toBe(true);
+		expect(at('literal.string.raw')(r, rContext)).toBe(true);
+	});
+
+	it('reads a string whose prefix and quotes state several facts by their crossing', () => {
+		const STRINGS = 'a = rf"{x}"\nb = Rb"x"\nc = f"""x"""\nd = br"""x"""\ne = r"""x"""\nf = tR"""{x}"""\ng = b"""x"""\n';
+		const crossings = [
+			'literal.string.interpolated.raw',
+			'literal.string.bytes.raw',
+			'literal.string.interpolated.multiline',
+			'literal.string.bytes.raw.multiline',
+			'literal.string.raw.multiline',
+			'literal.string.interpolated.raw.multiline',
+			'literal.string.bytes.multiline'
+		];
+		crossings.forEach((path, nth) => {
+			const [node, context] = find(STRINGS, 'string', undefined, nth);
+			expect(at(path)(node, context), path).toBe(true);
+		});
+		const [rf, rfContext] = find(STRINGS, 'string');
+		expect(at('literal.string.interpolated')(rf, rfContext)).toBe(true);
+	});
+
+	it.skip('reads each fact of a crossing by its own guard (pending: a guard tests each fact its path names, not the path as a prefix)', () => {
+		const [rf, context] = find('a = rf"{x}"\n', 'string');
+		expect(at('literal.string.raw')(rf, context)).toBe(true);
+	});
+
+	it('reads a splat as a rest pattern or type, and a double splat as its map refinement', () => {
+		const SOURCE = 'def f(*a, **k): pass\ndef g(a: *Ts, b: **P): pass\n';
+		const [rest, restContext] = find(SOURCE, 'list_splat_pattern');
+		const [map, mapContext] = find(SOURCE, 'dictionary_splat_pattern');
+		const [restType, restTypeContext] = find(SOURCE, 'splat_type');
+		const [mapType, mapTypeContext] = find(SOURCE, 'splat_type', undefined, 1);
+		expect(at('pattern.rest')(rest, restContext)).toBe(true);
+		expect(at('pattern.rest.map')(rest, restContext)).toBe(false);
+		expect(at('pattern.rest.map')(map, mapContext)).toBe(true);
+		expect(at('type.rest')(restType, restTypeContext)).toBe(true);
+		expect(at('type.rest.map')(restType, restTypeContext)).toBe(false);
+		expect(at('type.rest.map')(mapType, mapTypeContext)).toBe(true);
+	});
+
+	it('reads a renamed import as the import alias', () => {
+		const [alias, context] = find('import a.b as c\n', 'aliased_import');
+		expect(at('clause.import.alias')(alias, context)).toBe(true);
+	});
+
+	it('reads a case as-pattern as the as-pattern, and a with item\'s as as no pattern', () => {
+		const SOURCE = 'match x:\n    case [1] as y: pass\nwith open(p) as h: pass\n';
+		const [caseAs, caseContext] = find(SOURCE, 'case_as_pattern');
+		const [withAs, withContext] = find(SOURCE, 'as_pattern');
+		expect(at('pattern.as')(caseAs, caseContext)).toBe(true);
+		expect(at('pattern')(withAs, withContext)).toBe(false);
 	});
 
 	it('reads a comparison of one comparator by its operator, and of two or more as a chain, as tree-sitter matches the claims', () => {
@@ -136,6 +197,35 @@ describe('portable is: rust', async () => {
 			const [content, context] = find(SOURCE, 'string_content', text);
 			expect(at('literal.string.text')(content, context), text).toBe(true);
 		}
+	});
+
+	it('reads a self parameter and the self it names by the receiver kinds', () => {
+		const SOURCE = 'impl A { fn f(&self) -> u8 { self.x } }\n';
+		const [parameter, parameterContext] = find(SOURCE, 'self_parameter');
+		const [receiver, receiverContext] = find(SOURCE, 'self', undefined, 1);
+		expect(at('declaration.parameter.receiver')(parameter, parameterContext)).toBe(true);
+		expect(at('identifier.receiver')(receiver, receiverContext)).toBe(true);
+	});
+
+	it('reads a captured pattern as the as-pattern and a slice pattern as the list pattern', () => {
+		const SOURCE = 'fn f(x: [u8; 2]) { match x { [n @ 1, _] => 1, _ => 0 }; }\n';
+		const [captured, capturedContext] = find(SOURCE, 'captured_pattern');
+		const [slice, sliceContext] = find(SOURCE, 'slice_pattern');
+		expect(at('pattern.as')(captured, capturedContext)).toBe(true);
+		expect(at('pattern.list')(slice, sliceContext)).toBe(true);
+	});
+
+	it('reads a numeric cast as the conversion and a renamed use as the import alias', () => {
+		const SOURCE = 'use a::b as c;\nfn f() -> u8 { 1 as u8 }\n';
+		const [alias, aliasContext] = find(SOURCE, 'use_as_clause');
+		const [cast, castContext] = find(SOURCE, 'type_cast_expression');
+		expect(at('clause.import.alias')(alias, aliasContext)).toBe(true);
+		expect(at('expression.cast.conversion')(cast, castContext)).toBe(true);
+	});
+
+	it('reads trait bounds as the bounds clause', () => {
+		const [bounds, context] = find('fn f<T: A + B>() {}\n', 'trait_bounds');
+		expect(at('clause.bounds')(bounds, context)).toBe(true);
 	});
 
 	it('reads a kind-id leaf in the asking engine\'s language, on the low-level surface too', () => {
@@ -280,6 +370,51 @@ describe('portable is: typescript', async () => {
 	it('reads a double-quoted string\'s fragment as its text', () => {
 		const [fragment, context] = find('let a = "x";\n', 'unescaped_double_string_fragment');
 		expect(at('literal.string.text')(fragment, context)).toBe(true);
+	});
+
+	it('reads a template string as an interpolated string, whether or not it substitutes', () => {
+		const SOURCE = 'let a = `x${y}`;\nlet b = `z`;\nlet c = "w";\n';
+		const strings = [find(SOURCE, 'template_string'), find(SOURCE, 'template_string', undefined, 1), find(SOURCE, 'string_double')];
+		expect(strings.map(([node, context]) => at('literal.string.interpolated')(node, context))).toEqual([true, true, false]);
+		expect(strings.map(([node, context]) => at('literal.string')(node, context))).toEqual([true, true, true]);
+	});
+
+	it('reads a maybe type as a nullable type', () => {
+		const [maybe, context] = find('let a: ?string;\n', 'flow_maybe_type');
+		expect(at('type.nullable')(maybe, context)).toBe(true);
+	});
+
+	it('reads an array pattern as the list pattern, and its rest as the rest pattern', () => {
+		const SOURCE = 'const [a, ...b] = c;\ntype T = [...U];\n';
+		const [list, listContext] = find(SOURCE, 'array_pattern');
+		const [rest, restContext] = find(SOURCE, 'rest_pattern');
+		const [restType, restTypeContext] = find(SOURCE, 'rest_type');
+		expect(at('pattern.list')(list, listContext)).toBe(true);
+		expect(at('pattern.rest')(rest, restContext)).toBe(true);
+		expect(at('type.rest')(restType, restTypeContext)).toBe(true);
+	});
+
+	it('reads both assertions as the assertion, the angle-bracket one by its refinement, and import-equals as the import alias statement', () => {
+		const SOURCE = 'let a = x as T;\nlet b = <T>x;\nlet c = x satisfies T;\nimport A = N.B;\n';
+		const [as, asContext] = find(SOURCE, 'as_expression');
+		const [angle, angleContext] = find(SOURCE, 'type_assertion');
+		const [satisfies, satisfiesContext] = find(SOURCE, 'satisfies_expression');
+		const [alias, aliasContext] = find(SOURCE, 'import_alias');
+		expect(at('expression.cast.assertion')(as, asContext)).toBe(true);
+		expect(at('expression.cast.assertion.angle_bracket')(as, asContext)).toBe(false);
+		expect(at('expression.cast.assertion.angle_bracket')(angle, angleContext)).toBe(true);
+		expect(at('expression.cast.satisfies')(satisfies, satisfiesContext)).toBe(true);
+		expect(at('statement.import.alias')(alias, aliasContext)).toBe(true);
+	});
+
+	it('reads a type parameter\'s constraint as the bounds clause', () => {
+		const [bounds, context] = find('function f<T extends U>() {}\n', 'constraint');
+		expect(at('clause.bounds')(bounds, context)).toBe(true);
+	});
+
+	it('reads this as the receiver', () => {
+		const [receiver, context] = find('class A { f() { return this; } }\n', 'this');
+		expect(at('identifier.receiver')(receiver, context)).toBe(true);
 	});
 
 	it('keeps each path whose last segment a function owns', () => {
