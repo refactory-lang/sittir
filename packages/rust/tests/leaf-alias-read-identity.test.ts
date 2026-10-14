@@ -3,7 +3,7 @@ import { createEngine } from '@sittir/common';
 import rust from '../src/index.ts';
 
 const rs = await createEngine(rust);
-const kindNames = new Map(Object.entries(rs.kinds as unknown as Record<string, number>).map(([name, id]) => [id, name]));
+const kindNames = new Map(Object.entries(rs.kinds).flatMap(([name, id]) => (typeof id === 'number' ? [[id, name] as const] : [])));
 
 const kindsOf = (node: unknown, out: string[] = []): string[] => {
 	if (typeof node === 'number') out.push(kindNames.get(node) ?? `#${node}`);
