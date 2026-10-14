@@ -935,8 +935,8 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 	const stampRef = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
 		const relaxed = relaxedWord(rule);
 		if (relaxed !== undefined) return relaxed;
-		if (isPrecWrapper(rule)) {
-			const inner = (rule as unknown as { content: Rule<'evaluate'> }).content;
+		if (isPrecWrapper(rule) && 'content' in rule) {
+			const inner = rule.content;
 			if (inner.type === SYMBOL && inner.name === raw.word) return inner;
 		}
 		if (rule.type === CHOICE) return dedupeWordArms(rule);
