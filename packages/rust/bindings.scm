@@ -39,7 +39,9 @@
 (impl_item_body) @declaration.extension
 (impl_item_semi) @declaration.extension
 (impl_item_body trait_clause: (_ trait: (_) @implements)) @declaration.extension.conformance
-(trait_item bounds: (_)? @extends (declaration_list (function_item) @declaration.method)) @declaration.interface.trait
+(trait_item) @declaration.interface.trait
+(trait_item bounds: (trait_bounds bounds: (_) @extends))
+(trait_item (declaration_list (function_item) @declaration.method))
 (trait_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.interface.trait.private
 (trait_item (visibility_modifier (visibility_modifier_pub))) @declaration.interface.trait.public
 (trait_item (visibility_modifier (crate))) @declaration.interface.trait.public.internal

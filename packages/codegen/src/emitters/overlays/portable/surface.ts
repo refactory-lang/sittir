@@ -1,4 +1,5 @@
 import type { PortableCondition } from '@sittir/types';
+import { portablePathHasFacts } from '@sittir/common/engine';
 import { WILDCARD } from '../../../bindings/facts.ts';
 import type { GrammarRoutes, ReadEntry } from '../../../bindings/routes.ts';
 import { descendants, namespaceTree, type NamespaceNode } from './namespaces.ts';
@@ -19,12 +20,11 @@ export function emitPortableSurface({ routes, readTest, kindIdOf, fixedText }: P
 	const braces = (parts: readonly string[]): string => (parts.length === 0 ? '{}' : `{ ${parts.join('; ')} }`);
 	const members = (under: string, at: string): string[] =>
 		[...byPath.get(under)!.children].map(([name, child]) => `readonly ${q(name)}: ${at}[${q(child.path)}]`);
-	const under = (path: string, vocab: string): boolean => vocab === path || vocab.startsWith(`${path}.`);
 	const exact = (n: NamespaceNode): boolean =>
 		n.kinds.every((kind) => {
 			const read = routes.readEntries.get(kind) ?? [];
 			return (
-				read.every((entry) => under(n.path, entry.vocab)) &&
+				read.every((entry) => portablePathHasFacts(n.path, entry.vocab)) &&
 				read.some((entry) => entry.claim.within.length === 0 && readTest(entry).length === 0)
 			);
 		});

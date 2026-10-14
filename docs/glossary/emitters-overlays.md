@@ -182,7 +182,7 @@ A kind name's kind id, stamped from the generated id tables, or `undefined` for 
 
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::namespaceTree`
 
-The tree of every vocabulary path a grammar reads (`NamespaceNode`), segment by segment and sorted. Each node holds the kinds read at or under it, so a path's kinds are a superset of every refinement's under it.
+The tree of every vocabulary path a grammar reads (`NamespaceNode`), segment by segment and sorted. Each node's kinds are derived once from the read entries whose paths satisfy its facts through `portablePathHasFacts`. A crossing is admitted beneath each path that names its facts, even when another refinement separates its segments.
 
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::descendants`
 
@@ -194,7 +194,7 @@ The `namespaces` section of `node-model-portable.json5`. Per depth (`NamespaceLe
 
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::NamespaceNode`
 
-One level of the portable namespace tree: its dotted path, the kinds read as exactly that path, and its child levels by segment.
+One level of the portable namespace tree: its dotted path, the kinds whose readings carry every fact it names, and its child levels by segment.
 
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::MutableNode`
 

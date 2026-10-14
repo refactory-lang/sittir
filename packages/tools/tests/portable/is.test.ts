@@ -136,9 +136,23 @@ describe('portable is: python', async () => {
 		expect(at('literal.string.interpolated')(rf, rfContext)).toBe(true);
 	});
 
-	it.skip('reads each fact of a crossing by its own guard (pending: a guard tests each fact its path names, not the path as a prefix)', () => {
-		const [rf, context] = find('a = rf"{x}"\n', 'string');
-		expect(at('literal.string.raw')(rf, context)).toBe(true);
+	it('reads each fact of a crossing by its own guard', () => {
+		const cases: readonly (readonly [string, readonly string[]])[] = [
+			['rf"{x}"', ['interpolated', 'raw']],
+			['Rb"x"', ['bytes', 'raw']],
+			['f"""x"""', ['interpolated', 'multiline']],
+			['br"""x"""', ['bytes', 'raw', 'multiline']],
+			['r"""x"""', ['raw', 'multiline']],
+			['tR"""{x}"""', ['interpolated', 'raw', 'multiline']],
+			['b"""x"""', ['bytes', 'multiline']],
+			['"x"', []]
+		];
+		for (const [text, facts] of cases) {
+			const [node, context] = find(`a = ${text}\n`, 'string');
+			for (const fact of ['interpolated', 'bytes', 'raw', 'multiline'])
+				expect(at(`literal.string.${fact}`)(node, context), `${text}: ${fact}`).toBe(facts.includes(fact));
+			expect(at('literal.number')(node, context), text).toBe(false);
+		}
 	});
 
 	it('reads a splat as a rest pattern or type, and a double splat as its map refinement', () => {
@@ -356,15 +370,32 @@ describe('portable is: rust', async () => {
 });
 
 describe('portable is: typescript', async () => {
-	const { engine, at, find } = await surfaces('typescript');
+	const { at, find } = await surfaces('typescript');
 
-	it('compares a comment\'s own text', () => {
-		const root = engine.parse('/** doc */\n/* block */\nlet x = 1;\n') as unknown as { statements(): readonly { $trivia: { leading(): readonly Node[] } }[] };
-		const { CommentBlock } = engine.kinds as unknown as Readonly<Record<string, number>>;
-		const [doc, block] = root.statements()[0]!.$trivia.leading().filter((item) => item.$type === CommentBlock);
+	it('reads each parser comment form directly and tests a documentation block by its own text', async () => {
+		const commentEngine = await createEngine(typescript);
+		const root = commentEngine.parse('/** doc */\n/* block */\n// line\n<!-- html -->\nlet x = 1;\n');
+		const { CommentBlock, CommentLine, HtmlComment } = commentEngine.kinds;
+		const statement = root.statements()[0];
+		if (statement === undefined || typeof statement === 'number') throw new Error('expected the declaration after the leading comments');
+		const leading = statement.$trivia.leading();
+		const [doc, block] = leading.filter((item) => typeof item !== 'number' && item.$type === CommentBlock);
+		const line = leading.find((item) => typeof item !== 'number' && item.$type === CommentLine);
+		const html = leading.find((item) => typeof item !== 'number' && item.$type === HtmlComment);
+		for (const comment of [doc, block, line, html]) {
+			expect(comment).toBeDefined();
+			expect(at('comment')(comment)).toBe(true);
+		}
 		expect(at('comment.block.doc')(doc)).toBe(true);
 		expect(at('comment.block.doc')(block)).toBe(false);
+		expect(at('comment.block')(doc)).toBe(true);
 		expect(at('comment.block')(block)).toBe(true);
+		expect(at('comment.line')(line)).toBe(true);
+		expect(at('comment.line')(block)).toBe(false);
+		expect(typeof at('comment.html')).toBe('function');
+		expect(at('comment.html')(html)).toBe(true);
+		expect(at('comment.html')(line)).toBe(false);
+		expect(at('comment.block')(html)).toBe(false);
 	});
 
 	it('reads a double-quoted string\'s fragment as its text', () => {
@@ -590,7 +621,7 @@ describe('portable is agrees with one classification', () => {
 		typescript: 'import { a } from "b";\nenum E { A, B = 1 }\nclass C extends D implements I { constructor() { super(); } m(): void { const x = a?.b ?? 1; } }\n// c\n'
 	} as const;
 	for (const name of Object.keys(SOURCES) as (keyof typeof SOURCES)[]) {
-		it(`${name}: the paths a node is read as form one chain, and each admits the node's kind`, async () => {
+		it(`${name}: each guard names facts of one classification and admits the node's kind`, async () => {
 			const { located, at, kindsAt, paths } = await surfaces(name);
 			const canonical = new Map<Guard, string>();
 			for (const path of paths()) {
@@ -601,7 +632,8 @@ describe('portable is agrees with one classification', () => {
 				const held = [...canonical].filter(([guard]) => guard(node, context)).map(([, path]) => path);
 				const deepest = held.reduce((a, b) => (b.split('.').length > a.split('.').length ? b : a), held[0] ?? '');
 				for (const path of held) {
-					expect(deepest === path || deepest.startsWith(`${path}.`), `${path} beside ${deepest}`).toBe(true);
+					const facts = path.split('.').map((fact) => fact.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('(?:\\.[^.]+)*\\.');
+					expect(deepest, path).toMatch(new RegExp(`^${facts}(?:\\.[^.]+)*$`));
 					expect(kindsAt(path).$ids).toContain(kindOf(node));
 				}
 			}

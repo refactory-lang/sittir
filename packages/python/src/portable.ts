@@ -209,7 +209,7 @@ export interface PortableIds {
 	'expression.interpolation.conversion': TSKindId.TypeConversion;
 	'expression.interpolation.format': TSKindId.FormatSpecifier;
 	'expression.lambda': TSKindId.Lambda | TSKindId.LambdaWithinForInClause;
-	'expression.member': TSKindId.Attribute;
+	'expression.member': TSKindId.Attribute | TSKindId.Call;
 	'expression.parenthesized': TSKindId.ParenthesizedExpression;
 	'expression.slice': TSKindId.Slice;
 	'expression.subscript': TSKindId.Subscript;
@@ -351,10 +351,10 @@ export interface PortableIds {
 	'pattern.case.or': TSKindId.UnionPattern;
 	'pattern.case.splat': TSKindId.SplatPattern;
 	'pattern.case.tuple': TSKindId.CaseTuplePattern;
-	'pattern.list': TSKindId.ListPattern;
+	'pattern.list': TSKindId.CaseListPattern | TSKindId.ListPattern;
 	'pattern.rest': TSKindId.DictionarySplatPattern | TSKindId.ListSplatPattern;
 	'pattern.rest.map': TSKindId.DictionarySplatPattern;
-	'pattern.tuple': TSKindId.PatternList | TSKindId.TuplePattern;
+	'pattern.tuple': TSKindId.CaseTuplePattern | TSKindId.PatternList | TSKindId.TuplePattern;
 	'pattern.tuple.bare': TSKindId.PatternList;
 	statement:
 		| TSKindId.AssertStatement
@@ -1806,7 +1806,7 @@ const table: PortableTable = {
 		'expression.interpolation.conversion': { ids: [TSKindId.TypeConversion], exact: true },
 		'expression.interpolation.format': { ids: [TSKindId.FormatSpecifier], exact: true },
 		'expression.lambda': { ids: [TSKindId.Lambda, TSKindId.LambdaWithinForInClause], exact: true },
-		'expression.member': { ids: [TSKindId.Attribute], exact: true },
+		'expression.member': { ids: [TSKindId.Attribute, TSKindId.Call], exact: false },
 		'expression.parenthesized': { ids: [TSKindId.ParenthesizedExpression], exact: true },
 		'expression.slice': { ids: [TSKindId.Slice], exact: true },
 		'expression.subscript': { ids: [TSKindId.Subscript], exact: true },
@@ -1979,10 +1979,10 @@ const table: PortableTable = {
 		'pattern.case.or': { ids: [TSKindId.UnionPattern], exact: true },
 		'pattern.case.splat': { ids: [TSKindId.SplatPattern], exact: true },
 		'pattern.case.tuple': { ids: [TSKindId.CaseTuplePattern], exact: true },
-		'pattern.list': { ids: [TSKindId.ListPattern], exact: true },
+		'pattern.list': { ids: [TSKindId.CaseListPattern, TSKindId.ListPattern], exact: true },
 		'pattern.rest': { ids: [TSKindId.DictionarySplatPattern, TSKindId.ListSplatPattern], exact: true },
 		'pattern.rest.map': { ids: [TSKindId.DictionarySplatPattern], exact: true },
-		'pattern.tuple': { ids: [TSKindId.PatternList, TSKindId.TuplePattern], exact: true },
+		'pattern.tuple': { ids: [TSKindId.CaseTuplePattern, TSKindId.PatternList, TSKindId.TuplePattern], exact: true },
 		'pattern.tuple.bare': { ids: [TSKindId.PatternList], exact: true },
 		statement: {
 			ids: [

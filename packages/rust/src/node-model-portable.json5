@@ -18351,17 +18351,6 @@
           ]
         },
         {
-          "name": "extends",
-          "route": "slot",
-          "slot": "bounds",
-          "path": [
-            {
-              "owner": "trait_item",
-              "slot": "bounds"
-            }
-          ]
-        },
-        {
           "name": "whereClause",
           "route": "slot",
           "slot": "where_clause",
@@ -18380,6 +18369,31 @@
             {
               "owner": "trait_item",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "extends",
+          "route": "nested",
+          "via": [
+            {
+              "field": "bounds",
+              "kind": "trait_bounds",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "trait_bounds",
+          "slot": "bounds",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "trait_item",
+              "slot": "bounds"
+            },
+            {
+              "owner": "trait_bounds",
+              "slot": "bounds"
             }
           ]
         },

@@ -155,6 +155,13 @@ describe('readBindings', () => {
 		expect(facts.members).toEqual([{ route: 'dropped', owner: 'binary', field: 'left', kind: null, after: null, anchor: null, claims: [0] }]);
 	});
 
+	it('keeps the spelling of a dropped anonymous token so it identifies its slot', async () => {
+		const facts = await readBindings('(constraint "extends" @dropped) @clause.bounds');
+		expect(facts.members).toEqual([
+			{ route: 'dropped', owner: 'constraint', field: null, kind: null, after: null, anchor: null, token: 'extends', claims: [0] }
+		]);
+	});
+
 	it('reads each node below a claimed node as a test of its kind at its site', async () => {
 		const facts = await readBindings('(call_expression function: (field_expression) @function) @expression.call.member');
 		expect(facts.claims[0]?.children).toEqual([

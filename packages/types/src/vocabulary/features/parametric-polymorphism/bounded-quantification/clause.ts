@@ -6,8 +6,6 @@ export namespace Clause {
 		// claimed by rt
 		readonly $kind: 'clause.bounds';
 		readonly bounds?: G['slots']['clause.bounds']['bounds'][];
-		readonly content?: G['slots']['clause.bounds']['content'];
-		// t only
 	}
 	export namespace Bounds {
 		export interface Removed<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Bounds<G>> {

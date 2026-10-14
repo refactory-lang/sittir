@@ -128,6 +128,19 @@ describe('deriveVocabulary', () => {
 		expect(d.untargeted).toEqual([]);
 		expect(d.uncaptured).toEqual([]);
 	});
+	it('keeps rest-type markers out of the portable members without losing the held type', () => {
+		const rest = levelMembers(d, 'type.rest');
+		expect(rest.has('type')).toBe(true);
+		for (const grammar of ['python', 'typescript']) expect(rest.get('type')?.grammars.has(grammar), grammar).toBe(true);
+		expect(rest.has('operator')).toBe(false);
+		expect(levelMembers(d, 'type.rest.map').has('operator')).toBe(false);
+	});
+	it('keeps bounds introducers out of the portable members without losing the bounds', () => {
+		const bounds = levelMembers(d, 'clause.bounds');
+		expect(bounds.has('bounds')).toBe(true);
+		for (const grammar of ['rust', 'typescript']) expect(bounds.get('bounds')?.grammars.has(grammar), grammar).toBe(true);
+		expect(bounds.has('content')).toBe(false);
+	});
 	it('keeps the bounds of a type argument (`Iterator<Item: Copy>`), a wrapper claimed as a kind of its own, as the list of bounds its clause holds', () => {
 		const argument = d.members.get('element.type_argument');
 		expect(argument?.has('constraint')).toBe(false);

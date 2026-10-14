@@ -213,7 +213,6 @@ export namespace Type {
 	export interface Rest<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by pt
 		readonly $kind: 'type.rest';
-		readonly operator?: G['slots']['type.rest']['operator'];
 		readonly type: G['slots']['type.rest']['type'];
 	}
 	export namespace Rest {

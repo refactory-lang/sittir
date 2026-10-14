@@ -201,10 +201,10 @@ export interface PortableIds {
 	'declaration.field.public.internal': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
 	'declaration.field.public.restricted': TSKindId.AttributedOrderedField | TSKindId.FieldDeclaration;
 	'declaration.function': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
-	'declaration.function.private': TSKindId.FunctionItem;
-	'declaration.function.public': TSKindId.FunctionItem;
-	'declaration.function.public.internal': TSKindId.FunctionItem;
-	'declaration.function.public.restricted': TSKindId.FunctionItem;
+	'declaration.function.private': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
+	'declaration.function.public': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
+	'declaration.function.public.internal': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
+	'declaration.function.public.restricted': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
 	'declaration.function.signature': TSKindId.FunctionSignatureItem;
 	'declaration.function.signature.private': TSKindId.FunctionSignatureItem;
 	'declaration.function.signature.public': TSKindId.FunctionSignatureItem;
@@ -222,10 +222,10 @@ export interface PortableIds {
 		| TSKindId.MacroDefinitionBracket
 		| TSKindId.MacroDefinitionParen;
 	'declaration.method': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
-	'declaration.method.private': TSKindId.FunctionItem;
-	'declaration.method.public': TSKindId.FunctionItem;
-	'declaration.method.public.internal': TSKindId.FunctionItem;
-	'declaration.method.public.restricted': TSKindId.FunctionItem;
+	'declaration.method.private': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
+	'declaration.method.public': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
+	'declaration.method.public.internal': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
+	'declaration.method.public.restricted': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
 	'declaration.method.signature': TSKindId.FunctionSignatureItem;
 	'declaration.method.signature.private': TSKindId.FunctionSignatureItem;
 	'declaration.method.signature.public': TSKindId.FunctionSignatureItem;
@@ -243,10 +243,26 @@ export interface PortableIds {
 	'declaration.module.foreign.public': TSKindId.ForeignModItemBody | TSKindId.ForeignModItemSemi;
 	'declaration.module.foreign.public.internal': TSKindId.ForeignModItemBody | TSKindId.ForeignModItemSemi;
 	'declaration.module.foreign.public.restricted': TSKindId.ForeignModItemBody | TSKindId.ForeignModItemSemi;
-	'declaration.module.private': TSKindId.ModItemExternal | TSKindId.ModItemInline;
-	'declaration.module.public': TSKindId.ModItemExternal | TSKindId.ModItemInline;
-	'declaration.module.public.internal': TSKindId.ModItemExternal | TSKindId.ModItemInline;
-	'declaration.module.public.restricted': TSKindId.ModItemExternal | TSKindId.ModItemInline;
+	'declaration.module.private':
+		| TSKindId.ForeignModItemBody
+		| TSKindId.ForeignModItemSemi
+		| TSKindId.ModItemExternal
+		| TSKindId.ModItemInline;
+	'declaration.module.public':
+		| TSKindId.ForeignModItemBody
+		| TSKindId.ForeignModItemSemi
+		| TSKindId.ModItemExternal
+		| TSKindId.ModItemInline;
+	'declaration.module.public.internal':
+		| TSKindId.ForeignModItemBody
+		| TSKindId.ForeignModItemSemi
+		| TSKindId.ModItemExternal
+		| TSKindId.ModItemInline;
+	'declaration.module.public.restricted':
+		| TSKindId.ForeignModItemBody
+		| TSKindId.ForeignModItemSemi
+		| TSKindId.ModItemExternal
+		| TSKindId.ModItemInline;
 	'declaration.parameter':
 		| TSKindId.BoolKeyword
 		| TSKindId.CapturedPattern
@@ -309,14 +325,31 @@ export interface PortableIds {
 	'declaration.parameter.receiver': TSKindId.SelfParameter;
 	'declaration.parameter.variadic': TSKindId.VariadicParameter;
 	'declaration.struct':
+		| TSKindId.EnumVariant
 		| TSKindId.StructItem
 		| TSKindId.StructItemBrace
 		| TSKindId.StructItemTuple
 		| TSKindId.StructItemUnit;
-	'declaration.struct.private': TSKindId.StructItemBrace;
-	'declaration.struct.public': TSKindId.StructItemBrace;
-	'declaration.struct.public.internal': TSKindId.StructItemBrace;
-	'declaration.struct.public.restricted': TSKindId.StructItemBrace;
+	'declaration.struct.private':
+		| TSKindId.EnumVariant
+		| TSKindId.StructItemBrace
+		| TSKindId.StructItemTuple
+		| TSKindId.StructItemUnit;
+	'declaration.struct.public':
+		| TSKindId.EnumVariant
+		| TSKindId.StructItemBrace
+		| TSKindId.StructItemTuple
+		| TSKindId.StructItemUnit;
+	'declaration.struct.public.internal':
+		| TSKindId.EnumVariant
+		| TSKindId.StructItemBrace
+		| TSKindId.StructItemTuple
+		| TSKindId.StructItemUnit;
+	'declaration.struct.public.restricted':
+		| TSKindId.EnumVariant
+		| TSKindId.StructItemBrace
+		| TSKindId.StructItemTuple
+		| TSKindId.StructItemUnit;
 	'declaration.struct.tuple': TSKindId.StructItemTuple;
 	'declaration.struct.tuple.private': TSKindId.StructItemTuple;
 	'declaration.struct.tuple.public': TSKindId.StructItemTuple;
@@ -565,7 +598,7 @@ export interface PortableIds {
 	'expression.collection.tuple': TSKindId.TupleExpression;
 	'expression.instantiation': TSKindId.GenericFunction;
 	'expression.lambda': TSKindId.ClosureExpression | TSKindId.ClosureExpressionBlock | TSKindId.ClosureExpressionExpr;
-	'expression.member': TSKindId.FieldExpression;
+	'expression.member': TSKindId.CallExpression | TSKindId.FieldExpression;
 	'expression.parenthesized': TSKindId.ParenthesizedExpression;
 	'expression.propagate': TSKindId.TryExpression;
 	'expression.range':
@@ -735,7 +768,8 @@ export interface PortableIds {
 		| TSKindId.FieldPatternNamed
 		| TSKindId.FieldPatternShorthand
 		| TSKindId.RemainingFieldPattern
-		| TSKindId.StructPattern;
+		| TSKindId.StructPattern
+		| TSKindId.TupleStructPattern;
 	'pattern.struct.field': TSKindId.FieldPattern | TSKindId.FieldPatternNamed | TSKindId.FieldPatternShorthand;
 	'pattern.struct.rest': TSKindId.RemainingFieldPattern;
 	'pattern.tuple': TSKindId.TuplePattern | TSKindId.TupleStructPattern;
@@ -767,10 +801,10 @@ export interface PortableIds {
 	'statement.import.package.public': TSKindId.ExternCrateDeclaration;
 	'statement.import.package.public.internal': TSKindId.ExternCrateDeclaration;
 	'statement.import.package.public.restricted': TSKindId.ExternCrateDeclaration;
-	'statement.import.private': TSKindId.UseDeclaration;
-	'statement.import.public': TSKindId.UseDeclaration;
-	'statement.import.public.internal': TSKindId.UseDeclaration;
-	'statement.import.public.restricted': TSKindId.UseDeclaration;
+	'statement.import.private': TSKindId.ExternCrateDeclaration | TSKindId.UseDeclaration;
+	'statement.import.public': TSKindId.ExternCrateDeclaration | TSKindId.UseDeclaration;
+	'statement.import.public.internal': TSKindId.ExternCrateDeclaration | TSKindId.UseDeclaration;
+	'statement.import.public.restricted': TSKindId.ExternCrateDeclaration | TSKindId.UseDeclaration;
 	'statement.loop': TSKindId.ForExpression | TSKindId.LoopExpression | TSKindId.WhileExpression;
 	'statement.loop.for_each': TSKindId.ForExpression;
 	'statement.loop.while': TSKindId.WhileExpression;
@@ -2836,10 +2870,16 @@ const table: PortableTable = {
 			exact: false
 		},
 		'declaration.function': { ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem], exact: false },
-		'declaration.function.private': { ids: [TSKindId.FunctionItem], exact: false },
-		'declaration.function.public': { ids: [TSKindId.FunctionItem], exact: false },
-		'declaration.function.public.internal': { ids: [TSKindId.FunctionItem], exact: false },
-		'declaration.function.public.restricted': { ids: [TSKindId.FunctionItem], exact: false },
+		'declaration.function.private': { ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.function.public': { ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.function.public.internal': {
+			ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem],
+			exact: false
+		},
+		'declaration.function.public.restricted': {
+			ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem],
+			exact: false
+		},
 		'declaration.function.signature': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.function.signature.private': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.function.signature.public': { ids: [TSKindId.FunctionSignatureItem], exact: false },
@@ -2861,10 +2901,16 @@ const table: PortableTable = {
 			exact: true
 		},
 		'declaration.method': { ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem], exact: false },
-		'declaration.method.private': { ids: [TSKindId.FunctionItem], exact: false },
-		'declaration.method.public': { ids: [TSKindId.FunctionItem], exact: false },
-		'declaration.method.public.internal': { ids: [TSKindId.FunctionItem], exact: false },
-		'declaration.method.public.restricted': { ids: [TSKindId.FunctionItem], exact: false },
+		'declaration.method.private': { ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.method.public': { ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.method.public.internal': {
+			ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem],
+			exact: false
+		},
+		'declaration.method.public.restricted': {
+			ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem],
+			exact: false
+		},
 		'declaration.method.signature': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.method.signature.private': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.method.signature.public': { ids: [TSKindId.FunctionSignatureItem], exact: false },
@@ -2901,10 +2947,22 @@ const table: PortableTable = {
 			ids: [TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi],
 			exact: false
 		},
-		'declaration.module.private': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
-		'declaration.module.public': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
-		'declaration.module.public.internal': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
-		'declaration.module.public.restricted': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
+		'declaration.module.private': {
+			ids: [TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi, TSKindId.ModItemExternal, TSKindId.ModItemInline],
+			exact: false
+		},
+		'declaration.module.public': {
+			ids: [TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi, TSKindId.ModItemExternal, TSKindId.ModItemInline],
+			exact: false
+		},
+		'declaration.module.public.internal': {
+			ids: [TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi, TSKindId.ModItemExternal, TSKindId.ModItemInline],
+			exact: false
+		},
+		'declaration.module.public.restricted': {
+			ids: [TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi, TSKindId.ModItemExternal, TSKindId.ModItemInline],
+			exact: false
+		},
 		'declaration.parameter': {
 			ids: [
 				TSKindId.BoolKeyword,
@@ -2971,13 +3029,31 @@ const table: PortableTable = {
 		'declaration.parameter.receiver': { ids: [TSKindId.SelfParameter], exact: true },
 		'declaration.parameter.variadic': { ids: [TSKindId.VariadicParameter], exact: true },
 		'declaration.struct': {
-			ids: [TSKindId.StructItem, TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
-			exact: true
+			ids: [
+				TSKindId.EnumVariant,
+				TSKindId.StructItem,
+				TSKindId.StructItemBrace,
+				TSKindId.StructItemTuple,
+				TSKindId.StructItemUnit
+			],
+			exact: false
 		},
-		'declaration.struct.private': { ids: [TSKindId.StructItemBrace], exact: false },
-		'declaration.struct.public': { ids: [TSKindId.StructItemBrace], exact: false },
-		'declaration.struct.public.internal': { ids: [TSKindId.StructItemBrace], exact: false },
-		'declaration.struct.public.restricted': { ids: [TSKindId.StructItemBrace], exact: false },
+		'declaration.struct.private': {
+			ids: [TSKindId.EnumVariant, TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
+			exact: false
+		},
+		'declaration.struct.public': {
+			ids: [TSKindId.EnumVariant, TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
+			exact: false
+		},
+		'declaration.struct.public.internal': {
+			ids: [TSKindId.EnumVariant, TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
+			exact: false
+		},
+		'declaration.struct.public.restricted': {
+			ids: [TSKindId.EnumVariant, TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
+			exact: false
+		},
 		'declaration.struct.tuple': { ids: [TSKindId.StructItemTuple], exact: true },
 		'declaration.struct.tuple.private': { ids: [TSKindId.StructItemTuple], exact: false },
 		'declaration.struct.tuple.public': { ids: [TSKindId.StructItemTuple], exact: false },
@@ -3268,7 +3344,7 @@ const table: PortableTable = {
 			ids: [TSKindId.ClosureExpression, TSKindId.ClosureExpressionBlock, TSKindId.ClosureExpressionExpr],
 			exact: true
 		},
-		'expression.member': { ids: [TSKindId.FieldExpression], exact: true },
+		'expression.member': { ids: [TSKindId.CallExpression, TSKindId.FieldExpression], exact: false },
 		'expression.parenthesized': { ids: [TSKindId.ParenthesizedExpression], exact: true },
 		'expression.propagate': { ids: [TSKindId.TryExpression], exact: true },
 		'expression.range': {
@@ -3486,7 +3562,8 @@ const table: PortableTable = {
 				TSKindId.FieldPatternNamed,
 				TSKindId.FieldPatternShorthand,
 				TSKindId.RemainingFieldPattern,
-				TSKindId.StructPattern
+				TSKindId.StructPattern,
+				TSKindId.TupleStructPattern
 			],
 			exact: false
 		},
@@ -3528,10 +3605,16 @@ const table: PortableTable = {
 		'statement.import.package.public': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
 		'statement.import.package.public.internal': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
 		'statement.import.package.public.restricted': { ids: [TSKindId.ExternCrateDeclaration], exact: false },
-		'statement.import.private': { ids: [TSKindId.UseDeclaration], exact: false },
-		'statement.import.public': { ids: [TSKindId.UseDeclaration], exact: false },
-		'statement.import.public.internal': { ids: [TSKindId.UseDeclaration], exact: false },
-		'statement.import.public.restricted': { ids: [TSKindId.UseDeclaration], exact: false },
+		'statement.import.private': { ids: [TSKindId.ExternCrateDeclaration, TSKindId.UseDeclaration], exact: false },
+		'statement.import.public': { ids: [TSKindId.ExternCrateDeclaration, TSKindId.UseDeclaration], exact: false },
+		'statement.import.public.internal': {
+			ids: [TSKindId.ExternCrateDeclaration, TSKindId.UseDeclaration],
+			exact: false
+		},
+		'statement.import.public.restricted': {
+			ids: [TSKindId.ExternCrateDeclaration, TSKindId.UseDeclaration],
+			exact: false
+		},
 		'statement.loop': { ids: [TSKindId.ForExpression, TSKindId.LoopExpression, TSKindId.WhileExpression], exact: true },
 		'statement.loop.for_each': { ids: [TSKindId.ForExpression], exact: true },
 		'statement.loop.while': { ids: [TSKindId.WhileExpression], exact: true },

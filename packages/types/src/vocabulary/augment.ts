@@ -341,6 +341,7 @@ declare module './comment.ts' {
 			| V.Comment.Block<G>
 			| V.Comment.Block.Doc<G>
 			| V.Comment.Block.Doc.Inner<G>
+			| V.Comment.Html<G>
 			| V.Comment.Line<G>
 			| V.Comment.Line.Doc<G>
 			| V.Comment.Line.Doc.Inner<G>

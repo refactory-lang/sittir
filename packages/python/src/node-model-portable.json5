@@ -5901,17 +5901,6 @@
       ],
       "members": [
         {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "splat_type",
-              "slot": "operator"
-            }
-          ]
-        },
-        {
           "name": "type",
           "route": "slot",
           "slot": "name",
