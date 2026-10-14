@@ -362,7 +362,9 @@ describe('portable is: typescript', async () => {
 		const commentEngine = await createEngine(typescript);
 		const root = commentEngine.parse('/** doc */\n/* block */\n// line\n<!-- html -->\nlet x = 1;\n');
 		const { CommentBlock, CommentLine, HtmlComment } = commentEngine.kinds;
-		const leading = root.statements()[0]?.$trivia.leading() ?? [];
+		const statement = root.statements()[0];
+		if (statement === undefined || typeof statement === 'number') throw new Error('expected the declaration after the leading comments');
+		const leading = statement.$trivia.leading();
 		const [doc, block] = leading.filter((item) => typeof item !== 'number' && item.$type === CommentBlock);
 		const line = leading.find((item) => typeof item !== 'number' && item.$type === CommentLine);
 		const html = leading.find((item) => typeof item !== 'number' && item.$type === HtmlComment);

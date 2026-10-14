@@ -6011,17 +6011,6 @@
           ]
         },
         {
-          "name": "extends",
-          "route": "slot",
-          "slot": "extends_type_clause",
-          "path": [
-            {
-              "owner": "interface_declaration",
-              "slot": "extends_type_clause"
-            }
-          ]
-        },
-        {
           "name": "body",
           "route": "slot",
           "slot": "body",
@@ -6029,6 +6018,31 @@
             {
               "owner": "interface_declaration",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "extends",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "extends_type_clause",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "extends_type_clause",
+          "slot": "type",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "interface_declaration",
+              "slot": "extends_type_clause"
+            },
+            {
+              "owner": "extends_type_clause",
+              "slot": "type"
             }
           ]
         }

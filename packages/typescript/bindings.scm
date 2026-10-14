@@ -16,7 +16,7 @@
 (abstract_class_declaration "abstract" @abstract)
 (abstract_class_declaration (class_heritage (class_heritage_extends_clause (_) @extends)))
 (abstract_class_declaration (class_heritage (implements_clause type: (_) @implements)))
-(interface_declaration (extends_type_clause)? @extends) @declaration.interface
+(interface_declaration (extends_type_clause type: (_) @extends)?) @declaration.interface
 (enum_declaration) @declaration.enum
 (enum_assignment) @declaration.enum_member
 (enum_body_element_name name: (_) @name) @declaration.enum_member
