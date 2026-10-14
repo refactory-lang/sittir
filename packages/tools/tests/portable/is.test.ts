@@ -136,9 +136,23 @@ describe('portable is: python', async () => {
 		expect(at('literal.string.interpolated')(rf, rfContext)).toBe(true);
 	});
 
-	it.skip('reads each fact of a crossing by its own guard (pending: a guard tests each fact its path names, not the path as a prefix)', () => {
-		const [rf, context] = find('a = rf"{x}"\n', 'string');
-		expect(at('literal.string.raw')(rf, context)).toBe(true);
+	it('reads each fact of a crossing by its own guard', () => {
+		const cases: readonly (readonly [string, readonly string[]])[] = [
+			['rf"{x}"', ['interpolated', 'raw']],
+			['Rb"x"', ['bytes', 'raw']],
+			['f"""x"""', ['interpolated', 'multiline']],
+			['br"""x"""', ['bytes', 'raw', 'multiline']],
+			['r"""x"""', ['raw', 'multiline']],
+			['tR"""{x}"""', ['interpolated', 'raw', 'multiline']],
+			['b"""x"""', ['bytes', 'multiline']],
+			['"x"', []]
+		];
+		for (const [text, facts] of cases) {
+			const [node, context] = find(`a = ${text}\n`, 'string');
+			for (const fact of ['interpolated', 'bytes', 'raw', 'multiline'])
+				expect(at(`literal.string.${fact}`)(node, context), `${text}: ${fact}`).toBe(facts.includes(fact));
+			expect(at('literal.number')(node, context), text).toBe(false);
+		}
 	});
 
 	it('reads a splat as a rest pattern or type, and a double splat as its map refinement', () => {
@@ -607,7 +621,7 @@ describe('portable is agrees with one classification', () => {
 		typescript: 'import { a } from "b";\nenum E { A, B = 1 }\nclass C extends D implements I { constructor() { super(); } m(): void { const x = a?.b ?? 1; } }\n// c\n'
 	} as const;
 	for (const name of Object.keys(SOURCES) as (keyof typeof SOURCES)[]) {
-		it(`${name}: the paths a node is read as form one chain, and each admits the node's kind`, async () => {
+		it(`${name}: each guard names facts of one classification and admits the node's kind`, async () => {
 			const { located, at, kindsAt, paths } = await surfaces(name);
 			const canonical = new Map<Guard, string>();
 			for (const path of paths()) {
@@ -618,7 +632,8 @@ describe('portable is agrees with one classification', () => {
 				const held = [...canonical].filter(([guard]) => guard(node, context)).map(([, path]) => path);
 				const deepest = held.reduce((a, b) => (b.split('.').length > a.split('.').length ? b : a), held[0] ?? '');
 				for (const path of held) {
-					expect(deepest === path || deepest.startsWith(`${path}.`), `${path} beside ${deepest}`).toBe(true);
+					const facts = path.split('.').map((fact) => fact.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('(?:\\.[^.]+)*\\.');
+					expect(deepest, path).toMatch(new RegExp(`^${facts}(?:\\.[^.]+)*$`));
 					expect(kindsAt(path).$ids).toContain(kindOf(node));
 				}
 			}

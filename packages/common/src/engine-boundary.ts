@@ -17,3 +17,4 @@ export type {
 	ParsedRoot
 } from './engine.ts';
 export { portableSurface } from './portable.ts';
+export { portablePathHasFacts } from './portable-path.ts';

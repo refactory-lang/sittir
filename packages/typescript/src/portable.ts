@@ -46,7 +46,7 @@ export interface PortableIds {
 	'clause.case.default': TSKindId.SwitchDefault;
 	'clause.case.switch': TSKindId.SwitchCase;
 	'clause.catch': TSKindId.CatchClause;
-	'clause.default': TSKindId.DefaultType;
+	'clause.default': TSKindId.DefaultType | TSKindId.SwitchDefault;
 	'clause.else': TSKindId.ElseClause;
 	'clause.export': TSKindId.ExportClause | TSKindId.ExportSpecifier | TSKindId.NamespaceExport;
 	'clause.export.namespace': TSKindId.NamespaceExport;
@@ -117,9 +117,9 @@ export interface PortableIds {
 	'declaration.enum': TSKindId.EnumDeclaration;
 	'declaration.enum_member': TSKindId.EnumAssignment | TSKindId.EnumBodyElementName;
 	'declaration.field': TSKindId.PropertySignature | TSKindId.PublicFieldDefinition;
-	'declaration.field.private': TSKindId.PublicFieldDefinition;
-	'declaration.field.protected': TSKindId.PublicFieldDefinition;
-	'declaration.field.public': TSKindId.PublicFieldDefinition;
+	'declaration.field.private': TSKindId.PropertySignature | TSKindId.PublicFieldDefinition;
+	'declaration.field.protected': TSKindId.PropertySignature | TSKindId.PublicFieldDefinition;
+	'declaration.field.public': TSKindId.PropertySignature | TSKindId.PublicFieldDefinition;
 	'declaration.field.signature': TSKindId.PropertySignature;
 	'declaration.field.signature.private': TSKindId.PropertySignature;
 	'declaration.field.signature.protected': TSKindId.PropertySignature;
@@ -131,17 +131,38 @@ export interface PortableIds {
 	'declaration.function.signature': TSKindId.FunctionSignature;
 	'declaration.interface': TSKindId.InterfaceDeclaration;
 	'declaration.method': TSKindId.AbstractMethodSignature | TSKindId.MethodDefinition | TSKindId.MethodSignature;
-	'declaration.method.getter': TSKindId.MethodDefinition;
-	'declaration.method.getter.private': TSKindId.MethodDefinition;
-	'declaration.method.getter.protected': TSKindId.MethodDefinition;
-	'declaration.method.getter.public': TSKindId.MethodDefinition;
-	'declaration.method.private': TSKindId.MethodDefinition;
-	'declaration.method.protected': TSKindId.MethodDefinition;
-	'declaration.method.public': TSKindId.MethodDefinition;
-	'declaration.method.setter': TSKindId.MethodDefinition;
-	'declaration.method.setter.private': TSKindId.MethodDefinition;
-	'declaration.method.setter.protected': TSKindId.MethodDefinition;
-	'declaration.method.setter.public': TSKindId.MethodDefinition;
+	'declaration.method.getter': TSKindId.AbstractMethodSignature | TSKindId.MethodDefinition | TSKindId.MethodSignature;
+	'declaration.method.getter.private':
+		| TSKindId.AbstractMethodSignature
+		| TSKindId.MethodDefinition
+		| TSKindId.MethodSignature;
+	'declaration.method.getter.protected':
+		| TSKindId.AbstractMethodSignature
+		| TSKindId.MethodDefinition
+		| TSKindId.MethodSignature;
+	'declaration.method.getter.public':
+		| TSKindId.AbstractMethodSignature
+		| TSKindId.MethodDefinition
+		| TSKindId.MethodSignature;
+	'declaration.method.private': TSKindId.AbstractMethodSignature | TSKindId.MethodDefinition | TSKindId.MethodSignature;
+	'declaration.method.protected':
+		| TSKindId.AbstractMethodSignature
+		| TSKindId.MethodDefinition
+		| TSKindId.MethodSignature;
+	'declaration.method.public': TSKindId.AbstractMethodSignature | TSKindId.MethodDefinition | TSKindId.MethodSignature;
+	'declaration.method.setter': TSKindId.AbstractMethodSignature | TSKindId.MethodDefinition | TSKindId.MethodSignature;
+	'declaration.method.setter.private':
+		| TSKindId.AbstractMethodSignature
+		| TSKindId.MethodDefinition
+		| TSKindId.MethodSignature;
+	'declaration.method.setter.protected':
+		| TSKindId.AbstractMethodSignature
+		| TSKindId.MethodDefinition
+		| TSKindId.MethodSignature;
+	'declaration.method.setter.public':
+		| TSKindId.AbstractMethodSignature
+		| TSKindId.MethodDefinition
+		| TSKindId.MethodSignature;
 	'declaration.method.signature': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
 	'declaration.method.signature.abstract': TSKindId.AbstractMethodSignature;
 	'declaration.method.signature.abstract.getter': TSKindId.AbstractMethodSignature;
@@ -155,17 +176,17 @@ export interface PortableIds {
 	'declaration.method.signature.abstract.setter.private': TSKindId.AbstractMethodSignature;
 	'declaration.method.signature.abstract.setter.protected': TSKindId.AbstractMethodSignature;
 	'declaration.method.signature.abstract.setter.public': TSKindId.AbstractMethodSignature;
-	'declaration.method.signature.getter': TSKindId.MethodSignature;
-	'declaration.method.signature.getter.private': TSKindId.MethodSignature;
-	'declaration.method.signature.getter.protected': TSKindId.MethodSignature;
-	'declaration.method.signature.getter.public': TSKindId.MethodSignature;
-	'declaration.method.signature.private': TSKindId.MethodSignature;
-	'declaration.method.signature.protected': TSKindId.MethodSignature;
-	'declaration.method.signature.public': TSKindId.MethodSignature;
-	'declaration.method.signature.setter': TSKindId.MethodSignature;
-	'declaration.method.signature.setter.private': TSKindId.MethodSignature;
-	'declaration.method.signature.setter.protected': TSKindId.MethodSignature;
-	'declaration.method.signature.setter.public': TSKindId.MethodSignature;
+	'declaration.method.signature.getter': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+	'declaration.method.signature.getter.private': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+	'declaration.method.signature.getter.protected': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+	'declaration.method.signature.getter.public': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+	'declaration.method.signature.private': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+	'declaration.method.signature.protected': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+	'declaration.method.signature.public': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+	'declaration.method.signature.setter': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+	'declaration.method.signature.setter.private': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+	'declaration.method.signature.setter.protected': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+	'declaration.method.signature.setter.public': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
 	'declaration.module': TSKindId.InternalModule | TSKindId.Module;
 	'declaration.module.external': TSKindId.Module;
 	'declaration.module_property': TSKindId.AmbientDeclarationModule;
@@ -174,11 +195,15 @@ export interface PortableIds {
 	'declaration.parameter.protected': TSKindId.OptionalParameter | TSKindId.RequiredParameter;
 	'declaration.parameter.public': TSKindId.OptionalParameter | TSKindId.RequiredParameter;
 	'declaration.signature':
+		| TSKindId.AbstractMethodSignature
 		| TSKindId.CallSignature
 		| TSKindId.ConstructSignature
+		| TSKindId.FunctionSignature
 		| TSKindId.IndexSignature
 		| TSKindId.IndexSignatureColon
-		| TSKindId.IndexSignatureMappedTypeClause;
+		| TSKindId.IndexSignatureMappedTypeClause
+		| TSKindId.MethodSignature
+		| TSKindId.PropertySignature;
 	'declaration.signature.call': TSKindId.CallSignature;
 	'declaration.signature.construct': TSKindId.ConstructSignature;
 	'declaration.signature.index':
@@ -325,7 +350,7 @@ export interface PortableIds {
 	'expression.instantiation': TSKindId.InstantiationExpression;
 	'expression.interpolation': TSKindId.TemplateSubstitution;
 	'expression.lambda': TSKindId.ArrowFunction;
-	'expression.member': TSKindId.MemberExpression;
+	'expression.member': TSKindId.CallExpressionCall | TSKindId.MemberExpression;
 	'expression.meta': TSKindId.MetaProperty | TSKindId.MetaPropertyImportMeta | TSKindId.MetaPropertyNewTarget;
 	'expression.parenthesized':
 		| TSKindId.ParenthesizedExpression
@@ -439,9 +464,9 @@ export interface PortableIds {
 	'literal.number.integer.big.binary': TSKindId.NumberBigintBinary;
 	'literal.number.integer.big.hex': TSKindId.NumberBigintHex;
 	'literal.number.integer.big.octal': TSKindId.NumberBigintOctal;
-	'literal.number.integer.binary': TSKindId.NumberBinary;
-	'literal.number.integer.hex': TSKindId.NumberHex;
-	'literal.number.integer.octal': TSKindId.NumberOctal;
+	'literal.number.integer.binary': TSKindId.NumberBigintBinary | TSKindId.NumberBinary;
+	'literal.number.integer.hex': TSKindId.NumberBigintHex | TSKindId.NumberHex;
+	'literal.number.integer.octal': TSKindId.NumberBigintOctal | TSKindId.NumberOctal;
 	'literal.number.negative': TSKindId.LiteralTypeNegativeNumber;
 	'literal.regex': TSKindId.Regex | TSKindId.RegexFlags | TSKindId.RegexPattern;
 	'literal.regex.flags': TSKindId.RegexFlags;
@@ -473,7 +498,7 @@ export interface PortableIds {
 		| TSKindId.ObjectPattern
 		| TSKindId.PairPattern
 		| TSKindId.RestPattern;
-	'pattern.assignment': TSKindId.AssignmentPattern;
+	'pattern.assignment': TSKindId.AssignmentPattern | TSKindId.ObjectAssignmentPattern;
 	'pattern.list': TSKindId.ArrayPattern;
 	'pattern.object': TSKindId.ObjectAssignmentPattern | TSKindId.ObjectPattern | TSKindId.PairPattern;
 	'pattern.object.assignment': TSKindId.ObjectAssignmentPattern;
@@ -2276,7 +2301,7 @@ const table: PortableTable = {
 		'clause.case.default': { ids: [TSKindId.SwitchDefault], exact: true },
 		'clause.case.switch': { ids: [TSKindId.SwitchCase], exact: true },
 		'clause.catch': { ids: [TSKindId.CatchClause], exact: true },
-		'clause.default': { ids: [TSKindId.DefaultType], exact: true },
+		'clause.default': { ids: [TSKindId.DefaultType, TSKindId.SwitchDefault], exact: true },
 		'clause.else': { ids: [TSKindId.ElseClause], exact: true },
 		'clause.export': { ids: [TSKindId.ExportClause, TSKindId.ExportSpecifier, TSKindId.NamespaceExport], exact: true },
 		'clause.export.namespace': { ids: [TSKindId.NamespaceExport], exact: true },
@@ -2358,9 +2383,9 @@ const table: PortableTable = {
 		'declaration.enum': { ids: [TSKindId.EnumDeclaration], exact: true },
 		'declaration.enum_member': { ids: [TSKindId.EnumAssignment, TSKindId.EnumBodyElementName], exact: true },
 		'declaration.field': { ids: [TSKindId.PropertySignature, TSKindId.PublicFieldDefinition], exact: true },
-		'declaration.field.private': { ids: [TSKindId.PublicFieldDefinition], exact: false },
-		'declaration.field.protected': { ids: [TSKindId.PublicFieldDefinition], exact: false },
-		'declaration.field.public': { ids: [TSKindId.PublicFieldDefinition], exact: false },
+		'declaration.field.private': { ids: [TSKindId.PropertySignature, TSKindId.PublicFieldDefinition], exact: false },
+		'declaration.field.protected': { ids: [TSKindId.PropertySignature, TSKindId.PublicFieldDefinition], exact: false },
+		'declaration.field.public': { ids: [TSKindId.PropertySignature, TSKindId.PublicFieldDefinition], exact: false },
 		'declaration.field.signature': { ids: [TSKindId.PropertySignature], exact: true },
 		'declaration.field.signature.private': { ids: [TSKindId.PropertySignature], exact: false },
 		'declaration.field.signature.protected': { ids: [TSKindId.PropertySignature], exact: false },
@@ -2375,17 +2400,50 @@ const table: PortableTable = {
 			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
 			exact: false
 		},
-		'declaration.method.getter': { ids: [TSKindId.MethodDefinition], exact: false },
-		'declaration.method.getter.private': { ids: [TSKindId.MethodDefinition], exact: false },
-		'declaration.method.getter.protected': { ids: [TSKindId.MethodDefinition], exact: false },
-		'declaration.method.getter.public': { ids: [TSKindId.MethodDefinition], exact: false },
-		'declaration.method.private': { ids: [TSKindId.MethodDefinition], exact: false },
-		'declaration.method.protected': { ids: [TSKindId.MethodDefinition], exact: false },
-		'declaration.method.public': { ids: [TSKindId.MethodDefinition], exact: false },
-		'declaration.method.setter': { ids: [TSKindId.MethodDefinition], exact: false },
-		'declaration.method.setter.private': { ids: [TSKindId.MethodDefinition], exact: false },
-		'declaration.method.setter.protected': { ids: [TSKindId.MethodDefinition], exact: false },
-		'declaration.method.setter.public': { ids: [TSKindId.MethodDefinition], exact: false },
+		'declaration.method.getter': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.getter.private': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.getter.protected': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.getter.public': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.private': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.protected': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.public': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.setter': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.setter.private': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.setter.protected': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.setter.public': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			exact: false
+		},
 		'declaration.method.signature': { ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature], exact: true },
 		'declaration.method.signature.abstract': { ids: [TSKindId.AbstractMethodSignature], exact: true },
 		'declaration.method.signature.abstract.getter': { ids: [TSKindId.AbstractMethodSignature], exact: false },
@@ -2399,17 +2457,50 @@ const table: PortableTable = {
 		'declaration.method.signature.abstract.setter.private': { ids: [TSKindId.AbstractMethodSignature], exact: false },
 		'declaration.method.signature.abstract.setter.protected': { ids: [TSKindId.AbstractMethodSignature], exact: false },
 		'declaration.method.signature.abstract.setter.public': { ids: [TSKindId.AbstractMethodSignature], exact: false },
-		'declaration.method.signature.getter': { ids: [TSKindId.MethodSignature], exact: false },
-		'declaration.method.signature.getter.private': { ids: [TSKindId.MethodSignature], exact: false },
-		'declaration.method.signature.getter.protected': { ids: [TSKindId.MethodSignature], exact: false },
-		'declaration.method.signature.getter.public': { ids: [TSKindId.MethodSignature], exact: false },
-		'declaration.method.signature.private': { ids: [TSKindId.MethodSignature], exact: false },
-		'declaration.method.signature.protected': { ids: [TSKindId.MethodSignature], exact: false },
-		'declaration.method.signature.public': { ids: [TSKindId.MethodSignature], exact: false },
-		'declaration.method.signature.setter': { ids: [TSKindId.MethodSignature], exact: false },
-		'declaration.method.signature.setter.private': { ids: [TSKindId.MethodSignature], exact: false },
-		'declaration.method.signature.setter.protected': { ids: [TSKindId.MethodSignature], exact: false },
-		'declaration.method.signature.setter.public': { ids: [TSKindId.MethodSignature], exact: false },
+		'declaration.method.signature.getter': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.signature.getter.private': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.signature.getter.protected': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.signature.getter.public': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.signature.private': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.signature.protected': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.signature.public': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.signature.setter': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.signature.setter.private': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.signature.setter.protected': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.method.signature.setter.public': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
 		'declaration.module': { ids: [TSKindId.InternalModule, TSKindId.Module], exact: true },
 		'declaration.module.external': { ids: [TSKindId.Module], exact: true },
 		'declaration.module_property': { ids: [TSKindId.AmbientDeclarationModule], exact: true },
@@ -2419,11 +2510,15 @@ const table: PortableTable = {
 		'declaration.parameter.public': { ids: [TSKindId.OptionalParameter, TSKindId.RequiredParameter], exact: false },
 		'declaration.signature': {
 			ids: [
+				TSKindId.AbstractMethodSignature,
 				TSKindId.CallSignature,
 				TSKindId.ConstructSignature,
+				TSKindId.FunctionSignature,
 				TSKindId.IndexSignature,
 				TSKindId.IndexSignatureColon,
-				TSKindId.IndexSignatureMappedTypeClause
+				TSKindId.IndexSignatureMappedTypeClause,
+				TSKindId.MethodSignature,
+				TSKindId.PropertySignature
 			],
 			exact: true
 		},
@@ -2597,7 +2692,7 @@ const table: PortableTable = {
 		'expression.instantiation': { ids: [TSKindId.InstantiationExpression], exact: true },
 		'expression.interpolation': { ids: [TSKindId.TemplateSubstitution], exact: true },
 		'expression.lambda': { ids: [TSKindId.ArrowFunction], exact: true },
-		'expression.member': { ids: [TSKindId.MemberExpression], exact: true },
+		'expression.member': { ids: [TSKindId.CallExpressionCall, TSKindId.MemberExpression], exact: false },
 		'expression.meta': {
 			ids: [TSKindId.MetaProperty, TSKindId.MetaPropertyImportMeta, TSKindId.MetaPropertyNewTarget],
 			exact: true
@@ -2754,9 +2849,9 @@ const table: PortableTable = {
 		'literal.number.integer.big.binary': { ids: [TSKindId.NumberBigintBinary], exact: true },
 		'literal.number.integer.big.hex': { ids: [TSKindId.NumberBigintHex], exact: true },
 		'literal.number.integer.big.octal': { ids: [TSKindId.NumberBigintOctal], exact: true },
-		'literal.number.integer.binary': { ids: [TSKindId.NumberBinary], exact: true },
-		'literal.number.integer.hex': { ids: [TSKindId.NumberHex], exact: true },
-		'literal.number.integer.octal': { ids: [TSKindId.NumberOctal], exact: true },
+		'literal.number.integer.binary': { ids: [TSKindId.NumberBigintBinary, TSKindId.NumberBinary], exact: true },
+		'literal.number.integer.hex': { ids: [TSKindId.NumberBigintHex, TSKindId.NumberHex], exact: true },
+		'literal.number.integer.octal': { ids: [TSKindId.NumberBigintOctal, TSKindId.NumberOctal], exact: true },
 		'literal.number.negative': { ids: [TSKindId.LiteralTypeNegativeNumber], exact: true },
 		'literal.regex': { ids: [TSKindId.Regex, TSKindId.RegexFlags, TSKindId.RegexPattern], exact: true },
 		'literal.regex.flags': { ids: [TSKindId.RegexFlags], exact: true },
@@ -2799,7 +2894,7 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
-		'pattern.assignment': { ids: [TSKindId.AssignmentPattern], exact: true },
+		'pattern.assignment': { ids: [TSKindId.AssignmentPattern, TSKindId.ObjectAssignmentPattern], exact: true },
 		'pattern.list': { ids: [TSKindId.ArrayPattern], exact: true },
 		'pattern.object': {
 			ids: [TSKindId.ObjectAssignmentPattern, TSKindId.ObjectPattern, TSKindId.PairPattern],
