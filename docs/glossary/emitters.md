@@ -2860,7 +2860,7 @@ Also emits `RELAXED_KEYWORDS`, the token ids of the keywords the grammar relaxes
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::relaxedKeywordIds`
 
-The catalog ids of the tokens of a node map's `relaxedLiterals`: the keywords the grammar aliases to its word rule.
+The catalog ids of the tokens of a node map's `relaxedLiterals`: the keywords the grammar aliases to its word rule. Resolves each literal through `findKindEntryForLiteral`, preserving the canonical anonymous-token, literal-rule, then terminal precedence independently of catalog row order. Shared by the reader's relaxed-keyword table and identifier transport folding.
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::KindConstant`
 

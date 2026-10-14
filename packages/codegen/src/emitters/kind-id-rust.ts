@@ -1,6 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
-import { collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
+import { collectKindEntries, collectCatalogKinds, findKindEntryForLiteral, type KindEnumEntry } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import { findEntryForKindName } from '../dsl/symbol-table.ts';
@@ -41,9 +41,9 @@ export function kindConstants(
 	return constants;
 }
 
-export function relaxedKeywordIds(nodeMap: NodeMap, entries: readonly { readonly id: number; readonly literalText?: string }[]): number[] {
+export function relaxedKeywordIds(nodeMap: NodeMap, entries: readonly KindEnumEntry[]): number[] {
 	return (nodeMap.relaxedLiterals ?? []).flatMap((literal) => {
-		const entry = entries.find((candidate) => candidate.literalText === literal);
+		const entry = findKindEntryForLiteral(entries, literal);
 		return entry === undefined ? [] : [entry.id];
 	});
 }
