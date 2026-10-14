@@ -2872,7 +2872,7 @@ the rule in place. Called once from `enrich`, after
 labelled too. Returns the record, which `enrich` always attaches to its
 result as `ENRICH_AUTOMATIC_VARIANTS_KEY`.
 
-With `into`, the labels go onto an existing record instead of a fresh one, and `owners` limits the run to the rules named. `grammar()` uses both to label what wire created or changed with this same function, so a kind a patch authors after enrich ran carries the labels enrich would have given it. A supertype owner joins `into` only when stamping it added a label.
+With `into`, the labels go onto an existing record instead of a fresh one, and `owners` limits the run to the rules named. `stampWiredVariants` uses both to label what wire created or changed with this same function, so a kind a patch authors after enrich ran carries the labels enrich would have given it. A supertype owner joins `into` only when stamping it added a label.
 
 `enrich` passes a `seedAutomaticVariants` copy of its input's record as `into`, so a grammar that was already enriched keeps the provenance of its earlier labels: stamping an already-labelled arm adds no key, and without the seed the second pass's record would be empty while the labels stay on the rules.
 
@@ -4773,6 +4773,7 @@ with the config's authored group patterns and `extras:` callback, then `wire(con
 base as the raw stage,
 then the ambient `grammar()` (tree-sitter's in the bundled `.sittir/grammar.js`,
 sittir's `grammarFn` under evaluate) over the enriched base and wired options,
+then `stampWiredVariants`, which labels the rules wire created or changed in both pipelines,
 then `blankDeadEnrichMints`, which blanks the rules enrich
 added that the wired grammar never reaches, `attachDerivationRecords`,
 which records the upstream conflicts and each reshaped rule's upstream source
@@ -6335,6 +6336,10 @@ Appends rule names to one of the grammar's name lists (`supertypes` or `external
 ### `packages/codegen/src/dsl/enrich.ts::ENRICH_WHITESPACE_KEY`
 
 The non-enumerable key under which enrich leaves its whitespace sidecar (`EnrichWhitespaceSidecar`) on the enriched grammar, for `wire()` to merge into `visibleExternals` and the wire context.
+
+### `packages/codegen/src/dsl/enrich.ts::stampWiredVariants`
+
+Labels the rules of a wired grammar that wire created or changed against `base` (the layout supertype excepted, which enrich mints after its own labelling) with `stampAutomaticVariants`, into the wire context's record. It is the same stamping enrich applies to a kind it mints, run on the arms a patch or `groups:` entry authored after enrich, so a later enrich pass finds those arms already labelled. It reads the grammar's supertypes, inline names, externals, extras and word the way enrich reads its base, so it works on either pipeline's `grammar()` result. `sittirGrammar` calls it right after `grammar()`, so tree-sitter's `grammar.json` carries the labels the sittir side reads.
 
 ### `packages/codegen/src/dsl/enrich.ts::EnrichWhitespaceSidecar`
 

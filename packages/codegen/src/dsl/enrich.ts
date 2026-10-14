@@ -87,7 +87,8 @@ import { enrichWhitespace, type EnrichedWhitespace } from './whitespace.ts';
 import { LAYOUT_SUPERTYPE } from './primitives/spacing.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { distributeLeafEnum, distributeTokenForms, factorSharedOptional } from './transform/token-forms.ts';
-import { ENRICH_AUTOMATIC_VARIANTS_KEY, isSupertypeOwner, seedAutomaticVariants, stampAutomaticVariants } from './automatic-variants.ts';
+import { ENRICH_AUTOMATIC_VARIANTS_KEY, isSupertypeOwner, seedAutomaticVariants, stampAutomaticVariants, type AutomaticVariants } from './automatic-variants.ts';
+import { predictedSymbolSourceOf } from './symbol-table.ts';
 import { armNameOf, undisplayedKindAddress } from './arm-names.ts';
 
 export interface GrammarResult {
@@ -266,6 +267,26 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 		configurable: true
 	});
 	return result as unknown as EnrichedGrammar<B>;
+}
+
+export function stampWiredVariants(wired: unknown, base: unknown, automatic: AutomaticVariants, elementChoices: ReadonlySet<string>): void {
+	const rules = baseRulesOf<Rule>(wired);
+	if (!rules) return;
+	const baseRules = baseRulesOf<Rule>(base) ?? {};
+	const hasWrapper = 'grammar' in (wired as object);
+	const grammar = (hasWrapper ? (wired as { grammar: Record<string, unknown> }).grammar : wired) as Record<string, unknown>;
+	const supertypeNames = extractGrammarSymbolNames(wired, hasWrapper, 'supertypes');
+	const inlineNames = extractGrammarSymbolNames(wired, hasWrapper, 'inline');
+	const symbols = predictedSymbolSourceOf({
+		rules,
+		externals: extractGrammarRuleList(wired, hasWrapper, 'externals'),
+		extras: extractGrammarRuleList(wired, hasWrapper, 'extras'),
+		supertypes: [...supertypeNames],
+		inline: [...inlineNames],
+		word: extractWordName(grammar.word)
+	});
+	const changed = new Set(Object.keys(rules).filter((name) => name !== LAYOUT_SUPERTYPE && JSON.stringify(rules[name]) !== JSON.stringify(baseRules[name])));
+	stampAutomaticVariants(rules, supertypeNames, inlineNames, elementChoices, symbols, automatic, changed);
 }
 
 export const ENRICH_RULE_ORIGINS_KEY = '__enrichedRuleOrigins__' as const;

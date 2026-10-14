@@ -1,4 +1,4 @@
-import { attachTextTokens, enrich, getEnrichTextTokens, type EnrichedGrammar, type GrammarResult } from './enrich.ts';
+import { attachTextTokens, enrich, getEnrichTextTokens, stampWiredVariants, type EnrichedGrammar, type GrammarResult } from './enrich.ts';
 import { authoredFieldSites, authoredGroupBodies, wire, wireBindingEffects, type OptionsCheck, type PatchesCheck, type PatchesConfig, type WireConfig, type WiredOpts } from './wire/wire.ts';
 import { blankDeadEnrichMints, getDeadEnrichMints } from './wire/dead-mints.ts';
 import { attachDerivationRecords } from './wire/derivation-records.ts';
@@ -39,6 +39,8 @@ export function sittirGrammar<B extends GrammarJson, const P = PatchesConfig<Enr
 	const wiring = bindings?.patches === undefined ? wireConfig : ({ ...wireConfig, patches: withBindingPatches(wireConfig.patches, bindings.patches) } as typeof wireConfig);
 	const opts = wire<EnrichedGrammar<B>, P, O>(wiring, enriched, base);
 	const result = grammar(enriched, opts);
+	const wireContext = opts.__wireContext__;
+	if (wireContext !== undefined) stampWiredVariants(result, enriched, wireContext.automaticVariants, new Set(wireContext.elementSupertypes.keys()));
 	blankDeadEnrichMints(result.grammar, enriched, opts);
 	const dead = getDeadEnrichMints(result.grammar);
 	attachTextTokens(result.grammar, [...getEnrichTextTokens(enriched).keys()].filter((name) => !dead.has(name)));
