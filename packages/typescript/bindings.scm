@@ -193,6 +193,7 @@
 ; type annotations are transparent wrappers: the annotated member takes the type
 (constraint) @clause.bounds
 (constraint type: (_) @bounds)
+((constraint ["extends" ":"] @dropped) (#set! reason "the owning grammar rule determines the bounds introducer"))
 (default_type) @clause.default
 
 ; ── argument (pieces of a call that are not expressions) ───────────────────────
@@ -394,12 +395,10 @@
 (decorator (_)? @content) @attribute.decorator
 
 ; ── comment ────────────────────────────────────────────────────────────────────
-(comment_block) @comment
-(comment_line) @comment
-(html_comment) @comment
+(comment_block) @comment.block
+(comment_line) @comment.line
+(html_comment) @comment.html
 ((comment_block) @comment.block.doc (#match? @comment.block.doc "^/\\*\\*"))
-((comment_line) @comment.line (#match? @comment.line "^//"))
-((comment_block) @comment.block (#match? @comment.block "^/\\*"))
 
 ; ── keyword / punctuation ──────────────────────────────────────────────────────
 ["function" "class" "interface" "type" "enum" "namespace" "let" "const" "var"] @keyword.declaration

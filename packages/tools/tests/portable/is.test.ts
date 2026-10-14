@@ -356,15 +356,30 @@ describe('portable is: rust', async () => {
 });
 
 describe('portable is: typescript', async () => {
-	const { engine, at, find } = await surfaces('typescript');
+	const { at, find } = await surfaces('typescript');
 
-	it('compares a comment\'s own text', () => {
-		const root = engine.parse('/** doc */\n/* block */\nlet x = 1;\n') as unknown as { statements(): readonly { $trivia: { leading(): readonly Node[] } }[] };
-		const { CommentBlock } = engine.kinds as unknown as Readonly<Record<string, number>>;
-		const [doc, block] = root.statements()[0]!.$trivia.leading().filter((item) => item.$type === CommentBlock);
+	it('reads each parser comment form directly and tests a documentation block by its own text', async () => {
+		const commentEngine = await createEngine(typescript);
+		const root = commentEngine.parse('/** doc */\n/* block */\n// line\n<!-- html -->\nlet x = 1;\n');
+		const { CommentBlock, CommentLine, HtmlComment } = commentEngine.kinds;
+		const leading = root.statements()[0]?.$trivia.leading() ?? [];
+		const [doc, block] = leading.filter((item) => typeof item !== 'number' && item.$type === CommentBlock);
+		const line = leading.find((item) => typeof item !== 'number' && item.$type === CommentLine);
+		const html = leading.find((item) => typeof item !== 'number' && item.$type === HtmlComment);
+		for (const comment of [doc, block, line, html]) {
+			expect(comment).toBeDefined();
+			expect(at('comment')(comment)).toBe(true);
+		}
 		expect(at('comment.block.doc')(doc)).toBe(true);
 		expect(at('comment.block.doc')(block)).toBe(false);
+		expect(at('comment.block')(doc)).toBe(true);
 		expect(at('comment.block')(block)).toBe(true);
+		expect(at('comment.line')(line)).toBe(true);
+		expect(at('comment.line')(block)).toBe(false);
+		expect(typeof at('comment.html')).toBe('function');
+		expect(at('comment.html')(html)).toBe(true);
+		expect(at('comment.html')(line)).toBe(false);
+		expect(at('comment.block')(html)).toBe(false);
 	});
 
 	it('reads a double-quoted string\'s fragment as its text', () => {

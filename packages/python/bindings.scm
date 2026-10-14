@@ -210,6 +210,7 @@
 (splat_type) @type.rest
 (splat_type name: (_) @type)
 (splat_type operator: "**") @type.rest.map
+((splat_type operator: ["*" "**"] @dropped) (#set! reason "the rest kind and its map refinement determine the marker"))
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string [(interpolation) (string_content)]* @elements) @literal.string

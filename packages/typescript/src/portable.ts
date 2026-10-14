@@ -74,6 +74,7 @@ export interface PortableIds {
 	comment: TSKindId.CommentBlock | TSKindId.CommentLine | TSKindId.HtmlComment;
 	'comment.block': TSKindId.CommentBlock;
 	'comment.block.doc': TSKindId.CommentBlock;
+	'comment.html': TSKindId.HtmlComment;
 	'comment.line': TSKindId.CommentLine;
 	declaration:
 		| TSKindId.AbstractClassDeclaration
@@ -689,6 +690,7 @@ export interface PortableKindsAt {
 	comment: {
 		readonly $ids: readonly PortableIds['comment'][];
 		readonly block: PortableKindsAt['comment.block'];
+		readonly html: PortableKindsAt['comment.html'];
 		readonly line: PortableKindsAt['comment.line'];
 	};
 	'comment.block': {
@@ -696,6 +698,7 @@ export interface PortableKindsAt {
 		readonly doc: PortableKindsAt['comment.block.doc'];
 	};
 	'comment.block.doc': { readonly $ids: readonly PortableIds['comment.block.doc'][] };
+	'comment.html': { readonly $ids: readonly PortableIds['comment.html'][] };
 	'comment.line': { readonly $ids: readonly PortableIds['comment.line'][] };
 	declaration: {
 		readonly $ids: readonly PortableIds['declaration'][];
@@ -1529,10 +1532,12 @@ export interface PortableIsAt {
 	'clause.mapped_type': PortableGuard<PortableIds['clause.mapped_type']> & {};
 	comment: PortableGuard<PortableIds['comment']> & {
 		readonly block: PortableIsAt['comment.block'];
+		readonly html: PortableIsAt['comment.html'];
 		readonly line: PortableIsAt['comment.line'];
 	};
 	'comment.block': PortableGuard<PortableIds['comment.block']> & { readonly doc: PortableIsAt['comment.block.doc'] };
 	'comment.block.doc': PortableGuard<PortableIds['comment.block.doc']> & {};
+	'comment.html': PortableGuard<PortableIds['comment.html']> & {};
 	'comment.line': PortableGuard<PortableIds['comment.line']> & {};
 	declaration: PortableGuard<PortableIds['declaration']> & {
 		readonly ambient: PortableIsAt['declaration.ambient'];
@@ -2304,9 +2309,10 @@ const table: PortableTable = {
 		'clause.import.specifier.typeof': { ids: [TSKindId.ImportSpecifierAs, TSKindId.ImportSpecifierName], exact: false },
 		'clause.mapped_type': { ids: [TSKindId.MappedTypeClause], exact: true },
 		comment: { ids: [TSKindId.CommentBlock, TSKindId.CommentLine, TSKindId.HtmlComment], exact: true },
-		'comment.block': { ids: [TSKindId.CommentBlock], exact: false },
+		'comment.block': { ids: [TSKindId.CommentBlock], exact: true },
 		'comment.block.doc': { ids: [TSKindId.CommentBlock], exact: false },
-		'comment.line': { ids: [TSKindId.CommentLine], exact: false },
+		'comment.html': { ids: [TSKindId.HtmlComment], exact: true },
+		'comment.line': { ids: [TSKindId.CommentLine], exact: true },
 		declaration: {
 			ids: [
 				TSKindId.AbstractClassDeclaration,
@@ -3322,21 +3328,9 @@ const table: PortableTable = {
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^/\\*\\*', self: true } }]
 			},
-			{
-				path: 'comment.block',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^/\\*', self: true } }]
-			},
-			{ path: 'comment', within: [], test: [] }
+			{ path: 'comment.block', within: [], test: [] }
 		],
-		[TSKindId.CommentLine]: [
-			{
-				path: 'comment.line',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^//', self: true } }]
-			},
-			{ path: 'comment', within: [], test: [] }
-		],
+		[TSKindId.CommentLine]: [{ path: 'comment.line', within: [], test: [] }],
 		[TSKindId.ConditionalType]: [{ path: 'type.conditional', within: [], test: [] }],
 		[TSKindId.Constraint]: [{ path: 'clause.bounds', within: [], test: [] }],
 		[TSKindId.ConstructSignature]: [{ path: 'declaration.signature.construct', within: [], test: [] }],
@@ -3442,7 +3436,7 @@ const table: PortableTable = {
 		[TSKindId.GeneratorFunction]: [{ path: 'expression.function', within: [], test: [] }],
 		[TSKindId.GeneratorFunctionDeclaration]: [{ path: 'declaration.function', within: [], test: [] }],
 		[TSKindId.GenericType]: [{ path: 'type.generic', within: [], test: [] }],
-		[TSKindId.HtmlComment]: [{ path: 'comment', within: [], test: [] }],
+		[TSKindId.HtmlComment]: [{ path: 'comment.html', within: [], test: [] }],
 		[TSKindId.Identifier]: [{ path: 'identifier', within: [], test: [] }],
 		[TSKindId.IfStatement]: [{ path: 'statement.if', within: [], test: [] }],
 		[TSKindId.ImplementsClause]: [{ path: 'clause.implements', within: [], test: [] }],

@@ -2,7 +2,6 @@ import type { GrammarContext } from './context.ts';
 import type { SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
 export interface Comment<G extends GrammarContext<G>> {
-	// claimed by t
 	readonly $kind: 'comment';
 	readonly content?: G['slots']['comment']['content'];
 	// prt only
@@ -29,6 +28,10 @@ export namespace Comment {
 				readonly content?: G['slots']['comment.block.doc.inner']['content'];
 			}
 		}
+	}
+	export interface Html<G extends GrammarContext<G>> extends SubKindOf<V.Comment<G>> {
+		// claimed by t
+		readonly $kind: 'comment.html';
 	}
 	export interface Line<G extends GrammarContext<G>> extends SubKindOf<V.Comment<G>> {
 		// claimed by prt

@@ -3083,7 +3083,7 @@
       ]
     },
     "comment_block": {
-      "vocab": "comment",
+      "vocab": "comment.block",
       "read": [
         {
           "vocab": "comment.block.doc",
@@ -3107,23 +3107,6 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "match",
-                "pattern": "^/\\*",
-                "self": true
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "comment",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
           "test": []
         }
       ],
@@ -3142,27 +3125,10 @@
       ]
     },
     "comment_line": {
-      "vocab": "comment",
+      "vocab": "comment.line",
       "read": [
         {
           "vocab": "comment.line",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "match",
-                "pattern": "^//",
-                "self": true
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "comment",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3262,17 +3228,6 @@
         }
       ],
       "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "constraint",
-              "slot": "content"
-            }
-          ]
-        },
         {
           "name": "bounds",
           "route": "slot",
@@ -5150,10 +5105,10 @@
       ]
     },
     "html_comment": {
-      "vocab": "comment",
+      "vocab": "comment.html",
       "read": [
         {
-          "vocab": "comment",
+          "vocab": "comment.html",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12544,14 +12499,14 @@
       {
         "depth": 1,
         "paths": 13,
-        "kinds": 5,
+        "kinds": 2,
         "refinements": 0
       },
       {
         "depth": 2,
-        "paths": 110,
-        "kinds": 132,
-        "refinements": 8
+        "paths": 111,
+        "kinds": 133,
+        "refinements": 6
       },
       {
         "depth": 3,
