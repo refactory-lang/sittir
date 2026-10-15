@@ -164,8 +164,7 @@ export async function fixtureReplayOf(grammar: string): Promise<FixtureReplay> {
 
 export function kindViewOf(engine: NativeEngine): KindView {
 	return {
-		isWrapper: (kindId) => engine.trivia.rebuildWrappers.has(kindId),
-		isList: (kindId) => engine.trivia.listKinds.has(kindId)
+		isWrapper: (kindId) => engine.trivia.rebuildWrappers.has(kindId)
 	};
 }
 
@@ -470,6 +469,8 @@ export interface LoadedNodeModel {
 	readonly forwardsTo: Record<string, string>;
 	readonly listDefaults: Record<string, string>;
 	readonly listElementKinds: Record<string, readonly string[]>;
+	/** Each list kind whose separator is chosen per instance, with the separators it may hold. */
+	readonly listSeparators: Record<string, readonly string[]>;
 	readonly fullForms: Record<string, ModelFullForm>;
 }
 
@@ -509,6 +510,7 @@ interface ParsedNodeModel {
 		textLeavesThrough?: readonly string[];
 		forwardsTo?: string;
 		defaultDelimiter?: string;
+		separatorCandidates?: readonly string[];
 		leafPattern?: string;
 		fullForm?: ModelFullForm;
 	}>;
@@ -546,6 +548,7 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	forwardsTo: {},
 	listDefaults: {},
 	listElementKinds: {},
+	listSeparators: {},
 	fullForms: {}
 };
 
@@ -602,6 +605,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 	const forwardsTo: Record<string, string> = {};
 	const listDefaults: Record<string, string> = {};
 	const listElementKinds: Record<string, readonly string[]> = {};
+	const listSeparators: Record<string, readonly string[]> = {};
 	const fullForms: Record<string, ModelFullForm> = {};
 	for (const node of model.nodes ?? []) {
 		if (node.irKey !== undefined) irKeys[node.kind] = node.irKey;
@@ -643,6 +647,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		if (node.forwardsTo !== undefined) forwardsTo[node.kind] = node.forwardsTo;
 		if (node.defaultDelimiter !== undefined) listDefaults[node.kind] = node.defaultDelimiter;
 		if (node.elementKinds !== undefined) listElementKinds[node.kind] = node.elementKinds;
+		if (node.separatorCandidates !== undefined) listSeparators[node.kind] = node.separatorCandidates;
 		if (node.fullForm !== undefined) fullForms[node.kind] = node.fullForm;
 	}
 	return {
@@ -674,6 +679,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		forwardsTo,
 		listDefaults,
 		listElementKinds,
+		listSeparators,
 		fullForms
 	};
 }

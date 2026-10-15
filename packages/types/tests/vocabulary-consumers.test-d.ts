@@ -17,6 +17,7 @@ import type {
 	Clause,
 	Declaration,
 	Expression,
+	File,
 	GrammarContext,
 	Identifier,
 	ScopedVisibility,
@@ -163,9 +164,18 @@ export function nameOf<G extends GrammarContext<G>>(d: Declaration.Any<G>): unkn
 	return d.$kind;
 }
 
-// A loop family: the shared for-in is a refinement of loop, and needs its subject and body.
-export function forIn<G extends GrammarContext<G>>(right: G['identifier'], body: Statement.Block<G>): Statement.Loop.For<G> {
-	return { $kind: 'statement.loop.for', right, body };
+// The root of a file is `file`, and `module` names only a module declared in a file.
+export function file<G extends GrammarContext<G>>(statements: G['slots']['file']['statements'][]): File<G> {
+	return { $kind: 'file', statements };
+}
+export function declaredModuleAsFile<G extends GrammarContext<G>>(m: Declaration.Module<G>): File<G> {
+	// @ts-expect-error a module declared in a file is no file
+	return m;
+}
+
+// A loop family: the shared for-each is a refinement of loop, and needs its subject and body.
+export function forEach<G extends GrammarContext<G>>(right: G['identifier'], body: Statement.Block<G>): Statement.Loop.ForEach<G> {
+	return { $kind: 'statement.loop.for_each', right, body };
 }
 
 // A switch holds its cases, each naming its value, and its default, which names none; a match case is no clause of a switch.
@@ -175,6 +185,15 @@ export function switchBody<G extends GrammarContext<G>>(value: Clause.Case.Switc
 export function matchInSwitch<G extends GrammarContext<G>>(c: Clause.Case.Match<G>): Statement.Switch<G>['body'] {
 	// @ts-expect-error a match case is no clause of a switch
 	return [c];
+}
+
+// A handler is one kind in every language: it names what it binds and the type it catches, and holds its body.
+export function handler<G extends GrammarContext<G>>(name: G['identifier'], type: G['type'], body: Clause.Catch<G>['body']): Clause.Catch<G> {
+	return { $kind: 'clause.catch', name, type, body };
+}
+export function handlerException<G extends GrammarContext<G>>(c: Clause.Catch<G>): unknown {
+	// @ts-expect-error what a handler catches is its `type`, in every language
+	return c.exception;
 }
 
 // Roles read through the namespace map, which types each by its permissive fill.

@@ -12,30 +12,7 @@
           "array_pattern",
           "non_null_expression"
         ],
-        "terminals": [
-          "declare",
-          "namespace",
-          "type",
-          "public",
-          "private",
-          "protected",
-          "override",
-          "readonly",
-          "module",
-          "any",
-          "number",
-          "boolean",
-          "string",
-          "symbol",
-          "export",
-          "object",
-          "new",
-          "get",
-          "set",
-          "async",
-          "static",
-          "let"
-        ],
+        "terminals": [],
         "list": false
       }
     },
@@ -220,7 +197,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -272,7 +252,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -324,7 +307,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -376,7 +362,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -428,7 +417,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -480,7 +472,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -514,7 +509,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -548,7 +546,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -582,7 +583,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -912,10 +916,10 @@
       }
     },
     "array_pattern": {
-      "vocab": "pattern.array",
+      "vocab": "pattern.list",
       "read": [
         {
-          "vocab": "pattern.array",
+          "vocab": "pattern.list",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1062,11 +1066,20 @@
         }
       ]
     },
+    "arrow_function_parameter": {
+      "container": {
+        "kinds": [
+          "identifier"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
     "as_expression": {
-      "vocab": "expression.cast.as",
+      "vocab": "expression.cast.assertion",
       "read": [
         {
-          "vocab": "expression.cast.as",
+          "vocab": "expression.cast.assertion",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1086,7 +1099,7 @@
           ]
         },
         {
-          "name": "typeAnnotation",
+          "name": "type",
           "route": "slot",
           "slot": "type_annotation",
           "path": [
@@ -1584,7 +1597,7 @@
           ]
         },
         {
-          "vocab": "expression.assignment.compound.nullish",
+          "vocab": "expression.assignment.compound.coalesce",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -2272,7 +2285,7 @@
           ]
         },
         {
-          "vocab": "expression.binary.nullish",
+          "vocab": "expression.binary.coalesce",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -2663,17 +2676,6 @@
       ],
       "members": [
         {
-          "name": "catchClauseGroup",
-          "route": "slot",
-          "slot": "catch_clause_group",
-          "path": [
-            {
-              "owner": "catch_clause",
-              "slot": "catch_clause_group"
-            }
-          ]
-        },
-        {
           "name": "body",
           "route": "slot",
           "slot": "body",
@@ -2681,6 +2683,56 @@
             {
               "owner": "catch_clause",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "catch_clause_group",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "catch_clause_group",
+          "slot": "parameter",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "catch_clause",
+              "slot": "catch_clause_group"
+            },
+            {
+              "owner": "catch_clause_group",
+              "slot": "parameter"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "catch_clause_group",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "catch_clause_group",
+          "slot": "type",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "catch_clause",
+              "slot": "catch_clause_group"
+            },
+            {
+              "owner": "catch_clause_group",
+              "slot": "type"
             }
           ]
         }
@@ -3017,7 +3069,7 @@
       ]
     },
     "comment_block": {
-      "vocab": "comment",
+      "vocab": "comment.block",
       "read": [
         {
           "vocab": "comment.block.doc",
@@ -3041,23 +3093,6 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "match",
-                "pattern": "^/\\*",
-                "self": true
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "comment",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
           "test": []
         }
       ],
@@ -3076,27 +3111,10 @@
       ]
     },
     "comment_line": {
-      "vocab": "comment",
+      "vocab": "comment.line",
       "read": [
         {
           "vocab": "comment.line",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "match",
-                "pattern": "^//",
-                "self": true
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "comment",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3185,10 +3203,10 @@
       ]
     },
     "constraint": {
-      "vocab": "clause.constraint",
+      "vocab": "clause.bounds",
       "read": [
         {
-          "vocab": "clause.constraint",
+          "vocab": "clause.bounds",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3197,18 +3215,7 @@
       ],
       "members": [
         {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "constraint",
-              "slot": "content"
-            }
-          ]
-        },
-        {
-          "name": "type",
+          "name": "bounds",
           "route": "slot",
           "slot": "type",
           "path": [
@@ -4107,6 +4114,18 @@
       ],
       "members": [
         {
+          "name": "typeOnly",
+          "route": "presence",
+          "via": [],
+          "token": "type",
+          "path": [
+            {
+              "owner": "export_statement_default_from",
+              "slot": "type"
+            }
+          ]
+        },
+        {
           "name": "exportClause",
           "route": "nested",
           "via": [
@@ -4330,13 +4349,13 @@
       ],
       "members": [
         {
-          "name": "extendsClauseSingles",
+          "name": "types",
           "route": "slot",
-          "slot": "extends_clause_single",
+          "slot": "types",
           "path": [
             {
               "owner": "extends_clause",
-              "slot": "extends_clause_single"
+              "slot": "types"
             }
           ]
         }
@@ -4429,10 +4448,10 @@
       }
     },
     "flow_maybe_type": {
-      "vocab": "type.maybe",
+      "vocab": "type.nullable",
       "read": [
         {
-          "vocab": "type.maybe",
+          "vocab": "type.nullable",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4461,10 +4480,10 @@
       }
     },
     "for_in_statement": {
-      "vocab": "statement.loop.for",
+      "vocab": "statement.loop.for_each",
       "read": [
         {
-          "vocab": "statement.loop.for",
+          "vocab": "statement.loop.for_each",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4473,13 +4492,13 @@
       ],
       "members": [
         {
-          "name": "forHeader",
+          "name": "header",
           "route": "slot",
-          "slot": "for_header",
+          "slot": "header",
           "path": [
             {
               "owner": "for_in_statement",
-              "slot": "for_header"
+              "slot": "header"
             }
           ]
         },
@@ -5072,10 +5091,10 @@
       ]
     },
     "html_comment": {
-      "vocab": "comment",
+      "vocab": "comment.html",
       "read": [
         {
-          "vocab": "comment",
+          "vocab": "comment.html",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5190,10 +5209,10 @@
       "members": []
     },
     "import_alias": {
-      "vocab": "clause.import.alias",
+      "vocab": "statement.import.alias",
       "read": [
         {
-          "vocab": "clause.import.alias",
+          "vocab": "statement.import.alias",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5781,6 +5800,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "declaration.signature.index",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -5978,17 +6004,6 @@
           ]
         },
         {
-          "name": "extends",
-          "route": "slot",
-          "slot": "extends_type_clause",
-          "path": [
-            {
-              "owner": "interface_declaration",
-              "slot": "extends_type_clause"
-            }
-          ]
-        },
-        {
           "name": "body",
           "route": "slot",
           "slot": "body",
@@ -5996,6 +6011,31 @@
             {
               "owner": "interface_declaration",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "extends",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "extends_type_clause",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "extends_type_clause",
+          "slot": "type",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "interface_declaration",
+              "slot": "extends_type_clause"
+            },
+            {
+              "owner": "extends_type_clause",
+              "slot": "type"
             }
           ]
         }
@@ -6473,7 +6513,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -6543,7 +6586,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -6613,7 +6659,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -6723,7 +6772,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -6775,7 +6827,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -6827,7 +6882,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -6879,7 +6937,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -6931,7 +6992,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -6983,7 +7047,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7017,7 +7084,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7051,7 +7121,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7085,7 +7158,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7359,7 +7435,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7411,7 +7490,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7463,7 +7545,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7515,7 +7600,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7567,7 +7655,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7619,7 +7710,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7653,7 +7747,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7687,7 +7784,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -7721,7 +7821,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -8152,10 +8255,10 @@
       "members": []
     },
     "new_expression": {
-      "vocab": "expression.call.new",
+      "vocab": "expression.call.construct",
       "read": [
         {
-          "vocab": "expression.call.new",
+          "vocab": "expression.call.construct",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8278,6 +8381,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "literal.number",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -8299,6 +8409,13 @@
       "read": [
         {
           "vocab": "literal.number.integer.big",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "literal.number",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8328,6 +8445,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "literal.number",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -8353,6 +8477,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "literal.number",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -8374,6 +8505,13 @@
       "read": [
         {
           "vocab": "literal.number.integer.binary",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "literal.number",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8414,6 +8552,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "literal.number",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": []
@@ -8423,6 +8568,13 @@
       "read": [
         {
           "vocab": "literal.number.float.leading_point",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "literal.number",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8481,6 +8633,13 @@
       "read": [
         {
           "vocab": "literal.number.float",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "literal.number",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8554,6 +8713,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "literal.number",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -8612,6 +8778,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "literal.number",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -8657,6 +8830,13 @@
       "read": [
         {
           "vocab": "literal.number.integer.octal",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "literal.number",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8947,7 +9127,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [],
                 "kinds": [
@@ -8981,7 +9164,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [],
                 "kinds": [
@@ -9015,7 +9201,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [],
                 "kinds": [
@@ -9430,10 +9619,10 @@
       "members": []
     },
     "program": {
-      "vocab": "module",
+      "vocab": "file",
       "read": [
         {
-          "vocab": "module",
+          "vocab": "file",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9512,7 +9701,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -9546,7 +9738,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -9580,7 +9775,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -9740,8 +9938,7 @@
               "up": 0,
               "via": [],
               "plan": {
-                "op": "eq",
-                "text": "accessor",
+                "op": "present",
                 "fields": [
                   "accessor"
                 ],
@@ -9754,7 +9951,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -9792,8 +9992,7 @@
               "up": 0,
               "via": [],
               "plan": {
-                "op": "eq",
-                "text": "accessor",
+                "op": "present",
                 "fields": [
                   "accessor"
                 ],
@@ -9806,7 +10005,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -9844,8 +10046,7 @@
               "up": 0,
               "via": [],
               "plan": {
-                "op": "eq",
-                "text": "accessor",
+                "op": "present",
                 "fields": [
                   "accessor"
                 ],
@@ -9858,7 +10059,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -9892,7 +10096,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -9926,7 +10133,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -9960,7 +10170,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [
                   "accessibility_modifier"
@@ -9998,8 +10211,7 @@
               "up": 0,
               "via": [],
               "plan": {
-                "op": "eq",
-                "text": "accessor",
+                "op": "present",
                 "fields": [
                   "accessor"
                 ],
@@ -10304,7 +10516,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [],
                 "kinds": [
@@ -10338,7 +10553,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [],
                 "kinds": [
@@ -10372,7 +10590,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  318
+                  318,
+                  32,
+                  33,
+                  34
                 ],
                 "fields": [],
                 "kinds": [
@@ -10484,7 +10705,7 @@
       ],
       "members": [
         {
-          "name": "lhsExpression",
+          "name": "pattern",
           "route": "slot",
           "slot": "lhs_expression",
           "path": [
@@ -10505,30 +10726,7 @@
           "array_pattern",
           "non_null_expression"
         ],
-        "terminals": [
-          "declare",
-          "namespace",
-          "type",
-          "public",
-          "private",
-          "protected",
-          "override",
-          "readonly",
-          "module",
-          "any",
-          "number",
-          "boolean",
-          "string",
-          "symbol",
-          "export",
-          "object",
-          "new",
-          "get",
-          "set",
-          "async",
-          "static",
-          "let"
-        ],
+        "terminals": [],
         "list": false
       }
     },
@@ -10613,7 +10811,7 @@
           ]
         },
         {
-          "name": "typeAnnotation",
+          "name": "type",
           "route": "slot",
           "slot": "type_annotation",
           "path": [
@@ -10744,10 +10942,10 @@
       }
     },
     "spread_element": {
-      "vocab": "element.splat",
+      "vocab": "element.spread",
       "read": [
         {
-          "vocab": "element.splat",
+          "vocab": "element.spread",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -11169,10 +11367,10 @@
       }
     },
     "template_string": {
-      "vocab": "literal.template",
+      "vocab": "literal.string.interpolated",
       "read": [
         {
-          "vocab": "literal.template",
+          "vocab": "literal.string.interpolated",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -11300,10 +11498,10 @@
       ]
     },
     "this": {
-      "vocab": "identifier.self",
+      "vocab": "identifier.receiver",
       "read": [
         {
-          "vocab": "identifier.self",
+          "vocab": "identifier.receiver",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -11544,10 +11742,10 @@
       }
     },
     "type_assertion": {
-      "vocab": "expression.cast.assertion",
+      "vocab": "expression.cast.assertion.angle_bracket",
       "read": [
         {
-          "vocab": "expression.cast.assertion",
+          "vocab": "expression.cast.assertion.angle_bracket",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -11556,17 +11754,6 @@
       ],
       "members": [
         {
-          "name": "typeArguments",
-          "route": "slot",
-          "slot": "type_arguments",
-          "path": [
-            {
-              "owner": "type_assertion",
-              "slot": "type_arguments"
-            }
-          ]
-        },
-        {
           "name": "expression",
           "route": "slot",
           "slot": "expression",
@@ -11574,6 +11761,31 @@
             {
               "owner": "type_assertion",
               "slot": "expression"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "type_arguments",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "type_arguments",
+          "slot": "types",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "type_assertion",
+              "slot": "type_arguments"
+            },
+            {
+              "owner": "type_arguments",
+              "slot": "types"
             }
           ]
         }
@@ -11634,17 +11846,6 @@
           ]
         },
         {
-          "name": "constraint",
-          "route": "slot",
-          "slot": "constraint",
-          "path": [
-            {
-              "owner": "type_parameter",
-              "slot": "constraint"
-            }
-          ]
-        },
-        {
           "name": "default",
           "route": "slot",
           "slot": "value",
@@ -11652,6 +11853,31 @@
             {
               "owner": "type_parameter",
               "slot": "value"
+            }
+          ]
+        },
+        {
+          "name": "bounds",
+          "route": "nested",
+          "via": [
+            {
+              "field": "constraint",
+              "kind": "constraint",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "constraint",
+          "slot": "type",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "type_parameter",
+              "slot": "constraint"
+            },
+            {
+              "owner": "constraint",
+              "slot": "type"
             }
           ]
         }
@@ -12510,26 +12736,26 @@
       {
         "depth": 1,
         "paths": 13,
-        "kinds": 5,
+        "kinds": 2,
         "refinements": 0
       },
       {
         "depth": 2,
         "paths": 112,
-        "kinds": 133,
-        "refinements": 8
+        "kinds": 144,
+        "refinements": 6
       },
       {
         "depth": 3,
         "paths": 100,
-        "kinds": 80,
-        "refinements": 72
+        "kinds": 81,
+        "refinements": 74
       },
       {
         "depth": 4,
-        "paths": 66,
-        "kinds": 18,
-        "refinements": 39
+        "paths": 67,
+        "kinds": 19,
+        "refinements": 40
       },
       {
         "depth": 5,

@@ -74,21 +74,21 @@ export namespace Element {
 		readonly key: G['slots']['element.pair']['key'];
 		readonly value?: G['slots']['element.pair']['value'];
 	}
-	export interface Splat<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
+	export interface Spread<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
 		// claimed by pt
-		readonly $kind: 'element.splat';
-		readonly expression?: G['slots']['element.splat']['expression'];
+		readonly $kind: 'element.spread';
+		readonly expression?: G['slots']['element.spread']['expression'];
 	}
-	export namespace Splat {
-		export interface Dictionary<G extends GrammarContext<G>> extends SubKindOf<V.Element.Splat<G>> {
+	export namespace Spread {
+		export interface Map<G extends GrammarContext<G>> extends SubKindOf<V.Element.Spread<G>> {
 			// claimed by p
-			readonly $kind: 'element.splat.dictionary';
-			readonly expression: G['slots']['element.splat.dictionary']['expression'];
+			readonly $kind: 'element.spread.map';
+			readonly expression: G['slots']['element.spread.map']['expression'];
 		}
-		export interface Parenthesized<G extends GrammarContext<G>> extends SubKindOf<V.Element.Splat<G>> {
+		export interface Parenthesized<G extends GrammarContext<G>> extends SubKindOf<V.Element.Spread<G>> {
 			// claimed by p
-			readonly $kind: 'element.splat.parenthesized';
-			readonly content: V.Element.Splat.Any<G>;
+			readonly $kind: 'element.spread.parenthesized';
+			readonly content: V.Element.Spread.Any<G>;
 		}
 	}
 }

@@ -50,7 +50,7 @@ export namespace Declaration {
 		}
 	}
 	export interface TypeParameter<G extends GrammarContext<G>> {
-		readonly constraint?: G['clause'];
+		readonly bounds?: G['slots']['clause.bounds']['bounds'][];
 		// rt only
 	}
 	export interface Union<G extends GrammarContext<G>> {

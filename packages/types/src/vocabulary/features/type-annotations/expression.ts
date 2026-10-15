@@ -8,29 +8,29 @@ export namespace Expression {
 		// t only
 	}
 	export namespace Cast {
-		export interface As<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Cast<G>> {
-			// claimed by rt
-			readonly $kind: 'expression.cast.as';
-			readonly expression?: G['slots']['expression.cast.as']['expression'];
-			// t only
-			readonly type?: G['slots']['expression.cast.as']['type'];
-			// r only
-			readonly typeAnnotation?: G['slots']['expression.cast.as']['typeAnnotation'];
-			// t only
-			readonly value?: G['slots']['expression.cast.as']['value'];
-			// r only
-		}
 		export interface Assertion<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Cast<G>> {
 			// claimed by t
 			readonly $kind: 'expression.cast.assertion';
 			readonly expression: G['slots']['expression.cast.assertion']['expression'];
-			readonly typeArguments: G['slots']['expression.cast.assertion']['typeArguments'][];
+			readonly type: G['slots']['expression.cast.assertion']['type'];
+		}
+		export namespace Assertion {
+			export interface AngleBracket<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Cast.Assertion<G>> {
+				// claimed by t
+				readonly $kind: 'expression.cast.assertion.angle_bracket';
+			}
+		}
+		export interface Conversion<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Cast<G>> {
+			// claimed by r
+			readonly $kind: 'expression.cast.conversion';
+			readonly expression: G['slots']['expression.cast.conversion']['expression'];
+			readonly type: G['slots']['expression.cast.conversion']['type'];
 		}
 		export interface Satisfies<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Cast<G>> {
 			// claimed by t
 			readonly $kind: 'expression.cast.satisfies';
 			readonly expression: G['slots']['expression.cast.satisfies']['expression'];
-			readonly typeAnnotation: G['slots']['expression.cast.satisfies']['typeAnnotation'];
+			readonly type: G['slots']['expression.cast.satisfies']['type'];
 		}
 	}
 	export interface Function<G extends GrammarContext<G>> {

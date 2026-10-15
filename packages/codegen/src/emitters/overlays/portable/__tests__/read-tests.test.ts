@@ -44,7 +44,10 @@ const MODEL = new Map(
 		node('plain'),
 		node('annotated', [slot('type', ['type_identifier', 'identifier'])]),
 		node('cmp', [slot('left', ['identifier']), slot('ops', ['cmp_op'], { multiple: true })]),
-		node('cmp_op', [slot('operators', [], { terminals: ['==', '<'] }), slot('right', ['identifier'])])
+		node('cmp_op', [slot('operators', [], { terminals: ['==', '<'] }), slot('right', ['identifier'])]),
+		node('field_def', [slot('accessor', [], { required: false, storage: 'boolean', terminals: ['accessor'] }), slot('name', ['identifier'])]),
+		node('member', [slot('modifier', ['modifier'], { required: false })]),
+		{ ...node('modifier'), modelType: 'enum', enumMembers: [{ kind: 'private_keyword', text: 'private' }, { kind: 'public_keyword', text: 'public' }] }
 	].map((n) => [n.kind, n])
 );
 
@@ -60,15 +63,21 @@ const ROUTES: Readonly<Record<string, SlotRoutes>> = {
 	'param.element': { fields: [], kinds: ['self', 'plain'] },
 	'annotated.type': { fields: ['type'], kinds: [] },
 	'cmp.ops': { fields: [], kinds: ['cmp_op'] },
-	'cmp_op.operators': { fields: ['operators'], kinds: [] }
+	'cmp_op.operators': { fields: ['operators'], kinds: [] },
+	'field_def.accessor': { fields: ['accessor'], kinds: [] },
+	'member.modifier': { fields: ['modifier'], kinds: [] }
 };
 
-const TYPES: Readonly<Record<string, number>> = { param: 30, self: 31, plain: 32, type_identifier: 33, cmp_op: 34 };
+const PRESENCE: Readonly<Record<string, string>> = { 'field_def.accessor': 'accessor' };
+
+const presenceKeywordOf = (owner: string, name: string): string | undefined => PRESENCE[`${owner}.${name}`];
+
+const TYPES: Readonly<Record<string, number>> = { param: 30, self: 31, plain: 32, type_identifier: 33, cmp_op: 34, modifier: 35, private_keyword: 36, public_keyword: 37 };
 
 const testsOf = async (bindings: string, kind: string) => {
 	const input: GrammarInput = { grammar: 'g', bindings: await readBindings(bindings), model: MODEL, textTokens: new Set(), layoutSlots: [] };
 	const entries = resolveRoutes(input).readEntries.get(kind) ?? [];
-	return entries.map((entry) => [entry.vocab, readTestOf(entry, MODEL, (owner, name) => ROUTES[`${owner}.${name}`], (kind) => TYPES[kind])]);
+	return entries.map((entry) => [entry.vocab, readTestOf(entry, MODEL, (owner, name) => ROUTES[`${owner}.${name}`], presenceKeywordOf, (kind) => TYPES[kind])]);
 };
 
 describe('readTestOf', () => {
@@ -98,13 +107,13 @@ describe('readTestOf', () => {
 		expect(
 			await testsOf(
 				[
-					'((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))',
+					'((function_definition name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))',
 					'(binary operator: "+") @expression.binary.add'
 				].join('\n'),
 				'function_definition'
 			)
 		).toEqual([
-			['declaration.method.dunder', [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', fields: ['name'], kinds: [] } }]]
+			['declaration.method.special', [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', fields: ['name'], kinds: [] } }]]
 		]);
 		expect(await testsOf('(binary operator: "+") @expression.binary.add', 'binary')).toEqual([
 			['expression.binary.add', [{ up: 0, via: [], plan: { op: 'eq', text: '+', fields: ['operator'], kinds: [] } }]]
@@ -112,8 +121,8 @@ describe('readTestOf', () => {
 	});
 
 	it('compares a hidden capture under the claimed node through the slot that holds it', async () => {
-		expect(await testsOf('((string (string_start) @_p) @literal.string.f (#match? @_p "^[fF]"))', 'string')).toEqual([
-			['literal.string.f', [{ up: 0, via: [], plan: { op: 'match', pattern: '^[fF]', fields: [], kinds: ['string_start'] } }]]
+		expect(await testsOf('((string (string_start) @_p) @literal.string.interpolated (#match? @_p "^[a-zA-Z]*[fFtT]"))', 'string')).toEqual([
+			['literal.string.interpolated', [{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[fFtT]', fields: [], kinds: ['string_start'] } }]]
 		]);
 	});
 
@@ -174,21 +183,45 @@ describe('readTestOf', () => {
 	});
 
 	it('tests a child the pattern names by the type of its kind, once though a predicate restates it', async () => {
-		expect(await testsOf('(param (self)) @declaration.parameter.self', 'param')).toEqual([
-			['declaration.parameter.self', [{ up: 0, via: [], plan: { op: 'is', types: [31], ...ROUTES['param.element'] } }]]
+		expect(await testsOf('(param (self)) @declaration.parameter.receiver', 'param')).toEqual([
+			['declaration.parameter.receiver', [{ up: 0, via: [], plan: { op: 'is', types: [31], ...ROUTES['param.element'] } }]]
 		]);
-		expect(await testsOf('((param (self) @r) @declaration.parameter.self (#kind-eq? @r "self"))', 'param')).toEqual([
-			['declaration.parameter.self', [{ up: 0, via: [], plan: { op: 'is', types: [31], ...ROUTES['param.element'] } }]]
+		expect(await testsOf('((param (self) @r) @declaration.parameter.receiver (#kind-eq? @r "self"))', 'param')).toEqual([
+			['declaration.parameter.receiver', [{ up: 0, via: [], plan: { op: 'is', types: [31], ...ROUTES['param.element'] } }]]
 		]);
 	});
 
 	it('tests a member capture on an optional slot as holding no node of another kind', async () => {
 		const model = new Map([...MODEL, ['opt', node('opt', [slot('element', ['self', 'plain'], { required: false })])]]);
-		const input: GrammarInput = { grammar: 'g', bindings: await readBindings('(opt (self) @receiver) @declaration.parameter.self'), model, textTokens: new Set(), layoutSlots: [] };
+		const input: GrammarInput = { grammar: 'g', bindings: await readBindings('(opt (self) @receiver) @declaration.parameter.receiver'), model, textTokens: new Set(), layoutSlots: [] };
 		const [entry] = resolveRoutes(input).readEntries.get('opt') ?? [];
-		expect(readTestOf(entry!, model, (owner, name) => (owner === 'opt' ? ROUTES['param.element'] : ROUTES[`${owner}.${name}`]), (kind) => TYPES[kind])).toEqual([
+		expect(readTestOf(entry!, model, (owner, name) => (owner === 'opt' ? ROUTES['param.element'] : ROUTES[`${owner}.${name}`]), presenceKeywordOf, (kind) => TYPES[kind])).toEqual([
 			{ up: 0, via: [], plan: { op: 'not', of: { op: 'is', types: [32], ...ROUTES['param.element'] } } }
 		]);
+	});
+
+	it('tests an enum kind\'s child by the kind and every member kind, since the reader holds the node as its member', async () => {
+		expect(await testsOf('(member (modifier "private")) @declaration.member.private', 'member')).toEqual([
+			[
+				'declaration.member.private',
+				[
+					{ up: 0, via: [], plan: { op: 'is', types: [35, 36, 37], ...ROUTES['member.modifier'] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', ...ROUTES['member.modifier'] } }
+				]
+			]
+		]);
+	});
+
+	it('tests a pin on a boolean slot by the keyword\'s presence, since the slot holds true, not the keyword\'s text', async () => {
+		expect(await testsOf('(field_def accessor: "accessor") @declaration.property', 'field_def')).toEqual([
+			['declaration.property', [{ up: 0, via: [], plan: { op: 'present', ...ROUTES['field_def.accessor'] } }]]
+		]);
+	});
+
+	it('refuses a pin on a boolean slot whose text is not the slot\'s keyword, which no node could hold', async () => {
+		await expect(testsOf('(field_def accessor: "readonly") @declaration.property', 'field_def')).rejects.toThrow(
+			/declaration\.property.*accessor.*keyword 'accessor'/
+		);
 	});
 
 	it('refuses a type test that names a kind with no type', async () => {

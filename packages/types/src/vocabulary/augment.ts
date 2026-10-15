@@ -53,6 +53,7 @@ import type * as multipleInheritance from './features/methods/classes/multiple-i
 import type * as multiwayBranch from './features/multiway-branch/index.ts';
 import type * as namedArguments from './features/named-arguments/index.ts';
 import type * as nonNullAssertions from './features/type-annotations/nullable-types/non-null-assertions/index.ts';
+import type * as nullableTypes from './features/type-annotations/nullable-types/index.ts';
 import type * as openTypeExtension from './features/open-type-extension/index.ts';
 import type * as optionalChaining from './features/optional-chaining/index.ts';
 import type * as optionalMembers from './features/type-annotations/optional-members/index.ts';
@@ -84,8 +85,8 @@ import type * as visibility from './features/visibility/index.ts';
 
 declare module './argument.ts' {
 	namespace Argument {
-		interface Keyword<G extends GrammarContext<G>> extends namedArguments.Argument.Keyword<G> {}
-		type Any<G extends GrammarContext<G>> = V.Argument<G> | V.Argument.Keyword<G>;
+		interface Named<G extends GrammarContext<G>> extends namedArguments.Argument.Named<G> {}
+		type Any<G extends GrammarContext<G>> = V.Argument<G> | V.Argument.Named<G>;
 	}
 }
 
@@ -150,9 +151,7 @@ declare module './clause.ts' {
 				| V.Clause.Comprehension.For<G>
 				| V.Clause.Comprehension.If<G>;
 		}
-		interface Constraint<G extends GrammarContext<G>> extends boundedQuantification.Clause.Constraint<G> {}
 		interface Default<G extends GrammarContext<G>> extends parametricPolymorphism.Clause.Default<G> {}
-		interface Except<G extends GrammarContext<G>> extends exceptions.Clause.Except<G> {}
 		interface Export<G extends GrammarContext<G>> extends modules.Clause.Export<G> {}
 		namespace Export {
 			interface Namespace<G extends GrammarContext<G>> extends modules.Clause.Export.Namespace<G> {}
@@ -183,7 +182,6 @@ declare module './clause.ts' {
 		interface Import<G extends GrammarContext<G>> extends modules.Clause.Import<G> {}
 		namespace Import {
 			interface Alias<G extends GrammarContext<G>> extends modules.Clause.Import.Alias<G> {}
-			interface As<G extends GrammarContext<G>> extends modules.Clause.Import.As<G> {}
 			interface Attribute<G extends GrammarContext<G>> extends modules.Clause.Import.Attribute<G> {}
 			interface List<G extends GrammarContext<G>> extends modules.Clause.Import.List<G> {}
 			namespace List {
@@ -213,7 +211,6 @@ declare module './clause.ts' {
 			type Any<G extends GrammarContext<G>> =
 				| V.Clause.Import<G>
 				| V.Clause.Import.Alias<G>
-				| V.Clause.Import.As<G>
 				| V.Clause.Import.Attribute<G>
 				| V.Clause.Import.List<G>
 				| V.Clause.Import.List.Scoped<G>
@@ -256,15 +253,15 @@ declare module './clause.ts' {
 			interface Chevron<G extends GrammarContext<G>> extends printStatements.Clause.Print.Chevron<G> {}
 			type Any<G extends GrammarContext<G>> = V.Clause.Print<G> | V.Clause.Print.Chevron<G>;
 		}
+		interface Resource<G extends GrammarContext<G>> extends resourceManagement.Clause.Resource<G> {}
+		namespace Resource {
+			interface Item<G extends GrammarContext<G>> extends resourceManagement.Clause.Resource.Item<G> {}
+			type Any<G extends GrammarContext<G>> = V.Clause.Resource<G> | V.Clause.Resource.Item<G>;
+		}
 		interface Where<G extends GrammarContext<G>> extends boundedQuantification.Clause.Where<G> {}
 		namespace Where {
 			interface Predicate<G extends GrammarContext<G>> extends boundedQuantification.Clause.Where.Predicate<G> {}
 			type Any<G extends GrammarContext<G>> = V.Clause.Where<G> | V.Clause.Where.Predicate<G>;
-		}
-		interface With<G extends GrammarContext<G>> extends resourceManagement.Clause.With<G> {}
-		namespace With {
-			interface Item<G extends GrammarContext<G>> extends resourceManagement.Clause.With.Item<G> {}
-			type Any<G extends GrammarContext<G>> = V.Clause.With<G> | V.Clause.With.Item<G>;
 		}
 		type Any<G extends GrammarContext<G>> =
 			| V.Clause<G>
@@ -280,11 +277,9 @@ declare module './clause.ts' {
 			| V.Clause.Comprehension<G>
 			| V.Clause.Comprehension.For<G>
 			| V.Clause.Comprehension.If<G>
-			| V.Clause.Constraint<G>
 			| V.Clause.Default<G>
-			| V.Clause.Elif<G>
 			| V.Clause.Else<G>
-			| V.Clause.Except<G>
+			| V.Clause.ElseIf<G>
 			| V.Clause.Export<G>
 			| V.Clause.Export.Namespace<G>
 			| V.Clause.Export.Specifier<G>
@@ -295,7 +290,6 @@ declare module './clause.ts' {
 			| V.Clause.Implements<G>
 			| V.Clause.Import<G>
 			| V.Clause.Import.Alias<G>
-			| V.Clause.Import.As<G>
 			| V.Clause.Import.Attribute<G>
 			| V.Clause.Import.List<G>
 			| V.Clause.Import.List.Scoped<G>
@@ -318,10 +312,10 @@ declare module './clause.ts' {
 			| V.Clause.Match.Arm.Last<G>
 			| V.Clause.Print<G>
 			| V.Clause.Print.Chevron<G>
+			| V.Clause.Resource<G>
+			| V.Clause.Resource.Item<G>
 			| V.Clause.Where<G>
-			| V.Clause.Where.Predicate<G>
-			| V.Clause.With<G>
-			| V.Clause.With.Item<G>;
+			| V.Clause.Where.Predicate<G>;
 	}
 }
 
@@ -347,6 +341,7 @@ declare module './comment.ts' {
 			| V.Comment.Block<G>
 			| V.Comment.Block.Doc<G>
 			| V.Comment.Block.Doc.Inner<G>
+			| V.Comment.Html<G>
 			| V.Comment.Line<G>
 			| V.Comment.Line.Doc<G>
 			| V.Comment.Line.Doc.Inner<G>
@@ -778,7 +773,6 @@ declare module './declaration.ts' {
 			>;
 		}
 		namespace Method {
-			interface Dunder<G extends GrammarContext<G>> extends methods.Declaration.Method.Dunder<G> {}
 			interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Method.Private<G> {}
 			interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Method.Protected<G> {}
 			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Method.Public<G> {}
@@ -885,9 +879,9 @@ declare module './declaration.ts' {
 					| V.Declaration.Method.Signature.Public.Internal<G>
 					| V.Declaration.Method.Signature.Public.Restricted<G>;
 			}
+			interface Special<G extends GrammarContext<G>> extends methods.Declaration.Method.Special<G> {}
 			type Any<G extends GrammarContext<G>> =
 				| V.Declaration.Method<G>
-				| V.Declaration.Method.Dunder<G>
 				| V.Declaration.Method.Private<G>
 				| V.Declaration.Method.Protected<G>
 				| V.Declaration.Method.Public<G>
@@ -902,7 +896,8 @@ declare module './declaration.ts' {
 				| V.Declaration.Method.Signature.Protected<G>
 				| V.Declaration.Method.Signature.Public<G>
 				| V.Declaration.Method.Signature.Public.Internal<G>
-				| V.Declaration.Method.Signature.Public.Restricted<G>;
+				| V.Declaration.Method.Signature.Public.Restricted<G>
+				| V.Declaration.Method.Special<G>;
 		}
 		interface Module<G extends GrammarContext<G>> extends moduleDeclarations.Declaration.Module<G> {}
 		namespace Module {
@@ -975,9 +970,9 @@ declare module './declaration.ts' {
 			interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Parameter.Private<G> {}
 			interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Parameter.Protected<G> {}
 			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Parameter.Public<G> {}
-			interface Self<G extends GrammarContext<G>> extends explicitReceivers.Declaration.Parameter.Self<G> {
-				readonly lifetime?: gate.In<G, features.Lifetimes, lifetimes.Declaration.Parameter.Self<G>['lifetime']>;
-				readonly reference?: gate.In<G, features.References, references.Declaration.Parameter.Self<G>['reference']>;
+			interface Receiver<G extends GrammarContext<G>> extends explicitReceivers.Declaration.Parameter.Receiver<G> {
+				readonly lifetime?: gate.In<G, features.Lifetimes, lifetimes.Declaration.Parameter.Receiver<G>['lifetime']>;
+				readonly reference?: gate.In<G, features.References, references.Declaration.Parameter.Receiver<G>['reference']>;
 			}
 			interface Typed<G extends GrammarContext<G>> {
 				readonly type: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Parameter.Typed<G>['type']>;
@@ -1002,7 +997,7 @@ declare module './declaration.ts' {
 				| V.Declaration.Parameter.Private<G>
 				| V.Declaration.Parameter.Protected<G>
 				| V.Declaration.Parameter.Public<G>
-				| V.Declaration.Parameter.Self<G>
+				| V.Declaration.Parameter.Receiver<G>
 				| V.Declaration.Parameter.Typed<G>
 				| V.Declaration.Parameter.TypedDefault<G>
 				| V.Declaration.Parameter.Variadic<G>;
@@ -1349,10 +1344,10 @@ declare module './declaration.ts' {
 		}
 		interface TypeParameter<G extends GrammarContext<G>> extends parametricPolymorphism.Declaration.TypeParameter<G> {
 			readonly attributes?: gate.In<G, features.Attributes, attributes.Declaration.TypeParameter<G>['attributes']>;
-			readonly constraint?: gate.In<
+			readonly bounds?: gate.In<
 				G,
 				features.BoundedQuantification,
-				boundedQuantification.Declaration.TypeParameter<G>['constraint']
+				boundedQuantification.Declaration.TypeParameter<G>['bounds']
 			>;
 		}
 		namespace TypeParameter {
@@ -1406,6 +1401,7 @@ declare module './declaration.ts' {
 				| V.Declaration.Union.Public.Restricted<G>;
 		}
 		interface Variable<G extends GrammarContext<G>> {
+			readonly byReference?: gate.In<G, features.References, references.Declaration.Variable<G>['byReference']>;
 			readonly definite?: gate.In<G, features.NonNullAssertions, nonNullAssertions.Declaration.Variable<G>['definite']>;
 			readonly type?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Variable<G>['type']>;
 		}
@@ -1413,50 +1409,32 @@ declare module './declaration.ts' {
 			interface Pattern<G extends GrammarContext<G>> {
 				readonly type?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Variable.Pattern<G>['type']>;
 			}
+			interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Private<G> {}
+			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Public<G> {}
+			namespace Public {
+				interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Public.Internal<G> {}
+				interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Public
+					.Restricted<G> {}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Variable.Public<G>
+					| V.Declaration.Variable.Public.Internal<G>
+					| V.Declaration.Variable.Public.Restricted<G>;
+			}
 			namespace Reassignable {
 				type Any<G extends GrammarContext<G>> =
 					| V.Declaration.Variable.Reassignable<G>
 					| V.Declaration.Variable.Reassignable.FunctionScoped<G>;
 			}
-			interface Static<G extends GrammarContext<G>> {
-				readonly byReference?: gate.In<
-					G,
-					features.References,
-					references.Declaration.Variable.Static<G>['byReference']
-				>;
-				readonly type: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Variable.Static<G>['type']>;
-			}
-			namespace Static {
-				interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Static.Private<G> {}
-				interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Static.Public<G> {}
-				namespace Public {
-					interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Static.Public
-						.Internal<G> {}
-					interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Variable.Static.Public
-						.Restricted<G> {}
-					type Any<G extends GrammarContext<G>> =
-						| V.Declaration.Variable.Static.Public<G>
-						| V.Declaration.Variable.Static.Public.Internal<G>
-						| V.Declaration.Variable.Static.Public.Restricted<G>;
-				}
-				type Any<G extends GrammarContext<G>> =
-					| V.Declaration.Variable.Static<G>
-					| V.Declaration.Variable.Static.Private<G>
-					| V.Declaration.Variable.Static.Public<G>
-					| V.Declaration.Variable.Static.Public.Internal<G>
-					| V.Declaration.Variable.Static.Public.Restricted<G>;
-			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Declaration.Variable<G>
 				| V.Declaration.Variable.Constant<G>
 				| V.Declaration.Variable.Pattern<G>
+				| V.Declaration.Variable.Private<G>
+				| V.Declaration.Variable.Public<G>
+				| V.Declaration.Variable.Public.Internal<G>
+				| V.Declaration.Variable.Public.Restricted<G>
 				| V.Declaration.Variable.Reassignable<G>
-				| V.Declaration.Variable.Reassignable.FunctionScoped<G>
-				| V.Declaration.Variable.Static<G>
-				| V.Declaration.Variable.Static.Private<G>
-				| V.Declaration.Variable.Static.Public<G>
-				| V.Declaration.Variable.Static.Public.Internal<G>
-				| V.Declaration.Variable.Static.Public.Restricted<G>;
+				| V.Declaration.Variable.Reassignable.FunctionScoped<G>;
 		}
 		type Any<G extends GrammarContext<G>> =
 			| V.Declaration<G>
@@ -1521,7 +1499,6 @@ declare module './declaration.ts' {
 			| V.Declaration.Interface.Trait.Public.Restricted<G>
 			| V.Declaration.Macro<G>
 			| V.Declaration.Method<G>
-			| V.Declaration.Method.Dunder<G>
 			| V.Declaration.Method.Private<G>
 			| V.Declaration.Method.Protected<G>
 			| V.Declaration.Method.Public<G>
@@ -1537,6 +1514,7 @@ declare module './declaration.ts' {
 			| V.Declaration.Method.Signature.Public<G>
 			| V.Declaration.Method.Signature.Public.Internal<G>
 			| V.Declaration.Method.Signature.Public.Restricted<G>
+			| V.Declaration.Method.Special<G>
 			| V.Declaration.Module<G>
 			| V.Declaration.Module.External<G>
 			| V.Declaration.Module.Foreign<G>
@@ -1554,7 +1532,7 @@ declare module './declaration.ts' {
 			| V.Declaration.Parameter.Private<G>
 			| V.Declaration.Parameter.Protected<G>
 			| V.Declaration.Parameter.Public<G>
-			| V.Declaration.Parameter.Self<G>
+			| V.Declaration.Parameter.Receiver<G>
 			| V.Declaration.Parameter.Typed<G>
 			| V.Declaration.Parameter.TypedDefault<G>
 			| V.Declaration.Parameter.Variadic<G>
@@ -1625,13 +1603,12 @@ declare module './declaration.ts' {
 			| V.Declaration.Variable<G>
 			| V.Declaration.Variable.Constant<G>
 			| V.Declaration.Variable.Pattern<G>
+			| V.Declaration.Variable.Private<G>
+			| V.Declaration.Variable.Public<G>
+			| V.Declaration.Variable.Public.Internal<G>
+			| V.Declaration.Variable.Public.Restricted<G>
 			| V.Declaration.Variable.Reassignable<G>
-			| V.Declaration.Variable.Reassignable.FunctionScoped<G>
-			| V.Declaration.Variable.Static<G>
-			| V.Declaration.Variable.Static.Private<G>
-			| V.Declaration.Variable.Static.Public<G>
-			| V.Declaration.Variable.Static.Public.Internal<G>
-			| V.Declaration.Variable.Static.Public.Restricted<G>;
+			| V.Declaration.Variable.Reassignable.FunctionScoped<G>;
 	}
 }
 
@@ -1714,11 +1691,11 @@ declare module './element.ts' {
 		interface Pair<G extends GrammarContext<G>> {
 			readonly computed?: gate.In<G, features.ComputedKeys, computedKeys.Element.Pair<G>['computed']>;
 		}
-		namespace Splat {
+		namespace Spread {
 			type Any<G extends GrammarContext<G>> =
-				| V.Element.Splat<G>
-				| V.Element.Splat.Dictionary<G>
-				| V.Element.Splat.Parenthesized<G>;
+				| V.Element.Spread<G>
+				| V.Element.Spread.Map<G>
+				| V.Element.Spread.Parenthesized<G>;
 		}
 		interface Struct<G extends GrammarContext<G>> extends structs.Element.Struct<G> {}
 		namespace Struct {
@@ -1749,10 +1726,10 @@ declare module './element.ts' {
 				| V.Element.Tuple.Member.Optional<G>;
 		}
 		interface TypeArgument<G extends GrammarContext<G>> extends parametricPolymorphism.Element.TypeArgument<G> {
-			readonly constraint?: gate.In<
+			readonly bounds?: gate.In<
 				G,
 				features.BoundedQuantification,
-				boundedQuantification.Element.TypeArgument<G>['constraint']
+				boundedQuantification.Element.TypeArgument<G>['bounds']
 			>;
 		}
 		interface TypeBinding<G extends GrammarContext<G>> extends associatedTypes.Element.TypeBinding<G> {}
@@ -1781,9 +1758,9 @@ declare module './element.ts' {
 			| V.Element.Macro.TokenTree.Delimited<G>
 			| V.Element.Macro.TokenTree.Pattern<G>
 			| V.Element.Pair<G>
-			| V.Element.Splat<G>
-			| V.Element.Splat.Dictionary<G>
-			| V.Element.Splat.Parenthesized<G>
+			| V.Element.Spread<G>
+			| V.Element.Spread.Map<G>
+			| V.Element.Spread.Parenthesized<G>
 			| V.Element.Struct<G>
 			| V.Element.Struct.Base<G>
 			| V.Element.Struct.Field<G>
@@ -1815,13 +1792,13 @@ declare module './expression.ts' {
 					| V.Expression.Assignment.Compound.BitwiseAnd<G>
 					| V.Expression.Assignment.Compound.BitwiseOr<G>
 					| V.Expression.Assignment.Compound.BitwiseXor<G>
+					| V.Expression.Assignment.Compound.Coalesce<G>
 					| V.Expression.Assignment.Compound.Divide<G>
 					| V.Expression.Assignment.Compound.Exponent<G>
 					| V.Expression.Assignment.Compound.FloorDivide<G>
-					| V.Expression.Assignment.Compound.Matmul<G>
+					| V.Expression.Assignment.Compound.MatrixMultiply<G>
 					| V.Expression.Assignment.Compound.Modulo<G>
 					| V.Expression.Assignment.Compound.Multiply<G>
-					| V.Expression.Assignment.Compound.Nullish<G>
 					| V.Expression.Assignment.Compound.Or<G>
 					| V.Expression.Assignment.Compound.ShiftLeft<G>
 					| V.Expression.Assignment.Compound.ShiftRight<G>
@@ -1836,13 +1813,13 @@ declare module './expression.ts' {
 				| V.Expression.Assignment.Compound.BitwiseAnd<G>
 				| V.Expression.Assignment.Compound.BitwiseOr<G>
 				| V.Expression.Assignment.Compound.BitwiseXor<G>
+				| V.Expression.Assignment.Compound.Coalesce<G>
 				| V.Expression.Assignment.Compound.Divide<G>
 				| V.Expression.Assignment.Compound.Exponent<G>
 				| V.Expression.Assignment.Compound.FloorDivide<G>
-				| V.Expression.Assignment.Compound.Matmul<G>
+				| V.Expression.Assignment.Compound.MatrixMultiply<G>
 				| V.Expression.Assignment.Compound.Modulo<G>
 				| V.Expression.Assignment.Compound.Multiply<G>
-				| V.Expression.Assignment.Compound.Nullish<G>
 				| V.Expression.Assignment.Compound.Or<G>
 				| V.Expression.Assignment.Compound.ShiftLeft<G>
 				| V.Expression.Assignment.Compound.ShiftRight<G>
@@ -1926,6 +1903,7 @@ declare module './expression.ts' {
 				| V.Expression.Binary.Bitwise.And<G>
 				| V.Expression.Binary.Bitwise.Or<G>
 				| V.Expression.Binary.Bitwise.Xor<G>
+				| V.Expression.Binary.Coalesce<G>
 				| V.Expression.Binary.Comparison<G>
 				| V.Expression.Binary.Comparison.Chain<G>
 				| V.Expression.Binary.Comparison.Equal<G>
@@ -1942,12 +1920,11 @@ declare module './expression.ts' {
 				| V.Expression.Binary.Logical<G>
 				| V.Expression.Binary.Logical.And<G>
 				| V.Expression.Binary.Logical.Or<G>
-				| V.Expression.Binary.Matmul<G>
+				| V.Expression.Binary.MatrixMultiply<G>
 				| V.Expression.Binary.Membership<G>
 				| V.Expression.Binary.Membership.In<G>
 				| V.Expression.Binary.Membership.Instanceof<G>
 				| V.Expression.Binary.Membership.NotIn<G>
-				| V.Expression.Binary.Nullish<G>
 				| V.Expression.Binary.Shift<G>
 				| V.Expression.Binary.Shift.Left<G>
 				| V.Expression.Binary.Shift.Right<G>
@@ -1956,14 +1933,14 @@ declare module './expression.ts' {
 		namespace Block {
 			interface Async<G extends GrammarContext<G>> extends asyncBlocks.Expression.Block.Async<G> {}
 			interface Const<G extends GrammarContext<G>> extends compileTimeEvaluation.Expression.Block.Const<G> {}
-			interface Gen<G extends GrammarContext<G>> extends coroutines.Expression.Block.Gen<G> {}
+			interface Generator<G extends GrammarContext<G>> extends coroutines.Expression.Block.Generator<G> {}
 			interface Try<G extends GrammarContext<G>> extends errorPropagation.Expression.Block.Try<G> {}
 			interface Unsafe<G extends GrammarContext<G>> extends unsafeCode.Expression.Block.Unsafe<G> {}
 			type Any<G extends GrammarContext<G>> =
 				| V.Expression.Block<G>
 				| V.Expression.Block.Async<G>
 				| V.Expression.Block.Const<G>
-				| V.Expression.Block.Gen<G>
+				| V.Expression.Block.Generator<G>
 				| V.Expression.Block.Try<G>
 				| V.Expression.Block.Unsafe<G>;
 		}
@@ -1980,6 +1957,13 @@ declare module './expression.ts' {
 			>;
 		}
 		namespace Call {
+			interface Construct<G extends GrammarContext<G>> extends classes.Expression.Call.Construct<G> {
+				readonly typeArguments?: gate.In<
+					G,
+					features.ParametricPolymorphism,
+					parametricPolymorphism.Expression.Call.Construct<G>['typeArguments']
+				>;
+			}
 			interface Import<G extends GrammarContext<G>> extends modules.Expression.Call.Import<G> {}
 			interface Macro<G extends GrammarContext<G>> extends syntacticMetaprogramming.Expression.Call.Macro<G> {}
 			interface Member<G extends GrammarContext<G>> {
@@ -1989,33 +1973,34 @@ declare module './expression.ts' {
 					parametricPolymorphism.Expression.Call.Member<G>['typeArguments']
 				>;
 			}
-			interface New<G extends GrammarContext<G>> extends classes.Expression.Call.New<G> {
-				readonly typeArguments?: gate.In<
-					G,
-					features.ParametricPolymorphism,
-					parametricPolymorphism.Expression.Call.New<G>['typeArguments']
-				>;
-			}
 			interface Template<G extends GrammarContext<G>> extends stringInterpolation.Expression.Call.Template<G> {}
 			type Any<G extends GrammarContext<G>> =
 				| V.Expression.Call<G>
+				| V.Expression.Call.Construct<G>
 				| V.Expression.Call.Import<G>
 				| V.Expression.Call.Macro<G>
 				| V.Expression.Call.Member<G>
-				| V.Expression.Call.New<G>
-				| V.Expression.Call.Path<G>
+				| V.Expression.Call.Qualified<G>
 				| V.Expression.Call.Template<G>;
 		}
 		interface Cast<G extends GrammarContext<G>> extends typeAnnotations.Expression.Cast<G> {}
 		namespace Cast {
-			interface As<G extends GrammarContext<G>> extends typeAnnotations.Expression.Cast.As<G> {}
 			interface Assertion<G extends GrammarContext<G>> extends typeAnnotations.Expression.Cast.Assertion<G> {}
+			namespace Assertion {
+				interface AngleBracket<G extends GrammarContext<G>> extends typeAnnotations.Expression.Cast.Assertion
+					.AngleBracket<G> {}
+				type Any<G extends GrammarContext<G>> =
+					| V.Expression.Cast.Assertion<G>
+					| V.Expression.Cast.Assertion.AngleBracket<G>;
+			}
+			interface Conversion<G extends GrammarContext<G>> extends typeAnnotations.Expression.Cast.Conversion<G> {}
 			interface NonNull<G extends GrammarContext<G>> extends nonNullAssertions.Expression.Cast.NonNull<G> {}
 			interface Satisfies<G extends GrammarContext<G>> extends typeAnnotations.Expression.Cast.Satisfies<G> {}
 			type Any<G extends GrammarContext<G>> =
 				| V.Expression.Cast<G>
-				| V.Expression.Cast.As<G>
 				| V.Expression.Cast.Assertion<G>
+				| V.Expression.Cast.Assertion.AngleBracket<G>
+				| V.Expression.Cast.Conversion<G>
 				| V.Expression.Cast.NonNull<G>
 				| V.Expression.Cast.Satisfies<G>;
 		}
@@ -2051,9 +2036,9 @@ declare module './expression.ts' {
 			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Expression.Collection<G>
-				| V.Expression.Collection.Dictionary<G>
 				| V.Expression.Collection.List<G>
 				| V.Expression.Collection.List.Repeat<G>
+				| V.Expression.Collection.Map<G>
 				| V.Expression.Collection.Object<G>
 				| V.Expression.Collection.Set<G>
 				| V.Expression.Collection.Struct<G>
@@ -2062,15 +2047,15 @@ declare module './expression.ts' {
 		}
 		interface Comprehension<G extends GrammarContext<G>> extends comprehensions.Expression.Comprehension<G> {}
 		namespace Comprehension {
-			interface Dictionary<G extends GrammarContext<G>> extends comprehensions.Expression.Comprehension.Dictionary<G> {}
 			interface Generator<G extends GrammarContext<G>> extends comprehensions.Expression.Comprehension.Generator<G> {}
 			interface List<G extends GrammarContext<G>> extends comprehensions.Expression.Comprehension.List<G> {}
+			interface Map<G extends GrammarContext<G>> extends comprehensions.Expression.Comprehension.Map<G> {}
 			interface Set<G extends GrammarContext<G>> extends comprehensions.Expression.Comprehension.Set<G> {}
 			type Any<G extends GrammarContext<G>> =
 				| V.Expression.Comprehension<G>
-				| V.Expression.Comprehension.Dictionary<G>
 				| V.Expression.Comprehension.Generator<G>
 				| V.Expression.Comprehension.List<G>
+				| V.Expression.Comprehension.Map<G>
 				| V.Expression.Comprehension.Set<G>;
 		}
 		interface Conditional<G extends GrammarContext<G>> extends conditionalExpressions.Expression.Conditional<G> {}
@@ -2109,6 +2094,7 @@ declare module './expression.ts' {
 			>;
 			readonly privateName?: gate.In<G, features.Encapsulation, encapsulation.Expression.Member<G>['privateName']>;
 		}
+		interface Propagate<G extends GrammarContext<G>> extends errorPropagation.Expression.Propagate<G> {}
 		interface Range<G extends GrammarContext<G>> extends rangeExpressions.Expression.Range<G> {}
 		namespace Range {
 			interface Exclusive<G extends GrammarContext<G>> extends rangeExpressions.Expression.Range.Exclusive<G> {}
@@ -2127,7 +2113,6 @@ declare module './expression.ts' {
 				optionalChaining.Expression.Subscript<G>['optionalChain']
 			>;
 		}
-		interface Try<G extends GrammarContext<G>> extends errorPropagation.Expression.Try<G> {}
 		namespace Unary {
 			interface Deref<G extends GrammarContext<G>> extends references.Expression.Unary.Deref<G> {}
 			type Any<G extends GrammarContext<G>> =
@@ -2162,13 +2147,13 @@ declare module './expression.ts' {
 			| V.Expression.Assignment.Compound.BitwiseAnd<G>
 			| V.Expression.Assignment.Compound.BitwiseOr<G>
 			| V.Expression.Assignment.Compound.BitwiseXor<G>
+			| V.Expression.Assignment.Compound.Coalesce<G>
 			| V.Expression.Assignment.Compound.Divide<G>
 			| V.Expression.Assignment.Compound.Exponent<G>
 			| V.Expression.Assignment.Compound.FloorDivide<G>
-			| V.Expression.Assignment.Compound.Matmul<G>
+			| V.Expression.Assignment.Compound.MatrixMultiply<G>
 			| V.Expression.Assignment.Compound.Modulo<G>
 			| V.Expression.Assignment.Compound.Multiply<G>
-			| V.Expression.Assignment.Compound.Nullish<G>
 			| V.Expression.Assignment.Compound.Or<G>
 			| V.Expression.Assignment.Compound.ShiftLeft<G>
 			| V.Expression.Assignment.Compound.ShiftRight<G>
@@ -2188,6 +2173,7 @@ declare module './expression.ts' {
 			| V.Expression.Binary.Bitwise.And<G>
 			| V.Expression.Binary.Bitwise.Or<G>
 			| V.Expression.Binary.Bitwise.Xor<G>
+			| V.Expression.Binary.Coalesce<G>
 			| V.Expression.Binary.Comparison<G>
 			| V.Expression.Binary.Comparison.Chain<G>
 			| V.Expression.Binary.Comparison.Equal<G>
@@ -2204,12 +2190,11 @@ declare module './expression.ts' {
 			| V.Expression.Binary.Logical<G>
 			| V.Expression.Binary.Logical.And<G>
 			| V.Expression.Binary.Logical.Or<G>
-			| V.Expression.Binary.Matmul<G>
+			| V.Expression.Binary.MatrixMultiply<G>
 			| V.Expression.Binary.Membership<G>
 			| V.Expression.Binary.Membership.In<G>
 			| V.Expression.Binary.Membership.Instanceof<G>
 			| V.Expression.Binary.Membership.NotIn<G>
-			| V.Expression.Binary.Nullish<G>
 			| V.Expression.Binary.Shift<G>
 			| V.Expression.Binary.Shift.Left<G>
 			| V.Expression.Binary.Shift.Right<G>
@@ -2217,35 +2202,36 @@ declare module './expression.ts' {
 			| V.Expression.Block<G>
 			| V.Expression.Block.Async<G>
 			| V.Expression.Block.Const<G>
-			| V.Expression.Block.Gen<G>
+			| V.Expression.Block.Generator<G>
 			| V.Expression.Block.Try<G>
 			| V.Expression.Block.Unsafe<G>
 			| V.Expression.Call<G>
+			| V.Expression.Call.Construct<G>
 			| V.Expression.Call.Import<G>
 			| V.Expression.Call.Macro<G>
 			| V.Expression.Call.Member<G>
-			| V.Expression.Call.New<G>
-			| V.Expression.Call.Path<G>
+			| V.Expression.Call.Qualified<G>
 			| V.Expression.Call.Template<G>
 			| V.Expression.Cast<G>
-			| V.Expression.Cast.As<G>
 			| V.Expression.Cast.Assertion<G>
+			| V.Expression.Cast.Assertion.AngleBracket<G>
+			| V.Expression.Cast.Conversion<G>
 			| V.Expression.Cast.NonNull<G>
 			| V.Expression.Cast.Satisfies<G>
 			| V.Expression.Class<G>
 			| V.Expression.Collection<G>
-			| V.Expression.Collection.Dictionary<G>
 			| V.Expression.Collection.List<G>
 			| V.Expression.Collection.List.Repeat<G>
+			| V.Expression.Collection.Map<G>
 			| V.Expression.Collection.Object<G>
 			| V.Expression.Collection.Set<G>
 			| V.Expression.Collection.Struct<G>
 			| V.Expression.Collection.Tuple<G>
 			| V.Expression.Collection.Tuple.Bare<G>
 			| V.Expression.Comprehension<G>
-			| V.Expression.Comprehension.Dictionary<G>
 			| V.Expression.Comprehension.Generator<G>
 			| V.Expression.Comprehension.List<G>
+			| V.Expression.Comprehension.Map<G>
 			| V.Expression.Comprehension.Set<G>
 			| V.Expression.Conditional<G>
 			| V.Expression.Function<G>
@@ -2257,6 +2243,7 @@ declare module './expression.ts' {
 			| V.Expression.Member<G>
 			| V.Expression.Meta<G>
 			| V.Expression.Parenthesized<G>
+			| V.Expression.Propagate<G>
 			| V.Expression.Range<G>
 			| V.Expression.Range.Exclusive<G>
 			| V.Expression.Range.Inclusive<G>
@@ -2264,7 +2251,6 @@ declare module './expression.ts' {
 			| V.Expression.Sequence<G>
 			| V.Expression.Slice<G>
 			| V.Expression.Subscript<G>
-			| V.Expression.Try<G>
 			| V.Expression.Unary<G>
 			| V.Expression.Unary.BitwiseNot<G>
 			| V.Expression.Unary.Delete<G>
@@ -2283,6 +2269,12 @@ declare module './expression.ts' {
 	}
 }
 
+declare module './file.ts' {
+	namespace File {
+		type Any<G extends GrammarContext<G>> = V.File<G>;
+	}
+}
+
 declare module './identifier.ts' {
 	namespace Identifier {
 		interface Label<G extends GrammarContext<G>> extends labeledControlFlow.Identifier.Label<G> {}
@@ -2293,7 +2285,7 @@ declare module './identifier.ts' {
 		namespace Property {
 			type Any<G extends GrammarContext<G>> = V.Identifier.Property<G> | V.Identifier.Property.Shorthand<G>;
 		}
-		interface Self<G extends GrammarContext<G>> extends methods.Identifier.Self<G> {}
+		interface Receiver<G extends GrammarContext<G>> extends methods.Identifier.Receiver<G> {}
 		type Any<G extends GrammarContext<G>> =
 			| V.Identifier<G>
 			| V.Identifier.Crate<G>
@@ -2305,8 +2297,8 @@ declare module './identifier.ts' {
 			| V.Identifier.Nested<G>
 			| V.Identifier.Property<G>
 			| V.Identifier.Property.Shorthand<G>
+			| V.Identifier.Receiver<G>
 			| V.Identifier.Scoped<G>
-			| V.Identifier.Self<G>
 			| V.Identifier.Super<G>
 			| V.Identifier.Type<G>;
 	}
@@ -2320,7 +2312,7 @@ declare module './literal.ts' {
 				| V.Literal.Boolean.False<G>
 				| V.Literal.Boolean.True<G>;
 		}
-		interface Char<G extends GrammarContext<G>> extends characters.Literal.Char<G> {}
+		interface Character<G extends GrammarContext<G>> extends characters.Literal.Character<G> {}
 		namespace Null {
 			type Any<G extends GrammarContext<G>> = V.Literal.Null<G> | V.Literal.Null.Undefined<G>;
 		}
@@ -2402,25 +2394,67 @@ declare module './literal.ts' {
 		}
 		namespace String {
 			interface Bytes<G extends GrammarContext<G>> extends byteStrings.Literal.String.Bytes<G> {}
-			interface F<G extends GrammarContext<G>> extends stringInterpolation.Literal.String.F<G> {}
+			namespace Bytes {
+				interface Multiline<G extends GrammarContext<G>> extends byteStrings.Literal.String.Bytes.Multiline<G> {}
+				interface Raw<G extends GrammarContext<G>> extends rawStrings.Literal.String.Bytes.Raw<G> {}
+				namespace Raw {
+					interface Multiline<G extends GrammarContext<G>> extends rawStrings.Literal.String.Bytes.Raw.Multiline<G> {}
+					type Any<G extends GrammarContext<G>> =
+						| V.Literal.String.Bytes.Raw<G>
+						| V.Literal.String.Bytes.Raw.Multiline<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Literal.String.Bytes<G>
+					| V.Literal.String.Bytes.Multiline<G>
+					| V.Literal.String.Bytes.Raw<G>
+					| V.Literal.String.Bytes.Raw.Multiline<G>;
+			}
+			interface Interpolated<G extends GrammarContext<G>> extends stringInterpolation.Literal.String.Interpolated<G> {}
+			namespace Interpolated {
+				interface Multiline<G extends GrammarContext<G>> extends stringInterpolation.Literal.String.Interpolated
+					.Multiline<G> {}
+				interface Raw<G extends GrammarContext<G>> extends rawStrings.Literal.String.Interpolated.Raw<G> {}
+				namespace Raw {
+					interface Multiline<G extends GrammarContext<G>> extends rawStrings.Literal.String.Interpolated.Raw
+						.Multiline<G> {}
+					type Any<G extends GrammarContext<G>> =
+						| V.Literal.String.Interpolated.Raw<G>
+						| V.Literal.String.Interpolated.Raw.Multiline<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Literal.String.Interpolated<G>
+					| V.Literal.String.Interpolated.Multiline<G>
+					| V.Literal.String.Interpolated.Raw<G>
+					| V.Literal.String.Interpolated.Raw.Multiline<G>;
+			}
 			interface Raw<G extends GrammarContext<G>> extends rawStrings.Literal.String.Raw<G> {}
+			namespace Raw {
+				interface Multiline<G extends GrammarContext<G>> extends rawStrings.Literal.String.Raw.Multiline<G> {}
+				type Any<G extends GrammarContext<G>> = V.Literal.String.Raw<G> | V.Literal.String.Raw.Multiline<G>;
+			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Literal.String<G>
 				| V.Literal.String.Bytes<G>
+				| V.Literal.String.Bytes.Multiline<G>
+				| V.Literal.String.Bytes.Raw<G>
+				| V.Literal.String.Bytes.Raw.Multiline<G>
 				| V.Literal.String.Concatenated<G>
 				| V.Literal.String.Escape<G>
-				| V.Literal.String.F<G>
+				| V.Literal.String.Interpolated<G>
+				| V.Literal.String.Interpolated.Multiline<G>
+				| V.Literal.String.Interpolated.Raw<G>
+				| V.Literal.String.Interpolated.Raw.Multiline<G>
+				| V.Literal.String.Multiline<G>
 				| V.Literal.String.Raw<G>
-				| V.Literal.String.Text<G>
-				| V.Literal.String.Triple<G>;
+				| V.Literal.String.Raw.Multiline<G>
+				| V.Literal.String.Text<G>;
 		}
-		interface Template<G extends GrammarContext<G>> extends stringInterpolation.Literal.Template<G> {}
 		type Any<G extends GrammarContext<G>> =
 			| V.Literal<G>
 			| V.Literal.Boolean<G>
 			| V.Literal.Boolean.False<G>
 			| V.Literal.Boolean.True<G>
-			| V.Literal.Char<G>
+			| V.Literal.Character<G>
 			| V.Literal.Ellipsis<G>
 			| V.Literal.Null<G>
 			| V.Literal.Null.Undefined<G>
@@ -2443,13 +2477,19 @@ declare module './literal.ts' {
 			| V.Literal.Regex.Pattern<G>
 			| V.Literal.String<G>
 			| V.Literal.String.Bytes<G>
+			| V.Literal.String.Bytes.Multiline<G>
+			| V.Literal.String.Bytes.Raw<G>
+			| V.Literal.String.Bytes.Raw.Multiline<G>
 			| V.Literal.String.Concatenated<G>
 			| V.Literal.String.Escape<G>
-			| V.Literal.String.F<G>
+			| V.Literal.String.Interpolated<G>
+			| V.Literal.String.Interpolated.Multiline<G>
+			| V.Literal.String.Interpolated.Raw<G>
+			| V.Literal.String.Interpolated.Raw.Multiline<G>
+			| V.Literal.String.Multiline<G>
 			| V.Literal.String.Raw<G>
-			| V.Literal.String.Text<G>
-			| V.Literal.String.Triple<G>
-			| V.Literal.Template<G>;
+			| V.Literal.String.Raw.Multiline<G>
+			| V.Literal.String.Text<G>;
 	}
 }
 
@@ -2495,20 +2535,12 @@ declare module './modifier.ts' {
 	}
 }
 
-declare module './module.ts' {
-	namespace Module {
-		type Any<G extends GrammarContext<G>> = V.Module<G>;
-	}
-}
-
 declare module './pattern.ts' {
 	namespace Pattern {
-		interface Array<G extends GrammarContext<G>> extends destructuring.Pattern.Array<G> {}
+		interface As<G extends GrammarContext<G>> extends matchExpressions.Pattern.As<G> {}
 		interface Assignment<G extends GrammarContext<G>> extends destructuring.Pattern.Assignment<G> {}
-		interface Captured<G extends GrammarContext<G>> extends matchExpressions.Pattern.Captured<G> {}
 		interface Case<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case<G> {}
 		namespace Case {
-			interface As<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.As<G> {}
 			interface Class<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Class<G> {}
 			interface Complex<G extends GrammarContext<G>> extends complexNumbers.Pattern.Case.Complex<G> {}
 			interface Dictionary<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Dictionary<G> {}
@@ -2519,7 +2551,6 @@ declare module './pattern.ts' {
 			interface Tuple<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Tuple<G> {}
 			type Any<G extends GrammarContext<G>> =
 				| V.Pattern.Case<G>
-				| V.Pattern.Case.As<G>
 				| V.Pattern.Case.Class<G>
 				| V.Pattern.Case.Complex<G>
 				| V.Pattern.Case.Dictionary<G>
@@ -2559,11 +2590,9 @@ declare module './pattern.ts' {
 			type Any<G extends GrammarContext<G>> = V.Pattern.Reference<G> | V.Pattern.Reference.Value<G>;
 		}
 		interface Rest<G extends GrammarContext<G>> extends destructuring.Pattern.Rest<G> {}
-		interface Slice<G extends GrammarContext<G>> extends destructuring.Pattern.Slice<G> {}
-		interface Splat<G extends GrammarContext<G>> extends destructuring.Pattern.Splat<G> {}
-		namespace Splat {
-			interface Dictionary<G extends GrammarContext<G>> extends destructuring.Pattern.Splat.Dictionary<G> {}
-			type Any<G extends GrammarContext<G>> = V.Pattern.Splat<G> | V.Pattern.Splat.Dictionary<G>;
+		namespace Rest {
+			interface Map<G extends GrammarContext<G>> extends destructuring.Pattern.Rest.Map<G> {}
+			type Any<G extends GrammarContext<G>> = V.Pattern.Rest<G> | V.Pattern.Rest.Map<G>;
 		}
 		interface Struct<G extends GrammarContext<G>> extends structs.Pattern.Struct<G> {}
 		namespace Struct {
@@ -2583,12 +2612,9 @@ declare module './pattern.ts' {
 		interface Wildcard<G extends GrammarContext<G>> extends destructuring.Pattern.Wildcard<G> {}
 		type Any<G extends GrammarContext<G>> =
 			| V.Pattern<G>
-			| V.Pattern.Array<G>
 			| V.Pattern.As<G>
 			| V.Pattern.Assignment<G>
-			| V.Pattern.Captured<G>
 			| V.Pattern.Case<G>
-			| V.Pattern.Case.As<G>
 			| V.Pattern.Case.Class<G>
 			| V.Pattern.Case.Complex<G>
 			| V.Pattern.Case.Dictionary<G>
@@ -2611,9 +2637,7 @@ declare module './pattern.ts' {
 			| V.Pattern.Reference<G>
 			| V.Pattern.Reference.Value<G>
 			| V.Pattern.Rest<G>
-			| V.Pattern.Slice<G>
-			| V.Pattern.Splat<G>
-			| V.Pattern.Splat.Dictionary<G>
+			| V.Pattern.Rest.Map<G>
 			| V.Pattern.Struct<G>
 			| V.Pattern.Struct.Field<G>
 			| V.Pattern.Struct.Rest<G>
@@ -2658,29 +2682,30 @@ declare module './statement.ts' {
 			readonly typeOnly?: gate.In<G, features.TypeOnlyImports, typeOnlyImports.Statement.Import<G>['typeOnly']>;
 		}
 		namespace Import {
-			interface Crate<G extends GrammarContext<G>> extends modules.Statement.Import.Crate<G> {}
-			namespace Crate {
-				interface Private<G extends GrammarContext<G>> extends visibility.Statement.Import.Crate.Private<G> {}
-				interface Public<G extends GrammarContext<G>> extends visibility.Statement.Import.Crate.Public<G> {}
-				namespace Public {
-					interface Internal<G extends GrammarContext<G>> extends visibility.Statement.Import.Crate.Public
-						.Internal<G> {}
-					interface Restricted<G extends GrammarContext<G>> extends visibility.Statement.Import.Crate.Public
-						.Restricted<G> {}
-					type Any<G extends GrammarContext<G>> =
-						| V.Statement.Import.Crate.Public<G>
-						| V.Statement.Import.Crate.Public.Internal<G>
-						| V.Statement.Import.Crate.Public.Restricted<G>;
-				}
-				type Any<G extends GrammarContext<G>> =
-					| V.Statement.Import.Crate<G>
-					| V.Statement.Import.Crate.Private<G>
-					| V.Statement.Import.Crate.Public<G>
-					| V.Statement.Import.Crate.Public.Internal<G>
-					| V.Statement.Import.Crate.Public.Restricted<G>;
-			}
+			interface Alias<G extends GrammarContext<G>> extends modules.Statement.Import.Alias<G> {}
 			interface From<G extends GrammarContext<G>> extends modules.Statement.Import.From<G> {}
 			interface Future<G extends GrammarContext<G>> extends modules.Statement.Import.Future<G> {}
+			interface Package<G extends GrammarContext<G>> extends modules.Statement.Import.Package<G> {}
+			namespace Package {
+				interface Private<G extends GrammarContext<G>> extends visibility.Statement.Import.Package.Private<G> {}
+				interface Public<G extends GrammarContext<G>> extends visibility.Statement.Import.Package.Public<G> {}
+				namespace Public {
+					interface Internal<G extends GrammarContext<G>> extends visibility.Statement.Import.Package.Public
+						.Internal<G> {}
+					interface Restricted<G extends GrammarContext<G>> extends visibility.Statement.Import.Package.Public
+						.Restricted<G> {}
+					type Any<G extends GrammarContext<G>> =
+						| V.Statement.Import.Package.Public<G>
+						| V.Statement.Import.Package.Public.Internal<G>
+						| V.Statement.Import.Package.Public.Restricted<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Statement.Import.Package<G>
+					| V.Statement.Import.Package.Private<G>
+					| V.Statement.Import.Package.Public<G>
+					| V.Statement.Import.Package.Public.Internal<G>
+					| V.Statement.Import.Package.Public.Restricted<G>;
+			}
 			interface Private<G extends GrammarContext<G>> extends visibility.Statement.Import.Private<G> {}
 			interface Public<G extends GrammarContext<G>> extends visibility.Statement.Import.Public<G> {}
 			namespace Public {
@@ -2694,13 +2719,14 @@ declare module './statement.ts' {
 			interface Typeof<G extends GrammarContext<G>> extends modules.Statement.Import.Typeof<G> {}
 			type Any<G extends GrammarContext<G>> =
 				| V.Statement.Import<G>
-				| V.Statement.Import.Crate<G>
-				| V.Statement.Import.Crate.Private<G>
-				| V.Statement.Import.Crate.Public<G>
-				| V.Statement.Import.Crate.Public.Internal<G>
-				| V.Statement.Import.Crate.Public.Restricted<G>
+				| V.Statement.Import.Alias<G>
 				| V.Statement.Import.From<G>
 				| V.Statement.Import.Future<G>
+				| V.Statement.Import.Package<G>
+				| V.Statement.Import.Package.Private<G>
+				| V.Statement.Import.Package.Public<G>
+				| V.Statement.Import.Package.Public.Internal<G>
+				| V.Statement.Import.Package.Public.Restricted<G>
 				| V.Statement.Import.Private<G>
 				| V.Statement.Import.Public<G>
 				| V.Statement.Import.Public.Internal<G>
@@ -2714,9 +2740,9 @@ declare module './statement.ts' {
 		namespace Loop {
 			interface Counted<G extends GrammarContext<G>> extends countedLoops.Statement.Loop.Counted<G> {}
 			interface DoWhile<G extends GrammarContext<G>> extends postTestLoops.Statement.Loop.DoWhile<G> {}
-			interface For<G extends GrammarContext<G>> {
-				readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Statement.Loop.For<G>['async']>;
-				readonly label?: gate.In<G, features.LabeledControlFlow, labeledControlFlow.Statement.Loop.For<G>['label']>;
+			interface ForEach<G extends GrammarContext<G>> {
+				readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Statement.Loop.ForEach<G>['async']>;
+				readonly label?: gate.In<G, features.LabeledControlFlow, labeledControlFlow.Statement.Loop.ForEach<G>['label']>;
 			}
 			interface While<G extends GrammarContext<G>> {
 				readonly label?: gate.In<G, features.LabeledControlFlow, labeledControlFlow.Statement.Loop.While<G>['label']>;
@@ -2725,7 +2751,7 @@ declare module './statement.ts' {
 				| V.Statement.Loop<G>
 				| V.Statement.Loop.Counted<G>
 				| V.Statement.Loop.DoWhile<G>
-				| V.Statement.Loop.For<G>
+				| V.Statement.Loop.ForEach<G>
 				| V.Statement.Loop.While<G>;
 		}
 		interface Match<G extends GrammarContext<G>> extends matchExpressions.Statement.Match<G> {}
@@ -2735,13 +2761,13 @@ declare module './statement.ts' {
 			interface Chevron<G extends GrammarContext<G>> extends printStatements.Statement.Print.Chevron<G> {}
 			type Any<G extends GrammarContext<G>> = V.Statement.Print<G> | V.Statement.Print.Chevron<G>;
 		}
+		interface Resource<G extends GrammarContext<G>> extends resourceManagement.Statement.Resource<G> {
+			readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Statement.Resource<G>['async']>;
+		}
 		interface Scope<G extends GrammarContext<G>> extends dynamicScope.Statement.Scope<G> {}
 		interface Switch<G extends GrammarContext<G>> extends multiwayBranch.Statement.Switch<G> {}
 		interface Throw<G extends GrammarContext<G>> extends exceptions.Statement.Throw<G> {}
 		interface Try<G extends GrammarContext<G>> extends exceptions.Statement.Try<G> {}
-		interface With<G extends GrammarContext<G>> extends resourceManagement.Statement.With<G> {
-			readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Statement.With<G>['async']>;
-		}
 		type Any<G extends GrammarContext<G>> =
 			| V.Statement<G>
 			| V.Statement.Assert<G>
@@ -2760,13 +2786,14 @@ declare module './statement.ts' {
 			| V.Statement.Global<G>
 			| V.Statement.If<G>
 			| V.Statement.Import<G>
-			| V.Statement.Import.Crate<G>
-			| V.Statement.Import.Crate.Private<G>
-			| V.Statement.Import.Crate.Public<G>
-			| V.Statement.Import.Crate.Public.Internal<G>
-			| V.Statement.Import.Crate.Public.Restricted<G>
+			| V.Statement.Import.Alias<G>
 			| V.Statement.Import.From<G>
 			| V.Statement.Import.Future<G>
+			| V.Statement.Import.Package<G>
+			| V.Statement.Import.Package.Private<G>
+			| V.Statement.Import.Package.Public<G>
+			| V.Statement.Import.Package.Public.Internal<G>
+			| V.Statement.Import.Package.Public.Restricted<G>
 			| V.Statement.Import.Private<G>
 			| V.Statement.Import.Public<G>
 			| V.Statement.Import.Public.Internal<G>
@@ -2776,18 +2803,18 @@ declare module './statement.ts' {
 			| V.Statement.Loop<G>
 			| V.Statement.Loop.Counted<G>
 			| V.Statement.Loop.DoWhile<G>
-			| V.Statement.Loop.For<G>
+			| V.Statement.Loop.ForEach<G>
 			| V.Statement.Loop.While<G>
 			| V.Statement.Match<G>
 			| V.Statement.Nonlocal<G>
 			| V.Statement.Print<G>
 			| V.Statement.Print.Chevron<G>
+			| V.Statement.Resource<G>
 			| V.Statement.Return<G>
 			| V.Statement.Scope<G>
 			| V.Statement.Switch<G>
 			| V.Statement.Throw<G>
-			| V.Statement.Try<G>
-			| V.Statement.With<G>;
+			| V.Statement.Try<G>;
 	}
 }
 
@@ -2848,12 +2875,12 @@ declare module './type.ts' {
 		interface Intersection<G extends GrammarContext<G>> extends typeAnnotations.Type.Intersection<G> {}
 		interface Literal<G extends GrammarContext<G>> extends typeAnnotations.Type.Literal<G> {}
 		interface Lookup<G extends GrammarContext<G>> extends typeAnnotations.Type.Lookup<G> {}
-		interface Maybe<G extends GrammarContext<G>> extends typeAnnotations.Type.Maybe<G> {}
 		interface Named<G extends GrammarContext<G>> extends typeAnnotations.Type.Named<G> {}
 		namespace Named {
 			interface Prelude<G extends GrammarContext<G>> extends typeAnnotations.Type.Named.Prelude<G> {}
 			type Any<G extends GrammarContext<G>> = V.Type.Named<G> | V.Type.Named.Prelude<G>;
 		}
+		interface Nullable<G extends GrammarContext<G>> extends nullableTypes.Type.Nullable<G> {}
 		interface Object<G extends GrammarContext<G>> extends typeAnnotations.Type.Object<G> {}
 		interface Optional<G extends GrammarContext<G>> extends typeAnnotations.Type.Optional<G> {}
 		interface Parenthesized<G extends GrammarContext<G>> extends typeAnnotations.Type.Parenthesized<G> {}
@@ -2883,7 +2910,10 @@ declare module './type.ts' {
 			readonly lifetime?: gate.In<G, features.Lifetimes, lifetimes.Type.Reference<G>['lifetime']>;
 		}
 		interface Rest<G extends GrammarContext<G>> extends typeAnnotations.Type.Rest<G> {}
-		interface Splat<G extends GrammarContext<G>> extends typeAnnotations.Type.Splat<G> {}
+		namespace Rest {
+			interface Map<G extends GrammarContext<G>> extends typeAnnotations.Type.Rest.Map<G> {}
+			type Any<G extends GrammarContext<G>> = V.Type.Rest<G> | V.Type.Rest.Map<G>;
+		}
 		interface Template<G extends GrammarContext<G>> extends typeAnnotations.Type.Template<G> {}
 		interface Tuple<G extends GrammarContext<G>> extends typeAnnotations.Type.Tuple<G> {}
 		interface Union<G extends GrammarContext<G>> extends typeAnnotations.Type.Union<G> {}
@@ -2907,9 +2937,9 @@ declare module './type.ts' {
 			| V.Type.Intersection<G>
 			| V.Type.Literal<G>
 			| V.Type.Lookup<G>
-			| V.Type.Maybe<G>
 			| V.Type.Named<G>
 			| V.Type.Named.Prelude<G>
+			| V.Type.Nullable<G>
 			| V.Type.Object<G>
 			| V.Type.Optional<G>
 			| V.Type.Parenthesized<G>
@@ -2925,7 +2955,7 @@ declare module './type.ts' {
 			| V.Type.Readonly<G>
 			| V.Type.Reference<G>
 			| V.Type.Rest<G>
-			| V.Type.Splat<G>
+			| V.Type.Rest.Map<G>
 			| V.Type.Template<G>
 			| V.Type.Tuple<G>
 			| V.Type.Union<G>

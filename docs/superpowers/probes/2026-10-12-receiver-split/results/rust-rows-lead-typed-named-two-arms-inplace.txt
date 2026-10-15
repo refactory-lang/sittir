@@ -1,0 +1,19 @@
+  fromPass=247    fromTotal=247    fromTrivia=0
+  covPass=210    covTotal=210
+  read-render-parsePass=148    read-render-parseTotal=148    read-render-parseAstMatchPass=141    read-render-parseTrivia=0
+  read-render-parse-shallowPass=148    read-render-parse-shallowTotal=148    read-render-parse-shallowAstMatchPass=148    read-render-parse-shallowTrivia=0
+  factory-storagePass=1678    factory-storageTotal=1678    factory-storageAstMatchPass=1678
+  ir-storagePass=1379    ir-storageTotal=1379    ir-storageAstMatchPass=1379
+  built-render-parsePass=1876    built-render-parseTotal=1876    built-render-parseAstMatchPass=1840
+  read-render-parse-ast-mismatch first failures (5 of 10):
+    "Functions with precise capture syntax (parameters)" — parameters[1].parameters_elements_receiver: childCount 1 ≠ 2 [attributed_parameter_receiver] vs [attributed_parameter_receiver,","]
+    "Functions with empty precise capture syntax (parameters)" — parameters[1].parameters_elements_receiver: childCount 1 ≠ 2 [attributed_parameter_receiver] vs [attributed_parameter_receiver,","]
+    "Functions with custom types for self (parameters)" — parameters[1].parameters_elements_receiver: childCount 1 ≠ 2 [attributed_parameter_receiver] vs [attributed_parameter_receiver,","]
+    "Inherent Impls (parameters)" — parameters[1].parameters_elements_receiver: childCount 1 ≠ 2 [attributed_parameter_receiver] vs [attributed_parameter_receiver,","]
+    "Inherent Impls (parameters)" — parameters[1].parameters_elements_receiver: childCount 1 ≠ 2 [attributed_parameter_receiver] vs [attributed_parameter_receiver,","]
+  built-render-parse first failures (5 of 36):
+    "Functions with precise capture syntax (factory: function_item)" — function_item[3].parameters[1].parameters_elements_receiver: childCount 1 ≠ 2 [attributed_parameter_receiver] vs [attributed_parameter_receiver,","]
+    "Functions with precise capture syntax (factory: parameters)" — parameters[1].parameters_elements_receiver: childCount 1 ≠ 2 [attributed_parameter_receiver] vs [attributed_parameter_receiver,","]
+    "Functions with empty precise capture syntax (factory: function_item)" — function_item[2].parameters[1].parameters_elements_receiver: childCount 1 ≠ 2 [attributed_parameter_receiver] vs [attributed_parameter_receiver,","]
+    "Functions with empty precise capture syntax (factory: parameters)" — parameters[1].parameters_elements_receiver: childCount 1 ≠ 2 [attributed_parameter_receiver] vs [attributed_parameter_receiver,","]
+    "Functions with custom types for self (factory: trait_item)" — trait_item[2].declaration_list[1].function_signature_item[2].parameters[1].parameters_elements_receiver: childCount 1 ≠ 2 [attributed_parameter_receiver] vs [attributed_parameter_receiver,","]

@@ -12,9 +12,11 @@ export const triviaFacts = Object.freeze({
 		'_dedent',
 		'_double_blankline',
 		'_indent',
+		'_layout',
 		'_newline',
 		'_space',
 		'_tab',
+		'_tight',
 		'comment',
 		'comment_block',
 		'comment_line',
@@ -27,9 +29,10 @@ export const triviaFacts = Object.freeze({
 		419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 431, 432, 433, 459, 461, 462, 463, 464, 466
 	]),
 	listKinds: new Set<number>([376, 377, 379, 382, 383, 384, 385, 390]),
+	layout: new Set<number>([180, 181, 182, 183, 184, 185, 186, 187]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]))+)$/u,
-		kindIdByText: Object.freeze({ ' ': 181, '\t': 182, '\n': 183, '\n\n': 184, '\n\n\n': 185 })
+		kindIdByText: Object.freeze({ '': 180, ' ': 181, '\t': 182, '\n': 183, '\n\n': 184, '\n\n\n': 185 })
 	})
 } satisfies TriviaFacts);
 
@@ -132,8 +135,8 @@ export const querySlots: QuerySlots = Object.freeze({
 		['body', { fields: ['body'], kinds: [] }]
 	],
 	213: [
-		['await', { fields: ['await'], kinds: [] }],
-		['forHeader', { fields: [], kinds: ['for_header_lhs', 'for_header_var_kind', 'for_header_let_const_kind'] }],
+		['await', { fields: ['await'], kinds: [] }, 'await'],
+		['header', { fields: ['header'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
 	215: [
@@ -220,7 +223,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	244: [['content', { fields: [], kinds: ['class_heritage_extends_clause', 'implements_clause'] }]],
 	245: [
-		['async', { fields: ['async'], kinds: [] }],
+		['async', { fields: ['async'], kinds: [] }, 'async'],
 		['name', { fields: ['name'], kinds: [] }],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['parameters', { fields: ['parameters'], kinds: [] }],
@@ -228,7 +231,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['body', { fields: ['body'], kinds: [] }]
 	],
 	246: [
-		['async', { fields: ['async'], kinds: [] }],
+		['async', { fields: ['async'], kinds: [] }, 'async'],
 		['name', { fields: ['name'], kinds: [] }],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['parameters', { fields: ['parameters'], kinds: [] }],
@@ -237,7 +240,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
 	247: [
-		['async', { fields: ['async'], kinds: [] }],
+		['async', { fields: ['async'], kinds: [] }, 'async'],
 		['name', { fields: ['name'], kinds: [] }],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['parameters', { fields: ['parameters'], kinds: [] }],
@@ -245,7 +248,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['body', { fields: ['body'], kinds: [] }]
 	],
 	248: [
-		['async', { fields: ['async'], kinds: [] }],
+		['async', { fields: ['async'], kinds: [] }, 'async'],
 		['name', { fields: ['name'], kinds: [] }],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['parameters', { fields: ['parameters'], kinds: [] }],
@@ -254,7 +257,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
 	249: [
-		['async', { fields: ['async'], kinds: [] }],
+		['async', { fields: ['async'], kinds: [] }, 'async'],
 		['content', { fields: [], kinds: ['arrow_function_parameter', 'call_signature'] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
@@ -271,7 +274,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	257: [
 		['object', { fields: ['object'], kinds: [] }],
-		['optionalChain', { fields: ['optional_chain'], kinds: [] }],
+		['optionalChain', { fields: ['optional_chain'], kinds: [] }, '?.'],
 		['index', { fields: ['index'], kinds: [] }]
 	],
 	258: [
@@ -284,28 +287,6 @@ export const querySlots: QuerySlots = Object.freeze({
 					'subscript_expression',
 					'undefined',
 					'identifier',
-					'declare_keyword',
-					'namespace_keyword',
-					'type_keyword',
-					'public_keyword',
-					'private_keyword',
-					'protected_keyword',
-					'override_keyword',
-					'readonly_keyword',
-					'module_keyword',
-					'any_keyword',
-					'number_keyword',
-					'boolean_keyword',
-					'string_keyword',
-					'symbol_keyword',
-					'export_keyword',
-					'object_keyword',
-					'new_keyword',
-					'get_keyword',
-					'set_keyword',
-					'async_keyword',
-					'static_keyword',
-					'let_keyword',
 					'object_pattern',
 					'array_pattern',
 					'non_null_expression'
@@ -314,7 +295,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		]
 	],
 	259: [
-		['using', { fields: ['using'], kinds: [] }],
+		['using', { fields: ['using'], kinds: [] }, 'using'],
 		['left', { fields: ['left'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }]
 	],
@@ -373,28 +354,6 @@ export const querySlots: QuerySlots = Object.freeze({
 					'subscript_expression',
 					'undefined',
 					'identifier',
-					'declare_keyword',
-					'namespace_keyword',
-					'type_keyword',
-					'public_keyword',
-					'private_keyword',
-					'protected_keyword',
-					'override_keyword',
-					'readonly_keyword',
-					'module_keyword',
-					'any_keyword',
-					'number_keyword',
-					'boolean_keyword',
-					'string_keyword',
-					'symbol_keyword',
-					'export_keyword',
-					'object_keyword',
-					'new_keyword',
-					'get_keyword',
-					'set_keyword',
-					'async_keyword',
-					'static_keyword',
-					'let_keyword',
 					'object_pattern',
 					'array_pattern',
 					'non_null_expression'
@@ -404,13 +363,13 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	285: [
 		['accessibilityModifier', { fields: ['accessibility_modifier'], kinds: [] }],
-		['static', { fields: ['static'], kinds: [] }],
-		['override', { fields: ['override'], kinds: [] }],
-		['readonly', { fields: ['readonly'], kinds: [] }],
-		['async', { fields: ['async'], kinds: [] }],
+		['static', { fields: ['static'], kinds: [] }, 'static'],
+		['override', { fields: ['override'], kinds: [] }, 'override'],
+		['readonly', { fields: ['readonly'], kinds: [] }, 'readonly'],
+		['async', { fields: ['async'], kinds: [] }, 'async'],
 		['accessorKind', { fields: ['accessor_kind'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }],
-		['optional', { fields: ['optional'], kinds: [] }],
+		['optional', { fields: ['optional'], kinds: [] }, '?'],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['parameters', { fields: ['parameters'], kinds: [] }],
 		['returnType', { fields: ['return_type'], kinds: [] }],
@@ -427,13 +386,13 @@ export const querySlots: QuerySlots = Object.freeze({
 	289: [['expression', { fields: ['expression'], kinds: [] }]],
 	290: [
 		['decorators', { fields: ['decorator'], kinds: [] }],
-		['declare', { fields: ['declare'], kinds: [] }],
+		['declare', { fields: ['declare'], kinds: [] }, 'declare'],
 		['accessibilityModifier', { fields: ['accessibility_modifier'], kinds: [] }],
-		['static', { fields: ['static'], kinds: [] }],
-		['override', { fields: ['override'], kinds: [] }],
-		['readonly', { fields: ['readonly'], kinds: [] }],
-		['abstract', { fields: ['abstract'], kinds: [] }],
-		['accessor', { fields: ['accessor'], kinds: [] }],
+		['static', { fields: ['static'], kinds: [] }, 'static'],
+		['override', { fields: ['override'], kinds: [] }, 'override'],
+		['readonly', { fields: ['readonly'], kinds: [] }, 'readonly'],
+		['abstract', { fields: ['abstract'], kinds: [] }, 'abstract'],
+		['accessor', { fields: ['accessor'], kinds: [] }, 'accessor'],
 		['name', { fields: ['name'], kinds: [] }],
 		['optionality', { fields: ['optionality'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }],
@@ -442,29 +401,29 @@ export const querySlots: QuerySlots = Object.freeze({
 	292: [['expression', { fields: ['expression'], kinds: [] }]],
 	293: [
 		['accessibilityModifier', { fields: ['accessibility_modifier'], kinds: [] }],
-		['static', { fields: ['static'], kinds: [] }],
-		['override', { fields: ['override'], kinds: [] }],
-		['readonly', { fields: ['readonly'], kinds: [] }],
-		['async', { fields: ['async'], kinds: [] }],
+		['static', { fields: ['static'], kinds: [] }, 'static'],
+		['override', { fields: ['override'], kinds: [] }, 'override'],
+		['readonly', { fields: ['readonly'], kinds: [] }, 'readonly'],
+		['async', { fields: ['async'], kinds: [] }, 'async'],
 		['accessorKind', { fields: ['accessor_kind'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }],
-		['optional', { fields: ['optional'], kinds: [] }],
+		['optional', { fields: ['optional'], kinds: [] }, '?'],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['parameters', { fields: ['parameters'], kinds: [] }],
 		['returnType', { fields: ['return_type'], kinds: [] }]
 	],
 	294: [
 		['accessibilityModifier', { fields: ['accessibility_modifier'], kinds: [] }],
-		['override', { fields: ['override'], kinds: [] }],
+		['override', { fields: ['override'], kinds: [] }, 'override'],
 		['accessorKind', { fields: ['accessor_kind'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }],
-		['optional', { fields: ['optional'], kinds: [] }],
+		['optional', { fields: ['optional'], kinds: [] }, '?'],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['parameters', { fields: ['parameters'], kinds: [] }],
 		['returnType', { fields: ['return_type'], kinds: [] }]
 	],
 	295: [
-		['async', { fields: ['async'], kinds: [] }],
+		['async', { fields: ['async'], kinds: [] }, 'async'],
 		['name', { fields: ['name'], kinds: [] }],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['parameters', { fields: ['parameters'], kinds: [] }],
@@ -492,7 +451,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['name', { fields: ['name'], kinds: [] }],
 		['source', { fields: ['source'], kinds: [] }]
 	],
-	302: [['extendsClauseSingles', { fields: [], kinds: ['extends_clause_single'] }]],
+	302: [['types', { fields: ['types'], kinds: [] }]],
 	303: [
 		['value', { fields: ['value'], kinds: [] }],
 		['typeArguments', { fields: ['type_arguments'], kinds: [] }]
@@ -556,7 +515,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	313: [['types', { fields: ['type'], kinds: [] }]],
 	314: [
-		['const', { fields: ['const'], kinds: [] }],
+		['const', { fields: ['const'], kinds: [] }, 'const'],
 		['name', { fields: ['name'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
@@ -574,8 +533,8 @@ export const querySlots: QuerySlots = Object.freeze({
 	320: [
 		['decorators', { fields: ['decorator'], kinds: [] }],
 		['accessibilityModifier', { fields: [], kinds: ['accessibility_modifier'] }],
-		['override', { fields: ['override'], kinds: [] }],
-		['readonly', { fields: ['readonly'], kinds: [] }],
+		['override', { fields: ['override'], kinds: [] }, 'override'],
+		['readonly', { fields: ['readonly'], kinds: [] }, 'readonly'],
 		['pattern', { fields: ['pattern'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }],
 		['value', { fields: ['value'], kinds: [] }]
@@ -583,8 +542,8 @@ export const querySlots: QuerySlots = Object.freeze({
 	321: [
 		['decorators', { fields: ['decorator'], kinds: [] }],
 		['accessibilityModifier', { fields: [], kinds: ['accessibility_modifier'] }],
-		['override', { fields: ['override'], kinds: [] }],
-		['readonly', { fields: ['readonly'], kinds: [] }],
+		['override', { fields: ['override'], kinds: [] }, 'override'],
+		['readonly', { fields: ['readonly'], kinds: [] }, 'readonly'],
 		['pattern', { fields: ['pattern'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }],
 		['value', { fields: ['value'], kinds: [] }]
@@ -614,7 +573,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	334: [['type', { fields: ['type'], kinds: [] }]],
 	335: [['type', { fields: ['type'], kinds: [] }]],
 	337: [
-		['abstract', { fields: ['abstract'], kinds: [] }],
+		['abstract', { fields: ['abstract'], kinds: [] }, 'abstract'],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['parameters', { fields: ['parameters'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }]
@@ -647,7 +606,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	347: [
 		['object', { fields: ['object'], kinds: [] }],
-		['optionalChain', { fields: ['optional_chain'], kinds: [] }],
+		['optionalChain', { fields: ['optional_chain'], kinds: [] }, '?.'],
 		['index', { fields: ['index'], kinds: [] }]
 	],
 	348: [
@@ -712,16 +671,16 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	363: [
 		['accessibilityModifier', { fields: ['accessibility_modifier'], kinds: [] }],
-		['static', { fields: ['static'], kinds: [] }],
-		['override', { fields: ['override'], kinds: [] }],
-		['readonly', { fields: ['readonly'], kinds: [] }],
+		['static', { fields: ['static'], kinds: [] }, 'static'],
+		['override', { fields: ['override'], kinds: [] }, 'override'],
+		['readonly', { fields: ['readonly'], kinds: [] }, 'readonly'],
 		['name', { fields: ['name'], kinds: [] }],
-		['optional', { fields: ['optional'], kinds: [] }],
+		['optional', { fields: ['optional'], kinds: [] }, '?'],
 		['type', { fields: ['type'], kinds: [] }]
 	],
 	364: [['elements', { fields: ['elements'], kinds: [] }]],
 	365: [
-		['const', { fields: ['const'], kinds: [] }],
+		['const', { fields: ['const'], kinds: [] }, 'const'],
 		['name', { fields: ['name'], kinds: [] }],
 		['constraint', { fields: ['constraint'], kinds: [] }],
 		['value', { fields: ['value'], kinds: [] }]
@@ -732,7 +691,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['type', { fields: ['type'], kinds: [] }]
 	],
 	368: [
-		['abstract', { fields: ['abstract'], kinds: [] }],
+		['abstract', { fields: ['abstract'], kinds: [] }, 'abstract'],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['parameters', { fields: ['parameters'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }]
@@ -801,14 +760,14 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	401: [
 		['sign', { fields: ['sign'], kinds: [] }],
-		['readonly', { fields: ['readonly'], kinds: [] }],
+		['readonly', { fields: ['readonly'], kinds: [] }, 'readonly'],
 		['name', { fields: ['name'], kinds: [] }],
 		['indexType', { fields: ['index_type'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }]
 	],
 	402: [
 		['sign', { fields: ['sign'], kinds: [] }],
-		['readonly', { fields: ['readonly'], kinds: [] }],
+		['readonly', { fields: ['readonly'], kinds: [] }, 'readonly'],
 		['mappedTypeClause', { fields: [], kinds: ['mapped_type_clause'] }],
 		['type', { fields: ['type'], kinds: [] }]
 	],
@@ -827,34 +786,12 @@ export const querySlots: QuerySlots = Object.freeze({
 					'instantiation_expression',
 					'internal_module',
 					'type_assertion',
-					'identifier',
 					'subscript_expression',
 					'member_expression',
 					'parenthesized_expression_typed',
 					'parenthesized_expression_sequence',
 					'undefined',
-					'declare_keyword',
-					'namespace_keyword',
-					'type_keyword',
-					'public_keyword',
-					'private_keyword',
-					'protected_keyword',
-					'override_keyword',
-					'readonly_keyword',
-					'module_keyword',
-					'any_keyword',
-					'number_keyword',
-					'boolean_keyword',
-					'string_keyword',
-					'symbol_keyword',
-					'export_keyword',
-					'object_keyword',
-					'new_keyword',
-					'get_keyword',
-					'set_keyword',
-					'async_keyword',
-					'static_keyword',
-					'let_keyword',
+					'identifier',
 					'this',
 					'super',
 					'number_hex',
@@ -921,34 +858,12 @@ export const querySlots: QuerySlots = Object.freeze({
 					'instantiation_expression',
 					'internal_module',
 					'type_assertion',
-					'identifier',
 					'subscript_expression',
 					'member_expression',
 					'parenthesized_expression_typed',
 					'parenthesized_expression_sequence',
 					'undefined',
-					'declare_keyword',
-					'namespace_keyword',
-					'type_keyword',
-					'public_keyword',
-					'private_keyword',
-					'protected_keyword',
-					'override_keyword',
-					'readonly_keyword',
-					'module_keyword',
-					'any_keyword',
-					'number_keyword',
-					'boolean_keyword',
-					'string_keyword',
-					'symbol_keyword',
-					'export_keyword',
-					'object_keyword',
-					'new_keyword',
-					'get_keyword',
-					'set_keyword',
-					'async_keyword',
-					'static_keyword',
-					'let_keyword',
+					'identifier',
 					'this',
 					'super',
 					'number_hex',
@@ -1027,11 +942,11 @@ export const querySlots: QuerySlots = Object.freeze({
 		['implementsClause', { fields: [], kinds: ['implements_clause'] }]
 	],
 	419: [
-		['identifier', { fields: [], kinds: ['identifier', 'type_keyword'] }],
+		['identifier', { fields: [], kinds: ['identifier'] }],
 		['importClauseGroup', { fields: [], kinds: ['import_clause_group'] }]
 	],
 	420: [
-		['type', { fields: ['type'], kinds: [] }],
+		['type', { fields: ['type'], kinds: [] }, 'type'],
 		[
 			'content',
 			{

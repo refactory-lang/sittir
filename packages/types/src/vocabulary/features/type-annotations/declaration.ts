@@ -69,8 +69,5 @@ export namespace Declaration {
 		export interface Pattern<G extends GrammarContext<G>> {
 			readonly type?: G['slots']['declaration.variable.pattern']['type'];
 		}
-		export interface Static<G extends GrammarContext<G>> {
-			readonly type: G['slots']['declaration.variable.static']['type'];
-		}
 	}
 }

@@ -11,7 +11,8 @@ paths=(packages/types/src/vocabulary)
 for g in python rust typescript; do
 	paths+=("packages/$g/bindings.scm" "packages/$g/.sittir/src/node-types.json" "packages/$g/.sittir/src/grammar.json")
 done
-git -C "$ROOT" archive "$COMMIT" "${paths[@]}" | tar -x -C "$WORK"
+git -C "$ROOT" archive -o "$WORK/sources.tar" "$COMMIT" "${paths[@]}"
+tar -x -C "$WORK" -f "$WORK/sources.tar"
 echo "$(git -C "$ROOT" rev-parse --short "$COMMIT")"
 python3 -I "$HERE/census.py" "$WORK" "$WORK/census.json"
 python3 -I "$HERE/report.py" "$WORK" "$WORK/census.json" "$HERE/proposal.json" "$HERE/results"

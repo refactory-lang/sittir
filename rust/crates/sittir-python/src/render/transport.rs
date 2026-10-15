@@ -49,6 +49,8 @@ pub enum AnyTransport {
     ExpressionStatement(ExpressionStatementTransport),
     #[kind(kind::NAMED_EXPRESSION)]
     NamedExpression(NamedExpressionTransport),
+    #[kind(kind::_NAMED_EXPRESSION_LHS)]
+    NamedExpressionLhs(NamedExpressionLhsTransport),
     #[kind(kind::RETURN_STATEMENT)]
     ReturnStatement(ReturnStatementTransport),
     #[kind(kind::DELETE_STATEMENT)]
@@ -239,7 +241,7 @@ pub enum AnyTransport {
     FormatSpecifier(FormatSpecifierTransport),
     #[kind(kind::TYPE_CONVERSION)]
     TypeConversion(TypeConversionTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::AWAIT)]
     Await(AwaitTransport),
@@ -439,18 +441,6 @@ pub enum AnyTransport {
     GtGt,
     #[kind(kind::ASSERT_KEYWORD)]
     AssertKeyword,
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::COLON_EQ)]
     ColonEq,
     #[kind(kind::RETURN_KEYWORD)]
@@ -473,8 +463,12 @@ pub enum AnyTransport {
     ElifKeyword,
     #[kind(kind::ELSE_KEYWORD)]
     ElseKeyword,
+    #[kind(kind::MATCH_KEYWORD)]
+    MatchKeyword,
     #[kind(kind::CASE_KEYWORD)]
     CaseKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
+    AsyncKeyword,
     #[kind(kind::FOR_KEYWORD)]
     ForKeyword,
     #[kind(kind::IN_KEYWORD)]
@@ -503,6 +497,10 @@ pub enum AnyTransport {
     GlobalKeyword,
     #[kind(kind::NONLOCAL_KEYWORD)]
     NonlocalKeyword,
+    #[kind(kind::EXEC_KEYWORD)]
+    ExecKeyword,
+    #[kind(kind::TYPE_KEYWORD)]
+    TypeKeyword,
     #[kind(kind::EQ)]
     Eq,
     #[kind(kind::CLASS_KEYWORD)]
@@ -579,6 +577,10 @@ pub enum AnyTransport {
     Comma,
     #[kind(kind::BSLASH)]
     Bslash,
+    #[kind(kind::AWAIT_KEYWORD)]
+    AwaitKeyword,
+    #[kind(kind::PRINT_KEYWORD)]
+    PrintKeyword,
     #[kind(kind::LT)]
     Lt,
     #[kind(kind::LT_EQ)]
@@ -620,6 +622,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::AssertStatement(t) => t.prepare(ctx),
             AnyTransport::ExpressionStatement(t) => t.prepare(ctx),
             AnyTransport::NamedExpression(t) => t.prepare(ctx),
+            AnyTransport::NamedExpressionLhs(t) => t.prepare(ctx),
             AnyTransport::ReturnStatement(t) => t.prepare(ctx),
             AnyTransport::DeleteStatement(t) => t.prepare(ctx),
             AnyTransport::RaiseStatement(t) => t.prepare(ctx),
@@ -810,12 +813,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Star => Ok(()),
             AnyTransport::GtGt => Ok(()),
             AnyTransport::AssertKeyword => Ok(()),
-            AnyTransport::PrintKeyword => Ok(()),
-            AnyTransport::ExecKeyword => Ok(()),
-            AnyTransport::AsyncKeyword => Ok(()),
-            AnyTransport::AwaitKeyword => Ok(()),
-            AnyTransport::TypeKeyword => Ok(()),
-            AnyTransport::MatchKeyword => Ok(()),
             AnyTransport::ColonEq => Ok(()),
             AnyTransport::ReturnKeyword => Ok(()),
             AnyTransport::DelKeyword => Ok(()),
@@ -827,7 +824,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Colon => Ok(()),
             AnyTransport::ElifKeyword => Ok(()),
             AnyTransport::ElseKeyword => Ok(()),
+            AnyTransport::MatchKeyword => Ok(()),
             AnyTransport::CaseKeyword => Ok(()),
+            AnyTransport::AsyncKeyword => Ok(()),
             AnyTransport::ForKeyword => Ok(()),
             AnyTransport::InKeyword => Ok(()),
             AnyTransport::WhileKeyword => Ok(()),
@@ -842,6 +841,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::StarStar => Ok(()),
             AnyTransport::GlobalKeyword => Ok(()),
             AnyTransport::NonlocalKeyword => Ok(()),
+            AnyTransport::ExecKeyword => Ok(()),
+            AnyTransport::TypeKeyword => Ok(()),
             AnyTransport::Eq => Ok(()),
             AnyTransport::ClassKeyword => Ok(()),
             AnyTransport::Lbrack => Ok(()),
@@ -880,6 +881,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::YieldKeyword => Ok(()),
             AnyTransport::Comma => Ok(()),
             AnyTransport::Bslash => Ok(()),
+            AnyTransport::AwaitKeyword => Ok(()),
+            AnyTransport::PrintKeyword => Ok(()),
             AnyTransport::Lt => Ok(()),
             AnyTransport::LtEq => Ok(()),
             AnyTransport::EqEq => Ok(()),
@@ -891,295 +894,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::IsKeyword => Ok(()),
             AnyTransport::IsNot => Ok(()),
             AnyTransport::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            AnyTransport::Module(t) => t.source_gap(),
-            AnyTransport::SimpleStatements(t) => t.source_gap(),
-            AnyTransport::ImportStatement(t) => t.source_gap(),
-            AnyTransport::ImportPrefix(t) => t.source_gap(),
-            AnyTransport::RelativeImport(t) => t.source_gap(),
-            AnyTransport::FutureImportStatement(t) => t.source_gap(),
-            AnyTransport::ImportFromStatement(t) => t.source_gap(),
-            AnyTransport::ImportList(t) => t.source_gap(),
-            AnyTransport::AliasedImport(t) => t.source_gap(),
-            AnyTransport::PrintStatement(t) => t.source_gap(),
-            AnyTransport::Chevron(t) => t.source_gap(),
-            AnyTransport::AssertStatement(t) => t.source_gap(),
-            AnyTransport::ExpressionStatement(t) => t.source_gap(),
-            AnyTransport::NamedExpression(t) => t.source_gap(),
-            AnyTransport::ReturnStatement(t) => t.source_gap(),
-            AnyTransport::DeleteStatement(t) => t.source_gap(),
-            AnyTransport::RaiseStatement(t) => t.source_gap(),
-            AnyTransport::IfStatement(t) => t.source_gap(),
-            AnyTransport::ElifClause(t) => t.source_gap(),
-            AnyTransport::ElseClause(t) => t.source_gap(),
-            AnyTransport::MatchStatement(t) => t.source_gap(),
-            AnyTransport::MatchBlock(t) => t.source_gap(),
-            AnyTransport::CaseClause(t) => t.source_gap(),
-            AnyTransport::ForStatement(t) => t.source_gap(),
-            AnyTransport::WhileStatement(t) => t.source_gap(),
-            AnyTransport::TryStatement(t) => t.source_gap(),
-            AnyTransport::ExceptClause(t) => t.source_gap(),
-            AnyTransport::FinallyClause(t) => t.source_gap(),
-            AnyTransport::WithStatement(t) => t.source_gap(),
-            AnyTransport::WithItem(t) => t.source_gap(),
-            AnyTransport::FunctionDefinition(t) => t.source_gap(),
-            AnyTransport::Parameters(t) => t.source_gap(),
-            AnyTransport::LambdaParameters(t) => t.source_gap(),
-            AnyTransport::ListSplat(t) => t.source_gap(),
-            AnyTransport::DictionarySplat(t) => t.source_gap(),
-            AnyTransport::GlobalStatement(t) => t.source_gap(),
-            AnyTransport::NonlocalStatement(t) => t.source_gap(),
-            AnyTransport::ExecStatement(t) => t.source_gap(),
-            AnyTransport::TypeAliasStatement(t) => t.source_gap(),
-            AnyTransport::ClassDefinition(t) => t.source_gap(),
-            AnyTransport::TypeParameter(t) => t.source_gap(),
-            AnyTransport::ParenthesizedListSplat(t) => t.source_gap(),
-            AnyTransport::ArgumentList(t) => t.source_gap(),
-            AnyTransport::DecoratedDefinition(t) => t.source_gap(),
-            AnyTransport::Decorator(t) => t.source_gap(),
-            AnyTransport::Block(t) => t.source_gap(),
-            AnyTransport::ExpressionList(t) => t.source_gap(),
-            AnyTransport::DottedName(t) => t.source_gap(),
-            AnyTransport::CasePattern(t) => t.source_gap(),
-            AnyTransport::SimplePattern(t) => t.source_gap(),
-            AnyTransport::CaseAsPattern(t) => t.source_gap(),
-            AnyTransport::UnionPattern(t) => t.source_gap(),
-            AnyTransport::DictPattern(t) => t.source_gap(),
-            AnyTransport::KeyValuePattern(t) => t.source_gap(),
-            AnyTransport::KeywordPattern(t) => t.source_gap(),
-            AnyTransport::SplatPattern(t) => t.source_gap(),
-            AnyTransport::ClassPattern(t) => t.source_gap(),
-            AnyTransport::ComplexPattern(t) => t.source_gap(),
-            AnyTransport::ParametersElements(t) => t.source_gap(),
-            AnyTransport::Patterns(t) => t.source_gap(),
-            AnyTransport::TuplePattern(t) => t.source_gap(),
-            AnyTransport::ListPattern(t) => t.source_gap(),
-            AnyTransport::DefaultParameter(t) => t.source_gap(),
-            AnyTransport::TypedDefaultParameter(t) => t.source_gap(),
-            AnyTransport::ListSplatPattern(t) => t.source_gap(),
-            AnyTransport::DictionarySplatPattern(t) => t.source_gap(),
-            AnyTransport::AsPattern(t) => t.source_gap(),
-            AnyTransport::NotOperator(t) => t.source_gap(),
-            AnyTransport::BooleanOperator(t) => t.source_gap(),
-            AnyTransport::BinaryOperator(t) => t.source_gap(),
-            AnyTransport::UnaryOperator(t) => t.source_gap(),
-            AnyTransport::ComparisonOperator(t) => t.source_gap(),
-            AnyTransport::Lambda(t) => t.source_gap(),
-            AnyTransport::LambdaWithinForInClause(t) => t.source_gap(),
-            AnyTransport::AugmentedAssignment(t) => t.source_gap(),
-            AnyTransport::PatternList(t) => t.source_gap(),
-            AnyTransport::Yield(t) => t.source_gap(),
-            AnyTransport::Attribute(t) => t.source_gap(),
-            AnyTransport::Subscript(t) => t.source_gap(),
-            AnyTransport::Slice(t) => t.source_gap(),
-            AnyTransport::Call(t) => t.source_gap(),
-            AnyTransport::TypedParameter(t) => t.source_gap(),
-            AnyTransport::Type(t) => t.source_gap(),
-            AnyTransport::SplatType(t) => t.source_gap(),
-            AnyTransport::GenericType(t) => t.source_gap(),
-            AnyTransport::UnionType(t) => t.source_gap(),
-            AnyTransport::ConstrainedType(t) => t.source_gap(),
-            AnyTransport::MemberType(t) => t.source_gap(),
-            AnyTransport::KeywordArgument(t) => t.source_gap(),
-            AnyTransport::List(t) => t.source_gap(),
-            AnyTransport::Set(t) => t.source_gap(),
-            AnyTransport::Tuple(t) => t.source_gap(),
-            AnyTransport::Dictionary(t) => t.source_gap(),
-            AnyTransport::Pair(t) => t.source_gap(),
-            AnyTransport::ListComprehension(t) => t.source_gap(),
-            AnyTransport::DictionaryComprehension(t) => t.source_gap(),
-            AnyTransport::SetComprehension(t) => t.source_gap(),
-            AnyTransport::GeneratorExpression(t) => t.source_gap(),
-            AnyTransport::ParenthesizedExpression(t) => t.source_gap(),
-            AnyTransport::CollectionElements(t) => t.source_gap(),
-            AnyTransport::ForInClause(t) => t.source_gap(),
-            AnyTransport::IfClause(t) => t.source_gap(),
-            AnyTransport::ConditionalExpression(t) => t.source_gap(),
-            AnyTransport::ConcatenatedString(t) => t.source_gap(),
-            AnyTransport::String(t) => t.source_gap(),
-            AnyTransport::StringContent(t) => t.source_gap(),
-            AnyTransport::Interpolation(t) => t.source_gap(),
-            AnyTransport::FormatSpecifier(t) => t.source_gap(),
-            AnyTransport::TypeConversion(t) => t.source_gap(),
-            AnyTransport::Identifier(t) => t.source_gap(),
-            AnyTransport::Await(t) => t.source_gap(),
-            AnyTransport::Comment(t) => t.source_gap(),
-            AnyTransport::SimpleStatementsElements(t) => t.source_gap(),
-            AnyTransport::Subjects(t) => t.source_gap(),
-            AnyTransport::CasePatterns(t) => t.source_gap(),
-            AnyTransport::WithClauseWithItems(t) => t.source_gap(),
-            AnyTransport::Types(t) => t.source_gap(),
-            AnyTransport::ArgumentListElements(t) => t.source_gap(),
-            AnyTransport::ListPatternCasePatterns(t) => t.source_gap(),
-            AnyTransport::DictPatternElements(t) => t.source_gap(),
-            AnyTransport::Subscripts(t) => t.source_gap(),
-            AnyTransport::DictionaryElements(t) => t.source_gap(),
-            AnyTransport::SliceGroup(t) => t.source_gap(),
-            AnyTransport::FormatSpecifierText(t) => t.source_gap(),
-            AnyTransport::TuplePatternElements(t) => t.source_gap(),
-            AnyTransport::TupleElements(t) => t.source_gap(),
-            AnyTransport::ExceptClauseExceptionAs(t) => t.source_gap(),
-            AnyTransport::CaseTuplePattern(t) => t.source_gap(),
-            AnyTransport::CaseListPattern(t) => t.source_gap(),
-            AnyTransport::PrintArguments(t) => t.source_gap(),
-            AnyTransport::PrintChevronArguments(t) => t.source_gap(),
-            AnyTransport::PrintStatementChevron(t) => t.source_gap(),
-            AnyTransport::PrintStatementPlain(t) => t.source_gap(),
-            AnyTransport::ParenthesizedImportList(t) => t.source_gap(),
-            AnyTransport::ComprehensionClauses(t) => t.source_gap(),
-            AnyTransport::IntegerHex(t) => t.source_gap(),
-            AnyTransport::IntegerOctal(t) => t.source_gap(),
-            AnyTransport::IntegerBinary(t) => t.source_gap(),
-            AnyTransport::IntegerDecimalLong(t) => t.source_gap(),
-            AnyTransport::IntegerDecimalImaginary(t) => t.source_gap(),
-            AnyTransport::IntegerDecimalPlain(t) => t.source_gap(),
-            AnyTransport::FloatPoint(t) => t.source_gap(),
-            AnyTransport::FloatLeadingPoint(t) => t.source_gap(),
-            AnyTransport::FloatScientific(t) => t.source_gap(),
-            AnyTransport::EscapeSequenceUnicodeFixed(t) => t.source_gap(),
-            AnyTransport::EscapeSequenceUnicodeWide(t) => t.source_gap(),
-            AnyTransport::EscapeSequenceHex(t) => t.source_gap(),
-            AnyTransport::EscapeSequenceOctal(t) => t.source_gap(),
-            AnyTransport::EscapeSequenceLineBreak(t) => t.source_gap(),
-            AnyTransport::EscapeSequenceSimple(t) => t.source_gap(),
-            AnyTransport::EscapeSequenceNamed(t) => t.source_gap(),
-            AnyTransport::LineContinuationNewline(t) => t.source_gap(),
-            AnyTransport::SimplePatternNegative(t) => t.source_gap(),
-            AnyTransport::ExceptClauseExceptionList(t) => t.source_gap(),
-            AnyTransport::ExceptClauseException(t) => t.source_gap(),
-            AnyTransport::AssignmentEq(t) => t.source_gap(),
-            AnyTransport::AssignmentType(t) => t.source_gap(),
-            AnyTransport::AssignmentTyped(t) => t.source_gap(),
-            AnyTransport::ExpressionStatementTuple(t) => t.source_gap(),
-            AnyTransport::WithClauseBare(t) => t.source_gap(),
-            AnyTransport::WithClauseParen(t) => t.source_gap(),
-            AnyTransport::MatchBlockBlock(t) => t.source_gap(),
-            AnyTransport::MatchBlockEmpty(t) => t.source_gap(),
-            AnyTransport::SuiteInline(t) => t.source_gap(),
-            AnyTransport::SuiteBlock(t) => t.source_gap(),
-            AnyTransport::SuiteEmpty(t) => t.source_gap(),
-            AnyTransport::ComparisonOperatorComparator(t) => t.source_gap(),
-            AnyTransport::YieldFromClause(t) => t.source_gap(),
-            AnyTransport::StringStart(t) => t.source_gap(),
-            AnyTransport::StringFragment(t) => t.source_gap(),
-            AnyTransport::EscapeInterpolation(t) => t.source_gap(),
-            AnyTransport::StringEnd(t) => t.source_gap(),
-            AnyTransport::Names(t) => t.source_gap(),
-            AnyTransport::AsPatternTarget(t) => t.source_gap(),
-            AnyTransport::FormatExpression(t) => t.source_gap(),
-            AnyTransport::WildcardImport => None,
-            AnyTransport::PassStatement(_) => None,
-            AnyTransport::BreakStatement(_) => None,
-            AnyTransport::ContinueStatement(_) => None,
-            AnyTransport::Ellipsis(_) => None,
-            AnyTransport::NotEscapeSequence => None,
-            AnyTransport::True(_) => None,
-            AnyTransport::False(_) => None,
-            AnyTransport::None(_) => None,
-            AnyTransport::PositionalSeparator(_) => None,
-            AnyTransport::KeywordSeparator(_) => None,
-            AnyTransport::WildcardPattern(_) => None,
-            AnyTransport::LineContinuationNul => None,
-            AnyTransport::Indent => None,
-            AnyTransport::Dedent => None,
-            AnyTransport::Tight => None,
-            AnyTransport::Space => None,
-            AnyTransport::Tab => None,
-            AnyTransport::Newline => None,
-            AnyTransport::Blankline => None,
-            AnyTransport::DoubleBlankline => None,
-            AnyTransport::ImportKeyword => None,
-            AnyTransport::Dot => None,
-            AnyTransport::FromKeyword => None,
-            AnyTransport::FutureUKeyword => None,
-            AnyTransport::AsKeyword => None,
-            AnyTransport::Star => None,
-            AnyTransport::GtGt => None,
-            AnyTransport::AssertKeyword => None,
-            AnyTransport::PrintKeyword => None,
-            AnyTransport::ExecKeyword => None,
-            AnyTransport::AsyncKeyword => None,
-            AnyTransport::AwaitKeyword => None,
-            AnyTransport::TypeKeyword => None,
-            AnyTransport::MatchKeyword => None,
-            AnyTransport::ColonEq => None,
-            AnyTransport::ReturnKeyword => None,
-            AnyTransport::DelKeyword => None,
-            AnyTransport::RaiseKeyword => None,
-            AnyTransport::PassKeyword => None,
-            AnyTransport::BreakKeyword => None,
-            AnyTransport::ContinueKeyword => None,
-            AnyTransport::IfKeyword => None,
-            AnyTransport::Colon => None,
-            AnyTransport::ElifKeyword => None,
-            AnyTransport::ElseKeyword => None,
-            AnyTransport::CaseKeyword => None,
-            AnyTransport::ForKeyword => None,
-            AnyTransport::InKeyword => None,
-            AnyTransport::WhileKeyword => None,
-            AnyTransport::TryKeyword => None,
-            AnyTransport::ExceptKeyword => None,
-            AnyTransport::FinallyKeyword => None,
-            AnyTransport::WithKeyword => None,
-            AnyTransport::DefKeyword => None,
-            AnyTransport::DashGt => None,
-            AnyTransport::Lparen => None,
-            AnyTransport::Rparen => None,
-            AnyTransport::StarStar => None,
-            AnyTransport::GlobalKeyword => None,
-            AnyTransport::NonlocalKeyword => None,
-            AnyTransport::Eq => None,
-            AnyTransport::ClassKeyword => None,
-            AnyTransport::Lbrack => None,
-            AnyTransport::Rbrack => None,
-            AnyTransport::At => None,
-            AnyTransport::Lbrace => None,
-            AnyTransport::Rbrace => None,
-            AnyTransport::Underscore => None,
-            AnyTransport::Dash => None,
-            AnyTransport::Plus => None,
-            AnyTransport::NotKeyword => None,
-            AnyTransport::AndKeyword => None,
-            AnyTransport::OrKeyword => None,
-            AnyTransport::Slash => None,
-            AnyTransport::Percent => None,
-            AnyTransport::SlashSlash => None,
-            AnyTransport::Pipe => None,
-            AnyTransport::Amp => None,
-            AnyTransport::Caret => None,
-            AnyTransport::LtLt => None,
-            AnyTransport::Tilde => None,
-            AnyTransport::LambdaKeyword => None,
-            AnyTransport::PlusEq => None,
-            AnyTransport::DashEq => None,
-            AnyTransport::StarEq => None,
-            AnyTransport::SlashEq => None,
-            AnyTransport::AtEq => None,
-            AnyTransport::SlashSlashEq => None,
-            AnyTransport::PercentEq => None,
-            AnyTransport::StarStarEq => None,
-            AnyTransport::GtGtEq => None,
-            AnyTransport::LtLtEq => None,
-            AnyTransport::AmpEq => None,
-            AnyTransport::CaretEq => None,
-            AnyTransport::PipeEq => None,
-            AnyTransport::YieldKeyword => None,
-            AnyTransport::Comma => None,
-            AnyTransport::Bslash => None,
-            AnyTransport::Lt => None,
-            AnyTransport::LtEq => None,
-            AnyTransport::EqEq => None,
-            AnyTransport::BangEq => None,
-            AnyTransport::GtEq => None,
-            AnyTransport::Gt => None,
-            AnyTransport::LtGt => None,
-            AnyTransport::NotIn => None,
-            AnyTransport::IsKeyword => None,
-            AnyTransport::IsNot => None,
-            AnyTransport::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -1198,6 +912,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::AssertStatement(t) => t.gap_edges(),
             AnyTransport::ExpressionStatement(t) => t.gap_edges(),
             AnyTransport::NamedExpression(t) => t.gap_edges(),
+            AnyTransport::NamedExpressionLhs(t) => t.gap_edges(),
             AnyTransport::ReturnStatement(t) => t.gap_edges(),
             AnyTransport::DeleteStatement(t) => t.gap_edges(),
             AnyTransport::RaiseStatement(t) => t.gap_edges(),
@@ -1388,12 +1103,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Star => None,
             AnyTransport::GtGt => None,
             AnyTransport::AssertKeyword => None,
-            AnyTransport::PrintKeyword => None,
-            AnyTransport::ExecKeyword => None,
-            AnyTransport::AsyncKeyword => None,
-            AnyTransport::AwaitKeyword => None,
-            AnyTransport::TypeKeyword => None,
-            AnyTransport::MatchKeyword => None,
             AnyTransport::ColonEq => None,
             AnyTransport::ReturnKeyword => None,
             AnyTransport::DelKeyword => None,
@@ -1405,7 +1114,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Colon => None,
             AnyTransport::ElifKeyword => None,
             AnyTransport::ElseKeyword => None,
+            AnyTransport::MatchKeyword => None,
             AnyTransport::CaseKeyword => None,
+            AnyTransport::AsyncKeyword => None,
             AnyTransport::ForKeyword => None,
             AnyTransport::InKeyword => None,
             AnyTransport::WhileKeyword => None,
@@ -1420,6 +1131,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::StarStar => None,
             AnyTransport::GlobalKeyword => None,
             AnyTransport::NonlocalKeyword => None,
+            AnyTransport::ExecKeyword => None,
+            AnyTransport::TypeKeyword => None,
             AnyTransport::Eq => None,
             AnyTransport::ClassKeyword => None,
             AnyTransport::Lbrack => None,
@@ -1458,6 +1171,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::YieldKeyword => None,
             AnyTransport::Comma => None,
             AnyTransport::Bslash => None,
+            AnyTransport::AwaitKeyword => None,
+            AnyTransport::PrintKeyword => None,
             AnyTransport::Lt => None,
             AnyTransport::LtEq => None,
             AnyTransport::EqEq => None,
@@ -1487,6 +1202,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::AssertStatement(t) => t.snapshot_edge(),
             AnyTransport::ExpressionStatement(t) => t.snapshot_edge(),
             AnyTransport::NamedExpression(t) => t.snapshot_edge(),
+            AnyTransport::NamedExpressionLhs(t) => t.snapshot_edge(),
             AnyTransport::ReturnStatement(t) => t.snapshot_edge(),
             AnyTransport::DeleteStatement(t) => t.snapshot_edge(),
             AnyTransport::RaiseStatement(t) => t.snapshot_edge(),
@@ -1677,12 +1393,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Star => None,
             AnyTransport::GtGt => None,
             AnyTransport::AssertKeyword => None,
-            AnyTransport::PrintKeyword => None,
-            AnyTransport::ExecKeyword => None,
-            AnyTransport::AsyncKeyword => None,
-            AnyTransport::AwaitKeyword => None,
-            AnyTransport::TypeKeyword => None,
-            AnyTransport::MatchKeyword => None,
             AnyTransport::ColonEq => None,
             AnyTransport::ReturnKeyword => None,
             AnyTransport::DelKeyword => None,
@@ -1694,7 +1404,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Colon => None,
             AnyTransport::ElifKeyword => None,
             AnyTransport::ElseKeyword => None,
+            AnyTransport::MatchKeyword => None,
             AnyTransport::CaseKeyword => None,
+            AnyTransport::AsyncKeyword => None,
             AnyTransport::ForKeyword => None,
             AnyTransport::InKeyword => None,
             AnyTransport::WhileKeyword => None,
@@ -1709,6 +1421,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::StarStar => None,
             AnyTransport::GlobalKeyword => None,
             AnyTransport::NonlocalKeyword => None,
+            AnyTransport::ExecKeyword => None,
+            AnyTransport::TypeKeyword => None,
             AnyTransport::Eq => None,
             AnyTransport::ClassKeyword => None,
             AnyTransport::Lbrack => None,
@@ -1747,6 +1461,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::YieldKeyword => None,
             AnyTransport::Comma => None,
             AnyTransport::Bslash => None,
+            AnyTransport::AwaitKeyword => None,
+            AnyTransport::PrintKeyword => None,
             AnyTransport::Lt => None,
             AnyTransport::LtEq => None,
             AnyTransport::EqEq => None,
@@ -1758,6 +1474,296 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::IsKeyword => None,
             AnyTransport::IsNot => None,
             AnyTransport::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            AnyTransport::Module(t) => t.source_separator(ctx),
+            AnyTransport::SimpleStatements(t) => t.source_separator(ctx),
+            AnyTransport::ImportStatement(t) => t.source_separator(ctx),
+            AnyTransport::ImportPrefix(t) => t.source_separator(ctx),
+            AnyTransport::RelativeImport(t) => t.source_separator(ctx),
+            AnyTransport::FutureImportStatement(t) => t.source_separator(ctx),
+            AnyTransport::ImportFromStatement(t) => t.source_separator(ctx),
+            AnyTransport::ImportList(t) => t.source_separator(ctx),
+            AnyTransport::AliasedImport(t) => t.source_separator(ctx),
+            AnyTransport::PrintStatement(t) => t.source_separator(ctx),
+            AnyTransport::Chevron(t) => t.source_separator(ctx),
+            AnyTransport::AssertStatement(t) => t.source_separator(ctx),
+            AnyTransport::ExpressionStatement(t) => t.source_separator(ctx),
+            AnyTransport::NamedExpression(t) => t.source_separator(ctx),
+            AnyTransport::NamedExpressionLhs(t) => t.source_separator(ctx),
+            AnyTransport::ReturnStatement(t) => t.source_separator(ctx),
+            AnyTransport::DeleteStatement(t) => t.source_separator(ctx),
+            AnyTransport::RaiseStatement(t) => t.source_separator(ctx),
+            AnyTransport::IfStatement(t) => t.source_separator(ctx),
+            AnyTransport::ElifClause(t) => t.source_separator(ctx),
+            AnyTransport::ElseClause(t) => t.source_separator(ctx),
+            AnyTransport::MatchStatement(t) => t.source_separator(ctx),
+            AnyTransport::MatchBlock(t) => t.source_separator(ctx),
+            AnyTransport::CaseClause(t) => t.source_separator(ctx),
+            AnyTransport::ForStatement(t) => t.source_separator(ctx),
+            AnyTransport::WhileStatement(t) => t.source_separator(ctx),
+            AnyTransport::TryStatement(t) => t.source_separator(ctx),
+            AnyTransport::ExceptClause(t) => t.source_separator(ctx),
+            AnyTransport::FinallyClause(t) => t.source_separator(ctx),
+            AnyTransport::WithStatement(t) => t.source_separator(ctx),
+            AnyTransport::WithItem(t) => t.source_separator(ctx),
+            AnyTransport::FunctionDefinition(t) => t.source_separator(ctx),
+            AnyTransport::Parameters(t) => t.source_separator(ctx),
+            AnyTransport::LambdaParameters(t) => t.source_separator(ctx),
+            AnyTransport::ListSplat(t) => t.source_separator(ctx),
+            AnyTransport::DictionarySplat(t) => t.source_separator(ctx),
+            AnyTransport::GlobalStatement(t) => t.source_separator(ctx),
+            AnyTransport::NonlocalStatement(t) => t.source_separator(ctx),
+            AnyTransport::ExecStatement(t) => t.source_separator(ctx),
+            AnyTransport::TypeAliasStatement(t) => t.source_separator(ctx),
+            AnyTransport::ClassDefinition(t) => t.source_separator(ctx),
+            AnyTransport::TypeParameter(t) => t.source_separator(ctx),
+            AnyTransport::ParenthesizedListSplat(t) => t.source_separator(ctx),
+            AnyTransport::ArgumentList(t) => t.source_separator(ctx),
+            AnyTransport::DecoratedDefinition(t) => t.source_separator(ctx),
+            AnyTransport::Decorator(t) => t.source_separator(ctx),
+            AnyTransport::Block(t) => t.source_separator(ctx),
+            AnyTransport::ExpressionList(t) => t.source_separator(ctx),
+            AnyTransport::DottedName(t) => t.source_separator(ctx),
+            AnyTransport::CasePattern(t) => t.source_separator(ctx),
+            AnyTransport::SimplePattern(t) => t.source_separator(ctx),
+            AnyTransport::CaseAsPattern(t) => t.source_separator(ctx),
+            AnyTransport::UnionPattern(t) => t.source_separator(ctx),
+            AnyTransport::DictPattern(t) => t.source_separator(ctx),
+            AnyTransport::KeyValuePattern(t) => t.source_separator(ctx),
+            AnyTransport::KeywordPattern(t) => t.source_separator(ctx),
+            AnyTransport::SplatPattern(t) => t.source_separator(ctx),
+            AnyTransport::ClassPattern(t) => t.source_separator(ctx),
+            AnyTransport::ComplexPattern(t) => t.source_separator(ctx),
+            AnyTransport::ParametersElements(t) => t.source_separator(ctx),
+            AnyTransport::Patterns(t) => t.source_separator(ctx),
+            AnyTransport::TuplePattern(t) => t.source_separator(ctx),
+            AnyTransport::ListPattern(t) => t.source_separator(ctx),
+            AnyTransport::DefaultParameter(t) => t.source_separator(ctx),
+            AnyTransport::TypedDefaultParameter(t) => t.source_separator(ctx),
+            AnyTransport::ListSplatPattern(t) => t.source_separator(ctx),
+            AnyTransport::DictionarySplatPattern(t) => t.source_separator(ctx),
+            AnyTransport::AsPattern(t) => t.source_separator(ctx),
+            AnyTransport::NotOperator(t) => t.source_separator(ctx),
+            AnyTransport::BooleanOperator(t) => t.source_separator(ctx),
+            AnyTransport::BinaryOperator(t) => t.source_separator(ctx),
+            AnyTransport::UnaryOperator(t) => t.source_separator(ctx),
+            AnyTransport::ComparisonOperator(t) => t.source_separator(ctx),
+            AnyTransport::Lambda(t) => t.source_separator(ctx),
+            AnyTransport::LambdaWithinForInClause(t) => t.source_separator(ctx),
+            AnyTransport::AugmentedAssignment(t) => t.source_separator(ctx),
+            AnyTransport::PatternList(t) => t.source_separator(ctx),
+            AnyTransport::Yield(t) => t.source_separator(ctx),
+            AnyTransport::Attribute(t) => t.source_separator(ctx),
+            AnyTransport::Subscript(t) => t.source_separator(ctx),
+            AnyTransport::Slice(t) => t.source_separator(ctx),
+            AnyTransport::Call(t) => t.source_separator(ctx),
+            AnyTransport::TypedParameter(t) => t.source_separator(ctx),
+            AnyTransport::Type(t) => t.source_separator(ctx),
+            AnyTransport::SplatType(t) => t.source_separator(ctx),
+            AnyTransport::GenericType(t) => t.source_separator(ctx),
+            AnyTransport::UnionType(t) => t.source_separator(ctx),
+            AnyTransport::ConstrainedType(t) => t.source_separator(ctx),
+            AnyTransport::MemberType(t) => t.source_separator(ctx),
+            AnyTransport::KeywordArgument(t) => t.source_separator(ctx),
+            AnyTransport::List(t) => t.source_separator(ctx),
+            AnyTransport::Set(t) => t.source_separator(ctx),
+            AnyTransport::Tuple(t) => t.source_separator(ctx),
+            AnyTransport::Dictionary(t) => t.source_separator(ctx),
+            AnyTransport::Pair(t) => t.source_separator(ctx),
+            AnyTransport::ListComprehension(t) => t.source_separator(ctx),
+            AnyTransport::DictionaryComprehension(t) => t.source_separator(ctx),
+            AnyTransport::SetComprehension(t) => t.source_separator(ctx),
+            AnyTransport::GeneratorExpression(t) => t.source_separator(ctx),
+            AnyTransport::ParenthesizedExpression(t) => t.source_separator(ctx),
+            AnyTransport::CollectionElements(t) => t.source_separator(ctx),
+            AnyTransport::ForInClause(t) => t.source_separator(ctx),
+            AnyTransport::IfClause(t) => t.source_separator(ctx),
+            AnyTransport::ConditionalExpression(t) => t.source_separator(ctx),
+            AnyTransport::ConcatenatedString(t) => t.source_separator(ctx),
+            AnyTransport::String(t) => t.source_separator(ctx),
+            AnyTransport::StringContent(t) => t.source_separator(ctx),
+            AnyTransport::Interpolation(t) => t.source_separator(ctx),
+            AnyTransport::FormatSpecifier(t) => t.source_separator(ctx),
+            AnyTransport::TypeConversion(t) => t.source_separator(ctx),
+            AnyTransport::Identifier(t) => t.source_separator(ctx),
+            AnyTransport::Await(t) => t.source_separator(ctx),
+            AnyTransport::Comment(t) => t.source_separator(ctx),
+            AnyTransport::SimpleStatementsElements(t) => t.source_separator(ctx),
+            AnyTransport::Subjects(t) => t.source_separator(ctx),
+            AnyTransport::CasePatterns(t) => t.source_separator(ctx),
+            AnyTransport::WithClauseWithItems(t) => t.source_separator(ctx),
+            AnyTransport::Types(t) => t.source_separator(ctx),
+            AnyTransport::ArgumentListElements(t) => t.source_separator(ctx),
+            AnyTransport::ListPatternCasePatterns(t) => t.source_separator(ctx),
+            AnyTransport::DictPatternElements(t) => t.source_separator(ctx),
+            AnyTransport::Subscripts(t) => t.source_separator(ctx),
+            AnyTransport::DictionaryElements(t) => t.source_separator(ctx),
+            AnyTransport::SliceGroup(t) => t.source_separator(ctx),
+            AnyTransport::FormatSpecifierText(t) => t.source_separator(ctx),
+            AnyTransport::TuplePatternElements(t) => t.source_separator(ctx),
+            AnyTransport::TupleElements(t) => t.source_separator(ctx),
+            AnyTransport::ExceptClauseExceptionAs(t) => t.source_separator(ctx),
+            AnyTransport::CaseTuplePattern(t) => t.source_separator(ctx),
+            AnyTransport::CaseListPattern(t) => t.source_separator(ctx),
+            AnyTransport::PrintArguments(t) => t.source_separator(ctx),
+            AnyTransport::PrintChevronArguments(t) => t.source_separator(ctx),
+            AnyTransport::PrintStatementChevron(t) => t.source_separator(ctx),
+            AnyTransport::PrintStatementPlain(t) => t.source_separator(ctx),
+            AnyTransport::ParenthesizedImportList(t) => t.source_separator(ctx),
+            AnyTransport::ComprehensionClauses(t) => t.source_separator(ctx),
+            AnyTransport::IntegerHex(t) => t.source_separator(ctx),
+            AnyTransport::IntegerOctal(t) => t.source_separator(ctx),
+            AnyTransport::IntegerBinary(t) => t.source_separator(ctx),
+            AnyTransport::IntegerDecimalLong(t) => t.source_separator(ctx),
+            AnyTransport::IntegerDecimalImaginary(t) => t.source_separator(ctx),
+            AnyTransport::IntegerDecimalPlain(t) => t.source_separator(ctx),
+            AnyTransport::FloatPoint(t) => t.source_separator(ctx),
+            AnyTransport::FloatLeadingPoint(t) => t.source_separator(ctx),
+            AnyTransport::FloatScientific(t) => t.source_separator(ctx),
+            AnyTransport::EscapeSequenceUnicodeFixed(t) => t.source_separator(ctx),
+            AnyTransport::EscapeSequenceUnicodeWide(t) => t.source_separator(ctx),
+            AnyTransport::EscapeSequenceHex(t) => t.source_separator(ctx),
+            AnyTransport::EscapeSequenceOctal(t) => t.source_separator(ctx),
+            AnyTransport::EscapeSequenceLineBreak(t) => t.source_separator(ctx),
+            AnyTransport::EscapeSequenceSimple(t) => t.source_separator(ctx),
+            AnyTransport::EscapeSequenceNamed(t) => t.source_separator(ctx),
+            AnyTransport::LineContinuationNewline(t) => t.source_separator(ctx),
+            AnyTransport::SimplePatternNegative(t) => t.source_separator(ctx),
+            AnyTransport::ExceptClauseExceptionList(t) => t.source_separator(ctx),
+            AnyTransport::ExceptClauseException(t) => t.source_separator(ctx),
+            AnyTransport::AssignmentEq(t) => t.source_separator(ctx),
+            AnyTransport::AssignmentType(t) => t.source_separator(ctx),
+            AnyTransport::AssignmentTyped(t) => t.source_separator(ctx),
+            AnyTransport::ExpressionStatementTuple(t) => t.source_separator(ctx),
+            AnyTransport::WithClauseBare(t) => t.source_separator(ctx),
+            AnyTransport::WithClauseParen(t) => t.source_separator(ctx),
+            AnyTransport::MatchBlockBlock(t) => t.source_separator(ctx),
+            AnyTransport::MatchBlockEmpty(t) => t.source_separator(ctx),
+            AnyTransport::SuiteInline(t) => t.source_separator(ctx),
+            AnyTransport::SuiteBlock(t) => t.source_separator(ctx),
+            AnyTransport::SuiteEmpty(t) => t.source_separator(ctx),
+            AnyTransport::ComparisonOperatorComparator(t) => t.source_separator(ctx),
+            AnyTransport::YieldFromClause(t) => t.source_separator(ctx),
+            AnyTransport::StringStart(t) => t.source_separator(ctx),
+            AnyTransport::StringFragment(t) => t.source_separator(ctx),
+            AnyTransport::EscapeInterpolation(t) => t.source_separator(ctx),
+            AnyTransport::StringEnd(t) => t.source_separator(ctx),
+            AnyTransport::Names(t) => t.source_separator(ctx),
+            AnyTransport::AsPatternTarget(t) => t.source_separator(ctx),
+            AnyTransport::FormatExpression(t) => t.source_separator(ctx),
+            AnyTransport::WildcardImport => None,
+            AnyTransport::PassStatement(_) => None,
+            AnyTransport::BreakStatement(_) => None,
+            AnyTransport::ContinueStatement(_) => None,
+            AnyTransport::Ellipsis(_) => None,
+            AnyTransport::NotEscapeSequence => None,
+            AnyTransport::True(_) => None,
+            AnyTransport::False(_) => None,
+            AnyTransport::None(_) => None,
+            AnyTransport::PositionalSeparator(_) => None,
+            AnyTransport::KeywordSeparator(_) => None,
+            AnyTransport::WildcardPattern(_) => None,
+            AnyTransport::LineContinuationNul => None,
+            AnyTransport::Indent => None,
+            AnyTransport::Dedent => None,
+            AnyTransport::Tight => None,
+            AnyTransport::Space => None,
+            AnyTransport::Tab => None,
+            AnyTransport::Newline => None,
+            AnyTransport::Blankline => None,
+            AnyTransport::DoubleBlankline => None,
+            AnyTransport::ImportKeyword => None,
+            AnyTransport::Dot => None,
+            AnyTransport::FromKeyword => None,
+            AnyTransport::FutureUKeyword => None,
+            AnyTransport::AsKeyword => None,
+            AnyTransport::Star => None,
+            AnyTransport::GtGt => None,
+            AnyTransport::AssertKeyword => None,
+            AnyTransport::ColonEq => None,
+            AnyTransport::ReturnKeyword => None,
+            AnyTransport::DelKeyword => None,
+            AnyTransport::RaiseKeyword => None,
+            AnyTransport::PassKeyword => None,
+            AnyTransport::BreakKeyword => None,
+            AnyTransport::ContinueKeyword => None,
+            AnyTransport::IfKeyword => None,
+            AnyTransport::Colon => None,
+            AnyTransport::ElifKeyword => None,
+            AnyTransport::ElseKeyword => None,
+            AnyTransport::MatchKeyword => None,
+            AnyTransport::CaseKeyword => None,
+            AnyTransport::AsyncKeyword => None,
+            AnyTransport::ForKeyword => None,
+            AnyTransport::InKeyword => None,
+            AnyTransport::WhileKeyword => None,
+            AnyTransport::TryKeyword => None,
+            AnyTransport::ExceptKeyword => None,
+            AnyTransport::FinallyKeyword => None,
+            AnyTransport::WithKeyword => None,
+            AnyTransport::DefKeyword => None,
+            AnyTransport::DashGt => None,
+            AnyTransport::Lparen => None,
+            AnyTransport::Rparen => None,
+            AnyTransport::StarStar => None,
+            AnyTransport::GlobalKeyword => None,
+            AnyTransport::NonlocalKeyword => None,
+            AnyTransport::ExecKeyword => None,
+            AnyTransport::TypeKeyword => None,
+            AnyTransport::Eq => None,
+            AnyTransport::ClassKeyword => None,
+            AnyTransport::Lbrack => None,
+            AnyTransport::Rbrack => None,
+            AnyTransport::At => None,
+            AnyTransport::Lbrace => None,
+            AnyTransport::Rbrace => None,
+            AnyTransport::Underscore => None,
+            AnyTransport::Dash => None,
+            AnyTransport::Plus => None,
+            AnyTransport::NotKeyword => None,
+            AnyTransport::AndKeyword => None,
+            AnyTransport::OrKeyword => None,
+            AnyTransport::Slash => None,
+            AnyTransport::Percent => None,
+            AnyTransport::SlashSlash => None,
+            AnyTransport::Pipe => None,
+            AnyTransport::Amp => None,
+            AnyTransport::Caret => None,
+            AnyTransport::LtLt => None,
+            AnyTransport::Tilde => None,
+            AnyTransport::LambdaKeyword => None,
+            AnyTransport::PlusEq => None,
+            AnyTransport::DashEq => None,
+            AnyTransport::StarEq => None,
+            AnyTransport::SlashEq => None,
+            AnyTransport::AtEq => None,
+            AnyTransport::SlashSlashEq => None,
+            AnyTransport::PercentEq => None,
+            AnyTransport::StarStarEq => None,
+            AnyTransport::GtGtEq => None,
+            AnyTransport::LtLtEq => None,
+            AnyTransport::AmpEq => None,
+            AnyTransport::CaretEq => None,
+            AnyTransport::PipeEq => None,
+            AnyTransport::YieldKeyword => None,
+            AnyTransport::Comma => None,
+            AnyTransport::Bslash => None,
+            AnyTransport::AwaitKeyword => None,
+            AnyTransport::PrintKeyword => None,
+            AnyTransport::Lt => None,
+            AnyTransport::LtEq => None,
+            AnyTransport::EqEq => None,
+            AnyTransport::BangEq => None,
+            AnyTransport::GtEq => None,
+            AnyTransport::Gt => None,
+            AnyTransport::LtGt => None,
+            AnyTransport::NotIn => None,
+            AnyTransport::IsKeyword => None,
+            AnyTransport::IsNot => None,
+            AnyTransport::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1772,9 +1778,11 @@ pub enum TriviaTransport {
     #[kind(kind::COMMENT)]
     Comment(CommentTransport),
     #[kind(kind::LINE_CONTINUATION_NEWLINE)]
-    LineContinuationNewline(LineContinuationNewlineTransport),
+    LineContinuationNewline(::sittir_core::trivia::TriviaText),
     #[kind(kind::LINE_CONTINUATION_NUL)]
     LineContinuationNul,
+    #[kind(kind::_TIGHT)]
+    Tight,
     #[kind(kind::_SPACE)]
     Space,
     #[kind(kind::_TAB)]
@@ -1802,6 +1810,7 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Comment(t) => t.prepare(ctx),
             TriviaTransport::LineContinuationNewline(t) => t.prepare(ctx),
             TriviaTransport::LineContinuationNul => Ok(()),
+            TriviaTransport::Tight => Ok(()),
             TriviaTransport::Space => Ok(()),
             TriviaTransport::Tab => Ok(()),
             TriviaTransport::Newline => Ok(()),
@@ -1813,27 +1822,12 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Text(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            TriviaTransport::Comment(t) => t.source_gap(),
-            TriviaTransport::LineContinuationNewline(t) => t.source_gap(),
-            TriviaTransport::LineContinuationNul => None,
-            TriviaTransport::Space => None,
-            TriviaTransport::Tab => None,
-            TriviaTransport::Newline => None,
-            TriviaTransport::Blankline => None,
-            TriviaTransport::DoubleBlankline => None,
-            TriviaTransport::Indent => None,
-            TriviaTransport::Dedent => None,
-            TriviaTransport::Verbatim(t) => t.source_gap(),
-            TriviaTransport::Text(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             TriviaTransport::Comment(t) => t.gap_edges(),
             TriviaTransport::LineContinuationNewline(t) => t.gap_edges(),
             TriviaTransport::LineContinuationNul => None,
+            TriviaTransport::Tight => None,
             TriviaTransport::Space => None,
             TriviaTransport::Tab => None,
             TriviaTransport::Newline => None,
@@ -1850,6 +1844,7 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Comment(t) => t.snapshot_edge(),
             TriviaTransport::LineContinuationNewline(t) => t.snapshot_edge(),
             TriviaTransport::LineContinuationNul => None,
+            TriviaTransport::Tight => None,
             TriviaTransport::Space => None,
             TriviaTransport::Tab => None,
             TriviaTransport::Newline => None,
@@ -1861,6 +1856,23 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Text(t) => t.snapshot_edge(),
         }
     }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            TriviaTransport::Comment(t) => t.source_separator(ctx),
+            TriviaTransport::LineContinuationNewline(t) => t.source_separator(ctx),
+            TriviaTransport::LineContinuationNul => None,
+            TriviaTransport::Tight => None,
+            TriviaTransport::Space => None,
+            TriviaTransport::Tab => None,
+            TriviaTransport::Newline => None,
+            TriviaTransport::Blankline => None,
+            TriviaTransport::DoubleBlankline => None,
+            TriviaTransport::Indent => None,
+            TriviaTransport::Dedent => None,
+            TriviaTransport::Verbatim(t) => t.source_separator(ctx),
+            TriviaTransport::Text(t) => t.source_separator(ctx),
+        }
+    }
 }
 
 impl ::sittir_core::render::Render for TriviaTransport {
@@ -1869,6 +1881,7 @@ impl ::sittir_core::render::Render for TriviaTransport {
             TriviaTransport::Comment(t) => t.render(w),
             TriviaTransport::LineContinuationNewline(t) => t.render(w),
             TriviaTransport::LineContinuationNul => render_line_continuation_nul(w),
+            TriviaTransport::Tight => render_tight(w),
             TriviaTransport::Space => render_space(w),
             TriviaTransport::Tab => render_tab(w),
             TriviaTransport::Newline => render_newline(w),
@@ -1887,16 +1900,17 @@ impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {
         TriviaTransport::Text(text)
     }
 
-    fn from_layout(kind: ::sittir_core::types::KindId, text: &str) -> Option<Self> {
-        if kind == kind::LINE_CONTINUATION_NEWLINE { return Some(TriviaTransport::LineContinuationNewline(LineContinuationNewlineTransport { layout: None, text: text.to_owned() })); }
-        if kind == kind::LINE_CONTINUATION_NUL { return Some(TriviaTransport::LineContinuationNul); }
-        if kind == kind::_SPACE { return Some(TriviaTransport::Space); }
-        if kind == kind::_TAB { return Some(TriviaTransport::Tab); }
-        if kind == kind::_NEWLINE { return Some(TriviaTransport::Newline); }
-        if kind == kind::_BLANKLINE { return Some(TriviaTransport::Blankline); }
-        if kind == kind::_DOUBLE_BLANKLINE { return Some(TriviaTransport::DoubleBlankline); }
-        if kind == kind::_INDENT { return Some(TriviaTransport::Indent); }
-        if kind == kind::_DEDENT { return Some(TriviaTransport::Dedent); }
+    fn from_layout(text: ::sittir_core::trivia::TriviaText) -> Option<Self> {
+        if text.kind == kind::LINE_CONTINUATION_NEWLINE { return Some(TriviaTransport::LineContinuationNewline(text)); }
+        if text.kind == kind::LINE_CONTINUATION_NUL { return Some(TriviaTransport::LineContinuationNul); }
+        if text.kind == kind::_TIGHT { return Some(TriviaTransport::Tight); }
+        if text.kind == kind::_SPACE { return Some(TriviaTransport::Space); }
+        if text.kind == kind::_TAB { return Some(TriviaTransport::Tab); }
+        if text.kind == kind::_NEWLINE { return Some(TriviaTransport::Newline); }
+        if text.kind == kind::_BLANKLINE { return Some(TriviaTransport::Blankline); }
+        if text.kind == kind::_DOUBLE_BLANKLINE { return Some(TriviaTransport::DoubleBlankline); }
+        if text.kind == kind::_INDENT { return Some(TriviaTransport::Indent); }
+        if text.kind == kind::_DEDENT { return Some(TriviaTransport::Dedent); }
         None
     }
 }
@@ -1904,8 +1918,9 @@ impl ::sittir_core::trivia::FromTriviaText for TriviaTransport {
 impl ::sittir_core::trivia::TriviaSeam for TriviaTransport {
     fn seam_gap(&self) -> Option<(::sittir_core::layout_kinds::LayoutKinds, Option<&str>)> {
         match self {
-            TriviaTransport::LineContinuationNewline(t) => Some((::sittir_core::layout_kinds::LayoutKinds::LINE_CONTINUATION, Some(&t.text))),
+            TriviaTransport::LineContinuationNewline(t) if !t.verbatim() => Some((::sittir_core::layout_kinds::LayoutKinds::LINE_CONTINUATION, Some(&t.text))),
             TriviaTransport::LineContinuationNul => Some((::sittir_core::layout_kinds::LayoutKinds::LINE_CONTINUATION, Some("\\\u{0}"))),
+            TriviaTransport::Tight => Some((::sittir_core::layout_kinds::LayoutKinds::TIGHT, None)),
             TriviaTransport::Space => Some((::sittir_core::layout_kinds::LayoutKinds::SPACE, None)),
             TriviaTransport::Tab => Some((::sittir_core::layout_kinds::LayoutKinds::TAB, None)),
             TriviaTransport::Newline => Some((::sittir_core::layout_kinds::LayoutKinds::NEWLINE, None)),
@@ -1969,21 +1984,6 @@ impl ::sittir_core::prepare::Prepare for StatementTransport {
             StatementTransport::MatchStatement(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            StatementTransport::SimpleStatements(t) => t.source_gap(),
-            StatementTransport::CompoundStatement(t) => t.source_gap(),
-            StatementTransport::IfStatement(t) => t.source_gap(),
-            StatementTransport::ForStatement(t) => t.source_gap(),
-            StatementTransport::WhileStatement(t) => t.source_gap(),
-            StatementTransport::TryStatement(t) => t.source_gap(),
-            StatementTransport::WithStatement(t) => t.source_gap(),
-            StatementTransport::FunctionDefinition(t) => t.source_gap(),
-            StatementTransport::ClassDefinition(t) => t.source_gap(),
-            StatementTransport::DecoratedDefinition(t) => t.source_gap(),
-            StatementTransport::MatchStatement(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             StatementTransport::SimpleStatements(t) => t.gap_edges(),
@@ -2012,6 +2012,21 @@ impl ::sittir_core::prepare::Prepare for StatementTransport {
             StatementTransport::ClassDefinition(t) => t.snapshot_edge(),
             StatementTransport::DecoratedDefinition(t) => t.snapshot_edge(),
             StatementTransport::MatchStatement(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            StatementTransport::SimpleStatements(t) => t.source_separator(ctx),
+            StatementTransport::CompoundStatement(t) => t.source_separator(ctx),
+            StatementTransport::IfStatement(t) => t.source_separator(ctx),
+            StatementTransport::ForStatement(t) => t.source_separator(ctx),
+            StatementTransport::WhileStatement(t) => t.source_separator(ctx),
+            StatementTransport::TryStatement(t) => t.source_separator(ctx),
+            StatementTransport::WithStatement(t) => t.source_separator(ctx),
+            StatementTransport::FunctionDefinition(t) => t.source_separator(ctx),
+            StatementTransport::ClassDefinition(t) => t.source_separator(ctx),
+            StatementTransport::DecoratedDefinition(t) => t.source_separator(ctx),
+            StatementTransport::MatchStatement(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -2104,26 +2119,6 @@ impl ::sittir_core::prepare::Prepare for SimpleStatementTransport {
             SimpleStatementTransport::TypeAliasStatement(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            SimpleStatementTransport::FutureImportStatement(t) => t.source_gap(),
-            SimpleStatementTransport::ImportStatement(t) => t.source_gap(),
-            SimpleStatementTransport::ImportFromStatement(t) => t.source_gap(),
-            SimpleStatementTransport::PrintStatement(t) => t.source_gap(),
-            SimpleStatementTransport::AssertStatement(t) => t.source_gap(),
-            SimpleStatementTransport::ExpressionStatement(t) => t.source_gap(),
-            SimpleStatementTransport::ReturnStatement(t) => t.source_gap(),
-            SimpleStatementTransport::DeleteStatement(t) => t.source_gap(),
-            SimpleStatementTransport::RaiseStatement(t) => t.source_gap(),
-            SimpleStatementTransport::PassStatement(_) => None,
-            SimpleStatementTransport::BreakStatement(_) => None,
-            SimpleStatementTransport::ContinueStatement(_) => None,
-            SimpleStatementTransport::GlobalStatement(t) => t.source_gap(),
-            SimpleStatementTransport::NonlocalStatement(t) => t.source_gap(),
-            SimpleStatementTransport::ExecStatement(t) => t.source_gap(),
-            SimpleStatementTransport::TypeAliasStatement(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             SimpleStatementTransport::FutureImportStatement(t) => t.gap_edges(),
@@ -2162,6 +2157,26 @@ impl ::sittir_core::prepare::Prepare for SimpleStatementTransport {
             SimpleStatementTransport::NonlocalStatement(t) => t.snapshot_edge(),
             SimpleStatementTransport::ExecStatement(t) => t.snapshot_edge(),
             SimpleStatementTransport::TypeAliasStatement(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            SimpleStatementTransport::FutureImportStatement(t) => t.source_separator(ctx),
+            SimpleStatementTransport::ImportStatement(t) => t.source_separator(ctx),
+            SimpleStatementTransport::ImportFromStatement(t) => t.source_separator(ctx),
+            SimpleStatementTransport::PrintStatement(t) => t.source_separator(ctx),
+            SimpleStatementTransport::AssertStatement(t) => t.source_separator(ctx),
+            SimpleStatementTransport::ExpressionStatement(t) => t.source_separator(ctx),
+            SimpleStatementTransport::ReturnStatement(t) => t.source_separator(ctx),
+            SimpleStatementTransport::DeleteStatement(t) => t.source_separator(ctx),
+            SimpleStatementTransport::RaiseStatement(t) => t.source_separator(ctx),
+            SimpleStatementTransport::PassStatement(_) => None,
+            SimpleStatementTransport::BreakStatement(_) => None,
+            SimpleStatementTransport::ContinueStatement(_) => None,
+            SimpleStatementTransport::GlobalStatement(t) => t.source_separator(ctx),
+            SimpleStatementTransport::NonlocalStatement(t) => t.source_separator(ctx),
+            SimpleStatementTransport::ExecStatement(t) => t.source_separator(ctx),
+            SimpleStatementTransport::TypeAliasStatement(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -2235,19 +2250,6 @@ impl ::sittir_core::prepare::Prepare for CompoundStatementTransport {
             CompoundStatementTransport::MatchStatement(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            CompoundStatementTransport::IfStatement(t) => t.source_gap(),
-            CompoundStatementTransport::ForStatement(t) => t.source_gap(),
-            CompoundStatementTransport::WhileStatement(t) => t.source_gap(),
-            CompoundStatementTransport::TryStatement(t) => t.source_gap(),
-            CompoundStatementTransport::WithStatement(t) => t.source_gap(),
-            CompoundStatementTransport::FunctionDefinition(t) => t.source_gap(),
-            CompoundStatementTransport::ClassDefinition(t) => t.source_gap(),
-            CompoundStatementTransport::DecoratedDefinition(t) => t.source_gap(),
-            CompoundStatementTransport::MatchStatement(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             CompoundStatementTransport::IfStatement(t) => t.gap_edges(),
@@ -2272,6 +2274,19 @@ impl ::sittir_core::prepare::Prepare for CompoundStatementTransport {
             CompoundStatementTransport::ClassDefinition(t) => t.snapshot_edge(),
             CompoundStatementTransport::DecoratedDefinition(t) => t.snapshot_edge(),
             CompoundStatementTransport::MatchStatement(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            CompoundStatementTransport::IfStatement(t) => t.source_separator(ctx),
+            CompoundStatementTransport::ForStatement(t) => t.source_separator(ctx),
+            CompoundStatementTransport::WhileStatement(t) => t.source_separator(ctx),
+            CompoundStatementTransport::TryStatement(t) => t.source_separator(ctx),
+            CompoundStatementTransport::WithStatement(t) => t.source_separator(ctx),
+            CompoundStatementTransport::FunctionDefinition(t) => t.source_separator(ctx),
+            CompoundStatementTransport::ClassDefinition(t) => t.source_separator(ctx),
+            CompoundStatementTransport::DecoratedDefinition(t) => t.source_separator(ctx),
+            CompoundStatementTransport::MatchStatement(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -2331,12 +2346,6 @@ impl ::sittir_core::prepare::Prepare for WithClauseTransport {
             WithClauseTransport::WithClauseParen(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            WithClauseTransport::WithClauseBare(t) => t.source_gap(),
-            WithClauseTransport::WithClauseParen(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             WithClauseTransport::WithClauseBare(t) => t.gap_edges(),
@@ -2347,6 +2356,12 @@ impl ::sittir_core::prepare::Prepare for WithClauseTransport {
         match self {
             WithClauseTransport::WithClauseBare(t) => t.snapshot_edge(),
             WithClauseTransport::WithClauseParen(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            WithClauseTransport::WithClauseBare(t) => t.source_separator(ctx),
+            WithClauseTransport::WithClauseParen(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -2388,13 +2403,6 @@ impl ::sittir_core::prepare::Prepare for SuiteTransport {
             SuiteTransport::SuiteEmpty(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            SuiteTransport::SuiteInline(t) => t.source_gap(),
-            SuiteTransport::SuiteBlock(t) => t.source_gap(),
-            SuiteTransport::SuiteEmpty(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             SuiteTransport::SuiteInline(t) => t.gap_edges(),
@@ -2407,6 +2415,13 @@ impl ::sittir_core::prepare::Prepare for SuiteTransport {
             SuiteTransport::SuiteInline(t) => t.snapshot_edge(),
             SuiteTransport::SuiteBlock(t) => t.snapshot_edge(),
             SuiteTransport::SuiteEmpty(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            SuiteTransport::SuiteInline(t) => t.source_separator(ctx),
+            SuiteTransport::SuiteBlock(t) => t.source_separator(ctx),
+            SuiteTransport::SuiteEmpty(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -2433,7 +2448,7 @@ impl ::sittir_core::render::Render for SuiteTransport {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum ParameterTransport {
-    #[kind(kind::IDENTIFIER, kind::TYPE_KEYWORD, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::MATCH_KEYWORD)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::TYPED_PARAMETER)]
     TypedParameter(TypedParameterTransport),
@@ -2472,20 +2487,6 @@ impl ::sittir_core::prepare::Prepare for ParameterTransport {
             ParameterTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            ParameterTransport::Identifier(t) => t.source_gap(),
-            ParameterTransport::TypedParameter(t) => t.source_gap(),
-            ParameterTransport::DefaultParameter(t) => t.source_gap(),
-            ParameterTransport::TypedDefaultParameter(t) => t.source_gap(),
-            ParameterTransport::ListSplatPattern(t) => t.source_gap(),
-            ParameterTransport::TuplePattern(t) => t.source_gap(),
-            ParameterTransport::KeywordSeparator(_) => None,
-            ParameterTransport::PositionalSeparator(_) => None,
-            ParameterTransport::DictionarySplatPattern(t) => t.source_gap(),
-            ParameterTransport::Verbatim(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             ParameterTransport::Identifier(t) => t.gap_edges(),
@@ -2512,6 +2513,20 @@ impl ::sittir_core::prepare::Prepare for ParameterTransport {
             ParameterTransport::PositionalSeparator(_) => None,
             ParameterTransport::DictionarySplatPattern(t) => t.snapshot_edge(),
             ParameterTransport::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            ParameterTransport::Identifier(t) => t.source_separator(ctx),
+            ParameterTransport::TypedParameter(t) => t.source_separator(ctx),
+            ParameterTransport::DefaultParameter(t) => t.source_separator(ctx),
+            ParameterTransport::TypedDefaultParameter(t) => t.source_separator(ctx),
+            ParameterTransport::ListSplatPattern(t) => t.source_separator(ctx),
+            ParameterTransport::TuplePattern(t) => t.source_separator(ctx),
+            ParameterTransport::KeywordSeparator(_) => None,
+            ParameterTransport::PositionalSeparator(_) => None,
+            ParameterTransport::DictionarySplatPattern(t) => t.source_separator(ctx),
+            ParameterTransport::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -2545,20 +2560,8 @@ impl ::sittir_core::render::Render for ParameterTransport {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum PatternTransport {
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::SUBSCRIPT)]
     Subscript(SubscriptTransport),
     #[kind(kind::ATTRIBUTE)]
@@ -2577,12 +2580,6 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             PatternTransport::Identifier(t) => t.prepare(ctx),
-            PatternTransport::PrintKeyword => Ok(()),
-            PatternTransport::ExecKeyword => Ok(()),
-            PatternTransport::AsyncKeyword => Ok(()),
-            PatternTransport::AwaitKeyword => Ok(()),
-            PatternTransport::TypeKeyword => Ok(()),
-            PatternTransport::MatchKeyword => Ok(()),
             PatternTransport::Subscript(t) => t.prepare(ctx),
             PatternTransport::Attribute(t) => t.prepare(ctx),
             PatternTransport::ListSplatPattern(t) => t.prepare(ctx),
@@ -2591,32 +2588,9 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
             PatternTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            PatternTransport::Identifier(t) => t.source_gap(),
-            PatternTransport::PrintKeyword => None,
-            PatternTransport::ExecKeyword => None,
-            PatternTransport::AsyncKeyword => None,
-            PatternTransport::AwaitKeyword => None,
-            PatternTransport::TypeKeyword => None,
-            PatternTransport::MatchKeyword => None,
-            PatternTransport::Subscript(t) => t.source_gap(),
-            PatternTransport::Attribute(t) => t.source_gap(),
-            PatternTransport::ListSplatPattern(t) => t.source_gap(),
-            PatternTransport::TuplePattern(t) => t.source_gap(),
-            PatternTransport::ListPattern(t) => t.source_gap(),
-            PatternTransport::Verbatim(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             PatternTransport::Identifier(t) => t.gap_edges(),
-            PatternTransport::PrintKeyword => None,
-            PatternTransport::ExecKeyword => None,
-            PatternTransport::AsyncKeyword => None,
-            PatternTransport::AwaitKeyword => None,
-            PatternTransport::TypeKeyword => None,
-            PatternTransport::MatchKeyword => None,
             PatternTransport::Subscript(t) => t.gap_edges(),
             PatternTransport::Attribute(t) => t.gap_edges(),
             PatternTransport::ListSplatPattern(t) => t.gap_edges(),
@@ -2628,18 +2602,23 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
             PatternTransport::Identifier(t) => t.snapshot_edge(),
-            PatternTransport::PrintKeyword => None,
-            PatternTransport::ExecKeyword => None,
-            PatternTransport::AsyncKeyword => None,
-            PatternTransport::AwaitKeyword => None,
-            PatternTransport::TypeKeyword => None,
-            PatternTransport::MatchKeyword => None,
             PatternTransport::Subscript(t) => t.snapshot_edge(),
             PatternTransport::Attribute(t) => t.snapshot_edge(),
             PatternTransport::ListSplatPattern(t) => t.snapshot_edge(),
             PatternTransport::TuplePattern(t) => t.snapshot_edge(),
             PatternTransport::ListPattern(t) => t.snapshot_edge(),
             PatternTransport::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            PatternTransport::Identifier(t) => t.source_separator(ctx),
+            PatternTransport::Subscript(t) => t.source_separator(ctx),
+            PatternTransport::Attribute(t) => t.source_separator(ctx),
+            PatternTransport::ListSplatPattern(t) => t.source_separator(ctx),
+            PatternTransport::TuplePattern(t) => t.source_separator(ctx),
+            PatternTransport::ListPattern(t) => t.source_separator(ctx),
+            PatternTransport::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -2651,12 +2630,6 @@ impl ::sittir_core::view::KindOf for PatternTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::Subscript(inner) => inner.kind_in(kinds),
             Self::Attribute(inner) => inner.kind_in(kinds),
             Self::ListSplatPattern(inner) => inner.kind_in(kinds),
@@ -2684,7 +2657,7 @@ pub enum ExpressionTransport {
     BooleanOperator(BooleanOperatorTransport),
     #[kind(kind::LAMBDA)]
     Lambda(LambdaTransport),
-    #[kind(kind::AWAIT, kind::BINARY_OPERATOR, kind::IDENTIFIER, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::TYPE_KEYWORD, kind::MATCH_KEYWORD, kind::STRING, kind::CONCATENATED_STRING, kind::INTEGER_HEX, kind::INTEGER_OCTAL, kind::INTEGER_BINARY, kind::INTEGER_DECIMAL_LONG, kind::INTEGER_DECIMAL_IMAGINARY, kind::INTEGER_DECIMAL_PLAIN, kind::FLOAT_POINT, kind::FLOAT_LEADING_POINT, kind::FLOAT_SCIENTIFIC, kind::TRUE, kind::FALSE, kind::NONE, kind::UNARY_OPERATOR, kind::ATTRIBUTE, kind::SUBSCRIPT, kind::CALL, kind::LIST, kind::LIST_COMPREHENSION, kind::DICTIONARY, kind::DICTIONARY_COMPREHENSION, kind::SET, kind::SET_COMPREHENSION, kind::TUPLE, kind::PARENTHESIZED_EXPRESSION, kind::GENERATOR_EXPRESSION, kind::ELLIPSIS, kind::LIST_SPLAT_PATTERN, kind::PRIMARY_EXPRESSION, kind::INTEGER, kind::FLOAT)]
+    #[kind(kind::AWAIT, kind::BINARY_OPERATOR, kind::IDENTIFIER, kind::STRING, kind::CONCATENATED_STRING, kind::INTEGER_HEX, kind::INTEGER_OCTAL, kind::INTEGER_BINARY, kind::INTEGER_DECIMAL_LONG, kind::INTEGER_DECIMAL_IMAGINARY, kind::INTEGER_DECIMAL_PLAIN, kind::FLOAT_POINT, kind::FLOAT_LEADING_POINT, kind::FLOAT_SCIENTIFIC, kind::TRUE, kind::FALSE, kind::NONE, kind::UNARY_OPERATOR, kind::ATTRIBUTE, kind::SUBSCRIPT, kind::CALL, kind::LIST, kind::LIST_COMPREHENSION, kind::DICTIONARY, kind::DICTIONARY_COMPREHENSION, kind::SET, kind::SET_COMPREHENSION, kind::TUPLE, kind::PARENTHESIZED_EXPRESSION, kind::GENERATOR_EXPRESSION, kind::ELLIPSIS, kind::LIST_SPLAT_PATTERN, kind::PRIMARY_EXPRESSION, kind::INTEGER, kind::FLOAT, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     PrimaryExpression(PrimaryExpressionTransport),
     #[kind(kind::CONDITIONAL_EXPRESSION)]
     ConditionalExpression(ConditionalExpressionTransport),
@@ -2708,19 +2681,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionTransport {
             ExpressionTransport::NamedExpression(t) => t.prepare(ctx),
             ExpressionTransport::AsPattern(t) => t.prepare(ctx),
             ExpressionTransport::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            ExpressionTransport::ComparisonOperator(t) => t.source_gap(),
-            ExpressionTransport::NotOperator(t) => t.source_gap(),
-            ExpressionTransport::BooleanOperator(t) => t.source_gap(),
-            ExpressionTransport::Lambda(t) => t.source_gap(),
-            ExpressionTransport::PrimaryExpression(t) => t.source_gap(),
-            ExpressionTransport::ConditionalExpression(t) => t.source_gap(),
-            ExpressionTransport::NamedExpression(t) => t.source_gap(),
-            ExpressionTransport::AsPattern(t) => t.source_gap(),
-            ExpressionTransport::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -2747,6 +2707,19 @@ impl ::sittir_core::prepare::Prepare for ExpressionTransport {
             ExpressionTransport::NamedExpression(t) => t.snapshot_edge(),
             ExpressionTransport::AsPattern(t) => t.snapshot_edge(),
             ExpressionTransport::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            ExpressionTransport::ComparisonOperator(t) => t.source_separator(ctx),
+            ExpressionTransport::NotOperator(t) => t.source_separator(ctx),
+            ExpressionTransport::BooleanOperator(t) => t.source_separator(ctx),
+            ExpressionTransport::Lambda(t) => t.source_separator(ctx),
+            ExpressionTransport::PrimaryExpression(t) => t.source_separator(ctx),
+            ExpressionTransport::ConditionalExpression(t) => t.source_separator(ctx),
+            ExpressionTransport::NamedExpression(t) => t.source_separator(ctx),
+            ExpressionTransport::AsPattern(t) => t.source_separator(ctx),
+            ExpressionTransport::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -2783,20 +2756,8 @@ pub enum PrimaryExpressionTransport {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::STRING)]
     String(StringTransport),
     #[kind(kind::CONCATENATED_STRING)]
@@ -2855,12 +2816,6 @@ impl ::sittir_core::prepare::Prepare for PrimaryExpressionTransport {
             PrimaryExpressionTransport::Await(t) => t.prepare(ctx),
             PrimaryExpressionTransport::BinaryOperator(t) => t.prepare(ctx),
             PrimaryExpressionTransport::Identifier(t) => t.prepare(ctx),
-            PrimaryExpressionTransport::PrintKeyword => Ok(()),
-            PrimaryExpressionTransport::ExecKeyword => Ok(()),
-            PrimaryExpressionTransport::AsyncKeyword => Ok(()),
-            PrimaryExpressionTransport::AwaitKeyword => Ok(()),
-            PrimaryExpressionTransport::TypeKeyword => Ok(()),
-            PrimaryExpressionTransport::MatchKeyword => Ok(()),
             PrimaryExpressionTransport::String(t) => t.prepare(ctx),
             PrimaryExpressionTransport::ConcatenatedString(t) => t.prepare(ctx),
             PrimaryExpressionTransport::Integer(t) => t.prepare(ctx),
@@ -2886,53 +2841,11 @@ impl ::sittir_core::prepare::Prepare for PrimaryExpressionTransport {
             PrimaryExpressionTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            PrimaryExpressionTransport::Await(t) => t.source_gap(),
-            PrimaryExpressionTransport::BinaryOperator(t) => t.source_gap(),
-            PrimaryExpressionTransport::Identifier(t) => t.source_gap(),
-            PrimaryExpressionTransport::PrintKeyword => None,
-            PrimaryExpressionTransport::ExecKeyword => None,
-            PrimaryExpressionTransport::AsyncKeyword => None,
-            PrimaryExpressionTransport::AwaitKeyword => None,
-            PrimaryExpressionTransport::TypeKeyword => None,
-            PrimaryExpressionTransport::MatchKeyword => None,
-            PrimaryExpressionTransport::String(t) => t.source_gap(),
-            PrimaryExpressionTransport::ConcatenatedString(t) => t.source_gap(),
-            PrimaryExpressionTransport::Integer(t) => t.source_gap(),
-            PrimaryExpressionTransport::Float(t) => t.source_gap(),
-            PrimaryExpressionTransport::True(_) => None,
-            PrimaryExpressionTransport::False(_) => None,
-            PrimaryExpressionTransport::None(_) => None,
-            PrimaryExpressionTransport::UnaryOperator(t) => t.source_gap(),
-            PrimaryExpressionTransport::Attribute(t) => t.source_gap(),
-            PrimaryExpressionTransport::Subscript(t) => t.source_gap(),
-            PrimaryExpressionTransport::Call(t) => t.source_gap(),
-            PrimaryExpressionTransport::List(t) => t.source_gap(),
-            PrimaryExpressionTransport::ListComprehension(t) => t.source_gap(),
-            PrimaryExpressionTransport::Dictionary(t) => t.source_gap(),
-            PrimaryExpressionTransport::DictionaryComprehension(t) => t.source_gap(),
-            PrimaryExpressionTransport::Set(t) => t.source_gap(),
-            PrimaryExpressionTransport::SetComprehension(t) => t.source_gap(),
-            PrimaryExpressionTransport::Tuple(t) => t.source_gap(),
-            PrimaryExpressionTransport::ParenthesizedExpression(t) => t.source_gap(),
-            PrimaryExpressionTransport::GeneratorExpression(t) => t.source_gap(),
-            PrimaryExpressionTransport::Ellipsis(_) => None,
-            PrimaryExpressionTransport::ListSplatPattern(t) => t.source_gap(),
-            PrimaryExpressionTransport::Verbatim(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             PrimaryExpressionTransport::Await(t) => t.gap_edges(),
             PrimaryExpressionTransport::BinaryOperator(t) => t.gap_edges(),
             PrimaryExpressionTransport::Identifier(t) => t.gap_edges(),
-            PrimaryExpressionTransport::PrintKeyword => None,
-            PrimaryExpressionTransport::ExecKeyword => None,
-            PrimaryExpressionTransport::AsyncKeyword => None,
-            PrimaryExpressionTransport::AwaitKeyword => None,
-            PrimaryExpressionTransport::TypeKeyword => None,
-            PrimaryExpressionTransport::MatchKeyword => None,
             PrimaryExpressionTransport::String(t) => t.gap_edges(),
             PrimaryExpressionTransport::ConcatenatedString(t) => t.gap_edges(),
             PrimaryExpressionTransport::Integer(t) => t.gap_edges(),
@@ -2963,12 +2876,6 @@ impl ::sittir_core::prepare::Prepare for PrimaryExpressionTransport {
             PrimaryExpressionTransport::Await(t) => t.snapshot_edge(),
             PrimaryExpressionTransport::BinaryOperator(t) => t.snapshot_edge(),
             PrimaryExpressionTransport::Identifier(t) => t.snapshot_edge(),
-            PrimaryExpressionTransport::PrintKeyword => None,
-            PrimaryExpressionTransport::ExecKeyword => None,
-            PrimaryExpressionTransport::AsyncKeyword => None,
-            PrimaryExpressionTransport::AwaitKeyword => None,
-            PrimaryExpressionTransport::TypeKeyword => None,
-            PrimaryExpressionTransport::MatchKeyword => None,
             PrimaryExpressionTransport::String(t) => t.snapshot_edge(),
             PrimaryExpressionTransport::ConcatenatedString(t) => t.snapshot_edge(),
             PrimaryExpressionTransport::Integer(t) => t.snapshot_edge(),
@@ -2994,6 +2901,36 @@ impl ::sittir_core::prepare::Prepare for PrimaryExpressionTransport {
             PrimaryExpressionTransport::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            PrimaryExpressionTransport::Await(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::BinaryOperator(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::Identifier(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::String(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::ConcatenatedString(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::Integer(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::Float(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::True(_) => None,
+            PrimaryExpressionTransport::False(_) => None,
+            PrimaryExpressionTransport::None(_) => None,
+            PrimaryExpressionTransport::UnaryOperator(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::Attribute(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::Subscript(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::Call(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::List(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::ListComprehension(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::Dictionary(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::DictionaryComprehension(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::Set(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::SetComprehension(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::Tuple(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::ParenthesizedExpression(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::GeneratorExpression(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::Ellipsis(_) => None,
+            PrimaryExpressionTransport::ListSplatPattern(t) => t.source_separator(ctx),
+            PrimaryExpressionTransport::Verbatim(t) => t.source_separator(ctx),
+        }
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -3005,12 +2942,6 @@ impl ::sittir_core::view::KindOf for PrimaryExpressionTransport {
             Self::Await(inner) => inner.kind_in(kinds),
             Self::BinaryOperator(inner) => inner.kind_in(kinds),
             Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::String(inner) => inner.kind_in(kinds),
             Self::ConcatenatedString(inner) => inner.kind_in(kinds),
             Self::Integer(inner) => inner.kind_in(kinds),
@@ -3043,12 +2974,6 @@ fn primary_expression_transport_to_any(t: PrimaryExpressionTransport) -> AnyTran
         PrimaryExpressionTransport::Await(inner) => AnyTransport::Await(inner),
         PrimaryExpressionTransport::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
         PrimaryExpressionTransport::Identifier(inner) => AnyTransport::Identifier(inner),
-        PrimaryExpressionTransport::PrintKeyword => AnyTransport::PrintKeyword,
-        PrimaryExpressionTransport::ExecKeyword => AnyTransport::ExecKeyword,
-        PrimaryExpressionTransport::AsyncKeyword => AnyTransport::AsyncKeyword,
-        PrimaryExpressionTransport::AwaitKeyword => AnyTransport::AwaitKeyword,
-        PrimaryExpressionTransport::TypeKeyword => AnyTransport::TypeKeyword,
-        PrimaryExpressionTransport::MatchKeyword => AnyTransport::MatchKeyword,
         PrimaryExpressionTransport::String(inner) => AnyTransport::String(inner),
         PrimaryExpressionTransport::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
         PrimaryExpressionTransport::Integer(inner) => integer_transport_to_any(inner),
@@ -3106,15 +3031,6 @@ impl ::sittir_core::prepare::Prepare for IntegerTransport {
             IntegerTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            IntegerTransport::IntegerHex(t) => t.source_gap(),
-            IntegerTransport::IntegerOctal(t) => t.source_gap(),
-            IntegerTransport::IntegerBinary(t) => t.source_gap(),
-            IntegerTransport::IntegerDecimal(t) => t.source_gap(),
-            IntegerTransport::Verbatim(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             IntegerTransport::IntegerHex(t) => t.gap_edges(),
@@ -3131,6 +3047,15 @@ impl ::sittir_core::prepare::Prepare for IntegerTransport {
             IntegerTransport::IntegerBinary(t) => t.snapshot_edge(),
             IntegerTransport::IntegerDecimal(t) => t.snapshot_edge(),
             IntegerTransport::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            IntegerTransport::IntegerHex(t) => t.source_separator(ctx),
+            IntegerTransport::IntegerOctal(t) => t.source_separator(ctx),
+            IntegerTransport::IntegerBinary(t) => t.source_separator(ctx),
+            IntegerTransport::IntegerDecimal(t) => t.source_separator(ctx),
+            IntegerTransport::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -3185,13 +3110,6 @@ impl ::sittir_core::prepare::Prepare for FloatTransport {
             FloatTransport::FloatScientific(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            FloatTransport::FloatPoint(t) => t.source_gap(),
-            FloatTransport::FloatLeadingPoint(t) => t.source_gap(),
-            FloatTransport::FloatScientific(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             FloatTransport::FloatPoint(t) => t.gap_edges(),
@@ -3204,6 +3122,13 @@ impl ::sittir_core::prepare::Prepare for FloatTransport {
             FloatTransport::FloatPoint(t) => t.snapshot_edge(),
             FloatTransport::FloatLeadingPoint(t) => t.snapshot_edge(),
             FloatTransport::FloatScientific(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            FloatTransport::FloatPoint(t) => t.source_separator(ctx),
+            FloatTransport::FloatLeadingPoint(t) => t.source_separator(ctx),
+            FloatTransport::FloatScientific(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -3257,14 +3182,6 @@ impl ::sittir_core::prepare::Prepare for IntegerDecimalTransport {
             IntegerDecimalTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            IntegerDecimalTransport::IntegerDecimalLong(t) => t.source_gap(),
-            IntegerDecimalTransport::IntegerDecimalImaginary(t) => t.source_gap(),
-            IntegerDecimalTransport::IntegerDecimalPlain(t) => t.source_gap(),
-            IntegerDecimalTransport::Verbatim(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             IntegerDecimalTransport::IntegerDecimalLong(t) => t.gap_edges(),
@@ -3279,6 +3196,14 @@ impl ::sittir_core::prepare::Prepare for IntegerDecimalTransport {
             IntegerDecimalTransport::IntegerDecimalImaginary(t) => t.snapshot_edge(),
             IntegerDecimalTransport::IntegerDecimalPlain(t) => t.snapshot_edge(),
             IntegerDecimalTransport::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            IntegerDecimalTransport::IntegerDecimalLong(t) => t.source_separator(ctx),
+            IntegerDecimalTransport::IntegerDecimalImaginary(t) => t.source_separator(ctx),
+            IntegerDecimalTransport::IntegerDecimalPlain(t) => t.source_separator(ctx),
+            IntegerDecimalTransport::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -3329,12 +3254,6 @@ impl ::sittir_core::prepare::Prepare for FutureImportStatementContentTransportSl
             FutureImportStatementContentTransportSlot::ParenthesizedImportList(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            FutureImportStatementContentTransportSlot::ImportList(t) => t.source_gap(),
-            FutureImportStatementContentTransportSlot::ParenthesizedImportList(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             FutureImportStatementContentTransportSlot::ImportList(t) => t.gap_edges(),
@@ -3345,6 +3264,12 @@ impl ::sittir_core::prepare::Prepare for FutureImportStatementContentTransportSl
         match self {
             FutureImportStatementContentTransportSlot::ImportList(t) => t.snapshot_edge(),
             FutureImportStatementContentTransportSlot::ParenthesizedImportList(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            FutureImportStatementContentTransportSlot::ImportList(t) => t.source_separator(ctx),
+            FutureImportStatementContentTransportSlot::ParenthesizedImportList(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -3386,12 +3311,6 @@ impl ::sittir_core::prepare::Prepare for ImportFromStatementModuleNameTransportS
             ImportFromStatementModuleNameTransportSlot::DottedName(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            ImportFromStatementModuleNameTransportSlot::RelativeImport(t) => t.source_gap(),
-            ImportFromStatementModuleNameTransportSlot::DottedName(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             ImportFromStatementModuleNameTransportSlot::RelativeImport(t) => t.gap_edges(),
@@ -3402,6 +3321,12 @@ impl ::sittir_core::prepare::Prepare for ImportFromStatementModuleNameTransportS
         match self {
             ImportFromStatementModuleNameTransportSlot::RelativeImport(t) => t.snapshot_edge(),
             ImportFromStatementModuleNameTransportSlot::DottedName(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            ImportFromStatementModuleNameTransportSlot::RelativeImport(t) => t.source_separator(ctx),
+            ImportFromStatementModuleNameTransportSlot::DottedName(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -3446,13 +3371,6 @@ impl ::sittir_core::prepare::Prepare for ImportFromStatementContentTransportSlot
             ImportFromStatementContentTransportSlot::WildcardImport => Ok(()),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            ImportFromStatementContentTransportSlot::ImportList(t) => t.source_gap(),
-            ImportFromStatementContentTransportSlot::ParenthesizedImportList(t) => t.source_gap(),
-            ImportFromStatementContentTransportSlot::WildcardImport => None,
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             ImportFromStatementContentTransportSlot::ImportList(t) => t.gap_edges(),
@@ -3464,6 +3382,13 @@ impl ::sittir_core::prepare::Prepare for ImportFromStatementContentTransportSlot
         match self {
             ImportFromStatementContentTransportSlot::ImportList(t) => t.snapshot_edge(),
             ImportFromStatementContentTransportSlot::ParenthesizedImportList(t) => t.snapshot_edge(),
+            ImportFromStatementContentTransportSlot::WildcardImport => None,
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            ImportFromStatementContentTransportSlot::ImportList(t) => t.source_separator(ctx),
+            ImportFromStatementContentTransportSlot::ParenthesizedImportList(t) => t.source_separator(ctx),
             ImportFromStatementContentTransportSlot::WildcardImport => None,
         }
     }
@@ -3513,12 +3438,6 @@ impl ::sittir_core::prepare::Prepare for ImportListNameTransportSlot {
             ImportListNameTransportSlot::AliasedImport(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            ImportListNameTransportSlot::DottedName(t) => t.source_gap(),
-            ImportListNameTransportSlot::AliasedImport(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             ImportListNameTransportSlot::DottedName(t) => t.gap_edges(),
@@ -3529,6 +3448,12 @@ impl ::sittir_core::prepare::Prepare for ImportListNameTransportSlot {
         match self {
             ImportListNameTransportSlot::DottedName(t) => t.snapshot_edge(),
             ImportListNameTransportSlot::AliasedImport(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            ImportListNameTransportSlot::DottedName(t) => t.source_separator(ctx),
+            ImportListNameTransportSlot::AliasedImport(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -3570,12 +3495,6 @@ impl ::sittir_core::prepare::Prepare for PrintStatementContentTransportSlot {
             PrintStatementContentTransportSlot::PrintStatementPlain(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            PrintStatementContentTransportSlot::PrintStatementChevron(t) => t.source_gap(),
-            PrintStatementContentTransportSlot::PrintStatementPlain(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             PrintStatementContentTransportSlot::PrintStatementChevron(t) => t.gap_edges(),
@@ -3586,6 +3505,12 @@ impl ::sittir_core::prepare::Prepare for PrintStatementContentTransportSlot {
         match self {
             PrintStatementContentTransportSlot::PrintStatementChevron(t) => t.snapshot_edge(),
             PrintStatementContentTransportSlot::PrintStatementPlain(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            PrintStatementContentTransportSlot::PrintStatementChevron(t) => t.source_separator(ctx),
+            PrintStatementContentTransportSlot::PrintStatementPlain(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -3626,7 +3551,7 @@ pub enum ExpressionStatementContentTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -3696,18 +3621,6 @@ pub enum ExpressionStatementContentTransportSlot {
     AugmentedAssignment(AugmentedAssignmentTransport),
     #[kind(kind::YIELD)]
     Yield(YieldTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -3768,73 +3681,11 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementContentTransportSlot
             ExpressionStatementContentTransportSlot::AssignmentTyped(t) => t.prepare(ctx),
             ExpressionStatementContentTransportSlot::AugmentedAssignment(t) => t.prepare(ctx),
             ExpressionStatementContentTransportSlot::Yield(t) => t.prepare(ctx),
-            ExpressionStatementContentTransportSlot::PrintKeyword => Ok(()),
-            ExpressionStatementContentTransportSlot::ExecKeyword => Ok(()),
-            ExpressionStatementContentTransportSlot::AsyncKeyword => Ok(()),
-            ExpressionStatementContentTransportSlot::AwaitKeyword => Ok(()),
-            ExpressionStatementContentTransportSlot::TypeKeyword => Ok(()),
-            ExpressionStatementContentTransportSlot::MatchKeyword => Ok(()),
             ExpressionStatementContentTransportSlot::True(_) => Ok(()),
             ExpressionStatementContentTransportSlot::False(_) => Ok(()),
             ExpressionStatementContentTransportSlot::None(_) => Ok(()),
             ExpressionStatementContentTransportSlot::Ellipsis(_) => Ok(()),
             ExpressionStatementContentTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            ExpressionStatementContentTransportSlot::ComparisonOperator(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::NotOperator(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::BooleanOperator(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::Lambda(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::Await(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::BinaryOperator(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::Identifier(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::String(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::ConcatenatedString(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::IntegerHex(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::IntegerOctal(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::IntegerBinary(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::IntegerDecimalLong(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::IntegerDecimalImaginary(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::IntegerDecimalPlain(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::FloatPoint(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::FloatLeadingPoint(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::FloatScientific(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::UnaryOperator(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::Attribute(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::Subscript(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::Call(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::List(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::ListComprehension(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::Dictionary(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::DictionaryComprehension(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::Set(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::SetComprehension(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::Tuple(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::ParenthesizedExpression(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::GeneratorExpression(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::ListSplatPattern(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::ConditionalExpression(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::NamedExpression(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::AsPattern(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::ExpressionStatementTuple(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::AssignmentEq(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::AssignmentType(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::AssignmentTyped(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::AugmentedAssignment(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::Yield(t) => t.source_gap(),
-            ExpressionStatementContentTransportSlot::PrintKeyword => None,
-            ExpressionStatementContentTransportSlot::ExecKeyword => None,
-            ExpressionStatementContentTransportSlot::AsyncKeyword => None,
-            ExpressionStatementContentTransportSlot::AwaitKeyword => None,
-            ExpressionStatementContentTransportSlot::TypeKeyword => None,
-            ExpressionStatementContentTransportSlot::MatchKeyword => None,
-            ExpressionStatementContentTransportSlot::True(_) => None,
-            ExpressionStatementContentTransportSlot::False(_) => None,
-            ExpressionStatementContentTransportSlot::None(_) => None,
-            ExpressionStatementContentTransportSlot::Ellipsis(_) => None,
-            ExpressionStatementContentTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -3880,12 +3731,6 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementContentTransportSlot
             ExpressionStatementContentTransportSlot::AssignmentTyped(t) => t.gap_edges(),
             ExpressionStatementContentTransportSlot::AugmentedAssignment(t) => t.gap_edges(),
             ExpressionStatementContentTransportSlot::Yield(t) => t.gap_edges(),
-            ExpressionStatementContentTransportSlot::PrintKeyword => None,
-            ExpressionStatementContentTransportSlot::ExecKeyword => None,
-            ExpressionStatementContentTransportSlot::AsyncKeyword => None,
-            ExpressionStatementContentTransportSlot::AwaitKeyword => None,
-            ExpressionStatementContentTransportSlot::TypeKeyword => None,
-            ExpressionStatementContentTransportSlot::MatchKeyword => None,
             ExpressionStatementContentTransportSlot::True(edges) => Some(edges),
             ExpressionStatementContentTransportSlot::False(edges) => Some(edges),
             ExpressionStatementContentTransportSlot::None(edges) => Some(edges),
@@ -3936,17 +3781,61 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementContentTransportSlot
             ExpressionStatementContentTransportSlot::AssignmentTyped(t) => t.snapshot_edge(),
             ExpressionStatementContentTransportSlot::AugmentedAssignment(t) => t.snapshot_edge(),
             ExpressionStatementContentTransportSlot::Yield(t) => t.snapshot_edge(),
-            ExpressionStatementContentTransportSlot::PrintKeyword => None,
-            ExpressionStatementContentTransportSlot::ExecKeyword => None,
-            ExpressionStatementContentTransportSlot::AsyncKeyword => None,
-            ExpressionStatementContentTransportSlot::AwaitKeyword => None,
-            ExpressionStatementContentTransportSlot::TypeKeyword => None,
-            ExpressionStatementContentTransportSlot::MatchKeyword => None,
             ExpressionStatementContentTransportSlot::True(_) => None,
             ExpressionStatementContentTransportSlot::False(_) => None,
             ExpressionStatementContentTransportSlot::None(_) => None,
             ExpressionStatementContentTransportSlot::Ellipsis(_) => None,
             ExpressionStatementContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            ExpressionStatementContentTransportSlot::ComparisonOperator(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::NotOperator(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::BooleanOperator(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::Lambda(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::Await(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::BinaryOperator(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::Identifier(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::String(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::ConcatenatedString(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::IntegerHex(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::IntegerOctal(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::IntegerBinary(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::FloatPoint(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::FloatScientific(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::UnaryOperator(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::Attribute(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::Subscript(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::Call(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::List(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::ListComprehension(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::Dictionary(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::DictionaryComprehension(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::Set(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::SetComprehension(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::Tuple(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::ParenthesizedExpression(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::GeneratorExpression(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::ListSplatPattern(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::ConditionalExpression(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::NamedExpression(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::AsPattern(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::ExpressionStatementTuple(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::AssignmentEq(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::AssignmentType(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::AssignmentTyped(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::AugmentedAssignment(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::Yield(t) => t.source_separator(ctx),
+            ExpressionStatementContentTransportSlot::True(_) => None,
+            ExpressionStatementContentTransportSlot::False(_) => None,
+            ExpressionStatementContentTransportSlot::None(_) => None,
+            ExpressionStatementContentTransportSlot::Ellipsis(_) => None,
+            ExpressionStatementContentTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -3998,12 +3887,6 @@ impl ::sittir_core::view::KindOf for ExpressionStatementContentTransportSlot {
             Self::AssignmentTyped(inner) => inner.kind_in(kinds),
             Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -4057,122 +3940,11 @@ impl ::sittir_core::render::Render for ExpressionStatementContentTransportSlot {
             ExpressionStatementContentTransportSlot::AssignmentTyped(inner) => inner.render(w),
             ExpressionStatementContentTransportSlot::AugmentedAssignment(inner) => inner.render(w),
             ExpressionStatementContentTransportSlot::Yield(inner) => inner.render(w),
-            ExpressionStatementContentTransportSlot::PrintKeyword => render_print_keyword(w),
-            ExpressionStatementContentTransportSlot::ExecKeyword => render_exec_keyword(w),
-            ExpressionStatementContentTransportSlot::AsyncKeyword => render_async_keyword(w),
-            ExpressionStatementContentTransportSlot::AwaitKeyword => render_await_keyword(w),
-            ExpressionStatementContentTransportSlot::TypeKeyword => render_type_keyword(w),
-            ExpressionStatementContentTransportSlot::MatchKeyword => render_match_keyword(w),
             ExpressionStatementContentTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             ExpressionStatementContentTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             ExpressionStatementContentTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
             ExpressionStatementContentTransportSlot::Ellipsis(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(64), edges, w, render_ellipsis),
             ExpressionStatementContentTransportSlot::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum NamedExpressionNameTransportSlot {
-    #[kind(kind::IDENTIFIER)]
-    Identifier(IdentifierTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
-    #[transport(verbatim)]
-    Verbatim(VerbatimTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for NamedExpressionNameTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            NamedExpressionNameTransportSlot::Identifier(t) => t.prepare(ctx),
-            NamedExpressionNameTransportSlot::PrintKeyword => Ok(()),
-            NamedExpressionNameTransportSlot::ExecKeyword => Ok(()),
-            NamedExpressionNameTransportSlot::AsyncKeyword => Ok(()),
-            NamedExpressionNameTransportSlot::AwaitKeyword => Ok(()),
-            NamedExpressionNameTransportSlot::TypeKeyword => Ok(()),
-            NamedExpressionNameTransportSlot::MatchKeyword => Ok(()),
-            NamedExpressionNameTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            NamedExpressionNameTransportSlot::Identifier(t) => t.source_gap(),
-            NamedExpressionNameTransportSlot::PrintKeyword => None,
-            NamedExpressionNameTransportSlot::ExecKeyword => None,
-            NamedExpressionNameTransportSlot::AsyncKeyword => None,
-            NamedExpressionNameTransportSlot::AwaitKeyword => None,
-            NamedExpressionNameTransportSlot::TypeKeyword => None,
-            NamedExpressionNameTransportSlot::MatchKeyword => None,
-            NamedExpressionNameTransportSlot::Verbatim(t) => t.source_gap(),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            NamedExpressionNameTransportSlot::Identifier(t) => t.gap_edges(),
-            NamedExpressionNameTransportSlot::PrintKeyword => None,
-            NamedExpressionNameTransportSlot::ExecKeyword => None,
-            NamedExpressionNameTransportSlot::AsyncKeyword => None,
-            NamedExpressionNameTransportSlot::AwaitKeyword => None,
-            NamedExpressionNameTransportSlot::TypeKeyword => None,
-            NamedExpressionNameTransportSlot::MatchKeyword => None,
-            NamedExpressionNameTransportSlot::Verbatim(t) => t.gap_edges(),
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            NamedExpressionNameTransportSlot::Identifier(t) => t.snapshot_edge(),
-            NamedExpressionNameTransportSlot::PrintKeyword => None,
-            NamedExpressionNameTransportSlot::ExecKeyword => None,
-            NamedExpressionNameTransportSlot::AsyncKeyword => None,
-            NamedExpressionNameTransportSlot::AwaitKeyword => None,
-            NamedExpressionNameTransportSlot::TypeKeyword => None,
-            NamedExpressionNameTransportSlot::MatchKeyword => None,
-            NamedExpressionNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
-        }
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::view::KindOf for NamedExpressionNameTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for NamedExpressionNameTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            NamedExpressionNameTransportSlot::Identifier(inner) => inner.render(w),
-            NamedExpressionNameTransportSlot::PrintKeyword => render_print_keyword(w),
-            NamedExpressionNameTransportSlot::ExecKeyword => render_exec_keyword(w),
-            NamedExpressionNameTransportSlot::AsyncKeyword => render_async_keyword(w),
-            NamedExpressionNameTransportSlot::AwaitKeyword => render_await_keyword(w),
-            NamedExpressionNameTransportSlot::TypeKeyword => render_type_keyword(w),
-            NamedExpressionNameTransportSlot::MatchKeyword => render_match_keyword(w),
-            NamedExpressionNameTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -4192,7 +3964,7 @@ pub enum ReturnStatementExpressionsTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -4252,18 +4024,6 @@ pub enum ReturnStatementExpressionsTransportSlot {
     AsPattern(AsPatternTransport),
     #[kind(kind::EXPRESSION_LIST)]
     ExpressionList(ExpressionListTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -4319,68 +4079,11 @@ impl ::sittir_core::prepare::Prepare for ReturnStatementExpressionsTransportSlot
             ReturnStatementExpressionsTransportSlot::NamedExpression(t) => t.prepare(ctx),
             ReturnStatementExpressionsTransportSlot::AsPattern(t) => t.prepare(ctx),
             ReturnStatementExpressionsTransportSlot::ExpressionList(t) => t.prepare(ctx),
-            ReturnStatementExpressionsTransportSlot::PrintKeyword => Ok(()),
-            ReturnStatementExpressionsTransportSlot::ExecKeyword => Ok(()),
-            ReturnStatementExpressionsTransportSlot::AsyncKeyword => Ok(()),
-            ReturnStatementExpressionsTransportSlot::AwaitKeyword => Ok(()),
-            ReturnStatementExpressionsTransportSlot::TypeKeyword => Ok(()),
-            ReturnStatementExpressionsTransportSlot::MatchKeyword => Ok(()),
             ReturnStatementExpressionsTransportSlot::True(_) => Ok(()),
             ReturnStatementExpressionsTransportSlot::False(_) => Ok(()),
             ReturnStatementExpressionsTransportSlot::None(_) => Ok(()),
             ReturnStatementExpressionsTransportSlot::Ellipsis(_) => Ok(()),
             ReturnStatementExpressionsTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            ReturnStatementExpressionsTransportSlot::ComparisonOperator(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::NotOperator(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::BooleanOperator(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::Lambda(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::Await(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::BinaryOperator(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::Identifier(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::String(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::ConcatenatedString(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::IntegerHex(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::IntegerOctal(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::IntegerBinary(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::IntegerDecimalLong(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::IntegerDecimalImaginary(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::IntegerDecimalPlain(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::FloatPoint(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::FloatLeadingPoint(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::FloatScientific(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::UnaryOperator(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::Attribute(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::Subscript(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::Call(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::List(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::ListComprehension(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::Dictionary(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::DictionaryComprehension(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::Set(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::SetComprehension(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::Tuple(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::ParenthesizedExpression(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::GeneratorExpression(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::ListSplatPattern(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::ConditionalExpression(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::NamedExpression(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::AsPattern(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::ExpressionList(t) => t.source_gap(),
-            ReturnStatementExpressionsTransportSlot::PrintKeyword => None,
-            ReturnStatementExpressionsTransportSlot::ExecKeyword => None,
-            ReturnStatementExpressionsTransportSlot::AsyncKeyword => None,
-            ReturnStatementExpressionsTransportSlot::AwaitKeyword => None,
-            ReturnStatementExpressionsTransportSlot::TypeKeyword => None,
-            ReturnStatementExpressionsTransportSlot::MatchKeyword => None,
-            ReturnStatementExpressionsTransportSlot::True(_) => None,
-            ReturnStatementExpressionsTransportSlot::False(_) => None,
-            ReturnStatementExpressionsTransportSlot::None(_) => None,
-            ReturnStatementExpressionsTransportSlot::Ellipsis(_) => None,
-            ReturnStatementExpressionsTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -4421,12 +4124,6 @@ impl ::sittir_core::prepare::Prepare for ReturnStatementExpressionsTransportSlot
             ReturnStatementExpressionsTransportSlot::NamedExpression(t) => t.gap_edges(),
             ReturnStatementExpressionsTransportSlot::AsPattern(t) => t.gap_edges(),
             ReturnStatementExpressionsTransportSlot::ExpressionList(t) => t.gap_edges(),
-            ReturnStatementExpressionsTransportSlot::PrintKeyword => None,
-            ReturnStatementExpressionsTransportSlot::ExecKeyword => None,
-            ReturnStatementExpressionsTransportSlot::AsyncKeyword => None,
-            ReturnStatementExpressionsTransportSlot::AwaitKeyword => None,
-            ReturnStatementExpressionsTransportSlot::TypeKeyword => None,
-            ReturnStatementExpressionsTransportSlot::MatchKeyword => None,
             ReturnStatementExpressionsTransportSlot::True(edges) => Some(edges),
             ReturnStatementExpressionsTransportSlot::False(edges) => Some(edges),
             ReturnStatementExpressionsTransportSlot::None(edges) => Some(edges),
@@ -4472,17 +4169,56 @@ impl ::sittir_core::prepare::Prepare for ReturnStatementExpressionsTransportSlot
             ReturnStatementExpressionsTransportSlot::NamedExpression(t) => t.snapshot_edge(),
             ReturnStatementExpressionsTransportSlot::AsPattern(t) => t.snapshot_edge(),
             ReturnStatementExpressionsTransportSlot::ExpressionList(t) => t.snapshot_edge(),
-            ReturnStatementExpressionsTransportSlot::PrintKeyword => None,
-            ReturnStatementExpressionsTransportSlot::ExecKeyword => None,
-            ReturnStatementExpressionsTransportSlot::AsyncKeyword => None,
-            ReturnStatementExpressionsTransportSlot::AwaitKeyword => None,
-            ReturnStatementExpressionsTransportSlot::TypeKeyword => None,
-            ReturnStatementExpressionsTransportSlot::MatchKeyword => None,
             ReturnStatementExpressionsTransportSlot::True(_) => None,
             ReturnStatementExpressionsTransportSlot::False(_) => None,
             ReturnStatementExpressionsTransportSlot::None(_) => None,
             ReturnStatementExpressionsTransportSlot::Ellipsis(_) => None,
             ReturnStatementExpressionsTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            ReturnStatementExpressionsTransportSlot::ComparisonOperator(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::NotOperator(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::BooleanOperator(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::Lambda(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::Await(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::BinaryOperator(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::Identifier(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::String(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::ConcatenatedString(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::IntegerHex(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::IntegerOctal(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::IntegerBinary(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::FloatPoint(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::FloatScientific(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::UnaryOperator(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::Attribute(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::Subscript(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::Call(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::List(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::ListComprehension(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::Dictionary(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::DictionaryComprehension(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::Set(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::SetComprehension(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::Tuple(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::ParenthesizedExpression(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::GeneratorExpression(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::ListSplatPattern(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::ConditionalExpression(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::NamedExpression(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::AsPattern(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::ExpressionList(t) => t.source_separator(ctx),
+            ReturnStatementExpressionsTransportSlot::True(_) => None,
+            ReturnStatementExpressionsTransportSlot::False(_) => None,
+            ReturnStatementExpressionsTransportSlot::None(_) => None,
+            ReturnStatementExpressionsTransportSlot::Ellipsis(_) => None,
+            ReturnStatementExpressionsTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -4529,12 +4265,6 @@ impl ::sittir_core::view::KindOf for ReturnStatementExpressionsTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::ExpressionList(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -4583,12 +4313,6 @@ impl ::sittir_core::render::Render for ReturnStatementExpressionsTransportSlot {
             ReturnStatementExpressionsTransportSlot::NamedExpression(inner) => inner.render(w),
             ReturnStatementExpressionsTransportSlot::AsPattern(inner) => inner.render(w),
             ReturnStatementExpressionsTransportSlot::ExpressionList(inner) => inner.render(w),
-            ReturnStatementExpressionsTransportSlot::PrintKeyword => render_print_keyword(w),
-            ReturnStatementExpressionsTransportSlot::ExecKeyword => render_exec_keyword(w),
-            ReturnStatementExpressionsTransportSlot::AsyncKeyword => render_async_keyword(w),
-            ReturnStatementExpressionsTransportSlot::AwaitKeyword => render_await_keyword(w),
-            ReturnStatementExpressionsTransportSlot::TypeKeyword => render_type_keyword(w),
-            ReturnStatementExpressionsTransportSlot::MatchKeyword => render_match_keyword(w),
             ReturnStatementExpressionsTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             ReturnStatementExpressionsTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             ReturnStatementExpressionsTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -4614,12 +4338,6 @@ impl ::sittir_core::prepare::Prepare for IfStatementAlternativeTransportSlot {
             IfStatementAlternativeTransportSlot::ElseClause(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            IfStatementAlternativeTransportSlot::ElifClause(t) => t.source_gap(),
-            IfStatementAlternativeTransportSlot::ElseClause(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             IfStatementAlternativeTransportSlot::ElifClause(t) => t.gap_edges(),
@@ -4630,6 +4348,12 @@ impl ::sittir_core::prepare::Prepare for IfStatementAlternativeTransportSlot {
         match self {
             IfStatementAlternativeTransportSlot::ElifClause(t) => t.snapshot_edge(),
             IfStatementAlternativeTransportSlot::ElseClause(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            IfStatementAlternativeTransportSlot::ElifClause(t) => t.source_separator(ctx),
+            IfStatementAlternativeTransportSlot::ElseClause(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -4671,12 +4395,6 @@ impl ::sittir_core::prepare::Prepare for MatchBlockContentTransportSlot {
             MatchBlockContentTransportSlot::MatchBlockEmpty(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            MatchBlockContentTransportSlot::MatchBlockBlock(t) => t.source_gap(),
-            MatchBlockContentTransportSlot::MatchBlockEmpty(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             MatchBlockContentTransportSlot::MatchBlockBlock(t) => t.gap_edges(),
@@ -4687,6 +4405,12 @@ impl ::sittir_core::prepare::Prepare for MatchBlockContentTransportSlot {
         match self {
             MatchBlockContentTransportSlot::MatchBlockBlock(t) => t.snapshot_edge(),
             MatchBlockContentTransportSlot::MatchBlockEmpty(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            MatchBlockContentTransportSlot::MatchBlockBlock(t) => t.source_separator(ctx),
+            MatchBlockContentTransportSlot::MatchBlockEmpty(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -4715,7 +4439,7 @@ impl ::sittir_core::render::Render for MatchBlockContentTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum ForStatementLeftTransportSlot {
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SUBSCRIPT)]
     Subscript(SubscriptTransport),
@@ -4729,18 +4453,6 @@ pub enum ForStatementLeftTransportSlot {
     ListPattern(ListPatternTransport),
     #[kind(kind::PATTERN_LIST)]
     PatternList(PatternListTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -4755,31 +4467,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementLeftTransportSlot {
             ForStatementLeftTransportSlot::TuplePattern(t) => t.prepare(ctx),
             ForStatementLeftTransportSlot::ListPattern(t) => t.prepare(ctx),
             ForStatementLeftTransportSlot::PatternList(t) => t.prepare(ctx),
-            ForStatementLeftTransportSlot::PrintKeyword => Ok(()),
-            ForStatementLeftTransportSlot::ExecKeyword => Ok(()),
-            ForStatementLeftTransportSlot::AsyncKeyword => Ok(()),
-            ForStatementLeftTransportSlot::AwaitKeyword => Ok(()),
-            ForStatementLeftTransportSlot::TypeKeyword => Ok(()),
-            ForStatementLeftTransportSlot::MatchKeyword => Ok(()),
             ForStatementLeftTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            ForStatementLeftTransportSlot::Identifier(t) => t.source_gap(),
-            ForStatementLeftTransportSlot::Subscript(t) => t.source_gap(),
-            ForStatementLeftTransportSlot::Attribute(t) => t.source_gap(),
-            ForStatementLeftTransportSlot::ListSplatPattern(t) => t.source_gap(),
-            ForStatementLeftTransportSlot::TuplePattern(t) => t.source_gap(),
-            ForStatementLeftTransportSlot::ListPattern(t) => t.source_gap(),
-            ForStatementLeftTransportSlot::PatternList(t) => t.source_gap(),
-            ForStatementLeftTransportSlot::PrintKeyword => None,
-            ForStatementLeftTransportSlot::ExecKeyword => None,
-            ForStatementLeftTransportSlot::AsyncKeyword => None,
-            ForStatementLeftTransportSlot::AwaitKeyword => None,
-            ForStatementLeftTransportSlot::TypeKeyword => None,
-            ForStatementLeftTransportSlot::MatchKeyword => None,
-            ForStatementLeftTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -4791,12 +4479,6 @@ impl ::sittir_core::prepare::Prepare for ForStatementLeftTransportSlot {
             ForStatementLeftTransportSlot::TuplePattern(t) => t.gap_edges(),
             ForStatementLeftTransportSlot::ListPattern(t) => t.gap_edges(),
             ForStatementLeftTransportSlot::PatternList(t) => t.gap_edges(),
-            ForStatementLeftTransportSlot::PrintKeyword => None,
-            ForStatementLeftTransportSlot::ExecKeyword => None,
-            ForStatementLeftTransportSlot::AsyncKeyword => None,
-            ForStatementLeftTransportSlot::AwaitKeyword => None,
-            ForStatementLeftTransportSlot::TypeKeyword => None,
-            ForStatementLeftTransportSlot::MatchKeyword => None,
             ForStatementLeftTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -4809,13 +4491,19 @@ impl ::sittir_core::prepare::Prepare for ForStatementLeftTransportSlot {
             ForStatementLeftTransportSlot::TuplePattern(t) => t.snapshot_edge(),
             ForStatementLeftTransportSlot::ListPattern(t) => t.snapshot_edge(),
             ForStatementLeftTransportSlot::PatternList(t) => t.snapshot_edge(),
-            ForStatementLeftTransportSlot::PrintKeyword => None,
-            ForStatementLeftTransportSlot::ExecKeyword => None,
-            ForStatementLeftTransportSlot::AsyncKeyword => None,
-            ForStatementLeftTransportSlot::AwaitKeyword => None,
-            ForStatementLeftTransportSlot::TypeKeyword => None,
-            ForStatementLeftTransportSlot::MatchKeyword => None,
             ForStatementLeftTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            ForStatementLeftTransportSlot::Identifier(t) => t.source_separator(ctx),
+            ForStatementLeftTransportSlot::Subscript(t) => t.source_separator(ctx),
+            ForStatementLeftTransportSlot::Attribute(t) => t.source_separator(ctx),
+            ForStatementLeftTransportSlot::ListSplatPattern(t) => t.source_separator(ctx),
+            ForStatementLeftTransportSlot::TuplePattern(t) => t.source_separator(ctx),
+            ForStatementLeftTransportSlot::ListPattern(t) => t.source_separator(ctx),
+            ForStatementLeftTransportSlot::PatternList(t) => t.source_separator(ctx),
+            ForStatementLeftTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -4833,12 +4521,6 @@ impl ::sittir_core::view::KindOf for ForStatementLeftTransportSlot {
             Self::TuplePattern(inner) => inner.kind_in(kinds),
             Self::ListPattern(inner) => inner.kind_in(kinds),
             Self::PatternList(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -4854,12 +4536,6 @@ impl ::sittir_core::render::Render for ForStatementLeftTransportSlot {
             ForStatementLeftTransportSlot::TuplePattern(inner) => inner.render(w),
             ForStatementLeftTransportSlot::ListPattern(inner) => inner.render(w),
             ForStatementLeftTransportSlot::PatternList(inner) => inner.render(w),
-            ForStatementLeftTransportSlot::PrintKeyword => render_print_keyword(w),
-            ForStatementLeftTransportSlot::ExecKeyword => render_exec_keyword(w),
-            ForStatementLeftTransportSlot::AsyncKeyword => render_async_keyword(w),
-            ForStatementLeftTransportSlot::AwaitKeyword => render_await_keyword(w),
-            ForStatementLeftTransportSlot::TypeKeyword => render_type_keyword(w),
-            ForStatementLeftTransportSlot::MatchKeyword => render_match_keyword(w),
             ForStatementLeftTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -4870,7 +4546,7 @@ impl ::sittir_core::render::Render for ForStatementLeftTransportSlot {
 pub enum ExecStatementCodeTransportSlot {
     #[kind(kind::STRING)]
     String(StringTransport),
-    #[kind(kind::IDENTIFIER, kind::TYPE_KEYWORD, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::MATCH_KEYWORD)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
@@ -4882,13 +4558,6 @@ impl ::sittir_core::prepare::Prepare for ExecStatementCodeTransportSlot {
             ExecStatementCodeTransportSlot::String(t) => t.prepare(ctx),
             ExecStatementCodeTransportSlot::Identifier(t) => t.prepare(ctx),
             ExecStatementCodeTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            ExecStatementCodeTransportSlot::String(t) => t.source_gap(),
-            ExecStatementCodeTransportSlot::Identifier(t) => t.source_gap(),
-            ExecStatementCodeTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -4903,6 +4572,13 @@ impl ::sittir_core::prepare::Prepare for ExecStatementCodeTransportSlot {
             ExecStatementCodeTransportSlot::String(t) => t.snapshot_edge(),
             ExecStatementCodeTransportSlot::Identifier(t) => t.snapshot_edge(),
             ExecStatementCodeTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            ExecStatementCodeTransportSlot::String(t) => t.source_separator(ctx),
+            ExecStatementCodeTransportSlot::Identifier(t) => t.source_separator(ctx),
+            ExecStatementCodeTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -4946,12 +4622,6 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedListSplatContentTransportS
             ParenthesizedListSplatContentTransportSlot::ListSplat(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            ParenthesizedListSplatContentTransportSlot::ParenthesizedListSplat(t) => t.source_gap(),
-            ParenthesizedListSplatContentTransportSlot::ListSplat(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             ParenthesizedListSplatContentTransportSlot::ParenthesizedListSplat(t) => t.gap_edges(),
@@ -4962,6 +4632,12 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedListSplatContentTransportS
         match self {
             ParenthesizedListSplatContentTransportSlot::ParenthesizedListSplat(t) => t.snapshot_edge(),
             ParenthesizedListSplatContentTransportSlot::ListSplat(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            ParenthesizedListSplatContentTransportSlot::ParenthesizedListSplat(t) => t.source_separator(ctx),
+            ParenthesizedListSplatContentTransportSlot::ListSplat(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -5003,12 +4679,6 @@ impl ::sittir_core::prepare::Prepare for DecoratedDefinitionDefinitionTransportS
             DecoratedDefinitionDefinitionTransportSlot::FunctionDefinition(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            DecoratedDefinitionDefinitionTransportSlot::ClassDefinition(t) => t.source_gap(),
-            DecoratedDefinitionDefinitionTransportSlot::FunctionDefinition(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             DecoratedDefinitionDefinitionTransportSlot::ClassDefinition(t) => t.gap_edges(),
@@ -5019,6 +4689,12 @@ impl ::sittir_core::prepare::Prepare for DecoratedDefinitionDefinitionTransportS
         match self {
             DecoratedDefinitionDefinitionTransportSlot::ClassDefinition(t) => t.snapshot_edge(),
             DecoratedDefinitionDefinitionTransportSlot::FunctionDefinition(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            DecoratedDefinitionDefinitionTransportSlot::ClassDefinition(t) => t.source_separator(ctx),
+            DecoratedDefinitionDefinitionTransportSlot::FunctionDefinition(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -5063,13 +4739,6 @@ impl ::sittir_core::prepare::Prepare for CasePatternContentTransportSlot {
             CasePatternContentTransportSlot::SimplePattern(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            CasePatternContentTransportSlot::CaseAsPattern(t) => t.source_gap(),
-            CasePatternContentTransportSlot::KeywordPattern(t) => t.source_gap(),
-            CasePatternContentTransportSlot::SimplePattern(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             CasePatternContentTransportSlot::CaseAsPattern(t) => t.gap_edges(),
@@ -5082,6 +4751,13 @@ impl ::sittir_core::prepare::Prepare for CasePatternContentTransportSlot {
             CasePatternContentTransportSlot::CaseAsPattern(t) => t.snapshot_edge(),
             CasePatternContentTransportSlot::KeywordPattern(t) => t.snapshot_edge(),
             CasePatternContentTransportSlot::SimplePattern(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            CasePatternContentTransportSlot::CaseAsPattern(t) => t.source_separator(ctx),
+            CasePatternContentTransportSlot::KeywordPattern(t) => t.source_separator(ctx),
+            CasePatternContentTransportSlot::SimplePattern(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -5168,25 +4844,6 @@ impl ::sittir_core::prepare::Prepare for SimplePatternContentTransportSlot {
             SimplePatternContentTransportSlot::WildcardPattern(_) => Ok(()),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            SimplePatternContentTransportSlot::ClassPattern(t) => t.source_gap(),
-            SimplePatternContentTransportSlot::SplatPattern(t) => t.source_gap(),
-            SimplePatternContentTransportSlot::UnionPattern(t) => t.source_gap(),
-            SimplePatternContentTransportSlot::CaseListPattern(t) => t.source_gap(),
-            SimplePatternContentTransportSlot::CaseTuplePattern(t) => t.source_gap(),
-            SimplePatternContentTransportSlot::DictPattern(t) => t.source_gap(),
-            SimplePatternContentTransportSlot::String(t) => t.source_gap(),
-            SimplePatternContentTransportSlot::ConcatenatedString(t) => t.source_gap(),
-            SimplePatternContentTransportSlot::SimplePatternNegative(t) => t.source_gap(),
-            SimplePatternContentTransportSlot::ComplexPattern(t) => t.source_gap(),
-            SimplePatternContentTransportSlot::DottedName(t) => t.source_gap(),
-            SimplePatternContentTransportSlot::True(_) => None,
-            SimplePatternContentTransportSlot::False(_) => None,
-            SimplePatternContentTransportSlot::None(_) => None,
-            SimplePatternContentTransportSlot::WildcardPattern(_) => None,
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             SimplePatternContentTransportSlot::ClassPattern(t) => t.gap_edges(),
@@ -5219,6 +4876,25 @@ impl ::sittir_core::prepare::Prepare for SimplePatternContentTransportSlot {
             SimplePatternContentTransportSlot::SimplePatternNegative(t) => t.snapshot_edge(),
             SimplePatternContentTransportSlot::ComplexPattern(t) => t.snapshot_edge(),
             SimplePatternContentTransportSlot::DottedName(t) => t.snapshot_edge(),
+            SimplePatternContentTransportSlot::True(_) => None,
+            SimplePatternContentTransportSlot::False(_) => None,
+            SimplePatternContentTransportSlot::None(_) => None,
+            SimplePatternContentTransportSlot::WildcardPattern(_) => None,
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            SimplePatternContentTransportSlot::ClassPattern(t) => t.source_separator(ctx),
+            SimplePatternContentTransportSlot::SplatPattern(t) => t.source_separator(ctx),
+            SimplePatternContentTransportSlot::UnionPattern(t) => t.source_separator(ctx),
+            SimplePatternContentTransportSlot::CaseListPattern(t) => t.source_separator(ctx),
+            SimplePatternContentTransportSlot::CaseTuplePattern(t) => t.source_separator(ctx),
+            SimplePatternContentTransportSlot::DictPattern(t) => t.source_separator(ctx),
+            SimplePatternContentTransportSlot::String(t) => t.source_separator(ctx),
+            SimplePatternContentTransportSlot::ConcatenatedString(t) => t.source_separator(ctx),
+            SimplePatternContentTransportSlot::SimplePatternNegative(t) => t.source_separator(ctx),
+            SimplePatternContentTransportSlot::ComplexPattern(t) => t.source_separator(ctx),
+            SimplePatternContentTransportSlot::DottedName(t) => t.source_separator(ctx),
             SimplePatternContentTransportSlot::True(_) => None,
             SimplePatternContentTransportSlot::False(_) => None,
             SimplePatternContentTransportSlot::None(_) => None,
@@ -5326,7 +5002,7 @@ impl ::sittir_core::render::Render for SplatPatternOperatorTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum SplatPatternNameTransportSlot {
-    #[kind(kind::IDENTIFIER, kind::TYPE_KEYWORD, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::MATCH_KEYWORD)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::UNDERSCORE)]
     Underscore,
@@ -5342,13 +5018,6 @@ impl ::sittir_core::prepare::Prepare for SplatPatternNameTransportSlot {
             SplatPatternNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            SplatPatternNameTransportSlot::Identifier(t) => t.source_gap(),
-            SplatPatternNameTransportSlot::Underscore => None,
-            SplatPatternNameTransportSlot::Verbatim(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             SplatPatternNameTransportSlot::Identifier(t) => t.gap_edges(),
@@ -5361,6 +5030,13 @@ impl ::sittir_core::prepare::Prepare for SplatPatternNameTransportSlot {
             SplatPatternNameTransportSlot::Identifier(t) => t.snapshot_edge(),
             SplatPatternNameTransportSlot::Underscore => None,
             SplatPatternNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            SplatPatternNameTransportSlot::Identifier(t) => t.source_separator(ctx),
+            SplatPatternNameTransportSlot::Underscore => None,
+            SplatPatternNameTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -5433,20 +5109,6 @@ impl ::sittir_core::prepare::Prepare for ComplexPatternRealTransportSlot {
             ComplexPatternRealTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            ComplexPatternRealTransportSlot::IntegerHex(t) => t.source_gap(),
-            ComplexPatternRealTransportSlot::IntegerOctal(t) => t.source_gap(),
-            ComplexPatternRealTransportSlot::IntegerBinary(t) => t.source_gap(),
-            ComplexPatternRealTransportSlot::IntegerDecimalLong(t) => t.source_gap(),
-            ComplexPatternRealTransportSlot::IntegerDecimalImaginary(t) => t.source_gap(),
-            ComplexPatternRealTransportSlot::IntegerDecimalPlain(t) => t.source_gap(),
-            ComplexPatternRealTransportSlot::FloatPoint(t) => t.source_gap(),
-            ComplexPatternRealTransportSlot::FloatLeadingPoint(t) => t.source_gap(),
-            ComplexPatternRealTransportSlot::FloatScientific(t) => t.source_gap(),
-            ComplexPatternRealTransportSlot::Verbatim(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             ComplexPatternRealTransportSlot::IntegerHex(t) => t.gap_edges(),
@@ -5473,6 +5135,20 @@ impl ::sittir_core::prepare::Prepare for ComplexPatternRealTransportSlot {
             ComplexPatternRealTransportSlot::FloatLeadingPoint(t) => t.snapshot_edge(),
             ComplexPatternRealTransportSlot::FloatScientific(t) => t.snapshot_edge(),
             ComplexPatternRealTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            ComplexPatternRealTransportSlot::IntegerHex(t) => t.source_separator(ctx),
+            ComplexPatternRealTransportSlot::IntegerOctal(t) => t.source_separator(ctx),
+            ComplexPatternRealTransportSlot::IntegerBinary(t) => t.source_separator(ctx),
+            ComplexPatternRealTransportSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
+            ComplexPatternRealTransportSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
+            ComplexPatternRealTransportSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
+            ComplexPatternRealTransportSlot::FloatPoint(t) => t.source_separator(ctx),
+            ComplexPatternRealTransportSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
+            ComplexPatternRealTransportSlot::FloatScientific(t) => t.source_separator(ctx),
+            ComplexPatternRealTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -5556,7 +5232,7 @@ impl ::sittir_core::render::Render for ComplexPatternOperatorTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum DefaultParameterNameTransportSlot {
-    #[kind(kind::IDENTIFIER, kind::TYPE_KEYWORD, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::MATCH_KEYWORD)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::TUPLE_PATTERN)]
     TuplePattern(TuplePatternTransport),
@@ -5572,13 +5248,6 @@ impl ::sittir_core::prepare::Prepare for DefaultParameterNameTransportSlot {
             DefaultParameterNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            DefaultParameterNameTransportSlot::Identifier(t) => t.source_gap(),
-            DefaultParameterNameTransportSlot::TuplePattern(t) => t.source_gap(),
-            DefaultParameterNameTransportSlot::Verbatim(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             DefaultParameterNameTransportSlot::Identifier(t) => t.gap_edges(),
@@ -5591,6 +5260,13 @@ impl ::sittir_core::prepare::Prepare for DefaultParameterNameTransportSlot {
             DefaultParameterNameTransportSlot::Identifier(t) => t.snapshot_edge(),
             DefaultParameterNameTransportSlot::TuplePattern(t) => t.snapshot_edge(),
             DefaultParameterNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            DefaultParameterNameTransportSlot::Identifier(t) => t.source_separator(ctx),
+            DefaultParameterNameTransportSlot::TuplePattern(t) => t.source_separator(ctx),
+            DefaultParameterNameTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -5621,24 +5297,12 @@ impl ::sittir_core::render::Render for DefaultParameterNameTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum ListSplatPatternTargetTransportSlot {
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SUBSCRIPT)]
     Subscript(SubscriptTransport),
     #[kind(kind::ATTRIBUTE)]
     Attribute(AttributeTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -5649,27 +5313,7 @@ impl ::sittir_core::prepare::Prepare for ListSplatPatternTargetTransportSlot {
             ListSplatPatternTargetTransportSlot::Identifier(t) => t.prepare(ctx),
             ListSplatPatternTargetTransportSlot::Subscript(t) => t.prepare(ctx),
             ListSplatPatternTargetTransportSlot::Attribute(t) => t.prepare(ctx),
-            ListSplatPatternTargetTransportSlot::PrintKeyword => Ok(()),
-            ListSplatPatternTargetTransportSlot::ExecKeyword => Ok(()),
-            ListSplatPatternTargetTransportSlot::AsyncKeyword => Ok(()),
-            ListSplatPatternTargetTransportSlot::AwaitKeyword => Ok(()),
-            ListSplatPatternTargetTransportSlot::TypeKeyword => Ok(()),
-            ListSplatPatternTargetTransportSlot::MatchKeyword => Ok(()),
             ListSplatPatternTargetTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            ListSplatPatternTargetTransportSlot::Identifier(t) => t.source_gap(),
-            ListSplatPatternTargetTransportSlot::Subscript(t) => t.source_gap(),
-            ListSplatPatternTargetTransportSlot::Attribute(t) => t.source_gap(),
-            ListSplatPatternTargetTransportSlot::PrintKeyword => None,
-            ListSplatPatternTargetTransportSlot::ExecKeyword => None,
-            ListSplatPatternTargetTransportSlot::AsyncKeyword => None,
-            ListSplatPatternTargetTransportSlot::AwaitKeyword => None,
-            ListSplatPatternTargetTransportSlot::TypeKeyword => None,
-            ListSplatPatternTargetTransportSlot::MatchKeyword => None,
-            ListSplatPatternTargetTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -5677,12 +5321,6 @@ impl ::sittir_core::prepare::Prepare for ListSplatPatternTargetTransportSlot {
             ListSplatPatternTargetTransportSlot::Identifier(t) => t.gap_edges(),
             ListSplatPatternTargetTransportSlot::Subscript(t) => t.gap_edges(),
             ListSplatPatternTargetTransportSlot::Attribute(t) => t.gap_edges(),
-            ListSplatPatternTargetTransportSlot::PrintKeyword => None,
-            ListSplatPatternTargetTransportSlot::ExecKeyword => None,
-            ListSplatPatternTargetTransportSlot::AsyncKeyword => None,
-            ListSplatPatternTargetTransportSlot::AwaitKeyword => None,
-            ListSplatPatternTargetTransportSlot::TypeKeyword => None,
-            ListSplatPatternTargetTransportSlot::MatchKeyword => None,
             ListSplatPatternTargetTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -5691,13 +5329,15 @@ impl ::sittir_core::prepare::Prepare for ListSplatPatternTargetTransportSlot {
             ListSplatPatternTargetTransportSlot::Identifier(t) => t.snapshot_edge(),
             ListSplatPatternTargetTransportSlot::Subscript(t) => t.snapshot_edge(),
             ListSplatPatternTargetTransportSlot::Attribute(t) => t.snapshot_edge(),
-            ListSplatPatternTargetTransportSlot::PrintKeyword => None,
-            ListSplatPatternTargetTransportSlot::ExecKeyword => None,
-            ListSplatPatternTargetTransportSlot::AsyncKeyword => None,
-            ListSplatPatternTargetTransportSlot::AwaitKeyword => None,
-            ListSplatPatternTargetTransportSlot::TypeKeyword => None,
-            ListSplatPatternTargetTransportSlot::MatchKeyword => None,
             ListSplatPatternTargetTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            ListSplatPatternTargetTransportSlot::Identifier(t) => t.source_separator(ctx),
+            ListSplatPatternTargetTransportSlot::Subscript(t) => t.source_separator(ctx),
+            ListSplatPatternTargetTransportSlot::Attribute(t) => t.source_separator(ctx),
+            ListSplatPatternTargetTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -5711,12 +5351,6 @@ impl ::sittir_core::view::KindOf for ListSplatPatternTargetTransportSlot {
             Self::Identifier(inner) => inner.kind_in(kinds),
             Self::Subscript(inner) => inner.kind_in(kinds),
             Self::Attribute(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -5728,12 +5362,6 @@ impl ::sittir_core::render::Render for ListSplatPatternTargetTransportSlot {
             ListSplatPatternTargetTransportSlot::Identifier(inner) => inner.render(w),
             ListSplatPatternTargetTransportSlot::Subscript(inner) => inner.render(w),
             ListSplatPatternTargetTransportSlot::Attribute(inner) => inner.render(w),
-            ListSplatPatternTargetTransportSlot::PrintKeyword => render_print_keyword(w),
-            ListSplatPatternTargetTransportSlot::ExecKeyword => render_exec_keyword(w),
-            ListSplatPatternTargetTransportSlot::AsyncKeyword => render_async_keyword(w),
-            ListSplatPatternTargetTransportSlot::AwaitKeyword => render_await_keyword(w),
-            ListSplatPatternTargetTransportSlot::TypeKeyword => render_type_keyword(w),
-            ListSplatPatternTargetTransportSlot::MatchKeyword => render_match_keyword(w),
             ListSplatPatternTargetTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -5946,7 +5574,7 @@ pub enum LambdaWithinForInClauseBodyTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -6006,18 +5634,6 @@ pub enum LambdaWithinForInClauseBodyTransportSlot {
     AsPattern(AsPatternTransport),
     #[kind(kind::LAMBDA_WITHIN_FOR_IN_CLAUSE)]
     LambdaWithinForInClause(LambdaWithinForInClauseTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -6073,68 +5689,11 @@ impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseBodyTransportSlo
             LambdaWithinForInClauseBodyTransportSlot::NamedExpression(t) => t.prepare(ctx),
             LambdaWithinForInClauseBodyTransportSlot::AsPattern(t) => t.prepare(ctx),
             LambdaWithinForInClauseBodyTransportSlot::LambdaWithinForInClause(t) => t.prepare(ctx),
-            LambdaWithinForInClauseBodyTransportSlot::PrintKeyword => Ok(()),
-            LambdaWithinForInClauseBodyTransportSlot::ExecKeyword => Ok(()),
-            LambdaWithinForInClauseBodyTransportSlot::AsyncKeyword => Ok(()),
-            LambdaWithinForInClauseBodyTransportSlot::AwaitKeyword => Ok(()),
-            LambdaWithinForInClauseBodyTransportSlot::TypeKeyword => Ok(()),
-            LambdaWithinForInClauseBodyTransportSlot::MatchKeyword => Ok(()),
             LambdaWithinForInClauseBodyTransportSlot::True(_) => Ok(()),
             LambdaWithinForInClauseBodyTransportSlot::False(_) => Ok(()),
             LambdaWithinForInClauseBodyTransportSlot::None(_) => Ok(()),
             LambdaWithinForInClauseBodyTransportSlot::Ellipsis(_) => Ok(()),
             LambdaWithinForInClauseBodyTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            LambdaWithinForInClauseBodyTransportSlot::ComparisonOperator(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::NotOperator(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::BooleanOperator(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::Lambda(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::Await(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::BinaryOperator(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::Identifier(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::String(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::ConcatenatedString(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::IntegerHex(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::IntegerOctal(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::IntegerBinary(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::IntegerDecimalLong(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::IntegerDecimalImaginary(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::IntegerDecimalPlain(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::FloatPoint(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::FloatLeadingPoint(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::FloatScientific(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::UnaryOperator(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::Attribute(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::Subscript(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::Call(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::List(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::ListComprehension(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::Dictionary(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::DictionaryComprehension(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::Set(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::SetComprehension(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::Tuple(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::ParenthesizedExpression(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::GeneratorExpression(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::ListSplatPattern(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::ConditionalExpression(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::NamedExpression(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::AsPattern(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::LambdaWithinForInClause(t) => t.source_gap(),
-            LambdaWithinForInClauseBodyTransportSlot::PrintKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::ExecKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::AsyncKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::AwaitKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::TypeKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::MatchKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::True(_) => None,
-            LambdaWithinForInClauseBodyTransportSlot::False(_) => None,
-            LambdaWithinForInClauseBodyTransportSlot::None(_) => None,
-            LambdaWithinForInClauseBodyTransportSlot::Ellipsis(_) => None,
-            LambdaWithinForInClauseBodyTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -6175,12 +5734,6 @@ impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseBodyTransportSlo
             LambdaWithinForInClauseBodyTransportSlot::NamedExpression(t) => t.gap_edges(),
             LambdaWithinForInClauseBodyTransportSlot::AsPattern(t) => t.gap_edges(),
             LambdaWithinForInClauseBodyTransportSlot::LambdaWithinForInClause(t) => t.gap_edges(),
-            LambdaWithinForInClauseBodyTransportSlot::PrintKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::ExecKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::AsyncKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::AwaitKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::TypeKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::MatchKeyword => None,
             LambdaWithinForInClauseBodyTransportSlot::True(edges) => Some(edges),
             LambdaWithinForInClauseBodyTransportSlot::False(edges) => Some(edges),
             LambdaWithinForInClauseBodyTransportSlot::None(edges) => Some(edges),
@@ -6226,17 +5779,56 @@ impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseBodyTransportSlo
             LambdaWithinForInClauseBodyTransportSlot::NamedExpression(t) => t.snapshot_edge(),
             LambdaWithinForInClauseBodyTransportSlot::AsPattern(t) => t.snapshot_edge(),
             LambdaWithinForInClauseBodyTransportSlot::LambdaWithinForInClause(t) => t.snapshot_edge(),
-            LambdaWithinForInClauseBodyTransportSlot::PrintKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::ExecKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::AsyncKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::AwaitKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::TypeKeyword => None,
-            LambdaWithinForInClauseBodyTransportSlot::MatchKeyword => None,
             LambdaWithinForInClauseBodyTransportSlot::True(_) => None,
             LambdaWithinForInClauseBodyTransportSlot::False(_) => None,
             LambdaWithinForInClauseBodyTransportSlot::None(_) => None,
             LambdaWithinForInClauseBodyTransportSlot::Ellipsis(_) => None,
             LambdaWithinForInClauseBodyTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            LambdaWithinForInClauseBodyTransportSlot::ComparisonOperator(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::NotOperator(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::BooleanOperator(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::Lambda(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::Await(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::BinaryOperator(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::Identifier(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::String(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::ConcatenatedString(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::IntegerHex(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::IntegerOctal(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::IntegerBinary(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::FloatPoint(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::FloatScientific(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::UnaryOperator(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::Attribute(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::Subscript(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::Call(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::List(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::ListComprehension(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::Dictionary(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::DictionaryComprehension(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::Set(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::SetComprehension(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::Tuple(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::ParenthesizedExpression(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::GeneratorExpression(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::ListSplatPattern(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::ConditionalExpression(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::NamedExpression(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::AsPattern(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::LambdaWithinForInClause(t) => t.source_separator(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::True(_) => None,
+            LambdaWithinForInClauseBodyTransportSlot::False(_) => None,
+            LambdaWithinForInClauseBodyTransportSlot::None(_) => None,
+            LambdaWithinForInClauseBodyTransportSlot::Ellipsis(_) => None,
+            LambdaWithinForInClauseBodyTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -6283,12 +5875,6 @@ impl ::sittir_core::view::KindOf for LambdaWithinForInClauseBodyTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::LambdaWithinForInClause(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -6337,12 +5923,6 @@ impl ::sittir_core::render::Render for LambdaWithinForInClauseBodyTransportSlot 
             LambdaWithinForInClauseBodyTransportSlot::NamedExpression(inner) => inner.render(w),
             LambdaWithinForInClauseBodyTransportSlot::AsPattern(inner) => inner.render(w),
             LambdaWithinForInClauseBodyTransportSlot::LambdaWithinForInClause(inner) => inner.render(w),
-            LambdaWithinForInClauseBodyTransportSlot::PrintKeyword => render_print_keyword(w),
-            LambdaWithinForInClauseBodyTransportSlot::ExecKeyword => render_exec_keyword(w),
-            LambdaWithinForInClauseBodyTransportSlot::AsyncKeyword => render_async_keyword(w),
-            LambdaWithinForInClauseBodyTransportSlot::AwaitKeyword => render_await_keyword(w),
-            LambdaWithinForInClauseBodyTransportSlot::TypeKeyword => render_type_keyword(w),
-            LambdaWithinForInClauseBodyTransportSlot::MatchKeyword => render_match_keyword(w),
             LambdaWithinForInClauseBodyTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             LambdaWithinForInClauseBodyTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             LambdaWithinForInClauseBodyTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -6461,7 +6041,7 @@ pub enum AugmentedAssignmentRightTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -6533,18 +6113,6 @@ pub enum AugmentedAssignmentRightTransportSlot {
     PatternList(PatternListTransport),
     #[kind(kind::YIELD)]
     Yield(YieldTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -6606,74 +6174,11 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightTransportSlot {
             AugmentedAssignmentRightTransportSlot::AugmentedAssignment(t) => t.prepare(ctx),
             AugmentedAssignmentRightTransportSlot::PatternList(t) => t.prepare(ctx),
             AugmentedAssignmentRightTransportSlot::Yield(t) => t.prepare(ctx),
-            AugmentedAssignmentRightTransportSlot::PrintKeyword => Ok(()),
-            AugmentedAssignmentRightTransportSlot::ExecKeyword => Ok(()),
-            AugmentedAssignmentRightTransportSlot::AsyncKeyword => Ok(()),
-            AugmentedAssignmentRightTransportSlot::AwaitKeyword => Ok(()),
-            AugmentedAssignmentRightTransportSlot::TypeKeyword => Ok(()),
-            AugmentedAssignmentRightTransportSlot::MatchKeyword => Ok(()),
             AugmentedAssignmentRightTransportSlot::True(_) => Ok(()),
             AugmentedAssignmentRightTransportSlot::False(_) => Ok(()),
             AugmentedAssignmentRightTransportSlot::None(_) => Ok(()),
             AugmentedAssignmentRightTransportSlot::Ellipsis(_) => Ok(()),
             AugmentedAssignmentRightTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            AugmentedAssignmentRightTransportSlot::ComparisonOperator(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::NotOperator(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::BooleanOperator(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::Lambda(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::Await(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::BinaryOperator(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::Identifier(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::String(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::ConcatenatedString(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::IntegerHex(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::IntegerOctal(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::IntegerBinary(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::IntegerDecimalLong(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::IntegerDecimalImaginary(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::IntegerDecimalPlain(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::FloatPoint(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::FloatLeadingPoint(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::FloatScientific(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::UnaryOperator(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::Attribute(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::Subscript(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::Call(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::List(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::ListComprehension(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::Dictionary(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::DictionaryComprehension(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::Set(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::SetComprehension(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::Tuple(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::ParenthesizedExpression(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::GeneratorExpression(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::ListSplatPattern(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::ConditionalExpression(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::NamedExpression(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::AsPattern(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::ExpressionList(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::AssignmentEq(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::AssignmentType(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::AssignmentTyped(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::AugmentedAssignment(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::PatternList(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::Yield(t) => t.source_gap(),
-            AugmentedAssignmentRightTransportSlot::PrintKeyword => None,
-            AugmentedAssignmentRightTransportSlot::ExecKeyword => None,
-            AugmentedAssignmentRightTransportSlot::AsyncKeyword => None,
-            AugmentedAssignmentRightTransportSlot::AwaitKeyword => None,
-            AugmentedAssignmentRightTransportSlot::TypeKeyword => None,
-            AugmentedAssignmentRightTransportSlot::MatchKeyword => None,
-            AugmentedAssignmentRightTransportSlot::True(_) => None,
-            AugmentedAssignmentRightTransportSlot::False(_) => None,
-            AugmentedAssignmentRightTransportSlot::None(_) => None,
-            AugmentedAssignmentRightTransportSlot::Ellipsis(_) => None,
-            AugmentedAssignmentRightTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -6720,12 +6225,6 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightTransportSlot {
             AugmentedAssignmentRightTransportSlot::AugmentedAssignment(t) => t.gap_edges(),
             AugmentedAssignmentRightTransportSlot::PatternList(t) => t.gap_edges(),
             AugmentedAssignmentRightTransportSlot::Yield(t) => t.gap_edges(),
-            AugmentedAssignmentRightTransportSlot::PrintKeyword => None,
-            AugmentedAssignmentRightTransportSlot::ExecKeyword => None,
-            AugmentedAssignmentRightTransportSlot::AsyncKeyword => None,
-            AugmentedAssignmentRightTransportSlot::AwaitKeyword => None,
-            AugmentedAssignmentRightTransportSlot::TypeKeyword => None,
-            AugmentedAssignmentRightTransportSlot::MatchKeyword => None,
             AugmentedAssignmentRightTransportSlot::True(edges) => Some(edges),
             AugmentedAssignmentRightTransportSlot::False(edges) => Some(edges),
             AugmentedAssignmentRightTransportSlot::None(edges) => Some(edges),
@@ -6777,17 +6276,62 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightTransportSlot {
             AugmentedAssignmentRightTransportSlot::AugmentedAssignment(t) => t.snapshot_edge(),
             AugmentedAssignmentRightTransportSlot::PatternList(t) => t.snapshot_edge(),
             AugmentedAssignmentRightTransportSlot::Yield(t) => t.snapshot_edge(),
-            AugmentedAssignmentRightTransportSlot::PrintKeyword => None,
-            AugmentedAssignmentRightTransportSlot::ExecKeyword => None,
-            AugmentedAssignmentRightTransportSlot::AsyncKeyword => None,
-            AugmentedAssignmentRightTransportSlot::AwaitKeyword => None,
-            AugmentedAssignmentRightTransportSlot::TypeKeyword => None,
-            AugmentedAssignmentRightTransportSlot::MatchKeyword => None,
             AugmentedAssignmentRightTransportSlot::True(_) => None,
             AugmentedAssignmentRightTransportSlot::False(_) => None,
             AugmentedAssignmentRightTransportSlot::None(_) => None,
             AugmentedAssignmentRightTransportSlot::Ellipsis(_) => None,
             AugmentedAssignmentRightTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            AugmentedAssignmentRightTransportSlot::ComparisonOperator(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::NotOperator(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::BooleanOperator(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::Lambda(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::Await(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::BinaryOperator(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::Identifier(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::String(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::ConcatenatedString(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::IntegerHex(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::IntegerOctal(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::IntegerBinary(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::FloatPoint(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::FloatScientific(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::UnaryOperator(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::Attribute(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::Subscript(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::Call(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::List(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::ListComprehension(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::Dictionary(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::DictionaryComprehension(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::Set(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::SetComprehension(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::Tuple(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::ParenthesizedExpression(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::GeneratorExpression(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::ListSplatPattern(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::ConditionalExpression(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::NamedExpression(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::AsPattern(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::ExpressionList(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::AssignmentEq(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::AssignmentType(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::AssignmentTyped(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::AugmentedAssignment(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::PatternList(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::Yield(t) => t.source_separator(ctx),
+            AugmentedAssignmentRightTransportSlot::True(_) => None,
+            AugmentedAssignmentRightTransportSlot::False(_) => None,
+            AugmentedAssignmentRightTransportSlot::None(_) => None,
+            AugmentedAssignmentRightTransportSlot::Ellipsis(_) => None,
+            AugmentedAssignmentRightTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -6840,12 +6384,6 @@ impl ::sittir_core::view::KindOf for AugmentedAssignmentRightTransportSlot {
             Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
             Self::PatternList(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -6900,12 +6438,6 @@ impl ::sittir_core::render::Render for AugmentedAssignmentRightTransportSlot {
             AugmentedAssignmentRightTransportSlot::AugmentedAssignment(inner) => inner.render(w),
             AugmentedAssignmentRightTransportSlot::PatternList(inner) => inner.render(w),
             AugmentedAssignmentRightTransportSlot::Yield(inner) => inner.render(w),
-            AugmentedAssignmentRightTransportSlot::PrintKeyword => render_print_keyword(w),
-            AugmentedAssignmentRightTransportSlot::ExecKeyword => render_exec_keyword(w),
-            AugmentedAssignmentRightTransportSlot::AsyncKeyword => render_async_keyword(w),
-            AugmentedAssignmentRightTransportSlot::AwaitKeyword => render_await_keyword(w),
-            AugmentedAssignmentRightTransportSlot::TypeKeyword => render_type_keyword(w),
-            AugmentedAssignmentRightTransportSlot::MatchKeyword => render_match_keyword(w),
             AugmentedAssignmentRightTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             AugmentedAssignmentRightTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             AugmentedAssignmentRightTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -6932,7 +6464,7 @@ pub enum YieldContentTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -6992,18 +6524,6 @@ pub enum YieldContentTransportSlot {
     AsPattern(AsPatternTransport),
     #[kind(kind::EXPRESSION_LIST)]
     ExpressionList(ExpressionListTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -7060,69 +6580,11 @@ impl ::sittir_core::prepare::Prepare for YieldContentTransportSlot {
             YieldContentTransportSlot::NamedExpression(t) => t.prepare(ctx),
             YieldContentTransportSlot::AsPattern(t) => t.prepare(ctx),
             YieldContentTransportSlot::ExpressionList(t) => t.prepare(ctx),
-            YieldContentTransportSlot::PrintKeyword => Ok(()),
-            YieldContentTransportSlot::ExecKeyword => Ok(()),
-            YieldContentTransportSlot::AsyncKeyword => Ok(()),
-            YieldContentTransportSlot::AwaitKeyword => Ok(()),
-            YieldContentTransportSlot::TypeKeyword => Ok(()),
-            YieldContentTransportSlot::MatchKeyword => Ok(()),
             YieldContentTransportSlot::True(_) => Ok(()),
             YieldContentTransportSlot::False(_) => Ok(()),
             YieldContentTransportSlot::None(_) => Ok(()),
             YieldContentTransportSlot::Ellipsis(_) => Ok(()),
             YieldContentTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            YieldContentTransportSlot::YieldFromClause(t) => t.source_gap(),
-            YieldContentTransportSlot::ComparisonOperator(t) => t.source_gap(),
-            YieldContentTransportSlot::NotOperator(t) => t.source_gap(),
-            YieldContentTransportSlot::BooleanOperator(t) => t.source_gap(),
-            YieldContentTransportSlot::Lambda(t) => t.source_gap(),
-            YieldContentTransportSlot::Await(t) => t.source_gap(),
-            YieldContentTransportSlot::BinaryOperator(t) => t.source_gap(),
-            YieldContentTransportSlot::Identifier(t) => t.source_gap(),
-            YieldContentTransportSlot::String(t) => t.source_gap(),
-            YieldContentTransportSlot::ConcatenatedString(t) => t.source_gap(),
-            YieldContentTransportSlot::IntegerHex(t) => t.source_gap(),
-            YieldContentTransportSlot::IntegerOctal(t) => t.source_gap(),
-            YieldContentTransportSlot::IntegerBinary(t) => t.source_gap(),
-            YieldContentTransportSlot::IntegerDecimalLong(t) => t.source_gap(),
-            YieldContentTransportSlot::IntegerDecimalImaginary(t) => t.source_gap(),
-            YieldContentTransportSlot::IntegerDecimalPlain(t) => t.source_gap(),
-            YieldContentTransportSlot::FloatPoint(t) => t.source_gap(),
-            YieldContentTransportSlot::FloatLeadingPoint(t) => t.source_gap(),
-            YieldContentTransportSlot::FloatScientific(t) => t.source_gap(),
-            YieldContentTransportSlot::UnaryOperator(t) => t.source_gap(),
-            YieldContentTransportSlot::Attribute(t) => t.source_gap(),
-            YieldContentTransportSlot::Subscript(t) => t.source_gap(),
-            YieldContentTransportSlot::Call(t) => t.source_gap(),
-            YieldContentTransportSlot::List(t) => t.source_gap(),
-            YieldContentTransportSlot::ListComprehension(t) => t.source_gap(),
-            YieldContentTransportSlot::Dictionary(t) => t.source_gap(),
-            YieldContentTransportSlot::DictionaryComprehension(t) => t.source_gap(),
-            YieldContentTransportSlot::Set(t) => t.source_gap(),
-            YieldContentTransportSlot::SetComprehension(t) => t.source_gap(),
-            YieldContentTransportSlot::Tuple(t) => t.source_gap(),
-            YieldContentTransportSlot::ParenthesizedExpression(t) => t.source_gap(),
-            YieldContentTransportSlot::GeneratorExpression(t) => t.source_gap(),
-            YieldContentTransportSlot::ListSplatPattern(t) => t.source_gap(),
-            YieldContentTransportSlot::ConditionalExpression(t) => t.source_gap(),
-            YieldContentTransportSlot::NamedExpression(t) => t.source_gap(),
-            YieldContentTransportSlot::AsPattern(t) => t.source_gap(),
-            YieldContentTransportSlot::ExpressionList(t) => t.source_gap(),
-            YieldContentTransportSlot::PrintKeyword => None,
-            YieldContentTransportSlot::ExecKeyword => None,
-            YieldContentTransportSlot::AsyncKeyword => None,
-            YieldContentTransportSlot::AwaitKeyword => None,
-            YieldContentTransportSlot::TypeKeyword => None,
-            YieldContentTransportSlot::MatchKeyword => None,
-            YieldContentTransportSlot::True(_) => None,
-            YieldContentTransportSlot::False(_) => None,
-            YieldContentTransportSlot::None(_) => None,
-            YieldContentTransportSlot::Ellipsis(_) => None,
-            YieldContentTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -7164,12 +6626,6 @@ impl ::sittir_core::prepare::Prepare for YieldContentTransportSlot {
             YieldContentTransportSlot::NamedExpression(t) => t.gap_edges(),
             YieldContentTransportSlot::AsPattern(t) => t.gap_edges(),
             YieldContentTransportSlot::ExpressionList(t) => t.gap_edges(),
-            YieldContentTransportSlot::PrintKeyword => None,
-            YieldContentTransportSlot::ExecKeyword => None,
-            YieldContentTransportSlot::AsyncKeyword => None,
-            YieldContentTransportSlot::AwaitKeyword => None,
-            YieldContentTransportSlot::TypeKeyword => None,
-            YieldContentTransportSlot::MatchKeyword => None,
             YieldContentTransportSlot::True(edges) => Some(edges),
             YieldContentTransportSlot::False(edges) => Some(edges),
             YieldContentTransportSlot::None(edges) => Some(edges),
@@ -7216,17 +6672,57 @@ impl ::sittir_core::prepare::Prepare for YieldContentTransportSlot {
             YieldContentTransportSlot::NamedExpression(t) => t.snapshot_edge(),
             YieldContentTransportSlot::AsPattern(t) => t.snapshot_edge(),
             YieldContentTransportSlot::ExpressionList(t) => t.snapshot_edge(),
-            YieldContentTransportSlot::PrintKeyword => None,
-            YieldContentTransportSlot::ExecKeyword => None,
-            YieldContentTransportSlot::AsyncKeyword => None,
-            YieldContentTransportSlot::AwaitKeyword => None,
-            YieldContentTransportSlot::TypeKeyword => None,
-            YieldContentTransportSlot::MatchKeyword => None,
             YieldContentTransportSlot::True(_) => None,
             YieldContentTransportSlot::False(_) => None,
             YieldContentTransportSlot::None(_) => None,
             YieldContentTransportSlot::Ellipsis(_) => None,
             YieldContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            YieldContentTransportSlot::YieldFromClause(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::ComparisonOperator(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::NotOperator(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::BooleanOperator(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::Lambda(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::Await(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::BinaryOperator(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::Identifier(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::String(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::ConcatenatedString(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::IntegerHex(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::IntegerOctal(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::IntegerBinary(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::FloatPoint(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::FloatScientific(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::UnaryOperator(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::Attribute(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::Subscript(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::Call(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::List(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::ListComprehension(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::Dictionary(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::DictionaryComprehension(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::Set(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::SetComprehension(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::Tuple(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::ParenthesizedExpression(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::GeneratorExpression(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::ListSplatPattern(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::ConditionalExpression(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::NamedExpression(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::AsPattern(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::ExpressionList(t) => t.source_separator(ctx),
+            YieldContentTransportSlot::True(_) => None,
+            YieldContentTransportSlot::False(_) => None,
+            YieldContentTransportSlot::None(_) => None,
+            YieldContentTransportSlot::Ellipsis(_) => None,
+            YieldContentTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -7274,12 +6770,6 @@ impl ::sittir_core::view::KindOf for YieldContentTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::ExpressionList(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -7329,12 +6819,6 @@ impl ::sittir_core::render::Render for YieldContentTransportSlot {
             YieldContentTransportSlot::NamedExpression(inner) => inner.render(w),
             YieldContentTransportSlot::AsPattern(inner) => inner.render(w),
             YieldContentTransportSlot::ExpressionList(inner) => inner.render(w),
-            YieldContentTransportSlot::PrintKeyword => render_print_keyword(w),
-            YieldContentTransportSlot::ExecKeyword => render_exec_keyword(w),
-            YieldContentTransportSlot::AsyncKeyword => render_async_keyword(w),
-            YieldContentTransportSlot::AwaitKeyword => render_await_keyword(w),
-            YieldContentTransportSlot::TypeKeyword => render_type_keyword(w),
-            YieldContentTransportSlot::MatchKeyword => render_match_keyword(w),
             YieldContentTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             YieldContentTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             YieldContentTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -7360,12 +6844,6 @@ impl ::sittir_core::prepare::Prepare for CallArgumentsTransportSlot {
             CallArgumentsTransportSlot::ArgumentList(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            CallArgumentsTransportSlot::GeneratorExpression(t) => t.source_gap(),
-            CallArgumentsTransportSlot::ArgumentList(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             CallArgumentsTransportSlot::GeneratorExpression(t) => t.gap_edges(),
@@ -7376,6 +6854,12 @@ impl ::sittir_core::prepare::Prepare for CallArgumentsTransportSlot {
         match self {
             CallArgumentsTransportSlot::GeneratorExpression(t) => t.snapshot_edge(),
             CallArgumentsTransportSlot::ArgumentList(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            CallArgumentsTransportSlot::GeneratorExpression(t) => t.source_separator(ctx),
+            CallArgumentsTransportSlot::ArgumentList(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -7404,7 +6888,7 @@ impl ::sittir_core::render::Render for CallArgumentsTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum TypedParameterNameTransportSlot {
-    #[kind(kind::IDENTIFIER, kind::TYPE_KEYWORD, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::MATCH_KEYWORD)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::LIST_SPLAT_PATTERN)]
     ListSplatPattern(ListSplatPatternTransport),
@@ -7423,14 +6907,6 @@ impl ::sittir_core::prepare::Prepare for TypedParameterNameTransportSlot {
             TypedParameterNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            TypedParameterNameTransportSlot::Identifier(t) => t.source_gap(),
-            TypedParameterNameTransportSlot::ListSplatPattern(t) => t.source_gap(),
-            TypedParameterNameTransportSlot::DictionarySplatPattern(t) => t.source_gap(),
-            TypedParameterNameTransportSlot::Verbatim(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             TypedParameterNameTransportSlot::Identifier(t) => t.gap_edges(),
@@ -7445,6 +6921,14 @@ impl ::sittir_core::prepare::Prepare for TypedParameterNameTransportSlot {
             TypedParameterNameTransportSlot::ListSplatPattern(t) => t.snapshot_edge(),
             TypedParameterNameTransportSlot::DictionarySplatPattern(t) => t.snapshot_edge(),
             TypedParameterNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            TypedParameterNameTransportSlot::Identifier(t) => t.source_separator(ctx),
+            TypedParameterNameTransportSlot::ListSplatPattern(t) => t.source_separator(ctx),
+            TypedParameterNameTransportSlot::DictionarySplatPattern(t) => t.source_separator(ctx),
+            TypedParameterNameTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -7489,7 +6973,7 @@ pub enum TypeContentTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -7557,18 +7041,6 @@ pub enum TypeContentTransportSlot {
     ConstrainedType(ConstrainedTypeTransport),
     #[kind(kind::MEMBER_TYPE)]
     MemberType(MemberTypeTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -7628,72 +7100,11 @@ impl ::sittir_core::prepare::Prepare for TypeContentTransportSlot {
             TypeContentTransportSlot::UnionType(t) => t.prepare(ctx),
             TypeContentTransportSlot::ConstrainedType(t) => t.prepare(ctx),
             TypeContentTransportSlot::MemberType(t) => t.prepare(ctx),
-            TypeContentTransportSlot::PrintKeyword => Ok(()),
-            TypeContentTransportSlot::ExecKeyword => Ok(()),
-            TypeContentTransportSlot::AsyncKeyword => Ok(()),
-            TypeContentTransportSlot::AwaitKeyword => Ok(()),
-            TypeContentTransportSlot::TypeKeyword => Ok(()),
-            TypeContentTransportSlot::MatchKeyword => Ok(()),
             TypeContentTransportSlot::True(_) => Ok(()),
             TypeContentTransportSlot::False(_) => Ok(()),
             TypeContentTransportSlot::None(_) => Ok(()),
             TypeContentTransportSlot::Ellipsis(_) => Ok(()),
             TypeContentTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            TypeContentTransportSlot::ComparisonOperator(t) => t.source_gap(),
-            TypeContentTransportSlot::NotOperator(t) => t.source_gap(),
-            TypeContentTransportSlot::BooleanOperator(t) => t.source_gap(),
-            TypeContentTransportSlot::Lambda(t) => t.source_gap(),
-            TypeContentTransportSlot::Await(t) => t.source_gap(),
-            TypeContentTransportSlot::BinaryOperator(t) => t.source_gap(),
-            TypeContentTransportSlot::Identifier(t) => t.source_gap(),
-            TypeContentTransportSlot::String(t) => t.source_gap(),
-            TypeContentTransportSlot::ConcatenatedString(t) => t.source_gap(),
-            TypeContentTransportSlot::IntegerHex(t) => t.source_gap(),
-            TypeContentTransportSlot::IntegerOctal(t) => t.source_gap(),
-            TypeContentTransportSlot::IntegerBinary(t) => t.source_gap(),
-            TypeContentTransportSlot::IntegerDecimalLong(t) => t.source_gap(),
-            TypeContentTransportSlot::IntegerDecimalImaginary(t) => t.source_gap(),
-            TypeContentTransportSlot::IntegerDecimalPlain(t) => t.source_gap(),
-            TypeContentTransportSlot::FloatPoint(t) => t.source_gap(),
-            TypeContentTransportSlot::FloatLeadingPoint(t) => t.source_gap(),
-            TypeContentTransportSlot::FloatScientific(t) => t.source_gap(),
-            TypeContentTransportSlot::UnaryOperator(t) => t.source_gap(),
-            TypeContentTransportSlot::Attribute(t) => t.source_gap(),
-            TypeContentTransportSlot::Subscript(t) => t.source_gap(),
-            TypeContentTransportSlot::Call(t) => t.source_gap(),
-            TypeContentTransportSlot::List(t) => t.source_gap(),
-            TypeContentTransportSlot::ListComprehension(t) => t.source_gap(),
-            TypeContentTransportSlot::Dictionary(t) => t.source_gap(),
-            TypeContentTransportSlot::DictionaryComprehension(t) => t.source_gap(),
-            TypeContentTransportSlot::Set(t) => t.source_gap(),
-            TypeContentTransportSlot::SetComprehension(t) => t.source_gap(),
-            TypeContentTransportSlot::Tuple(t) => t.source_gap(),
-            TypeContentTransportSlot::ParenthesizedExpression(t) => t.source_gap(),
-            TypeContentTransportSlot::GeneratorExpression(t) => t.source_gap(),
-            TypeContentTransportSlot::ListSplatPattern(t) => t.source_gap(),
-            TypeContentTransportSlot::ConditionalExpression(t) => t.source_gap(),
-            TypeContentTransportSlot::NamedExpression(t) => t.source_gap(),
-            TypeContentTransportSlot::AsPattern(t) => t.source_gap(),
-            TypeContentTransportSlot::SplatType(t) => t.source_gap(),
-            TypeContentTransportSlot::GenericType(t) => t.source_gap(),
-            TypeContentTransportSlot::UnionType(t) => t.source_gap(),
-            TypeContentTransportSlot::ConstrainedType(t) => t.source_gap(),
-            TypeContentTransportSlot::MemberType(t) => t.source_gap(),
-            TypeContentTransportSlot::PrintKeyword => None,
-            TypeContentTransportSlot::ExecKeyword => None,
-            TypeContentTransportSlot::AsyncKeyword => None,
-            TypeContentTransportSlot::AwaitKeyword => None,
-            TypeContentTransportSlot::TypeKeyword => None,
-            TypeContentTransportSlot::MatchKeyword => None,
-            TypeContentTransportSlot::True(_) => None,
-            TypeContentTransportSlot::False(_) => None,
-            TypeContentTransportSlot::None(_) => None,
-            TypeContentTransportSlot::Ellipsis(_) => None,
-            TypeContentTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -7738,12 +7149,6 @@ impl ::sittir_core::prepare::Prepare for TypeContentTransportSlot {
             TypeContentTransportSlot::UnionType(t) => t.gap_edges(),
             TypeContentTransportSlot::ConstrainedType(t) => t.gap_edges(),
             TypeContentTransportSlot::MemberType(t) => t.gap_edges(),
-            TypeContentTransportSlot::PrintKeyword => None,
-            TypeContentTransportSlot::ExecKeyword => None,
-            TypeContentTransportSlot::AsyncKeyword => None,
-            TypeContentTransportSlot::AwaitKeyword => None,
-            TypeContentTransportSlot::TypeKeyword => None,
-            TypeContentTransportSlot::MatchKeyword => None,
             TypeContentTransportSlot::True(edges) => Some(edges),
             TypeContentTransportSlot::False(edges) => Some(edges),
             TypeContentTransportSlot::None(edges) => Some(edges),
@@ -7793,17 +7198,60 @@ impl ::sittir_core::prepare::Prepare for TypeContentTransportSlot {
             TypeContentTransportSlot::UnionType(t) => t.snapshot_edge(),
             TypeContentTransportSlot::ConstrainedType(t) => t.snapshot_edge(),
             TypeContentTransportSlot::MemberType(t) => t.snapshot_edge(),
-            TypeContentTransportSlot::PrintKeyword => None,
-            TypeContentTransportSlot::ExecKeyword => None,
-            TypeContentTransportSlot::AsyncKeyword => None,
-            TypeContentTransportSlot::AwaitKeyword => None,
-            TypeContentTransportSlot::TypeKeyword => None,
-            TypeContentTransportSlot::MatchKeyword => None,
             TypeContentTransportSlot::True(_) => None,
             TypeContentTransportSlot::False(_) => None,
             TypeContentTransportSlot::None(_) => None,
             TypeContentTransportSlot::Ellipsis(_) => None,
             TypeContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            TypeContentTransportSlot::ComparisonOperator(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::NotOperator(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::BooleanOperator(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::Lambda(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::Await(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::BinaryOperator(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::Identifier(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::String(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::ConcatenatedString(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::IntegerHex(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::IntegerOctal(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::IntegerBinary(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::FloatPoint(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::FloatScientific(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::UnaryOperator(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::Attribute(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::Subscript(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::Call(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::List(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::ListComprehension(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::Dictionary(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::DictionaryComprehension(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::Set(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::SetComprehension(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::Tuple(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::ParenthesizedExpression(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::GeneratorExpression(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::ListSplatPattern(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::ConditionalExpression(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::NamedExpression(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::AsPattern(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::SplatType(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::GenericType(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::UnionType(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::ConstrainedType(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::MemberType(t) => t.source_separator(ctx),
+            TypeContentTransportSlot::True(_) => None,
+            TypeContentTransportSlot::False(_) => None,
+            TypeContentTransportSlot::None(_) => None,
+            TypeContentTransportSlot::Ellipsis(_) => None,
+            TypeContentTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -7854,12 +7302,6 @@ impl ::sittir_core::view::KindOf for TypeContentTransportSlot {
             Self::UnionType(inner) => inner.kind_in(kinds),
             Self::ConstrainedType(inner) => inner.kind_in(kinds),
             Self::MemberType(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -7912,12 +7354,6 @@ impl ::sittir_core::render::Render for TypeContentTransportSlot {
             TypeContentTransportSlot::UnionType(inner) => inner.render(w),
             TypeContentTransportSlot::ConstrainedType(inner) => inner.render(w),
             TypeContentTransportSlot::MemberType(inner) => inner.render(w),
-            TypeContentTransportSlot::PrintKeyword => render_print_keyword(w),
-            TypeContentTransportSlot::ExecKeyword => render_exec_keyword(w),
-            TypeContentTransportSlot::AsyncKeyword => render_async_keyword(w),
-            TypeContentTransportSlot::AwaitKeyword => render_await_keyword(w),
-            TypeContentTransportSlot::TypeKeyword => render_type_keyword(w),
-            TypeContentTransportSlot::MatchKeyword => render_match_keyword(w),
             TypeContentTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             TypeContentTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             TypeContentTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -7978,71 +7414,6 @@ impl ::sittir_core::render::Render for SplatTypeOperatorTransportSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum GenericTypeNameTransportSlot {
-    #[kind(kind::IDENTIFIER, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::MATCH_KEYWORD)]
-    Identifier(IdentifierTransport),
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[transport(verbatim)]
-    Verbatim(VerbatimTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for GenericTypeNameTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            GenericTypeNameTransportSlot::Identifier(t) => t.prepare(ctx),
-            GenericTypeNameTransportSlot::TypeKeyword => Ok(()),
-            GenericTypeNameTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            GenericTypeNameTransportSlot::Identifier(t) => t.source_gap(),
-            GenericTypeNameTransportSlot::TypeKeyword => None,
-            GenericTypeNameTransportSlot::Verbatim(t) => t.source_gap(),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            GenericTypeNameTransportSlot::Identifier(t) => t.gap_edges(),
-            GenericTypeNameTransportSlot::TypeKeyword => None,
-            GenericTypeNameTransportSlot::Verbatim(t) => t.gap_edges(),
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            GenericTypeNameTransportSlot::Identifier(t) => t.snapshot_edge(),
-            GenericTypeNameTransportSlot::TypeKeyword => None,
-            GenericTypeNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
-        }
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::view::KindOf for GenericTypeNameTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for GenericTypeNameTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            GenericTypeNameTransportSlot::Identifier(inner) => inner.render(w),
-            GenericTypeNameTransportSlot::TypeKeyword => render_type_keyword(w),
-            GenericTypeNameTransportSlot::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
 pub enum ParenthesizedExpressionExpressionTransportSlot {
     #[kind(kind::COMPARISON_OPERATOR)]
     ComparisonOperator(ComparisonOperatorTransport),
@@ -8056,7 +7427,7 @@ pub enum ParenthesizedExpressionExpressionTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -8116,18 +7487,6 @@ pub enum ParenthesizedExpressionExpressionTransportSlot {
     AsPattern(AsPatternTransport),
     #[kind(kind::YIELD)]
     Yield(YieldTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -8183,68 +7542,11 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionExpressionTransp
             ParenthesizedExpressionExpressionTransportSlot::NamedExpression(t) => t.prepare(ctx),
             ParenthesizedExpressionExpressionTransportSlot::AsPattern(t) => t.prepare(ctx),
             ParenthesizedExpressionExpressionTransportSlot::Yield(t) => t.prepare(ctx),
-            ParenthesizedExpressionExpressionTransportSlot::PrintKeyword => Ok(()),
-            ParenthesizedExpressionExpressionTransportSlot::ExecKeyword => Ok(()),
-            ParenthesizedExpressionExpressionTransportSlot::AsyncKeyword => Ok(()),
-            ParenthesizedExpressionExpressionTransportSlot::AwaitKeyword => Ok(()),
-            ParenthesizedExpressionExpressionTransportSlot::TypeKeyword => Ok(()),
-            ParenthesizedExpressionExpressionTransportSlot::MatchKeyword => Ok(()),
             ParenthesizedExpressionExpressionTransportSlot::True(_) => Ok(()),
             ParenthesizedExpressionExpressionTransportSlot::False(_) => Ok(()),
             ParenthesizedExpressionExpressionTransportSlot::None(_) => Ok(()),
             ParenthesizedExpressionExpressionTransportSlot::Ellipsis(_) => Ok(()),
             ParenthesizedExpressionExpressionTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            ParenthesizedExpressionExpressionTransportSlot::ComparisonOperator(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::NotOperator(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::BooleanOperator(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::Lambda(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::Await(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::BinaryOperator(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::Identifier(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::String(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::ConcatenatedString(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::IntegerHex(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::IntegerOctal(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::IntegerBinary(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::IntegerDecimalLong(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::IntegerDecimalImaginary(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::IntegerDecimalPlain(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::FloatPoint(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::FloatLeadingPoint(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::FloatScientific(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::UnaryOperator(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::Attribute(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::Subscript(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::Call(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::List(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::ListComprehension(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::Dictionary(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::DictionaryComprehension(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::Set(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::SetComprehension(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::Tuple(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::ParenthesizedExpression(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::GeneratorExpression(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::ListSplatPattern(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::ConditionalExpression(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::NamedExpression(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::AsPattern(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::Yield(t) => t.source_gap(),
-            ParenthesizedExpressionExpressionTransportSlot::PrintKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::ExecKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::AsyncKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::AwaitKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::TypeKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::MatchKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::True(_) => None,
-            ParenthesizedExpressionExpressionTransportSlot::False(_) => None,
-            ParenthesizedExpressionExpressionTransportSlot::None(_) => None,
-            ParenthesizedExpressionExpressionTransportSlot::Ellipsis(_) => None,
-            ParenthesizedExpressionExpressionTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -8285,12 +7587,6 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionExpressionTransp
             ParenthesizedExpressionExpressionTransportSlot::NamedExpression(t) => t.gap_edges(),
             ParenthesizedExpressionExpressionTransportSlot::AsPattern(t) => t.gap_edges(),
             ParenthesizedExpressionExpressionTransportSlot::Yield(t) => t.gap_edges(),
-            ParenthesizedExpressionExpressionTransportSlot::PrintKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::ExecKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::AsyncKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::AwaitKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::TypeKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::MatchKeyword => None,
             ParenthesizedExpressionExpressionTransportSlot::True(edges) => Some(edges),
             ParenthesizedExpressionExpressionTransportSlot::False(edges) => Some(edges),
             ParenthesizedExpressionExpressionTransportSlot::None(edges) => Some(edges),
@@ -8336,17 +7632,56 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionExpressionTransp
             ParenthesizedExpressionExpressionTransportSlot::NamedExpression(t) => t.snapshot_edge(),
             ParenthesizedExpressionExpressionTransportSlot::AsPattern(t) => t.snapshot_edge(),
             ParenthesizedExpressionExpressionTransportSlot::Yield(t) => t.snapshot_edge(),
-            ParenthesizedExpressionExpressionTransportSlot::PrintKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::ExecKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::AsyncKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::AwaitKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::TypeKeyword => None,
-            ParenthesizedExpressionExpressionTransportSlot::MatchKeyword => None,
             ParenthesizedExpressionExpressionTransportSlot::True(_) => None,
             ParenthesizedExpressionExpressionTransportSlot::False(_) => None,
             ParenthesizedExpressionExpressionTransportSlot::None(_) => None,
             ParenthesizedExpressionExpressionTransportSlot::Ellipsis(_) => None,
             ParenthesizedExpressionExpressionTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            ParenthesizedExpressionExpressionTransportSlot::ComparisonOperator(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::NotOperator(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::BooleanOperator(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Lambda(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Await(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::BinaryOperator(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Identifier(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::String(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::ConcatenatedString(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::IntegerHex(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::IntegerOctal(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::IntegerBinary(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::FloatPoint(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::FloatScientific(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::UnaryOperator(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Attribute(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Subscript(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Call(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::List(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::ListComprehension(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Dictionary(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::DictionaryComprehension(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Set(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::SetComprehension(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Tuple(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::ParenthesizedExpression(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::GeneratorExpression(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::ListSplatPattern(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::ConditionalExpression(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::NamedExpression(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::AsPattern(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::Yield(t) => t.source_separator(ctx),
+            ParenthesizedExpressionExpressionTransportSlot::True(_) => None,
+            ParenthesizedExpressionExpressionTransportSlot::False(_) => None,
+            ParenthesizedExpressionExpressionTransportSlot::None(_) => None,
+            ParenthesizedExpressionExpressionTransportSlot::Ellipsis(_) => None,
+            ParenthesizedExpressionExpressionTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -8393,12 +7728,6 @@ impl ::sittir_core::view::KindOf for ParenthesizedExpressionExpressionTransportS
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -8447,12 +7776,6 @@ impl ::sittir_core::render::Render for ParenthesizedExpressionExpressionTranspor
             ParenthesizedExpressionExpressionTransportSlot::NamedExpression(inner) => inner.render(w),
             ParenthesizedExpressionExpressionTransportSlot::AsPattern(inner) => inner.render(w),
             ParenthesizedExpressionExpressionTransportSlot::Yield(inner) => inner.render(w),
-            ParenthesizedExpressionExpressionTransportSlot::PrintKeyword => render_print_keyword(w),
-            ParenthesizedExpressionExpressionTransportSlot::ExecKeyword => render_exec_keyword(w),
-            ParenthesizedExpressionExpressionTransportSlot::AsyncKeyword => render_async_keyword(w),
-            ParenthesizedExpressionExpressionTransportSlot::AwaitKeyword => render_await_keyword(w),
-            ParenthesizedExpressionExpressionTransportSlot::TypeKeyword => render_type_keyword(w),
-            ParenthesizedExpressionExpressionTransportSlot::MatchKeyword => render_match_keyword(w),
             ParenthesizedExpressionExpressionTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             ParenthesizedExpressionExpressionTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             ParenthesizedExpressionExpressionTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -8477,7 +7800,7 @@ pub enum CollectionElementsItemTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -8541,18 +7864,6 @@ pub enum CollectionElementsItemTransportSlot {
     ListSplat(ListSplatTransport),
     #[kind(kind::PARENTHESIZED_LIST_SPLAT)]
     ParenthesizedListSplat(ParenthesizedListSplatTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -8610,70 +7921,11 @@ impl ::sittir_core::prepare::Prepare for CollectionElementsItemTransportSlot {
             CollectionElementsItemTransportSlot::Yield(t) => t.prepare(ctx),
             CollectionElementsItemTransportSlot::ListSplat(t) => t.prepare(ctx),
             CollectionElementsItemTransportSlot::ParenthesizedListSplat(t) => t.prepare(ctx),
-            CollectionElementsItemTransportSlot::PrintKeyword => Ok(()),
-            CollectionElementsItemTransportSlot::ExecKeyword => Ok(()),
-            CollectionElementsItemTransportSlot::AsyncKeyword => Ok(()),
-            CollectionElementsItemTransportSlot::AwaitKeyword => Ok(()),
-            CollectionElementsItemTransportSlot::TypeKeyword => Ok(()),
-            CollectionElementsItemTransportSlot::MatchKeyword => Ok(()),
             CollectionElementsItemTransportSlot::True(_) => Ok(()),
             CollectionElementsItemTransportSlot::False(_) => Ok(()),
             CollectionElementsItemTransportSlot::None(_) => Ok(()),
             CollectionElementsItemTransportSlot::Ellipsis(_) => Ok(()),
             CollectionElementsItemTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            CollectionElementsItemTransportSlot::ComparisonOperator(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::NotOperator(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::BooleanOperator(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::Lambda(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::Await(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::BinaryOperator(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::Identifier(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::String(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::ConcatenatedString(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::IntegerHex(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::IntegerOctal(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::IntegerBinary(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::IntegerDecimalLong(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::IntegerDecimalImaginary(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::IntegerDecimalPlain(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::FloatPoint(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::FloatLeadingPoint(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::FloatScientific(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::UnaryOperator(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::Attribute(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::Subscript(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::Call(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::List(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::ListComprehension(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::Dictionary(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::DictionaryComprehension(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::Set(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::SetComprehension(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::Tuple(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::ParenthesizedExpression(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::GeneratorExpression(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::ListSplatPattern(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::ConditionalExpression(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::NamedExpression(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::AsPattern(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::Yield(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::ListSplat(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::ParenthesizedListSplat(t) => t.source_gap(),
-            CollectionElementsItemTransportSlot::PrintKeyword => None,
-            CollectionElementsItemTransportSlot::ExecKeyword => None,
-            CollectionElementsItemTransportSlot::AsyncKeyword => None,
-            CollectionElementsItemTransportSlot::AwaitKeyword => None,
-            CollectionElementsItemTransportSlot::TypeKeyword => None,
-            CollectionElementsItemTransportSlot::MatchKeyword => None,
-            CollectionElementsItemTransportSlot::True(_) => None,
-            CollectionElementsItemTransportSlot::False(_) => None,
-            CollectionElementsItemTransportSlot::None(_) => None,
-            CollectionElementsItemTransportSlot::Ellipsis(_) => None,
-            CollectionElementsItemTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -8716,12 +7968,6 @@ impl ::sittir_core::prepare::Prepare for CollectionElementsItemTransportSlot {
             CollectionElementsItemTransportSlot::Yield(t) => t.gap_edges(),
             CollectionElementsItemTransportSlot::ListSplat(t) => t.gap_edges(),
             CollectionElementsItemTransportSlot::ParenthesizedListSplat(t) => t.gap_edges(),
-            CollectionElementsItemTransportSlot::PrintKeyword => None,
-            CollectionElementsItemTransportSlot::ExecKeyword => None,
-            CollectionElementsItemTransportSlot::AsyncKeyword => None,
-            CollectionElementsItemTransportSlot::AwaitKeyword => None,
-            CollectionElementsItemTransportSlot::TypeKeyword => None,
-            CollectionElementsItemTransportSlot::MatchKeyword => None,
             CollectionElementsItemTransportSlot::True(edges) => Some(edges),
             CollectionElementsItemTransportSlot::False(edges) => Some(edges),
             CollectionElementsItemTransportSlot::None(edges) => Some(edges),
@@ -8769,17 +8015,58 @@ impl ::sittir_core::prepare::Prepare for CollectionElementsItemTransportSlot {
             CollectionElementsItemTransportSlot::Yield(t) => t.snapshot_edge(),
             CollectionElementsItemTransportSlot::ListSplat(t) => t.snapshot_edge(),
             CollectionElementsItemTransportSlot::ParenthesizedListSplat(t) => t.snapshot_edge(),
-            CollectionElementsItemTransportSlot::PrintKeyword => None,
-            CollectionElementsItemTransportSlot::ExecKeyword => None,
-            CollectionElementsItemTransportSlot::AsyncKeyword => None,
-            CollectionElementsItemTransportSlot::AwaitKeyword => None,
-            CollectionElementsItemTransportSlot::TypeKeyword => None,
-            CollectionElementsItemTransportSlot::MatchKeyword => None,
             CollectionElementsItemTransportSlot::True(_) => None,
             CollectionElementsItemTransportSlot::False(_) => None,
             CollectionElementsItemTransportSlot::None(_) => None,
             CollectionElementsItemTransportSlot::Ellipsis(_) => None,
             CollectionElementsItemTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            CollectionElementsItemTransportSlot::ComparisonOperator(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::NotOperator(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::BooleanOperator(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::Lambda(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::Await(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::BinaryOperator(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::Identifier(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::String(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::ConcatenatedString(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::IntegerHex(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::IntegerOctal(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::IntegerBinary(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::FloatPoint(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::FloatScientific(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::UnaryOperator(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::Attribute(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::Subscript(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::Call(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::List(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::ListComprehension(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::Dictionary(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::DictionaryComprehension(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::Set(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::SetComprehension(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::Tuple(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::ParenthesizedExpression(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::GeneratorExpression(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::ListSplatPattern(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::ConditionalExpression(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::NamedExpression(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::AsPattern(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::Yield(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::ListSplat(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::ParenthesizedListSplat(t) => t.source_separator(ctx),
+            CollectionElementsItemTransportSlot::True(_) => None,
+            CollectionElementsItemTransportSlot::False(_) => None,
+            CollectionElementsItemTransportSlot::None(_) => None,
+            CollectionElementsItemTransportSlot::Ellipsis(_) => None,
+            CollectionElementsItemTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -8828,12 +8115,6 @@ impl ::sittir_core::view::KindOf for CollectionElementsItemTransportSlot {
             Self::Yield(inner) => inner.kind_in(kinds),
             Self::ListSplat(inner) => inner.kind_in(kinds),
             Self::ParenthesizedListSplat(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -8884,12 +8165,6 @@ impl ::sittir_core::render::Render for CollectionElementsItemTransportSlot {
             CollectionElementsItemTransportSlot::Yield(inner) => inner.render(w),
             CollectionElementsItemTransportSlot::ListSplat(inner) => inner.render(w),
             CollectionElementsItemTransportSlot::ParenthesizedListSplat(inner) => inner.render(w),
-            CollectionElementsItemTransportSlot::PrintKeyword => render_print_keyword(w),
-            CollectionElementsItemTransportSlot::ExecKeyword => render_exec_keyword(w),
-            CollectionElementsItemTransportSlot::AsyncKeyword => render_async_keyword(w),
-            CollectionElementsItemTransportSlot::AwaitKeyword => render_await_keyword(w),
-            CollectionElementsItemTransportSlot::TypeKeyword => render_type_keyword(w),
-            CollectionElementsItemTransportSlot::MatchKeyword => render_match_keyword(w),
             CollectionElementsItemTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             CollectionElementsItemTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             CollectionElementsItemTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -8915,12 +8190,6 @@ impl ::sittir_core::prepare::Prepare for StringContentTransportSlot {
             StringContentTransportSlot::StringContent(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            StringContentTransportSlot::Interpolation(t) => t.source_gap(),
-            StringContentTransportSlot::StringContent(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             StringContentTransportSlot::Interpolation(t) => t.gap_edges(),
@@ -8931,6 +8200,12 @@ impl ::sittir_core::prepare::Prepare for StringContentTransportSlot {
         match self {
             StringContentTransportSlot::Interpolation(t) => t.snapshot_edge(),
             StringContentTransportSlot::StringContent(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            StringContentTransportSlot::Interpolation(t) => t.source_separator(ctx),
+            StringContentTransportSlot::StringContent(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -8958,7 +8233,7 @@ impl ::sittir_core::render::Render for StringContentTransportSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum StringContentContentTransportSlot {
+pub enum StringContentElementsTransportSlot {
     #[kind(kind::ESCAPE_INTERPOLATION)]
     EscapeInterpolation(EscapeInterpolationTransport),
     #[kind(kind::ESCAPE_SEQUENCE_UNICODE_FIXED)]
@@ -8983,65 +8258,65 @@ pub enum StringContentContentTransportSlot {
     Verbatim(VerbatimTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for StringContentContentTransportSlot {
+impl ::sittir_core::prepare::Prepare for StringContentElementsTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            StringContentContentTransportSlot::EscapeInterpolation(t) => t.prepare(ctx),
-            StringContentContentTransportSlot::EscapeSequenceUnicodeFixed(t) => t.prepare(ctx),
-            StringContentContentTransportSlot::EscapeSequenceUnicodeWide(t) => t.prepare(ctx),
-            StringContentContentTransportSlot::EscapeSequenceHex(t) => t.prepare(ctx),
-            StringContentContentTransportSlot::EscapeSequenceOctal(t) => t.prepare(ctx),
-            StringContentContentTransportSlot::EscapeSequenceLineBreak(t) => t.prepare(ctx),
-            StringContentContentTransportSlot::EscapeSequenceSimple(t) => t.prepare(ctx),
-            StringContentContentTransportSlot::EscapeSequenceNamed(t) => t.prepare(ctx),
-            StringContentContentTransportSlot::StringFragment(t) => t.prepare(ctx),
-            StringContentContentTransportSlot::NotEscapeSequence => Ok(()),
-            StringContentContentTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            StringContentContentTransportSlot::EscapeInterpolation(t) => t.source_gap(),
-            StringContentContentTransportSlot::EscapeSequenceUnicodeFixed(t) => t.source_gap(),
-            StringContentContentTransportSlot::EscapeSequenceUnicodeWide(t) => t.source_gap(),
-            StringContentContentTransportSlot::EscapeSequenceHex(t) => t.source_gap(),
-            StringContentContentTransportSlot::EscapeSequenceOctal(t) => t.source_gap(),
-            StringContentContentTransportSlot::EscapeSequenceLineBreak(t) => t.source_gap(),
-            StringContentContentTransportSlot::EscapeSequenceSimple(t) => t.source_gap(),
-            StringContentContentTransportSlot::EscapeSequenceNamed(t) => t.source_gap(),
-            StringContentContentTransportSlot::StringFragment(t) => t.source_gap(),
-            StringContentContentTransportSlot::NotEscapeSequence => None,
-            StringContentContentTransportSlot::Verbatim(t) => t.source_gap(),
+            StringContentElementsTransportSlot::EscapeInterpolation(t) => t.prepare(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeFixed(t) => t.prepare(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeWide(t) => t.prepare(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceHex(t) => t.prepare(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceOctal(t) => t.prepare(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceLineBreak(t) => t.prepare(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceSimple(t) => t.prepare(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceNamed(t) => t.prepare(ctx),
+            StringContentElementsTransportSlot::StringFragment(t) => t.prepare(ctx),
+            StringContentElementsTransportSlot::NotEscapeSequence => Ok(()),
+            StringContentElementsTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            StringContentContentTransportSlot::EscapeInterpolation(t) => t.gap_edges(),
-            StringContentContentTransportSlot::EscapeSequenceUnicodeFixed(t) => t.gap_edges(),
-            StringContentContentTransportSlot::EscapeSequenceUnicodeWide(t) => t.gap_edges(),
-            StringContentContentTransportSlot::EscapeSequenceHex(t) => t.gap_edges(),
-            StringContentContentTransportSlot::EscapeSequenceOctal(t) => t.gap_edges(),
-            StringContentContentTransportSlot::EscapeSequenceLineBreak(t) => t.gap_edges(),
-            StringContentContentTransportSlot::EscapeSequenceSimple(t) => t.gap_edges(),
-            StringContentContentTransportSlot::EscapeSequenceNamed(t) => t.gap_edges(),
-            StringContentContentTransportSlot::StringFragment(t) => t.gap_edges(),
-            StringContentContentTransportSlot::NotEscapeSequence => None,
-            StringContentContentTransportSlot::Verbatim(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::EscapeInterpolation(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeFixed(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeWide(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::EscapeSequenceHex(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::EscapeSequenceOctal(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::EscapeSequenceLineBreak(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::EscapeSequenceSimple(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::EscapeSequenceNamed(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::StringFragment(t) => t.gap_edges(),
+            StringContentElementsTransportSlot::NotEscapeSequence => None,
+            StringContentElementsTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            StringContentContentTransportSlot::EscapeInterpolation(t) => t.snapshot_edge(),
-            StringContentContentTransportSlot::EscapeSequenceUnicodeFixed(t) => t.snapshot_edge(),
-            StringContentContentTransportSlot::EscapeSequenceUnicodeWide(t) => t.snapshot_edge(),
-            StringContentContentTransportSlot::EscapeSequenceHex(t) => t.snapshot_edge(),
-            StringContentContentTransportSlot::EscapeSequenceOctal(t) => t.snapshot_edge(),
-            StringContentContentTransportSlot::EscapeSequenceLineBreak(t) => t.snapshot_edge(),
-            StringContentContentTransportSlot::EscapeSequenceSimple(t) => t.snapshot_edge(),
-            StringContentContentTransportSlot::EscapeSequenceNamed(t) => t.snapshot_edge(),
-            StringContentContentTransportSlot::StringFragment(t) => t.snapshot_edge(),
-            StringContentContentTransportSlot::NotEscapeSequence => None,
-            StringContentContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::EscapeInterpolation(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeFixed(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeWide(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::EscapeSequenceHex(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::EscapeSequenceOctal(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::EscapeSequenceLineBreak(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::EscapeSequenceSimple(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::EscapeSequenceNamed(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::StringFragment(t) => t.snapshot_edge(),
+            StringContentElementsTransportSlot::NotEscapeSequence => None,
+            StringContentElementsTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            StringContentElementsTransportSlot::EscapeInterpolation(t) => t.source_separator(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeFixed(t) => t.source_separator(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeWide(t) => t.source_separator(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceHex(t) => t.source_separator(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceOctal(t) => t.source_separator(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceLineBreak(t) => t.source_separator(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceSimple(t) => t.source_separator(ctx),
+            StringContentElementsTransportSlot::EscapeSequenceNamed(t) => t.source_separator(ctx),
+            StringContentElementsTransportSlot::StringFragment(t) => t.source_separator(ctx),
+            StringContentElementsTransportSlot::NotEscapeSequence => None,
+            StringContentElementsTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -9049,7 +8324,7 @@ impl ::sittir_core::prepare::Prepare for StringContentContentTransportSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for StringContentContentTransportSlot {
+impl ::sittir_core::view::KindOf for StringContentElementsTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::EscapeInterpolation(inner) => inner.kind_in(kinds),
@@ -9067,20 +8342,20 @@ impl ::sittir_core::view::KindOf for StringContentContentTransportSlot {
     }
 }
 
-impl ::sittir_core::render::Render for StringContentContentTransportSlot {
+impl ::sittir_core::render::Render for StringContentElementsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            StringContentContentTransportSlot::EscapeInterpolation(inner) => inner.render(w),
-            StringContentContentTransportSlot::EscapeSequenceUnicodeFixed(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            StringContentContentTransportSlot::EscapeSequenceUnicodeWide(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            StringContentContentTransportSlot::EscapeSequenceHex(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            StringContentContentTransportSlot::EscapeSequenceOctal(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            StringContentContentTransportSlot::EscapeSequenceLineBreak(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            StringContentContentTransportSlot::EscapeSequenceSimple(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            StringContentContentTransportSlot::EscapeSequenceNamed(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            StringContentContentTransportSlot::StringFragment(inner) => inner.render(w),
-            StringContentContentTransportSlot::NotEscapeSequence => render_not_escape_sequence(w),
-            StringContentContentTransportSlot::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringContentElementsTransportSlot::EscapeInterpolation(inner) => inner.render(w),
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeFixed(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringContentElementsTransportSlot::EscapeSequenceUnicodeWide(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringContentElementsTransportSlot::EscapeSequenceHex(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringContentElementsTransportSlot::EscapeSequenceOctal(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringContentElementsTransportSlot::EscapeSequenceLineBreak(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringContentElementsTransportSlot::EscapeSequenceSimple(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringContentElementsTransportSlot::EscapeSequenceNamed(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringContentElementsTransportSlot::StringFragment(inner) => inner.render(w),
+            StringContentElementsTransportSlot::NotEscapeSequence => render_not_escape_sequence(w),
+            StringContentElementsTransportSlot::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
 }
@@ -9100,7 +8375,7 @@ pub enum InterpolationExpressionTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -9164,18 +8439,6 @@ pub enum InterpolationExpressionTransportSlot {
     PatternList(PatternListTransport),
     #[kind(kind::YIELD)]
     Yield(YieldTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -9233,70 +8496,11 @@ impl ::sittir_core::prepare::Prepare for InterpolationExpressionTransportSlot {
             InterpolationExpressionTransportSlot::ExpressionList(t) => t.prepare(ctx),
             InterpolationExpressionTransportSlot::PatternList(t) => t.prepare(ctx),
             InterpolationExpressionTransportSlot::Yield(t) => t.prepare(ctx),
-            InterpolationExpressionTransportSlot::PrintKeyword => Ok(()),
-            InterpolationExpressionTransportSlot::ExecKeyword => Ok(()),
-            InterpolationExpressionTransportSlot::AsyncKeyword => Ok(()),
-            InterpolationExpressionTransportSlot::AwaitKeyword => Ok(()),
-            InterpolationExpressionTransportSlot::TypeKeyword => Ok(()),
-            InterpolationExpressionTransportSlot::MatchKeyword => Ok(()),
             InterpolationExpressionTransportSlot::True(_) => Ok(()),
             InterpolationExpressionTransportSlot::False(_) => Ok(()),
             InterpolationExpressionTransportSlot::None(_) => Ok(()),
             InterpolationExpressionTransportSlot::Ellipsis(_) => Ok(()),
             InterpolationExpressionTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            InterpolationExpressionTransportSlot::ComparisonOperator(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::NotOperator(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::BooleanOperator(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::Lambda(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::Await(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::BinaryOperator(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::Identifier(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::String(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::ConcatenatedString(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::IntegerHex(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::IntegerOctal(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::IntegerBinary(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::IntegerDecimalLong(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::IntegerDecimalImaginary(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::IntegerDecimalPlain(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::FloatPoint(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::FloatLeadingPoint(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::FloatScientific(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::UnaryOperator(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::Attribute(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::Subscript(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::Call(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::List(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::ListComprehension(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::Dictionary(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::DictionaryComprehension(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::Set(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::SetComprehension(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::Tuple(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::ParenthesizedExpression(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::GeneratorExpression(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::ListSplatPattern(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::ConditionalExpression(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::NamedExpression(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::AsPattern(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::ExpressionList(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::PatternList(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::Yield(t) => t.source_gap(),
-            InterpolationExpressionTransportSlot::PrintKeyword => None,
-            InterpolationExpressionTransportSlot::ExecKeyword => None,
-            InterpolationExpressionTransportSlot::AsyncKeyword => None,
-            InterpolationExpressionTransportSlot::AwaitKeyword => None,
-            InterpolationExpressionTransportSlot::TypeKeyword => None,
-            InterpolationExpressionTransportSlot::MatchKeyword => None,
-            InterpolationExpressionTransportSlot::True(_) => None,
-            InterpolationExpressionTransportSlot::False(_) => None,
-            InterpolationExpressionTransportSlot::None(_) => None,
-            InterpolationExpressionTransportSlot::Ellipsis(_) => None,
-            InterpolationExpressionTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -9339,12 +8543,6 @@ impl ::sittir_core::prepare::Prepare for InterpolationExpressionTransportSlot {
             InterpolationExpressionTransportSlot::ExpressionList(t) => t.gap_edges(),
             InterpolationExpressionTransportSlot::PatternList(t) => t.gap_edges(),
             InterpolationExpressionTransportSlot::Yield(t) => t.gap_edges(),
-            InterpolationExpressionTransportSlot::PrintKeyword => None,
-            InterpolationExpressionTransportSlot::ExecKeyword => None,
-            InterpolationExpressionTransportSlot::AsyncKeyword => None,
-            InterpolationExpressionTransportSlot::AwaitKeyword => None,
-            InterpolationExpressionTransportSlot::TypeKeyword => None,
-            InterpolationExpressionTransportSlot::MatchKeyword => None,
             InterpolationExpressionTransportSlot::True(edges) => Some(edges),
             InterpolationExpressionTransportSlot::False(edges) => Some(edges),
             InterpolationExpressionTransportSlot::None(edges) => Some(edges),
@@ -9392,17 +8590,58 @@ impl ::sittir_core::prepare::Prepare for InterpolationExpressionTransportSlot {
             InterpolationExpressionTransportSlot::ExpressionList(t) => t.snapshot_edge(),
             InterpolationExpressionTransportSlot::PatternList(t) => t.snapshot_edge(),
             InterpolationExpressionTransportSlot::Yield(t) => t.snapshot_edge(),
-            InterpolationExpressionTransportSlot::PrintKeyword => None,
-            InterpolationExpressionTransportSlot::ExecKeyword => None,
-            InterpolationExpressionTransportSlot::AsyncKeyword => None,
-            InterpolationExpressionTransportSlot::AwaitKeyword => None,
-            InterpolationExpressionTransportSlot::TypeKeyword => None,
-            InterpolationExpressionTransportSlot::MatchKeyword => None,
             InterpolationExpressionTransportSlot::True(_) => None,
             InterpolationExpressionTransportSlot::False(_) => None,
             InterpolationExpressionTransportSlot::None(_) => None,
             InterpolationExpressionTransportSlot::Ellipsis(_) => None,
             InterpolationExpressionTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            InterpolationExpressionTransportSlot::ComparisonOperator(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::NotOperator(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::BooleanOperator(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::Lambda(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::Await(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::BinaryOperator(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::Identifier(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::String(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::ConcatenatedString(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::IntegerHex(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::IntegerOctal(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::IntegerBinary(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::FloatPoint(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::FloatScientific(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::UnaryOperator(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::Attribute(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::Subscript(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::Call(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::List(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::ListComprehension(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::Dictionary(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::DictionaryComprehension(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::Set(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::SetComprehension(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::Tuple(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::ParenthesizedExpression(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::GeneratorExpression(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::ListSplatPattern(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::ConditionalExpression(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::NamedExpression(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::AsPattern(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::ExpressionList(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::PatternList(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::Yield(t) => t.source_separator(ctx),
+            InterpolationExpressionTransportSlot::True(_) => None,
+            InterpolationExpressionTransportSlot::False(_) => None,
+            InterpolationExpressionTransportSlot::None(_) => None,
+            InterpolationExpressionTransportSlot::Ellipsis(_) => None,
+            InterpolationExpressionTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -9451,12 +8690,6 @@ impl ::sittir_core::view::KindOf for InterpolationExpressionTransportSlot {
             Self::ExpressionList(inner) => inner.kind_in(kinds),
             Self::PatternList(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -9507,12 +8740,6 @@ impl ::sittir_core::render::Render for InterpolationExpressionTransportSlot {
             InterpolationExpressionTransportSlot::ExpressionList(inner) => inner.render(w),
             InterpolationExpressionTransportSlot::PatternList(inner) => inner.render(w),
             InterpolationExpressionTransportSlot::Yield(inner) => inner.render(w),
-            InterpolationExpressionTransportSlot::PrintKeyword => render_print_keyword(w),
-            InterpolationExpressionTransportSlot::ExecKeyword => render_exec_keyword(w),
-            InterpolationExpressionTransportSlot::AsyncKeyword => render_async_keyword(w),
-            InterpolationExpressionTransportSlot::AwaitKeyword => render_await_keyword(w),
-            InterpolationExpressionTransportSlot::TypeKeyword => render_type_keyword(w),
-            InterpolationExpressionTransportSlot::MatchKeyword => render_match_keyword(w),
             InterpolationExpressionTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             InterpolationExpressionTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             InterpolationExpressionTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -9541,13 +8768,6 @@ impl ::sittir_core::prepare::Prepare for FormatSpecifierElementsTransportSlot {
             FormatSpecifierElementsTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            FormatSpecifierElementsTransportSlot::FormatSpecifierText(t) => t.source_gap(),
-            FormatSpecifierElementsTransportSlot::FormatExpression(t) => t.source_gap(),
-            FormatSpecifierElementsTransportSlot::Verbatim(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             FormatSpecifierElementsTransportSlot::FormatSpecifierText(t) => t.gap_edges(),
@@ -9560,6 +8780,13 @@ impl ::sittir_core::prepare::Prepare for FormatSpecifierElementsTransportSlot {
             FormatSpecifierElementsTransportSlot::FormatSpecifierText(t) => t.snapshot_edge(),
             FormatSpecifierElementsTransportSlot::FormatExpression(t) => t.snapshot_edge(),
             FormatSpecifierElementsTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            FormatSpecifierElementsTransportSlot::FormatSpecifierText(t) => t.source_separator(ctx),
+            FormatSpecifierElementsTransportSlot::FormatExpression(t) => t.source_separator(ctx),
+            FormatSpecifierElementsTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -9602,7 +8829,7 @@ pub enum ArgumentListElementsItemTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -9668,18 +8895,6 @@ pub enum ArgumentListElementsItemTransportSlot {
     ParenthesizedListSplat(ParenthesizedListSplatTransport),
     #[kind(kind::KEYWORD_ARGUMENT)]
     KeywordArgument(KeywordArgumentTransport),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -9738,71 +8953,11 @@ impl ::sittir_core::prepare::Prepare for ArgumentListElementsItemTransportSlot {
             ArgumentListElementsItemTransportSlot::DictionarySplat(t) => t.prepare(ctx),
             ArgumentListElementsItemTransportSlot::ParenthesizedListSplat(t) => t.prepare(ctx),
             ArgumentListElementsItemTransportSlot::KeywordArgument(t) => t.prepare(ctx),
-            ArgumentListElementsItemTransportSlot::PrintKeyword => Ok(()),
-            ArgumentListElementsItemTransportSlot::ExecKeyword => Ok(()),
-            ArgumentListElementsItemTransportSlot::AsyncKeyword => Ok(()),
-            ArgumentListElementsItemTransportSlot::AwaitKeyword => Ok(()),
-            ArgumentListElementsItemTransportSlot::TypeKeyword => Ok(()),
-            ArgumentListElementsItemTransportSlot::MatchKeyword => Ok(()),
             ArgumentListElementsItemTransportSlot::True(_) => Ok(()),
             ArgumentListElementsItemTransportSlot::False(_) => Ok(()),
             ArgumentListElementsItemTransportSlot::None(_) => Ok(()),
             ArgumentListElementsItemTransportSlot::Ellipsis(_) => Ok(()),
             ArgumentListElementsItemTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            ArgumentListElementsItemTransportSlot::ComparisonOperator(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::NotOperator(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::BooleanOperator(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::Lambda(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::Await(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::BinaryOperator(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::Identifier(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::String(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::ConcatenatedString(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::IntegerHex(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::IntegerOctal(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::IntegerBinary(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::IntegerDecimalLong(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::IntegerDecimalImaginary(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::IntegerDecimalPlain(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::FloatPoint(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::FloatLeadingPoint(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::FloatScientific(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::UnaryOperator(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::Attribute(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::Subscript(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::Call(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::List(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::ListComprehension(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::Dictionary(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::DictionaryComprehension(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::Set(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::SetComprehension(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::Tuple(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::ParenthesizedExpression(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::GeneratorExpression(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::ListSplatPattern(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::ConditionalExpression(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::NamedExpression(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::AsPattern(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::ListSplat(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::DictionarySplat(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::ParenthesizedListSplat(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::KeywordArgument(t) => t.source_gap(),
-            ArgumentListElementsItemTransportSlot::PrintKeyword => None,
-            ArgumentListElementsItemTransportSlot::ExecKeyword => None,
-            ArgumentListElementsItemTransportSlot::AsyncKeyword => None,
-            ArgumentListElementsItemTransportSlot::AwaitKeyword => None,
-            ArgumentListElementsItemTransportSlot::TypeKeyword => None,
-            ArgumentListElementsItemTransportSlot::MatchKeyword => None,
-            ArgumentListElementsItemTransportSlot::True(_) => None,
-            ArgumentListElementsItemTransportSlot::False(_) => None,
-            ArgumentListElementsItemTransportSlot::None(_) => None,
-            ArgumentListElementsItemTransportSlot::Ellipsis(_) => None,
-            ArgumentListElementsItemTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -9846,12 +9001,6 @@ impl ::sittir_core::prepare::Prepare for ArgumentListElementsItemTransportSlot {
             ArgumentListElementsItemTransportSlot::DictionarySplat(t) => t.gap_edges(),
             ArgumentListElementsItemTransportSlot::ParenthesizedListSplat(t) => t.gap_edges(),
             ArgumentListElementsItemTransportSlot::KeywordArgument(t) => t.gap_edges(),
-            ArgumentListElementsItemTransportSlot::PrintKeyword => None,
-            ArgumentListElementsItemTransportSlot::ExecKeyword => None,
-            ArgumentListElementsItemTransportSlot::AsyncKeyword => None,
-            ArgumentListElementsItemTransportSlot::AwaitKeyword => None,
-            ArgumentListElementsItemTransportSlot::TypeKeyword => None,
-            ArgumentListElementsItemTransportSlot::MatchKeyword => None,
             ArgumentListElementsItemTransportSlot::True(edges) => Some(edges),
             ArgumentListElementsItemTransportSlot::False(edges) => Some(edges),
             ArgumentListElementsItemTransportSlot::None(edges) => Some(edges),
@@ -9900,17 +9049,59 @@ impl ::sittir_core::prepare::Prepare for ArgumentListElementsItemTransportSlot {
             ArgumentListElementsItemTransportSlot::DictionarySplat(t) => t.snapshot_edge(),
             ArgumentListElementsItemTransportSlot::ParenthesizedListSplat(t) => t.snapshot_edge(),
             ArgumentListElementsItemTransportSlot::KeywordArgument(t) => t.snapshot_edge(),
-            ArgumentListElementsItemTransportSlot::PrintKeyword => None,
-            ArgumentListElementsItemTransportSlot::ExecKeyword => None,
-            ArgumentListElementsItemTransportSlot::AsyncKeyword => None,
-            ArgumentListElementsItemTransportSlot::AwaitKeyword => None,
-            ArgumentListElementsItemTransportSlot::TypeKeyword => None,
-            ArgumentListElementsItemTransportSlot::MatchKeyword => None,
             ArgumentListElementsItemTransportSlot::True(_) => None,
             ArgumentListElementsItemTransportSlot::False(_) => None,
             ArgumentListElementsItemTransportSlot::None(_) => None,
             ArgumentListElementsItemTransportSlot::Ellipsis(_) => None,
             ArgumentListElementsItemTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            ArgumentListElementsItemTransportSlot::ComparisonOperator(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::NotOperator(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::BooleanOperator(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::Lambda(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::Await(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::BinaryOperator(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::Identifier(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::String(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::ConcatenatedString(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::IntegerHex(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::IntegerOctal(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::IntegerBinary(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::FloatPoint(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::FloatScientific(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::UnaryOperator(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::Attribute(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::Subscript(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::Call(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::List(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::ListComprehension(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::Dictionary(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::DictionaryComprehension(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::Set(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::SetComprehension(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::Tuple(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::ParenthesizedExpression(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::GeneratorExpression(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::ListSplatPattern(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::ConditionalExpression(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::NamedExpression(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::AsPattern(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::ListSplat(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::DictionarySplat(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::ParenthesizedListSplat(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::KeywordArgument(t) => t.source_separator(ctx),
+            ArgumentListElementsItemTransportSlot::True(_) => None,
+            ArgumentListElementsItemTransportSlot::False(_) => None,
+            ArgumentListElementsItemTransportSlot::None(_) => None,
+            ArgumentListElementsItemTransportSlot::Ellipsis(_) => None,
+            ArgumentListElementsItemTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -9960,12 +9151,6 @@ impl ::sittir_core::view::KindOf for ArgumentListElementsItemTransportSlot {
             Self::DictionarySplat(inner) => inner.kind_in(kinds),
             Self::ParenthesizedListSplat(inner) => inner.kind_in(kinds),
             Self::KeywordArgument(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -10017,12 +9202,6 @@ impl ::sittir_core::render::Render for ArgumentListElementsItemTransportSlot {
             ArgumentListElementsItemTransportSlot::DictionarySplat(inner) => inner.render(w),
             ArgumentListElementsItemTransportSlot::ParenthesizedListSplat(inner) => inner.render(w),
             ArgumentListElementsItemTransportSlot::KeywordArgument(inner) => inner.render(w),
-            ArgumentListElementsItemTransportSlot::PrintKeyword => render_print_keyword(w),
-            ArgumentListElementsItemTransportSlot::ExecKeyword => render_exec_keyword(w),
-            ArgumentListElementsItemTransportSlot::AsyncKeyword => render_async_keyword(w),
-            ArgumentListElementsItemTransportSlot::AwaitKeyword => render_await_keyword(w),
-            ArgumentListElementsItemTransportSlot::TypeKeyword => render_type_keyword(w),
-            ArgumentListElementsItemTransportSlot::MatchKeyword => render_match_keyword(w),
             ArgumentListElementsItemTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             ArgumentListElementsItemTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             ArgumentListElementsItemTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -10048,12 +9227,6 @@ impl ::sittir_core::prepare::Prepare for DictPatternElementsItemTransportSlot {
             DictPatternElementsItemTransportSlot::SplatPattern(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            DictPatternElementsItemTransportSlot::KeyValuePattern(t) => t.source_gap(),
-            DictPatternElementsItemTransportSlot::SplatPattern(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             DictPatternElementsItemTransportSlot::KeyValuePattern(t) => t.gap_edges(),
@@ -10064,6 +9237,12 @@ impl ::sittir_core::prepare::Prepare for DictPatternElementsItemTransportSlot {
         match self {
             DictPatternElementsItemTransportSlot::KeyValuePattern(t) => t.snapshot_edge(),
             DictPatternElementsItemTransportSlot::SplatPattern(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            DictPatternElementsItemTransportSlot::KeyValuePattern(t) => t.source_separator(ctx),
+            DictPatternElementsItemTransportSlot::SplatPattern(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -10104,7 +9283,7 @@ pub enum SubscriptsSubscriptTransportSlot {
     Await(AwaitTransport),
     #[kind(kind::BINARY_OPERATOR)]
     BinaryOperator(BinaryOperatorTransport),
-    #[kind(kind::IDENTIFIER)]
+    #[kind(kind::IDENTIFIER, folded(kind::TYPE_KEYWORD), folded(kind::PRINT_KEYWORD), folded(kind::EXEC_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::MATCH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING)]
     String(StringTransport),
@@ -10164,18 +9343,6 @@ pub enum SubscriptsSubscriptTransportSlot {
     AsPattern(AsPatternTransport),
     #[kind(kind::SLICE)]
     Slice(Box<SliceTransport>),
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
     #[kind(kind::TRUE)]
     #[transport(edged)]
     True(::sittir_core::options::Edges),
@@ -10231,68 +9398,11 @@ impl ::sittir_core::prepare::Prepare for SubscriptsSubscriptTransportSlot {
             SubscriptsSubscriptTransportSlot::NamedExpression(t) => t.prepare(ctx),
             SubscriptsSubscriptTransportSlot::AsPattern(t) => t.prepare(ctx),
             SubscriptsSubscriptTransportSlot::Slice(t) => t.prepare(ctx),
-            SubscriptsSubscriptTransportSlot::PrintKeyword => Ok(()),
-            SubscriptsSubscriptTransportSlot::ExecKeyword => Ok(()),
-            SubscriptsSubscriptTransportSlot::AsyncKeyword => Ok(()),
-            SubscriptsSubscriptTransportSlot::AwaitKeyword => Ok(()),
-            SubscriptsSubscriptTransportSlot::TypeKeyword => Ok(()),
-            SubscriptsSubscriptTransportSlot::MatchKeyword => Ok(()),
             SubscriptsSubscriptTransportSlot::True(_) => Ok(()),
             SubscriptsSubscriptTransportSlot::False(_) => Ok(()),
             SubscriptsSubscriptTransportSlot::None(_) => Ok(()),
             SubscriptsSubscriptTransportSlot::Ellipsis(_) => Ok(()),
             SubscriptsSubscriptTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            SubscriptsSubscriptTransportSlot::ComparisonOperator(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::NotOperator(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::BooleanOperator(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::Lambda(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::Await(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::BinaryOperator(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::Identifier(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::String(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::ConcatenatedString(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::IntegerHex(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::IntegerOctal(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::IntegerBinary(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::IntegerDecimalLong(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::IntegerDecimalImaginary(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::IntegerDecimalPlain(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::FloatPoint(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::FloatLeadingPoint(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::FloatScientific(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::UnaryOperator(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::Attribute(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::Subscript(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::Call(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::List(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::ListComprehension(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::Dictionary(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::DictionaryComprehension(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::Set(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::SetComprehension(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::Tuple(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::ParenthesizedExpression(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::GeneratorExpression(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::ListSplatPattern(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::ConditionalExpression(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::NamedExpression(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::AsPattern(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::Slice(t) => t.source_gap(),
-            SubscriptsSubscriptTransportSlot::PrintKeyword => None,
-            SubscriptsSubscriptTransportSlot::ExecKeyword => None,
-            SubscriptsSubscriptTransportSlot::AsyncKeyword => None,
-            SubscriptsSubscriptTransportSlot::AwaitKeyword => None,
-            SubscriptsSubscriptTransportSlot::TypeKeyword => None,
-            SubscriptsSubscriptTransportSlot::MatchKeyword => None,
-            SubscriptsSubscriptTransportSlot::True(_) => None,
-            SubscriptsSubscriptTransportSlot::False(_) => None,
-            SubscriptsSubscriptTransportSlot::None(_) => None,
-            SubscriptsSubscriptTransportSlot::Ellipsis(_) => None,
-            SubscriptsSubscriptTransportSlot::Verbatim(t) => t.source_gap(),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -10333,12 +9443,6 @@ impl ::sittir_core::prepare::Prepare for SubscriptsSubscriptTransportSlot {
             SubscriptsSubscriptTransportSlot::NamedExpression(t) => t.gap_edges(),
             SubscriptsSubscriptTransportSlot::AsPattern(t) => t.gap_edges(),
             SubscriptsSubscriptTransportSlot::Slice(t) => t.gap_edges(),
-            SubscriptsSubscriptTransportSlot::PrintKeyword => None,
-            SubscriptsSubscriptTransportSlot::ExecKeyword => None,
-            SubscriptsSubscriptTransportSlot::AsyncKeyword => None,
-            SubscriptsSubscriptTransportSlot::AwaitKeyword => None,
-            SubscriptsSubscriptTransportSlot::TypeKeyword => None,
-            SubscriptsSubscriptTransportSlot::MatchKeyword => None,
             SubscriptsSubscriptTransportSlot::True(edges) => Some(edges),
             SubscriptsSubscriptTransportSlot::False(edges) => Some(edges),
             SubscriptsSubscriptTransportSlot::None(edges) => Some(edges),
@@ -10384,17 +9488,56 @@ impl ::sittir_core::prepare::Prepare for SubscriptsSubscriptTransportSlot {
             SubscriptsSubscriptTransportSlot::NamedExpression(t) => t.snapshot_edge(),
             SubscriptsSubscriptTransportSlot::AsPattern(t) => t.snapshot_edge(),
             SubscriptsSubscriptTransportSlot::Slice(t) => t.snapshot_edge(),
-            SubscriptsSubscriptTransportSlot::PrintKeyword => None,
-            SubscriptsSubscriptTransportSlot::ExecKeyword => None,
-            SubscriptsSubscriptTransportSlot::AsyncKeyword => None,
-            SubscriptsSubscriptTransportSlot::AwaitKeyword => None,
-            SubscriptsSubscriptTransportSlot::TypeKeyword => None,
-            SubscriptsSubscriptTransportSlot::MatchKeyword => None,
             SubscriptsSubscriptTransportSlot::True(_) => None,
             SubscriptsSubscriptTransportSlot::False(_) => None,
             SubscriptsSubscriptTransportSlot::None(_) => None,
             SubscriptsSubscriptTransportSlot::Ellipsis(_) => None,
             SubscriptsSubscriptTransportSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            SubscriptsSubscriptTransportSlot::ComparisonOperator(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::NotOperator(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::BooleanOperator(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::Lambda(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::Await(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::BinaryOperator(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::Identifier(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::String(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::ConcatenatedString(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::IntegerHex(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::IntegerOctal(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::IntegerBinary(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::FloatPoint(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::FloatScientific(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::UnaryOperator(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::Attribute(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::Subscript(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::Call(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::List(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::ListComprehension(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::Dictionary(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::DictionaryComprehension(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::Set(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::SetComprehension(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::Tuple(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::ParenthesizedExpression(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::GeneratorExpression(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::ListSplatPattern(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::ConditionalExpression(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::NamedExpression(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::AsPattern(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::Slice(t) => t.source_separator(ctx),
+            SubscriptsSubscriptTransportSlot::True(_) => None,
+            SubscriptsSubscriptTransportSlot::False(_) => None,
+            SubscriptsSubscriptTransportSlot::None(_) => None,
+            SubscriptsSubscriptTransportSlot::Ellipsis(_) => None,
+            SubscriptsSubscriptTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -10441,12 +9584,6 @@ impl ::sittir_core::view::KindOf for SubscriptsSubscriptTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::Slice(inner) => inner.kind_in(kinds),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
@@ -10495,12 +9632,6 @@ impl ::sittir_core::render::Render for SubscriptsSubscriptTransportSlot {
             SubscriptsSubscriptTransportSlot::NamedExpression(inner) => inner.render(w),
             SubscriptsSubscriptTransportSlot::AsPattern(inner) => inner.render(w),
             SubscriptsSubscriptTransportSlot::Slice(inner) => inner.as_ref().render(w),
-            SubscriptsSubscriptTransportSlot::PrintKeyword => render_print_keyword(w),
-            SubscriptsSubscriptTransportSlot::ExecKeyword => render_exec_keyword(w),
-            SubscriptsSubscriptTransportSlot::AsyncKeyword => render_async_keyword(w),
-            SubscriptsSubscriptTransportSlot::AwaitKeyword => render_await_keyword(w),
-            SubscriptsSubscriptTransportSlot::TypeKeyword => render_type_keyword(w),
-            SubscriptsSubscriptTransportSlot::MatchKeyword => render_match_keyword(w),
             SubscriptsSubscriptTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             SubscriptsSubscriptTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             SubscriptsSubscriptTransportSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
@@ -10526,12 +9657,6 @@ impl ::sittir_core::prepare::Prepare for DictionaryElementsItemTransportSlot {
             DictionaryElementsItemTransportSlot::DictionarySplat(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            DictionaryElementsItemTransportSlot::Pair(t) => t.source_gap(),
-            DictionaryElementsItemTransportSlot::DictionarySplat(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             DictionaryElementsItemTransportSlot::Pair(t) => t.gap_edges(),
@@ -10542,6 +9667,12 @@ impl ::sittir_core::prepare::Prepare for DictionaryElementsItemTransportSlot {
         match self {
             DictionaryElementsItemTransportSlot::Pair(t) => t.snapshot_edge(),
             DictionaryElementsItemTransportSlot::DictionarySplat(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            DictionaryElementsItemTransportSlot::Pair(t) => t.source_separator(ctx),
+            DictionaryElementsItemTransportSlot::DictionarySplat(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -10583,12 +9714,6 @@ impl ::sittir_core::prepare::Prepare for PrintStatementChevronPrintChevronArgume
             PrintStatementChevronPrintChevronArgumentsTransportSlot::Comma => Ok(()),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            PrintStatementChevronPrintChevronArgumentsTransportSlot::PrintChevronArguments(t) => t.source_gap(),
-            PrintStatementChevronPrintChevronArgumentsTransportSlot::Comma => None,
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             PrintStatementChevronPrintChevronArgumentsTransportSlot::PrintChevronArguments(t) => t.gap_edges(),
@@ -10598,6 +9723,12 @@ impl ::sittir_core::prepare::Prepare for PrintStatementChevronPrintChevronArgume
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
             PrintStatementChevronPrintChevronArgumentsTransportSlot::PrintChevronArguments(t) => t.snapshot_edge(),
+            PrintStatementChevronPrintChevronArgumentsTransportSlot::Comma => None,
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            PrintStatementChevronPrintChevronArgumentsTransportSlot::PrintChevronArguments(t) => t.source_separator(ctx),
             PrintStatementChevronPrintChevronArgumentsTransportSlot::Comma => None,
         }
     }
@@ -10645,12 +9776,6 @@ impl ::sittir_core::prepare::Prepare for ComprehensionClausesContentTransportSlo
             ComprehensionClausesContentTransportSlot::IfClause(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            ComprehensionClausesContentTransportSlot::ForInClause(t) => t.source_gap(),
-            ComprehensionClausesContentTransportSlot::IfClause(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             ComprehensionClausesContentTransportSlot::ForInClause(t) => t.gap_edges(),
@@ -10661,6 +9786,12 @@ impl ::sittir_core::prepare::Prepare for ComprehensionClausesContentTransportSlo
         match self {
             ComprehensionClausesContentTransportSlot::ForInClause(t) => t.snapshot_edge(),
             ComprehensionClausesContentTransportSlot::IfClause(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            ComprehensionClausesContentTransportSlot::ForInClause(t) => t.source_separator(ctx),
+            ComprehensionClausesContentTransportSlot::IfClause(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -10702,12 +9833,6 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionContentTransportSl
             ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionList(t) => t.prepare(ctx),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionAs(t) => t.source_gap(),
-            ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionList(t) => t.source_gap(),
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionAs(t) => t.gap_edges(),
@@ -10718,6 +9843,12 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionContentTransportSl
         match self {
             ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionAs(t) => t.snapshot_edge(),
             ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionList(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        match self {
+            ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionAs(t) => t.source_separator(ctx),
+            ExceptClauseExceptionContentTransportSlot::ExceptClauseExceptionList(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -10922,20 +10053,18 @@ impl ::sittir_core::prepare::Prepare for ModuleTransport {
         let root = ::sittir_core::layout::Layout::snapshot_edge(&self.layout).map(|edge| edge.span);
         let flanks = ::sittir_core::prepare::root_flanks(first, last, root, options::allowed(options::SITE_MODULE_MODULE_BEFORE), options::allowed(options::SITE_MODULE_MODULE_AFTER), &options::WHITESPACE, ctx);
         ::sittir_core::prepare::fill_edges(self, flanks);
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.statements.iter_mut().map(Some), "", options::allowed(options::SITE_MODULE_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.statements.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_statements"));
         self.statements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MODULE_STATEMENTS_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.statements.iter_mut().map(Some), options::SEATS_MODULE_STATEMENTS, ctx);
         self.statements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -10976,17 +10105,15 @@ impl ::sittir_core::render::Render for SimpleStatementsTransport {
 impl ::sittir_core::prepare::Prepare for SimpleStatementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -11027,17 +10154,15 @@ impl ::sittir_core::render::Render for ImportStatementTransport {
 impl ::sittir_core::prepare::Prepare for ImportStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.names.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -11079,11 +10204,11 @@ impl ::sittir_core::prepare::Prepare for ImportPrefixTransport {
         self.layout.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -11127,18 +10252,16 @@ impl ::sittir_core::render::Render for RelativeImportTransport {
 impl ::sittir_core::prepare::Prepare for RelativeImportTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.prefix.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -11179,17 +10302,15 @@ impl ::sittir_core::render::Render for FutureImportStatementTransport {
 impl ::sittir_core::prepare::Prepare for FutureImportStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -11233,18 +10354,16 @@ impl ::sittir_core::render::Render for ImportFromStatementTransport {
 impl ::sittir_core::prepare::Prepare for ImportFromStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.module_name.prepare(ctx)?;
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -11292,20 +10411,19 @@ impl ::sittir_core::render::Render for ImportListTransport {
 impl ::sittir_core::prepare::Prepare for ImportListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.name.iter_mut().map(Some), ",", options::allowed(options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.name.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_name"));
         self.name_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_BEFORE].arm);
         self.name_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.name.iter_mut().map(Some), options::SEATS_IMPORT_LIST_NAME, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(135), &[6], ctx.options.delimiter[options::DELIM_IMPORT_LIST_NAME], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(135), &[6], ctx.options.delimiter[options::DELIM_IMPORT_LIST_NAME], ctx));
         self.name.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -11349,18 +10467,16 @@ impl ::sittir_core::render::Render for AliasedImportTransport {
 impl ::sittir_core::prepare::Prepare for AliasedImportTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.alias.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -11432,11 +10548,11 @@ impl ::sittir_core::prepare::Prepare for PrintStatementTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -11477,17 +10593,15 @@ impl ::sittir_core::render::Render for ChevronTransport {
 impl ::sittir_core::prepare::Prepare for ChevronTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -11532,21 +10646,19 @@ impl ::sittir_core::render::Render for AssertStatementTransport {
 impl ::sittir_core::prepare::Prepare for AssertStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.expression.iter_mut().map(Some), ",", options::allowed(options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.expression.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_expression"));
         self.expression_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_BEFORE].arm);
         self.expression_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_ASSERT_STATEMENT_EXPRESSION_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.expression.iter_mut().map(Some), options::SEATS_ASSERT_STATEMENT_EXPRESSION, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -11590,11 +10702,11 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -11611,7 +10723,7 @@ pub struct NamedExpressionTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
-    pub name: ::sittir_core::SlotValue<NamedExpressionNameTransportSlot>,
+    pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
@@ -11638,18 +10750,64 @@ impl ::sittir_core::render::Render for NamedExpressionTransport {
 impl ::sittir_core::prepare::Prepare for NamedExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::_NAMED_EXPRESSION_LHS)]
+pub struct NamedExpressionLhsTransport {
+    #[wire(key = "$_layout")]
+    pub layout: Option<Box<TransportLayout>>,
+    #[wire(key = "_identifier")]
+    #[slot]
+    pub identifier: ::sittir_core::SlotValue<IdentifierTransport>,
+}
+
+impl ::sittir_core::view::KindOf for NamedExpressionLhsTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(143)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for NamedExpressionLhsTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(143) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for NamedExpressionLhsTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(143)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_named_expression_lhs(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for NamedExpressionLhsTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.layout.prepare(ctx)?;
+        self.identifier.prepare(ctx)?;
+        Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -11690,17 +10848,15 @@ impl ::sittir_core::render::Render for ReturnStatementTransport {
 impl ::sittir_core::prepare::Prepare for ReturnStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expressions.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -11741,17 +10897,15 @@ impl ::sittir_core::render::Render for DeleteStatementTransport {
 impl ::sittir_core::prepare::Prepare for DeleteStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expressions.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -11795,18 +10949,16 @@ impl ::sittir_core::render::Render for RaiseStatementTransport {
 impl ::sittir_core::prepare::Prepare for RaiseStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expressions.prepare(ctx)?;
         self.cause.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -11836,17 +10988,17 @@ impl ::sittir_core::prepare::Prepare for PassStatementTransport {
             PassStatementTransport::PassStatement(_) => Ok(()),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            PassStatementTransport::PassStatement(_) => None,
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             PassStatementTransport::PassStatement(edges) => Some(edges),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            PassStatementTransport::PassStatement(_) => None,
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
             PassStatementTransport::PassStatement(_) => None,
         }
@@ -11884,17 +11036,17 @@ impl ::sittir_core::prepare::Prepare for BreakStatementTransport {
             BreakStatementTransport::BreakStatement(_) => Ok(()),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            BreakStatementTransport::BreakStatement(_) => None,
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             BreakStatementTransport::BreakStatement(edges) => Some(edges),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            BreakStatementTransport::BreakStatement(_) => None,
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
             BreakStatementTransport::BreakStatement(_) => None,
         }
@@ -11932,17 +11084,17 @@ impl ::sittir_core::prepare::Prepare for ContinueStatementTransport {
             ContinueStatementTransport::ContinueStatement(_) => Ok(()),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            ContinueStatementTransport::ContinueStatement(_) => None,
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             ContinueStatementTransport::ContinueStatement(edges) => Some(edges),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            ContinueStatementTransport::ContinueStatement(_) => None,
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
             ContinueStatementTransport::ContinueStatement(_) => None,
         }
@@ -11999,10 +11151,8 @@ impl ::sittir_core::render::Render for IfStatementTransport {
 impl ::sittir_core::prepare::Prepare for IfStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.alternative.iter_mut().map(Some), "", options::allowed(options::SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.alternative.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_alternative"));
         self.alternative_separator_space.get_or_insert(ctx.options.spacing[options::SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.alternative.iter_mut().map(Some), options::SEATS_IF_STATEMENT_ALTERNATIVE, ctx);
         self.condition.prepare(ctx)?;
@@ -12010,11 +11160,11 @@ impl ::sittir_core::prepare::Prepare for IfStatementTransport {
         self.alternative.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -12058,18 +11208,16 @@ impl ::sittir_core::render::Render for ElifClauseTransport {
 impl ::sittir_core::prepare::Prepare for ElifClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.condition.prepare(ctx)?;
         self.consequence.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -12110,17 +11258,15 @@ impl ::sittir_core::render::Render for ElseClauseTransport {
 impl ::sittir_core::prepare::Prepare for ElseClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -12164,18 +11310,16 @@ impl ::sittir_core::render::Render for MatchStatementTransport {
 impl ::sittir_core::prepare::Prepare for MatchStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.subjects.prepare(ctx)?;
         self.body.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -12219,11 +11363,11 @@ impl ::sittir_core::prepare::Prepare for MatchBlockTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -12270,19 +11414,17 @@ impl ::sittir_core::render::Render for CaseClauseTransport {
 impl ::sittir_core::prepare::Prepare for CaseClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.case_patterns.prepare(ctx)?;
         self.guard.prepare(ctx)?;
         self.consequence.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -12335,8 +11477,6 @@ impl ::sittir_core::render::Render for ForStatementTransport {
 impl ::sittir_core::prepare::Prepare for ForStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.async_.prepare(ctx)?;
         self.left.prepare(ctx)?;
@@ -12345,11 +11485,11 @@ impl ::sittir_core::prepare::Prepare for ForStatementTransport {
         self.alternative.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -12396,19 +11536,17 @@ impl ::sittir_core::render::Render for WhileStatementTransport {
 impl ::sittir_core::prepare::Prepare for WhileStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.condition.prepare(ctx)?;
         self.body.prepare(ctx)?;
         self.alternative.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -12460,10 +11598,8 @@ impl ::sittir_core::render::Render for TryStatementTransport {
 impl ::sittir_core::prepare::Prepare for TryStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.except_clauses.iter_mut().map(Some), "", options::allowed(options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.except_clauses.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_except_clauses"));
         self.except_clauses_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.except_clauses.iter_mut().map(Some), options::SEATS_TRY_STATEMENT_EXCEPT_CLAUSES, ctx);
         self.body.prepare(ctx)?;
@@ -12472,11 +11608,11 @@ impl ::sittir_core::prepare::Prepare for TryStatementTransport {
         self.finally_clause.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -12497,9 +11633,9 @@ pub struct ExceptClauseTransport {
     #[wire(key = "_exception")]
     #[slot(field = field::EXCEPTION)]
     pub exception: Option<::sittir_core::SlotValue<ExceptClauseExceptionTransport>>,
-    #[wire(key = "_suite")]
-    #[slot]
-    pub suite: ::sittir_core::SlotValue<SuiteTransport>,
+    #[wire(key = "_body")]
+    #[slot(field = field::BODY)]
+    pub body: ::sittir_core::SlotValue<SuiteTransport>,
 }
 
 impl ::sittir_core::view::KindOf for ExceptClauseTransport {
@@ -12523,19 +11659,17 @@ impl ::sittir_core::render::Render for ExceptClauseTransport {
 impl ::sittir_core::prepare::Prepare for ExceptClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.group.prepare(ctx)?;
         self.exception.prepare(ctx)?;
-        self.suite.prepare(ctx)?;
+        self.body.prepare(ctx)?;
         Ok(())
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -12576,17 +11710,15 @@ impl ::sittir_core::render::Render for FinallyClauseTransport {
 impl ::sittir_core::prepare::Prepare for FinallyClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.block.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -12633,19 +11765,17 @@ impl ::sittir_core::render::Render for WithStatementTransport {
 impl ::sittir_core::prepare::Prepare for WithStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.async_.prepare(ctx)?;
         self.with_clause.prepare(ctx)?;
         self.body.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -12689,11 +11819,11 @@ impl ::sittir_core::prepare::Prepare for WithItemTransport {
         self.value.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -12749,8 +11879,6 @@ impl ::sittir_core::render::Render for FunctionDefinitionTransport {
 impl ::sittir_core::prepare::Prepare for FunctionDefinitionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.async_.prepare(ctx)?;
         self.name.prepare(ctx)?;
@@ -12760,11 +11888,11 @@ impl ::sittir_core::prepare::Prepare for FunctionDefinitionTransport {
         self.body.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -12805,17 +11933,15 @@ impl ::sittir_core::render::Render for ParametersTransport {
 impl ::sittir_core::prepare::Prepare for ParametersTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -12859,11 +11985,11 @@ impl ::sittir_core::prepare::Prepare for LambdaParametersTransport {
         self.parameters_elements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -12904,17 +12030,15 @@ impl ::sittir_core::render::Render for ListSplatTransport {
 impl ::sittir_core::prepare::Prepare for ListSplatTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -12955,17 +12079,15 @@ impl ::sittir_core::render::Render for DictionarySplatTransport {
 impl ::sittir_core::prepare::Prepare for DictionarySplatTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -13010,20 +12132,18 @@ impl ::sittir_core::render::Render for GlobalStatementTransport {
 impl ::sittir_core::prepare::Prepare for GlobalStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.names.iter_mut().map(Some), ",", options::allowed(options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.names.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_names"));
         self.names_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE].arm);
         self.names_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_GLOBAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER].arm);
         self.names.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -13068,20 +12188,18 @@ impl ::sittir_core::render::Render for NonlocalStatementTransport {
 impl ::sittir_core::prepare::Prepare for NonlocalStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.names.iter_mut().map(Some), ",", options::allowed(options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.names.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_names"));
         self.names_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_BEFORE].arm);
         self.names_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_NONLOCAL_STATEMENT_NAMES_SEPARATOR_SPACE_AFTER].arm);
         self.names.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -13129,10 +12247,8 @@ impl ::sittir_core::render::Render for ExecStatementTransport {
 impl ::sittir_core::prepare::Prepare for ExecStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.in_clause.iter_mut().map(Some), ",", options::allowed(options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.in_clause.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_in_clause"));
         self.in_clause_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_BEFORE].arm);
         self.in_clause_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_EXEC_STATEMENT_IN_CLAUSE_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.in_clause.iter_mut().map(Some), options::SEATS_EXEC_STATEMENT_IN_CLAUSE, ctx);
@@ -13140,11 +12256,11 @@ impl ::sittir_core::prepare::Prepare for ExecStatementTransport {
         self.in_clause.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -13188,18 +12304,16 @@ impl ::sittir_core::render::Render for TypeAliasStatementTransport {
 impl ::sittir_core::prepare::Prepare for TypeAliasStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -13249,8 +12363,6 @@ impl ::sittir_core::render::Render for ClassDefinitionTransport {
 impl ::sittir_core::prepare::Prepare for ClassDefinitionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.type_parameters.prepare(ctx)?;
@@ -13258,11 +12370,11 @@ impl ::sittir_core::prepare::Prepare for ClassDefinitionTransport {
         self.body.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -13303,17 +12415,15 @@ impl ::sittir_core::render::Render for TypeParameterTransport {
 impl ::sittir_core::prepare::Prepare for TypeParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.types.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -13354,17 +12464,15 @@ impl ::sittir_core::render::Render for ParenthesizedListSplatTransport {
 impl ::sittir_core::prepare::Prepare for ParenthesizedListSplatTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -13405,17 +12513,15 @@ impl ::sittir_core::render::Render for ArgumentListTransport {
 impl ::sittir_core::prepare::Prepare for ArgumentListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.arguments.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -13461,21 +12567,19 @@ impl ::sittir_core::render::Render for DecoratedDefinitionTransport {
 impl ::sittir_core::prepare::Prepare for DecoratedDefinitionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.decorator.iter_mut().map(Some), "", options::allowed(options::SITE_DECORATED_DEFINITION_DECORATOR_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.decorator.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_decorator"));
         self.decorator_separator_space.get_or_insert(ctx.options.spacing[options::SITE_DECORATED_DEFINITION_DECORATOR_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.decorator.iter_mut().map(Some), options::SEATS_DECORATED_DEFINITION_DECORATOR, ctx);
         self.decorator.prepare(ctx)?;
         self.definition.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -13516,17 +12620,15 @@ impl ::sittir_core::render::Render for DecoratorTransport {
 impl ::sittir_core::prepare::Prepare for DecoratorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -13569,20 +12671,18 @@ impl ::sittir_core::render::Render for BlockTransport {
 impl ::sittir_core::prepare::Prepare for BlockTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.statements.iter_mut().map(Some), "", options::allowed(options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.statements.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_statements"));
         self.statements_separator_space.get_or_insert(ctx.options.spacing[options::SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.statements.iter_mut().map(Some), options::SEATS_BLOCK_STATEMENTS, ctx);
         self.statements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -13630,20 +12730,19 @@ impl ::sittir_core::render::Render for ExpressionListTransport {
 impl ::sittir_core::prepare::Prepare for ExpressionListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_EXPRESSION_LIST_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXPRESSION_LIST_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSION_LIST_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSION_LIST_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_EXPRESSION_LIST_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(180), &[6], ctx.options.delimiter[options::DELIM_EXPRESSION_LIST_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(180), &[6], ctx.options.delimiter[options::DELIM_EXPRESSION_LIST_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -13688,17 +12787,17 @@ impl ::sittir_core::render::Render for DottedNameTransport {
 impl ::sittir_core::prepare::Prepare for DottedNameTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        ::sittir_core::prepare::fill_list_gaps(self.names.iter_mut().map(Some), ".", options::allowed(options::SITE_DOTTED_NAME_NAMES_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_DOTTED_NAME_NAMES_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.names.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_names"));
         self.names_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_DOTTED_NAME_NAMES_SEPARATOR_SPACE_BEFORE].arm);
         self.names_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_DOTTED_NAME_NAMES_SEPARATOR_SPACE_AFTER].arm);
         self.names.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -13742,11 +12841,11 @@ impl ::sittir_core::prepare::Prepare for CasePatternTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -13790,11 +12889,11 @@ impl ::sittir_core::prepare::Prepare for SimplePatternTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -13838,18 +12937,16 @@ impl ::sittir_core::render::Render for CaseAsPatternTransport {
 impl ::sittir_core::prepare::Prepare for CaseAsPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.case_pattern.prepare(ctx)?;
         self.identifier.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -13894,18 +12991,18 @@ impl ::sittir_core::render::Render for UnionPatternTransport {
 impl ::sittir_core::prepare::Prepare for UnionPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        ::sittir_core::prepare::fill_list_gaps(self.patterns.iter_mut().map(Some), "|", options::allowed(options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.patterns.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_patterns"));
         self.patterns_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_BEFORE].arm);
         self.patterns_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.patterns.iter_mut().map(Some), options::SEATS_UNION_PATTERN_PATTERNS, ctx);
         self.patterns.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -13946,17 +13043,15 @@ impl ::sittir_core::render::Render for DictPatternTransport {
 impl ::sittir_core::prepare::Prepare for DictPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -14000,18 +13095,16 @@ impl ::sittir_core::render::Render for KeyValuePatternTransport {
 impl ::sittir_core::prepare::Prepare for KeyValuePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.key.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -14055,18 +13148,16 @@ impl ::sittir_core::render::Render for KeywordPatternTransport {
 impl ::sittir_core::prepare::Prepare for KeywordPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -14114,18 +13205,16 @@ impl ::sittir_core::render::Render for SplatPatternTransport {
 impl ::sittir_core::prepare::Prepare for SplatPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.operator.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -14169,18 +13258,16 @@ impl ::sittir_core::render::Render for ClassPatternTransport {
 impl ::sittir_core::prepare::Prepare for ClassPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.arguments.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -14230,8 +13317,6 @@ impl ::sittir_core::render::Render for ComplexPatternTransport {
 impl ::sittir_core::prepare::Prepare for ComplexPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.sign.prepare(ctx)?;
         self.real.prepare(ctx)?;
@@ -14239,11 +13324,11 @@ impl ::sittir_core::prepare::Prepare for ComplexPatternTransport {
         self.imaginary.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -14291,20 +13376,19 @@ impl ::sittir_core::render::Render for ParametersElementsTransport {
 impl ::sittir_core::prepare::Prepare for ParametersElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_PARAMETERS_ELEMENTS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(192), &[6], ctx.options.delimiter[options::DELIM_PARAMETERS_ELEMENTS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(192), &[6], ctx.options.delimiter[options::DELIM_PARAMETERS_ELEMENTS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -14352,20 +13436,19 @@ impl ::sittir_core::render::Render for PatternsTransport {
 impl ::sittir_core::prepare::Prepare for PatternsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_PATTERNS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(193), &[6], ctx.options.delimiter[options::DELIM_PATTERNS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(193), &[6], ctx.options.delimiter[options::DELIM_PATTERNS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -14406,17 +13489,15 @@ impl ::sittir_core::render::Render for TuplePatternTransport {
 impl ::sittir_core::prepare::Prepare for TuplePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -14457,17 +13538,15 @@ impl ::sittir_core::render::Render for ListPatternTransport {
 impl ::sittir_core::prepare::Prepare for ListPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.patterns.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -14511,18 +13590,16 @@ impl ::sittir_core::render::Render for DefaultParameterTransport {
 impl ::sittir_core::prepare::Prepare for DefaultParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -14569,19 +13646,17 @@ impl ::sittir_core::render::Render for TypedDefaultParameterTransport {
 impl ::sittir_core::prepare::Prepare for TypedDefaultParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -14622,17 +13697,15 @@ impl ::sittir_core::render::Render for ListSplatPatternTransport {
 impl ::sittir_core::prepare::Prepare for ListSplatPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.target.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -14673,17 +13746,15 @@ impl ::sittir_core::render::Render for DictionarySplatPatternTransport {
 impl ::sittir_core::prepare::Prepare for DictionarySplatPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.target.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -14727,18 +13798,16 @@ impl ::sittir_core::render::Render for AsPatternTransport {
 impl ::sittir_core::prepare::Prepare for AsPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         self.alias.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -14779,17 +13848,15 @@ impl ::sittir_core::render::Render for NotOperatorTransport {
 impl ::sittir_core::prepare::Prepare for NotOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.argument.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -14836,19 +13903,17 @@ impl ::sittir_core::render::Render for BooleanOperatorTransport {
 impl ::sittir_core::prepare::Prepare for BooleanOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.operator.prepare(ctx)?;
         self.right.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -14895,19 +13960,17 @@ impl ::sittir_core::render::Render for BinaryOperatorTransport {
 impl ::sittir_core::prepare::Prepare for BinaryOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.operator.prepare(ctx)?;
         self.right.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -14955,18 +14018,16 @@ impl ::sittir_core::render::Render for UnaryOperatorTransport {
 impl ::sittir_core::prepare::Prepare for UnaryOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.operator.prepare(ctx)?;
         self.argument.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -15012,21 +14073,19 @@ impl ::sittir_core::render::Render for ComparisonOperatorTransport {
 impl ::sittir_core::prepare::Prepare for ComparisonOperatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.comparators.iter_mut().map(Some), "", options::allowed(options::SITE_COMPARISON_OPERATOR_COMPARATORS_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.comparators.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_comparators"));
         self.comparators_separator_space.get_or_insert(ctx.options.spacing[options::SITE_COMPARISON_OPERATOR_COMPARATORS_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.comparators.iter_mut().map(Some), options::SEATS_COMPARISON_OPERATOR_COMPARATORS, ctx);
         self.left.prepare(ctx)?;
         self.comparators.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -15070,18 +14129,16 @@ impl ::sittir_core::render::Render for LambdaTransport {
 impl ::sittir_core::prepare::Prepare for LambdaTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.parameters.prepare(ctx)?;
         self.body.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -15125,18 +14182,16 @@ impl ::sittir_core::render::Render for LambdaWithinForInClauseTransport {
 impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.parameters.prepare(ctx)?;
         self.body.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -15183,19 +14238,17 @@ impl ::sittir_core::render::Render for AugmentedAssignmentTransport {
 impl ::sittir_core::prepare::Prepare for AugmentedAssignmentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.operator.prepare(ctx)?;
         self.right.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -15243,20 +14296,19 @@ impl ::sittir_core::render::Render for PatternListTransport {
 impl ::sittir_core::prepare::Prepare for PatternListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_PATTERN_LIST_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(217), &[6], ctx.options.delimiter[options::DELIM_PATTERN_LIST_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(217), &[6], ctx.options.delimiter[options::DELIM_PATTERN_LIST_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -15297,17 +14349,15 @@ impl ::sittir_core::render::Render for YieldTransport {
 impl ::sittir_core::prepare::Prepare for YieldTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -15351,18 +14401,16 @@ impl ::sittir_core::render::Render for AttributeTransport {
 impl ::sittir_core::prepare::Prepare for AttributeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.object.prepare(ctx)?;
         self.attribute.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -15406,18 +14454,16 @@ impl ::sittir_core::render::Render for SubscriptTransport {
 impl ::sittir_core::prepare::Prepare for SubscriptTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.value.prepare(ctx)?;
         self.subscripts.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -15464,19 +14510,17 @@ impl ::sittir_core::render::Render for SliceTransport {
 impl ::sittir_core::prepare::Prepare for SliceTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.start.prepare(ctx)?;
         self.stop.prepare(ctx)?;
         self.step.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -15506,17 +14550,17 @@ impl ::sittir_core::prepare::Prepare for EllipsisTransport {
             EllipsisTransport::Ellipsis(_) => Ok(()),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            EllipsisTransport::Ellipsis(_) => None,
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             EllipsisTransport::Ellipsis(edges) => Some(edges),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            EllipsisTransport::Ellipsis(_) => None,
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
             EllipsisTransport::Ellipsis(_) => None,
         }
@@ -15568,18 +14612,16 @@ impl ::sittir_core::render::Render for CallTransport {
 impl ::sittir_core::prepare::Prepare for CallTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.function.prepare(ctx)?;
         self.arguments.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -15623,18 +14665,16 @@ impl ::sittir_core::render::Render for TypedParameterTransport {
 impl ::sittir_core::prepare::Prepare for TypedParameterTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -15678,11 +14718,11 @@ impl ::sittir_core::prepare::Prepare for TypeTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -15730,18 +14770,16 @@ impl ::sittir_core::render::Render for SplatTypeTransport {
 impl ::sittir_core::prepare::Prepare for SplatTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.operator.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -15758,7 +14796,7 @@ pub struct GenericTypeTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
-    pub name: ::sittir_core::SlotValue<GenericTypeNameTransportSlot>,
+    pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[wire(key = "_type_parameter")]
     #[slot(field = field::TYPE_PARAMETER)]
     pub type_parameter: ::sittir_core::SlotValue<TypeParameterTransport>,
@@ -15785,18 +14823,16 @@ impl ::sittir_core::render::Render for GenericTypeTransport {
 impl ::sittir_core::prepare::Prepare for GenericTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.type_parameter.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -15840,18 +14876,16 @@ impl ::sittir_core::render::Render for UnionTypeTransport {
 impl ::sittir_core::prepare::Prepare for UnionTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -15895,18 +14929,16 @@ impl ::sittir_core::render::Render for ConstrainedTypeTransport {
 impl ::sittir_core::prepare::Prepare for ConstrainedTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.base_type.prepare(ctx)?;
         self.constraint.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -15950,18 +14982,16 @@ impl ::sittir_core::render::Render for MemberTypeTransport {
 impl ::sittir_core::prepare::Prepare for MemberTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.base_type.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -15978,7 +15008,7 @@ pub struct KeywordArgumentTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME)]
-    pub name: ::sittir_core::SlotValue<NamedExpressionNameTransportSlot>,
+    pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[wire(key = "_value")]
     #[slot(field = field::VALUE)]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
@@ -16005,18 +15035,16 @@ impl ::sittir_core::render::Render for KeywordArgumentTransport {
 impl ::sittir_core::prepare::Prepare for KeywordArgumentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.name.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -16057,17 +15085,15 @@ impl ::sittir_core::render::Render for ListTransport {
 impl ::sittir_core::prepare::Prepare for ListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.collection_elements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -16108,17 +15134,15 @@ impl ::sittir_core::render::Render for SetTransport {
 impl ::sittir_core::prepare::Prepare for SetTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.collection_elements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -16159,17 +15183,15 @@ impl ::sittir_core::render::Render for TupleTransport {
 impl ::sittir_core::prepare::Prepare for TupleTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -16210,17 +15232,15 @@ impl ::sittir_core::render::Render for DictionaryTransport {
 impl ::sittir_core::prepare::Prepare for DictionaryTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -16264,18 +15284,16 @@ impl ::sittir_core::render::Render for PairTransport {
 impl ::sittir_core::prepare::Prepare for PairTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.key.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -16293,9 +15311,9 @@ pub struct ListComprehensionTransport {
     #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[wire(key = "_comprehension_clauses")]
-    #[slot]
-    pub comprehension_clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
+    #[wire(key = "_clauses")]
+    #[slot(field = field::CLAUSES)]
+    pub clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
 }
 
 impl ::sittir_core::view::KindOf for ListComprehensionTransport {
@@ -16319,18 +15337,16 @@ impl ::sittir_core::render::Render for ListComprehensionTransport {
 impl ::sittir_core::prepare::Prepare for ListComprehensionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
-        self.comprehension_clauses.prepare(ctx)?;
+        self.clauses.prepare(ctx)?;
         Ok(())
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -16348,9 +15364,9 @@ pub struct DictionaryComprehensionTransport {
     #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<PairTransport>>,
-    #[wire(key = "_comprehension_clauses")]
-    #[slot]
-    pub comprehension_clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
+    #[wire(key = "_clauses")]
+    #[slot(field = field::CLAUSES)]
+    pub clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
 }
 
 impl ::sittir_core::view::KindOf for DictionaryComprehensionTransport {
@@ -16374,18 +15390,16 @@ impl ::sittir_core::render::Render for DictionaryComprehensionTransport {
 impl ::sittir_core::prepare::Prepare for DictionaryComprehensionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
-        self.comprehension_clauses.prepare(ctx)?;
+        self.clauses.prepare(ctx)?;
         Ok(())
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -16403,9 +15417,9 @@ pub struct SetComprehensionTransport {
     #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[wire(key = "_comprehension_clauses")]
-    #[slot]
-    pub comprehension_clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
+    #[wire(key = "_clauses")]
+    #[slot(field = field::CLAUSES)]
+    pub clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
 }
 
 impl ::sittir_core::view::KindOf for SetComprehensionTransport {
@@ -16429,18 +15443,16 @@ impl ::sittir_core::render::Render for SetComprehensionTransport {
 impl ::sittir_core::prepare::Prepare for SetComprehensionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
-        self.comprehension_clauses.prepare(ctx)?;
+        self.clauses.prepare(ctx)?;
         Ok(())
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -16458,9 +15470,9 @@ pub struct GeneratorExpressionTransport {
     #[wire(key = "_body")]
     #[slot(field = field::BODY)]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
-    #[wire(key = "_comprehension_clauses")]
-    #[slot]
-    pub comprehension_clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
+    #[wire(key = "_clauses")]
+    #[slot(field = field::CLAUSES)]
+    pub clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
 }
 
 impl ::sittir_core::view::KindOf for GeneratorExpressionTransport {
@@ -16484,18 +15496,16 @@ impl ::sittir_core::render::Render for GeneratorExpressionTransport {
 impl ::sittir_core::prepare::Prepare for GeneratorExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
-        self.comprehension_clauses.prepare(ctx)?;
+        self.clauses.prepare(ctx)?;
         Ok(())
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -16536,17 +15546,15 @@ impl ::sittir_core::render::Render for ParenthesizedExpressionTransport {
 impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -16594,20 +15602,19 @@ impl ::sittir_core::render::Render for CollectionElementsTransport {
 impl ::sittir_core::prepare::Prepare for CollectionElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_COLLECTION_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_COLLECTION_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_COLLECTION_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_COLLECTION_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_COLLECTION_ELEMENTS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(242), &[6], ctx.options.delimiter[options::DELIM_COLLECTION_ELEMENTS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(242), &[6], ctx.options.delimiter[options::DELIM_COLLECTION_ELEMENTS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -16661,10 +15668,8 @@ impl ::sittir_core::render::Render for ForInClauseTransport {
 impl ::sittir_core::prepare::Prepare for ForInClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.right.iter_mut().map(Some), ",", options::allowed(options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.right.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_right"));
         self.right_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_BEFORE].arm);
         self.right_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.right.iter_mut().map(Some), options::SEATS_FOR_IN_CLAUSE_RIGHT, ctx);
@@ -16674,11 +15679,11 @@ impl ::sittir_core::prepare::Prepare for ForInClauseTransport {
         self.comma.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -16719,17 +15724,15 @@ impl ::sittir_core::render::Render for IfClauseTransport {
 impl ::sittir_core::prepare::Prepare for IfClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.condition.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -16776,19 +15779,17 @@ impl ::sittir_core::render::Render for ConditionalExpressionTransport {
 impl ::sittir_core::prepare::Prepare for ConditionalExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.body.prepare(ctx)?;
         self.condition.prepare(ctx)?;
         self.alternative.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -16831,20 +15832,18 @@ impl ::sittir_core::render::Render for ConcatenatedStringTransport {
 impl ::sittir_core::prepare::Prepare for ConcatenatedStringTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.string.iter_mut().map(Some), "", options::allowed(options::SITE_CONCATENATED_STRING_STRING_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.string.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_string"));
         self.string_separator_space.get_or_insert(ctx.options.spacing[options::SITE_CONCATENATED_STRING_STRING_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.string.iter_mut().map(Some), options::SEATS_CONCATENATED_STRING_STRING, ctx);
         self.string.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -16891,19 +15890,18 @@ impl ::sittir_core::render::Render for StringTransport {
 impl ::sittir_core::prepare::Prepare for StringTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.content.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_content"));
         self.string_start.prepare(ctx)?;
         self.content.prepare(ctx)?;
         self.string_end.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -16918,9 +15916,9 @@ impl ::sittir_core::prepare::Prepare for StringTransport {
 pub struct StringContentTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_content")]
-    #[slot]
-    pub content: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<StringContentContentTransportSlot, true>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS)]
+    pub elements: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<StringContentElementsTransportSlot, true>>,
 }
 
 impl ::sittir_core::view::KindOf for StringContentTransport {
@@ -16944,14 +15942,15 @@ impl ::sittir_core::render::Render for StringContentTransport {
 impl ::sittir_core::prepare::Prepare for StringContentTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        self.content.prepare(ctx)?;
+        ::sittir_core::prepare::fill_slot_gaps(self.elements.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_elements"));
+        self.elements.prepare(ctx)?;
         Ok(())
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -17001,8 +16000,6 @@ impl ::sittir_core::render::Render for InterpolationTransport {
 impl ::sittir_core::prepare::Prepare for InterpolationTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         self.debug.prepare(ctx)?;
@@ -17010,11 +16007,11 @@ impl ::sittir_core::prepare::Prepare for InterpolationTransport {
         self.format_specifier.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -17083,17 +16080,16 @@ impl ::sittir_core::render::Render for FormatSpecifierTransport {
 impl ::sittir_core::prepare::Prepare for FormatSpecifierTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.elements.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_elements"));
         self.elements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -17135,11 +16131,11 @@ impl ::sittir_core::prepare::Prepare for TypeConversionTransport {
         self.layout.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -17150,7 +16146,7 @@ impl ::sittir_core::prepare::Prepare for TypeConversionTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::IDENTIFIER, text)]
+#[transport(kind = kind::IDENTIFIER, folded = [kind::TYPE_KEYWORD, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::MATCH_KEYWORD], text)]
 pub struct IdentifierTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -17181,11 +16177,11 @@ impl ::sittir_core::prepare::Prepare for IdentifierTransport {
         self.layout.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -17215,17 +16211,17 @@ impl ::sittir_core::prepare::Prepare for TrueTransport {
             TrueTransport::True(_) => Ok(()),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            TrueTransport::True(_) => None,
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             TrueTransport::True(edges) => Some(edges),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            TrueTransport::True(_) => None,
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
             TrueTransport::True(_) => None,
         }
@@ -17263,17 +16259,17 @@ impl ::sittir_core::prepare::Prepare for FalseTransport {
             FalseTransport::False(_) => Ok(()),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            FalseTransport::False(_) => None,
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             FalseTransport::False(edges) => Some(edges),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            FalseTransport::False(_) => None,
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
             FalseTransport::False(_) => None,
         }
@@ -17311,17 +16307,17 @@ impl ::sittir_core::prepare::Prepare for NoneTransport {
             NoneTransport::None(_) => Ok(()),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            NoneTransport::None(_) => None,
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             NoneTransport::None(edges) => Some(edges),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            NoneTransport::None(_) => None,
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
             NoneTransport::None(_) => None,
         }
@@ -17370,17 +16366,15 @@ impl ::sittir_core::render::Render for AwaitTransport {
 impl ::sittir_core::prepare::Prepare for AwaitTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -17424,11 +16418,11 @@ impl ::sittir_core::prepare::Prepare for CommentTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -17458,17 +16452,17 @@ impl ::sittir_core::prepare::Prepare for PositionalSeparatorTransport {
             PositionalSeparatorTransport::PositionalSeparator(_) => Ok(()),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            PositionalSeparatorTransport::PositionalSeparator(_) => None,
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             PositionalSeparatorTransport::PositionalSeparator(edges) => Some(edges),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            PositionalSeparatorTransport::PositionalSeparator(_) => None,
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
             PositionalSeparatorTransport::PositionalSeparator(_) => None,
         }
@@ -17506,17 +16500,17 @@ impl ::sittir_core::prepare::Prepare for KeywordSeparatorTransport {
             KeywordSeparatorTransport::KeywordSeparator(_) => Ok(()),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            KeywordSeparatorTransport::KeywordSeparator(_) => None,
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             KeywordSeparatorTransport::KeywordSeparator(edges) => Some(edges),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            KeywordSeparatorTransport::KeywordSeparator(_) => None,
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
             KeywordSeparatorTransport::KeywordSeparator(_) => None,
         }
@@ -17572,20 +16566,19 @@ impl ::sittir_core::render::Render for SimpleStatementsElementsTransport {
 impl ::sittir_core::prepare::Prepare for SimpleStatementsElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ";", options::allowed(options::SITE_SIMPLE_STATEMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_SIMPLE_STATEMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_SIMPLE_STATEMENTS_ELEMENTS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(259), &[74], ctx.options.delimiter[options::DELIM_SIMPLE_STATEMENTS_ELEMENTS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(259), &[74], ctx.options.delimiter[options::DELIM_SIMPLE_STATEMENTS_ELEMENTS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -17633,20 +16626,19 @@ impl ::sittir_core::render::Render for SubjectsTransport {
 impl ::sittir_core::prepare::Prepare for SubjectsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.subject.iter_mut().map(Some), ",", options::allowed(options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.subject.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_subject"));
         self.subject_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_BEFORE].arm);
         self.subject_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_SUBJECTS_SUBJECT_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.subject.iter_mut().map(Some), options::SEATS_SUBJECTS_SUBJECT, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(260), &[6], ctx.options.delimiter[options::DELIM_SUBJECTS_SUBJECT], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(260), &[6], ctx.options.delimiter[options::DELIM_SUBJECTS_SUBJECT], ctx));
         self.subject.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -17694,20 +16686,19 @@ impl ::sittir_core::render::Render for CasePatternsTransport {
 impl ::sittir_core::prepare::Prepare for CasePatternsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_CASE_PATTERNS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(261), &[6], ctx.options.delimiter[options::DELIM_CASE_PATTERNS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(261), &[6], ctx.options.delimiter[options::DELIM_CASE_PATTERNS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -17755,19 +16746,18 @@ impl ::sittir_core::render::Render for WithClauseWithItemsTransport {
 impl ::sittir_core::prepare::Prepare for WithClauseWithItemsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_WITH_CLAUSE_WITH_ITEMS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_WITH_CLAUSE_WITH_ITEMS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_WITH_CLAUSE_WITH_ITEMS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_WITH_CLAUSE_WITH_ITEMS_ITEM_SEPARATOR_SPACE_AFTER].arm);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(262), &[6], ctx.options.delimiter[options::DELIM_WITH_CLAUSE_WITH_ITEMS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(262), &[6], ctx.options.delimiter[options::DELIM_WITH_CLAUSE_WITH_ITEMS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -17815,20 +16805,19 @@ impl ::sittir_core::render::Render for TypesTransport {
 impl ::sittir_core::prepare::Prepare for TypesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_TYPES_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TYPES_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TYPES_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TYPES_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_TYPES_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(263), &[6], ctx.options.delimiter[options::DELIM_TYPES_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(263), &[6], ctx.options.delimiter[options::DELIM_TYPES_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -17876,20 +16865,19 @@ impl ::sittir_core::render::Render for ArgumentListElementsTransport {
 impl ::sittir_core::prepare::Prepare for ArgumentListElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_ARGUMENT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ARGUMENT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_ARGUMENT_LIST_ELEMENTS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(264), &[6], ctx.options.delimiter[options::DELIM_ARGUMENT_LIST_ELEMENTS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(264), &[6], ctx.options.delimiter[options::DELIM_ARGUMENT_LIST_ELEMENTS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -17937,20 +16925,19 @@ impl ::sittir_core::render::Render for ListPatternCasePatternsTransport {
 impl ::sittir_core::prepare::Prepare for ListPatternCasePatternsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_LIST_PATTERN_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_LIST_PATTERN_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_LIST_PATTERN_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_LIST_PATTERN_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_LIST_PATTERN_CASE_PATTERNS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(265), &[6], ctx.options.delimiter[options::DELIM_LIST_PATTERN_CASE_PATTERNS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(265), &[6], ctx.options.delimiter[options::DELIM_LIST_PATTERN_CASE_PATTERNS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -17998,20 +16985,19 @@ impl ::sittir_core::render::Render for DictPatternElementsTransport {
 impl ::sittir_core::prepare::Prepare for DictPatternElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_DICT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_DICT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_DICT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_DICT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_DICT_PATTERN_ELEMENTS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(266), &[6], ctx.options.delimiter[options::DELIM_DICT_PATTERN_ELEMENTS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(266), &[6], ctx.options.delimiter[options::DELIM_DICT_PATTERN_ELEMENTS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -18059,20 +17045,19 @@ impl ::sittir_core::render::Render for SubscriptsTransport {
 impl ::sittir_core::prepare::Prepare for SubscriptsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.subscript.iter_mut().map(Some), ",", options::allowed(options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.subscript.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_subscript"));
         self.subscript_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_BEFORE].arm);
         self.subscript_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.subscript.iter_mut().map(Some), options::SEATS_SUBSCRIPTS_SUBSCRIPT, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(267), &[6], ctx.options.delimiter[options::DELIM_SUBSCRIPTS_SUBSCRIPT], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(267), &[6], ctx.options.delimiter[options::DELIM_SUBSCRIPTS_SUBSCRIPT], ctx));
         self.subscript.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -18120,20 +17105,19 @@ impl ::sittir_core::render::Render for DictionaryElementsTransport {
 impl ::sittir_core::prepare::Prepare for DictionaryElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_DICTIONARY_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_DICTIONARY_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_DICTIONARY_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_DICTIONARY_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_DICTIONARY_ELEMENTS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(268), &[6], ctx.options.delimiter[options::DELIM_DICTIONARY_ELEMENTS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(268), &[6], ctx.options.delimiter[options::DELIM_DICTIONARY_ELEMENTS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -18174,17 +17158,15 @@ impl ::sittir_core::render::Render for SliceGroupTransport {
 impl ::sittir_core::prepare::Prepare for SliceGroupTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -18226,11 +17208,11 @@ impl ::sittir_core::prepare::Prepare for FormatSpecifierTextTransport {
         self.layout.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -18278,20 +17260,19 @@ impl ::sittir_core::render::Render for TuplePatternElementsTransport {
 impl ::sittir_core::prepare::Prepare for TuplePatternElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_TUPLE_PATTERN_ELEMENTS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(270), &[6], ctx.options.delimiter[options::DELIM_TUPLE_PATTERN_ELEMENTS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(270), &[6], ctx.options.delimiter[options::DELIM_TUPLE_PATTERN_ELEMENTS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -18339,20 +17320,19 @@ impl ::sittir_core::render::Render for TupleElementsTransport {
 impl ::sittir_core::prepare::Prepare for TupleElementsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_TUPLE_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_TUPLE_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_TUPLE_ELEMENTS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(271), &[6], ctx.options.delimiter[options::DELIM_TUPLE_ELEMENTS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(271), &[6], ctx.options.delimiter[options::DELIM_TUPLE_ELEMENTS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -18396,18 +17376,16 @@ impl ::sittir_core::render::Render for ExceptClauseExceptionAsTransport {
 impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionAsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.value.prepare(ctx)?;
         self.alias.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -18422,9 +17400,9 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionAsTransport {
 pub struct CaseTuplePatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_list_pattern_case_patterns")]
-    #[slot]
-    pub list_pattern_case_patterns: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS)]
+    pub elements: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for CaseTuplePatternTransport {
@@ -18448,17 +17426,15 @@ impl ::sittir_core::render::Render for CaseTuplePatternTransport {
 impl ::sittir_core::prepare::Prepare for CaseTuplePatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.list_pattern_case_patterns.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -18473,9 +17449,9 @@ impl ::sittir_core::prepare::Prepare for CaseTuplePatternTransport {
 pub struct CaseListPatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_list_pattern_case_patterns")]
-    #[slot]
-    pub list_pattern_case_patterns: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
+    #[wire(key = "_elements")]
+    #[slot(field = field::ELEMENTS)]
+    pub elements: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for CaseListPatternTransport {
@@ -18499,17 +17475,15 @@ impl ::sittir_core::render::Render for CaseListPatternTransport {
 impl ::sittir_core::prepare::Prepare for CaseListPatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.list_pattern_case_patterns.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
-    }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -18557,20 +17531,19 @@ impl ::sittir_core::render::Render for PrintArgumentsTransport {
 impl ::sittir_core::prepare::Prepare for PrintArgumentsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_PRINT_ARGUMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PRINT_ARGUMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PRINT_ARGUMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PRINT_ARGUMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_PRINT_ARGUMENTS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(275), &[6], ctx.options.delimiter[options::DELIM_PRINT_ARGUMENTS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(275), &[6], ctx.options.delimiter[options::DELIM_PRINT_ARGUMENTS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -18618,20 +17591,19 @@ impl ::sittir_core::render::Render for PrintChevronArgumentsTransport {
 impl ::sittir_core::prepare::Prepare for PrintChevronArgumentsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_PRINT_CHEVRON_ARGUMENTS_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PRINT_CHEVRON_ARGUMENTS_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PRINT_CHEVRON_ARGUMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_PRINT_CHEVRON_ARGUMENTS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(276), &[6], ctx.options.delimiter[options::DELIM_PRINT_CHEVRON_ARGUMENTS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(276), &[6], ctx.options.delimiter[options::DELIM_PRINT_CHEVRON_ARGUMENTS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -18647,7 +17619,7 @@ pub struct PrintStatementChevronTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_chevron")]
-    #[slot]
+    #[slot(field = field::CHEVRON)]
     pub chevron: ::sittir_core::SlotValue<ChevronTransport>,
     #[wire(key = "_print_chevron_arguments")]
     #[slot]
@@ -18675,18 +17647,16 @@ impl ::sittir_core::render::Render for PrintStatementChevronTransport {
 impl ::sittir_core::prepare::Prepare for PrintStatementChevronTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.chevron.prepare(ctx)?;
         self.print_chevron_arguments.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -18727,17 +17697,15 @@ impl ::sittir_core::render::Render for PrintStatementPlainTransport {
 impl ::sittir_core::prepare::Prepare for PrintStatementPlainTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.print_arguments.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -18767,17 +17735,17 @@ impl ::sittir_core::prepare::Prepare for WildcardPatternTransport {
             WildcardPatternTransport::WildcardPattern(_) => Ok(()),
         }
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        match self {
-            WildcardPatternTransport::WildcardPattern(_) => None,
-        }
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             WildcardPatternTransport::WildcardPattern(edges) => Some(edges),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            WildcardPatternTransport::WildcardPattern(_) => None,
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
             WildcardPatternTransport::WildcardPattern(_) => None,
         }
@@ -18826,17 +17794,15 @@ impl ::sittir_core::render::Render for ParenthesizedImportListTransport {
 impl ::sittir_core::prepare::Prepare for ParenthesizedImportListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.import_list.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -18879,17 +17845,17 @@ impl ::sittir_core::render::Render for ComprehensionClausesTransport {
 impl ::sittir_core::prepare::Prepare for ComprehensionClausesTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        ::sittir_core::prepare::fill_list_gaps(self.content.iter_mut().map(Some), "", options::allowed(options::SITE_COMPREHENSION_CLAUSES_CONTENT_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.content.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_content"));
         self.content_separator_space.get_or_insert(ctx.options.spacing[options::SITE_COMPREHENSION_CLAUSES_CONTENT_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.content.iter_mut().map(Some), options::SEATS_COMPREHENSION_CLAUSES_CONTENT, ctx);
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -18937,11 +17903,11 @@ impl ::sittir_core::prepare::Prepare for IntegerHexTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -18989,11 +17955,11 @@ impl ::sittir_core::prepare::Prepare for IntegerOctalTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -19041,11 +18007,11 @@ impl ::sittir_core::prepare::Prepare for IntegerBinaryTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -19087,11 +18053,11 @@ impl ::sittir_core::prepare::Prepare for IntegerDecimalLongTransport {
         self.layout.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -19133,11 +18099,11 @@ impl ::sittir_core::prepare::Prepare for IntegerDecimalImaginaryTransport {
         self.layout.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -19179,11 +18145,11 @@ impl ::sittir_core::prepare::Prepare for IntegerDecimalPlainTransport {
         self.layout.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -19243,11 +18209,11 @@ impl ::sittir_core::prepare::Prepare for FloatPointTransport {
         self.imaginary.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -19307,11 +18273,11 @@ impl ::sittir_core::prepare::Prepare for FloatLeadingPointTransport {
         self.imaginary.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -19367,11 +18333,11 @@ impl ::sittir_core::prepare::Prepare for FloatScientificTransport {
         self.imaginary.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -19415,11 +18381,11 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeFixedTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -19463,11 +18429,11 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeWideTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -19511,11 +18477,11 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceHexTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -19559,11 +18525,11 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceOctalTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -19607,11 +18573,11 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceLineBreakTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -19655,11 +18621,11 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceSimpleTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -19703,11 +18669,11 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceNamedTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -19749,11 +18715,11 @@ impl ::sittir_core::prepare::Prepare for LineContinuationNewlineTransport {
         self.layout.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -19825,18 +18791,16 @@ impl ::sittir_core::render::Render for SimplePatternNegativeTransport {
 impl ::sittir_core::prepare::Prepare for SimplePatternNegativeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.sign.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -19881,18 +18845,18 @@ impl ::sittir_core::render::Render for ExceptClauseExceptionListTransport {
 impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionListTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        ::sittir_core::prepare::fill_list_gaps(self.value.iter_mut().map(Some), ",", options::allowed(options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.value.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_value"));
         self.value_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_BEFORE].arm);
         self.value_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.value.iter_mut().map(Some), options::SEATS_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE, ctx);
         self.value.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -19936,11 +18900,11 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -19984,18 +18948,16 @@ impl ::sittir_core::render::Render for AssignmentEqTransport {
 impl ::sittir_core::prepare::Prepare for AssignmentEqTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -20039,18 +19001,16 @@ impl ::sittir_core::render::Render for AssignmentTypeTransport {
 impl ::sittir_core::prepare::Prepare for AssignmentTypeTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -20097,19 +19057,17 @@ impl ::sittir_core::render::Render for AssignmentTypedTransport {
 impl ::sittir_core::prepare::Prepare for AssignmentTypedTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.left.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         self.right.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -20157,20 +19115,19 @@ impl ::sittir_core::render::Render for ExpressionStatementTupleTransport {
 impl ::sittir_core::prepare::Prepare for ExpressionStatementTupleTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_EXPRESSION_STATEMENT_TUPLE_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(289), &[6], ctx.options.delimiter[options::DELIM_EXPRESSION_STATEMENT_TUPLE_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(289), &[6], ctx.options.delimiter[options::DELIM_EXPRESSION_STATEMENT_TUPLE_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -20218,19 +19175,18 @@ impl ::sittir_core::render::Render for WithClauseBareTransport {
 impl ::sittir_core::prepare::Prepare for WithClauseBareTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_list_gaps(self.item.iter_mut().map(Some), ",", options::allowed(options::SITE_WITH_CLAUSE_BARE_ITEM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_WITH_CLAUSE_BARE_ITEM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_WITH_CLAUSE_BARE_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_WITH_CLAUSE_BARE_ITEM_SEPARATOR_SPACE_AFTER].arm);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(flank.as_ref(), ::sittir_core::types::KindId(290), &[6], ctx.options.delimiter[options::DELIM_WITH_CLAUSE_BARE_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(290), &[6], ctx.options.delimiter[options::DELIM_WITH_CLAUSE_BARE_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -20271,17 +19227,15 @@ impl ::sittir_core::render::Render for WithClauseParenTransport {
 impl ::sittir_core::prepare::Prepare for WithClauseParenTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.with_items.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -20324,20 +19278,18 @@ impl ::sittir_core::render::Render for MatchBlockBlockTransport {
 impl ::sittir_core::prepare::Prepare for MatchBlockBlockTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        ::sittir_core::prepare::fill_list_gaps(self.alternative.iter_mut().map(Some), "", options::allowed(options::SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE), &[], &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.alternative.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_alternative"));
         self.alternative_separator_space.get_or_insert(ctx.options.spacing[options::SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.alternative.iter_mut().map(Some), options::SEATS_MATCH_BLOCK_BLOCK_ALTERNATIVE, ctx);
         self.alternative.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -20381,11 +19333,11 @@ impl ::sittir_core::prepare::Prepare for MatchBlockEmptyTransport {
         self.newline.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -20426,17 +19378,15 @@ impl ::sittir_core::render::Render for SuiteInlineTransport {
 impl ::sittir_core::prepare::Prepare for SuiteInlineTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -20477,17 +19427,15 @@ impl ::sittir_core::render::Render for SuiteBlockTransport {
 impl ::sittir_core::prepare::Prepare for SuiteBlockTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.block.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -20531,11 +19479,11 @@ impl ::sittir_core::prepare::Prepare for SuiteEmptyTransport {
         self.newline.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -20583,18 +19531,16 @@ impl ::sittir_core::render::Render for ComparisonOperatorComparatorTransport {
 impl ::sittir_core::prepare::Prepare for ComparisonOperatorComparatorTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.operators.prepare(ctx)?;
         self.primary_expression.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -20635,17 +19581,15 @@ impl ::sittir_core::render::Render for YieldFromClauseTransport {
 impl ::sittir_core::prepare::Prepare for YieldFromClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        let flank = self.layout.take_flank();
-        ::sittir_core::prepare::fill_source_flanks(self, flank.as_ref(), options::allowed, &options::WHITESPACE, ctx);
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -20687,11 +19631,11 @@ impl ::sittir_core::prepare::Prepare for StringStartTransport {
         self.layout.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -20733,11 +19677,11 @@ impl ::sittir_core::prepare::Prepare for StringFragmentTransport {
         self.layout.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -20779,11 +19723,11 @@ impl ::sittir_core::prepare::Prepare for EscapeInterpolationTransport {
         self.layout.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -20825,11 +19769,11 @@ impl ::sittir_core::prepare::Prepare for StringEndTransport {
         self.layout.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -21096,11 +20040,11 @@ impl ::sittir_core::prepare::Prepare for NamesTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -21143,11 +20087,11 @@ impl ::sittir_core::prepare::Prepare for AsPatternTargetTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -21190,11 +20134,11 @@ impl ::sittir_core::prepare::Prepare for FormatExpressionTransport {
         self.content.prepare(ctx)?;
         Ok(())
     }
-    fn source_gap(&self) -> Option<&::sittir_core::slot::SourceGap> {
-        self.layout.gap()
-    }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -21425,174 +20369,6 @@ impl ::sittir_core::prepare::Prepare for AssertKeywordTransport {
 impl ::sittir_core::render::Render for AssertKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_assert_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum PrintKeywordTransport {
-    #[kind(kind::PRINT_KEYWORD)]
-    PrintKeyword,
-}
-
-impl ::sittir_core::view::KindOf for PrintKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for PrintKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for PrintKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_print_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum ExecKeywordTransport {
-    #[kind(kind::EXEC_KEYWORD)]
-    ExecKeyword,
-}
-
-impl ::sittir_core::view::KindOf for ExecKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for ExecKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for ExecKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_exec_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum AsyncKeywordTransport {
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-}
-
-impl ::sittir_core::view::KindOf for AsyncKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for AsyncKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for AsyncKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_async_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum AwaitKeywordTransport {
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-}
-
-impl ::sittir_core::view::KindOf for AwaitKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for AwaitKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for AwaitKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_await_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum TypeKeywordTransport {
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-}
-
-impl ::sittir_core::view::KindOf for TypeKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for TypeKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for TypeKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_type_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum MatchKeywordTransport {
-    #[kind(kind::MATCH_KEYWORD)]
-    MatchKeyword,
-}
-
-impl ::sittir_core::view::KindOf for MatchKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for MatchKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for MatchKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_match_keyword(w)
     }
 }
 
@@ -21906,6 +20682,34 @@ impl ::sittir_core::render::Render for ElseKeywordTransport {
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
+pub enum MatchKeywordTransport {
+    #[kind(kind::MATCH_KEYWORD)]
+    MatchKeyword,
+}
+
+impl ::sittir_core::view::KindOf for MatchKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for MatchKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for MatchKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_match_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum CaseKeywordTransport {
     #[kind(kind::CASE_KEYWORD)]
     CaseKeyword,
@@ -21929,6 +20733,34 @@ impl ::sittir_core::prepare::Prepare for CaseKeywordTransport {
 impl ::sittir_core::render::Render for CaseKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_case_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum AsyncKeywordTransport {
+    #[kind(kind::ASYNC_KEYWORD)]
+    AsyncKeyword,
+}
+
+impl ::sittir_core::view::KindOf for AsyncKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for AsyncKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for AsyncKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_async_keyword(w)
     }
 }
 
@@ -22321,6 +21153,62 @@ impl ::sittir_core::prepare::Prepare for NonlocalKeywordTransport {
 impl ::sittir_core::render::Render for NonlocalKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_nonlocal_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum ExecKeywordTransport {
+    #[kind(kind::EXEC_KEYWORD)]
+    ExecKeyword,
+}
+
+impl ::sittir_core::view::KindOf for ExecKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for ExecKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for ExecKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_exec_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum TypeKeywordTransport {
+    #[kind(kind::TYPE_KEYWORD)]
+    TypeKeyword,
+}
+
+impl ::sittir_core::view::KindOf for TypeKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for TypeKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for TypeKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_type_keyword(w)
     }
 }
 
@@ -23390,6 +22278,62 @@ impl ::sittir_core::render::Render for BslashTransport {
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
+pub enum AwaitKeywordTransport {
+    #[kind(kind::AWAIT_KEYWORD)]
+    AwaitKeyword,
+}
+
+impl ::sittir_core::view::KindOf for AwaitKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for AwaitKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for AwaitKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_await_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum PrintKeywordTransport {
+    #[kind(kind::PRINT_KEYWORD)]
+    PrintKeyword,
+}
+
+impl ::sittir_core::view::KindOf for PrintKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for PrintKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for PrintKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_print_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum LtTransport {
     #[kind(kind::LT)]
     Lt,
@@ -23669,7 +22613,7 @@ impl ::sittir_core::render::Render for IsNotTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for SimpleStatementsTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(129)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23678,7 +22622,7 @@ impl ::sittir_core::prepare::SeatTarget for SimpleStatementsTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ImportStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(130)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23687,7 +22631,7 @@ impl ::sittir_core::prepare::SeatTarget for ImportStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for FutureImportStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(133)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23696,7 +22640,7 @@ impl ::sittir_core::prepare::SeatTarget for FutureImportStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ImportFromStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(134)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23705,7 +22649,7 @@ impl ::sittir_core::prepare::SeatTarget for ImportFromStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AliasedImportTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(136)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23714,16 +22658,22 @@ impl ::sittir_core::prepare::SeatTarget for AliasedImportTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for PrintStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.content {
-            return inner.seat_target(table);
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match Some(&mut self.content) {
+            Some(::sittir_core::SlotValue::Transport(inner)) => return inner.seat_target(table, ctx),
+            Some(::sittir_core::SlotValue::Coord(coord)) => {
+                if let Some(site) = ::sittir_core::prepare::coord_seat(coord, table, ctx) {
+                    return Some((self.layout.edges_mut(), site));
+                }
+            }
+            None => {}
         }
         None
     }
 }
 
 impl ::sittir_core::prepare::SeatTarget for AssertStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(140)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23732,16 +22682,22 @@ impl ::sittir_core::prepare::SeatTarget for AssertStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ExpressionStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.content {
-            return inner.seat_target(table);
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match Some(&mut self.content) {
+            Some(::sittir_core::SlotValue::Transport(inner)) => return inner.seat_target(table, ctx),
+            Some(::sittir_core::SlotValue::Coord(coord)) => {
+                if let Some(site) = ::sittir_core::prepare::coord_seat(coord, table, ctx) {
+                    return Some((self.layout.edges_mut(), site));
+                }
+            }
+            None => {}
         }
         None
     }
 }
 
 impl ::sittir_core::prepare::SeatTarget for NamedExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(142)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23750,31 +22706,43 @@ impl ::sittir_core::prepare::SeatTarget for NamedExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ReturnStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(144)) {
             return Some((self.layout.edges_mut(), site));
         }
-        if let Some(::sittir_core::SlotValue::Transport(inner)) = &mut self.expressions {
-            return inner.seat_target(table);
+        match self.expressions.as_mut() {
+            Some(::sittir_core::SlotValue::Transport(inner)) => return inner.seat_target(table, ctx),
+            Some(::sittir_core::SlotValue::Coord(coord)) => {
+                if let Some(site) = ::sittir_core::prepare::coord_seat(coord, table, ctx) {
+                    return Some((self.layout.edges_mut(), site));
+                }
+            }
+            None => {}
         }
         None
     }
 }
 
 impl ::sittir_core::prepare::SeatTarget for DeleteStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(145)) {
             return Some((self.layout.edges_mut(), site));
         }
-        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.expressions {
-            return inner.seat_target(table);
+        match Some(&mut self.expressions) {
+            Some(::sittir_core::SlotValue::Transport(inner)) => return inner.seat_target(table, ctx),
+            Some(::sittir_core::SlotValue::Coord(coord)) => {
+                if let Some(site) = ::sittir_core::prepare::coord_seat(coord, table, ctx) {
+                    return Some((self.layout.edges_mut(), site));
+                }
+            }
+            None => {}
         }
         None
     }
 }
 
 impl ::sittir_core::prepare::SeatTarget for RaiseStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(146)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23783,7 +22751,7 @@ impl ::sittir_core::prepare::SeatTarget for RaiseStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for PassStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::PassStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(147)).map(|site| (edges, site)),
         }
@@ -23791,7 +22759,7 @@ impl ::sittir_core::prepare::SeatTarget for PassStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for BreakStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::BreakStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(148)).map(|site| (edges, site)),
         }
@@ -23799,7 +22767,7 @@ impl ::sittir_core::prepare::SeatTarget for BreakStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ContinueStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::ContinueStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(149)).map(|site| (edges, site)),
         }
@@ -23807,7 +22775,7 @@ impl ::sittir_core::prepare::SeatTarget for ContinueStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for IfStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(150)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23816,7 +22784,7 @@ impl ::sittir_core::prepare::SeatTarget for IfStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ElifClauseTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(151)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23825,7 +22793,7 @@ impl ::sittir_core::prepare::SeatTarget for ElifClauseTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ElseClauseTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(152)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23834,7 +22802,7 @@ impl ::sittir_core::prepare::SeatTarget for ElseClauseTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for MatchStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(153)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23843,7 +22811,7 @@ impl ::sittir_core::prepare::SeatTarget for MatchStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for CaseClauseTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(155)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23852,7 +22820,7 @@ impl ::sittir_core::prepare::SeatTarget for CaseClauseTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ForStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(156)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23861,7 +22829,7 @@ impl ::sittir_core::prepare::SeatTarget for ForStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for WhileStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(157)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23870,7 +22838,7 @@ impl ::sittir_core::prepare::SeatTarget for WhileStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TryStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(158)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23879,7 +22847,7 @@ impl ::sittir_core::prepare::SeatTarget for TryStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ExceptClauseTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(159)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23888,7 +22856,7 @@ impl ::sittir_core::prepare::SeatTarget for ExceptClauseTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for WithStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(161)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23897,7 +22865,7 @@ impl ::sittir_core::prepare::SeatTarget for WithStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for FunctionDefinitionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(164)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23906,7 +22874,7 @@ impl ::sittir_core::prepare::SeatTarget for FunctionDefinitionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ListSplatTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(167)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23915,7 +22883,7 @@ impl ::sittir_core::prepare::SeatTarget for ListSplatTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for DictionarySplatTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(168)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23924,7 +22892,7 @@ impl ::sittir_core::prepare::SeatTarget for DictionarySplatTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for GlobalStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(169)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23933,7 +22901,7 @@ impl ::sittir_core::prepare::SeatTarget for GlobalStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for NonlocalStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(170)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23942,7 +22910,7 @@ impl ::sittir_core::prepare::SeatTarget for NonlocalStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ExecStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(171)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23951,7 +22919,7 @@ impl ::sittir_core::prepare::SeatTarget for ExecStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TypeAliasStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(172)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23960,7 +22928,7 @@ impl ::sittir_core::prepare::SeatTarget for TypeAliasStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ClassDefinitionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(173)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23969,7 +22937,7 @@ impl ::sittir_core::prepare::SeatTarget for ClassDefinitionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ParenthesizedListSplatTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(175)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23978,7 +22946,7 @@ impl ::sittir_core::prepare::SeatTarget for ParenthesizedListSplatTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for DecoratedDefinitionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(177)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23987,7 +22955,7 @@ impl ::sittir_core::prepare::SeatTarget for DecoratedDefinitionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for DecoratorTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(178)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -23996,16 +22964,22 @@ impl ::sittir_core::prepare::SeatTarget for DecoratorTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for CasePatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.content {
-            return inner.seat_target(table);
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match Some(&mut self.content) {
+            Some(::sittir_core::SlotValue::Transport(inner)) => return inner.seat_target(table, ctx),
+            Some(::sittir_core::SlotValue::Coord(coord)) => {
+                if let Some(site) = ::sittir_core::prepare::coord_seat(coord, table, ctx) {
+                    return Some((self.layout.edges_mut(), site));
+                }
+            }
+            None => {}
         }
         None
     }
 }
 
 impl ::sittir_core::prepare::SeatTarget for CaseAsPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(184)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24014,7 +22988,7 @@ impl ::sittir_core::prepare::SeatTarget for CaseAsPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for DictPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(186)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24023,7 +22997,7 @@ impl ::sittir_core::prepare::SeatTarget for DictPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for KeyValuePatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(187)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24032,7 +23006,7 @@ impl ::sittir_core::prepare::SeatTarget for KeyValuePatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for KeywordPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(188)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24041,7 +23015,7 @@ impl ::sittir_core::prepare::SeatTarget for KeywordPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for SplatPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(189)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24050,7 +23024,7 @@ impl ::sittir_core::prepare::SeatTarget for SplatPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ClassPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(190)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24059,7 +23033,7 @@ impl ::sittir_core::prepare::SeatTarget for ClassPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ComplexPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(191)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24068,7 +23042,7 @@ impl ::sittir_core::prepare::SeatTarget for ComplexPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TuplePatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(196)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24077,7 +23051,7 @@ impl ::sittir_core::prepare::SeatTarget for TuplePatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ListPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(197)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24086,7 +23060,7 @@ impl ::sittir_core::prepare::SeatTarget for ListPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for DefaultParameterTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(198)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24095,7 +23069,7 @@ impl ::sittir_core::prepare::SeatTarget for DefaultParameterTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TypedDefaultParameterTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(199)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24104,7 +23078,7 @@ impl ::sittir_core::prepare::SeatTarget for TypedDefaultParameterTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ListSplatPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(200)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24113,7 +23087,7 @@ impl ::sittir_core::prepare::SeatTarget for ListSplatPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for DictionarySplatPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(201)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24122,7 +23096,7 @@ impl ::sittir_core::prepare::SeatTarget for DictionarySplatPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AsPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(202)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24131,7 +23105,7 @@ impl ::sittir_core::prepare::SeatTarget for AsPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for NotOperatorTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(206)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24140,7 +23114,7 @@ impl ::sittir_core::prepare::SeatTarget for NotOperatorTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for BooleanOperatorTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(207)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24149,7 +23123,7 @@ impl ::sittir_core::prepare::SeatTarget for BooleanOperatorTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for BinaryOperatorTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(208)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24158,7 +23132,7 @@ impl ::sittir_core::prepare::SeatTarget for BinaryOperatorTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for UnaryOperatorTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(209)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24167,7 +23141,7 @@ impl ::sittir_core::prepare::SeatTarget for UnaryOperatorTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ComparisonOperatorTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(212)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24176,7 +23150,7 @@ impl ::sittir_core::prepare::SeatTarget for ComparisonOperatorTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for LambdaTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(213)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24185,7 +23159,7 @@ impl ::sittir_core::prepare::SeatTarget for LambdaTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for LambdaWithinForInClauseTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(214)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24194,7 +23168,7 @@ impl ::sittir_core::prepare::SeatTarget for LambdaWithinForInClauseTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AugmentedAssignmentTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(216)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24203,19 +23177,25 @@ impl ::sittir_core::prepare::SeatTarget for AugmentedAssignmentTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for YieldTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(219)) {
             return Some((self.layout.edges_mut(), site));
         }
-        if let Some(::sittir_core::SlotValue::Transport(inner)) = &mut self.content {
-            return inner.seat_target(table);
+        match self.content.as_mut() {
+            Some(::sittir_core::SlotValue::Transport(inner)) => return inner.seat_target(table, ctx),
+            Some(::sittir_core::SlotValue::Coord(coord)) => {
+                if let Some(site) = ::sittir_core::prepare::coord_seat(coord, table, ctx) {
+                    return Some((self.layout.edges_mut(), site));
+                }
+            }
+            None => {}
         }
         None
     }
 }
 
 impl ::sittir_core::prepare::SeatTarget for AttributeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(220)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24224,7 +23204,7 @@ impl ::sittir_core::prepare::SeatTarget for AttributeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for SubscriptTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(221)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24233,7 +23213,7 @@ impl ::sittir_core::prepare::SeatTarget for SubscriptTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for SliceTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(222)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24242,7 +23222,7 @@ impl ::sittir_core::prepare::SeatTarget for SliceTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for EllipsisTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(64)).map(|site| (edges, site)),
         }
@@ -24250,7 +23230,7 @@ impl ::sittir_core::prepare::SeatTarget for EllipsisTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for CallTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(223)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24259,7 +23239,7 @@ impl ::sittir_core::prepare::SeatTarget for CallTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TypedParameterTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(224)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24268,16 +23248,22 @@ impl ::sittir_core::prepare::SeatTarget for TypedParameterTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        if let ::sittir_core::SlotValue::Transport(inner) = &mut self.content {
-            return inner.seat_target(table);
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        match Some(&mut self.content) {
+            Some(::sittir_core::SlotValue::Transport(inner)) => return inner.seat_target(table, ctx),
+            Some(::sittir_core::SlotValue::Coord(coord)) => {
+                if let Some(site) = ::sittir_core::prepare::coord_seat(coord, table, ctx) {
+                    return Some((self.layout.edges_mut(), site));
+                }
+            }
+            None => {}
         }
         None
     }
 }
 
 impl ::sittir_core::prepare::SeatTarget for SplatTypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(226)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24286,7 +23272,7 @@ impl ::sittir_core::prepare::SeatTarget for SplatTypeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for GenericTypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(227)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24295,7 +23281,7 @@ impl ::sittir_core::prepare::SeatTarget for GenericTypeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for UnionTypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(228)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24304,7 +23290,7 @@ impl ::sittir_core::prepare::SeatTarget for UnionTypeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ConstrainedTypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(229)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24313,7 +23299,7 @@ impl ::sittir_core::prepare::SeatTarget for ConstrainedTypeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for MemberTypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(230)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24322,7 +23308,7 @@ impl ::sittir_core::prepare::SeatTarget for MemberTypeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for KeywordArgumentTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(231)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24331,7 +23317,7 @@ impl ::sittir_core::prepare::SeatTarget for KeywordArgumentTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ListTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(232)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24340,7 +23326,7 @@ impl ::sittir_core::prepare::SeatTarget for ListTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for SetTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(233)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24349,7 +23335,7 @@ impl ::sittir_core::prepare::SeatTarget for SetTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TupleTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(234)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24358,7 +23344,7 @@ impl ::sittir_core::prepare::SeatTarget for TupleTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for DictionaryTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(235)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24367,7 +23353,7 @@ impl ::sittir_core::prepare::SeatTarget for DictionaryTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for PairTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(236)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24376,7 +23362,7 @@ impl ::sittir_core::prepare::SeatTarget for PairTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ListComprehensionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(237)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24385,7 +23371,7 @@ impl ::sittir_core::prepare::SeatTarget for ListComprehensionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for DictionaryComprehensionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(238)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24394,7 +23380,7 @@ impl ::sittir_core::prepare::SeatTarget for DictionaryComprehensionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for SetComprehensionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(239)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24403,7 +23389,7 @@ impl ::sittir_core::prepare::SeatTarget for SetComprehensionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for GeneratorExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(240)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24412,7 +23398,7 @@ impl ::sittir_core::prepare::SeatTarget for GeneratorExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ParenthesizedExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(241)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24421,7 +23407,7 @@ impl ::sittir_core::prepare::SeatTarget for ParenthesizedExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ForInClauseTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(243)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24430,7 +23416,7 @@ impl ::sittir_core::prepare::SeatTarget for ForInClauseTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for IfClauseTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(244)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24439,7 +23425,7 @@ impl ::sittir_core::prepare::SeatTarget for IfClauseTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ConditionalExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(245)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24448,7 +23434,7 @@ impl ::sittir_core::prepare::SeatTarget for ConditionalExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ConcatenatedStringTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(246)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24457,7 +23443,7 @@ impl ::sittir_core::prepare::SeatTarget for ConcatenatedStringTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for StringTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(247)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24466,7 +23452,7 @@ impl ::sittir_core::prepare::SeatTarget for StringTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TrueTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
         }
@@ -24474,7 +23460,7 @@ impl ::sittir_core::prepare::SeatTarget for TrueTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for FalseTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
         }
@@ -24482,7 +23468,7 @@ impl ::sittir_core::prepare::SeatTarget for FalseTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for NoneTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(72)).map(|site| (edges, site)),
         }
@@ -24490,7 +23476,7 @@ impl ::sittir_core::prepare::SeatTarget for NoneTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AwaitTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(256)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24499,7 +23485,7 @@ impl ::sittir_core::prepare::SeatTarget for AwaitTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for PositionalSeparatorTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::PositionalSeparator(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(257)).map(|site| (edges, site)),
         }
@@ -24507,7 +23493,7 @@ impl ::sittir_core::prepare::SeatTarget for PositionalSeparatorTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for KeywordSeparatorTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::KeywordSeparator(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(258)).map(|site| (edges, site)),
         }
@@ -24515,7 +23501,7 @@ impl ::sittir_core::prepare::SeatTarget for KeywordSeparatorTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for CaseTuplePatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(273)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24524,7 +23510,7 @@ impl ::sittir_core::prepare::SeatTarget for CaseTuplePatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for CaseListPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(274)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24533,7 +23519,7 @@ impl ::sittir_core::prepare::SeatTarget for CaseListPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for PrintStatementChevronTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(277)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24542,7 +23528,7 @@ impl ::sittir_core::prepare::SeatTarget for PrintStatementChevronTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for PrintStatementPlainTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(278)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24551,7 +23537,7 @@ impl ::sittir_core::prepare::SeatTarget for PrintStatementPlainTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for WildcardPatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::WildcardPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(279)).map(|site| (edges, site)),
         }
@@ -24559,7 +23545,7 @@ impl ::sittir_core::prepare::SeatTarget for WildcardPatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for SimplePatternNegativeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(283)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24568,7 +23554,7 @@ impl ::sittir_core::prepare::SeatTarget for SimplePatternNegativeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AssignmentEqTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(286)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24577,7 +23563,7 @@ impl ::sittir_core::prepare::SeatTarget for AssignmentEqTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AssignmentTypeTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(287)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24586,7 +23572,7 @@ impl ::sittir_core::prepare::SeatTarget for AssignmentTypeTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AssignmentTypedTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(288)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24595,7 +23581,7 @@ impl ::sittir_core::prepare::SeatTarget for AssignmentTypedTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ComparisonOperatorComparatorTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(297)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -24604,19 +23590,19 @@ impl ::sittir_core::prepare::SeatTarget for ComparisonOperatorComparatorTranspor
 }
 
 impl ::sittir_core::prepare::SeatTarget for StatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::SimpleStatements(t) => t.seat_target(table),
-            Self::CompoundStatement(t) => t.seat_target(table),
-            Self::IfStatement(t) => t.seat_target(table),
-            Self::ForStatement(t) => t.seat_target(table),
-            Self::WhileStatement(t) => t.seat_target(table),
-            Self::TryStatement(t) => t.seat_target(table),
-            Self::WithStatement(t) => t.seat_target(table),
-            Self::FunctionDefinition(t) => t.seat_target(table),
-            Self::ClassDefinition(t) => t.seat_target(table),
-            Self::DecoratedDefinition(t) => t.seat_target(table),
-            Self::MatchStatement(t) => t.seat_target(table),
+            Self::SimpleStatements(t) => t.seat_target(table, ctx),
+            Self::CompoundStatement(t) => t.seat_target(table, ctx),
+            Self::IfStatement(t) => t.seat_target(table, ctx),
+            Self::ForStatement(t) => t.seat_target(table, ctx),
+            Self::WhileStatement(t) => t.seat_target(table, ctx),
+            Self::TryStatement(t) => t.seat_target(table, ctx),
+            Self::WithStatement(t) => t.seat_target(table, ctx),
+            Self::FunctionDefinition(t) => t.seat_target(table, ctx),
+            Self::ClassDefinition(t) => t.seat_target(table, ctx),
+            Self::DecoratedDefinition(t) => t.seat_target(table, ctx),
+            Self::MatchStatement(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24624,24 +23610,24 @@ impl ::sittir_core::prepare::SeatTarget for StatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for SimpleStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::FutureImportStatement(t) => t.seat_target(table),
-            Self::ImportStatement(t) => t.seat_target(table),
-            Self::ImportFromStatement(t) => t.seat_target(table),
-            Self::PrintStatement(t) => t.seat_target(table),
-            Self::AssertStatement(t) => t.seat_target(table),
-            Self::ExpressionStatement(t) => t.seat_target(table),
-            Self::ReturnStatement(t) => t.seat_target(table),
-            Self::DeleteStatement(t) => t.seat_target(table),
-            Self::RaiseStatement(t) => t.seat_target(table),
+            Self::FutureImportStatement(t) => t.seat_target(table, ctx),
+            Self::ImportStatement(t) => t.seat_target(table, ctx),
+            Self::ImportFromStatement(t) => t.seat_target(table, ctx),
+            Self::PrintStatement(t) => t.seat_target(table, ctx),
+            Self::AssertStatement(t) => t.seat_target(table, ctx),
+            Self::ExpressionStatement(t) => t.seat_target(table, ctx),
+            Self::ReturnStatement(t) => t.seat_target(table, ctx),
+            Self::DeleteStatement(t) => t.seat_target(table, ctx),
+            Self::RaiseStatement(t) => t.seat_target(table, ctx),
             Self::PassStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(147)).map(|site| (edges, site)),
             Self::BreakStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(148)).map(|site| (edges, site)),
             Self::ContinueStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(149)).map(|site| (edges, site)),
-            Self::GlobalStatement(t) => t.seat_target(table),
-            Self::NonlocalStatement(t) => t.seat_target(table),
-            Self::ExecStatement(t) => t.seat_target(table),
-            Self::TypeAliasStatement(t) => t.seat_target(table),
+            Self::GlobalStatement(t) => t.seat_target(table, ctx),
+            Self::NonlocalStatement(t) => t.seat_target(table, ctx),
+            Self::ExecStatement(t) => t.seat_target(table, ctx),
+            Self::TypeAliasStatement(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24649,17 +23635,17 @@ impl ::sittir_core::prepare::SeatTarget for SimpleStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for CompoundStatementTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::IfStatement(t) => t.seat_target(table),
-            Self::ForStatement(t) => t.seat_target(table),
-            Self::WhileStatement(t) => t.seat_target(table),
-            Self::TryStatement(t) => t.seat_target(table),
-            Self::WithStatement(t) => t.seat_target(table),
-            Self::FunctionDefinition(t) => t.seat_target(table),
-            Self::ClassDefinition(t) => t.seat_target(table),
-            Self::DecoratedDefinition(t) => t.seat_target(table),
-            Self::MatchStatement(t) => t.seat_target(table),
+            Self::IfStatement(t) => t.seat_target(table, ctx),
+            Self::ForStatement(t) => t.seat_target(table, ctx),
+            Self::WhileStatement(t) => t.seat_target(table, ctx),
+            Self::TryStatement(t) => t.seat_target(table, ctx),
+            Self::WithStatement(t) => t.seat_target(table, ctx),
+            Self::FunctionDefinition(t) => t.seat_target(table, ctx),
+            Self::ClassDefinition(t) => t.seat_target(table, ctx),
+            Self::DecoratedDefinition(t) => t.seat_target(table, ctx),
+            Self::MatchStatement(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24667,16 +23653,16 @@ impl ::sittir_core::prepare::SeatTarget for CompoundStatementTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ParameterTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::TypedParameter(t) => t.seat_target(table),
-            Self::DefaultParameter(t) => t.seat_target(table),
-            Self::TypedDefaultParameter(t) => t.seat_target(table),
-            Self::ListSplatPattern(t) => t.seat_target(table),
-            Self::TuplePattern(t) => t.seat_target(table),
+            Self::TypedParameter(t) => t.seat_target(table, ctx),
+            Self::DefaultParameter(t) => t.seat_target(table, ctx),
+            Self::TypedDefaultParameter(t) => t.seat_target(table, ctx),
+            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
+            Self::TuplePattern(t) => t.seat_target(table, ctx),
             Self::KeywordSeparator(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(258)).map(|site| (edges, site)),
             Self::PositionalSeparator(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(257)).map(|site| (edges, site)),
-            Self::DictionarySplatPattern(t) => t.seat_target(table),
+            Self::DictionarySplatPattern(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24684,13 +23670,13 @@ impl ::sittir_core::prepare::SeatTarget for ParameterTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for PatternTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::Subscript(t) => t.seat_target(table),
-            Self::Attribute(t) => t.seat_target(table),
-            Self::ListSplatPattern(t) => t.seat_target(table),
-            Self::TuplePattern(t) => t.seat_target(table),
-            Self::ListPattern(t) => t.seat_target(table),
+            Self::Subscript(t) => t.seat_target(table, ctx),
+            Self::Attribute(t) => t.seat_target(table, ctx),
+            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
+            Self::TuplePattern(t) => t.seat_target(table, ctx),
+            Self::ListPattern(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24698,16 +23684,16 @@ impl ::sittir_core::prepare::SeatTarget for PatternTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ComparisonOperator(t) => t.seat_target(table),
-            Self::NotOperator(t) => t.seat_target(table),
-            Self::BooleanOperator(t) => t.seat_target(table),
-            Self::Lambda(t) => t.seat_target(table),
-            Self::PrimaryExpression(t) => t.seat_target(table),
-            Self::ConditionalExpression(t) => t.seat_target(table),
-            Self::NamedExpression(t) => t.seat_target(table),
-            Self::AsPattern(t) => t.seat_target(table),
+            Self::ComparisonOperator(t) => t.seat_target(table, ctx),
+            Self::NotOperator(t) => t.seat_target(table, ctx),
+            Self::BooleanOperator(t) => t.seat_target(table, ctx),
+            Self::Lambda(t) => t.seat_target(table, ctx),
+            Self::PrimaryExpression(t) => t.seat_target(table, ctx),
+            Self::ConditionalExpression(t) => t.seat_target(table, ctx),
+            Self::NamedExpression(t) => t.seat_target(table, ctx),
+            Self::AsPattern(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24715,30 +23701,30 @@ impl ::sittir_core::prepare::SeatTarget for ExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for PrimaryExpressionTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::Await(t) => t.seat_target(table),
-            Self::BinaryOperator(t) => t.seat_target(table),
-            Self::String(t) => t.seat_target(table),
-            Self::ConcatenatedString(t) => t.seat_target(table),
+            Self::Await(t) => t.seat_target(table, ctx),
+            Self::BinaryOperator(t) => t.seat_target(table, ctx),
+            Self::String(t) => t.seat_target(table, ctx),
+            Self::ConcatenatedString(t) => t.seat_target(table, ctx),
             Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
             Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(72)).map(|site| (edges, site)),
-            Self::UnaryOperator(t) => t.seat_target(table),
-            Self::Attribute(t) => t.seat_target(table),
-            Self::Subscript(t) => t.seat_target(table),
-            Self::Call(t) => t.seat_target(table),
-            Self::List(t) => t.seat_target(table),
-            Self::ListComprehension(t) => t.seat_target(table),
-            Self::Dictionary(t) => t.seat_target(table),
-            Self::DictionaryComprehension(t) => t.seat_target(table),
-            Self::Set(t) => t.seat_target(table),
-            Self::SetComprehension(t) => t.seat_target(table),
-            Self::Tuple(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::GeneratorExpression(t) => t.seat_target(table),
+            Self::UnaryOperator(t) => t.seat_target(table, ctx),
+            Self::Attribute(t) => t.seat_target(table, ctx),
+            Self::Subscript(t) => t.seat_target(table, ctx),
+            Self::Call(t) => t.seat_target(table, ctx),
+            Self::List(t) => t.seat_target(table, ctx),
+            Self::ListComprehension(t) => t.seat_target(table, ctx),
+            Self::Dictionary(t) => t.seat_target(table, ctx),
+            Self::DictionaryComprehension(t) => t.seat_target(table, ctx),
+            Self::Set(t) => t.seat_target(table, ctx),
+            Self::SetComprehension(t) => t.seat_target(table, ctx),
+            Self::Tuple(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::GeneratorExpression(t) => t.seat_target(table, ctx),
             Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(64)).map(|site| (edges, site)),
-            Self::ListSplatPattern(t) => t.seat_target(table),
+            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24746,9 +23732,9 @@ impl ::sittir_core::prepare::SeatTarget for PrimaryExpressionTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ImportListNameTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::AliasedImport(t) => t.seat_target(table),
+            Self::AliasedImport(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24756,10 +23742,10 @@ impl ::sittir_core::prepare::SeatTarget for ImportListNameTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for PrintStatementContentTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::PrintStatementChevron(t) => t.seat_target(table),
-            Self::PrintStatementPlain(t) => t.seat_target(table),
+            Self::PrintStatementChevron(t) => t.seat_target(table, ctx),
+            Self::PrintStatementPlain(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24767,42 +23753,42 @@ impl ::sittir_core::prepare::SeatTarget for PrintStatementContentTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ExpressionStatementContentTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ComparisonOperator(t) => t.seat_target(table),
-            Self::NotOperator(t) => t.seat_target(table),
-            Self::BooleanOperator(t) => t.seat_target(table),
-            Self::Lambda(t) => t.seat_target(table),
-            Self::Await(t) => t.seat_target(table),
-            Self::BinaryOperator(t) => t.seat_target(table),
-            Self::String(t) => t.seat_target(table),
-            Self::ConcatenatedString(t) => t.seat_target(table),
+            Self::ComparisonOperator(t) => t.seat_target(table, ctx),
+            Self::NotOperator(t) => t.seat_target(table, ctx),
+            Self::BooleanOperator(t) => t.seat_target(table, ctx),
+            Self::Lambda(t) => t.seat_target(table, ctx),
+            Self::Await(t) => t.seat_target(table, ctx),
+            Self::BinaryOperator(t) => t.seat_target(table, ctx),
+            Self::String(t) => t.seat_target(table, ctx),
+            Self::ConcatenatedString(t) => t.seat_target(table, ctx),
             Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
             Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(72)).map(|site| (edges, site)),
-            Self::UnaryOperator(t) => t.seat_target(table),
-            Self::Attribute(t) => t.seat_target(table),
-            Self::Subscript(t) => t.seat_target(table),
-            Self::Call(t) => t.seat_target(table),
-            Self::List(t) => t.seat_target(table),
-            Self::ListComprehension(t) => t.seat_target(table),
-            Self::Dictionary(t) => t.seat_target(table),
-            Self::DictionaryComprehension(t) => t.seat_target(table),
-            Self::Set(t) => t.seat_target(table),
-            Self::SetComprehension(t) => t.seat_target(table),
-            Self::Tuple(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::GeneratorExpression(t) => t.seat_target(table),
+            Self::UnaryOperator(t) => t.seat_target(table, ctx),
+            Self::Attribute(t) => t.seat_target(table, ctx),
+            Self::Subscript(t) => t.seat_target(table, ctx),
+            Self::Call(t) => t.seat_target(table, ctx),
+            Self::List(t) => t.seat_target(table, ctx),
+            Self::ListComprehension(t) => t.seat_target(table, ctx),
+            Self::Dictionary(t) => t.seat_target(table, ctx),
+            Self::DictionaryComprehension(t) => t.seat_target(table, ctx),
+            Self::Set(t) => t.seat_target(table, ctx),
+            Self::SetComprehension(t) => t.seat_target(table, ctx),
+            Self::Tuple(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::GeneratorExpression(t) => t.seat_target(table, ctx),
             Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(64)).map(|site| (edges, site)),
-            Self::ListSplatPattern(t) => t.seat_target(table),
-            Self::ConditionalExpression(t) => t.seat_target(table),
-            Self::NamedExpression(t) => t.seat_target(table),
-            Self::AsPattern(t) => t.seat_target(table),
-            Self::AssignmentEq(t) => t.seat_target(table),
-            Self::AssignmentType(t) => t.seat_target(table),
-            Self::AssignmentTyped(t) => t.seat_target(table),
-            Self::AugmentedAssignment(t) => t.seat_target(table),
-            Self::Yield(t) => t.seat_target(table),
+            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
+            Self::ConditionalExpression(t) => t.seat_target(table, ctx),
+            Self::NamedExpression(t) => t.seat_target(table, ctx),
+            Self::AsPattern(t) => t.seat_target(table, ctx),
+            Self::AssignmentEq(t) => t.seat_target(table, ctx),
+            Self::AssignmentType(t) => t.seat_target(table, ctx),
+            Self::AssignmentTyped(t) => t.seat_target(table, ctx),
+            Self::AugmentedAssignment(t) => t.seat_target(table, ctx),
+            Self::Yield(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24810,37 +23796,37 @@ impl ::sittir_core::prepare::SeatTarget for ExpressionStatementContentTransportS
 }
 
 impl ::sittir_core::prepare::SeatTarget for ReturnStatementExpressionsTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ComparisonOperator(t) => t.seat_target(table),
-            Self::NotOperator(t) => t.seat_target(table),
-            Self::BooleanOperator(t) => t.seat_target(table),
-            Self::Lambda(t) => t.seat_target(table),
-            Self::Await(t) => t.seat_target(table),
-            Self::BinaryOperator(t) => t.seat_target(table),
-            Self::String(t) => t.seat_target(table),
-            Self::ConcatenatedString(t) => t.seat_target(table),
+            Self::ComparisonOperator(t) => t.seat_target(table, ctx),
+            Self::NotOperator(t) => t.seat_target(table, ctx),
+            Self::BooleanOperator(t) => t.seat_target(table, ctx),
+            Self::Lambda(t) => t.seat_target(table, ctx),
+            Self::Await(t) => t.seat_target(table, ctx),
+            Self::BinaryOperator(t) => t.seat_target(table, ctx),
+            Self::String(t) => t.seat_target(table, ctx),
+            Self::ConcatenatedString(t) => t.seat_target(table, ctx),
             Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
             Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(72)).map(|site| (edges, site)),
-            Self::UnaryOperator(t) => t.seat_target(table),
-            Self::Attribute(t) => t.seat_target(table),
-            Self::Subscript(t) => t.seat_target(table),
-            Self::Call(t) => t.seat_target(table),
-            Self::List(t) => t.seat_target(table),
-            Self::ListComprehension(t) => t.seat_target(table),
-            Self::Dictionary(t) => t.seat_target(table),
-            Self::DictionaryComprehension(t) => t.seat_target(table),
-            Self::Set(t) => t.seat_target(table),
-            Self::SetComprehension(t) => t.seat_target(table),
-            Self::Tuple(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::GeneratorExpression(t) => t.seat_target(table),
+            Self::UnaryOperator(t) => t.seat_target(table, ctx),
+            Self::Attribute(t) => t.seat_target(table, ctx),
+            Self::Subscript(t) => t.seat_target(table, ctx),
+            Self::Call(t) => t.seat_target(table, ctx),
+            Self::List(t) => t.seat_target(table, ctx),
+            Self::ListComprehension(t) => t.seat_target(table, ctx),
+            Self::Dictionary(t) => t.seat_target(table, ctx),
+            Self::DictionaryComprehension(t) => t.seat_target(table, ctx),
+            Self::Set(t) => t.seat_target(table, ctx),
+            Self::SetComprehension(t) => t.seat_target(table, ctx),
+            Self::Tuple(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::GeneratorExpression(t) => t.seat_target(table, ctx),
             Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(64)).map(|site| (edges, site)),
-            Self::ListSplatPattern(t) => t.seat_target(table),
-            Self::ConditionalExpression(t) => t.seat_target(table),
-            Self::NamedExpression(t) => t.seat_target(table),
-            Self::AsPattern(t) => t.seat_target(table),
+            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
+            Self::ConditionalExpression(t) => t.seat_target(table, ctx),
+            Self::NamedExpression(t) => t.seat_target(table, ctx),
+            Self::AsPattern(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24848,10 +23834,10 @@ impl ::sittir_core::prepare::SeatTarget for ReturnStatementExpressionsTransportS
 }
 
 impl ::sittir_core::prepare::SeatTarget for IfStatementAlternativeTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ElifClause(t) => t.seat_target(table),
-            Self::ElseClause(t) => t.seat_target(table),
+            Self::ElifClause(t) => t.seat_target(table, ctx),
+            Self::ElseClause(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24859,13 +23845,13 @@ impl ::sittir_core::prepare::SeatTarget for IfStatementAlternativeTransportSlot 
 }
 
 impl ::sittir_core::prepare::SeatTarget for ForStatementLeftTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::Subscript(t) => t.seat_target(table),
-            Self::Attribute(t) => t.seat_target(table),
-            Self::ListSplatPattern(t) => t.seat_target(table),
-            Self::TuplePattern(t) => t.seat_target(table),
-            Self::ListPattern(t) => t.seat_target(table),
+            Self::Subscript(t) => t.seat_target(table, ctx),
+            Self::Attribute(t) => t.seat_target(table, ctx),
+            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
+            Self::TuplePattern(t) => t.seat_target(table, ctx),
+            Self::ListPattern(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24873,9 +23859,9 @@ impl ::sittir_core::prepare::SeatTarget for ForStatementLeftTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ExecStatementCodeTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::String(t) => t.seat_target(table),
+            Self::String(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24883,10 +23869,10 @@ impl ::sittir_core::prepare::SeatTarget for ExecStatementCodeTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ParenthesizedListSplatContentTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ParenthesizedListSplat(t) => t.seat_target(table),
-            Self::ListSplat(t) => t.seat_target(table),
+            Self::ParenthesizedListSplat(t) => t.seat_target(table, ctx),
+            Self::ListSplat(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24894,10 +23880,10 @@ impl ::sittir_core::prepare::SeatTarget for ParenthesizedListSplatContentTranspo
 }
 
 impl ::sittir_core::prepare::SeatTarget for DecoratedDefinitionDefinitionTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ClassDefinition(t) => t.seat_target(table),
-            Self::FunctionDefinition(t) => t.seat_target(table),
+            Self::ClassDefinition(t) => t.seat_target(table, ctx),
+            Self::FunctionDefinition(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24905,10 +23891,10 @@ impl ::sittir_core::prepare::SeatTarget for DecoratedDefinitionDefinitionTranspo
 }
 
 impl ::sittir_core::prepare::SeatTarget for CasePatternContentTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::CaseAsPattern(t) => t.seat_target(table),
-            Self::KeywordPattern(t) => t.seat_target(table),
+            Self::CaseAsPattern(t) => t.seat_target(table, ctx),
+            Self::KeywordPattern(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24916,17 +23902,17 @@ impl ::sittir_core::prepare::SeatTarget for CasePatternContentTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for SimplePatternContentTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ClassPattern(t) => t.seat_target(table),
-            Self::SplatPattern(t) => t.seat_target(table),
-            Self::CaseListPattern(t) => t.seat_target(table),
-            Self::CaseTuplePattern(t) => t.seat_target(table),
-            Self::DictPattern(t) => t.seat_target(table),
-            Self::String(t) => t.seat_target(table),
-            Self::ConcatenatedString(t) => t.seat_target(table),
-            Self::SimplePatternNegative(t) => t.seat_target(table),
-            Self::ComplexPattern(t) => t.seat_target(table),
+            Self::ClassPattern(t) => t.seat_target(table, ctx),
+            Self::SplatPattern(t) => t.seat_target(table, ctx),
+            Self::CaseListPattern(t) => t.seat_target(table, ctx),
+            Self::CaseTuplePattern(t) => t.seat_target(table, ctx),
+            Self::DictPattern(t) => t.seat_target(table, ctx),
+            Self::String(t) => t.seat_target(table, ctx),
+            Self::ConcatenatedString(t) => t.seat_target(table, ctx),
+            Self::SimplePatternNegative(t) => t.seat_target(table, ctx),
+            Self::ComplexPattern(t) => t.seat_target(table, ctx),
             Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
             Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(72)).map(|site| (edges, site)),
@@ -24938,9 +23924,9 @@ impl ::sittir_core::prepare::SeatTarget for SimplePatternContentTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for DefaultParameterNameTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::TuplePattern(t) => t.seat_target(table),
+            Self::TuplePattern(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24948,10 +23934,10 @@ impl ::sittir_core::prepare::SeatTarget for DefaultParameterNameTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ListSplatPatternTargetTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::Subscript(t) => t.seat_target(table),
-            Self::Attribute(t) => t.seat_target(table),
+            Self::Subscript(t) => t.seat_target(table, ctx),
+            Self::Attribute(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24959,38 +23945,38 @@ impl ::sittir_core::prepare::SeatTarget for ListSplatPatternTargetTransportSlot 
 }
 
 impl ::sittir_core::prepare::SeatTarget for LambdaWithinForInClauseBodyTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ComparisonOperator(t) => t.seat_target(table),
-            Self::NotOperator(t) => t.seat_target(table),
-            Self::BooleanOperator(t) => t.seat_target(table),
-            Self::Lambda(t) => t.seat_target(table),
-            Self::Await(t) => t.seat_target(table),
-            Self::BinaryOperator(t) => t.seat_target(table),
-            Self::String(t) => t.seat_target(table),
-            Self::ConcatenatedString(t) => t.seat_target(table),
+            Self::ComparisonOperator(t) => t.seat_target(table, ctx),
+            Self::NotOperator(t) => t.seat_target(table, ctx),
+            Self::BooleanOperator(t) => t.seat_target(table, ctx),
+            Self::Lambda(t) => t.seat_target(table, ctx),
+            Self::Await(t) => t.seat_target(table, ctx),
+            Self::BinaryOperator(t) => t.seat_target(table, ctx),
+            Self::String(t) => t.seat_target(table, ctx),
+            Self::ConcatenatedString(t) => t.seat_target(table, ctx),
             Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
             Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(72)).map(|site| (edges, site)),
-            Self::UnaryOperator(t) => t.seat_target(table),
-            Self::Attribute(t) => t.seat_target(table),
-            Self::Subscript(t) => t.seat_target(table),
-            Self::Call(t) => t.seat_target(table),
-            Self::List(t) => t.seat_target(table),
-            Self::ListComprehension(t) => t.seat_target(table),
-            Self::Dictionary(t) => t.seat_target(table),
-            Self::DictionaryComprehension(t) => t.seat_target(table),
-            Self::Set(t) => t.seat_target(table),
-            Self::SetComprehension(t) => t.seat_target(table),
-            Self::Tuple(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::GeneratorExpression(t) => t.seat_target(table),
+            Self::UnaryOperator(t) => t.seat_target(table, ctx),
+            Self::Attribute(t) => t.seat_target(table, ctx),
+            Self::Subscript(t) => t.seat_target(table, ctx),
+            Self::Call(t) => t.seat_target(table, ctx),
+            Self::List(t) => t.seat_target(table, ctx),
+            Self::ListComprehension(t) => t.seat_target(table, ctx),
+            Self::Dictionary(t) => t.seat_target(table, ctx),
+            Self::DictionaryComprehension(t) => t.seat_target(table, ctx),
+            Self::Set(t) => t.seat_target(table, ctx),
+            Self::SetComprehension(t) => t.seat_target(table, ctx),
+            Self::Tuple(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::GeneratorExpression(t) => t.seat_target(table, ctx),
             Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(64)).map(|site| (edges, site)),
-            Self::ListSplatPattern(t) => t.seat_target(table),
-            Self::ConditionalExpression(t) => t.seat_target(table),
-            Self::NamedExpression(t) => t.seat_target(table),
-            Self::AsPattern(t) => t.seat_target(table),
-            Self::LambdaWithinForInClause(t) => t.seat_target(table),
+            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
+            Self::ConditionalExpression(t) => t.seat_target(table, ctx),
+            Self::NamedExpression(t) => t.seat_target(table, ctx),
+            Self::AsPattern(t) => t.seat_target(table, ctx),
+            Self::LambdaWithinForInClause(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -24998,42 +23984,42 @@ impl ::sittir_core::prepare::SeatTarget for LambdaWithinForInClauseBodyTransport
 }
 
 impl ::sittir_core::prepare::SeatTarget for AugmentedAssignmentRightTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ComparisonOperator(t) => t.seat_target(table),
-            Self::NotOperator(t) => t.seat_target(table),
-            Self::BooleanOperator(t) => t.seat_target(table),
-            Self::Lambda(t) => t.seat_target(table),
-            Self::Await(t) => t.seat_target(table),
-            Self::BinaryOperator(t) => t.seat_target(table),
-            Self::String(t) => t.seat_target(table),
-            Self::ConcatenatedString(t) => t.seat_target(table),
+            Self::ComparisonOperator(t) => t.seat_target(table, ctx),
+            Self::NotOperator(t) => t.seat_target(table, ctx),
+            Self::BooleanOperator(t) => t.seat_target(table, ctx),
+            Self::Lambda(t) => t.seat_target(table, ctx),
+            Self::Await(t) => t.seat_target(table, ctx),
+            Self::BinaryOperator(t) => t.seat_target(table, ctx),
+            Self::String(t) => t.seat_target(table, ctx),
+            Self::ConcatenatedString(t) => t.seat_target(table, ctx),
             Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
             Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(72)).map(|site| (edges, site)),
-            Self::UnaryOperator(t) => t.seat_target(table),
-            Self::Attribute(t) => t.seat_target(table),
-            Self::Subscript(t) => t.seat_target(table),
-            Self::Call(t) => t.seat_target(table),
-            Self::List(t) => t.seat_target(table),
-            Self::ListComprehension(t) => t.seat_target(table),
-            Self::Dictionary(t) => t.seat_target(table),
-            Self::DictionaryComprehension(t) => t.seat_target(table),
-            Self::Set(t) => t.seat_target(table),
-            Self::SetComprehension(t) => t.seat_target(table),
-            Self::Tuple(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::GeneratorExpression(t) => t.seat_target(table),
+            Self::UnaryOperator(t) => t.seat_target(table, ctx),
+            Self::Attribute(t) => t.seat_target(table, ctx),
+            Self::Subscript(t) => t.seat_target(table, ctx),
+            Self::Call(t) => t.seat_target(table, ctx),
+            Self::List(t) => t.seat_target(table, ctx),
+            Self::ListComprehension(t) => t.seat_target(table, ctx),
+            Self::Dictionary(t) => t.seat_target(table, ctx),
+            Self::DictionaryComprehension(t) => t.seat_target(table, ctx),
+            Self::Set(t) => t.seat_target(table, ctx),
+            Self::SetComprehension(t) => t.seat_target(table, ctx),
+            Self::Tuple(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::GeneratorExpression(t) => t.seat_target(table, ctx),
             Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(64)).map(|site| (edges, site)),
-            Self::ListSplatPattern(t) => t.seat_target(table),
-            Self::ConditionalExpression(t) => t.seat_target(table),
-            Self::NamedExpression(t) => t.seat_target(table),
-            Self::AsPattern(t) => t.seat_target(table),
-            Self::AssignmentEq(t) => t.seat_target(table),
-            Self::AssignmentType(t) => t.seat_target(table),
-            Self::AssignmentTyped(t) => t.seat_target(table),
-            Self::AugmentedAssignment(t) => t.seat_target(table),
-            Self::Yield(t) => t.seat_target(table),
+            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
+            Self::ConditionalExpression(t) => t.seat_target(table, ctx),
+            Self::NamedExpression(t) => t.seat_target(table, ctx),
+            Self::AsPattern(t) => t.seat_target(table, ctx),
+            Self::AssignmentEq(t) => t.seat_target(table, ctx),
+            Self::AssignmentType(t) => t.seat_target(table, ctx),
+            Self::AssignmentTyped(t) => t.seat_target(table, ctx),
+            Self::AugmentedAssignment(t) => t.seat_target(table, ctx),
+            Self::Yield(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -25041,37 +24027,37 @@ impl ::sittir_core::prepare::SeatTarget for AugmentedAssignmentRightTransportSlo
 }
 
 impl ::sittir_core::prepare::SeatTarget for YieldContentTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ComparisonOperator(t) => t.seat_target(table),
-            Self::NotOperator(t) => t.seat_target(table),
-            Self::BooleanOperator(t) => t.seat_target(table),
-            Self::Lambda(t) => t.seat_target(table),
-            Self::Await(t) => t.seat_target(table),
-            Self::BinaryOperator(t) => t.seat_target(table),
-            Self::String(t) => t.seat_target(table),
-            Self::ConcatenatedString(t) => t.seat_target(table),
+            Self::ComparisonOperator(t) => t.seat_target(table, ctx),
+            Self::NotOperator(t) => t.seat_target(table, ctx),
+            Self::BooleanOperator(t) => t.seat_target(table, ctx),
+            Self::Lambda(t) => t.seat_target(table, ctx),
+            Self::Await(t) => t.seat_target(table, ctx),
+            Self::BinaryOperator(t) => t.seat_target(table, ctx),
+            Self::String(t) => t.seat_target(table, ctx),
+            Self::ConcatenatedString(t) => t.seat_target(table, ctx),
             Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
             Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(72)).map(|site| (edges, site)),
-            Self::UnaryOperator(t) => t.seat_target(table),
-            Self::Attribute(t) => t.seat_target(table),
-            Self::Subscript(t) => t.seat_target(table),
-            Self::Call(t) => t.seat_target(table),
-            Self::List(t) => t.seat_target(table),
-            Self::ListComprehension(t) => t.seat_target(table),
-            Self::Dictionary(t) => t.seat_target(table),
-            Self::DictionaryComprehension(t) => t.seat_target(table),
-            Self::Set(t) => t.seat_target(table),
-            Self::SetComprehension(t) => t.seat_target(table),
-            Self::Tuple(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::GeneratorExpression(t) => t.seat_target(table),
+            Self::UnaryOperator(t) => t.seat_target(table, ctx),
+            Self::Attribute(t) => t.seat_target(table, ctx),
+            Self::Subscript(t) => t.seat_target(table, ctx),
+            Self::Call(t) => t.seat_target(table, ctx),
+            Self::List(t) => t.seat_target(table, ctx),
+            Self::ListComprehension(t) => t.seat_target(table, ctx),
+            Self::Dictionary(t) => t.seat_target(table, ctx),
+            Self::DictionaryComprehension(t) => t.seat_target(table, ctx),
+            Self::Set(t) => t.seat_target(table, ctx),
+            Self::SetComprehension(t) => t.seat_target(table, ctx),
+            Self::Tuple(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::GeneratorExpression(t) => t.seat_target(table, ctx),
             Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(64)).map(|site| (edges, site)),
-            Self::ListSplatPattern(t) => t.seat_target(table),
-            Self::ConditionalExpression(t) => t.seat_target(table),
-            Self::NamedExpression(t) => t.seat_target(table),
-            Self::AsPattern(t) => t.seat_target(table),
+            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
+            Self::ConditionalExpression(t) => t.seat_target(table, ctx),
+            Self::NamedExpression(t) => t.seat_target(table, ctx),
+            Self::AsPattern(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -25079,9 +24065,9 @@ impl ::sittir_core::prepare::SeatTarget for YieldContentTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for CallArgumentsTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::GeneratorExpression(t) => t.seat_target(table),
+            Self::GeneratorExpression(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -25089,10 +24075,10 @@ impl ::sittir_core::prepare::SeatTarget for CallArgumentsTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TypedParameterNameTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ListSplatPattern(t) => t.seat_target(table),
-            Self::DictionarySplatPattern(t) => t.seat_target(table),
+            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
+            Self::DictionarySplatPattern(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -25100,42 +24086,42 @@ impl ::sittir_core::prepare::SeatTarget for TypedParameterNameTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TypeContentTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ComparisonOperator(t) => t.seat_target(table),
-            Self::NotOperator(t) => t.seat_target(table),
-            Self::BooleanOperator(t) => t.seat_target(table),
-            Self::Lambda(t) => t.seat_target(table),
-            Self::Await(t) => t.seat_target(table),
-            Self::BinaryOperator(t) => t.seat_target(table),
-            Self::String(t) => t.seat_target(table),
-            Self::ConcatenatedString(t) => t.seat_target(table),
+            Self::ComparisonOperator(t) => t.seat_target(table, ctx),
+            Self::NotOperator(t) => t.seat_target(table, ctx),
+            Self::BooleanOperator(t) => t.seat_target(table, ctx),
+            Self::Lambda(t) => t.seat_target(table, ctx),
+            Self::Await(t) => t.seat_target(table, ctx),
+            Self::BinaryOperator(t) => t.seat_target(table, ctx),
+            Self::String(t) => t.seat_target(table, ctx),
+            Self::ConcatenatedString(t) => t.seat_target(table, ctx),
             Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
             Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(72)).map(|site| (edges, site)),
-            Self::UnaryOperator(t) => t.seat_target(table),
-            Self::Attribute(t) => t.seat_target(table),
-            Self::Subscript(t) => t.seat_target(table),
-            Self::Call(t) => t.seat_target(table),
-            Self::List(t) => t.seat_target(table),
-            Self::ListComprehension(t) => t.seat_target(table),
-            Self::Dictionary(t) => t.seat_target(table),
-            Self::DictionaryComprehension(t) => t.seat_target(table),
-            Self::Set(t) => t.seat_target(table),
-            Self::SetComprehension(t) => t.seat_target(table),
-            Self::Tuple(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::GeneratorExpression(t) => t.seat_target(table),
+            Self::UnaryOperator(t) => t.seat_target(table, ctx),
+            Self::Attribute(t) => t.seat_target(table, ctx),
+            Self::Subscript(t) => t.seat_target(table, ctx),
+            Self::Call(t) => t.seat_target(table, ctx),
+            Self::List(t) => t.seat_target(table, ctx),
+            Self::ListComprehension(t) => t.seat_target(table, ctx),
+            Self::Dictionary(t) => t.seat_target(table, ctx),
+            Self::DictionaryComprehension(t) => t.seat_target(table, ctx),
+            Self::Set(t) => t.seat_target(table, ctx),
+            Self::SetComprehension(t) => t.seat_target(table, ctx),
+            Self::Tuple(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::GeneratorExpression(t) => t.seat_target(table, ctx),
             Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(64)).map(|site| (edges, site)),
-            Self::ListSplatPattern(t) => t.seat_target(table),
-            Self::ConditionalExpression(t) => t.seat_target(table),
-            Self::NamedExpression(t) => t.seat_target(table),
-            Self::AsPattern(t) => t.seat_target(table),
-            Self::SplatType(t) => t.seat_target(table),
-            Self::GenericType(t) => t.seat_target(table),
-            Self::UnionType(t) => t.seat_target(table),
-            Self::ConstrainedType(t) => t.seat_target(table),
-            Self::MemberType(t) => t.seat_target(table),
+            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
+            Self::ConditionalExpression(t) => t.seat_target(table, ctx),
+            Self::NamedExpression(t) => t.seat_target(table, ctx),
+            Self::AsPattern(t) => t.seat_target(table, ctx),
+            Self::SplatType(t) => t.seat_target(table, ctx),
+            Self::GenericType(t) => t.seat_target(table, ctx),
+            Self::UnionType(t) => t.seat_target(table, ctx),
+            Self::ConstrainedType(t) => t.seat_target(table, ctx),
+            Self::MemberType(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -25143,38 +24129,38 @@ impl ::sittir_core::prepare::SeatTarget for TypeContentTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for ParenthesizedExpressionExpressionTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ComparisonOperator(t) => t.seat_target(table),
-            Self::NotOperator(t) => t.seat_target(table),
-            Self::BooleanOperator(t) => t.seat_target(table),
-            Self::Lambda(t) => t.seat_target(table),
-            Self::Await(t) => t.seat_target(table),
-            Self::BinaryOperator(t) => t.seat_target(table),
-            Self::String(t) => t.seat_target(table),
-            Self::ConcatenatedString(t) => t.seat_target(table),
+            Self::ComparisonOperator(t) => t.seat_target(table, ctx),
+            Self::NotOperator(t) => t.seat_target(table, ctx),
+            Self::BooleanOperator(t) => t.seat_target(table, ctx),
+            Self::Lambda(t) => t.seat_target(table, ctx),
+            Self::Await(t) => t.seat_target(table, ctx),
+            Self::BinaryOperator(t) => t.seat_target(table, ctx),
+            Self::String(t) => t.seat_target(table, ctx),
+            Self::ConcatenatedString(t) => t.seat_target(table, ctx),
             Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
             Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(72)).map(|site| (edges, site)),
-            Self::UnaryOperator(t) => t.seat_target(table),
-            Self::Attribute(t) => t.seat_target(table),
-            Self::Subscript(t) => t.seat_target(table),
-            Self::Call(t) => t.seat_target(table),
-            Self::List(t) => t.seat_target(table),
-            Self::ListComprehension(t) => t.seat_target(table),
-            Self::Dictionary(t) => t.seat_target(table),
-            Self::DictionaryComprehension(t) => t.seat_target(table),
-            Self::Set(t) => t.seat_target(table),
-            Self::SetComprehension(t) => t.seat_target(table),
-            Self::Tuple(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::GeneratorExpression(t) => t.seat_target(table),
+            Self::UnaryOperator(t) => t.seat_target(table, ctx),
+            Self::Attribute(t) => t.seat_target(table, ctx),
+            Self::Subscript(t) => t.seat_target(table, ctx),
+            Self::Call(t) => t.seat_target(table, ctx),
+            Self::List(t) => t.seat_target(table, ctx),
+            Self::ListComprehension(t) => t.seat_target(table, ctx),
+            Self::Dictionary(t) => t.seat_target(table, ctx),
+            Self::DictionaryComprehension(t) => t.seat_target(table, ctx),
+            Self::Set(t) => t.seat_target(table, ctx),
+            Self::SetComprehension(t) => t.seat_target(table, ctx),
+            Self::Tuple(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::GeneratorExpression(t) => t.seat_target(table, ctx),
             Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(64)).map(|site| (edges, site)),
-            Self::ListSplatPattern(t) => t.seat_target(table),
-            Self::ConditionalExpression(t) => t.seat_target(table),
-            Self::NamedExpression(t) => t.seat_target(table),
-            Self::AsPattern(t) => t.seat_target(table),
-            Self::Yield(t) => t.seat_target(table),
+            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
+            Self::ConditionalExpression(t) => t.seat_target(table, ctx),
+            Self::NamedExpression(t) => t.seat_target(table, ctx),
+            Self::AsPattern(t) => t.seat_target(table, ctx),
+            Self::Yield(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -25182,40 +24168,40 @@ impl ::sittir_core::prepare::SeatTarget for ParenthesizedExpressionExpressionTra
 }
 
 impl ::sittir_core::prepare::SeatTarget for CollectionElementsItemTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ComparisonOperator(t) => t.seat_target(table),
-            Self::NotOperator(t) => t.seat_target(table),
-            Self::BooleanOperator(t) => t.seat_target(table),
-            Self::Lambda(t) => t.seat_target(table),
-            Self::Await(t) => t.seat_target(table),
-            Self::BinaryOperator(t) => t.seat_target(table),
-            Self::String(t) => t.seat_target(table),
-            Self::ConcatenatedString(t) => t.seat_target(table),
+            Self::ComparisonOperator(t) => t.seat_target(table, ctx),
+            Self::NotOperator(t) => t.seat_target(table, ctx),
+            Self::BooleanOperator(t) => t.seat_target(table, ctx),
+            Self::Lambda(t) => t.seat_target(table, ctx),
+            Self::Await(t) => t.seat_target(table, ctx),
+            Self::BinaryOperator(t) => t.seat_target(table, ctx),
+            Self::String(t) => t.seat_target(table, ctx),
+            Self::ConcatenatedString(t) => t.seat_target(table, ctx),
             Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
             Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(72)).map(|site| (edges, site)),
-            Self::UnaryOperator(t) => t.seat_target(table),
-            Self::Attribute(t) => t.seat_target(table),
-            Self::Subscript(t) => t.seat_target(table),
-            Self::Call(t) => t.seat_target(table),
-            Self::List(t) => t.seat_target(table),
-            Self::ListComprehension(t) => t.seat_target(table),
-            Self::Dictionary(t) => t.seat_target(table),
-            Self::DictionaryComprehension(t) => t.seat_target(table),
-            Self::Set(t) => t.seat_target(table),
-            Self::SetComprehension(t) => t.seat_target(table),
-            Self::Tuple(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::GeneratorExpression(t) => t.seat_target(table),
+            Self::UnaryOperator(t) => t.seat_target(table, ctx),
+            Self::Attribute(t) => t.seat_target(table, ctx),
+            Self::Subscript(t) => t.seat_target(table, ctx),
+            Self::Call(t) => t.seat_target(table, ctx),
+            Self::List(t) => t.seat_target(table, ctx),
+            Self::ListComprehension(t) => t.seat_target(table, ctx),
+            Self::Dictionary(t) => t.seat_target(table, ctx),
+            Self::DictionaryComprehension(t) => t.seat_target(table, ctx),
+            Self::Set(t) => t.seat_target(table, ctx),
+            Self::SetComprehension(t) => t.seat_target(table, ctx),
+            Self::Tuple(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::GeneratorExpression(t) => t.seat_target(table, ctx),
             Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(64)).map(|site| (edges, site)),
-            Self::ListSplatPattern(t) => t.seat_target(table),
-            Self::ConditionalExpression(t) => t.seat_target(table),
-            Self::NamedExpression(t) => t.seat_target(table),
-            Self::AsPattern(t) => t.seat_target(table),
-            Self::Yield(t) => t.seat_target(table),
-            Self::ListSplat(t) => t.seat_target(table),
-            Self::ParenthesizedListSplat(t) => t.seat_target(table),
+            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
+            Self::ConditionalExpression(t) => t.seat_target(table, ctx),
+            Self::NamedExpression(t) => t.seat_target(table, ctx),
+            Self::AsPattern(t) => t.seat_target(table, ctx),
+            Self::Yield(t) => t.seat_target(table, ctx),
+            Self::ListSplat(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedListSplat(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -25223,38 +24209,38 @@ impl ::sittir_core::prepare::SeatTarget for CollectionElementsItemTransportSlot 
 }
 
 impl ::sittir_core::prepare::SeatTarget for InterpolationExpressionTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ComparisonOperator(t) => t.seat_target(table),
-            Self::NotOperator(t) => t.seat_target(table),
-            Self::BooleanOperator(t) => t.seat_target(table),
-            Self::Lambda(t) => t.seat_target(table),
-            Self::Await(t) => t.seat_target(table),
-            Self::BinaryOperator(t) => t.seat_target(table),
-            Self::String(t) => t.seat_target(table),
-            Self::ConcatenatedString(t) => t.seat_target(table),
+            Self::ComparisonOperator(t) => t.seat_target(table, ctx),
+            Self::NotOperator(t) => t.seat_target(table, ctx),
+            Self::BooleanOperator(t) => t.seat_target(table, ctx),
+            Self::Lambda(t) => t.seat_target(table, ctx),
+            Self::Await(t) => t.seat_target(table, ctx),
+            Self::BinaryOperator(t) => t.seat_target(table, ctx),
+            Self::String(t) => t.seat_target(table, ctx),
+            Self::ConcatenatedString(t) => t.seat_target(table, ctx),
             Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
             Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(72)).map(|site| (edges, site)),
-            Self::UnaryOperator(t) => t.seat_target(table),
-            Self::Attribute(t) => t.seat_target(table),
-            Self::Subscript(t) => t.seat_target(table),
-            Self::Call(t) => t.seat_target(table),
-            Self::List(t) => t.seat_target(table),
-            Self::ListComprehension(t) => t.seat_target(table),
-            Self::Dictionary(t) => t.seat_target(table),
-            Self::DictionaryComprehension(t) => t.seat_target(table),
-            Self::Set(t) => t.seat_target(table),
-            Self::SetComprehension(t) => t.seat_target(table),
-            Self::Tuple(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::GeneratorExpression(t) => t.seat_target(table),
+            Self::UnaryOperator(t) => t.seat_target(table, ctx),
+            Self::Attribute(t) => t.seat_target(table, ctx),
+            Self::Subscript(t) => t.seat_target(table, ctx),
+            Self::Call(t) => t.seat_target(table, ctx),
+            Self::List(t) => t.seat_target(table, ctx),
+            Self::ListComprehension(t) => t.seat_target(table, ctx),
+            Self::Dictionary(t) => t.seat_target(table, ctx),
+            Self::DictionaryComprehension(t) => t.seat_target(table, ctx),
+            Self::Set(t) => t.seat_target(table, ctx),
+            Self::SetComprehension(t) => t.seat_target(table, ctx),
+            Self::Tuple(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::GeneratorExpression(t) => t.seat_target(table, ctx),
             Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(64)).map(|site| (edges, site)),
-            Self::ListSplatPattern(t) => t.seat_target(table),
-            Self::ConditionalExpression(t) => t.seat_target(table),
-            Self::NamedExpression(t) => t.seat_target(table),
-            Self::AsPattern(t) => t.seat_target(table),
-            Self::Yield(t) => t.seat_target(table),
+            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
+            Self::ConditionalExpression(t) => t.seat_target(table, ctx),
+            Self::NamedExpression(t) => t.seat_target(table, ctx),
+            Self::AsPattern(t) => t.seat_target(table, ctx),
+            Self::Yield(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -25262,41 +24248,41 @@ impl ::sittir_core::prepare::SeatTarget for InterpolationExpressionTransportSlot
 }
 
 impl ::sittir_core::prepare::SeatTarget for ArgumentListElementsItemTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ComparisonOperator(t) => t.seat_target(table),
-            Self::NotOperator(t) => t.seat_target(table),
-            Self::BooleanOperator(t) => t.seat_target(table),
-            Self::Lambda(t) => t.seat_target(table),
-            Self::Await(t) => t.seat_target(table),
-            Self::BinaryOperator(t) => t.seat_target(table),
-            Self::String(t) => t.seat_target(table),
-            Self::ConcatenatedString(t) => t.seat_target(table),
+            Self::ComparisonOperator(t) => t.seat_target(table, ctx),
+            Self::NotOperator(t) => t.seat_target(table, ctx),
+            Self::BooleanOperator(t) => t.seat_target(table, ctx),
+            Self::Lambda(t) => t.seat_target(table, ctx),
+            Self::Await(t) => t.seat_target(table, ctx),
+            Self::BinaryOperator(t) => t.seat_target(table, ctx),
+            Self::String(t) => t.seat_target(table, ctx),
+            Self::ConcatenatedString(t) => t.seat_target(table, ctx),
             Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
             Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(72)).map(|site| (edges, site)),
-            Self::UnaryOperator(t) => t.seat_target(table),
-            Self::Attribute(t) => t.seat_target(table),
-            Self::Subscript(t) => t.seat_target(table),
-            Self::Call(t) => t.seat_target(table),
-            Self::List(t) => t.seat_target(table),
-            Self::ListComprehension(t) => t.seat_target(table),
-            Self::Dictionary(t) => t.seat_target(table),
-            Self::DictionaryComprehension(t) => t.seat_target(table),
-            Self::Set(t) => t.seat_target(table),
-            Self::SetComprehension(t) => t.seat_target(table),
-            Self::Tuple(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::GeneratorExpression(t) => t.seat_target(table),
+            Self::UnaryOperator(t) => t.seat_target(table, ctx),
+            Self::Attribute(t) => t.seat_target(table, ctx),
+            Self::Subscript(t) => t.seat_target(table, ctx),
+            Self::Call(t) => t.seat_target(table, ctx),
+            Self::List(t) => t.seat_target(table, ctx),
+            Self::ListComprehension(t) => t.seat_target(table, ctx),
+            Self::Dictionary(t) => t.seat_target(table, ctx),
+            Self::DictionaryComprehension(t) => t.seat_target(table, ctx),
+            Self::Set(t) => t.seat_target(table, ctx),
+            Self::SetComprehension(t) => t.seat_target(table, ctx),
+            Self::Tuple(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::GeneratorExpression(t) => t.seat_target(table, ctx),
             Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(64)).map(|site| (edges, site)),
-            Self::ListSplatPattern(t) => t.seat_target(table),
-            Self::ConditionalExpression(t) => t.seat_target(table),
-            Self::NamedExpression(t) => t.seat_target(table),
-            Self::AsPattern(t) => t.seat_target(table),
-            Self::ListSplat(t) => t.seat_target(table),
-            Self::DictionarySplat(t) => t.seat_target(table),
-            Self::ParenthesizedListSplat(t) => t.seat_target(table),
-            Self::KeywordArgument(t) => t.seat_target(table),
+            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
+            Self::ConditionalExpression(t) => t.seat_target(table, ctx),
+            Self::NamedExpression(t) => t.seat_target(table, ctx),
+            Self::AsPattern(t) => t.seat_target(table, ctx),
+            Self::ListSplat(t) => t.seat_target(table, ctx),
+            Self::DictionarySplat(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedListSplat(t) => t.seat_target(table, ctx),
+            Self::KeywordArgument(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -25304,10 +24290,10 @@ impl ::sittir_core::prepare::SeatTarget for ArgumentListElementsItemTransportSlo
 }
 
 impl ::sittir_core::prepare::SeatTarget for DictPatternElementsItemTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::KeyValuePattern(t) => t.seat_target(table),
-            Self::SplatPattern(t) => t.seat_target(table),
+            Self::KeyValuePattern(t) => t.seat_target(table, ctx),
+            Self::SplatPattern(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -25315,38 +24301,38 @@ impl ::sittir_core::prepare::SeatTarget for DictPatternElementsItemTransportSlot
 }
 
 impl ::sittir_core::prepare::SeatTarget for SubscriptsSubscriptTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ComparisonOperator(t) => t.seat_target(table),
-            Self::NotOperator(t) => t.seat_target(table),
-            Self::BooleanOperator(t) => t.seat_target(table),
-            Self::Lambda(t) => t.seat_target(table),
-            Self::Await(t) => t.seat_target(table),
-            Self::BinaryOperator(t) => t.seat_target(table),
-            Self::String(t) => t.seat_target(table),
-            Self::ConcatenatedString(t) => t.seat_target(table),
+            Self::ComparisonOperator(t) => t.seat_target(table, ctx),
+            Self::NotOperator(t) => t.seat_target(table, ctx),
+            Self::BooleanOperator(t) => t.seat_target(table, ctx),
+            Self::Lambda(t) => t.seat_target(table, ctx),
+            Self::Await(t) => t.seat_target(table, ctx),
+            Self::BinaryOperator(t) => t.seat_target(table, ctx),
+            Self::String(t) => t.seat_target(table, ctx),
+            Self::ConcatenatedString(t) => t.seat_target(table, ctx),
             Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
             Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(72)).map(|site| (edges, site)),
-            Self::UnaryOperator(t) => t.seat_target(table),
-            Self::Attribute(t) => t.seat_target(table),
-            Self::Subscript(t) => t.seat_target(table),
-            Self::Call(t) => t.seat_target(table),
-            Self::List(t) => t.seat_target(table),
-            Self::ListComprehension(t) => t.seat_target(table),
-            Self::Dictionary(t) => t.seat_target(table),
-            Self::DictionaryComprehension(t) => t.seat_target(table),
-            Self::Set(t) => t.seat_target(table),
-            Self::SetComprehension(t) => t.seat_target(table),
-            Self::Tuple(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::GeneratorExpression(t) => t.seat_target(table),
+            Self::UnaryOperator(t) => t.seat_target(table, ctx),
+            Self::Attribute(t) => t.seat_target(table, ctx),
+            Self::Subscript(t) => t.seat_target(table, ctx),
+            Self::Call(t) => t.seat_target(table, ctx),
+            Self::List(t) => t.seat_target(table, ctx),
+            Self::ListComprehension(t) => t.seat_target(table, ctx),
+            Self::Dictionary(t) => t.seat_target(table, ctx),
+            Self::DictionaryComprehension(t) => t.seat_target(table, ctx),
+            Self::Set(t) => t.seat_target(table, ctx),
+            Self::SetComprehension(t) => t.seat_target(table, ctx),
+            Self::Tuple(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::GeneratorExpression(t) => t.seat_target(table, ctx),
             Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(64)).map(|site| (edges, site)),
-            Self::ListSplatPattern(t) => t.seat_target(table),
-            Self::ConditionalExpression(t) => t.seat_target(table),
-            Self::NamedExpression(t) => t.seat_target(table),
-            Self::AsPattern(t) => t.seat_target(table),
-            Self::Slice(t) => t.seat_target(table),
+            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
+            Self::ConditionalExpression(t) => t.seat_target(table, ctx),
+            Self::NamedExpression(t) => t.seat_target(table, ctx),
+            Self::AsPattern(t) => t.seat_target(table, ctx),
+            Self::Slice(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -25354,10 +24340,10 @@ impl ::sittir_core::prepare::SeatTarget for SubscriptsSubscriptTransportSlot {
 }
 
 impl ::sittir_core::prepare::SeatTarget for DictionaryElementsItemTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::Pair(t) => t.seat_target(table),
-            Self::DictionarySplat(t) => t.seat_target(table),
+            Self::Pair(t) => t.seat_target(table, ctx),
+            Self::DictionarySplat(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -25365,10 +24351,10 @@ impl ::sittir_core::prepare::SeatTarget for DictionaryElementsItemTransportSlot 
 }
 
 impl ::sittir_core::prepare::SeatTarget for ComprehensionClausesContentTransportSlot {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::ForInClause(t) => t.seat_target(table),
-            Self::IfClause(t) => t.seat_target(table),
+            Self::ForInClause(t) => t.seat_target(table, ctx),
+            Self::IfClause(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -25376,112 +24362,112 @@ impl ::sittir_core::prepare::SeatTarget for ComprehensionClausesContentTransport
 }
 
 impl ::sittir_core::prepare::SeatTarget for AnyTransport {
-    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
-            Self::SimpleStatements(t) => t.seat_target(table),
-            Self::ImportStatement(t) => t.seat_target(table),
-            Self::FutureImportStatement(t) => t.seat_target(table),
-            Self::ImportFromStatement(t) => t.seat_target(table),
-            Self::AliasedImport(t) => t.seat_target(table),
-            Self::PrintStatement(t) => t.seat_target(table),
-            Self::AssertStatement(t) => t.seat_target(table),
-            Self::ExpressionStatement(t) => t.seat_target(table),
-            Self::NamedExpression(t) => t.seat_target(table),
-            Self::ReturnStatement(t) => t.seat_target(table),
-            Self::DeleteStatement(t) => t.seat_target(table),
-            Self::RaiseStatement(t) => t.seat_target(table),
+            Self::SimpleStatements(t) => t.seat_target(table, ctx),
+            Self::ImportStatement(t) => t.seat_target(table, ctx),
+            Self::FutureImportStatement(t) => t.seat_target(table, ctx),
+            Self::ImportFromStatement(t) => t.seat_target(table, ctx),
+            Self::AliasedImport(t) => t.seat_target(table, ctx),
+            Self::PrintStatement(t) => t.seat_target(table, ctx),
+            Self::AssertStatement(t) => t.seat_target(table, ctx),
+            Self::ExpressionStatement(t) => t.seat_target(table, ctx),
+            Self::NamedExpression(t) => t.seat_target(table, ctx),
+            Self::ReturnStatement(t) => t.seat_target(table, ctx),
+            Self::DeleteStatement(t) => t.seat_target(table, ctx),
+            Self::RaiseStatement(t) => t.seat_target(table, ctx),
             Self::PassStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(147)).map(|site| (edges, site)),
             Self::BreakStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(148)).map(|site| (edges, site)),
             Self::ContinueStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(149)).map(|site| (edges, site)),
-            Self::IfStatement(t) => t.seat_target(table),
-            Self::ElifClause(t) => t.seat_target(table),
-            Self::ElseClause(t) => t.seat_target(table),
-            Self::MatchStatement(t) => t.seat_target(table),
-            Self::CaseClause(t) => t.seat_target(table),
-            Self::ForStatement(t) => t.seat_target(table),
-            Self::WhileStatement(t) => t.seat_target(table),
-            Self::TryStatement(t) => t.seat_target(table),
-            Self::ExceptClause(t) => t.seat_target(table),
-            Self::WithStatement(t) => t.seat_target(table),
-            Self::FunctionDefinition(t) => t.seat_target(table),
-            Self::ListSplat(t) => t.seat_target(table),
-            Self::DictionarySplat(t) => t.seat_target(table),
-            Self::GlobalStatement(t) => t.seat_target(table),
-            Self::NonlocalStatement(t) => t.seat_target(table),
-            Self::ExecStatement(t) => t.seat_target(table),
-            Self::TypeAliasStatement(t) => t.seat_target(table),
-            Self::ClassDefinition(t) => t.seat_target(table),
-            Self::ParenthesizedListSplat(t) => t.seat_target(table),
-            Self::DecoratedDefinition(t) => t.seat_target(table),
-            Self::Decorator(t) => t.seat_target(table),
-            Self::CasePattern(t) => t.seat_target(table),
-            Self::CaseAsPattern(t) => t.seat_target(table),
-            Self::DictPattern(t) => t.seat_target(table),
-            Self::KeyValuePattern(t) => t.seat_target(table),
-            Self::KeywordPattern(t) => t.seat_target(table),
-            Self::SplatPattern(t) => t.seat_target(table),
-            Self::ClassPattern(t) => t.seat_target(table),
-            Self::ComplexPattern(t) => t.seat_target(table),
-            Self::TuplePattern(t) => t.seat_target(table),
-            Self::ListPattern(t) => t.seat_target(table),
-            Self::DefaultParameter(t) => t.seat_target(table),
-            Self::TypedDefaultParameter(t) => t.seat_target(table),
-            Self::ListSplatPattern(t) => t.seat_target(table),
-            Self::DictionarySplatPattern(t) => t.seat_target(table),
-            Self::AsPattern(t) => t.seat_target(table),
-            Self::NotOperator(t) => t.seat_target(table),
-            Self::BooleanOperator(t) => t.seat_target(table),
-            Self::BinaryOperator(t) => t.seat_target(table),
-            Self::UnaryOperator(t) => t.seat_target(table),
-            Self::ComparisonOperator(t) => t.seat_target(table),
-            Self::Lambda(t) => t.seat_target(table),
-            Self::LambdaWithinForInClause(t) => t.seat_target(table),
-            Self::AugmentedAssignment(t) => t.seat_target(table),
-            Self::Yield(t) => t.seat_target(table),
-            Self::Attribute(t) => t.seat_target(table),
-            Self::Subscript(t) => t.seat_target(table),
-            Self::Slice(t) => t.seat_target(table),
+            Self::IfStatement(t) => t.seat_target(table, ctx),
+            Self::ElifClause(t) => t.seat_target(table, ctx),
+            Self::ElseClause(t) => t.seat_target(table, ctx),
+            Self::MatchStatement(t) => t.seat_target(table, ctx),
+            Self::CaseClause(t) => t.seat_target(table, ctx),
+            Self::ForStatement(t) => t.seat_target(table, ctx),
+            Self::WhileStatement(t) => t.seat_target(table, ctx),
+            Self::TryStatement(t) => t.seat_target(table, ctx),
+            Self::ExceptClause(t) => t.seat_target(table, ctx),
+            Self::WithStatement(t) => t.seat_target(table, ctx),
+            Self::FunctionDefinition(t) => t.seat_target(table, ctx),
+            Self::ListSplat(t) => t.seat_target(table, ctx),
+            Self::DictionarySplat(t) => t.seat_target(table, ctx),
+            Self::GlobalStatement(t) => t.seat_target(table, ctx),
+            Self::NonlocalStatement(t) => t.seat_target(table, ctx),
+            Self::ExecStatement(t) => t.seat_target(table, ctx),
+            Self::TypeAliasStatement(t) => t.seat_target(table, ctx),
+            Self::ClassDefinition(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedListSplat(t) => t.seat_target(table, ctx),
+            Self::DecoratedDefinition(t) => t.seat_target(table, ctx),
+            Self::Decorator(t) => t.seat_target(table, ctx),
+            Self::CasePattern(t) => t.seat_target(table, ctx),
+            Self::CaseAsPattern(t) => t.seat_target(table, ctx),
+            Self::DictPattern(t) => t.seat_target(table, ctx),
+            Self::KeyValuePattern(t) => t.seat_target(table, ctx),
+            Self::KeywordPattern(t) => t.seat_target(table, ctx),
+            Self::SplatPattern(t) => t.seat_target(table, ctx),
+            Self::ClassPattern(t) => t.seat_target(table, ctx),
+            Self::ComplexPattern(t) => t.seat_target(table, ctx),
+            Self::TuplePattern(t) => t.seat_target(table, ctx),
+            Self::ListPattern(t) => t.seat_target(table, ctx),
+            Self::DefaultParameter(t) => t.seat_target(table, ctx),
+            Self::TypedDefaultParameter(t) => t.seat_target(table, ctx),
+            Self::ListSplatPattern(t) => t.seat_target(table, ctx),
+            Self::DictionarySplatPattern(t) => t.seat_target(table, ctx),
+            Self::AsPattern(t) => t.seat_target(table, ctx),
+            Self::NotOperator(t) => t.seat_target(table, ctx),
+            Self::BooleanOperator(t) => t.seat_target(table, ctx),
+            Self::BinaryOperator(t) => t.seat_target(table, ctx),
+            Self::UnaryOperator(t) => t.seat_target(table, ctx),
+            Self::ComparisonOperator(t) => t.seat_target(table, ctx),
+            Self::Lambda(t) => t.seat_target(table, ctx),
+            Self::LambdaWithinForInClause(t) => t.seat_target(table, ctx),
+            Self::AugmentedAssignment(t) => t.seat_target(table, ctx),
+            Self::Yield(t) => t.seat_target(table, ctx),
+            Self::Attribute(t) => t.seat_target(table, ctx),
+            Self::Subscript(t) => t.seat_target(table, ctx),
+            Self::Slice(t) => t.seat_target(table, ctx),
             Self::Ellipsis(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(64)).map(|site| (edges, site)),
-            Self::Call(t) => t.seat_target(table),
-            Self::TypedParameter(t) => t.seat_target(table),
-            Self::Type(t) => t.seat_target(table),
-            Self::SplatType(t) => t.seat_target(table),
-            Self::GenericType(t) => t.seat_target(table),
-            Self::UnionType(t) => t.seat_target(table),
-            Self::ConstrainedType(t) => t.seat_target(table),
-            Self::MemberType(t) => t.seat_target(table),
-            Self::KeywordArgument(t) => t.seat_target(table),
-            Self::List(t) => t.seat_target(table),
-            Self::Set(t) => t.seat_target(table),
-            Self::Tuple(t) => t.seat_target(table),
-            Self::Dictionary(t) => t.seat_target(table),
-            Self::Pair(t) => t.seat_target(table),
-            Self::ListComprehension(t) => t.seat_target(table),
-            Self::DictionaryComprehension(t) => t.seat_target(table),
-            Self::SetComprehension(t) => t.seat_target(table),
-            Self::GeneratorExpression(t) => t.seat_target(table),
-            Self::ParenthesizedExpression(t) => t.seat_target(table),
-            Self::ForInClause(t) => t.seat_target(table),
-            Self::IfClause(t) => t.seat_target(table),
-            Self::ConditionalExpression(t) => t.seat_target(table),
-            Self::ConcatenatedString(t) => t.seat_target(table),
-            Self::String(t) => t.seat_target(table),
+            Self::Call(t) => t.seat_target(table, ctx),
+            Self::TypedParameter(t) => t.seat_target(table, ctx),
+            Self::Type(t) => t.seat_target(table, ctx),
+            Self::SplatType(t) => t.seat_target(table, ctx),
+            Self::GenericType(t) => t.seat_target(table, ctx),
+            Self::UnionType(t) => t.seat_target(table, ctx),
+            Self::ConstrainedType(t) => t.seat_target(table, ctx),
+            Self::MemberType(t) => t.seat_target(table, ctx),
+            Self::KeywordArgument(t) => t.seat_target(table, ctx),
+            Self::List(t) => t.seat_target(table, ctx),
+            Self::Set(t) => t.seat_target(table, ctx),
+            Self::Tuple(t) => t.seat_target(table, ctx),
+            Self::Dictionary(t) => t.seat_target(table, ctx),
+            Self::Pair(t) => t.seat_target(table, ctx),
+            Self::ListComprehension(t) => t.seat_target(table, ctx),
+            Self::DictionaryComprehension(t) => t.seat_target(table, ctx),
+            Self::SetComprehension(t) => t.seat_target(table, ctx),
+            Self::GeneratorExpression(t) => t.seat_target(table, ctx),
+            Self::ParenthesizedExpression(t) => t.seat_target(table, ctx),
+            Self::ForInClause(t) => t.seat_target(table, ctx),
+            Self::IfClause(t) => t.seat_target(table, ctx),
+            Self::ConditionalExpression(t) => t.seat_target(table, ctx),
+            Self::ConcatenatedString(t) => t.seat_target(table, ctx),
+            Self::String(t) => t.seat_target(table, ctx),
             Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
             Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(72)).map(|site| (edges, site)),
-            Self::Await(t) => t.seat_target(table),
+            Self::Await(t) => t.seat_target(table, ctx),
             Self::PositionalSeparator(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(257)).map(|site| (edges, site)),
             Self::KeywordSeparator(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(258)).map(|site| (edges, site)),
-            Self::CaseTuplePattern(t) => t.seat_target(table),
-            Self::CaseListPattern(t) => t.seat_target(table),
-            Self::PrintStatementChevron(t) => t.seat_target(table),
-            Self::PrintStatementPlain(t) => t.seat_target(table),
+            Self::CaseTuplePattern(t) => t.seat_target(table, ctx),
+            Self::CaseListPattern(t) => t.seat_target(table, ctx),
+            Self::PrintStatementChevron(t) => t.seat_target(table, ctx),
+            Self::PrintStatementPlain(t) => t.seat_target(table, ctx),
             Self::WildcardPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(279)).map(|site| (edges, site)),
-            Self::SimplePatternNegative(t) => t.seat_target(table),
-            Self::AssignmentEq(t) => t.seat_target(table),
-            Self::AssignmentType(t) => t.seat_target(table),
-            Self::AssignmentTyped(t) => t.seat_target(table),
-            Self::ComparisonOperatorComparator(t) => t.seat_target(table),
+            Self::SimplePatternNegative(t) => t.seat_target(table, ctx),
+            Self::AssignmentEq(t) => t.seat_target(table, ctx),
+            Self::AssignmentType(t) => t.seat_target(table, ctx),
+            Self::AssignmentTyped(t) => t.seat_target(table, ctx),
+            Self::ComparisonOperatorComparator(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -25495,6 +24481,7 @@ fn render_module(node: &ModuleTransport, w: &mut dyn ::sittir_core::render::Rend
         items: &node.statements,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.statements_separator_space.unwrap_or(0),
         leading: false,
@@ -25579,6 +24566,7 @@ fn render_import_list(node: &ImportListTransport, w: &mut dyn ::sittir_core::ren
         items: &node.name,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.name_separator_space_before.unwrap_or(0),
         after: node.name_separator_space_after.unwrap_or(0),
         leading: false,
@@ -25625,6 +24613,7 @@ fn render_assert_statement(node: &AssertStatementTransport, w: &mut dyn ::sittir
         items: &node.expression,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.expression_separator_space_before.unwrap_or(0),
         after: node.expression_separator_space_after.unwrap_or(0),
         leading: false,
@@ -25657,6 +24646,11 @@ fn render_named_expression(node: &NamedExpressionTransport, w: &mut dyn ::sittir
     w.site_at(options::SITE_NAMED_EXPRESSION_COLON_EQ_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", 0, w, |w| value.render(w))?;
     w.edge(::sittir_core::types::KindId(142), ::sittir_core::options::Side::After, node.layout.edges().after);
+    Ok(())
+}
+
+fn render_named_expression_lhs(node: &NamedExpressionLhsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    if let Some(v) = node.identifier.transport_or_write(w)? { render_identifier(v, w)?; }
     Ok(())
 }
 
@@ -25702,6 +24696,7 @@ fn render_if_statement(node: &IfStatementTransport, w: &mut dyn ::sittir_core::r
         items: &node.alternative,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.alternative_separator_space.unwrap_or(0),
         leading: false,
@@ -25843,6 +24838,7 @@ fn render_try_statement(node: &TryStatementTransport, w: &mut dyn ::sittir_core:
         items: &node.except_clauses,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.except_clauses_separator_space.unwrap_or(0),
         leading: false,
@@ -25867,9 +24863,9 @@ fn render_try_statement(node: &TryStatementTransport, w: &mut dyn ::sittir_core:
 }
 
 fn render_except_clause(node: &ExceptClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let body = &node.body;
     let exception = View::new(&node.exception, "{}");
     let group = View::new(&node.group, "*");
-    let suite = &node.suite;
     w.edge(::sittir_core::types::KindId(159), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("except")?;
     w.site_at(options::SITE_EXCEPT_CLAUSE_EXCEPT_KEYWORD_AFTER);
@@ -25882,7 +24878,7 @@ fn render_except_clause(node: &ExceptClauseTransport, w: &mut dyn ::sittir_core:
     w.site_at(options::SITE_EXCEPT_CLAUSE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_EXCEPT_CLAUSE_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_suite", 0, w, |w| suite.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
     w.edge(::sittir_core::types::KindId(159), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -26003,6 +24999,7 @@ fn render_global_statement(node: &GlobalStatementTransport, w: &mut dyn ::sittir
         items: &node.names,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.names_separator_space_before.unwrap_or(0),
         after: node.names_separator_space_after.unwrap_or(0),
         leading: false,
@@ -26024,6 +25021,7 @@ fn render_nonlocal_statement(node: &NonlocalStatementTransport, w: &mut dyn ::si
         items: &node.names,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.names_separator_space_before.unwrap_or(0),
         after: node.names_separator_space_after.unwrap_or(0),
         leading: false,
@@ -26046,6 +25044,7 @@ fn render_exec_statement(node: &ExecStatementTransport, w: &mut dyn ::sittir_cor
         items: &node.in_clause,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.in_clause_separator_space_before.unwrap_or(0),
         after: node.in_clause_separator_space_after.unwrap_or(0),
         leading: false,
@@ -26144,6 +25143,7 @@ fn render_decorated_definition(node: &DecoratedDefinitionTransport, w: &mut dyn 
         items: &node.decorator,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.decorator_separator_space.unwrap_or(0),
         leading: false,
@@ -26176,6 +25176,7 @@ fn render_block(node: &BlockTransport, w: &mut dyn ::sittir_core::render::Render
         items: &node.statements,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.statements_separator_space.unwrap_or(0),
         leading: false,
@@ -26199,6 +25200,7 @@ fn render_expression_list(node: &ExpressionListTransport, w: &mut dyn ::sittir_c
         items: &node.item,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
@@ -26216,6 +25218,7 @@ fn render_dotted_name(node: &DottedNameTransport, w: &mut dyn ::sittir_core::ren
         items: &node.names,
         template: "{}",
         token: ".",
+        separators: None,
         before: node.names_separator_space_before.unwrap_or(0),
         after: node.names_separator_space_after.unwrap_or(0),
         leading: false,
@@ -26258,6 +25261,7 @@ fn render_union_pattern(node: &UnionPatternTransport, w: &mut dyn ::sittir_core:
         items: &node.patterns,
         template: "{}",
         token: "|",
+        separators: None,
         before: node.patterns_separator_space_before.unwrap_or(0),
         after: node.patterns_separator_space_after.unwrap_or(0),
         leading: false,
@@ -26359,6 +25363,7 @@ fn render_parameters_elements(node: &ParametersElementsTransport, w: &mut dyn ::
         items: &node.item,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
@@ -26376,6 +25381,7 @@ fn render_patterns(node: &PatternsTransport, w: &mut dyn ::sittir_core::render::
         items: &node.item,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
@@ -26532,6 +25538,7 @@ fn render_comparison_operator(node: &ComparisonOperatorTransport, w: &mut dyn ::
         items: &node.comparators,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.comparators_separator_space.unwrap_or(0),
         leading: false,
@@ -26597,6 +25604,7 @@ fn render_pattern_list(node: &PatternListTransport, w: &mut dyn ::sittir_core::r
         items: &node.item,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
@@ -26830,12 +25838,12 @@ fn render_pair(node: &PairTransport, w: &mut dyn ::sittir_core::render::RenderSi
 
 fn render_list_comprehension(node: &ListComprehensionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
-    let comprehension_clauses = &node.comprehension_clauses;
+    let clauses = &node.clauses;
     w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_LIST_COMPREHENSION_LBRACK_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_comprehension_clauses", 0, w, |w| comprehension_clauses.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_clauses", 0, w, |w| clauses.render(w))?;
     w.site_at(options::SITE_LIST_COMPREHENSION_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(237), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -26844,12 +25852,12 @@ fn render_list_comprehension(node: &ListComprehensionTransport, w: &mut dyn ::si
 
 fn render_dictionary_comprehension(node: &DictionaryComprehensionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
-    let comprehension_clauses = &node.comprehension_clauses;
+    let clauses = &node.clauses;
     w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_DICTIONARY_COMPREHENSION_LBRACE_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_comprehension_clauses", 0, w, |w| comprehension_clauses.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_clauses", 0, w, |w| clauses.render(w))?;
     w.site_at(options::SITE_DICTIONARY_COMPREHENSION_RBRACE_BEFORE);
     w.text("}")?;
     w.edge(::sittir_core::types::KindId(238), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -26858,12 +25866,12 @@ fn render_dictionary_comprehension(node: &DictionaryComprehensionTransport, w: &
 
 fn render_set_comprehension(node: &SetComprehensionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
-    let comprehension_clauses = &node.comprehension_clauses;
+    let clauses = &node.clauses;
     w.edge(::sittir_core::types::KindId(239), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("{")?;
     w.site_at(options::SITE_SET_COMPREHENSION_LBRACE_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_comprehension_clauses", 0, w, |w| comprehension_clauses.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_clauses", 0, w, |w| clauses.render(w))?;
     w.site_at(options::SITE_SET_COMPREHENSION_RBRACE_BEFORE);
     w.text("}")?;
     w.edge(::sittir_core::types::KindId(239), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -26872,12 +25880,12 @@ fn render_set_comprehension(node: &SetComprehensionTransport, w: &mut dyn ::sitt
 
 fn render_generator_expression(node: &GeneratorExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
-    let comprehension_clauses = &node.comprehension_clauses;
+    let clauses = &node.clauses;
     w.edge(::sittir_core::types::KindId(240), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_GENERATOR_EXPRESSION_LPAREN_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_comprehension_clauses", 0, w, |w| comprehension_clauses.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_clauses", 0, w, |w| clauses.render(w))?;
     w.site_at(options::SITE_GENERATOR_EXPRESSION_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(240), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -26901,6 +25909,7 @@ fn render_collection_elements(node: &CollectionElementsTransport, w: &mut dyn ::
         items: &node.item,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
@@ -26921,6 +25930,7 @@ fn render_for_in_clause(node: &ForInClauseTransport, w: &mut dyn ::sittir_core::
         items: &node.right,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.right_separator_space_before.unwrap_or(0),
         after: node.right_separator_space_after.unwrap_or(0),
         leading: false,
@@ -26983,6 +25993,7 @@ fn render_concatenated_string(node: &ConcatenatedStringTransport, w: &mut dyn ::
         items: &node.string,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.string_separator_space.unwrap_or(0),
         leading: false,
@@ -27002,6 +26013,7 @@ fn render_string(node: &StringTransport, w: &mut dyn ::sittir_core::render::Rend
         items: &node.content,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: 0,
         leading: false,
@@ -27021,19 +26033,20 @@ fn render_string(node: &StringTransport, w: &mut dyn ::sittir_core::render::Rend
 }
 
 fn render_string_content(node: &StringContentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = ListView {
-        items: &node.content,
+    let elements = ListView {
+        items: &node.elements,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: 0,
         leading: false,
         trailing: false,
         head: None,
         tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_content"),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_elements"),
     };
-    content.render(w)?;
+    elements.render(w)?;
     Ok(())
 }
 
@@ -27064,6 +26077,7 @@ fn render_format_specifier(node: &FormatSpecifierTransport, w: &mut dyn ::sittir
         items: &node.elements,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: 0,
         leading: false,
@@ -27111,6 +26125,7 @@ fn render_simple_statements_elements(node: &SimpleStatementsElementsTransport, w
         items: &node.item,
         template: "{}",
         token: ";",
+        separators: None,
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
@@ -27128,6 +26143,7 @@ fn render_subjects(node: &SubjectsTransport, w: &mut dyn ::sittir_core::render::
         items: &node.subject,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.subject_separator_space_before.unwrap_or(0),
         after: node.subject_separator_space_after.unwrap_or(0),
         leading: false,
@@ -27145,6 +26161,7 @@ fn render_case_patterns(node: &CasePatternsTransport, w: &mut dyn ::sittir_core:
         items: &node.item,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
@@ -27162,6 +26179,7 @@ fn render_with_clause_with_items(node: &WithClauseWithItemsTransport, w: &mut dy
         items: &node.item,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
@@ -27179,6 +26197,7 @@ fn render_types(node: &TypesTransport, w: &mut dyn ::sittir_core::render::Render
         items: &node.item,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
@@ -27196,6 +26215,7 @@ fn render_argument_list_elements(node: &ArgumentListElementsTransport, w: &mut d
         items: &node.item,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
@@ -27213,6 +26233,7 @@ fn render_list_pattern_case_patterns(node: &ListPatternCasePatternsTransport, w:
         items: &node.item,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
@@ -27230,6 +26251,7 @@ fn render_dict_pattern_elements(node: &DictPatternElementsTransport, w: &mut dyn
         items: &node.item,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
@@ -27247,6 +26269,7 @@ fn render_subscripts(node: &SubscriptsTransport, w: &mut dyn ::sittir_core::rend
         items: &node.subscript,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.subscript_separator_space_before.unwrap_or(0),
         after: node.subscript_separator_space_after.unwrap_or(0),
         leading: false,
@@ -27264,6 +26287,7 @@ fn render_dictionary_elements(node: &DictionaryElementsTransport, w: &mut dyn ::
         items: &node.item,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
@@ -27296,6 +26320,7 @@ fn render_tuple_pattern_elements(node: &TuplePatternElementsTransport, w: &mut d
         items: &node.item,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
@@ -27313,6 +26338,7 @@ fn render_tuple_elements(node: &TupleElementsTransport, w: &mut dyn ::sittir_cor
         items: &node.item,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
@@ -27341,12 +26367,12 @@ fn render_except_clause_exception_as(node: &ExceptClauseExceptionAsTransport, w:
 }
 
 fn render_case_tuple_pattern(node: &CaseTuplePatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let list_pattern_case_patterns = View::new(&node.list_pattern_case_patterns, "{}");
+    let elements = View::new(&node.elements, "{}");
     w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("(")?;
     w.site_at(options::SITE_CASE_TUPLE_PATTERN_LPAREN_AFTER);
     ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_list_pattern_case_patterns", 0, w, |w| list_pattern_case_patterns.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", 0, w, |w| elements.render(w))?;
     w.site_at(options::SITE_CASE_TUPLE_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(273), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -27354,12 +26380,12 @@ fn render_case_tuple_pattern(node: &CaseTuplePatternTransport, w: &mut dyn ::sit
 }
 
 fn render_case_list_pattern(node: &CaseListPatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let list_pattern_case_patterns = View::new(&node.list_pattern_case_patterns, "{}");
+    let elements = View::new(&node.elements, "{}");
     w.edge(::sittir_core::types::KindId(274), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("[")?;
     w.site_at(options::SITE_CASE_LIST_PATTERN_LBRACK_AFTER);
     ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_list_pattern_case_patterns", 0, w, |w| list_pattern_case_patterns.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", 0, w, |w| elements.render(w))?;
     w.site_at(options::SITE_CASE_LIST_PATTERN_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(274), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -27371,6 +26397,7 @@ fn render_print_arguments(node: &PrintArgumentsTransport, w: &mut dyn ::sittir_c
         items: &node.item,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
@@ -27388,6 +26415,7 @@ fn render_print_chevron_arguments(node: &PrintChevronArgumentsTransport, w: &mut
         items: &node.item,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: true,
@@ -27439,6 +26467,7 @@ fn render_comprehension_clauses(node: &ComprehensionClausesTransport, w: &mut dy
         items: &node.content,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.content_separator_space.unwrap_or(0),
         leading: false,
@@ -27646,6 +26675,7 @@ fn render_except_clause_exception_list(node: &ExceptClauseExceptionListTransport
         items: &node.value,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.value_separator_space_before.unwrap_or(0),
         after: node.value_separator_space_after.unwrap_or(0),
         leading: false,
@@ -27713,6 +26743,7 @@ fn render_expression_statement_tuple(node: &ExpressionStatementTupleTransport, w
         items: &node.item,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
@@ -27730,6 +26761,7 @@ fn render_with_clause_bare(node: &WithClauseBareTransport, w: &mut dyn ::sittir_
         items: &node.item,
         template: "{}",
         token: ",",
+        separators: None,
         before: node.item_separator_space_before.unwrap_or(0),
         after: node.item_separator_space_after.unwrap_or(0),
         leading: false,
@@ -27759,6 +26791,7 @@ fn render_match_block_block(node: &MatchBlockBlockTransport, w: &mut dyn ::sitti
         items: &node.alternative,
         template: "{}",
         token: "",
+        separators: None,
         before: 0,
         after: node.alternative_separator_space.unwrap_or(0),
         leading: false,
@@ -27989,30 +27022,6 @@ fn render_assert_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sit
     TransportLayout::render(None, Some(::sittir_core::types::KindId(10)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("assert"))
 }
 
-fn render_print_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(67)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("print"))
-}
-
-fn render_exec_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(38)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("exec"))
-}
-
-fn render_async_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(68)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("async"))
-}
-
-fn render_await_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(69)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("await"))
-}
-
-fn render_type_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(39)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("type"))
-}
-
-fn render_match_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(22)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("match"))
-}
-
 fn render_colon_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(11)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(":="))
 }
@@ -28057,8 +27066,16 @@ fn render_else_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sitti
     TransportLayout::render(None, Some(::sittir_core::types::KindId(21)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("else"))
 }
 
+fn render_match_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(22)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("match"))
+}
+
 fn render_case_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(23)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("case"))
+}
+
+fn render_async_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(68)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("async"))
 }
 
 fn render_for_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -28115,6 +27132,14 @@ fn render_global_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sit
 
 fn render_nonlocal_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(37)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("nonlocal"))
+}
+
+fn render_exec_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(38)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("exec"))
+}
+
+fn render_type_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(39)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("type"))
 }
 
 fn render_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -28269,6 +27294,14 @@ fn render_bslash(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core
     TransportLayout::render(None, Some(::sittir_core::types::KindId(65)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("\\"))
 }
 
+fn render_await_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(69)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("await"))
+}
+
+fn render_print_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(67)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("print"))
+}
+
 fn render_lt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(108)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<"))
 }
@@ -28393,12 +27426,6 @@ fn render_parameter(t: &ParameterTransport, w: &mut dyn ::sittir_core::render::R
 fn render_pattern(t: &PatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         PatternTransport::Identifier(inner) => inner.render(w),
-        PatternTransport::PrintKeyword => render_print_keyword(w),
-        PatternTransport::ExecKeyword => render_exec_keyword(w),
-        PatternTransport::AsyncKeyword => render_async_keyword(w),
-        PatternTransport::AwaitKeyword => render_await_keyword(w),
-        PatternTransport::TypeKeyword => render_type_keyword(w),
-        PatternTransport::MatchKeyword => render_match_keyword(w),
         PatternTransport::Subscript(inner) => inner.render(w),
         PatternTransport::Attribute(inner) => inner.render(w),
         PatternTransport::ListSplatPattern(inner) => inner.render(w),
@@ -28427,12 +27454,6 @@ fn render_primary_expression(t: &PrimaryExpressionTransport, w: &mut dyn ::sitti
         PrimaryExpressionTransport::Await(inner) => inner.render(w),
         PrimaryExpressionTransport::BinaryOperator(inner) => inner.render(w),
         PrimaryExpressionTransport::Identifier(inner) => inner.render(w),
-        PrimaryExpressionTransport::PrintKeyword => render_print_keyword(w),
-        PrimaryExpressionTransport::ExecKeyword => render_exec_keyword(w),
-        PrimaryExpressionTransport::AsyncKeyword => render_async_keyword(w),
-        PrimaryExpressionTransport::AwaitKeyword => render_await_keyword(w),
-        PrimaryExpressionTransport::TypeKeyword => render_type_keyword(w),
-        PrimaryExpressionTransport::MatchKeyword => render_match_keyword(w),
         PrimaryExpressionTransport::String(inner) => inner.render(w),
         PrimaryExpressionTransport::ConcatenatedString(inner) => inner.render(w),
         PrimaryExpressionTransport::Integer(inner) => inner.render(w),
@@ -28500,7 +27521,7 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 /// document.
 pub fn render_transport_dispatch(transport: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {
     let mut s = String::new();
-    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
+    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options).with_recording(ctx.recording);
     let document = ::sittir_core::view::KindTest::kind_in(transport, &w, kind::ROOT_KINDS);
     let mut w = w.with_document(document);
     transport.render(&mut w)?;
@@ -28525,6 +27546,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::AssertStatement(inner) => inner.kind_in(kinds),
             Self::ExpressionStatement(inner) => inner.kind_in(kinds),
             Self::NamedExpression(inner) => inner.kind_in(kinds),
+            Self::NamedExpressionLhs(inner) => inner.kind_in(kinds),
             Self::ReturnStatement(inner) => inner.kind_in(kinds),
             Self::DeleteStatement(inner) => inner.kind_in(kinds),
             Self::RaiseStatement(inner) => inner.kind_in(kinds),
@@ -28715,12 +27737,6 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::Star => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
             Self::GtGt => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
             Self::AssertKeyword => [::sittir_core::types::KindId(10)].iter().any(|k| kinds.contains(k)),
-            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::ColonEq => [::sittir_core::types::KindId(11)].iter().any(|k| kinds.contains(k)),
             Self::ReturnKeyword => [::sittir_core::types::KindId(12)].iter().any(|k| kinds.contains(k)),
             Self::DelKeyword => [::sittir_core::types::KindId(13)].iter().any(|k| kinds.contains(k)),
@@ -28732,7 +27748,9 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::Colon => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
             Self::ElifKeyword => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
             Self::ElseKeyword => [::sittir_core::types::KindId(21)].iter().any(|k| kinds.contains(k)),
+            Self::MatchKeyword => [::sittir_core::types::KindId(22)].iter().any(|k| kinds.contains(k)),
             Self::CaseKeyword => [::sittir_core::types::KindId(23)].iter().any(|k| kinds.contains(k)),
+            Self::AsyncKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
             Self::ForKeyword => [::sittir_core::types::KindId(24)].iter().any(|k| kinds.contains(k)),
             Self::InKeyword => [::sittir_core::types::KindId(25)].iter().any(|k| kinds.contains(k)),
             Self::WhileKeyword => [::sittir_core::types::KindId(26)].iter().any(|k| kinds.contains(k)),
@@ -28747,6 +27765,8 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::StarStar => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
             Self::GlobalKeyword => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
             Self::NonlocalKeyword => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
+            Self::ExecKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
+            Self::TypeKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
             Self::Eq => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
             Self::ClassKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
             Self::Lbrack => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
@@ -28785,6 +27805,8 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::YieldKeyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
             Self::Comma => [::sittir_core::types::KindId(6)].iter().any(|k| kinds.contains(k)),
             Self::Bslash => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
+            Self::AwaitKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
+            Self::PrintKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
             Self::Lt => [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k)),
             Self::LtEq => [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k)),
             Self::EqEq => [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k)),
@@ -28817,6 +27839,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::AssertStatement(t) => t.render(w),
             AnyTransport::ExpressionStatement(t) => t.render(w),
             AnyTransport::NamedExpression(t) => t.render(w),
+            AnyTransport::NamedExpressionLhs(t) => t.render(w),
             AnyTransport::ReturnStatement(t) => t.render(w),
             AnyTransport::DeleteStatement(t) => t.render(w),
             AnyTransport::RaiseStatement(t) => t.render(w),
@@ -29007,12 +28030,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Star => render_star(w),
             AnyTransport::GtGt => render_gt_gt(w),
             AnyTransport::AssertKeyword => render_assert_keyword(w),
-            AnyTransport::PrintKeyword => render_print_keyword(w),
-            AnyTransport::ExecKeyword => render_exec_keyword(w),
-            AnyTransport::AsyncKeyword => render_async_keyword(w),
-            AnyTransport::AwaitKeyword => render_await_keyword(w),
-            AnyTransport::TypeKeyword => render_type_keyword(w),
-            AnyTransport::MatchKeyword => render_match_keyword(w),
             AnyTransport::ColonEq => render_colon_eq(w),
             AnyTransport::ReturnKeyword => render_return_keyword(w),
             AnyTransport::DelKeyword => render_del_keyword(w),
@@ -29024,7 +28041,9 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Colon => render_colon(w),
             AnyTransport::ElifKeyword => render_elif_keyword(w),
             AnyTransport::ElseKeyword => render_else_keyword(w),
+            AnyTransport::MatchKeyword => render_match_keyword(w),
             AnyTransport::CaseKeyword => render_case_keyword(w),
+            AnyTransport::AsyncKeyword => render_async_keyword(w),
             AnyTransport::ForKeyword => render_for_keyword(w),
             AnyTransport::InKeyword => render_in_keyword(w),
             AnyTransport::WhileKeyword => render_while_keyword(w),
@@ -29039,6 +28058,8 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::StarStar => render_star_star(w),
             AnyTransport::GlobalKeyword => render_global_keyword(w),
             AnyTransport::NonlocalKeyword => render_nonlocal_keyword(w),
+            AnyTransport::ExecKeyword => render_exec_keyword(w),
+            AnyTransport::TypeKeyword => render_type_keyword(w),
             AnyTransport::Eq => render_eq(w),
             AnyTransport::ClassKeyword => render_class_keyword(w),
             AnyTransport::Lbrack => render_lbrack(w),
@@ -29077,6 +28098,8 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::YieldKeyword => render_yield_keyword(w),
             AnyTransport::Comma => render_comma(w),
             AnyTransport::Bslash => render_bslash(w),
+            AnyTransport::AwaitKeyword => render_await_keyword(w),
+            AnyTransport::PrintKeyword => render_print_keyword(w),
             AnyTransport::Lt => render_lt(w),
             AnyTransport::LtEq => render_lt_eq(w),
             AnyTransport::EqEq => render_eq_eq(w),
@@ -29224,6 +28247,7 @@ const _: () = assert!(::core::mem::size_of::<MatchBlockTransport>() <= 256, "Mat
 const _: () = assert!(::core::mem::size_of::<MatchStatementTransport>() <= 256, "MatchStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<MemberTypeTransport>() <= 256, "MemberTypeTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<ModuleTransport>() <= 256, "ModuleTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<NamedExpressionLhsTransport>() <= 256, "NamedExpressionLhsTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<NamedExpressionTransport>() <= 256, "NamedExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<NamesTransport>() <= 256, "NamesTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<NonlocalStatementTransport>() <= 256, "NonlocalStatementTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -29290,4 +28314,4 @@ const _: () = assert!(::core::mem::size_of::<WithStatementTransport>() <= 256, "
 const _: () = assert!(::core::mem::size_of::<YieldFromClauseTransport>() <= 256, "YieldFromClauseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<YieldTransport>() <= 256, "YieldTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 
-::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, StatementTransport, SimpleStatementTransport, CompoundStatementTransport, WithClauseTransport, SuiteTransport, ParameterTransport, PatternTransport, ExpressionTransport, PrimaryExpressionTransport, IntegerTransport, FloatTransport, IntegerDecimalTransport, FutureImportStatementContentTransportSlot, ImportFromStatementModuleNameTransportSlot, ImportFromStatementContentTransportSlot, ImportListNameTransportSlot, PrintStatementContentTransportSlot, ExpressionStatementContentTransportSlot, NamedExpressionNameTransportSlot, ReturnStatementExpressionsTransportSlot, IfStatementAlternativeTransportSlot, MatchBlockContentTransportSlot, ForStatementLeftTransportSlot, ExecStatementCodeTransportSlot, ParenthesizedListSplatContentTransportSlot, DecoratedDefinitionDefinitionTransportSlot, CasePatternContentTransportSlot, SimplePatternContentTransportSlot, SplatPatternOperatorTransportSlot, SplatPatternNameTransportSlot, ComplexPatternRealTransportSlot, ComplexPatternOperatorTransportSlot, DefaultParameterNameTransportSlot, ListSplatPatternTargetTransportSlot, BooleanOperatorOperatorTransportSlot, BinaryOperatorOperatorTransportSlot, UnaryOperatorOperatorTransportSlot, LambdaWithinForInClauseBodyTransportSlot, AugmentedAssignmentOperatorTransportSlot, AugmentedAssignmentRightTransportSlot, YieldContentTransportSlot, CallArgumentsTransportSlot, TypedParameterNameTransportSlot, TypeContentTransportSlot, SplatTypeOperatorTransportSlot, GenericTypeNameTransportSlot, ParenthesizedExpressionExpressionTransportSlot, CollectionElementsItemTransportSlot, StringContentTransportSlot, StringContentContentTransportSlot, InterpolationExpressionTransportSlot, FormatSpecifierElementsTransportSlot, ArgumentListElementsItemTransportSlot, DictPatternElementsItemTransportSlot, SubscriptsSubscriptTransportSlot, DictionaryElementsItemTransportSlot, PrintStatementChevronPrintChevronArgumentsTransportSlot, ComprehensionClausesContentTransportSlot, ExceptClauseExceptionContentTransportSlot, ComparisonOperatorComparatorOperatorsTransportSlot, ModuleTransport, SimpleStatementsTransport, ImportStatementTransport, ImportPrefixTransport, RelativeImportTransport, FutureImportStatementTransport, ImportFromStatementTransport, ImportListTransport, AliasedImportTransport, WildcardImportTransport, PrintStatementTransport, ChevronTransport, AssertStatementTransport, ExpressionStatementTransport, NamedExpressionTransport, ReturnStatementTransport, DeleteStatementTransport, RaiseStatementTransport, PassStatementTransport, BreakStatementTransport, ContinueStatementTransport, IfStatementTransport, ElifClauseTransport, ElseClauseTransport, MatchStatementTransport, MatchBlockTransport, CaseClauseTransport, ForStatementTransport, WhileStatementTransport, TryStatementTransport, ExceptClauseTransport, FinallyClauseTransport, WithStatementTransport, WithItemTransport, FunctionDefinitionTransport, ParametersTransport, LambdaParametersTransport, ListSplatTransport, DictionarySplatTransport, GlobalStatementTransport, NonlocalStatementTransport, ExecStatementTransport, TypeAliasStatementTransport, ClassDefinitionTransport, TypeParameterTransport, ParenthesizedListSplatTransport, ArgumentListTransport, DecoratedDefinitionTransport, DecoratorTransport, BlockTransport, ExpressionListTransport, DottedNameTransport, CasePatternTransport, SimplePatternTransport, CaseAsPatternTransport, UnionPatternTransport, DictPatternTransport, KeyValuePatternTransport, KeywordPatternTransport, SplatPatternTransport, ClassPatternTransport, ComplexPatternTransport, ParametersElementsTransport, PatternsTransport, TuplePatternTransport, ListPatternTransport, DefaultParameterTransport, TypedDefaultParameterTransport, ListSplatPatternTransport, DictionarySplatPatternTransport, AsPatternTransport, NotOperatorTransport, BooleanOperatorTransport, BinaryOperatorTransport, UnaryOperatorTransport, ComparisonOperatorTransport, LambdaTransport, LambdaWithinForInClauseTransport, AugmentedAssignmentTransport, PatternListTransport, YieldTransport, AttributeTransport, SubscriptTransport, SliceTransport, EllipsisTransport, CallTransport, TypedParameterTransport, TypeTransport, SplatTypeTransport, GenericTypeTransport, UnionTypeTransport, ConstrainedTypeTransport, MemberTypeTransport, KeywordArgumentTransport, ListTransport, SetTransport, TupleTransport, DictionaryTransport, PairTransport, ListComprehensionTransport, DictionaryComprehensionTransport, SetComprehensionTransport, GeneratorExpressionTransport, ParenthesizedExpressionTransport, CollectionElementsTransport, ForInClauseTransport, IfClauseTransport, ConditionalExpressionTransport, ConcatenatedStringTransport, StringTransport, StringContentTransport, InterpolationTransport, NotEscapeSequenceTransport, FormatSpecifierTransport, TypeConversionTransport, IdentifierTransport, TrueTransport, FalseTransport, NoneTransport, AwaitTransport, CommentTransport, PositionalSeparatorTransport, KeywordSeparatorTransport, SimpleStatementsElementsTransport, SubjectsTransport, CasePatternsTransport, WithClauseWithItemsTransport, TypesTransport, ArgumentListElementsTransport, ListPatternCasePatternsTransport, DictPatternElementsTransport, SubscriptsTransport, DictionaryElementsTransport, SliceGroupTransport, FormatSpecifierTextTransport, TuplePatternElementsTransport, TupleElementsTransport, ExceptClauseExceptionAsTransport, CaseTuplePatternTransport, CaseListPatternTransport, PrintArgumentsTransport, PrintChevronArgumentsTransport, PrintStatementChevronTransport, PrintStatementPlainTransport, WildcardPatternTransport, ParenthesizedImportListTransport, ComprehensionClausesTransport, IntegerHexTransport, IntegerOctalTransport, IntegerBinaryTransport, IntegerDecimalLongTransport, IntegerDecimalImaginaryTransport, IntegerDecimalPlainTransport, FloatPointTransport, FloatLeadingPointTransport, FloatScientificTransport, EscapeSequenceUnicodeFixedTransport, EscapeSequenceUnicodeWideTransport, EscapeSequenceHexTransport, EscapeSequenceOctalTransport, EscapeSequenceLineBreakTransport, EscapeSequenceSimpleTransport, EscapeSequenceNamedTransport, LineContinuationNewlineTransport, LineContinuationNulTransport, SimplePatternNegativeTransport, ExceptClauseExceptionListTransport, ExceptClauseExceptionTransport, AssignmentEqTransport, AssignmentTypeTransport, AssignmentTypedTransport, ExpressionStatementTupleTransport, WithClauseBareTransport, WithClauseParenTransport, MatchBlockBlockTransport, MatchBlockEmptyTransport, SuiteInlineTransport, SuiteBlockTransport, SuiteEmptyTransport, ComparisonOperatorComparatorTransport, YieldFromClauseTransport, StringStartTransport, StringFragmentTransport, EscapeInterpolationTransport, StringEndTransport, IndentTransport, DedentTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, NamesTransport, AsPatternTargetTransport, FormatExpressionTransport, ImportKeywordTransport, DotTransport, FromKeywordTransport, FutureUKeywordTransport, AsKeywordTransport, StarTransport, GtGtTransport, AssertKeywordTransport, PrintKeywordTransport, ExecKeywordTransport, AsyncKeywordTransport, AwaitKeywordTransport, TypeKeywordTransport, MatchKeywordTransport, ColonEqTransport, ReturnKeywordTransport, DelKeywordTransport, RaiseKeywordTransport, PassKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, IfKeywordTransport, ColonTransport, ElifKeywordTransport, ElseKeywordTransport, CaseKeywordTransport, ForKeywordTransport, InKeywordTransport, WhileKeywordTransport, TryKeywordTransport, ExceptKeywordTransport, FinallyKeywordTransport, WithKeywordTransport, DefKeywordTransport, DashGtTransport, LparenTransport, RparenTransport, StarStarTransport, GlobalKeywordTransport, NonlocalKeywordTransport, EqTransport, ClassKeywordTransport, LbrackTransport, RbrackTransport, AtTransport, LbraceTransport, RbraceTransport, UnderscoreTransport, DashTransport, PlusTransport, NotKeywordTransport, AndKeywordTransport, OrKeywordTransport, SlashTransport, PercentTransport, SlashSlashTransport, PipeTransport, AmpTransport, CaretTransport, LtLtTransport, TildeTransport, LambdaKeywordTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, AtEqTransport, SlashSlashEqTransport, PercentEqTransport, StarStarEqTransport, GtGtEqTransport, LtLtEqTransport, AmpEqTransport, CaretEqTransport, PipeEqTransport, YieldKeywordTransport, CommaTransport, BslashTransport, LtTransport, LtEqTransport, EqEqTransport, BangEqTransport, GtEqTransport, GtTransport, LtGtTransport, NotInTransport, IsKeywordTransport, IsNotTransport, TriviaTransport);
+::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, StatementTransport, SimpleStatementTransport, CompoundStatementTransport, WithClauseTransport, SuiteTransport, ParameterTransport, PatternTransport, ExpressionTransport, PrimaryExpressionTransport, IntegerTransport, FloatTransport, IntegerDecimalTransport, FutureImportStatementContentTransportSlot, ImportFromStatementModuleNameTransportSlot, ImportFromStatementContentTransportSlot, ImportListNameTransportSlot, PrintStatementContentTransportSlot, ExpressionStatementContentTransportSlot, ReturnStatementExpressionsTransportSlot, IfStatementAlternativeTransportSlot, MatchBlockContentTransportSlot, ForStatementLeftTransportSlot, ExecStatementCodeTransportSlot, ParenthesizedListSplatContentTransportSlot, DecoratedDefinitionDefinitionTransportSlot, CasePatternContentTransportSlot, SimplePatternContentTransportSlot, SplatPatternOperatorTransportSlot, SplatPatternNameTransportSlot, ComplexPatternRealTransportSlot, ComplexPatternOperatorTransportSlot, DefaultParameterNameTransportSlot, ListSplatPatternTargetTransportSlot, BooleanOperatorOperatorTransportSlot, BinaryOperatorOperatorTransportSlot, UnaryOperatorOperatorTransportSlot, LambdaWithinForInClauseBodyTransportSlot, AugmentedAssignmentOperatorTransportSlot, AugmentedAssignmentRightTransportSlot, YieldContentTransportSlot, CallArgumentsTransportSlot, TypedParameterNameTransportSlot, TypeContentTransportSlot, SplatTypeOperatorTransportSlot, ParenthesizedExpressionExpressionTransportSlot, CollectionElementsItemTransportSlot, StringContentTransportSlot, StringContentElementsTransportSlot, InterpolationExpressionTransportSlot, FormatSpecifierElementsTransportSlot, ArgumentListElementsItemTransportSlot, DictPatternElementsItemTransportSlot, SubscriptsSubscriptTransportSlot, DictionaryElementsItemTransportSlot, PrintStatementChevronPrintChevronArgumentsTransportSlot, ComprehensionClausesContentTransportSlot, ExceptClauseExceptionContentTransportSlot, ComparisonOperatorComparatorOperatorsTransportSlot, ModuleTransport, SimpleStatementsTransport, ImportStatementTransport, ImportPrefixTransport, RelativeImportTransport, FutureImportStatementTransport, ImportFromStatementTransport, ImportListTransport, AliasedImportTransport, WildcardImportTransport, PrintStatementTransport, ChevronTransport, AssertStatementTransport, ExpressionStatementTransport, NamedExpressionTransport, NamedExpressionLhsTransport, ReturnStatementTransport, DeleteStatementTransport, RaiseStatementTransport, PassStatementTransport, BreakStatementTransport, ContinueStatementTransport, IfStatementTransport, ElifClauseTransport, ElseClauseTransport, MatchStatementTransport, MatchBlockTransport, CaseClauseTransport, ForStatementTransport, WhileStatementTransport, TryStatementTransport, ExceptClauseTransport, FinallyClauseTransport, WithStatementTransport, WithItemTransport, FunctionDefinitionTransport, ParametersTransport, LambdaParametersTransport, ListSplatTransport, DictionarySplatTransport, GlobalStatementTransport, NonlocalStatementTransport, ExecStatementTransport, TypeAliasStatementTransport, ClassDefinitionTransport, TypeParameterTransport, ParenthesizedListSplatTransport, ArgumentListTransport, DecoratedDefinitionTransport, DecoratorTransport, BlockTransport, ExpressionListTransport, DottedNameTransport, CasePatternTransport, SimplePatternTransport, CaseAsPatternTransport, UnionPatternTransport, DictPatternTransport, KeyValuePatternTransport, KeywordPatternTransport, SplatPatternTransport, ClassPatternTransport, ComplexPatternTransport, ParametersElementsTransport, PatternsTransport, TuplePatternTransport, ListPatternTransport, DefaultParameterTransport, TypedDefaultParameterTransport, ListSplatPatternTransport, DictionarySplatPatternTransport, AsPatternTransport, NotOperatorTransport, BooleanOperatorTransport, BinaryOperatorTransport, UnaryOperatorTransport, ComparisonOperatorTransport, LambdaTransport, LambdaWithinForInClauseTransport, AugmentedAssignmentTransport, PatternListTransport, YieldTransport, AttributeTransport, SubscriptTransport, SliceTransport, EllipsisTransport, CallTransport, TypedParameterTransport, TypeTransport, SplatTypeTransport, GenericTypeTransport, UnionTypeTransport, ConstrainedTypeTransport, MemberTypeTransport, KeywordArgumentTransport, ListTransport, SetTransport, TupleTransport, DictionaryTransport, PairTransport, ListComprehensionTransport, DictionaryComprehensionTransport, SetComprehensionTransport, GeneratorExpressionTransport, ParenthesizedExpressionTransport, CollectionElementsTransport, ForInClauseTransport, IfClauseTransport, ConditionalExpressionTransport, ConcatenatedStringTransport, StringTransport, StringContentTransport, InterpolationTransport, NotEscapeSequenceTransport, FormatSpecifierTransport, TypeConversionTransport, IdentifierTransport, TrueTransport, FalseTransport, NoneTransport, AwaitTransport, CommentTransport, PositionalSeparatorTransport, KeywordSeparatorTransport, SimpleStatementsElementsTransport, SubjectsTransport, CasePatternsTransport, WithClauseWithItemsTransport, TypesTransport, ArgumentListElementsTransport, ListPatternCasePatternsTransport, DictPatternElementsTransport, SubscriptsTransport, DictionaryElementsTransport, SliceGroupTransport, FormatSpecifierTextTransport, TuplePatternElementsTransport, TupleElementsTransport, ExceptClauseExceptionAsTransport, CaseTuplePatternTransport, CaseListPatternTransport, PrintArgumentsTransport, PrintChevronArgumentsTransport, PrintStatementChevronTransport, PrintStatementPlainTransport, WildcardPatternTransport, ParenthesizedImportListTransport, ComprehensionClausesTransport, IntegerHexTransport, IntegerOctalTransport, IntegerBinaryTransport, IntegerDecimalLongTransport, IntegerDecimalImaginaryTransport, IntegerDecimalPlainTransport, FloatPointTransport, FloatLeadingPointTransport, FloatScientificTransport, EscapeSequenceUnicodeFixedTransport, EscapeSequenceUnicodeWideTransport, EscapeSequenceHexTransport, EscapeSequenceOctalTransport, EscapeSequenceLineBreakTransport, EscapeSequenceSimpleTransport, EscapeSequenceNamedTransport, LineContinuationNewlineTransport, LineContinuationNulTransport, SimplePatternNegativeTransport, ExceptClauseExceptionListTransport, ExceptClauseExceptionTransport, AssignmentEqTransport, AssignmentTypeTransport, AssignmentTypedTransport, ExpressionStatementTupleTransport, WithClauseBareTransport, WithClauseParenTransport, MatchBlockBlockTransport, MatchBlockEmptyTransport, SuiteInlineTransport, SuiteBlockTransport, SuiteEmptyTransport, ComparisonOperatorComparatorTransport, YieldFromClauseTransport, StringStartTransport, StringFragmentTransport, EscapeInterpolationTransport, StringEndTransport, IndentTransport, DedentTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, NamesTransport, AsPatternTargetTransport, FormatExpressionTransport, ImportKeywordTransport, DotTransport, FromKeywordTransport, FutureUKeywordTransport, AsKeywordTransport, StarTransport, GtGtTransport, AssertKeywordTransport, ColonEqTransport, ReturnKeywordTransport, DelKeywordTransport, RaiseKeywordTransport, PassKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, IfKeywordTransport, ColonTransport, ElifKeywordTransport, ElseKeywordTransport, MatchKeywordTransport, CaseKeywordTransport, AsyncKeywordTransport, ForKeywordTransport, InKeywordTransport, WhileKeywordTransport, TryKeywordTransport, ExceptKeywordTransport, FinallyKeywordTransport, WithKeywordTransport, DefKeywordTransport, DashGtTransport, LparenTransport, RparenTransport, StarStarTransport, GlobalKeywordTransport, NonlocalKeywordTransport, ExecKeywordTransport, TypeKeywordTransport, EqTransport, ClassKeywordTransport, LbrackTransport, RbrackTransport, AtTransport, LbraceTransport, RbraceTransport, UnderscoreTransport, DashTransport, PlusTransport, NotKeywordTransport, AndKeywordTransport, OrKeywordTransport, SlashTransport, PercentTransport, SlashSlashTransport, PipeTransport, AmpTransport, CaretTransport, LtLtTransport, TildeTransport, LambdaKeywordTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, AtEqTransport, SlashSlashEqTransport, PercentEqTransport, StarStarEqTransport, GtGtEqTransport, LtLtEqTransport, AmpEqTransport, CaretEqTransport, PipeEqTransport, YieldKeywordTransport, CommaTransport, BslashTransport, AwaitKeywordTransport, PrintKeywordTransport, LtTransport, LtEqTransport, EqEqTransport, BangEqTransport, GtEqTransport, GtTransport, LtGtTransport, NotInTransport, IsKeywordTransport, IsNotTransport, TriviaTransport);

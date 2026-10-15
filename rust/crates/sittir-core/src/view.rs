@@ -253,6 +253,9 @@ impl<S: Slot> Render for View<'_, S> {
 /// The items of a list slot named in a template but absent from the transport.
 pub const NO_ITEMS: &[&str] = &[];
 
+/// The text of a list's separator kind (`ListView::separators`).
+pub type SeparatorText = fn(u16) -> &'static str;
+
 /// A repeated slot with everything its rendering needs. Between items every
 /// separator part is written; a leading flank writes the token and what
 /// follows it, a trailing flank what precedes it and the token, so the
@@ -270,6 +273,11 @@ pub struct ListView<'a, E: Slot> {
     pub before: u16,
     /// The separator token itself; empty for an unseparated repeat.
     pub token: &'a str,
+    /// Each item's own separator by its place, where its source spells
+    /// another than `token` (`layout::slot_tokens`), with the text of each
+    /// separator kind; `None` for a list whose separator is not chosen per
+    /// instance.
+    pub separators: Option<(&'a [Option<u16>], SeparatorText)>,
     /// Whitespace site written after the separator token.
     pub after: u16,
     pub leading: bool,
@@ -313,8 +321,9 @@ impl<E: Slot> Render for ListView<'_, E> {
         }
         for (i, item) in self.items.iter().enumerate() {
             if i > 0 {
+                let own = self.separators.and_then(|(tokens, text)| Some(text(tokens.get(i).copied().flatten()?)));
                 w.site(self.before);
-                w.text(self.token)?;
+                w.text(own.unwrap_or(self.token))?;
                 w.site(self.after);
             }
             match self.units {

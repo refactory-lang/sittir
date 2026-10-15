@@ -1,6 +1,6 @@
 import { type ContainerCapture, type ModelSlot, KNOWN_PREDICATE_OPERATORS, WILDCARD, isFixedText } from './facts.ts';
 import { camel, snake } from './names.ts';
-import { type GrammarInput, type GrammarRoutes, isLayout, modelNode, resolveRoutes, slotFor } from './routes.ts';
+import { type GrammarInput, type GrammarRoutes, isLayout, modelNode, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
 
 interface Resolution {
 	readonly tokens: readonly string[];
@@ -86,6 +86,7 @@ export interface Derivation {
 	readonly unknownPredicates: readonly string[];
 	readonly wildcardContainers: readonly string[];
 	readonly wildcardUnrouted: readonly string[];
+	readonly unenteredForms: readonly string[];
 }
 
 const unmappedToken = (grammar: string, kind: string): string => `<${grammar}:${kind}>`;
@@ -188,9 +189,12 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 	const contentDerived = new Map<string, Set<string>>();
 	const holes = new Map<string, Map<string, string>>();
 	const routed = new Map<string, GrammarRoutes>();
+	const unentered: string[] = [];
 	for (const input of inputs) {
 		collect(input, allvocab, contentDerived, holes);
-		routed.set(input.grammar, resolveRoutes(input));
+		const routes = resolveRoutes(input);
+		routed.set(input.grammar, routes);
+		unentered.push(...unenteredForms(input, routes));
 	}
 	const routesOf = (g: string): GrammarRoutes | undefined => routed.get(g);
 	const vocabOf = (g: string): ReadonlyMap<string, string> => routesOf(g)?.vocabOf ?? new Map<string, string>();
@@ -333,6 +337,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 				const { vocab } = entry;
 				(claimers.get(vocab) ?? claimers.set(vocab, new Set<string>()).get(vocab))?.add(input.grammar);
 				if (entry.claim.kind === WILDCARD || entry.claim.predicates.length > 0) continue;
+				if (entry.claimed !== gk && vocabOf(input.grammar).get(gk) !== vocab) continue;
 				if (entry.pins.length > 0) {
 					const parent = vocabOf(input.grammar).get(gk);
 					if (parent !== undefined && parent !== vocab) {
@@ -489,7 +494,8 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		unmapped,
 		unknownPredicates: unknownPredicates(inputs),
 		wildcardContainers: wildcardContainers(inputs, routesOf),
-		wildcardUnrouted: wildcardUnrouted(inputs, routesOf, members)
+		wildcardUnrouted: wildcardUnrouted(inputs, routesOf, members),
+		unenteredForms: unentered
 	};
 }
 

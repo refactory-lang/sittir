@@ -14,7 +14,7 @@ export namespace Declaration {
 		readonly $kind: 'declaration.interface';
 		readonly body: G['slots']['declaration.interface']['body'] | G['slots']['declaration.interface']['body'][];
 		// rt only
-		readonly extends?: G['clause'];
+		readonly extends?: (G['slots']['clause.extends.type']['types'] | G['slots']['clause.bounds']['bounds'])[];
 		// rt only
 		readonly name: V.Identifier.Type<G>;
 		// rt only
@@ -24,7 +24,7 @@ export namespace Declaration {
 			// claimed by r
 			readonly $kind: 'declaration.interface.trait';
 			readonly body: G['slots']['declaration.interface.trait']['body'][];
-			readonly extends?: V.Clause.Bounds<G>;
+			readonly extends?: G['slots']['clause.bounds']['bounds'][];
 			readonly name: V.Identifier.Type<G>;
 		}
 	}

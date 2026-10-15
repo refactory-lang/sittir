@@ -6,7 +6,7 @@ export namespace Declaration {
 		export interface Associated<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.TypeAlias<G>> {
 			// claimed by r
 			readonly $kind: 'declaration.type_alias.associated';
-			readonly bounds?: V.Clause.Bounds<G>;
+			readonly bounds?: G['slots']['clause.bounds']['bounds'][];
 			readonly name: V.Identifier.Type<G>;
 		}
 	}

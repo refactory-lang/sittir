@@ -3,6 +3,7 @@ import { holds, slotItems } from './query.ts';
 import { spanSlicer, type ByteSpan } from './span.ts';
 import { treeOf } from './tree-token.ts';
 import { spanOf } from './utils.ts';
+import { portablePathHasFacts } from './portable-path.ts';
 
 type Node = { readonly $type: number; readonly $subType?: unknown; readonly $text?: string };
 type Context = readonly Node[] | undefined;
@@ -33,8 +34,11 @@ function placed(entry: PortableReadEntry, context: Context): boolean {
 
 export function portableSurface<Kinds, Is>(table: PortableTable, querySlots: QuerySlots): { readonly kinds: Kinds; readonly is: Is } {
 	const itemsIn = (node: Node, routes: SlotRoutes): readonly unknown[] => {
-		const accessor = querySlots[node.$type]?.find(([, r]) => sameRoutes(r, routes))?.[0];
-		return accessor === undefined ? [] : slotItems(node, accessor);
+		const slot = querySlots[node.$type]?.find(([, r]) => sameRoutes(r, routes));
+		if (slot === undefined) return [];
+		const [accessor, , keyword] = slot;
+		const items = slotItems(node, accessor);
+		return keyword === undefined ? items : items.flatMap((item) => (item === true ? [keyword] : []));
 	};
 	const slicers = new WeakMap<object, (span: ByteSpan) => string>();
 	const sliceOf = (node: Node): string | undefined => {
@@ -46,7 +50,7 @@ export function portableSurface<Kinds, Is>(table: PortableTable, querySlots: Que
 		return slice(span);
 	};
 	const textOf = (item: unknown): string | undefined =>
-		typeof item === 'number' ? table.fixedText[item] : isNode(item) ? (item.$text ?? sliceOf(item)) : undefined;
+		typeof item === 'string' ? item : typeof item === 'number' ? table.fixedText[item] : isNode(item) ? (item.$text ?? sliceOf(item)) : undefined;
 	const conditionHolds = (condition: PortableCondition, node: Item, context: Context): boolean => {
 		const holder: Item | undefined = condition.up === 0 ? node : context?.[context.length - condition.up];
 		if (holder === undefined) return false;
@@ -68,7 +72,6 @@ export function portableSurface<Kinds, Is>(table: PortableTable, querySlots: Que
 	const kinds = new Map<string, object>([['', {}]]);
 	const guards = new Map<string, object>([['', {}]]);
 	const paths = Object.keys(table.paths);
-	const under = (path: string, read: string | undefined): boolean => read !== undefined && (read === path || read.startsWith(`${path}.`));
 	for (const path of paths) {
 		const { ids, exact } = table.paths[path]!;
 		const admitted = new Set(ids);
@@ -79,8 +82,8 @@ export function portableSurface<Kinds, Is>(table: PortableTable, querySlots: Que
 				const item = asItem(node);
 				if (item === undefined || !admitted.has(kindOf(item))) return false;
 				if (exact) return true;
-				if (typeof item !== 'number' && typeof item.$subType === 'string') return under(path, item.$subType);
-				return under(path, classify(item, context));
+				if (typeof item !== 'number' && typeof item.$subType === 'string') return portablePathHasFacts(path, item.$subType);
+				return portablePathHasFacts(path, classify(item, context));
 			}
 		);
 	}

@@ -40,10 +40,6 @@ pub struct NodeCoordinate {
 /// built carries neither.
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct CoordinateWrites {
-    /// The gap toward the item before this one in a list, when the two are
-    /// still adjacent in the source both were read from (`$_layout.gap`),
-    /// written on a rebuilt list's items.
-    pub gap: Option<SourceGap>,
     /// The edges whose neighbour a built holder changed (`$_layout.changed`):
     /// the node's sides there drop their layout runs.
     pub changed: ChangedEdges,
@@ -68,107 +64,15 @@ impl ChangedEdges {
     }
 }
 
-/// The bytes between a list item and the item before it, in the source both
-/// were read from, when the two are still adjacent there. A live render names
-/// them by their tree and byte range; data detached from its tree carries the
-/// bytes themselves. Evidence of layout only, written by JavaScript for the
-/// prepare walk; nothing slices it into the output, and it never crosses back.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum SourceGap {
-    Range { tree: u32, span: Span },
-    Text(String),
-}
-
-impl SourceGap {
-    /// The gap's bytes: the range read from its tree, when the tree is still in
-    /// `sources`, or the text the gap carries.
-    pub fn text<'g>(&'g self, sources: &'g dyn SourceTable) -> Option<&'g str> {
-        match self {
-            SourceGap::Range { tree, span } => sources.source_of(*tree)?.get(span.start as usize..span.end as usize),
-            SourceGap::Text(text) => Some(text),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for SourceGap {
-    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
-        use crate::boundary::property;
-        if let Some(text) = unsafe { property::<String>(env, napi_val, c"$text")? } {
-            return Ok(Self::Text(text));
-        }
-        let handle = unsafe { property::<f64>(env, napi_val, c"$treeHandle")? }
-            .ok_or_else(|| ::napi::Error::from_reason("a source gap names its tree in $treeHandle or carries its $text"))?;
-        let (tree, _) = crate::engine::decode_handle(crate::napi_engine::checked_index(handle, "$treeHandle")?);
-        let span: Span = unsafe { property(env, napi_val, c"$span")? }
-            .ok_or_else(|| ::napi::Error::from_reason(format!("source gap in tree {tree} carries no $span")))?;
-        Ok(Self::Range { tree, span })
-    }
-}
-
-/// A list node's flanks in the source it was read from: the source, the
-/// node's span in it, and which flanks the transport kept, each only while the
-/// list's edge item is still the source's edge item. Evidence of layout only,
-/// written by JavaScript for the prepare walk; nothing slices it into the
-/// output, and it never crosses back.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SourceFlank {
-    pub source: FlankSource,
-    pub span: Span,
-    pub before: bool,
-    pub after: bool,
-}
-
-/// The source a flank's span counts into. A live render names the tree; data
-/// detached from its tree carries a window of the source itself, from the start
-/// of the opener's line to the closer.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum FlankSource {
-    Tree(u32),
-    Text(String),
-}
-
-impl SourceFlank {
-    /// The source `span` counts into: the tree's, when it is still in
-    /// `sources`, or the window the flank carries.
-    pub fn source<'f>(&'f self, sources: &'f dyn SourceTable) -> Option<&'f str> {
-        match &self.source {
-            FlankSource::Tree(tree) => sources.source_of(*tree).map(|source| &**source),
-            FlankSource::Text(text) => Some(text),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for SourceFlank {
-    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
-        use crate::boundary::property;
-        let source = match unsafe { property::<String>(env, napi_val, c"$text")? } {
-            Some(text) => FlankSource::Text(text),
-            None => {
-                let handle = unsafe { property::<f64>(env, napi_val, c"$treeHandle")? }
-                    .ok_or_else(|| ::napi::Error::from_reason("source flanks name their tree in $treeHandle or carry its $text"))?;
-                FlankSource::Tree(crate::engine::decode_handle(crate::napi_engine::checked_index(handle, "$treeHandle")?).0)
-            }
-        };
-        let span: Span = unsafe { property(env, napi_val, c"$span")? }
-            .ok_or_else(|| ::napi::Error::from_reason("source flanks carry no $span"))?;
-        Ok(Self {
-            source,
-            span,
-            before: unsafe { property::<bool>(env, napi_val, c"$before")? }.unwrap_or(false),
-            after: unsafe { property::<bool>(env, napi_val, c"$after")? }.unwrap_or(false),
-        })
-    }
-}
-
 /// One edge seam's resolved arm and the strength it carries into the writer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SeamArm {
     pub arm: u16,
     pub strength: u8,
-    /// Close a depth before writing the arm: the after edge of a list whose
-    /// before flank opened a depth that its closer's line does not close.
+    /// Close a depth before writing the arm. No fill sets it; it stays for
+    /// the niche it gives `Option<SeamArm>`, which keeps a coordinate's edges,
+    /// and so the transports that hold coordinates, within their payload
+    /// ceiling.
     pub dedent: bool,
 }
 
@@ -190,11 +94,6 @@ impl NodeCoordinate {
             edges: None,
             writes: None,
         }
-    }
-
-    /// The source gap JavaScript wrote on this coordinate (`CoordinateWrites::gap`).
-    pub fn gap(&self) -> Option<&SourceGap> {
-        self.writes.as_ref()?.gap.as_ref()
     }
 
     /// The edges whose neighbour JavaScript changed (`CoordinateWrites::changed`).
@@ -436,15 +335,12 @@ pub(crate) unsafe fn coordinate_from_napi(env: ::napi::sys::napi_env, napi_val: 
     let end: u32 = unsafe { property(env, napi_val, c"$end")? }
         .ok_or_else(|| ::napi::Error::from_reason(format!("coordinate with $treeHandle {handle} carries no $end")))?;
     let kind = unsafe { property::<u32>(env, napi_val, c"$type")? }.map(|id| crate::types::KindId(id as u16));
-    let (gap, changed) = match unsafe { property::<::napi::bindgen_prelude::Object>(env, napi_val, c"$_layout")? } {
-        Some(layout) => unsafe {
-            let layout = ::napi::JsValue::raw(&layout);
-            (property::<SourceGap>(env, layout, c"gap")?, property::<ChangedEdges>(env, layout, c"changed")?.unwrap_or_default())
-        },
-        None => (None, ChangedEdges::default()),
+    let changed = match unsafe { property::<::napi::bindgen_prelude::Object>(env, napi_val, c"$_layout")? } {
+        Some(layout) => unsafe { property::<ChangedEdges>(env, ::napi::JsValue::raw(&layout), c"changed")?.unwrap_or_default() },
+        None => ChangedEdges::default(),
     };
     let (tree, index) = crate::engine::decode_handle(handle);
-    let writes = (gap.is_some() || changed != ChangedEdges::default()).then(|| Box::new(CoordinateWrites { gap, changed }));
+    let writes = (changed != ChangedEdges::default()).then(|| Box::new(CoordinateWrites { changed }));
     Ok(Some(NodeCoordinate { kind, writes, ..NodeCoordinate::new(tree, index, end, span) }))
 }
 
@@ -568,6 +464,7 @@ mod tests {
             slot.prepare(&RenderContext {
                 options,
                 sources: &sources,
+                recording: None,
             })
             .unwrap();
             let mut out = String::new();

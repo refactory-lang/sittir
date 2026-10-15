@@ -69,7 +69,8 @@ A grammar's convergence as `--write` prints it: the renames, aliases, field rena
 problem per file (`bindingIssues`) rather than the first; the
 derivation summary always prints (kinds, prefixes, members, refinements,
 unmapped references, cycles, container captures with no direct target,
-container slots left uncaptured);
+container slots left uncaptured, and any form left with no entry for its
+supertype's claim);
 `--members` prints member names and kinds per shared kind. `--write` first
 writes the vocabulary's flags module (`printFlagsModule`, built as nodes with `@sittir/typescript`'s factories and rendered by its engine), which the bindings
 hash covers, then each grammar's `grammar.bindings.ts` (`bindingsModule`), and
@@ -77,8 +78,9 @@ prints its convergence (`grammarBindingsSummary`). `--check` also
 reports where the bindings and the authored vocabulary disagree
 (`vocabularyDisagreements`), and whether the flags module is current
 (`flagsCurrent`). A cycle, a container capture with no direct
-target, a container slot left uncaptured, a failed compile, a disagreement or
-a stale flags module is a non-zero exit.
+target, a container slot left uncaptured, a form with no entry for its supertype's
+claim, a failed compile, a disagreement or a stale flags module is a non-zero
+exit.
 ```
 
 ### `packages/tools/src/inventory/index.ts::flagsCurrent`

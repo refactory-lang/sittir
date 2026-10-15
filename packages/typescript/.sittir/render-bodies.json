@@ -2650,7 +2650,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "extends_clause_single"
+			"name": "types"
 		},
 		{
 			"kind": "seam",
@@ -3000,7 +3000,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "for_header"
+			"name": "header"
 		},
 		{
 			"kind": "slot",

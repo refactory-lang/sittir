@@ -845,7 +845,7 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 
 export function buildForInStatement(config: T.ForInStatement.Config): T.ForInStatement.Bound {
 	const _await = coerceBooleanKeywordStorage(rejectBareText(config.await, 'ForInStatement.await', 'a boolean'));
-	const _for_header = rejectBareText(config.forHeader, 'ForInStatement.forHeader', 'a built ForHeader');
+	const _header = rejectBareText(config.header, 'ForInStatement.header', 'a built ForHeader');
 	const _body = rejectBareText(
 		kindIdStorage<NonNullable<T.ForInStatement['_body']>>(config.body),
 		'ForInStatement.body',
@@ -857,18 +857,18 @@ export function buildForInStatement(config: T.ForInStatement.Config): T.ForInSta
 		$source: 2 as const,
 		$named: true as const,
 		_await,
-		_for_header,
+		_header,
 		_body,
 		$with: {
 			await: (value?: Admit<NonNullable<T.ForInStatement.Config>['await']>) =>
 				rebuilt(node, handle, () => buildForInStatement({ ...config, await: value })),
-			forHeader: (value: Admit<T.ForHeader>) =>
-				rebuilt(node, handle, () => buildForInStatement({ ...config, forHeader: value })),
+			header: (value: Admit<T.ForHeader>) =>
+				rebuilt(node, handle, () => buildForInStatement({ ...config, header: value })),
 			body: (value: Admit<NonNullable<T.ForInStatement.Config>['body']>) =>
 				rebuilt(node, handle, () => buildForInStatement({ ...config, body: value }))
 		},
 		await: () => _await,
-		forHeader: () => hydrateStoredSlot(node, '_for_header'),
+		header: () => hydrateStoredSlot(node, '_header'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -2716,28 +2716,6 @@ export function buildLhsExpression(
 		| T.SubscriptExpression
 		| TSKindId.Undefined
 		| T.Identifier
-		| TSKindId.DeclareKeyword
-		| TSKindId.NamespaceKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.PublicKeyword
-		| TSKindId.PrivateKeyword
-		| TSKindId.ProtectedKeyword
-		| TSKindId.OverrideKeyword
-		| TSKindId.ReadonlyKeyword
-		| TSKindId.ModuleKeyword
-		| TSKindId.AnyKeyword
-		| TSKindId.NumberKeyword
-		| TSKindId.BooleanKeyword
-		| TSKindId.StringKeyword
-		| TSKindId.SymbolKeyword
-		| TSKindId.ExportKeyword
-		| TSKindId.ObjectKeyword
-		| TSKindId.NewKeyword
-		| TSKindId.GetKeyword
-		| TSKindId.SetKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.StaticKeyword
-		| TSKindId.LetKeyword
 		| T.ObjectPattern
 		| T.ArrayPattern
 		| T.NonNullExpression
@@ -2751,31 +2729,7 @@ export function buildLhsExpression(
 		),
 		'LhsExpression.content',
 		TSKindId.Identifier,
-		[
-			'undefined',
-			'declare',
-			'namespace',
-			'type',
-			'public',
-			'private',
-			'protected',
-			'override',
-			'readonly',
-			'module',
-			'any',
-			'number',
-			'boolean',
-			'string',
-			'symbol',
-			'export',
-			'object',
-			'new',
-			'get',
-			'set',
-			'async',
-			'static',
-			'let'
-		]
+		['undefined']
 	);
 	const handle = currentHandle();
 	const node = {
@@ -2791,28 +2745,6 @@ export function buildLhsExpression(
 						| T.SubscriptExpression
 						| TSKindId.Undefined
 						| T.Identifier
-						| TSKindId.DeclareKeyword
-						| TSKindId.NamespaceKeyword
-						| TSKindId.TypeKeyword
-						| TSKindId.PublicKeyword
-						| TSKindId.PrivateKeyword
-						| TSKindId.ProtectedKeyword
-						| TSKindId.OverrideKeyword
-						| TSKindId.ReadonlyKeyword
-						| TSKindId.ModuleKeyword
-						| TSKindId.AnyKeyword
-						| TSKindId.NumberKeyword
-						| TSKindId.BooleanKeyword
-						| TSKindId.StringKeyword
-						| TSKindId.SymbolKeyword
-						| TSKindId.ExportKeyword
-						| TSKindId.ObjectKeyword
-						| TSKindId.NewKeyword
-						| TSKindId.GetKeyword
-						| TSKindId.SetKeyword
-						| TSKindId.AsyncKeyword
-						| TSKindId.StaticKeyword
-						| TSKindId.LetKeyword
 						| T.ObjectPattern
 						| T.ArrayPattern
 						| T.NonNullExpression
@@ -2875,39 +2807,7 @@ export function buildAssignmentExpression(config: T.AssignmentExpression.Config)
 export function buildAugmentedAssignmentExpression(
 	config: T.AugmentedAssignmentExpression.Config
 ): T.AugmentedAssignmentExpression.Bound {
-	const _left = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.AugmentedAssignmentExpression['_left']>>(config.left),
-			'AugmentedAssignmentExpression.left',
-			'buildIdentifier(…)'
-		),
-		'AugmentedAssignmentExpression.left',
-		TSKindId.Identifier,
-		[
-			'declare',
-			'namespace',
-			'type',
-			'public',
-			'private',
-			'protected',
-			'override',
-			'readonly',
-			'module',
-			'any',
-			'number',
-			'boolean',
-			'string',
-			'symbol',
-			'export',
-			'object',
-			'new',
-			'get',
-			'set',
-			'async',
-			'static',
-			'let'
-		]
-	);
+	const _left = rejectBareText(config.left, 'AugmentedAssignmentExpression.left', 'buildIdentifier(…)');
 	const _operator = rejectBareText(
 		kindIdStorage<NonNullable<T.AugmentedAssignmentExpression['_operator']>>(config.operator),
 		'AugmentedAssignmentExpression.operator',
@@ -2927,8 +2827,11 @@ export function buildAugmentedAssignmentExpression(
 		_operator,
 		_right,
 		$with: {
-			left: (value: Admit<NonNullable<T.AugmentedAssignmentExpression.Config>['left']>) =>
-				rebuilt(node, handle, () => buildAugmentedAssignmentExpression({ ...config, left: value })),
+			left: (
+				value: Admit<
+					T.MemberExpression | T.SubscriptExpression | T.Identifier | T.ParenthesizedExpression | T.NonNullExpression
+				>
+			) => rebuilt(node, handle, () => buildAugmentedAssignmentExpression({ ...config, left: value })),
 			operator: (value: Admit<NonNullable<T.AugmentedAssignmentExpression.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildAugmentedAssignmentExpression({ ...config, operator: value })),
 			right: (value: Admit<NonNullable<T.AugmentedAssignmentExpression.Config>['right']>) =>
@@ -3685,28 +3588,6 @@ export function buildRestPattern(
 		| T.SubscriptExpression
 		| TSKindId.Undefined
 		| T.Identifier
-		| TSKindId.DeclareKeyword
-		| TSKindId.NamespaceKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.PublicKeyword
-		| TSKindId.PrivateKeyword
-		| TSKindId.ProtectedKeyword
-		| TSKindId.OverrideKeyword
-		| TSKindId.ReadonlyKeyword
-		| TSKindId.ModuleKeyword
-		| TSKindId.AnyKeyword
-		| TSKindId.NumberKeyword
-		| TSKindId.BooleanKeyword
-		| TSKindId.StringKeyword
-		| TSKindId.SymbolKeyword
-		| TSKindId.ExportKeyword
-		| TSKindId.ObjectKeyword
-		| TSKindId.NewKeyword
-		| TSKindId.GetKeyword
-		| TSKindId.SetKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.StaticKeyword
-		| TSKindId.LetKeyword
 		| T.ObjectPattern
 		| T.ArrayPattern
 		| T.NonNullExpression
@@ -3720,31 +3601,7 @@ export function buildRestPattern(
 		),
 		'RestPattern.lhsExpression',
 		TSKindId.Identifier,
-		[
-			'undefined',
-			'declare',
-			'namespace',
-			'type',
-			'public',
-			'private',
-			'protected',
-			'override',
-			'readonly',
-			'module',
-			'any',
-			'number',
-			'boolean',
-			'string',
-			'symbol',
-			'export',
-			'object',
-			'new',
-			'get',
-			'set',
-			'async',
-			'static',
-			'let'
-		]
+		['undefined']
 	);
 	const handle = currentHandle();
 	const node = {
@@ -3760,28 +3617,6 @@ export function buildRestPattern(
 						| T.SubscriptExpression
 						| TSKindId.Undefined
 						| T.Identifier
-						| TSKindId.DeclareKeyword
-						| TSKindId.NamespaceKeyword
-						| TSKindId.TypeKeyword
-						| TSKindId.PublicKeyword
-						| TSKindId.PrivateKeyword
-						| TSKindId.ProtectedKeyword
-						| TSKindId.OverrideKeyword
-						| TSKindId.ReadonlyKeyword
-						| TSKindId.ModuleKeyword
-						| TSKindId.AnyKeyword
-						| TSKindId.NumberKeyword
-						| TSKindId.BooleanKeyword
-						| TSKindId.StringKeyword
-						| TSKindId.SymbolKeyword
-						| TSKindId.ExportKeyword
-						| TSKindId.ObjectKeyword
-						| TSKindId.NewKeyword
-						| TSKindId.GetKeyword
-						| TSKindId.SetKeyword
-						| TSKindId.AsyncKeyword
-						| TSKindId.StaticKeyword
-						| TSKindId.LetKeyword
 						| T.ObjectPattern
 						| T.ArrayPattern
 						| T.NonNullExpression
@@ -4682,22 +4517,18 @@ export function buildImportRequireClause(config: T.ImportRequireClause.Config): 
 
 export function buildExtendsClause(...children: NonEmptyArray<Admit<T.ExtendsClauseSingle>>): T.ExtendsClause.Bound {
 	_assertNonEmpty(children, 'extends_clause.children');
-	const _extends_clause_single = rejectBareText(
-		children,
-		'ExtendsClause.extendsClauseSingle',
-		'a built ExtendsClauseSingle'
-	);
+	const _types = rejectBareText(children, 'ExtendsClause.types', 'a built ExtendsClauseSingle');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExtendsClause as const,
 		$source: 2 as const,
 		$named: true as const,
-		_extends_clause_single,
+		_types,
 		$with: {
-			extendsClauseSingles: (...vs: NonEmptyArray<Admit<T.ExtendsClauseSingle>>) =>
-				rebuilt(node, handle, () => buildExtendsClause(...restItems('extendsClauseSingles', vs)))
+			types: (...vs: NonEmptyArray<Admit<T.ExtendsClauseSingle>>) =>
+				rebuilt(node, handle, () => buildExtendsClause(...restItems('types', vs)))
 		},
-		extendsClauseSingles: () => hydrateStoredSlots(node, '_extends_clause_single'),
+		types: () => hydrateStoredSlots(node, '_types'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -8260,7 +8091,7 @@ function _buildObjectTypeContent(
 ): T.ObjectTypeContent.Bound {
 	_assertNonEmpty(elements, 'object_type_content.elements');
 	const _item = elements;
-	const _separator = options.separator ?? TSKindId.Semi;
+	const _separator = options.separator;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
 	const handle = currentHandle();
@@ -9096,39 +8927,7 @@ export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): 
 	const _readonly = coerceBooleanKeywordStorage(
 		rejectBareText(config.readonly, 'IndexSignatureColon.readonly', 'a boolean')
 	);
-	const _name = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.IndexSignatureColon['_name']>>(config.name),
-			'IndexSignatureColon.name',
-			'buildIdentifier(…)'
-		),
-		'IndexSignatureColon.name',
-		TSKindId.Identifier,
-		[
-			'declare',
-			'namespace',
-			'type',
-			'public',
-			'private',
-			'protected',
-			'override',
-			'readonly',
-			'module',
-			'any',
-			'number',
-			'boolean',
-			'string',
-			'symbol',
-			'export',
-			'object',
-			'new',
-			'get',
-			'set',
-			'async',
-			'static',
-			'let'
-		]
-	);
+	const _name = rejectBareText(config.name, 'IndexSignatureColon.name', 'buildIdentifier(…)');
 	const _index_type = admitAliasContent<NonNullable<T.IndexSignatureColon['_index_type']>>(
 		rejectBareText(
 			kindIdStorage<NonNullable<T.IndexSignatureColon['_index_type']>>(config.indexType),
@@ -9157,7 +8956,7 @@ export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): 
 				rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, sign: value })),
 			readonly: (value?: Admit<NonNullable<T.IndexSignatureColon.Config>['readonly']>) =>
 				rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, readonly: value })),
-			name: (value: Admit<NonNullable<T.IndexSignatureColon.Config>['name']>) =>
+			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, name: value })),
 			indexType: (value: Admit<NonNullable<T.IndexSignatureColon.Config>['indexType']>) =>
 				rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, indexType: value })),
@@ -9304,16 +9103,7 @@ export function buildImportSpecifierName(config: T.ImportSpecifierName.Config): 
 		'ImportSpecifierName.importKind',
 		'a kind id'
 	);
-	const _name = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.ImportSpecifierName['_name']>>(config.name),
-			'ImportSpecifierName.name',
-			'buildIdentifier(…)'
-		),
-		'ImportSpecifierName.name',
-		TSKindId.Identifier,
-		['type']
-	);
+	const _name = rejectBareText(config.name, 'ImportSpecifierName.name', 'buildIdentifier(…)');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ImportSpecifierName as const,
@@ -9324,7 +9114,7 @@ export function buildImportSpecifierName(config: T.ImportSpecifierName.Config): 
 		$with: {
 			importKind: (value?: Admit<NonNullable<T.ImportSpecifierName.Config>['importKind']>) =>
 				rebuilt(node, handle, () => buildImportSpecifierName({ ...config, importKind: value })),
-			name: (value: Admit<NonNullable<T.ImportSpecifierName.Config>['name']>) =>
+			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildImportSpecifierName({ ...config, name: value }))
 		},
 		importKind: () => _import_kind,
@@ -9345,26 +9135,8 @@ export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.Im
 		'ImportSpecifierAs.importKind',
 		'a kind id'
 	);
-	const _name = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.ImportSpecifierAs['_name']>>(config.name),
-			'ImportSpecifierAs.name',
-			'buildIdentifier(…)'
-		),
-		'ImportSpecifierAs.name',
-		TSKindId.Identifier,
-		['type']
-	);
-	const _alias = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.ImportSpecifierAs['_alias']>>(config.alias),
-			'ImportSpecifierAs.alias',
-			'buildIdentifier(…)'
-		),
-		'ImportSpecifierAs.alias',
-		TSKindId.Identifier,
-		['type']
-	);
+	const _name = rejectBareText(config.name, 'ImportSpecifierAs.name', 'buildIdentifier(…)');
+	const _alias = rejectBareText(config.alias, 'ImportSpecifierAs.alias', 'buildIdentifier(…)');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ImportSpecifierAs as const,
@@ -9376,9 +9148,9 @@ export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.Im
 		$with: {
 			importKind: (value?: Admit<NonNullable<T.ImportSpecifierAs.Config>['importKind']>) =>
 				rebuilt(node, handle, () => buildImportSpecifierAs({ ...config, importKind: value })),
-			name: (value: Admit<NonNullable<T.ImportSpecifierAs.Config>['name']>) =>
+			name: (value: Admit<T.Identifier | T.String>) =>
 				rebuilt(node, handle, () => buildImportSpecifierAs({ ...config, name: value })),
-			alias: (value: Admit<NonNullable<T.ImportSpecifierAs.Config>['alias']>) =>
+			alias: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildImportSpecifierAs({ ...config, alias: value }))
 		},
 		importKind: () => _import_kind,
@@ -9746,66 +9518,8 @@ export function buildUpdateExpressionPrefix(config: T.UpdateExpressionPrefix.Con
 	return node as unknown as T.UpdateExpressionPrefix.Bound;
 }
 
-export function buildArrowFunctionParameter(
-	value: Admit<
-		| TSKindId.DeclareKeyword
-		| TSKindId.NamespaceKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.PublicKeyword
-		| TSKindId.PrivateKeyword
-		| TSKindId.ProtectedKeyword
-		| TSKindId.OverrideKeyword
-		| TSKindId.ReadonlyKeyword
-		| TSKindId.ModuleKeyword
-		| TSKindId.AnyKeyword
-		| TSKindId.NumberKeyword
-		| TSKindId.BooleanKeyword
-		| TSKindId.StringKeyword
-		| TSKindId.SymbolKeyword
-		| TSKindId.ExportKeyword
-		| TSKindId.ObjectKeyword
-		| TSKindId.NewKeyword
-		| TSKindId.GetKeyword
-		| TSKindId.SetKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.StaticKeyword
-		| TSKindId.LetKeyword
-		| T.Identifier
-	>
-): T.ArrowFunctionParameter.Bound {
-	const _parameter = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.ArrowFunctionParameter['_parameter']>>(value),
-			'ArrowFunctionParameter.parameter',
-			'buildIdentifier(…)'
-		),
-		'ArrowFunctionParameter.parameter',
-		TSKindId.Identifier,
-		[
-			'declare',
-			'namespace',
-			'type',
-			'public',
-			'private',
-			'protected',
-			'override',
-			'readonly',
-			'module',
-			'any',
-			'number',
-			'boolean',
-			'string',
-			'symbol',
-			'export',
-			'object',
-			'new',
-			'get',
-			'set',
-			'async',
-			'static',
-			'let'
-		]
-	);
+export function buildArrowFunctionParameter(value: Admit<T.Identifier>): T.ArrowFunctionParameter.Bound {
+	const _parameter = rejectBareText(value, 'ArrowFunctionParameter.parameter', 'buildIdentifier(…)');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ArrowFunctionParameter as const,
@@ -9813,35 +9527,7 @@ export function buildArrowFunctionParameter(
 		$named: true as const,
 		_parameter,
 		$with: {
-			parameter: (
-				value: Admit<
-					NonNullable<
-						| TSKindId.DeclareKeyword
-						| TSKindId.NamespaceKeyword
-						| TSKindId.TypeKeyword
-						| TSKindId.PublicKeyword
-						| TSKindId.PrivateKeyword
-						| TSKindId.ProtectedKeyword
-						| TSKindId.OverrideKeyword
-						| TSKindId.ReadonlyKeyword
-						| TSKindId.ModuleKeyword
-						| TSKindId.AnyKeyword
-						| TSKindId.NumberKeyword
-						| TSKindId.BooleanKeyword
-						| TSKindId.StringKeyword
-						| TSKindId.SymbolKeyword
-						| TSKindId.ExportKeyword
-						| TSKindId.ObjectKeyword
-						| TSKindId.NewKeyword
-						| TSKindId.GetKeyword
-						| TSKindId.SetKeyword
-						| TSKindId.AsyncKeyword
-						| TSKindId.StaticKeyword
-						| TSKindId.LetKeyword
-						| T.Identifier
-					>
-				>
-			) => rebuilt(node, handle, () => buildArrowFunctionParameter(value))
+			parameter: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildArrowFunctionParameter(value))
 		},
 		parameter: () => hydrateStoredSlot(node, '_parameter'),
 		$render: () => renderText(handle, node),
@@ -9895,16 +9581,7 @@ export function buildClassHeritageExtendsClause(
 export function buildImportClauseDefaultImport(
 	config: T.ImportClauseDefaultImport.Config
 ): T.ImportClauseDefaultImport.Bound {
-	const _identifier = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.ImportClauseDefaultImport['_identifier']>>(config.identifier),
-			'ImportClauseDefaultImport.identifier',
-			'buildIdentifier(…)'
-		),
-		'ImportClauseDefaultImport.identifier',
-		TSKindId.Identifier,
-		['type']
-	);
+	const _identifier = rejectBareText(config.identifier, 'ImportClauseDefaultImport.identifier', 'buildIdentifier(…)');
 	const _import_clause_group = rejectBareText(
 		config.importClauseGroup,
 		'ImportClauseDefaultImport.importClauseGroup',
@@ -9918,7 +9595,7 @@ export function buildImportClauseDefaultImport(
 		_identifier,
 		_import_clause_group,
 		$with: {
-			identifier: (value: Admit<NonNullable<T.ImportClauseDefaultImport.Config>['identifier']>) =>
+			identifier: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildImportClauseDefaultImport({ ...config, identifier: value })),
 			importClauseGroup: (value?: Admit<T.ImportClauseGroup>) =>
 				rebuilt(node, handle, () => buildImportClauseDefaultImport({ ...config, importClauseGroup: value }))

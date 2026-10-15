@@ -1,6 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
-import { collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
+import { collectKindEntries, collectCatalogKinds, findKindEntryForLiteral, type KindEnumEntry } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import { findEntryForKindName } from '../dsl/symbol-table.ts';
@@ -41,6 +41,13 @@ export function kindConstants(
 	return constants;
 }
 
+export function relaxedKeywordIds(nodeMap: NodeMap, entries: readonly KindEnumEntry[]): number[] {
+	return (nodeMap.relaxedLiterals ?? []).flatMap((literal) => {
+		const entry = findKindEntryForLiteral(entries, literal);
+		return entry === undefined ? [] : [entry.id];
+	});
+}
+
 export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	const { grammar, nodeMap, generatedIdTables } = config;
 	const entries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
@@ -77,6 +84,16 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push(`/// The grammar's root kinds: a render whose root is one of them is a document.`);
 	lines.push(`pub const ROOT_KINDS: &[KindId] = &[${rootKindIds(nodeMap).map((id) => `KindId(${id})`).join(', ')}];`);
 
+	const wordId = nodeMap.word === null || nodeMap.word === undefined ? undefined : findEntryForKindName(entries, nodeMap.word)?.id;
+	const relaxedIds = relaxedKeywordIds(nodeMap, entries);
+	lines.push('');
+	lines.push(`/// The keyword tokens the grammar aliases to its word rule: a node of one of them, displayed as the word rule, reads as the word rule.`);
+	lines.push(`pub const RELAXED_KEYWORDS: &[KindId] = &[${relaxedIds.map((id) => `KindId(${id})`).join(', ')}];`);
+	lines.push('');
+	lines.push(`/// Whether a node with this grammar id and display id is a relaxed keyword (\`ReadCtx::relaxes\`).`);
+	lines.push(`pub fn relaxes(grammar: KindId, display: KindId) -> bool {`);
+	lines.push(wordId === undefined || relaxedIds.length === 0 ? `    let _ = (grammar, display);\n    false` : `    display.0 == ${wordId} && RELAXED_KEYWORDS.contains(&grammar)`);
+	lines.push(`}`);
 	lines.push('');
 	lines.push(`/// Map a \`KindId\` back to its grammar kind string for diagnostics.`);
 	lines.push(`/// Returns \`"<unknown>"\` for ids not in this grammar's symbol table.`);

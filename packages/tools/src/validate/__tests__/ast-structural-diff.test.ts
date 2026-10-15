@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { astStructuralDiff } from '../read-render-parse.ts';
+import { astStructuralDiff, type AstTolerance } from '../read-render-parse.ts';
 import { loadLanguageForGrammar, type TSNode } from '../common.ts';
 
 const GRAMMAR_IDS: Record<string, number> = {
@@ -10,6 +10,8 @@ const GRAMMAR_IDS: Record<string, number> = {
 	new_expression: 5,
 	member_expression: 6,
 	property_identifier: 7,
+	object_type_content: 8,
+	property_signature: 9,
 	generic_type: 245,
 	generic_type_with_turbofish: 246
 };
@@ -25,6 +27,32 @@ function node(type: string, text: string, children: TSNode[] = [], grammarType: 
 		child: (i: number) => children[i] ?? null
 	} as unknown as TSNode;
 }
+
+function anon(text: string): TSNode {
+	return { type: text, grammarType: text, grammarId: 0, text, childCount: 0, isNamed: false, child: () => null } as unknown as TSNode;
+}
+
+describe('astStructuralDiff tolerates another of a list separator only where asked', () => {
+	const list = (separator: string) =>
+		node('object_type_content', `a${separator} b`, [node('property_signature', 'a'), anon(separator), node('property_signature', 'b')]);
+	const tolerance = (): AstTolerance => ({ listSeparators: { object_type_content: [',', ';'] }, tolerated: [] });
+
+	it('accepts another of the list separators and records it', () => {
+		const tolerated = tolerance();
+		expect(astStructuralDiff(list(','), list(';'), '', undefined, tolerated)).toBeNull();
+		expect(tolerated.tolerated).toEqual(['object_type_content[1]: separator "," ≠ ";"']);
+	});
+
+	it('fails a token the list cannot hold as its separator', () => {
+		const tolerated = tolerance();
+		expect(astStructuralDiff(list(','), list('|'), '', undefined, tolerated)).toBe('object_type_content[1]: anon "," ≠ "|"');
+		expect(tolerated.tolerated).toEqual([]);
+	});
+
+	it('stays strict without a tolerance', () => {
+		expect(astStructuralDiff(list(','), list(';'))).toBe('object_type_content[1]: anon "," ≠ ";"');
+	});
+});
 
 describe('astStructuralDiff compares grammar types, not display names', () => {
 	it('two nodes with the same grammar type but different display names are equal', () => {

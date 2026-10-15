@@ -514,7 +514,10 @@ export default sittirGrammar(base, {
 
 		class_heritage: { '0': variant('extends_clause'), '1': variant('implements_clause') },
 
-		extends_clause: { '1/0': alias('extends_clause_single'), '1/1/0/1': alias('extends_clause_single') },
+		extends_clause: [
+			{ '1/0': alias('extends_clause_single'), '1/1/0/1': alias('extends_clause_single') },
+			{ '1/0': field('types'), '1/1/0/1': field('types') }
+		],
 
 		import_clause: {
 			'0': variant('namespace_import'),
@@ -551,6 +554,8 @@ export default sittirGrammar(base, {
 		array_type: { 0: field('type') },
 		export_statement_namespace_export: { 3: field('name'), 4: field('terminator') },
 		export_statement_equals_export: { 3: field('terminator') },
+
+		for_in_statement: { 2: field('header') },
 
 		_for_header: {
 			'1/0': variant('lhs'),
@@ -677,11 +682,7 @@ export default sittirGrammar(base, {
 				$.index_signature,
 				$.method_signature
 			);
-			return seq(
-				optional(SEP()),
-				seq(field('item', member), repeat(seq(SEP(), field('item', member)))),
-				optional(SEP())
-			);
+			return seq(optional(SEP()), field('item', member), repeat(seq(SEP(), field('item', member))), optional(SEP()));
 		})
 	},
 	renderAs: (_$) => ({

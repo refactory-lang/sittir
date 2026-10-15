@@ -145,7 +145,7 @@ The generated module is type-checked against the vocabulary, and the target is z
 | an enum value read where the slot admits only its text (a primitive type token as `type.primitive` in an expression slot) | The dispatch reads a token as the enum's value only where the slot admits that enum; elsewhere it is its const string, which the language's context admits. |
 | a token read as text that the member type doesn't admit (`'_'`, `'gen'`, `'union'`) | The reader's type admits keyword tokens the grammar aliases to identifiers: either the low-level types narrow them, or the member admits them. |
 | a text leaf read as a plain string where the member admits only kinds | A leaf whose text varies is a node carrying `$value`, and a fixed literal is its const string; the members admit both. |
-| a content-derived claim the member type leaves out (`type.named.prelude`, `literal.boolean.true`) | A member that admits a kind admits every claim of that kind, predicate claims included. |
+| a content-derived claim the member type leaves out (`type.primitive.never`, `literal.boolean.true`) | A member that admits a kind admits every claim of that kind, predicate claims included. |
 | an unmapped marker where the read gives a mapped kind | The unmapped ratchet: it falls as claims complete, onto an existing kind or one a feature adds. |
 | a low-level reader typed `unknown` (`token_repetition.operator`) | Type those readers in the typed surface. |
 | a refinement where its parent is admitted (`$kind` is a single literal) | A level's `$kind` admits every path beneath it, so a refinement is assignable where its parent is. |

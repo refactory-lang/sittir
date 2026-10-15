@@ -77,9 +77,17 @@ describe('portable is: python', async () => {
 	it('tests a string prefix through the hidden string_start capture', () => {
 		const [f, fc] = find('f"x"\n', 'string');
 		const [b, bc] = find('b"x"\n', 'string');
-		expect(at('literal.string.f')(f, fc)).toBe(true);
+		expect(at('literal.string.interpolated')(f, fc)).toBe(true);
 		expect(at('literal.string.bytes')(f, fc)).toBe(false);
 		expect(at('literal.string.bytes')(b, bc)).toBe(true);
+	});
+
+	it('reads an except clause as the one catch kind, and its finally as finally', () => {
+		const SOURCE = 'try:\n    pass\nexcept E as e:\n    pass\nfinally:\n    pass\n';
+		const [handler, hc] = find(SOURCE, 'except_clause');
+		const [finalizer, fc] = find(SOURCE, 'finally_clause');
+		expect(at('clause.catch')(handler, hc)).toBe(true);
+		expect(at('clause.finally')(finalizer, fc)).toBe(true);
 	});
 
 	it('reads each text piece of a string as its text, an f-string\'s included', () => {
@@ -97,6 +105,81 @@ describe('portable is: python', async () => {
 		expect(at('declaration.constructor')).not.toBe(Function.prototype.constructor);
 		expect(at('declaration.constructor')(init, context)).toBe(true);
 		expect(at('expression.call')).not.toBe(Function.prototype.call);
+	});
+
+	it('reads a prefix letter wherever it stands, and a template string as interpolated', () => {
+		const STRINGS = 'a = rf"{x}"\nb = Fr"{x}"\nc = t"{x}"\nd = Rb"x"\ne = R"x"\n';
+		const strings = [0, 1, 2, 3, 4].map((nth) => find(STRINGS, 'string', undefined, nth));
+		expect(strings.map(([node, context]) => at('literal.string.interpolated')(node, context))).toEqual([true, true, true, false, false]);
+		const [rb, rbContext] = find(STRINGS, 'string', undefined, 3);
+		const [r, rContext] = find(STRINGS, 'string', undefined, 4);
+		expect(at('literal.string.bytes')(rb, rbContext)).toBe(true);
+		expect(at('literal.string.raw')(r, rContext)).toBe(true);
+	});
+
+	it('reads a string whose prefix and quotes state several facts by their crossing', () => {
+		const STRINGS = 'a = rf"{x}"\nb = Rb"x"\nc = f"""x"""\nd = br"""x"""\ne = r"""x"""\nf = tR"""{x}"""\ng = b"""x"""\n';
+		const crossings = [
+			'literal.string.interpolated.raw',
+			'literal.string.bytes.raw',
+			'literal.string.interpolated.multiline',
+			'literal.string.bytes.raw.multiline',
+			'literal.string.raw.multiline',
+			'literal.string.interpolated.raw.multiline',
+			'literal.string.bytes.multiline'
+		];
+		crossings.forEach((path, nth) => {
+			const [node, context] = find(STRINGS, 'string', undefined, nth);
+			expect(at(path)(node, context), path).toBe(true);
+		});
+		const [rf, rfContext] = find(STRINGS, 'string');
+		expect(at('literal.string.interpolated')(rf, rfContext)).toBe(true);
+	});
+
+	it('reads each fact of a crossing by its own guard', () => {
+		const cases: readonly (readonly [string, readonly string[]])[] = [
+			['rf"{x}"', ['interpolated', 'raw']],
+			['Rb"x"', ['bytes', 'raw']],
+			['f"""x"""', ['interpolated', 'multiline']],
+			['br"""x"""', ['bytes', 'raw', 'multiline']],
+			['r"""x"""', ['raw', 'multiline']],
+			['tR"""{x}"""', ['interpolated', 'raw', 'multiline']],
+			['b"""x"""', ['bytes', 'multiline']],
+			['"x"', []]
+		];
+		for (const [text, facts] of cases) {
+			const [node, context] = find(`a = ${text}\n`, 'string');
+			for (const fact of ['interpolated', 'bytes', 'raw', 'multiline'])
+				expect(at(`literal.string.${fact}`)(node, context), `${text}: ${fact}`).toBe(facts.includes(fact));
+			expect(at('literal.number')(node, context), text).toBe(false);
+		}
+	});
+
+	it('reads a splat as a rest pattern or type, and a double splat as its map refinement', () => {
+		const SOURCE = 'def f(*a, **k): pass\ndef g(a: *Ts, b: **P): pass\n';
+		const [rest, restContext] = find(SOURCE, 'list_splat_pattern');
+		const [map, mapContext] = find(SOURCE, 'dictionary_splat_pattern');
+		const [restType, restTypeContext] = find(SOURCE, 'splat_type');
+		const [mapType, mapTypeContext] = find(SOURCE, 'splat_type', undefined, 1);
+		expect(at('pattern.rest')(rest, restContext)).toBe(true);
+		expect(at('pattern.rest.map')(rest, restContext)).toBe(false);
+		expect(at('pattern.rest.map')(map, mapContext)).toBe(true);
+		expect(at('type.rest')(restType, restTypeContext)).toBe(true);
+		expect(at('type.rest.map')(restType, restTypeContext)).toBe(false);
+		expect(at('type.rest.map')(mapType, mapTypeContext)).toBe(true);
+	});
+
+	it('reads a renamed import as the import alias', () => {
+		const [alias, context] = find('import a.b as c\n', 'aliased_import');
+		expect(at('clause.import.alias')(alias, context)).toBe(true);
+	});
+
+	it('reads a case as-pattern as the as-pattern, and a with item\'s as as no pattern', () => {
+		const SOURCE = 'match x:\n    case [1] as y: pass\nwith open(p) as h: pass\n';
+		const [caseAs, caseContext] = find(SOURCE, 'case_as_pattern');
+		const [withAs, withContext] = find(SOURCE, 'as_pattern');
+		expect(at('pattern.as')(caseAs, caseContext)).toBe(true);
+		expect(at('pattern')(withAs, withContext)).toBe(false);
 	});
 
 	it('reads a comparison of one comparator by its operator, and of two or more as a chain, as tree-sitter matches the claims', () => {
@@ -128,6 +211,42 @@ describe('portable is: rust', async () => {
 			const [content, context] = find(SOURCE, 'string_content', text);
 			expect(at('literal.string.text')(content, context), text).toBe(true);
 		}
+	});
+
+	it('reads a string literal opening with b" as a byte string, and a plain or C string as none', () => {
+		const SOURCE = 'fn f() { let a = b"ab"; let b = "cd"; let c = c"ef"; }\n';
+		const strings = [0, 1, 2].map((nth) => find(SOURCE, 'string_literal', undefined, nth));
+		expect(strings.map(([node, context]) => at('literal.string.bytes')(node, context))).toEqual([true, false, false]);
+		expect(strings.map(([node, context]) => at('literal.string')(node, context))).toEqual([true, true, true]);
+	});
+
+	it('reads a self parameter and the self it names by the receiver kinds', () => {
+		const SOURCE = 'impl A { fn f(&self) -> u8 { self.x } }\n';
+		const [parameter, parameterContext] = find(SOURCE, 'self_parameter');
+		const [receiver, receiverContext] = find(SOURCE, 'self', undefined, 1);
+		expect(at('declaration.parameter.receiver')(parameter, parameterContext)).toBe(true);
+		expect(at('identifier.receiver')(receiver, receiverContext)).toBe(true);
+	});
+
+	it('reads a captured pattern as the as-pattern and a slice pattern as the list pattern', () => {
+		const SOURCE = 'fn f(x: [u8; 2]) { match x { [n @ 1, _] => 1, _ => 0 }; }\n';
+		const [captured, capturedContext] = find(SOURCE, 'captured_pattern');
+		const [slice, sliceContext] = find(SOURCE, 'slice_pattern');
+		expect(at('pattern.as')(captured, capturedContext)).toBe(true);
+		expect(at('pattern.list')(slice, sliceContext)).toBe(true);
+	});
+
+	it('reads a numeric cast as the conversion and a renamed use as the import alias', () => {
+		const SOURCE = 'use a::b as c;\nfn f() -> u8 { 1 as u8 }\n';
+		const [alias, aliasContext] = find(SOURCE, 'use_as_clause');
+		const [cast, castContext] = find(SOURCE, 'type_cast_expression');
+		expect(at('clause.import.alias')(alias, aliasContext)).toBe(true);
+		expect(at('expression.cast.conversion')(cast, castContext)).toBe(true);
+	});
+
+	it('reads trait bounds as the bounds clause', () => {
+		const [bounds, context] = find('fn f<T: A + B>() {}\n', 'trait_bounds');
+		expect(at('clause.bounds')(bounds, context)).toBe(true);
 	});
 
 	it('reads a kind-id leaf in the asking engine\'s language, on the low-level surface too', () => {
@@ -168,6 +287,24 @@ describe('portable is: rust', async () => {
 		const [a, m, z, n] = [0, 1, 2, 3].map((nth) => find(SOURCE, 'function_item', undefined, nth));
 		for (const [fn, context] of [m!, n!]) expect(at('declaration.method.static')(fn, context)).toBe(false);
 		for (const [fn, context] of [a!, z!]) expect(at('declaration.method.static')(fn, context)).toBe(true);
+	});
+
+	it('reads a static item as a variable, and a visible one by its crossing', () => {
+		const SOURCE = 'static A: u8 = 1;\npub static B: u8 = 2;\npub(crate) static C: u8 = 3;\nfn f() { let d = 4; }\n';
+		const statics = [0, 1, 2].map((nth) => find(SOURCE, 'static_item', undefined, nth));
+		const [local, lc] = find(SOURCE, 'let_declaration');
+		expect(statics.map(([n, c]) => at('declaration.variable')(n, c))).toEqual([true, true, true]);
+		expect(statics.map(([n, c]) => at('declaration.variable.public')(n, c))).toEqual([false, true, true]);
+		expect(statics.map(([n, c]) => at('declaration.variable.public.internal')(n, c))).toEqual([false, false, true]);
+		expect(at('declaration.variable')(local, lc)).toBe(true);
+		expect(at('declaration.variable.public')(local, lc)).toBe(false);
+	});
+
+	it.skip('reads a static item\'s `mut` and `ref` as its flags (pending: `mutable` and `byReference` are flags of declaration.variable, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
+		const SOURCE = 'static A: u8 = 1;\nstatic mut B: u8 = 2;\nstatic ref C: u8 = 3;\n';
+		const statics = [0, 1, 2].map((nth) => find(SOURCE, 'static_item', undefined, nth));
+		expect(statics.map(([n, c]) => at('declaration.variable.mutable')(n, c))).toEqual([false, true, false]);
+		expect(statics.map(([n, c]) => at('declaration.variable.byReference')(n, c))).toEqual([false, false, true]);
 	});
 
 	it('reads every kind a closure\'s parameters admit as a parameter, through the wildcard claim', () => {
@@ -240,20 +377,82 @@ describe('portable is: rust', async () => {
 });
 
 describe('portable is: typescript', async () => {
-	const { engine, at, find } = await surfaces('typescript');
+	const { at, find } = await surfaces('typescript');
 
-	it('compares a comment\'s own text', () => {
-		const root = engine.parse('/** doc */\n/* block */\nlet x = 1;\n') as unknown as { statements(): readonly { $trivia: { leading(): readonly Node[] } }[] };
-		const { CommentBlock } = engine.kinds as unknown as Readonly<Record<string, number>>;
-		const [doc, block] = root.statements()[0]!.$trivia.leading().filter((item) => item.$type === CommentBlock);
+	it('reads each parser comment form directly and tests a documentation block by its own text', async () => {
+		const commentEngine = await createEngine(typescript);
+		const root = commentEngine.parse('/** doc */\n/* block */\n// line\n<!-- html -->\nlet x = 1;\n');
+		const { CommentBlock, CommentLine, HtmlComment } = commentEngine.kinds;
+		const statement = root.statements()[0];
+		if (statement === undefined || typeof statement === 'number') throw new Error('expected the declaration after the leading comments');
+		const leading = statement.$trivia.leading();
+		const [doc, block] = leading.filter((item) => typeof item !== 'number' && item.$type === CommentBlock);
+		const line = leading.find((item) => typeof item !== 'number' && item.$type === CommentLine);
+		const html = leading.find((item) => typeof item !== 'number' && item.$type === HtmlComment);
+		for (const comment of [doc, block, line, html]) {
+			expect(comment).toBeDefined();
+			expect(at('comment')(comment)).toBe(true);
+		}
 		expect(at('comment.block.doc')(doc)).toBe(true);
 		expect(at('comment.block.doc')(block)).toBe(false);
+		expect(at('comment.block')(doc)).toBe(true);
 		expect(at('comment.block')(block)).toBe(true);
+		expect(at('comment.line')(line)).toBe(true);
+		expect(at('comment.line')(block)).toBe(false);
+		expect(typeof at('comment.html')).toBe('function');
+		expect(at('comment.html')(html)).toBe(true);
+		expect(at('comment.html')(line)).toBe(false);
+		expect(at('comment.block')(html)).toBe(false);
 	});
 
 	it('reads a double-quoted string\'s fragment as its text', () => {
 		const [fragment, context] = find('let a = "x";\n', 'unescaped_double_string_fragment');
 		expect(at('literal.string.text')(fragment, context)).toBe(true);
+	});
+
+	it('reads a template string as an interpolated string, whether or not it substitutes', () => {
+		const SOURCE = 'let a = `x${y}`;\nlet b = `z`;\nlet c = "w";\n';
+		const strings = [find(SOURCE, 'template_string'), find(SOURCE, 'template_string', undefined, 1), find(SOURCE, 'string_double')];
+		expect(strings.map(([node, context]) => at('literal.string.interpolated')(node, context))).toEqual([true, true, false]);
+		expect(strings.map(([node, context]) => at('literal.string')(node, context))).toEqual([true, true, true]);
+	});
+
+	it('reads a maybe type as a nullable type', () => {
+		const [maybe, context] = find('let a: ?string;\n', 'flow_maybe_type');
+		expect(at('type.nullable')(maybe, context)).toBe(true);
+	});
+
+	it('reads an array pattern as the list pattern, and its rest as the rest pattern', () => {
+		const SOURCE = 'const [a, ...b] = c;\ntype T = [...U];\n';
+		const [list, listContext] = find(SOURCE, 'array_pattern');
+		const [rest, restContext] = find(SOURCE, 'rest_pattern');
+		const [restType, restTypeContext] = find(SOURCE, 'rest_type');
+		expect(at('pattern.list')(list, listContext)).toBe(true);
+		expect(at('pattern.rest')(rest, restContext)).toBe(true);
+		expect(at('type.rest')(restType, restTypeContext)).toBe(true);
+	});
+
+	it('reads both assertions as the assertion, the angle-bracket one by its refinement, and import-equals as the import alias statement', () => {
+		const SOURCE = 'let a = x as T;\nlet b = <T>x;\nlet c = x satisfies T;\nimport A = N.B;\n';
+		const [as, asContext] = find(SOURCE, 'as_expression');
+		const [angle, angleContext] = find(SOURCE, 'type_assertion');
+		const [satisfies, satisfiesContext] = find(SOURCE, 'satisfies_expression');
+		const [alias, aliasContext] = find(SOURCE, 'import_alias');
+		expect(at('expression.cast.assertion')(as, asContext)).toBe(true);
+		expect(at('expression.cast.assertion.angle_bracket')(as, asContext)).toBe(false);
+		expect(at('expression.cast.assertion.angle_bracket')(angle, angleContext)).toBe(true);
+		expect(at('expression.cast.satisfies')(satisfies, satisfiesContext)).toBe(true);
+		expect(at('statement.import.alias')(alias, aliasContext)).toBe(true);
+	});
+
+	it('reads a type parameter\'s constraint as the bounds clause', () => {
+		const [bounds, context] = find('function f<T extends U>() {}\n', 'constraint');
+		expect(at('clause.bounds')(bounds, context)).toBe(true);
+	});
+
+	it('reads this as the receiver', () => {
+		const [receiver, context] = find('class A { f() { return this; } }\n', 'this');
+		expect(at('identifier.receiver')(receiver, context)).toBe(true);
 	});
 
 	it('keeps each path whose last segment a function owns', () => {
@@ -269,6 +468,14 @@ describe('portable is: typescript', async () => {
 		}
 	});
 
+	it('reads a catch clause as the one catch kind, with or without its binding', () => {
+		const SOURCE = 'try { a(); } catch (e: unknown) { b(); }\ntry { c(); } catch { d(); }\n';
+		const [bound, bc] = find(SOURCE, 'catch_clause');
+		const [bare, nc] = find(SOURCE, 'catch_clause', undefined, 1);
+		expect(at('clause.catch')(bound, bc)).toBe(true);
+		expect(at('clause.catch')(bare, nc)).toBe(true);
+	});
+
 	it('reads an enum member through the wildcard claim under the enum body\'s elements', () => {
 		const [member, context] = find('enum E { A, B = 1 }\n', 'enum_assignment');
 		expect(at('declaration.enum_member')(member, context)).toBe(true);
@@ -278,6 +485,15 @@ describe('portable is: typescript', async () => {
 		const [hex, context] = find('let x = 0x1F;\n', 'number_hex');
 		expect(at('literal.number.integer.hex')(hex, context)).toBe(true);
 		expect(at('literal.number')(hex, context)).toBe(true);
+	});
+
+	it('reads a method by its visibility keyword, which the reader holds as the modifier\'s member kind', () => {
+		const SOURCE = 'class C { private a() {} protected b() {} public c() {} d() {} }\n';
+		const methods = [0, 1, 2, 3].map((n) => find(SOURCE, 'method_definition', undefined, n));
+		expect(methods.map(([n, c]) => at('declaration.method.private')(n, c))).toEqual([true, false, false, false]);
+		expect(methods.map(([n, c]) => at('declaration.method.protected')(n, c))).toEqual([false, true, false, false]);
+		expect(methods.map(([n, c]) => at('declaration.method.public')(n, c))).toEqual([false, false, true, false]);
+		expect(methods.map(([n, c]) => at('declaration.method')(n, c))).toEqual([true, true, true, true]);
 	});
 
 	it('reads a mapped index signature by its form', () => {
@@ -305,6 +521,19 @@ describe('portable is: typescript', async () => {
 		const [plain, pc] = find(SOURCE, 'import_statement', undefined, 1);
 		expect(at('statement.import.typeOnly')(type, tc)).toBe(true);
 		expect(at('statement.import.typeOnly')(plain, pc)).toBe(false);
+	});
+
+	it('reads a type-only export as an export, an export of all one included', () => {
+		const SOURCE = 'export type { A } from "a";\nexport type * from "b";\nexport { C } from "c";\n';
+		const froms = [0, 1, 2].map((nth) => find(SOURCE, 'export_statement_default_from', undefined, nth));
+		expect(froms.map(([n, c]) => at('statement.export')(n, c))).toEqual([true, true, true]);
+		expect(froms.map(([n, c]) => at('statement.export.all')(n, c))).toEqual([false, true, false]);
+	});
+
+	it.skip('reads a type-only export by its keyword (pending: `typeOnly` is a flag of statement.export, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
+		const SOURCE = 'export type { A } from "a";\nexport type * from "b";\nexport { C } from "c";\n';
+		const froms = [0, 1, 2].map((nth) => find(SOURCE, 'export_statement_default_from', undefined, nth));
+		expect(froms.map(([n, c]) => at('statement.export.typeOnly')(n, c))).toEqual([true, true, false]);
 	});
 
 	it('pins a typeof specifier by its keyword, and reads a type-only specifier as a specifier', () => {
@@ -403,14 +632,41 @@ describe('portable is: typescript', async () => {
 	});
 });
 
+describe('portable is: the root of a file', () => {
+	for (const [name, source, root] of [
+		['python', 'import os\n', 'module'],
+		['rust', 'mod m {}\n', 'source_file'],
+		['typescript', 'module M {}\n', 'program']
+	] as const) {
+		it(`${name}: reads the root as a file`, async () => {
+			const { at, find } = await surfaces(name);
+			const [file] = find(source, root);
+			expect(at('file')(file)).toBe(true);
+		});
+	}
+	for (const [name, source, declared, root] of [
+		['rust', 'mod m {}\n', 'mod_item_inline', 'source_file'],
+		['typescript', 'module M {}\n', 'module', 'program']
+	] as const) {
+		it(`${name}: tells a module declared in a file from the file`, async () => {
+			const { at, find } = await surfaces(name);
+			const [module, context] = find(source, declared);
+			const [file] = find(source, root);
+			expect(at('declaration.module')(module, context)).toBe(true);
+			expect(at('file')(module, context)).toBe(false);
+			expect(at('declaration.module')(file)).toBe(false);
+		});
+	}
+});
+
 describe('portable is agrees with one classification', () => {
 	const SOURCES = {
 		python: 'import os\nclass A(B):\n    @staticmethod\n    def s(x: int = 1) -> str:\n        return f"{x}" + b"y".decode()\nwhile x > 0:\n    x -= 1\n',
-		rust: 'use std::io;\nstruct S { a: u8 }\nfn f(x: &mut S) -> Option<u8> { let y = x.a + 1; if y > 2 { return Some(y); } let g = |a, mut b| a; None }\n',
+		rust: 'use std::io;\npub static Z: u8 = 0;\nstruct S { a: u8 }\nfn f(x: &mut S) -> Option<u8> { let y = x.a + 1; if y > 2 { return Some(y); } let g = |a, mut b| a; None }\n',
 		typescript: 'import { a } from "b";\nenum E { A, B = 1 }\nclass C extends D implements I { constructor() { super(); } m(): void { const x = a?.b ?? 1; } get g() { return 1; } accessor p = 1; }\n// c\n'
 	} as const;
 	for (const name of Object.keys(SOURCES) as (keyof typeof SOURCES)[]) {
-		it(`${name}: the paths a node is read as form one chain, and each admits the node's kind`, async () => {
+		it(`${name}: each guard names facts of one classification and admits the node's kind`, async () => {
 			const { located, at, kindsAt, paths } = await surfaces(name);
 			const canonical = new Map<Guard, string>();
 			for (const path of paths()) {
@@ -421,9 +677,55 @@ describe('portable is agrees with one classification', () => {
 				const held = [...canonical].filter(([guard]) => guard(node, context)).map(([, path]) => path);
 				const deepest = held.reduce((a, b) => (b.split('.').length > a.split('.').length ? b : a), held[0] ?? '');
 				for (const path of held) {
-					expect(deepest === path || deepest.startsWith(`${path}.`), `${path} beside ${deepest}`).toBe(true);
+					const facts = path.split('.').map((fact) => fact.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('(?:\\.[^.]+)*\\.');
+					expect(deepest, path).toMatch(new RegExp(`^${facts}(?:\\.[^.]+)*$`));
 					expect(kindsAt(path).$ids).toContain(kindOf(node));
 				}
+			}
+		});
+	}
+});
+
+describe('portable is: each kind under its neutral name', () => {
+	const NEUTRAL = {
+		python: [
+			['f(*a)\n', 'list_splat', 'element.spread'],
+			['f(**a)\n', 'dictionary_splat', 'element.spread.map'],
+			['with a as b:\n    pass\n', 'with_statement', 'statement.resource'],
+			['with a as b:\n    pass\n', 'with_clause_bare', 'clause.resource'],
+			['with a as b:\n    pass\n', 'with_item', 'clause.resource.item'],
+			['if a:\n    pass\nelif b:\n    pass\n', 'elif_clause', 'clause.else_if'],
+			['f(k=1)\n', 'keyword_argument', 'argument.named'],
+			['a @ b\n', 'binary_operator', 'expression.binary.matrix_multiply'],
+			['a @= b\n', 'augmented_assignment', 'expression.assignment.compound.matrix_multiply'],
+			['{k: v for k in x}\n', 'dictionary_comprehension', 'expression.comprehension.map'],
+			['{1: 2}\n', 'dictionary', 'expression.collection.map'],
+			['"""x"""\n', 'string', 'literal.string.multiline'],
+			['for x in y:\n    pass\n', 'for_statement', 'statement.loop.for_each'],
+			['class A:\n    def __add__(self, o): pass\n', 'function_definition', 'declaration.method.special']
+		],
+		rust: [
+			['extern crate foo;\n', 'extern_crate_declaration', 'statement.import.package'],
+			['fn f() { for x in y {} }\n', 'for_expression', 'statement.loop.for_each'],
+			['fn f() { a::b(); }\n', 'call_expression', 'expression.call.qualified'],
+			['fn f() -> Option<u8> { x?; None }\n', 'try_expression', 'expression.propagate'],
+			["fn f() { let c = 'a'; }\n", 'char_literal_plain', 'literal.character'],
+			['fn f() { let g = gen { yield 1; }; }\n', 'gen_block', 'expression.block.generator']
+		],
+		typescript: [
+			['for (const x of y) {}\n', 'for_in_statement', 'statement.loop.for_each'],
+			['f(...a);\n', 'spread_element', 'element.spread'],
+			['new A();\n', 'new_expression', 'expression.call.construct'],
+			['a ?? b;\n', 'binary_expression', 'expression.binary.coalesce'],
+			['a ??= b;\n', 'augmented_assignment_expression', 'expression.assignment.compound.coalesce']
+		]
+	} as const;
+	for (const name of Object.keys(NEUTRAL) as (keyof typeof NEUTRAL)[]) {
+		it(`${name}: reads each renamed kind by its neutral path`, async () => {
+			const { at, find } = await surfaces(name);
+			for (const [source, kind, path] of NEUTRAL[name]) {
+				const [node, context] = find(source, kind);
+				expect(at(path)(node, context), `${kind} as ${path}`).toBe(true);
 			}
 		});
 	}

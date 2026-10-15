@@ -20,11 +20,6 @@
             "_content": {
               "$type": 12,
               "$text": "e"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -32,11 +27,6 @@
             "_content": {
               "$type": 12,
               "$text": "l"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -44,11 +34,6 @@
             "_content": {
               "$type": 12,
               "$text": "l"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -56,11 +41,6 @@
             "_content": {
               "$type": 12,
               "$text": "o"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ]
@@ -99,11 +79,6 @@
           "_content": {
             "$type": 12,
             "$text": "e"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -111,11 +86,6 @@
           "_content": {
             "$type": 12,
             "$text": "l"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -123,11 +93,6 @@
           "_content": {
             "$type": 12,
             "$text": "l"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -135,11 +100,6 @@
           "_content": {
             "$type": 12,
             "$text": "o"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -298,41 +258,21 @@
             "_content": {
               "$type": 12,
               "$text": "e"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
             "$type": 77,
-            "_content": 2,
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "_content": 2
           },
           {
             "$type": 77,
-            "_content": 2,
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "_content": 2
           },
           {
             "$type": 77,
             "_content": {
               "$type": 12,
               "$text": "o"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ]
@@ -371,41 +311,21 @@
           "_content": {
             "$type": 12,
             "$text": "e"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
           "$type": 77,
-          "_content": 2,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 2
         },
         {
           "$type": 77,
-          "_content": 2,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 2
         },
         {
           "$type": 77,
           "_content": {
             "$type": 12,
             "$text": "o"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -566,11 +486,6 @@
             "_quantifier": {
               "$type": 67,
               "_lazy": false
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -582,11 +497,6 @@
             "_quantifier": {
               "$type": 68,
               "_lazy": false
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -595,11 +505,6 @@
             "_quantifier": {
               "$type": 69,
               "_lazy": false
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ]
@@ -646,11 +551,6 @@
           "_quantifier": {
             "$type": 67,
             "_lazy": false
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -662,11 +562,6 @@
           "_quantifier": {
             "$type": 68,
             "_lazy": false
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -675,11 +570,6 @@
           "_quantifier": {
             "$type": 69,
             "_lazy": false
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -929,11 +819,6 @@
             "_content": {
               "$type": 12,
               "$text": "e"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -959,11 +844,6 @@
                 }
               },
               "_lazy": false
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -979,11 +859,6 @@
                 }
               },
               "_lazy": false
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -1005,11 +880,6 @@
                 }
               },
               "_lazy": false
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ]
@@ -1066,11 +936,6 @@
           "_content": {
             "$type": 12,
             "$text": "e"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -1096,11 +961,6 @@
               }
             },
             "_lazy": false
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -1116,11 +976,6 @@
               }
             },
             "_lazy": false
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -1142,11 +997,6 @@
               }
             },
             "_lazy": false
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -1673,11 +1523,6 @@
             "_content": {
               "$type": 12,
               "$text": "a"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ]
@@ -1716,11 +1561,6 @@
           "_content": {
             "$type": 12,
             "$text": "a"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -1810,41 +1650,21 @@
                 "_content": {
                   "$type": 12,
                   "$text": "e"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
                 "$type": 77,
-                "_content": 2,
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "_content": 2
               },
               {
                 "$type": 77,
-                "_content": 2,
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "_content": 2
               },
               {
                 "$type": 77,
                 "_content": {
                   "$type": 12,
                   "$text": "o"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               }
             ]
@@ -1864,32 +1684,17 @@
                 "_content": {
                   "$type": 12,
                   "$text": "o"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
                 "$type": 77,
-                "_content": 2,
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "_content": 2
               },
               {
                 "$type": 77,
                 "_content": {
                   "$type": 12,
                   "$text": "l"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -1897,19 +1702,9 @@
                 "_content": {
                   "$type": 12,
                   "$text": "d"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               }
-            ],
-            "$_layout": {
-              "gap": {
-                "$text": "|"
-              }
-            }
+            ]
           }
         ]
       },
@@ -1950,41 +1745,21 @@
               "_content": {
                 "$type": 12,
                 "$text": "e"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
               "$type": 77,
-              "_content": 2,
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
-              }
+              "_content": 2
             },
             {
               "$type": 77,
-              "_content": 2,
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
-              }
+              "_content": 2
             },
             {
               "$type": 77,
               "_content": {
                 "$type": 12,
                 "$text": "o"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             }
           ]
@@ -2004,32 +1779,17 @@
               "_content": {
                 "$type": 12,
                 "$text": "o"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
               "$type": 77,
-              "_content": 2,
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
-              }
+              "_content": 2
             },
             {
               "$type": 77,
               "_content": {
                 "$type": 12,
                 "$text": "l"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -2037,19 +1797,9 @@
               "_content": {
                 "$type": 12,
                 "$text": "d"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             }
-          ],
-          "$_layout": {
-            "gap": {
-              "$text": "|"
-            }
-          }
+          ]
         }
       ]
     },
@@ -2085,41 +1835,21 @@
           "_content": {
             "$type": 12,
             "$text": "e"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
           "$type": 77,
-          "_content": 2,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 2
         },
         {
           "$type": 77,
-          "_content": 2,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 2
         },
         {
           "$type": 77,
           "_content": {
             "$type": 12,
             "$text": "o"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -2156,32 +1886,17 @@
           "_content": {
             "$type": 12,
             "$text": "o"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
           "$type": 77,
-          "_content": 2,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 2
         },
         {
           "$type": 77,
           "_content": {
             "$type": 12,
             "$text": "l"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -2189,11 +1904,6 @@
           "_content": {
             "$type": 12,
             "$text": "d"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -2468,41 +2178,21 @@
                 "_content": {
                   "$type": 12,
                   "$text": "e"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
                 "$type": 77,
-                "_content": 2,
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "_content": 2
               },
               {
                 "$type": 77,
-                "_content": 2,
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "_content": 2
               },
               {
                 "$type": 77,
                 "_content": {
                   "$type": 12,
                   "$text": "o"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               }
             ]
@@ -2523,32 +2213,17 @@
                 "_content": {
                   "$type": 12,
                   "$text": "o"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
                 "$type": 77,
-                "_content": 2,
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "_content": 2
               },
               {
                 "$type": 77,
                 "_content": {
                   "$type": 12,
                   "$text": "l"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -2556,11 +2231,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "d"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               }
             ]
@@ -2609,41 +2279,21 @@
               "_content": {
                 "$type": 12,
                 "$text": "e"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
               "$type": 77,
-              "_content": 2,
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
-              }
+              "_content": 2
             },
             {
               "$type": 77,
-              "_content": 2,
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
-              }
+              "_content": 2
             },
             {
               "$type": 77,
               "_content": {
                 "$type": 12,
                 "$text": "o"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             }
           ]
@@ -2664,32 +2314,17 @@
               "_content": {
                 "$type": 12,
                 "$text": "o"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
               "$type": 77,
-              "_content": 2,
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
-              }
+              "_content": 2
             },
             {
               "$type": 77,
               "_content": {
                 "$type": 12,
                 "$text": "l"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -2697,11 +2332,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "d"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             }
           ]
@@ -2743,41 +2373,21 @@
           "_content": {
             "$type": 12,
             "$text": "e"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
           "$type": 77,
-          "_content": 2,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 2
         },
         {
           "$type": 77,
-          "_content": 2,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 2
         },
         {
           "$type": 77,
           "_content": {
             "$type": 12,
             "$text": "o"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -2814,32 +2424,17 @@
           "_content": {
             "$type": 12,
             "$text": "o"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
           "$type": 77,
-          "_content": 2,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 2
         },
         {
           "$type": 77,
           "_content": {
             "$type": 12,
             "$text": "l"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -2847,11 +2442,6 @@
           "_content": {
             "$type": 12,
             "$text": "d"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -3118,11 +2708,6 @@
             "_content": {
               "$type": 12,
               "$text": "h"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -3130,51 +2715,26 @@
             "_content": {
               "$type": 12,
               "$text": "e"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
             "$type": 77,
-            "_content": 2,
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "_content": 2
           },
           {
             "$type": 77,
-            "_content": 2,
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "_content": 2
           },
           {
             "$type": 77,
             "_content": {
               "$type": 12,
               "$text": "o"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
             "$type": 77,
-            "_content": 4,
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "_content": 4
           }
         ]
       },
@@ -3209,11 +2769,6 @@
           "_content": {
             "$type": 12,
             "$text": "h"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -3221,51 +2776,26 @@
           "_content": {
             "$type": 12,
             "$text": "e"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
           "$type": 77,
-          "_content": 2,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 2
         },
         {
           "$type": 77,
-          "_content": 2,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 2
         },
         {
           "$type": 77,
           "_content": {
             "$type": 12,
             "$text": "o"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
           "$type": 77,
-          "_content": 4,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 4
         }
       ]
     },
@@ -3456,11 +2986,6 @@
             "_content": {
               "$type": 12,
               "$text": "h"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -3468,51 +2993,26 @@
             "_content": {
               "$type": 12,
               "$text": "e"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
             "$type": 77,
-            "_content": 2,
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "_content": 2
           },
           {
             "$type": 77,
-            "_content": 2,
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "_content": 2
           },
           {
             "$type": 77,
             "_content": {
               "$type": 12,
               "$text": "o"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
             "$type": 77,
-            "_content": 5,
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "_content": 5
           }
         ]
       },
@@ -3547,11 +3047,6 @@
           "_content": {
             "$type": 12,
             "$text": "h"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -3559,51 +3054,26 @@
           "_content": {
             "$type": 12,
             "$text": "e"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
           "$type": 77,
-          "_content": 2,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 2
         },
         {
           "$type": 77,
-          "_content": 2,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 2
         },
         {
           "$type": 77,
           "_content": {
             "$type": 12,
             "$text": "o"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
           "$type": 77,
-          "_content": 5,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 5
         }
       ]
     },
@@ -3797,11 +3267,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "h"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -3809,51 +3274,26 @@
                 "_content": {
                   "$type": 12,
                   "$text": "e"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
                 "$type": 77,
-                "_content": 2,
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "_content": 2
               },
               {
                 "$type": 77,
-                "_content": 2,
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "_content": 2
               },
               {
                 "$type": 77,
                 "_content": {
                   "$type": 12,
                   "$text": "o"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
                 "$type": 77,
-                "_content": 4,
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "_content": 4
               }
             ]
           },
@@ -3870,32 +3310,17 @@
               },
               {
                 "$type": 77,
-                "_content": 2,
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "_content": 2
               },
               {
                 "$type": 77,
-                "_content": 2,
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "_content": 2
               },
               {
                 "$type": 77,
                 "_content": {
                   "$type": 12,
                   "$text": "l"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -3903,21 +3328,11 @@
                 "_content": {
                   "$type": 12,
                   "$text": "d"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
                 "$type": 77,
-                "_content": 4,
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "_content": 4
               }
             ]
           }
@@ -3957,11 +3372,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "h"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -3969,51 +3379,26 @@
               "_content": {
                 "$type": 12,
                 "$text": "e"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
               "$type": 77,
-              "_content": 2,
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
-              }
+              "_content": 2
             },
             {
               "$type": 77,
-              "_content": 2,
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
-              }
+              "_content": 2
             },
             {
               "$type": 77,
               "_content": {
                 "$type": 12,
                 "$text": "o"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
               "$type": 77,
-              "_content": 4,
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
-              }
+              "_content": 4
             }
           ]
         },
@@ -4030,32 +3415,17 @@
             },
             {
               "$type": 77,
-              "_content": 2,
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
-              }
+              "_content": 2
             },
             {
               "$type": 77,
-              "_content": 2,
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
-              }
+              "_content": 2
             },
             {
               "$type": 77,
               "_content": {
                 "$type": 12,
                 "$text": "l"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -4063,21 +3433,11 @@
               "_content": {
                 "$type": 12,
                 "$text": "d"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
               "$type": 77,
-              "_content": 4,
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
-              }
+              "_content": 4
             }
           ]
         }
@@ -4112,11 +3472,6 @@
           "_content": {
             "$type": 12,
             "$text": "h"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -4124,51 +3479,26 @@
           "_content": {
             "$type": 12,
             "$text": "e"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
           "$type": 77,
-          "_content": 2,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 2
         },
         {
           "$type": 77,
-          "_content": 2,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 2
         },
         {
           "$type": 77,
           "_content": {
             "$type": 12,
             "$text": "o"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
           "$type": 77,
-          "_content": 4,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 4
         }
       ]
     },
@@ -4201,32 +3531,17 @@
         },
         {
           "$type": 77,
-          "_content": 2,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 2
         },
         {
           "$type": 77,
-          "_content": 2,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 2
         },
         {
           "$type": 77,
           "_content": {
             "$type": 12,
             "$text": "l"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -4234,21 +3549,11 @@
           "_content": {
             "$type": 12,
             "$text": "d"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
           "$type": 77,
-          "_content": 4,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 4
         }
       ]
     },
@@ -4577,11 +3882,6 @@
             "_content": {
               "$type": 12,
               "$text": "a"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -4589,11 +3889,6 @@
             "_content": {
               "$type": 12,
               "$text": "c"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -4601,11 +3896,6 @@
             "_content": {
               "$type": 12,
               "$text": "k"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -4632,11 +3922,6 @@
                         "_content": {
                           "$type": 12,
                           "$text": "p"
-                        },
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
                         }
                       },
                       {
@@ -4644,11 +3929,6 @@
                         "_content": {
                           "$type": 12,
                           "$text": "r"
-                        },
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
                         }
                       },
                       {
@@ -4656,11 +3936,6 @@
                         "_content": {
                           "$type": 12,
                           "$text": "a"
-                        },
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
                         }
                       },
                       {
@@ -4668,21 +3943,11 @@
                         "_content": {
                           "$type": 12,
                           "$text": "t"
-                        },
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
                         }
                       }
                     ]
                   }
                 }
-              }
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
               }
             }
           }
@@ -4724,11 +3989,6 @@
             "_content": {
               "$type": 12,
               "$text": "p"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -4736,11 +3996,6 @@
             "_content": {
               "$type": 12,
               "$text": "r"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -4748,11 +4003,6 @@
             "_content": {
               "$type": 12,
               "$text": "a"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -4760,11 +4010,6 @@
             "_content": {
               "$type": 12,
               "$text": "t"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ]
@@ -4802,11 +4047,6 @@
           "_content": {
             "$type": 12,
             "$text": "a"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -4814,11 +4054,6 @@
           "_content": {
             "$type": 12,
             "$text": "c"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -4826,11 +4061,6 @@
           "_content": {
             "$type": 12,
             "$text": "k"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -4857,11 +4087,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "p"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -4869,11 +4094,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "r"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -4881,11 +4101,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "a"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -4893,21 +4108,11 @@
                       "_content": {
                         "$type": 12,
                         "$text": "t"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     }
                   ]
                 }
               }
-            }
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
             }
           }
         }
@@ -4945,11 +4150,6 @@
           "_content": {
             "$type": 12,
             "$text": "p"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -4957,11 +4157,6 @@
           "_content": {
             "$type": 12,
             "$text": "r"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -4969,11 +4164,6 @@
           "_content": {
             "$type": 12,
             "$text": "a"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -4981,11 +4171,6 @@
           "_content": {
             "$type": 12,
             "$text": "t"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -5127,11 +4312,6 @@
                   "_content": {
                     "$type": 12,
                     "$text": "p"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
                   }
                 },
                 {
@@ -5139,11 +4319,6 @@
                   "_content": {
                     "$type": 12,
                     "$text": "r"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
                   }
                 },
                 {
@@ -5151,11 +4326,6 @@
                   "_content": {
                     "$type": 12,
                     "$text": "a"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
                   }
                 },
                 {
@@ -5163,11 +4333,6 @@
                   "_content": {
                     "$type": 12,
                     "$text": "t"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
                   }
                 }
               ]
@@ -5335,11 +4500,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "p"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -5347,11 +4507,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "r"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -5359,11 +4514,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "a"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -5371,11 +4521,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "t"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               }
             ]
@@ -5420,11 +4565,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "p"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -5432,11 +4572,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "r"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -5444,11 +4579,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "a"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -5456,11 +4586,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "t"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             }
           ]
@@ -5501,11 +4626,6 @@
             "_content": {
               "$type": 12,
               "$text": "a"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -5513,11 +4633,6 @@
             "_content": {
               "$type": 12,
               "$text": "c"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -5525,11 +4640,6 @@
             "_content": {
               "$type": 12,
               "$text": "k"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -5556,11 +4666,6 @@
                         "_content": {
                           "$type": 12,
                           "$text": "p"
-                        },
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
                         }
                       },
                       {
@@ -5568,11 +4673,6 @@
                         "_content": {
                           "$type": 12,
                           "$text": "r"
-                        },
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
                         }
                       },
                       {
@@ -5580,11 +4680,6 @@
                         "_content": {
                           "$type": 12,
                           "$text": "a"
-                        },
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
                         }
                       },
                       {
@@ -5592,21 +4687,11 @@
                         "_content": {
                           "$type": 12,
                           "$text": "t"
-                        },
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
                         }
                       }
                     ]
                   }
                 }
-              }
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
               }
             }
           }
@@ -5648,11 +4733,6 @@
             "_content": {
               "$type": 12,
               "$text": "p"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -5660,11 +4740,6 @@
             "_content": {
               "$type": 12,
               "$text": "r"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -5672,11 +4747,6 @@
             "_content": {
               "$type": 12,
               "$text": "a"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -5684,11 +4754,6 @@
             "_content": {
               "$type": 12,
               "$text": "t"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ]
@@ -5726,11 +4791,6 @@
           "_content": {
             "$type": 12,
             "$text": "a"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -5738,11 +4798,6 @@
           "_content": {
             "$type": 12,
             "$text": "c"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -5750,11 +4805,6 @@
           "_content": {
             "$type": 12,
             "$text": "k"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -5781,11 +4831,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "p"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -5793,11 +4838,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "r"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -5805,11 +4845,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "a"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -5817,21 +4852,11 @@
                       "_content": {
                         "$type": 12,
                         "$text": "t"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     }
                   ]
                 }
               }
-            }
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
             }
           }
         }
@@ -5869,11 +4894,6 @@
           "_content": {
             "$type": 12,
             "$text": "p"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -5881,11 +4901,6 @@
           "_content": {
             "$type": 12,
             "$text": "r"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -5893,11 +4908,6 @@
           "_content": {
             "$type": 12,
             "$text": "a"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -5905,11 +4915,6 @@
           "_content": {
             "$type": 12,
             "$text": "t"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -6051,11 +5056,6 @@
                   "_content": {
                     "$type": 12,
                     "$text": "p"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
                   }
                 },
                 {
@@ -6063,11 +5063,6 @@
                   "_content": {
                     "$type": 12,
                     "$text": "r"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
                   }
                 },
                 {
@@ -6075,11 +5070,6 @@
                   "_content": {
                     "$type": 12,
                     "$text": "a"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
                   }
                 },
                 {
@@ -6087,11 +5077,6 @@
                   "_content": {
                     "$type": 12,
                     "$text": "t"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
                   }
                 }
               ]
@@ -6259,11 +5244,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "p"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -6271,11 +5251,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "r"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -6283,11 +5258,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "a"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -6295,11 +5265,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "t"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               }
             ]
@@ -6344,11 +5309,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "p"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -6356,11 +5316,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "r"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -6368,11 +5323,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "a"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -6380,11 +5330,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "t"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             }
           ]
@@ -6437,11 +5382,6 @@
                         "_content": {
                           "$type": 12,
                           "$text": "a"
-                        },
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
                         }
                       },
                       {
@@ -6449,11 +5389,6 @@
                         "_content": {
                           "$type": 12,
                           "$text": "c"
-                        },
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
                         }
                       },
                       {
@@ -6461,11 +5396,6 @@
                         "_content": {
                           "$type": 12,
                           "$text": "k"
-                        },
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
                         }
                       }
                     ]
@@ -6479,11 +5409,6 @@
             "_content": {
               "$type": 12,
               "$text": "S"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -6491,11 +5416,6 @@
             "_content": {
               "$type": 12,
               "$text": "p"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -6503,11 +5423,6 @@
             "_content": {
               "$type": 12,
               "$text": "r"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -6515,11 +5430,6 @@
             "_content": {
               "$type": 12,
               "$text": "a"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -6527,11 +5437,6 @@
             "_content": {
               "$type": 12,
               "$text": "t"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ]
@@ -6572,11 +5477,6 @@
             "_content": {
               "$type": 12,
               "$text": "a"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -6584,11 +5484,6 @@
             "_content": {
               "$type": 12,
               "$text": "c"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -6596,11 +5491,6 @@
             "_content": {
               "$type": 12,
               "$text": "k"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ]
@@ -6650,11 +5540,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "a"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -6662,11 +5547,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "c"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -6674,11 +5554,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "k"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     }
                   ]
@@ -6692,11 +5567,6 @@
           "_content": {
             "$type": 12,
             "$text": "S"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -6704,11 +5574,6 @@
           "_content": {
             "$type": 12,
             "$text": "p"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -6716,11 +5581,6 @@
           "_content": {
             "$type": 12,
             "$text": "r"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -6728,11 +5588,6 @@
           "_content": {
             "$type": 12,
             "$text": "a"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -6740,11 +5595,6 @@
           "_content": {
             "$type": 12,
             "$text": "t"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -6781,11 +5631,6 @@
           "_content": {
             "$type": 12,
             "$text": "a"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -6793,11 +5638,6 @@
           "_content": {
             "$type": 12,
             "$text": "c"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -6805,11 +5645,6 @@
           "_content": {
             "$type": 12,
             "$text": "k"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -6855,11 +5690,6 @@
                   "_content": {
                     "$type": 12,
                     "$text": "a"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
                   }
                 },
                 {
@@ -6867,11 +5697,6 @@
                   "_content": {
                     "$type": 12,
                     "$text": "c"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
                   }
                 },
                 {
@@ -6879,11 +5704,6 @@
                   "_content": {
                     "$type": 12,
                     "$text": "k"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
                   }
                 }
               ]
@@ -7147,11 +5967,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "a"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -7159,11 +5974,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "c"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -7171,11 +5981,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "k"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               }
             ]
@@ -7220,11 +6025,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "a"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -7232,11 +6032,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "c"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -7244,11 +6039,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "k"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             }
           ]
@@ -7301,11 +6091,6 @@
                         "_content": {
                           "$type": 12,
                           "$text": "a"
-                        },
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
                         }
                       },
                       {
@@ -7313,11 +6098,6 @@
                         "_content": {
                           "$type": 12,
                           "$text": "c"
-                        },
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
                         }
                       },
                       {
@@ -7325,11 +6105,6 @@
                         "_content": {
                           "$type": 12,
                           "$text": "k"
-                        },
-                        "$_layout": {
-                          "gap": {
-                            "$text": ""
-                          }
                         }
                       }
                     ]
@@ -7343,11 +6118,6 @@
             "_content": {
               "$type": 12,
               "$text": "S"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -7355,11 +6125,6 @@
             "_content": {
               "$type": 12,
               "$text": "p"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -7367,11 +6132,6 @@
             "_content": {
               "$type": 12,
               "$text": "r"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -7379,11 +6139,6 @@
             "_content": {
               "$type": 12,
               "$text": "a"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -7391,11 +6146,6 @@
             "_content": {
               "$type": 12,
               "$text": "t"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ]
@@ -7436,11 +6186,6 @@
             "_content": {
               "$type": 12,
               "$text": "a"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -7448,11 +6193,6 @@
             "_content": {
               "$type": 12,
               "$text": "c"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -7460,11 +6200,6 @@
             "_content": {
               "$type": 12,
               "$text": "k"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ]
@@ -7514,11 +6249,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "a"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -7526,11 +6256,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "c"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -7538,11 +6263,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "k"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     }
                   ]
@@ -7556,11 +6276,6 @@
           "_content": {
             "$type": 12,
             "$text": "S"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -7568,11 +6283,6 @@
           "_content": {
             "$type": 12,
             "$text": "p"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -7580,11 +6290,6 @@
           "_content": {
             "$type": 12,
             "$text": "r"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -7592,11 +6297,6 @@
           "_content": {
             "$type": 12,
             "$text": "a"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -7604,11 +6304,6 @@
           "_content": {
             "$type": 12,
             "$text": "t"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -7645,11 +6340,6 @@
           "_content": {
             "$type": 12,
             "$text": "a"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -7657,11 +6347,6 @@
           "_content": {
             "$type": 12,
             "$text": "c"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -7669,11 +6354,6 @@
           "_content": {
             "$type": 12,
             "$text": "k"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -7719,11 +6399,6 @@
                   "_content": {
                     "$type": 12,
                     "$text": "a"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
                   }
                 },
                 {
@@ -7731,11 +6406,6 @@
                   "_content": {
                     "$type": 12,
                     "$text": "c"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
                   }
                 },
                 {
@@ -7743,11 +6413,6 @@
                   "_content": {
                     "$type": 12,
                     "$text": "k"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
                   }
                 }
               ]
@@ -8011,11 +6676,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "a"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -8023,11 +6683,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "c"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -8035,11 +6690,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "k"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               }
             ]
@@ -8084,11 +6734,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "a"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -8096,11 +6741,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "c"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -8108,11 +6748,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "k"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             }
           ]
@@ -8168,11 +6803,6 @@
                   "_end": {
                     "$type": 20,
                     "$text": "z"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
                   }
                 }
               ],
@@ -8192,20 +6822,10 @@
                 },
                 {
                   "$type": 20,
-                  "$text": "x",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "x"
                 }
               ],
               "_trailing": false
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ]
@@ -8259,11 +6879,6 @@
                 "_end": {
                   "$type": 20,
                   "$text": "z"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               }
             ],
@@ -8283,20 +6898,10 @@
               },
               {
                 "$type": 20,
-                "$text": "x",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "x"
               }
             ],
             "_trailing": false
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -8345,11 +6950,6 @@
             "_end": {
               "$type": 20,
               "$text": "z"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ],
@@ -8386,12 +6986,7 @@
           },
           {
             "$type": 20,
-            "$text": "x",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "x"
           }
         ],
         "_trailing": false
@@ -8439,11 +7034,6 @@
           "_end": {
             "$type": 20,
             "$text": "z"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ],
@@ -8477,12 +7067,7 @@
         },
         {
           "$type": 20,
-          "$text": "x",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "x"
         }
       ],
       "_trailing": false
@@ -8998,12 +7583,7 @@
                 19,
                 {
                   "$type": 37,
-                  "_content": ".",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "_content": "."
                 }
               ],
               "_trailing": false
@@ -9043,12 +7623,7 @@
               19,
               {
                 "$type": 37,
-                "_content": ".",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "_content": "."
               }
             ],
             "_trailing": false
@@ -9083,12 +7658,7 @@
           19,
           {
             "$type": 37,
-            "_content": ".",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "_content": "."
           }
         ],
         "_trailing": false
@@ -9119,12 +7689,7 @@
         19,
         {
           "$type": 37,
-          "_content": ".",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": "."
         }
       ],
       "_trailing": false
@@ -9181,23 +7746,13 @@
           },
           {
             "$type": 77,
-            "_content": 5,
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "_content": 5
           },
           {
             "$type": 77,
             "_content": {
               "$type": 37,
               "_content": "c"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -9208,11 +7763,6 @@
                 "$type": 41,
                 "$text": "\\d"
               }
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -9220,11 +7770,6 @@
             "_content": {
               "$type": 37,
               "_content": "\\"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -9232,11 +7777,6 @@
             "_content": {
               "$type": 37,
               "_content": "{"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -9244,11 +7784,6 @@
             "_content": {
               "$type": 37,
               "_content": "("
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -9256,11 +7791,6 @@
             "_content": {
               "$type": 37,
               "_content": "["
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -9268,11 +7798,6 @@
             "_content": {
               "$type": 37,
               "_content": "]"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -9280,11 +7805,6 @@
             "_content": {
               "$type": 37,
               "_content": ")"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -9292,11 +7812,6 @@
             "_content": {
               "$type": 37,
               "_content": "}"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ]
@@ -9332,23 +7847,13 @@
         },
         {
           "$type": 77,
-          "_content": 5,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 5
         },
         {
           "$type": 77,
           "_content": {
             "$type": 37,
             "_content": "c"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -9359,11 +7864,6 @@
               "$type": 41,
               "$text": "\\d"
             }
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -9371,11 +7871,6 @@
           "_content": {
             "$type": 37,
             "_content": "\\"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -9383,11 +7878,6 @@
           "_content": {
             "$type": 37,
             "_content": "{"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -9395,11 +7885,6 @@
           "_content": {
             "$type": 37,
             "_content": "("
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -9407,11 +7892,6 @@
           "_content": {
             "$type": 37,
             "_content": "["
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -9419,11 +7899,6 @@
           "_content": {
             "$type": 37,
             "_content": "]"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -9431,11 +7906,6 @@
           "_content": {
             "$type": 37,
             "_content": ")"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -9443,11 +7913,6 @@
           "_content": {
             "$type": 37,
             "_content": "}"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -9963,11 +8428,6 @@
             "_content": {
               "$type": 12,
               "$text": "a"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -9975,11 +8435,6 @@
             "_content": {
               "$type": 12,
               "$text": "c"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -9987,11 +8442,6 @@
             "_content": {
               "$type": 12,
               "$text": "k"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -10015,11 +8465,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "p"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -10027,11 +8472,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "r"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -10039,11 +8479,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "a"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -10051,20 +8486,10 @@
                       "_content": {
                         "$type": 12,
                         "$text": "t"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     }
                   ]
                 }
-              }
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
               }
             }
           }
@@ -10106,11 +8531,6 @@
             "_content": {
               "$type": 12,
               "$text": "p"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -10118,11 +8538,6 @@
             "_content": {
               "$type": 12,
               "$text": "r"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -10130,11 +8545,6 @@
             "_content": {
               "$type": 12,
               "$text": "a"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -10142,11 +8552,6 @@
             "_content": {
               "$type": 12,
               "$text": "t"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ]
@@ -10184,11 +8589,6 @@
           "_content": {
             "$type": 12,
             "$text": "a"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -10196,11 +8596,6 @@
           "_content": {
             "$type": 12,
             "$text": "c"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -10208,11 +8603,6 @@
           "_content": {
             "$type": 12,
             "$text": "k"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -10236,11 +8626,6 @@
                     "_content": {
                       "$type": 12,
                       "$text": "p"
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
                     }
                   },
                   {
@@ -10248,11 +8633,6 @@
                     "_content": {
                       "$type": 12,
                       "$text": "r"
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
                     }
                   },
                   {
@@ -10260,11 +8640,6 @@
                     "_content": {
                       "$type": 12,
                       "$text": "a"
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
                     }
                   },
                   {
@@ -10272,20 +8647,10 @@
                     "_content": {
                       "$type": 12,
                       "$text": "t"
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
                     }
                   }
                 ]
               }
-            }
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
             }
           }
         }
@@ -10323,11 +8688,6 @@
           "_content": {
             "$type": 12,
             "$text": "p"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -10335,11 +8695,6 @@
           "_content": {
             "$type": 12,
             "$text": "r"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -10347,11 +8702,6 @@
           "_content": {
             "$type": 12,
             "$text": "a"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -10359,11 +8709,6 @@
           "_content": {
             "$type": 12,
             "$text": "t"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -10502,11 +8847,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "p"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -10514,11 +8854,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "r"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -10526,11 +8861,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "a"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -10538,11 +8868,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "t"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               }
             ]
@@ -10706,11 +9031,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "p"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -10718,11 +9038,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "r"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -10730,11 +9045,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "a"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -10742,11 +9052,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "t"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             }
           ]
@@ -10793,11 +9098,6 @@
                 "$type": 41,
                 "$text": "\\w"
               }
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -10805,11 +9105,6 @@
             "_content": {
               "$type": 36,
               "$text": "\\cZ"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ]
@@ -10854,11 +9149,6 @@
               "$type": 41,
               "$text": "\\w"
             }
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -10866,11 +9156,6 @@
           "_content": {
             "$type": 36,
             "$text": "\\cZ"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -11035,11 +9320,6 @@
             "_content": {
               "$type": 76,
               "$text": "\\n"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -11047,11 +9327,6 @@
             "_content": {
               "$type": 76,
               "$text": "\\r"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -11059,11 +9334,6 @@
             "_content": {
               "$type": 76,
               "$text": "\\t"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -11071,11 +9341,6 @@
             "_content": {
               "$type": 76,
               "$text": "\\v"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -11083,11 +9348,6 @@
             "_content": {
               "$type": 76,
               "$text": "\\0"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ]
@@ -11126,11 +9386,6 @@
           "_content": {
             "$type": 76,
             "$text": "\\n"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -11138,11 +9393,6 @@
           "_content": {
             "$type": 76,
             "$text": "\\r"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -11150,11 +9400,6 @@
           "_content": {
             "$type": 76,
             "$text": "\\t"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -11162,11 +9407,6 @@
           "_content": {
             "$type": 76,
             "$text": "\\v"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -11174,11 +9414,6 @@
           "_content": {
             "$type": 76,
             "$text": "\\0"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -11986,11 +10221,6 @@
             "_content": {
               "$type": 12,
               "$text": "e"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -11998,11 +10228,6 @@
             "_content": {
               "$type": 12,
               "$text": "l"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -12010,11 +10235,6 @@
             "_content": {
               "$type": 12,
               "$text": "l"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -12022,11 +10242,6 @@
             "_content": {
               "$type": 12,
               "$text": "o"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -12036,8 +10251,10 @@
               "$text": " "
             },
             "$_layout": {
-              "gap": {
-                "$text": ""
+              "trivia": {
+                "leading": [
+                  47
+                ]
               }
             }
           },
@@ -12060,11 +10277,6 @@
                     }
                   ]
                 }
-              }
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
               }
             }
           }
@@ -12137,11 +10349,6 @@
           "_content": {
             "$type": 12,
             "$text": "e"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -12149,11 +10356,6 @@
           "_content": {
             "$type": 12,
             "$text": "l"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -12161,11 +10363,6 @@
           "_content": {
             "$type": 12,
             "$text": "l"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -12173,11 +10370,6 @@
           "_content": {
             "$type": 12,
             "$text": "o"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -12187,8 +10379,10 @@
             "$text": " "
           },
           "$_layout": {
-            "gap": {
-              "$text": ""
+            "trivia": {
+              "leading": [
+                47
+              ]
             }
           }
         },
@@ -12211,11 +10405,6 @@
                   }
                 ]
               }
-            }
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
             }
           }
         }
@@ -13107,11 +11296,6 @@
                 "$type": 38,
                 "$text": "the_world"
               }
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -13155,11 +11339,6 @@
               "_group_name": {
                 "$type": 38,
                 "$text": "python"
-              }
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
               }
             }
           }
@@ -13288,11 +11467,6 @@
               "$type": 38,
               "$text": "the_world"
             }
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -13336,11 +11510,6 @@
             "_group_name": {
               "$type": 38,
               "$text": "python"
-            }
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
             }
           }
         }
@@ -13849,11 +12018,6 @@
             "_content": {
               "$type": 12,
               "$text": "-"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -13906,11 +12070,6 @@
                   ]
                 }
               }
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -13918,11 +12077,6 @@
             "_content": {
               "$type": 12,
               "$text": "-"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -13974,11 +12128,6 @@
                     }
                   ]
                 }
-              }
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
               }
             }
           }
@@ -14237,11 +12386,6 @@
           "_content": {
             "$type": 12,
             "$text": "-"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -14294,11 +12438,6 @@
                 ]
               }
             }
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -14306,11 +12445,6 @@
           "_content": {
             "$type": 12,
             "$text": "-"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -14362,11 +12496,6 @@
                   }
                 ]
               }
-            }
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
             }
           }
         }
@@ -15537,11 +13666,6 @@
                   "_end": {
                     "$type": 20,
                     "$text": "Z"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
                   }
                 },
                 {
@@ -15553,93 +13677,43 @@
                   "_end": {
                     "$type": 20,
                     "$text": "9"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
                   }
                 },
                 {
                   "$type": 20,
-                  "$text": "@",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "@"
                 },
                 {
                   "$type": 20,
-                  "$text": ":",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": ":"
                 },
                 {
                   "$type": 20,
-                  "$text": "%",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "%"
                 },
                 {
                   "$type": 20,
-                  "$text": ".",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "."
                 },
                 {
                   "$type": 20,
-                  "$text": "_",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "_"
                 },
                 {
                   "$type": 37,
-                  "_content": "+",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "_content": "+"
                 },
                 {
                   "$type": 20,
-                  "$text": "~",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "~"
                 },
                 {
                   "$type": 20,
-                  "$text": "#",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "#"
                 },
                 {
                   "$type": 20,
-                  "$text": "=",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "="
                 }
               ],
               "_trailing": false
@@ -15715,21 +13789,11 @@
                 }
               },
               "_lazy": false
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
             "$type": 77,
-            "_content": 5,
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "_content": 5
           },
           {
             "$type": 77,
@@ -15767,11 +13831,6 @@
                             "_end": {
                               "$type": 20,
                               "$text": "Z"
-                            },
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
                             }
                           },
                           {
@@ -15783,129 +13842,59 @@
                             "_end": {
                               "$type": 20,
                               "$text": "9"
-                            },
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
                             }
                           },
                           {
                             "$type": 20,
-                            "$text": "@",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
+                            "$text": "@"
                           },
                           {
                             "$type": 20,
-                            "$text": ":",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
+                            "$text": ":"
                           },
                           {
                             "$type": 20,
-                            "$text": "%",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
+                            "$text": "%"
                           },
                           {
                             "$type": 20,
-                            "$text": "_",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
+                            "$text": "_"
                           },
                           {
                             "$type": 37,
-                            "_content": "+",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
+                            "_content": "+"
                           },
                           {
                             "$type": 20,
-                            "$text": ".",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
+                            "$text": "."
                           },
                           {
                             "$type": 20,
-                            "$text": "~",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
+                            "$text": "~"
                           },
                           {
                             "$type": 20,
-                            "$text": "#",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
+                            "$text": "#"
                           },
                           {
                             "$type": 20,
-                            "$text": "?",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
+                            "$text": "?"
                           },
                           {
                             "$type": 20,
-                            "$text": "&",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
+                            "$text": "&"
                           },
                           {
                             "$type": 20,
-                            "$text": "/",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
+                            "$text": "/"
                           },
                           {
                             "$type": 20,
-                            "$text": "/",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
+                            "$text": "/"
                           },
                           {
                             "$type": 20,
-                            "$text": "=",
-                            "$_layout": {
-                              "gap": {
-                                "$text": ""
-                              }
-                            }
+                            "$text": "="
                           }
                         ],
                         "_trailing": false
@@ -15927,11 +13916,6 @@
                     ]
                   }
                 }
-              }
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
               }
             }
           }
@@ -15988,11 +13972,6 @@
                   "_end": {
                     "$type": 20,
                     "$text": "Z"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
                   }
                 },
                 {
@@ -16004,129 +13983,59 @@
                   "_end": {
                     "$type": 20,
                     "$text": "9"
-                  },
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
                   }
                 },
                 {
                   "$type": 20,
-                  "$text": "@",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "@"
                 },
                 {
                   "$type": 20,
-                  "$text": ":",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": ":"
                 },
                 {
                   "$type": 20,
-                  "$text": "%",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "%"
                 },
                 {
                   "$type": 20,
-                  "$text": "_",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "_"
                 },
                 {
                   "$type": 37,
-                  "_content": "+",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "_content": "+"
                 },
                 {
                   "$type": 20,
-                  "$text": ".",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "."
                 },
                 {
                   "$type": 20,
-                  "$text": "~",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "~"
                 },
                 {
                   "$type": 20,
-                  "$text": "#",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "#"
                 },
                 {
                   "$type": 20,
-                  "$text": "?",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "?"
                 },
                 {
                   "$type": 20,
-                  "$text": "&",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "&"
                 },
                 {
                   "$type": 20,
-                  "$text": "/",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "/"
                 },
                 {
                   "$type": 20,
-                  "$text": "/",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "/"
                 },
                 {
                   "$type": 20,
-                  "$text": "=",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "="
                 }
               ],
               "_trailing": false
@@ -16186,11 +14095,6 @@
                 "_end": {
                   "$type": 20,
                   "$text": "Z"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -16202,93 +14106,43 @@
                 "_end": {
                   "$type": 20,
                   "$text": "9"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
                 "$type": 20,
-                "$text": "@",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "@"
               },
               {
                 "$type": 20,
-                "$text": ":",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": ":"
               },
               {
                 "$type": 20,
-                "$text": "%",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "%"
               },
               {
                 "$type": 20,
-                "$text": ".",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "."
               },
               {
                 "$type": 20,
-                "$text": "_",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "_"
               },
               {
                 "$type": 37,
-                "_content": "+",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "_content": "+"
               },
               {
                 "$type": 20,
-                "$text": "~",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "~"
               },
               {
                 "$type": 20,
-                "$text": "#",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "#"
               },
               {
                 "$type": 20,
-                "$text": "=",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "="
               }
             ],
             "_trailing": false
@@ -16364,21 +14218,11 @@
               }
             },
             "_lazy": false
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
           "$type": 77,
-          "_content": 5,
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": 5
         },
         {
           "$type": 77,
@@ -16416,11 +14260,6 @@
                           "_end": {
                             "$type": 20,
                             "$text": "Z"
-                          },
-                          "$_layout": {
-                            "gap": {
-                              "$text": ""
-                            }
                           }
                         },
                         {
@@ -16432,129 +14271,59 @@
                           "_end": {
                             "$type": 20,
                             "$text": "9"
-                          },
-                          "$_layout": {
-                            "gap": {
-                              "$text": ""
-                            }
                           }
                         },
                         {
                           "$type": 20,
-                          "$text": "@",
-                          "$_layout": {
-                            "gap": {
-                              "$text": ""
-                            }
-                          }
+                          "$text": "@"
                         },
                         {
                           "$type": 20,
-                          "$text": ":",
-                          "$_layout": {
-                            "gap": {
-                              "$text": ""
-                            }
-                          }
+                          "$text": ":"
                         },
                         {
                           "$type": 20,
-                          "$text": "%",
-                          "$_layout": {
-                            "gap": {
-                              "$text": ""
-                            }
-                          }
+                          "$text": "%"
                         },
                         {
                           "$type": 20,
-                          "$text": "_",
-                          "$_layout": {
-                            "gap": {
-                              "$text": ""
-                            }
-                          }
+                          "$text": "_"
                         },
                         {
                           "$type": 37,
-                          "_content": "+",
-                          "$_layout": {
-                            "gap": {
-                              "$text": ""
-                            }
-                          }
+                          "_content": "+"
                         },
                         {
                           "$type": 20,
-                          "$text": ".",
-                          "$_layout": {
-                            "gap": {
-                              "$text": ""
-                            }
-                          }
+                          "$text": "."
                         },
                         {
                           "$type": 20,
-                          "$text": "~",
-                          "$_layout": {
-                            "gap": {
-                              "$text": ""
-                            }
-                          }
+                          "$text": "~"
                         },
                         {
                           "$type": 20,
-                          "$text": "#",
-                          "$_layout": {
-                            "gap": {
-                              "$text": ""
-                            }
-                          }
+                          "$text": "#"
                         },
                         {
                           "$type": 20,
-                          "$text": "?",
-                          "$_layout": {
-                            "gap": {
-                              "$text": ""
-                            }
-                          }
+                          "$text": "?"
                         },
                         {
                           "$type": 20,
-                          "$text": "&",
-                          "$_layout": {
-                            "gap": {
-                              "$text": ""
-                            }
-                          }
+                          "$text": "&"
                         },
                         {
                           "$type": 20,
-                          "$text": "/",
-                          "$_layout": {
-                            "gap": {
-                              "$text": ""
-                            }
-                          }
+                          "$text": "/"
                         },
                         {
                           "$type": 20,
-                          "$text": "/",
-                          "$_layout": {
-                            "gap": {
-                              "$text": ""
-                            }
-                          }
+                          "$text": "/"
                         },
                         {
                           "$type": 20,
-                          "$text": "=",
-                          "$_layout": {
-                            "gap": {
-                              "$text": ""
-                            }
-                          }
+                          "$text": "="
                         }
                       ],
                       "_trailing": false
@@ -16576,11 +14345,6 @@
                   ]
                 }
               }
-            }
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
             }
           }
         }
@@ -16633,11 +14397,6 @@
                 "_end": {
                   "$type": 20,
                   "$text": "Z"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -16649,129 +14408,59 @@
                 "_end": {
                   "$type": 20,
                   "$text": "9"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
                 "$type": 20,
-                "$text": "@",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "@"
               },
               {
                 "$type": 20,
-                "$text": ":",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": ":"
               },
               {
                 "$type": 20,
-                "$text": "%",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "%"
               },
               {
                 "$type": 20,
-                "$text": "_",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "_"
               },
               {
                 "$type": 37,
-                "_content": "+",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "_content": "+"
               },
               {
                 "$type": 20,
-                "$text": ".",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "."
               },
               {
                 "$type": 20,
-                "$text": "~",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "~"
               },
               {
                 "$type": 20,
-                "$text": "#",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "#"
               },
               {
                 "$type": 20,
-                "$text": "?",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "?"
               },
               {
                 "$type": 20,
-                "$text": "&",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "&"
               },
               {
                 "$type": 20,
-                "$text": "/",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "/"
               },
               {
                 "$type": 20,
-                "$text": "/",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "/"
               },
               {
                 "$type": 20,
-                "$text": "=",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "="
               }
             ],
             "_trailing": false
@@ -16827,11 +14516,6 @@
             "_end": {
               "$type": 20,
               "$text": "Z"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -16843,93 +14527,43 @@
             "_end": {
               "$type": 20,
               "$text": "9"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
             "$type": 20,
-            "$text": "@",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "@"
           },
           {
             "$type": 20,
-            "$text": ":",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": ":"
           },
           {
             "$type": 20,
-            "$text": "%",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "%"
           },
           {
             "$type": 20,
-            "$text": ".",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "."
           },
           {
             "$type": 20,
-            "$text": "_",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "_"
           },
           {
             "$type": 37,
-            "_content": "+",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "_content": "+"
           },
           {
             "$type": 20,
-            "$text": "~",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "~"
           },
           {
             "$type": 20,
-            "$text": "#",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "#"
           },
           {
             "$type": 20,
-            "$text": "=",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "="
           }
         ],
         "_trailing": false
@@ -17108,11 +14742,6 @@
                       "_end": {
                         "$type": 20,
                         "$text": "Z"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -17124,129 +14753,59 @@
                       "_end": {
                         "$type": 20,
                         "$text": "9"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
                       "$type": 20,
-                      "$text": "@",
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
-                      }
+                      "$text": "@"
                     },
                     {
                       "$type": 20,
-                      "$text": ":",
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
-                      }
+                      "$text": ":"
                     },
                     {
                       "$type": 20,
-                      "$text": "%",
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
-                      }
+                      "$text": "%"
                     },
                     {
                       "$type": 20,
-                      "$text": "_",
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
-                      }
+                      "$text": "_"
                     },
                     {
                       "$type": 37,
-                      "_content": "+",
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
-                      }
+                      "_content": "+"
                     },
                     {
                       "$type": 20,
-                      "$text": ".",
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
-                      }
+                      "$text": "."
                     },
                     {
                       "$type": 20,
-                      "$text": "~",
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
-                      }
+                      "$text": "~"
                     },
                     {
                       "$type": 20,
-                      "$text": "#",
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
-                      }
+                      "$text": "#"
                     },
                     {
                       "$type": 20,
-                      "$text": "?",
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
-                      }
+                      "$text": "?"
                     },
                     {
                       "$type": 20,
-                      "$text": "&",
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
-                      }
+                      "$text": "&"
                     },
                     {
                       "$type": 20,
-                      "$text": "/",
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
-                      }
+                      "$text": "/"
                     },
                     {
                       "$type": 20,
-                      "$text": "/",
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
-                      }
+                      "$text": "/"
                     },
                     {
                       "$type": 20,
-                      "$text": "=",
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
-                      }
+                      "$text": "="
                     }
                   ],
                   "_trailing": false
@@ -17315,11 +14874,6 @@
             "_end": {
               "$type": 20,
               "$text": "Z"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -17331,129 +14885,59 @@
             "_end": {
               "$type": 20,
               "$text": "9"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
             "$type": 20,
-            "$text": "@",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "@"
           },
           {
             "$type": 20,
-            "$text": ":",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": ":"
           },
           {
             "$type": 20,
-            "$text": "%",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "%"
           },
           {
             "$type": 20,
-            "$text": "_",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "_"
           },
           {
             "$type": 37,
-            "_content": "+",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "_content": "+"
           },
           {
             "$type": 20,
-            "$text": ".",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "."
           },
           {
             "$type": 20,
-            "$text": "~",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "~"
           },
           {
             "$type": 20,
-            "$text": "#",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "#"
           },
           {
             "$type": 20,
-            "$text": "?",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "?"
           },
           {
             "$type": 20,
-            "$text": "&",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "&"
           },
           {
             "$type": 20,
-            "$text": "/",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "/"
           },
           {
             "$type": 20,
-            "$text": "/",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "/"
           },
           {
             "$type": 20,
-            "$text": "=",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "="
           }
         ],
         "_trailing": false
@@ -17505,11 +14989,6 @@
           "_end": {
             "$type": 20,
             "$text": "Z"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -17521,93 +15000,43 @@
           "_end": {
             "$type": 20,
             "$text": "9"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
           "$type": 20,
-          "$text": "@",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "@"
         },
         {
           "$type": 20,
-          "$text": ":",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": ":"
         },
         {
           "$type": 20,
-          "$text": "%",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "%"
         },
         {
           "$type": 20,
-          "$text": ".",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "."
         },
         {
           "$type": 20,
-          "$text": "_",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "_"
         },
         {
           "$type": 37,
-          "_content": "+",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": "+"
         },
         {
           "$type": 20,
-          "$text": "~",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "~"
         },
         {
           "$type": 20,
-          "$text": "#",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "#"
         },
         {
           "$type": 20,
-          "$text": "=",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "="
         }
       ],
       "_trailing": false
@@ -17690,11 +15119,6 @@
           "_end": {
             "$type": 20,
             "$text": "Z"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -17706,129 +15130,59 @@
           "_end": {
             "$type": 20,
             "$text": "9"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
           "$type": 20,
-          "$text": "@",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "@"
         },
         {
           "$type": 20,
-          "$text": ":",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": ":"
         },
         {
           "$type": 20,
-          "$text": "%",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "%"
         },
         {
           "$type": 20,
-          "$text": "_",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "_"
         },
         {
           "$type": 37,
-          "_content": "+",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "_content": "+"
         },
         {
           "$type": 20,
-          "$text": ".",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "."
         },
         {
           "$type": 20,
-          "$text": "~",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "~"
         },
         {
           "$type": 20,
-          "$text": "#",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "#"
         },
         {
           "$type": 20,
-          "$text": "?",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "?"
         },
         {
           "$type": 20,
-          "$text": "&",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "&"
         },
         {
           "$type": 20,
-          "$text": "/",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "/"
         },
         {
           "$type": 20,
-          "$text": "/",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "/"
         },
         {
           "$type": 20,
-          "$text": "=",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "="
         }
       ],
       "_trailing": false
@@ -18323,11 +15677,6 @@
                     "_end": {
                       "$type": 20,
                       "$text": "Z"
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
                     }
                   },
                   {
@@ -18339,129 +15688,59 @@
                     "_end": {
                       "$type": 20,
                       "$text": "9"
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
                     }
                   },
                   {
                     "$type": 20,
-                    "$text": "@",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
+                    "$text": "@"
                   },
                   {
                     "$type": 20,
-                    "$text": ":",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
+                    "$text": ":"
                   },
                   {
                     "$type": 20,
-                    "$text": "%",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
+                    "$text": "%"
                   },
                   {
                     "$type": 20,
-                    "$text": "_",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
+                    "$text": "_"
                   },
                   {
                     "$type": 37,
-                    "_content": "+",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
+                    "_content": "+"
                   },
                   {
                     "$type": 20,
-                    "$text": ".",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
+                    "$text": "."
                   },
                   {
                     "$type": 20,
-                    "$text": "~",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
+                    "$text": "~"
                   },
                   {
                     "$type": 20,
-                    "$text": "#",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
+                    "$text": "#"
                   },
                   {
                     "$type": 20,
-                    "$text": "?",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
+                    "$text": "?"
                   },
                   {
                     "$type": 20,
-                    "$text": "&",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
+                    "$text": "&"
                   },
                   {
                     "$type": 20,
-                    "$text": "/",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
+                    "$text": "/"
                   },
                   {
                     "$type": 20,
-                    "$text": "/",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
+                    "$text": "/"
                   },
                   {
                     "$type": 20,
-                    "$text": "=",
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
-                    }
+                    "$text": "="
                   }
                 ],
                 "_trailing": false
@@ -18550,17 +15829,7 @@
               "_lazy": false
             }
           }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              48
-            ],
-            "trailing": [
-              48
-            ]
-          }
-        }
+        ]
       },
       "$errors": []
     },
@@ -18797,11 +16066,6 @@
                 "$type": 74,
                 "$text": "\\u0065"
               }
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -18809,11 +16073,6 @@
             "_content": {
               "$type": 12,
               "$text": "e"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -18823,11 +16082,6 @@
               "_content": {
                 "$type": 74,
                 "$text": "\\u006C"
-              }
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
               }
             }
           },
@@ -18839,24 +16093,9 @@
                 "$type": 74,
                 "$text": "\\u{006F}"
               }
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              48
-            ],
-            "trailing": [
-              48
-            ]
-          }
-        }
+        ]
       },
       "$errors": []
     },
@@ -18901,11 +16140,6 @@
               "$type": 74,
               "$text": "\\u0065"
             }
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -18913,11 +16147,6 @@
           "_content": {
             "$type": 12,
             "$text": "e"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -18928,11 +16157,6 @@
               "$type": 74,
               "$text": "\\u006C"
             }
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -18942,11 +16166,6 @@
             "_content": {
               "$type": 74,
               "$text": "\\u{006F}"
-            }
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
             }
           }
         }
@@ -19244,11 +16463,6 @@
             "_content": {
               "$type": 12,
               "$text": "o"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -19256,11 +16470,6 @@
             "_content": {
               "$type": 12,
               "$text": "w"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -19270,8 +16479,10 @@
               "$text": " "
             },
             "$_layout": {
-              "gap": {
-                "$text": ""
+              "trivia": {
+                "leading": [
+                  47
+                ]
               }
             }
           },
@@ -19280,11 +16491,6 @@
             "_content": {
               "$type": 12,
               "$text": "r"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -19294,8 +16500,10 @@
               "$text": " "
             },
             "$_layout": {
-              "gap": {
-                "$text": ""
+              "trivia": {
+                "leading": [
+                  47
+                ]
               }
             }
           },
@@ -19304,11 +16512,6 @@
             "_content": {
               "$type": 37,
               "_content": "u"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -19316,24 +16519,9 @@
             "_content": {
               "$type": 37,
               "_content": "?"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              48
-            ],
-            "trailing": [
-              48
-            ]
-          }
-        }
+        ]
       },
       "$errors": []
     },
@@ -19378,11 +16566,6 @@
           "_content": {
             "$type": 12,
             "$text": "o"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -19390,11 +16573,6 @@
           "_content": {
             "$type": 12,
             "$text": "w"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -19404,8 +16582,10 @@
             "$text": " "
           },
           "$_layout": {
-            "gap": {
-              "$text": ""
+            "trivia": {
+              "leading": [
+                47
+              ]
             }
           }
         },
@@ -19414,11 +16594,6 @@
           "_content": {
             "$type": 12,
             "$text": "r"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -19428,8 +16603,10 @@
             "$text": " "
           },
           "$_layout": {
-            "gap": {
-              "$text": ""
+            "trivia": {
+              "leading": [
+                47
+              ]
             }
           }
         },
@@ -19438,11 +16615,6 @@
           "_content": {
             "$type": 37,
             "_content": "u"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -19450,11 +16622,6 @@
           "_content": {
             "$type": 37,
             "_content": "?"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -19805,24 +16972,9 @@
                 }
               ],
               "_trailing": false
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              48
-            ],
-            "trailing": [
-              48
-            ]
-          }
-        }
+        ]
       },
       "$errors": []
     },
@@ -19903,11 +17055,6 @@
               }
             ],
             "_trailing": false
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -20311,11 +17458,6 @@
             "_content": {
               "$type": 76,
               "$text": "\\xa8"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -20338,33 +17480,13 @@
                 },
                 {
                   "$type": 76,
-                  "$text": "\\x5c",
-                  "$_layout": {
-                    "gap": {
-                      "$text": ""
-                    }
-                  }
+                  "$text": "\\x5c"
                 }
               ],
               "_trailing": false
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              48
-            ],
-            "trailing": [
-              48
-            ]
-          }
-        }
+        ]
       },
       "$errors": []
     },
@@ -20406,11 +17528,6 @@
           "_content": {
             "$type": 76,
             "$text": "\\xa8"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -20433,20 +17550,10 @@
               },
               {
                 "$type": 76,
-                "$text": "\\x5c",
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
-                }
+                "$text": "\\x5c"
               }
             ],
             "_trailing": false
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -20554,12 +17661,7 @@
           },
           {
             "$type": 76,
-            "$text": "\\x5c",
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
-            }
+            "$text": "\\x5c"
           }
         ],
         "_trailing": false
@@ -20606,12 +17708,7 @@
         },
         {
           "$type": 76,
-          "$text": "\\x5c",
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
-          }
+          "$text": "\\x5c"
         }
       ],
       "_trailing": false
@@ -20713,11 +17810,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "e"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -20725,11 +17817,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "s"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -20737,14 +17824,19 @@
                       "_content": {
                         "$type": 12,
                         "$text": "t"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     }
                   ]
+                },
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      47
+                    ],
+                    "trailing": [
+                      47
+                    ]
+                  }
                 }
               }
             },
@@ -20785,11 +17877,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "e"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -20797,11 +17884,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "s"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -20809,14 +17891,19 @@
                       "_content": {
                         "$type": 12,
                         "$text": "t"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     }
                   ]
+                },
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      47
+                    ],
+                    "trailing": [
+                      47
+                    ]
+                  }
                 }
               }
             },
@@ -20853,11 +17940,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "e"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -20865,11 +17947,6 @@
                       "_content": {
                         "$type": 12,
                         "$text": "s"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     },
                     {
@@ -20877,14 +17954,19 @@
                       "_content": {
                         "$type": 12,
                         "$text": "t"
-                      },
-                      "$_layout": {
-                        "gap": {
-                          "$text": ""
-                        }
                       }
                     }
                   ]
+                },
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      47
+                    ],
+                    "trailing": [
+                      47
+                    ]
+                  }
                 }
               }
             },
@@ -20913,17 +17995,7 @@
               }
             }
           }
-        ],
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              48
-            ],
-            "trailing": [
-              48
-            ]
-          }
-        }
+        ]
       },
       "$errors": []
     },
@@ -20967,11 +18039,6 @@
             "_content": {
               "$type": 12,
               "$text": "e"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -20979,11 +18046,6 @@
             "_content": {
               "$type": 12,
               "$text": "s"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -20991,11 +18053,6 @@
             "_content": {
               "$type": 12,
               "$text": "t"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ]
@@ -21041,11 +18098,6 @@
             "_content": {
               "$type": 12,
               "$text": "e"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -21053,11 +18105,6 @@
             "_content": {
               "$type": 12,
               "$text": "s"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -21065,11 +18112,6 @@
             "_content": {
               "$type": 12,
               "$text": "t"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ]
@@ -21115,11 +18157,6 @@
             "_content": {
               "$type": 12,
               "$text": "e"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -21127,11 +18164,6 @@
             "_content": {
               "$type": 12,
               "$text": "s"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           },
           {
@@ -21139,11 +18171,6 @@
             "_content": {
               "$type": 12,
               "$text": "t"
-            },
-            "$_layout": {
-              "gap": {
-                "$text": ""
-              }
             }
           }
         ]
@@ -21210,11 +18237,6 @@
                     "_content": {
                       "$type": 12,
                       "$text": "e"
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
                     }
                   },
                   {
@@ -21222,11 +18244,6 @@
                     "_content": {
                       "$type": 12,
                       "$text": "s"
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
                     }
                   },
                   {
@@ -21234,14 +18251,19 @@
                     "_content": {
                       "$type": 12,
                       "$text": "t"
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
                     }
                   }
                 ]
+              },
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    47
+                  ],
+                  "trailing": [
+                    47
+                  ]
+                }
               }
             }
           },
@@ -21282,11 +18304,6 @@
                     "_content": {
                       "$type": 12,
                       "$text": "e"
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
                     }
                   },
                   {
@@ -21294,11 +18311,6 @@
                     "_content": {
                       "$type": 12,
                       "$text": "s"
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
                     }
                   },
                   {
@@ -21306,14 +18318,19 @@
                     "_content": {
                       "$type": 12,
                       "$text": "t"
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
                     }
                   }
                 ]
+              },
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    47
+                  ],
+                  "trailing": [
+                    47
+                  ]
+                }
               }
             }
           },
@@ -21350,11 +18367,6 @@
                     "_content": {
                       "$type": 12,
                       "$text": "e"
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
                     }
                   },
                   {
@@ -21362,11 +18374,6 @@
                     "_content": {
                       "$type": 12,
                       "$text": "s"
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
                     }
                   },
                   {
@@ -21374,14 +18381,19 @@
                     "_content": {
                       "$type": 12,
                       "$text": "t"
-                    },
-                    "$_layout": {
-                      "gap": {
-                        "$text": ""
-                      }
                     }
                   }
                 ]
+              },
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    47
+                  ],
+                  "trailing": [
+                    47
+                  ]
+                }
               }
             }
           },
@@ -21450,11 +18462,6 @@
           "_content": {
             "$type": 12,
             "$text": "e"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -21462,11 +18469,6 @@
           "_content": {
             "$type": 12,
             "$text": "s"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -21474,11 +18476,6 @@
           "_content": {
             "$type": 12,
             "$text": "t"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -21521,11 +18518,6 @@
           "_content": {
             "$type": 12,
             "$text": "e"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -21533,11 +18525,6 @@
           "_content": {
             "$type": 12,
             "$text": "s"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -21545,11 +18532,6 @@
           "_content": {
             "$type": 12,
             "$text": "t"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -21592,11 +18574,6 @@
           "_content": {
             "$type": 12,
             "$text": "e"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -21604,11 +18581,6 @@
           "_content": {
             "$type": 12,
             "$text": "s"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         },
         {
@@ -21616,11 +18588,6 @@
           "_content": {
             "$type": 12,
             "$text": "t"
-          },
-          "$_layout": {
-            "gap": {
-              "$text": ""
-            }
           }
         }
       ]
@@ -21706,11 +18673,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "e"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -21718,11 +18680,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "s"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -21730,14 +18687,19 @@
                 "_content": {
                   "$type": 12,
                   "$text": "t"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               }
             ]
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                47
+              ],
+              "trailing": [
+                47
+              ]
+            }
           }
         }
       }
@@ -21914,11 +18876,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "e"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -21926,11 +18883,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "s"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -21938,14 +18890,19 @@
                 "_content": {
                   "$type": 12,
                   "$text": "t"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               }
             ]
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                47
+              ],
+              "trailing": [
+                47
+              ]
+            }
           }
         }
       }
@@ -22118,11 +19075,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "e"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -22130,11 +19082,6 @@
                 "_content": {
                   "$type": 12,
                   "$text": "s"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               },
               {
@@ -22142,14 +19089,19 @@
                 "_content": {
                   "$type": 12,
                   "$text": "t"
-                },
-                "$_layout": {
-                  "gap": {
-                    "$text": ""
-                  }
                 }
               }
             ]
+          },
+          "$_layout": {
+            "trivia": {
+              "leading": [
+                47
+              ],
+              "trailing": [
+                47
+              ]
+            }
           }
         }
       }
@@ -22383,11 +19335,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "e"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -22395,11 +19342,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "s"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -22407,14 +19349,19 @@
               "_content": {
                 "$type": 12,
                 "$text": "t"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             }
           ]
+        },
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              47
+            ],
+            "trailing": [
+              47
+            ]
+          }
         }
       }
     },
@@ -22468,11 +19415,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "e"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -22480,11 +19422,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "s"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -22492,14 +19429,19 @@
               "_content": {
                 "$type": 12,
                 "$text": "t"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             }
           ]
+        },
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              47
+            ],
+            "trailing": [
+              47
+            ]
+          }
         }
       }
     },
@@ -22549,11 +19491,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "e"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -22561,11 +19498,6 @@
               "_content": {
                 "$type": 12,
                 "$text": "s"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             },
             {
@@ -22573,14 +19505,19 @@
               "_content": {
                 "$type": 12,
                 "$text": "t"
-              },
-              "$_layout": {
-                "gap": {
-                  "$text": ""
-                }
               }
             }
           ]
+        },
+        "$_layout": {
+          "trivia": {
+            "leading": [
+              47
+            ],
+            "trailing": [
+              47
+            ]
+          }
         }
       }
     },

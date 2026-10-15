@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import type { ir } from '../src/ir.ts';
+import type { Blankline, BlockComment, Dedent, DoubleBlankline, Indent, LineComment, Newline, RustTypeMap, Space, Tab, Tight } from '../src/types.ts';
 import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
@@ -104,10 +105,14 @@ describe('loose trivia strings build ir.comment', () => {
 		expect(spelled.$trivia.leading()).toEqual([rs.kinds.Blankline]);
 	});
 
-	it('refuses whitespace kinds the extras do not match, for the one reason that they are not extras', () => {
-		const a = (): ReturnType<typeof ir.identifier> => rs.build.identifier('a');
-		// @ts-expect-error tight is not an extra, so it is no trivia entry
-		expect(() => a().$trivia.leading(rs.build.layout.tight)).toThrow(/_tight is not an extra/);
+	it('types a side as its concrete members: tight, the depth members, comments and whitespace', () => {
+		expectTypeOf<RustTypeMap['trivia']>().toEqualTypeOf<Blankline | BlockComment | Dedent | DoubleBlankline | Indent | LineComment | Newline | Space | Tab | Tight>();
+	});
+
+	it('takes the tight member, which no extra spells, as the entry of a gap held tight', () => {
+		const built = rs.build.identifier('a').$trivia.leading(rs.build.layout.tight);
+		expect(built.$trivia.leading()).toEqual([rs.kinds.Tight]);
+		expect(rs.build.identifier('a').$trivia.leading(rs.kinds.Tight).$trivia.leading()).toEqual([rs.kinds.Tight]);
 	});
 
 	it('takes a depth member as an entry, the excess indentation a layout run carries', () => {
