@@ -2,7 +2,7 @@
 
 **Specs:** the bindings spec (`2026-09-13-bindings-and-vocabulary-design.md`, §2.1 and §9) and the binding generator spec (`2026-10-06-binding-generator-design.md`). **Probes:** `docs/superpowers/probes/2026-10-10-contextual-alias/` and `docs/superpowers/probes/2026-10-10-placed-claims/`. **Earlier stages:** `2026-10-06-binding-generator.md`.
 
-Three stages, in order. Each is one PR into `feat/bindings`, stacked on the one before. Every stage passes the standing gates:
+Four stages, in order. Each is one PR into `feat/bindings`, stacked on the one before, except stage 4: its two PRs land where it places them. Every stage passes the standing gates:
 - `validate:native` rows equal to the baseline on all five grammars, compared with `validate history`;
 - the full unit suite, run as its own call;
 - the cargo workspace (`cargo test --workspace --no-default-features`);
@@ -103,3 +103,46 @@ The runtime bindings are what the portable engine runs, generated per grammar fr
 
 - **Census:** per grammar, the build, `is` and `kinds` entries and the flags each guard tests, compared with the routes.
 - **Gate:** the portable type-check ratchet (per-grammar error count) only falls, and every generated guard agrees with the routes' read tests on the existing `is` tests.
+
+## Stage 4: vocabulary synonyms
+
+`bindings.scm` claims are written in the languages' own words, and the portable side keeps only the canonical names. This stage implements the bindings spec's §4.2 as ruled, so a language's word for a segment or a flag reads as the canonical name everywhere. The table's entries are the synonyms probe's rulings (`docs/superpowers/probes/2026-10-12-vocabulary-synonyms/`, §1's "languages' words" and rulings NT1–NT9, NT11, ID2, ID5 and ID6), and the words NT10 excludes are in no table.
+
+Two PRs:
+- **4a** needs only stage 1's flag resolution (`bindings/vocabulary.ts::flagSegment` and `resolveFlags`). It lands after 2b merges, since 2b reworks the receiver claims that 4a rewrites.
+- **4b** stacks on stage 3, whose generated `is`, `kinds` and `build` it extends.
+
+**Census first:**
+- the synonyms per level and the flags' table (NT11: empty);
+- every synonym position the collision rule checks, against the probe's 120 positions with no collision and one note: `try` is a synonym of `propagate` and the canonical segment of `expression.block.try`;
+- per grammar, the claims 4a rewrites into their language's word.
+
+### 4a. The tables, the reader and the collision rule
+
+- **The tables.** Each top-level namespace's file declares its level's table, from a canonical segment to its synonyms (`declaration.ts`: `receiver` to `self` and `this`). The flags' table sits beside the `Flag` marker. A synonym is not gated: it holds where its canonical segment does.
+- **The vocabulary reader** (`bindings/vocabulary.ts`) reads the tables with the kinds, members and flags, so `Vocabulary` answers a segment's synonyms per level.
+- **Canonicalized where a claim is read.** A pass before `resolveFlags` resolves each path segment and each flag capture against the vocabulary:
+  - the canonical names at that position first;
+  - then the level's synonyms of the segments the position has.
+
+  It hands on canonical paths and flags only. Every later step sees canonical names only: `resolveFlags`, the routes, derivation, the inventory, `grammar.bindings.ts`, the node models and `portable.ts`. A segment that is neither a name nor a synonym at its position stays the diagnostic it is today.
+- **The collision rule** joins `vocabulary-features --check`'s planning issues (`tools/src/vocabulary/plan.ts`), as the spec words it:
+  - for a segment's synonym, a sibling segment or a sibling's synonym, or a flag the parent kind or a kind above it declares, or that flag's synonym;
+  - for a flag's synonym, another flag or flag synonym, a member of a kind that has the flag, or a segment or synonym beneath such a kind;
+  - a synonym not spelled as a segment.
+- **The claims use their words.** The bindings are written against the languages' idioms: the three `bindings.scm` files rewrite each claim segment the census attributes to that grammar into its language's word, e.g. rust's and typescript's receiver claims as `self` and `this`, and python's catch as `except`. Words of languages without a grammar (`rescue`, `using`, `unpack`) stay table entries only.
+- **Gate:**
+  - after the rewrite, every generated file is byte-identical to before it: `grammar.bindings.ts`, `augment.ts`, `flags.ts`, the node models and `portable.ts`, with the inventory's output unchanged;
+  - `vocabulary-features --check` passes on the real tables, and a fixture vocabulary trips each clause of the collision rule once;
+  - a scan of the generated files finds no synonym in a path or flag position.
+
+### 4b. Typed synonym keys on the portable surface
+
+- **Types.** A mapped type in the vocabulary adds a key per synonym to each portable namespace, typed as the canonical key, so an editor offers `is.declaration.parameter.this`. A synonym has no interface and no `$kind`.
+- **A spelling, not a shortcut.** A synonym key spells one canonical segment at its own level. It never drops, adds or reorders a segment, so the portable surface still names every path in full and has no aliases.
+- **Runtime.** The generator emits each synonym key as the canonical key's own entry, the same function and the same object, so nothing canonicalizes at run time.
+- **Canonical wherever kept.** `$kind`, `$type` and `$flags` never hold a synonym. A build through a synonym's path gives the canonical `$kind`; a structure whose `$kind` or `$flags` holds a synonym is refused as an unknown name, since a synonym is a builder's path, never data.
+- **Gate:**
+  - acceptance item 11: for a synonym path, `is`, `kinds` and `build` are the canonical entries (identity) and give equal results on the existing `is` tests;
+  - a type test that the synonym key's type equals the canonical key's;
+  - the portable type-check ratchet only falls.
