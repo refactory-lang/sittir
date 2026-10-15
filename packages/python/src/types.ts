@@ -75,12 +75,6 @@ export type LeafStringMap = {
 	[TSKindId.FutureUKeyword]: '__future__';
 	[TSKindId.AsKeyword]: 'as';
 	[TSKindId.AssertKeyword]: 'assert';
-	[TSKindId.PrintKeyword]: 'print';
-	[TSKindId.ExecKeyword]: 'exec';
-	[TSKindId.AsyncKeyword]: 'async';
-	[TSKindId.AwaitKeyword]: 'await';
-	[TSKindId.TypeKeyword]: 'type';
-	[TSKindId.MatchKeyword]: 'match';
 	[TSKindId.ReturnKeyword]: 'return';
 	[TSKindId.DelKeyword]: 'del';
 	[TSKindId.RaiseKeyword]: 'raise';
@@ -90,7 +84,9 @@ export type LeafStringMap = {
 	[TSKindId.IfKeyword]: 'if';
 	[TSKindId.ElifKeyword]: 'elif';
 	[TSKindId.ElseKeyword]: 'else';
+	[TSKindId.MatchKeyword]: 'match';
 	[TSKindId.CaseKeyword]: 'case';
+	[TSKindId.AsyncKeyword]: 'async';
 	[TSKindId.ForKeyword]: 'for';
 	[TSKindId.InKeyword]: 'in';
 	[TSKindId.WhileKeyword]: 'while';
@@ -101,6 +97,8 @@ export type LeafStringMap = {
 	[TSKindId.DefKeyword]: 'def';
 	[TSKindId.GlobalKeyword]: 'global';
 	[TSKindId.NonlocalKeyword]: 'nonlocal';
+	[TSKindId.ExecKeyword]: 'exec';
+	[TSKindId.TypeKeyword]: 'type';
 	[TSKindId.ClassKeyword]: 'class';
 	[TSKindId.Underscore]: '_';
 	[TSKindId.NotKeyword]: 'not';
@@ -108,6 +106,8 @@ export type LeafStringMap = {
 	[TSKindId.OrKeyword]: 'or';
 	[TSKindId.LambdaKeyword]: 'lambda';
 	[TSKindId.YieldKeyword]: 'yield';
+	[TSKindId.AwaitKeyword]: 'await';
+	[TSKindId.PrintKeyword]: 'print';
 	[TSKindId.IsKeyword]: 'is';
 };
 
@@ -2052,16 +2052,6 @@ export enum SimpleStatementKind {
 	TypeAliasStatement = 'type_alias_statement'
 }
 
-export enum NamedExpressionLhsKind {
-	Identifier = 'identifier',
-	PrintKeyword = 'print_keyword',
-	ExecKeyword = 'exec_keyword',
-	AsyncKeyword = 'async_keyword',
-	AwaitKeyword = 'await_keyword',
-	TypeKeyword = 'type_keyword',
-	MatchKeyword = 'match_keyword'
-}
-
 export enum ExpressionsKind {
 	Expression = 'expression',
 	ExpressionList = 'expression_list'
@@ -2104,12 +2094,6 @@ export enum ParameterKind {
 
 export enum PatternKind {
 	Identifier = 'identifier',
-	PrintKeyword = 'print_keyword',
-	ExecKeyword = 'exec_keyword',
-	AsyncKeyword = 'async_keyword',
-	AwaitKeyword = 'await_keyword',
-	TypeKeyword = 'type_keyword',
-	MatchKeyword = 'match_keyword',
 	Subscript = 'subscript',
 	Attribute = 'attribute',
 	ListSplatPattern = 'list_splat_pattern',
@@ -2137,12 +2121,6 @@ export enum PrimaryExpressionKind {
 	Await = 'await',
 	BinaryOperator = 'binary_operator',
 	Identifier = 'identifier',
-	PrintKeyword = 'print_keyword',
-	ExecKeyword = 'exec_keyword',
-	AsyncKeyword = 'async_keyword',
-	AwaitKeyword = 'await_keyword',
-	TypeKeyword = 'type_keyword',
-	MatchKeyword = 'match_keyword',
 	String = 'string',
 	ConcatenatedString = 'concatenated_string',
 	Integer = 'integer',
@@ -2215,15 +2193,6 @@ export enum FloatKind {
 	FloatPoint = 'float_point',
 	FloatLeadingPoint = 'float_leading_point',
 	FloatScientific = 'float_scientific'
-}
-
-export enum KeywordIdentifierKind {
-	PrintKeyword = 'print_keyword',
-	ExecKeyword = 'exec_keyword',
-	AsyncKeyword = 'async_keyword',
-	AwaitKeyword = 'await_keyword',
-	TypeKeyword = 'type_keyword',
-	MatchKeyword = 'match_keyword'
 }
 
 export enum LineContinuationKind {
@@ -2412,44 +2381,28 @@ export interface ExpressionStatement {
 
 export interface NamedExpression {
 	readonly $type: TSKindId.NamedExpression;
-	readonly _name:
-		| Identifier
-		| TSKindId.PrintKeyword
-		| TSKindId.ExecKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.AwaitKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.MatchKeyword;
+	readonly _name: Identifier;
 	readonly _value: Expression;
 	readonly __inputHints__?: {
-		readonly name:
-			| KindEnum<
-					'print' | 'exec' | 'async' | 'await' | 'type' | 'match',
-					| TSKindId.PrintKeyword
-					| TSKindId.ExecKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.AwaitKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.MatchKeyword
-			  >
-			| Identifier;
 		readonly value:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
 	};
 	readonly __slotHints__?: {
-		readonly name: SlotHint<NonNullable<T.NamedExpression.Config>['name']>;
+		readonly name: SlotHint<T.Identifier>;
 		readonly value: SlotHint<NonNullable<T.NamedExpression.Config>['value']>;
 	};
-	name():
-		| Identifier
-		| TSKindId.PrintKeyword
-		| TSKindId.ExecKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.AwaitKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.MatchKeyword;
+	name(): Identifier;
 	value(): Expression;
+}
+
+export interface NamedExpressionLhs {
+	readonly $type: TSKindId.NamedExpressionLhs;
+	readonly _identifier: Identifier;
+	readonly __slotHints__?: {
+		readonly identifier: SlotHint<T.Identifier>;
+	};
+	identifier(): Identifier;
 }
 
 export interface ReturnStatement {
@@ -3506,110 +3459,20 @@ export interface TypedDefaultParameter {
 
 export interface ListSplatPattern {
 	readonly $type: TSKindId.ListSplatPattern;
-	readonly _target:
-		| Identifier
-		| TSKindId.PrintKeyword
-		| TSKindId.ExecKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.AwaitKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.MatchKeyword
-		| Subscript
-		| Attribute;
-	readonly __inputHints__?: {
-		readonly target:
-			| KindEnum<
-					'print' | 'exec' | 'async' | 'await' | 'type' | 'match',
-					| TSKindId.PrintKeyword
-					| TSKindId.ExecKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.AwaitKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.MatchKeyword
-			  >
-			| Identifier
-			| Subscript
-			| Attribute;
-	};
+	readonly _target: Identifier | Subscript | Attribute;
 	readonly __slotHints__?: {
-		readonly target: SlotHint<
-			NonNullable<
-				| T.Identifier
-				| TSKindId.PrintKeyword
-				| TSKindId.ExecKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.AwaitKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.MatchKeyword
-				| T.Subscript
-				| T.Attribute
-			>
-		>;
+		readonly target: SlotHint<T.Identifier | T.Subscript | T.Attribute>;
 	};
-	target():
-		| Identifier
-		| TSKindId.PrintKeyword
-		| TSKindId.ExecKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.AwaitKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.MatchKeyword
-		| Subscript
-		| Attribute;
+	target(): Identifier | Subscript | Attribute;
 }
 
 export interface DictionarySplatPattern {
 	readonly $type: TSKindId.DictionarySplatPattern;
-	readonly _target:
-		| Identifier
-		| TSKindId.PrintKeyword
-		| TSKindId.ExecKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.AwaitKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.MatchKeyword
-		| Subscript
-		| Attribute;
-	readonly __inputHints__?: {
-		readonly target:
-			| KindEnum<
-					'print' | 'exec' | 'async' | 'await' | 'type' | 'match',
-					| TSKindId.PrintKeyword
-					| TSKindId.ExecKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.AwaitKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.MatchKeyword
-			  >
-			| Identifier
-			| Subscript
-			| Attribute;
-	};
+	readonly _target: Identifier | Subscript | Attribute;
 	readonly __slotHints__?: {
-		readonly target: SlotHint<
-			NonNullable<
-				| T.Identifier
-				| TSKindId.PrintKeyword
-				| TSKindId.ExecKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.AwaitKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.MatchKeyword
-				| T.Subscript
-				| T.Attribute
-			>
-		>;
+		readonly target: SlotHint<T.Identifier | T.Subscript | T.Attribute>;
 	};
-	target():
-		| Identifier
-		| TSKindId.PrintKeyword
-		| TSKindId.ExecKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.AwaitKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.MatchKeyword
-		| Subscript
-		| Attribute;
+	target(): Identifier | Subscript | Attribute;
 }
 
 export interface AsPattern {
@@ -4001,22 +3864,19 @@ export interface SplatType {
 
 export interface GenericType {
 	readonly $type: TSKindId.GenericType;
-	readonly _name: Identifier | TSKindId.TypeKeyword;
+	readonly _name: Identifier;
 	readonly _type_parameter: TypeParameter;
-	readonly __inputHints__?: {
-		readonly name: KindEnum<'type', TSKindId.TypeKeyword> | Identifier;
-	};
 	readonly __looseHints__?: {
 		readonly type_parameter: readonly Type[];
 	};
 	readonly __slotHints__?: {
-		readonly name: SlotHint<NonNullable<T.GenericType.Config>['name']>;
+		readonly name: SlotHint<T.Identifier>;
 		readonly typeParameter: SlotHint<T.TypeParameter>;
 		readonly $listSlots: {
 			readonly typeParameter: ListSlotHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	name(): Identifier | TSKindId.TypeKeyword;
+	name(): Identifier;
 	typeParameter(): TypeParameter;
 }
 
@@ -4069,43 +3929,18 @@ export interface MemberType {
 
 export interface KeywordArgument {
 	readonly $type: TSKindId.KeywordArgument;
-	readonly _name:
-		| Identifier
-		| TSKindId.PrintKeyword
-		| TSKindId.ExecKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.AwaitKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.MatchKeyword;
+	readonly _name: Identifier;
 	readonly _value: Expression;
 	readonly __inputHints__?: {
-		readonly name:
-			| KindEnum<
-					'print' | 'exec' | 'async' | 'await' | 'type' | 'match',
-					| TSKindId.PrintKeyword
-					| TSKindId.ExecKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.AwaitKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.MatchKeyword
-			  >
-			| Identifier;
 		readonly value:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
 	};
 	readonly __slotHints__?: {
-		readonly name: SlotHint<NonNullable<T.KeywordArgument.Config>['name']>;
+		readonly name: SlotHint<T.Identifier>;
 		readonly value: SlotHint<NonNullable<T.KeywordArgument.Config>['value']>;
 	};
-	name():
-		| Identifier
-		| TSKindId.PrintKeyword
-		| TSKindId.ExecKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.AwaitKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.MatchKeyword;
+	name(): Identifier;
 	value(): Expression;
 }
 
@@ -5295,12 +5130,6 @@ export type Tab = TSKindId.Tab;
 export type Newline = TSKindId.Newline;
 export type Blankline = TSKindId.Blankline;
 export type DoubleBlankline = TSKindId.DoubleBlankline;
-export type PrintKeyword = TSKindId.PrintKeyword;
-export type ExecKeyword = TSKindId.ExecKeyword;
-export type AsyncKeyword = TSKindId.AsyncKeyword;
-export type AwaitKeyword = TSKindId.AwaitKeyword;
-export type TypeKeyword = TSKindId.TypeKeyword;
-export type MatchKeyword = TSKindId.MatchKeyword;
 
 // Supertype unions
 export type Statement =
@@ -5360,19 +5189,7 @@ export type Parameter =
 	| PositionalSeparator
 	| DictionarySplatPattern;
 
-export type Pattern =
-	| Identifier
-	| PrintKeyword
-	| ExecKeyword
-	| AsyncKeyword
-	| AwaitKeyword
-	| TypeKeyword
-	| MatchKeyword
-	| Subscript
-	| Attribute
-	| ListSplatPattern
-	| TuplePattern
-	| ListPattern;
+export type Pattern = Identifier | Subscript | Attribute | ListSplatPattern | TuplePattern | ListPattern;
 
 export type Expression =
 	| ComparisonOperator
@@ -5388,12 +5205,6 @@ export type PrimaryExpression =
 	| Await
 	| BinaryOperator
 	| Identifier
-	| PrintKeyword
-	| ExecKeyword
-	| AsyncKeyword
-	| AwaitKeyword
-	| TypeKeyword
-	| MatchKeyword
 	| String
 	| ConcatenatedString
 	| Integer
@@ -7911,6 +7722,20 @@ export interface NamedExpressionNs extends NodeNs<
 	readonly BuildArgs: NamedExpression.BuildArgs;
 	readonly LooseArgs: NamedExpression.LooseArgs;
 }
+export interface NamedExpressionLhsNs extends NodeNs<
+	NamedExpressionLhs,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	NamedExpressionLhs.Bound,
+	never,
+	never,
+	NamedExpressionLhs.Parsed,
+	never
+> {
+	readonly BuildArgs: NamedExpressionLhs.BuildArgs;
+	readonly LooseArgs: NamedExpressionLhs.LooseArgs;
+}
 export interface ReturnStatementNs extends NodeNs<
 	ReturnStatement,
 	LeafScalarMap,
@@ -10044,12 +9869,6 @@ export interface TabNs extends KeywordNs<TSKindId.Tab, '\t', TSKindId.Tab> {}
 export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', TSKindId.Newline> {}
 export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', TSKindId.Blankline> {}
 export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '\n\n\n', TSKindId.DoubleBlankline> {}
-export interface PrintKeywordNs extends KeywordNs<TSKindId.PrintKeyword, 'print', TSKindId.PrintKeyword> {}
-export interface ExecKeywordNs extends KeywordNs<TSKindId.ExecKeyword, 'exec', TSKindId.ExecKeyword> {}
-export interface AsyncKeywordNs extends KeywordNs<TSKindId.AsyncKeyword, 'async', TSKindId.AsyncKeyword> {}
-export interface AwaitKeywordNs extends KeywordNs<TSKindId.AwaitKeyword, 'await', TSKindId.AwaitKeyword> {}
-export interface TypeKeywordNs extends KeywordNs<TSKindId.TypeKeyword, 'type', TSKindId.TypeKeyword> {}
-export interface MatchKeywordNs extends KeywordNs<TSKindId.MatchKeyword, 'match', TSKindId.MatchKeyword> {}
 export interface ImportPrefixNs extends LeafNs<ImportPrefix, string, ImportPrefix.Bound, TSKindId.ImportPrefix> {}
 export interface TypeConversionNs extends LeafNs<
 	TypeConversion,
@@ -10117,6 +9936,7 @@ export interface NamespaceMap {
 	[TSKindId.AssertStatement]: AssertStatementNs;
 	[TSKindId.ExpressionStatement]: ExpressionStatementNs;
 	[TSKindId.NamedExpression]: NamedExpressionNs;
+	[TSKindId.NamedExpressionLhs]: NamedExpressionLhsNs;
 	[TSKindId.ReturnStatement]: ReturnStatementNs;
 	[TSKindId.DeleteStatement]: DeleteStatementNs;
 	[TSKindId.RaiseStatement]: RaiseStatementNs;
@@ -10288,12 +10108,6 @@ export interface NamespaceMap {
 	[TSKindId.Newline]: NewlineNs;
 	[TSKindId.Blankline]: BlanklineNs;
 	[TSKindId.DoubleBlankline]: DoubleBlanklineNs;
-	[TSKindId.PrintKeyword]: PrintKeywordNs;
-	[TSKindId.ExecKeyword]: ExecKeywordNs;
-	[TSKindId.AsyncKeyword]: AsyncKeywordNs;
-	[TSKindId.AwaitKeyword]: AwaitKeywordNs;
-	[TSKindId.TypeKeyword]: TypeKeywordNs;
-	[TSKindId.MatchKeyword]: MatchKeywordNs;
 	[TSKindId.ImportPrefix]: ImportPrefixNs;
 	[TSKindId.TypeConversion]: TypeConversionNs;
 	[TSKindId.Identifier]: IdentifierNs;
@@ -10322,6 +10136,7 @@ export interface BoundByKindId {
 	[TSKindId.AssertStatement]: AssertStatement.Bound;
 	[TSKindId.ExpressionStatement]: ExpressionStatement.Bound;
 	[TSKindId.NamedExpression]: NamedExpression.Bound;
+	[TSKindId.NamedExpressionLhs]: NamedExpressionLhs.Bound;
 	[TSKindId.ReturnStatement]: ReturnStatement.Bound;
 	[TSKindId.DeleteStatement]: DeleteStatement.Bound;
 	[TSKindId.RaiseStatement]: RaiseStatement.Bound;
@@ -10500,6 +10315,7 @@ export interface ParsedByKindId {
 	[TSKindId.AssertStatement]: AssertStatement.Parsed;
 	[TSKindId.ExpressionStatement]: ExpressionStatement.Parsed;
 	[TSKindId.NamedExpression]: NamedExpression.Parsed;
+	[TSKindId.NamedExpressionLhs]: NamedExpressionLhs.Parsed;
 	[TSKindId.ReturnStatement]: ReturnStatement.Parsed;
 	[TSKindId.DeleteStatement]: DeleteStatement.Parsed;
 	[TSKindId.RaiseStatement]: RaiseStatement.Parsed;
@@ -10691,12 +10507,6 @@ export type FixedTextKindId =
 	| TSKindId.Star
 	| TSKindId.GtGt
 	| TSKindId.AssertKeyword
-	| TSKindId.PrintKeyword
-	| TSKindId.ExecKeyword
-	| TSKindId.AsyncKeyword
-	| TSKindId.AwaitKeyword
-	| TSKindId.TypeKeyword
-	| TSKindId.MatchKeyword
 	| TSKindId.ColonEq
 	| TSKindId.ReturnKeyword
 	| TSKindId.DelKeyword
@@ -10708,7 +10518,9 @@ export type FixedTextKindId =
 	| TSKindId.Colon
 	| TSKindId.ElifKeyword
 	| TSKindId.ElseKeyword
+	| TSKindId.MatchKeyword
 	| TSKindId.CaseKeyword
+	| TSKindId.AsyncKeyword
 	| TSKindId.ForKeyword
 	| TSKindId.InKeyword
 	| TSKindId.WhileKeyword
@@ -10723,6 +10535,8 @@ export type FixedTextKindId =
 	| TSKindId.StarStar
 	| TSKindId.GlobalKeyword
 	| TSKindId.NonlocalKeyword
+	| TSKindId.ExecKeyword
+	| TSKindId.TypeKeyword
 	| TSKindId.Eq
 	| TSKindId.ClassKeyword
 	| TSKindId.Lbrack
@@ -10761,6 +10575,8 @@ export type FixedTextKindId =
 	| TSKindId.YieldKeyword
 	| TSKindId.Comma
 	| TSKindId.Bslash
+	| TSKindId.AwaitKeyword
+	| TSKindId.PrintKeyword
 	| TSKindId.Lt
 	| TSKindId.LtEq
 	| TSKindId.EqEq
@@ -10786,6 +10602,7 @@ export interface TypeKeyOf {
 	[TSKindId.AssertStatement]: 'assertStatement';
 	[TSKindId.ExpressionStatement]: 'expressionStatement';
 	[TSKindId.NamedExpression]: 'namedExpression';
+	[TSKindId.NamedExpressionLhs]: 'namedExpressionLhs';
 	[TSKindId.ReturnStatement]: 'returnStatement';
 	[TSKindId.DeleteStatement]: 'deleteStatement';
 	[TSKindId.RaiseStatement]: 'raiseStatement';
@@ -10957,12 +10774,6 @@ export interface TypeKeyOf {
 	[TSKindId.Newline]: 'newline';
 	[TSKindId.Blankline]: 'blankline';
 	[TSKindId.DoubleBlankline]: 'doubleBlankline';
-	[TSKindId.PrintKeyword]: 'printKeyword';
-	[TSKindId.ExecKeyword]: 'execKeyword';
-	[TSKindId.AsyncKeyword]: 'asyncKeyword';
-	[TSKindId.AwaitKeyword]: 'awaitKeyword';
-	[TSKindId.TypeKeyword]: 'typeKeyword';
-	[TSKindId.MatchKeyword]: 'matchKeyword';
 	[TSKindId.ImportPrefix]: 'importPrefix';
 	[TSKindId.TypeConversion]: 'typeConversion';
 	[TSKindId.Identifier]: 'identifier';
@@ -11256,6 +11067,24 @@ export namespace NamedExpression {
 	export type BuildArgs = [config: ConfigOf<T.NamedExpression>];
 	export type LooseArgs = [config: T.NamedExpression.Loose];
 	export type Kind = TSKindId.NamedExpression;
+}
+export namespace NamedExpressionLhs {
+	export type Config = ConfigFor<TSKindId.NamedExpressionLhs>;
+	export interface Bound extends BoundOf<T.NamedExpressionLhs, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NamedExpressionLhs['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NamedExpressionLhs, ParsedByKindId>, NodeMethodsOf, HoldsTree {
+		readonly $type: T.NamedExpressionLhs['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<this, ParsedByKindId>;
+		readonly $snapshot: () => Snapshot<T.NamedExpressionLhs['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.NamedExpressionLhs>;
+	export type LooseConfig = LooseConfigFor<TSKindId.NamedExpressionLhs>;
+	export type BuildArgs = [config: ConfigOf<T.NamedExpressionLhs>];
+	export type LooseArgs = [config: T.NamedExpressionLhs.Loose];
+	export type Kind = TSKindId.NamedExpressionLhs;
 }
 export namespace ReturnStatement {
 	export type Config = ConfigFor<TSKindId.ReturnStatement>;
@@ -12436,19 +12265,7 @@ export namespace ListSplatPattern {
 	}
 	export type Loose = LooseFor<TSKindId.ListSplatPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ListSplatPattern>;
-	export type BuildArgs = [
-		value: Admit<
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute
-		>
-	];
+	export type BuildArgs = [value: Admit<T.Identifier | T.Subscript | T.Attribute>];
 	export type LooseArgs = [value: T.ListSplatPattern.Loose];
 	export type Kind = TSKindId.ListSplatPattern;
 }
@@ -12466,19 +12283,7 @@ export namespace DictionarySplatPattern {
 	}
 	export type Loose = LooseFor<TSKindId.DictionarySplatPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictionarySplatPattern>;
-	export type BuildArgs = [
-		value: Admit<
-			| T.Identifier
-			| TSKindId.PrintKeyword
-			| TSKindId.ExecKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.AwaitKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.MatchKeyword
-			| T.Subscript
-			| T.Attribute
-		>
-	];
+	export type BuildArgs = [value: Admit<T.Identifier | T.Subscript | T.Attribute>];
 	export type LooseArgs = [value: T.DictionarySplatPattern.Loose];
 	export type Kind = TSKindId.DictionarySplatPattern;
 }
@@ -15199,66 +15004,6 @@ export namespace DoubleBlankline {
 	export type BuildArgs = DoubleBlanklineNs['BuildArgs'];
 	export type LooseArgs = DoubleBlanklineNs['LooseArgs'];
 	export type Kind = TSKindId.DoubleBlankline;
-}
-export namespace PrintKeyword {
-	export type Config = PrintKeywordNs['Config'];
-	export type Bound = PrintKeywordNs['Bound'];
-	export type Parsed = PrintKeywordNs['Bound'];
-	export type Loose = PrintKeywordNs['Loose'];
-	export type LooseConfig = PrintKeywordNs['LooseConfig'];
-	export type BuildArgs = PrintKeywordNs['BuildArgs'];
-	export type LooseArgs = PrintKeywordNs['LooseArgs'];
-	export type Kind = TSKindId.PrintKeyword;
-}
-export namespace ExecKeyword {
-	export type Config = ExecKeywordNs['Config'];
-	export type Bound = ExecKeywordNs['Bound'];
-	export type Parsed = ExecKeywordNs['Bound'];
-	export type Loose = ExecKeywordNs['Loose'];
-	export type LooseConfig = ExecKeywordNs['LooseConfig'];
-	export type BuildArgs = ExecKeywordNs['BuildArgs'];
-	export type LooseArgs = ExecKeywordNs['LooseArgs'];
-	export type Kind = TSKindId.ExecKeyword;
-}
-export namespace AsyncKeyword {
-	export type Config = AsyncKeywordNs['Config'];
-	export type Bound = AsyncKeywordNs['Bound'];
-	export type Parsed = AsyncKeywordNs['Bound'];
-	export type Loose = AsyncKeywordNs['Loose'];
-	export type LooseConfig = AsyncKeywordNs['LooseConfig'];
-	export type BuildArgs = AsyncKeywordNs['BuildArgs'];
-	export type LooseArgs = AsyncKeywordNs['LooseArgs'];
-	export type Kind = TSKindId.AsyncKeyword;
-}
-export namespace AwaitKeyword {
-	export type Config = AwaitKeywordNs['Config'];
-	export type Bound = AwaitKeywordNs['Bound'];
-	export type Parsed = AwaitKeywordNs['Bound'];
-	export type Loose = AwaitKeywordNs['Loose'];
-	export type LooseConfig = AwaitKeywordNs['LooseConfig'];
-	export type BuildArgs = AwaitKeywordNs['BuildArgs'];
-	export type LooseArgs = AwaitKeywordNs['LooseArgs'];
-	export type Kind = TSKindId.AwaitKeyword;
-}
-export namespace TypeKeyword {
-	export type Config = TypeKeywordNs['Config'];
-	export type Bound = TypeKeywordNs['Bound'];
-	export type Parsed = TypeKeywordNs['Bound'];
-	export type Loose = TypeKeywordNs['Loose'];
-	export type LooseConfig = TypeKeywordNs['LooseConfig'];
-	export type BuildArgs = TypeKeywordNs['BuildArgs'];
-	export type LooseArgs = TypeKeywordNs['LooseArgs'];
-	export type Kind = TSKindId.TypeKeyword;
-}
-export namespace MatchKeyword {
-	export type Config = MatchKeywordNs['Config'];
-	export type Bound = MatchKeywordNs['Bound'];
-	export type Parsed = MatchKeywordNs['Bound'];
-	export type Loose = MatchKeywordNs['Loose'];
-	export type LooseConfig = MatchKeywordNs['LooseConfig'];
-	export type BuildArgs = MatchKeywordNs['BuildArgs'];
-	export type LooseArgs = MatchKeywordNs['LooseArgs'];
-	export type Kind = TSKindId.MatchKeyword;
 }
 export namespace ImportPrefix {
 	export type Config = ImportPrefixNs['Config'];

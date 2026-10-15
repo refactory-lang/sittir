@@ -650,6 +650,15 @@ describe('expression_statement sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('named.identifier builds the parent', () => {
+		const node = ir.expressionStatement.named.identifier({
+			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: ['test']
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('yield.fromClause builds the parent', () => {
 		const node = ir.expressionStatement.yield.fromClause({
 			$type: TSKindId.Identifier,
@@ -742,6 +751,15 @@ describe('expression_statement sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('yield.fromClause.named.identifier builds the parent', () => {
+		const node = ir.expressionStatement.yield.fromClause.named.identifier({
+			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: ['test']
+		});
+		expect(node.$type).toBe(TSKindId.ExpressionStatement);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 });
 
 describe('named_expression', () => {
@@ -760,6 +778,18 @@ describe('named_expression', () => {
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('named_expression sub-factories', () => {
+	it('identifier builds the parent', () => {
+		const node = ir.namedExpression.identifier({
+			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: ['test']
+		});
+		expect(node.$type).toBe(TSKindId.NamedExpression);
+		expect((node as any).name()?.$type).toBe(TSKindId.Identifier);
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -3715,6 +3745,15 @@ describe('yield sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('fromClause.named.identifier builds the parent', () => {
+		const node = ir.yield.fromClause.named.identifier({
+			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: ['test']
+		});
+		expect(node.$type).toBe(TSKindId.Yield);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 });
 
 describe('attribute', () => {
@@ -4060,6 +4099,15 @@ describe('type sub-factories', () => {
 				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.Type);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('named.identifier builds the parent', () => {
+		const node = ir.type.named.identifier({
+			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: ['test']
 		});
 		expect(node.$type).toBe(TSKindId.Type);
 		expect((node as any).content()).toBeDefined();

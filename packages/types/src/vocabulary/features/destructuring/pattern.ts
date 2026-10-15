@@ -2,11 +2,6 @@ import type { GrammarContext } from '../../context.ts';
 import type { SubKindOf } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Pattern {
-	export interface Array<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
-		// claimed by t
-		readonly $kind: 'pattern.array';
-		readonly elements?: G['slots']['pattern.array']['elements'][];
-	}
 	export interface Assignment<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
 		// claimed by t
 		readonly $kind: 'pattern.assignment';
@@ -14,7 +9,7 @@ export namespace Pattern {
 		readonly right: G['slots']['pattern.assignment']['right'];
 	}
 	export interface List<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
-		// claimed by p
+		// claimed by prt
 		readonly $kind: 'pattern.list';
 		readonly elements?: G['slots']['pattern.list']['elements'][];
 	}
@@ -38,25 +33,14 @@ export namespace Pattern {
 		}
 	}
 	export interface Rest<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
-		// claimed by t
+		// claimed by pt
 		readonly $kind: 'pattern.rest';
-		readonly lhsExpression: G['slots']['pattern.rest']['lhsExpression'];
+		readonly pattern: G['slots']['pattern.rest']['pattern'];
 	}
-	export interface Slice<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
-		// claimed by r
-		readonly $kind: 'pattern.slice';
-		readonly patterns?: G['slots']['pattern.slice']['patterns'][];
-	}
-	export interface Splat<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
-		// claimed by p
-		readonly $kind: 'pattern.splat';
-		readonly target: G['slots']['pattern.splat']['target'];
-	}
-	export namespace Splat {
-		export interface Dictionary<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Splat<G>> {
+	export namespace Rest {
+		export interface Map<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Rest<G>> {
 			// claimed by p
-			readonly $kind: 'pattern.splat.dictionary';
-			readonly target: G['slots']['pattern.splat.dictionary']['target'];
+			readonly $kind: 'pattern.rest.map';
 		}
 	}
 	export interface Tuple<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {

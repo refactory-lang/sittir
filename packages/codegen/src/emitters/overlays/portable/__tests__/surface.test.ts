@@ -7,7 +7,12 @@ const input = async (scm: string): Promise<GrammarInput> => ({
 	bindings: await readBindings(scm),
 	model: slotModelOf({
 		nodes: [
-			{ kind: 'binary', slots: [{ name: 'operator', propertyName: 'operator', required: true, values: [{ kind: 'terminal', value: '+' }] }] },
+			{
+				kind: 'binary',
+				slots: [
+					{ name: 'operator', propertyName: 'operator', required: true, values: [{ kind: 'terminal', value: '+' }] }
+				]
+			},
 			{ kind: 'call', slots: [] },
 			{ kind: 'block', slots: [] },
 			{ kind: 'assign', slots: [] }
@@ -20,7 +25,10 @@ const input = async (scm: string): Promise<GrammarInput> => ({
 const emit = async (scm: string) =>
 	emitPortableSurface({
 		routes: resolveRoutes(await input(scm)),
-		readTest: (entry) => (entry.pins.length === 0 ? [] : [{ up: 0, via: [], plan: { op: 'eq', text: '+', fields: ['operator'], kinds: [] } }]),
+		readTest: (entry) =>
+			entry.pins.length === 0
+				? []
+				: [{ up: 0, via: [], plan: { op: 'eq', text: '+', fields: ['operator'], kinds: [] } }],
 		kindIdOf: (kind) => `TSKindId.${kind[0]!.toUpperCase()}${kind.slice(1)}`,
 		fixedText: [['TSKindId.Plus', '+']]
 	});
@@ -34,6 +42,31 @@ const SCM = [
 ].join('\n');
 
 describe('emitPortableSurface', () => {
+	it('types crossing candidates and uses the same facts for the exact-kind shortcut', async () => {
+		const text = await emit('(call) @literal.string.raw\n(assign) @literal.string.interpolated.raw');
+		expect(text).toContain('\t"literal.string.raw": TSKindId.Assign | TSKindId.Call;');
+		expect(text).toContain('\t\t"literal.string.raw": { ids: [TSKindId.Assign, TSKindId.Call], exact: true },');
+	});
+
+	it('keeps a crossing guard conditional when the kind also reads without its fact', async () => {
+		const text = await emit(
+			'(binary operator: "+") @literal.string.interpolated.raw\n(binary) @literal.string\n(assign) @literal.string.raw'
+		);
+		expect(text).toContain('\t\t"literal.string.raw": { ids: [TSKindId.Assign, TSKindId.Binary], exact: false },');
+	});
+
+	it('ignores a fallback after an unconditional crossing claim for the exact-kind shortcut', async () => {
+		const text = await emit(
+			'(call) @literal.string.interpolated.raw\n(call) @literal.string\n(assign) @literal.string.raw'
+		);
+		expect(text).toContain('\t\t"literal.string.raw": { ids: [TSKindId.Assign, TSKindId.Call], exact: true },');
+	});
+
+	it('keeps a crossing guard conditional when its fact depends on placement', async () => {
+		const text = await emit('(block (call) @literal.string.interpolated.raw)\n(assign) @literal.string.raw');
+		expect(text).toContain('\t\t"literal.string.raw": { ids: [TSKindId.Assign, TSKindId.Call], exact: false },');
+	});
+
 	it('writes one entry and one id for kinds the parser shows by one name', async () => {
 		const routes = resolveRoutes({
 			grammar: 'g',
@@ -42,7 +75,12 @@ describe('emitPortableSurface', () => {
 				nodes: [
 					{ kind: 'call', slots: [] },
 					{ kind: '_call', slots: [] },
-					{ kind: 'holder', slots: [{ name: 'item', propertyName: 'item', values: [{ kind: 'node-ref', name: '_call', parseKind: 'call' }] }] }
+					{
+						kind: 'holder',
+						slots: [
+							{ name: 'item', propertyName: 'item', values: [{ kind: 'node-ref', name: '_call', parseKind: 'call' }] }
+						]
+					}
 				]
 			}),
 			textTokens: new Set(),
@@ -66,7 +104,9 @@ describe('emitPortableSurface', () => {
 		expect(text).toContain(
 			'\t"expression": { readonly $ids: readonly PortableIds["expression"][]; readonly "assignment": PortableKindsAt["expression.assignment"]; readonly "binary": PortableKindsAt["expression.binary"]; readonly "call": PortableKindsAt["expression.call"] };'
 		);
-		expect(text).toContain('\t"expression.call": PortableGuard<PortableIds["expression.call"]> & { readonly "nested": PortableIsAt["expression.call.nested"] };');
+		expect(text).toContain(
+			'\t"expression.call": PortableGuard<PortableIds["expression.call"]> & { readonly "nested": PortableIsAt["expression.call.nested"] };'
+		);
 		expect(text).toContain('export interface PortableIs { readonly "expression": PortableIsAt["expression"] }');
 	});
 
@@ -80,7 +120,9 @@ describe('emitPortableSurface', () => {
 		expect(text).toContain(
 			'\t\t[TSKindId.Binary]: [{ path: "expression.binary.add", within: [], test: [{"up":0,"via":[],"plan":{"op":"eq","text":"+","fields":["operator"],"kinds":[]}}] }, { path: "expression.binary", within: [], test: [] }],'
 		);
-		expect(text).toContain('\t\t[TSKindId.Call]: [{ path: "expression.call.nested", within: [TSKindId.Block], test: [] }, { path: "expression.call", within: [], test: [] }],');
+		expect(text).toContain(
+			'\t\t[TSKindId.Call]: [{ path: "expression.call.nested", within: [TSKindId.Block], test: [] }, { path: "expression.call", within: [], test: [] }],'
+		);
 		expect(text).toContain('\tfixedText: { [TSKindId.Plus]: "+" },');
 		expect(text).toContain('export const portable = portableSurface<PortableKinds, PortableIs>(table, querySlots);');
 	});

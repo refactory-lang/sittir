@@ -3,6 +3,7 @@ import { holds, slotItems } from './query.ts';
 import { spanSlicer, type ByteSpan } from './span.ts';
 import { treeOf } from './tree-token.ts';
 import { spanOf } from './utils.ts';
+import { portablePathHasFacts } from './portable-path.ts';
 
 type Node = { readonly $type: number; readonly $subType?: unknown; readonly $text?: string };
 type Context = readonly Node[] | undefined;
@@ -71,7 +72,6 @@ export function portableSurface<Kinds, Is>(table: PortableTable, querySlots: Que
 	const kinds = new Map<string, object>([['', {}]]);
 	const guards = new Map<string, object>([['', {}]]);
 	const paths = Object.keys(table.paths);
-	const under = (path: string, read: string | undefined): boolean => read !== undefined && (read === path || read.startsWith(`${path}.`));
 	for (const path of paths) {
 		const { ids, exact } = table.paths[path]!;
 		const admitted = new Set(ids);
@@ -82,8 +82,8 @@ export function portableSurface<Kinds, Is>(table: PortableTable, querySlots: Que
 				const item = asItem(node);
 				if (item === undefined || !admitted.has(kindOf(item))) return false;
 				if (exact) return true;
-				if (typeof item !== 'number' && typeof item.$subType === 'string') return under(path, item.$subType);
-				return under(path, classify(item, context));
+				if (typeof item !== 'number' && typeof item.$subType === 'string') return portablePathHasFacts(path, item.$subType);
+				return portablePathHasFacts(path, classify(item, context));
 			}
 		);
 	}

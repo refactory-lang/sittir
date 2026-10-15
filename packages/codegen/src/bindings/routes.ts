@@ -651,7 +651,9 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	for (const member of input.bindings.members) {
 		if ((member.route !== 'rename' && member.route !== 'dropped') || (member.route === 'rename' && member.flag === true)) continue;
 		for (const form of formsOf(input.model, member.owner)) {
-			const slot = slotFor(input.model, modelNode(input.model, form)?.slots ?? [], member);
+			const slots = modelNode(input.model, form)?.slots ?? [];
+			const token = member.route === 'dropped' && member.field === null ? member.token : undefined;
+			const slot = token === undefined ? slotFor(input.model, slots, member) : slotHoldingText(input.model, slots, token);
 			if (slot !== undefined)
 				(slotNames.get(form) ?? slotNames.set(form, new Map<string, string | null>()).get(form))?.set(slot.name, member.route === 'rename' ? member.name : null);
 		}

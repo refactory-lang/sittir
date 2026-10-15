@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { emitKindIdRust } from '../kind-id-rust.ts';
+import { emitKindIdRust, relaxedKeywordIds } from '../kind-id-rust.ts';
 import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
 import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
@@ -29,6 +29,37 @@ async function emittedKindIds(grammar: GrammarName) {
 }
 
 describe('facts the wrap layer owns', () => {
+	it(
+		'resolves relaxed literals by catalog precedence regardless of row order',
+		async () => {
+			const { nodeMap } = await emittedKindIds('python');
+			expect(nodeMap.relaxedLiterals).toContain('async');
+			const anonymous = { kind: 'async', member: 'Async', id: 22, literalText: 'async', anon: true };
+			const literal = {
+				kind: 'async_literal',
+				member: 'AsyncLiteral',
+				id: 11,
+				literalText: 'async',
+				literalRule: true
+			};
+			const terminal = { kind: 'async_token', member: 'AsyncToken', id: 5, literalText: 'async', terminal: true };
+			const other = { kind: 'async_branch', member: 'AsyncBranch', id: 1, literalText: 'async' };
+			for (const entries of [
+				[literal, anonymous],
+				[anonymous, literal],
+				[other, terminal, literal, anonymous],
+				[anonymous, literal, terminal, other]
+			])
+				expect(relaxedKeywordIds(nodeMap, entries)).toEqual([22]);
+			expect(relaxedKeywordIds(nodeMap, [other, terminal, literal])).toEqual([11]);
+			expect(relaxedKeywordIds(nodeMap, [literal, terminal, other])).toEqual([11]);
+			expect(relaxedKeywordIds(nodeMap, [other, terminal])).toEqual([5]);
+			expect(relaxedKeywordIds(nodeMap, [other])).toEqual([]);
+			expect(relaxedKeywordIds(nodeMap, [])).toEqual([]);
+		},
+		FULL_PIPELINE_TIMEOUT
+	);
+
 	it('emits no slot-separator or anonymous-children table for the reader', async () => {
 		for (const grammar of ['python', 'typescript', 'rust'] as const) {
 			const { source } = await emittedKindIds(grammar);

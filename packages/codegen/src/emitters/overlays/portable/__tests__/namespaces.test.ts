@@ -5,8 +5,24 @@ const tree = (entries: Record<string, readonly string[]>) =>
 	namespaceTree(new Map(Object.entries(entries).map(([kind, vocabs]) => [kind, vocabs.map((vocab) => ({ vocab }))])));
 
 describe('namespaceTree', () => {
+	it('admits a crossing under every path whose facts it names', () => {
+		const root = tree({
+			raw: ['literal.string.raw'],
+			interpolated_raw: ['literal.string.interpolated.raw'],
+			plain: ['literal.string'],
+			rawness: ['literal.string.rawness'],
+			other_root: ['expression.string.raw']
+		});
+		const string = root.children.get('literal')?.children.get('string');
+		expect(string?.children.get('raw')?.kinds).toEqual(['interpolated_raw', 'raw']);
+		expect(string?.children.get('interpolated')?.kinds).toEqual(['interpolated_raw']);
+	});
+
 	it('nests every claimed path under its prefixes, each node holding the kinds read at or under it', () => {
-		const root = tree({ binary_expression: ['expression.binary', 'expression.binary.add'], call_expression: ['expression.call'] });
+		const root = tree({
+			binary_expression: ['expression.binary', 'expression.binary.add'],
+			call_expression: ['expression.call']
+		});
 		expect([...root.children.keys()]).toEqual(['expression']);
 		const expression = root.children.get('expression')!;
 		expect(expression.kinds).toEqual(['binary_expression', 'call_expression']);
@@ -16,7 +32,7 @@ describe('namespaceTree', () => {
 });
 
 describe('namespaceSection', () => {
-	it('counts each depth\'s paths, the kinds read exactly there, and the paths refining a read path', () => {
+	it("counts each depth's paths, the kinds read exactly there, and the paths refining a read path", () => {
 		const entries = new Map(
 			Object.entries({
 				binary: ['expression.binary', 'expression.binary.add'],

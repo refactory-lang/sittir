@@ -182,7 +182,7 @@ A kind name's kind id, stamped from the generated id tables, or `undefined` for 
 
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::namespaceTree`
 
-The tree of every vocabulary path a grammar reads (`NamespaceNode`), segment by segment and sorted. Each node holds the kinds read at or under it, so a path's kinds are a superset of every refinement's under it.
+The tree of every vocabulary path a grammar reads (`NamespaceNode`), segment by segment and sorted. Each node's kinds are derived once from the read entries whose paths satisfy its facts through `portablePathHasFacts`. A crossing is admitted beneath each path that names its facts, even when another refinement separates its segments.
 
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::descendants`
 
@@ -194,7 +194,7 @@ The `namespaces` section of `node-model-portable.json5`. Per depth (`NamespaceLe
 
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::NamespaceNode`
 
-One level of the portable namespace tree: its dotted path, the kinds read as exactly that path, and its child levels by segment.
+One level of the portable namespace tree: its dotted path, the kinds whose readings carry every fact it names, and its child levels by segment.
 
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::MutableNode`
 
@@ -222,7 +222,7 @@ The portable overlay's two emitted files: the routes model (`node-model-portable
 
 ### `packages/codegen/src/emitters/overlays/portable/surface.ts::emitPortableSurface`
 
-`src/portable.ts`: the types and the table of a bound grammar's portable surface. `PortableIds` names, per path, the union of the kind ids read at or under it (`namespaceTree`). `PortableKindsAt` and `PortableIsAt` type each path's `kinds` node and guard, both with their child segments, each referring to the next path by key. A path is reached only by its full path: no segment is linked under a further ancestor. `PortableKinds` and `PortableIs` are the roots. The `PortableTable` holds each path's ids and whether they decide it (`exact`: each of its kinds has an unplaced, untested entry, and every entry up to and including the first such one names it or a path under it, so the first match always lands under it; no entry after an unconditional one is ever tried), each kind id's read entries in read order (placement kinds nearest first, `null` for a wildcard, and the compiled test; kinds the parser shows by one name share one id, so their entries are written once under it and a path's ids are listed once each), and every fixed literal's text. A placement kind without a parser id fails generation with `kindDiscriminantExpr`'s message. The module ends by building the runtime from it (`common/src/portable.ts::portableSurface`).
+`src/portable.ts`: the types and the table of a bound grammar's portable surface. `PortableIds` names, per path, the union of the kind ids read at or under it (`namespaceTree`). `PortableKindsAt` and `PortableIsAt` type each path's `kinds` node and guard, both with their child segments, each referring to the next path by key. A path is reached only by its full path: no segment is linked under a further ancestor. `PortableKinds` and `PortableIs` are the roots. The `PortableTable` holds each path's ids and whether they decide it (`exact`: each of its kinds has an unplaced, untested entry, and every entry up to and including the first such one carries all of its facts (`portablePathHasFacts`), so the first match always satisfies it; no entry after an unconditional one is ever tried), each kind id's read entries in read order (placement kinds nearest first, `null` for a wildcard, and the compiled test; kinds the parser shows by one name share one id, so their entries are written once under it and a path's ids are listed once each), and every fixed literal's text. A placement kind without a parser id fails generation with `kindDiscriminantExpr`'s message. The module ends by building the runtime from it (`common/src/portable.ts::portableSurface`).
 ### `packages/codegen/src/emitters/overlays/portable/surface.ts::PortableSurfaceConfig`
 
 What the portable surface is emitted from: the grammar's routes, the compiled test of each read entry, the kind-id expression of a kind, and the fixed text of each fixed-text kind.

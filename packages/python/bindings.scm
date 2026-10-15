@@ -69,6 +69,8 @@
 (case_clause) @clause.case.match
 (with_clause with_items: (_)? @items) @clause.resource
 (with_item) @clause.resource.item
+(with_item value: (as_pattern expression: (_) @value))
+(with_item value: (as_pattern alias: (_) @name))
 (for_in_clause) @clause.comprehension.for
 (if_clause) @clause.comprehension.if
 (chevron) @clause.print.chevron
@@ -182,9 +184,10 @@
 (tuple_pattern) @pattern.tuple
 (pattern_list) @pattern.tuple.bare
 (list_pattern (patterns)? @elements) @pattern.list
-(list_splat_pattern) @pattern.splat
-(dictionary_splat_pattern) @pattern.splat.dictionary
-(as_pattern) @pattern.as
+(list_splat_pattern) @pattern.rest
+(list_splat_pattern target: (_) @pattern)
+(dictionary_splat_pattern) @pattern.rest.map
+(dictionary_splat_pattern target: (_) @pattern)
 (case_pattern) @pattern.case
 (union_pattern) @pattern.case.or
 (dict_pattern) @pattern.case.dictionary
@@ -194,7 +197,9 @@
 (complex_pattern) @pattern.case.complex
 (case_tuple_pattern) @pattern.case.tuple
 (case_list_pattern) @pattern.case.list
-(case_as_pattern) @pattern.case.as
+(case_as_pattern) @pattern.as
+(case_as_pattern (case_pattern) @pattern)
+(case_as_pattern (identifier) @name)
 
 ; ── type ───────────────────────────────────────────────────────────────────────
 (type) @type
@@ -202,7 +207,10 @@
 (union_type) @type.union
 (constrained_type) @type.constrained
 (member_type) @type.path
-(splat_type) @type.splat
+(splat_type) @type.rest
+(splat_type name: (_) @type)
+(splat_type operator: "**") @type.rest.map
+((splat_type operator: ["*" "**"] @dropped) (#set! reason "the rest kind and its map refinement determine the marker"))
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string [(interpolation) (string_content)]* @elements) @literal.string
@@ -210,9 +218,16 @@
 (escape_interpolation) @literal.string.escape
 (string_fragment) @literal.string.text
 (concatenated_string) @literal.string.concatenated
-((string (string_start) @_p) @literal.string.f (#match? @_p "^[fF]"))
-((string (string_start) @_p) @literal.string.bytes (#match? @_p "^[bB]"))
-((string (string_start) @_p) @literal.string.raw (#match? @_p "^[rR]"))
+((string (string_start) @_p) @literal.string.interpolated.raw.multiline (#match? @_p "^[a-zA-Z]*[fFtT]") (#match? @_p "^[a-zA-Z]*[rR]") (#match? @_p "\"\"\"|'''"))
+((string (string_start) @_p) @literal.string.bytes.raw.multiline (#match? @_p "^[a-zA-Z]*[bB]") (#match? @_p "^[a-zA-Z]*[rR]") (#match? @_p "\"\"\"|'''"))
+((string (string_start) @_p) @literal.string.interpolated.raw (#match? @_p "^[a-zA-Z]*[fFtT]") (#match? @_p "^[a-zA-Z]*[rR]"))
+((string (string_start) @_p) @literal.string.interpolated.multiline (#match? @_p "^[a-zA-Z]*[fFtT]") (#match? @_p "\"\"\"|'''"))
+((string (string_start) @_p) @literal.string.bytes.raw (#match? @_p "^[a-zA-Z]*[bB]") (#match? @_p "^[a-zA-Z]*[rR]"))
+((string (string_start) @_p) @literal.string.bytes.multiline (#match? @_p "^[a-zA-Z]*[bB]") (#match? @_p "\"\"\"|'''"))
+((string (string_start) @_p) @literal.string.raw.multiline (#match? @_p "^[a-zA-Z]*[rR]") (#match? @_p "\"\"\"|'''"))
+((string (string_start) @_p) @literal.string.interpolated (#match? @_p "^[a-zA-Z]*[fFtT]"))
+((string (string_start) @_p) @literal.string.bytes (#match? @_p "^[a-zA-Z]*[bB]"))
+((string (string_start) @_p) @literal.string.raw (#match? @_p "^[a-zA-Z]*[rR]"))
 ((string (string_start) @_p) @literal.string.multiline (#match? @_p "\"\"\"|'''"))
 (integer_decimal_plain) @literal.number.integer
 (integer_decimal_long) @literal.number.integer.big

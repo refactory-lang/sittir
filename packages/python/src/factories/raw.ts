@@ -51,7 +51,6 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 
 const _reservedWordList_buildIdentifier = [
 	'False',
-	'await',
 	'else',
 	'import',
 	'pass',
@@ -80,7 +79,6 @@ const _reservedWordList_buildIdentifier = [
 	'global',
 	'not',
 	'with',
-	'async',
 	'elif',
 	'if',
 	'or',
@@ -590,16 +588,7 @@ export function buildExpressionStatement(
 }
 
 export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedExpression.Bound {
-	const _name = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.NamedExpression['_name']>>(config.name),
-			'NamedExpression.name',
-			'buildIdentifier(…)'
-		),
-		'NamedExpression.name',
-		TSKindId.Identifier,
-		['print', 'exec', 'async', 'await', 'type', 'match']
-	);
+	const _name = rejectBareText(config.name, 'NamedExpression.name', 'buildIdentifier(…)');
 	const _value = rejectBareText(
 		kindIdStorage<NonNullable<T.NamedExpression['_value']>>(config.value),
 		'NamedExpression.value',
@@ -613,7 +602,7 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 		_name,
 		_value,
 		$with: {
-			name: (value: Admit<NonNullable<T.NamedExpression.Config>['name']>) =>
+			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildNamedExpression({ ...config, name: value })),
 			value: (value: Admit<NonNullable<T.NamedExpression.Config>['value']>) =>
 				rebuilt(node, handle, () => buildNamedExpression({ ...config, value: value }))
@@ -628,6 +617,29 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.NamedExpression.Bound;
+}
+
+export function buildNamedExpressionLhs(config: T.NamedExpressionLhs.Config): T.NamedExpressionLhs.Bound {
+	const _identifier = rejectBareText(config.identifier, 'NamedExpressionLhs.identifier', 'buildIdentifier(…)');
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.NamedExpressionLhs as const,
+		$source: 2 as const,
+		$named: true as const,
+		_identifier,
+		$with: {
+			identifier: (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildNamedExpressionLhs({ ...config, identifier: value }))
+		},
+		identifier: () => hydrateStoredSlot(node, '_identifier'),
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.NamedExpressionLhs.Bound;
 }
 
 export function buildReturnStatement(value?: Admit<T.Expression | T.ExpressionList>): T.ReturnStatement.Bound {
@@ -2640,28 +2652,9 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 }
 
 export function buildListSplatPattern(
-	value: Admit<
-		| T.Identifier
-		| TSKindId.PrintKeyword
-		| TSKindId.ExecKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.AwaitKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.MatchKeyword
-		| T.Subscript
-		| T.Attribute
-	>
+	value: Admit<T.Identifier | T.Subscript | T.Attribute>
 ): T.ListSplatPattern.Bound {
-	const _target = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.ListSplatPattern['_target']>>(value),
-			'ListSplatPattern.target',
-			'buildIdentifier(…)'
-		),
-		'ListSplatPattern.target',
-		TSKindId.Identifier,
-		['print', 'exec', 'async', 'await', 'type', 'match']
-	);
+	const _target = rejectBareText(value, 'ListSplatPattern.target', 'buildIdentifier(…)');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ListSplatPattern as const,
@@ -2669,21 +2662,8 @@ export function buildListSplatPattern(
 		$named: true as const,
 		_target,
 		$with: {
-			target: (
-				value: Admit<
-					NonNullable<
-						| T.Identifier
-						| TSKindId.PrintKeyword
-						| TSKindId.ExecKeyword
-						| TSKindId.AsyncKeyword
-						| TSKindId.AwaitKeyword
-						| TSKindId.TypeKeyword
-						| TSKindId.MatchKeyword
-						| T.Subscript
-						| T.Attribute
-					>
-				>
-			) => rebuilt(node, handle, () => buildListSplatPattern(value))
+			target: (value: Admit<T.Identifier | T.Subscript | T.Attribute>) =>
+				rebuilt(node, handle, () => buildListSplatPattern(value))
 		},
 		target: () => hydrateStoredSlot(node, '_target'),
 		$render: () => renderText(handle, node),
@@ -2697,28 +2677,9 @@ export function buildListSplatPattern(
 }
 
 export function buildDictionarySplatPattern(
-	value: Admit<
-		| T.Identifier
-		| TSKindId.PrintKeyword
-		| TSKindId.ExecKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.AwaitKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.MatchKeyword
-		| T.Subscript
-		| T.Attribute
-	>
+	value: Admit<T.Identifier | T.Subscript | T.Attribute>
 ): T.DictionarySplatPattern.Bound {
-	const _target = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.DictionarySplatPattern['_target']>>(value),
-			'DictionarySplatPattern.target',
-			'buildIdentifier(…)'
-		),
-		'DictionarySplatPattern.target',
-		TSKindId.Identifier,
-		['print', 'exec', 'async', 'await', 'type', 'match']
-	);
+	const _target = rejectBareText(value, 'DictionarySplatPattern.target', 'buildIdentifier(…)');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DictionarySplatPattern as const,
@@ -2726,21 +2687,8 @@ export function buildDictionarySplatPattern(
 		$named: true as const,
 		_target,
 		$with: {
-			target: (
-				value: Admit<
-					NonNullable<
-						| T.Identifier
-						| TSKindId.PrintKeyword
-						| TSKindId.ExecKeyword
-						| TSKindId.AsyncKeyword
-						| TSKindId.AwaitKeyword
-						| TSKindId.TypeKeyword
-						| TSKindId.MatchKeyword
-						| T.Subscript
-						| T.Attribute
-					>
-				>
-			) => rebuilt(node, handle, () => buildDictionarySplatPattern(value))
+			target: (value: Admit<T.Identifier | T.Subscript | T.Attribute>) =>
+				rebuilt(node, handle, () => buildDictionarySplatPattern(value))
 		},
 		target: () => hydrateStoredSlot(node, '_target'),
 		$render: () => renderText(handle, node),
@@ -2764,8 +2712,8 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 		[
 			[
 				[
-					212, 206, 207, 213, 256, 208, 1, 67, 38, 68, 69, 39, 22, 247, 246, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71,
-					72, 209, 220, 221, 223, 232, 237, 235, 238, 233, 239, 234, 241, 240, 64, 200, 245, 142, 202
+					212, 206, 207, 213, 256, 208, 1, 247, 246, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71, 72, 209, 220, 221, 223,
+					232, 237, 235, 238, 233, 239, 234, 241, 240, 64, 200, 245, 142, 202
 				],
 				(v: unknown) => buildAsPatternTarget(v as never)
 			]
@@ -3451,16 +3399,7 @@ export function buildSplatType(config: T.SplatType.Config): T.SplatType.Bound {
 }
 
 export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bound {
-	const _name = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.GenericType['_name']>>(config.name),
-			'GenericType.name',
-			'buildIdentifier(…)'
-		),
-		'GenericType.name',
-		TSKindId.Identifier,
-		['type']
-	);
+	const _name = rejectBareText(config.name, 'GenericType.name', 'buildIdentifier(…)');
 	const _type_parameter = rejectBareText(config.typeParameter, 'GenericType.typeParameter', 'a built TypeParameter');
 	const handle = currentHandle();
 	const node = {
@@ -3470,8 +3409,7 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 		_name,
 		_type_parameter,
 		$with: {
-			name: (value: Admit<NonNullable<T.GenericType.Config>['name']>) =>
-				rebuilt(node, handle, () => buildGenericType({ ...config, name: value })),
+			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildGenericType({ ...config, name: value })),
 			typeParameter: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -3574,16 +3512,7 @@ export function buildMemberType(config: T.MemberType.Config): T.MemberType.Bound
 }
 
 export function buildKeywordArgument(config: T.KeywordArgument.Config): T.KeywordArgument.Bound {
-	const _name = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.KeywordArgument['_name']>>(config.name),
-			'KeywordArgument.name',
-			'buildIdentifier(…)'
-		),
-		'KeywordArgument.name',
-		TSKindId.Identifier,
-		['print', 'exec', 'async', 'await', 'type', 'match']
-	);
+	const _name = rejectBareText(config.name, 'KeywordArgument.name', 'buildIdentifier(…)');
 	const _value = rejectBareText(
 		kindIdStorage<NonNullable<T.KeywordArgument['_value']>>(config.value),
 		'KeywordArgument.value',
@@ -3597,7 +3526,7 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config): T.Keywor
 		_name,
 		_value,
 		$with: {
-			name: (value: Admit<NonNullable<T.KeywordArgument.Config>['name']>) =>
+			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildKeywordArgument({ ...config, name: value })),
 			value: (value: Admit<NonNullable<T.KeywordArgument.Config>['value']>) =>
 				rebuilt(node, handle, () => buildKeywordArgument({ ...config, value: value }))
@@ -7245,6 +7174,7 @@ export type FluentKindMap = {
 	assert_statement: T.AssertStatement.Bound;
 	expression_statement: T.ExpressionStatement.Bound;
 	named_expression: T.NamedExpression.Bound;
+	_named_expression_lhs: T.NamedExpressionLhs.Bound;
 	return_statement: T.ReturnStatement.Bound;
 	delete_statement: T.DeleteStatement.Bound;
 	raise_statement: T.RaiseStatement.Bound;
@@ -7444,6 +7374,7 @@ export const _factoryMap = {
 	assert_statement: buildAssertStatement,
 	expression_statement: buildExpressionStatement,
 	named_expression: buildNamedExpression,
+	_named_expression_lhs: buildNamedExpressionLhs,
 	return_statement: buildReturnStatement,
 	delete_statement: buildDeleteStatement,
 	raise_statement: buildRaiseStatement,

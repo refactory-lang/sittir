@@ -96,6 +96,39 @@ pub struct StoredLayout {
     pub separators: u32,
 }
 
+/// The work a parsed tree's layout reads have done so far, counted where it
+/// is done (`ParsedTree::layout_work`): a diagnostic, so a growth test
+/// compares counts, never times.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct LayoutWork {
+    /// The nodes the region-depth walks entered (`ParsedTree::region_depth`).
+    pub region_nodes: u32,
+    /// The items the sibling lookups visited (`ParsedTree::siblings`).
+    pub sibling_items: u32,
+}
+
+/// The running counts behind [`LayoutWork`], kept on the tree.
+#[derive(Debug, Default)]
+pub struct LayoutWorkCounter {
+    region_nodes: std::sync::atomic::AtomicU64,
+    sibling_items: std::sync::atomic::AtomicU64,
+}
+
+impl LayoutWorkCounter {
+    pub fn region_nodes(&self, n: usize) {
+        self.region_nodes.fetch_add(n as u64, std::sync::atomic::Ordering::Relaxed);
+    }
+
+    pub fn sibling_items(&self, n: usize) {
+        self.sibling_items.fetch_add(n as u64, std::sync::atomic::Ordering::Relaxed);
+    }
+
+    pub fn counts(&self) -> LayoutWork {
+        let read = |count: &std::sync::atomic::AtomicU64| u32::try_from(count.load(std::sync::atomic::Ordering::Relaxed)).unwrap_or(u32::MAX);
+        LayoutWork { region_nodes: read(&self.region_nodes), sibling_items: read(&self.sibling_items) }
+    }
+}
+
 /// The layout `layout` holds for the list slot `slot`.
 pub fn slot_layout<'a, T>(layout: Option<&'a TransportLayout<T>>, slot: &str) -> Option<&'a SlotLayout> {
     layout?.slots.iter().find(|entry| entry.slot == slot)
@@ -500,6 +533,20 @@ impl ::napi::bindgen_prelude::ToNapiValue for SlotLayout {
                 present(env, c"before", val.before)?,
                 present(env, c"after", val.after)?,
                 present(env, c"separator", val.separator)?,
+            ])
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for LayoutWork {
+    /// `{ regionNodes, siblingItems }`.
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        use crate::boundary::{object_with_present, present};
+        unsafe {
+            object_with_present(env, &[
+                present(env, c"regionNodes", Some(val.region_nodes))?,
+                present(env, c"siblingItems", Some(val.sibling_items))?,
             ])
         }
     }

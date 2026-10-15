@@ -7,5 +7,11 @@ export namespace Literal {
 			// claimed by p
 			readonly $kind: 'literal.string.bytes';
 		}
+		export namespace Bytes {
+			export interface Multiline<G extends GrammarContext<G>> extends SubKindOf<V.Literal.String.Bytes<G>> {
+				// claimed by p
+				readonly $kind: 'literal.string.bytes.multiline';
+			}
+		}
 	}
 }

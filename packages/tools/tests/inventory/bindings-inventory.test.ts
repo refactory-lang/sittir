@@ -128,10 +128,26 @@ describe('deriveVocabulary', () => {
 		expect(d.untargeted).toEqual([]);
 		expect(d.uncaptured).toEqual([]);
 	});
-	it('keeps the bounds of a type argument (`Iterator<Item: Copy>`), a wrapper claimed as a kind of its own', () => {
+	it('keeps rest-type markers out of the portable members without losing the held type', () => {
+		const rest = levelMembers(d, 'type.rest');
+		expect(rest.has('type')).toBe(true);
+		for (const grammar of ['python', 'typescript']) expect(rest.get('type')?.grammars.has(grammar), grammar).toBe(true);
+		expect(rest.has('operator')).toBe(false);
+		expect(levelMembers(d, 'type.rest.map').has('operator')).toBe(false);
+	});
+	it('keeps bounds introducers out of the portable members without losing the bounds', () => {
+		const bounds = levelMembers(d, 'clause.bounds');
+		expect(bounds.has('bounds')).toBe(true);
+		for (const grammar of ['rust', 'typescript']) expect(bounds.get('bounds')?.grammars.has(grammar), grammar).toBe(true);
+		expect(bounds.has('content')).toBe(false);
+	});
+	it('keeps the bounds of a type argument (`Iterator<Item: Copy>`), a wrapper claimed as a kind of its own, as the list of bounds its clause holds', () => {
 		const argument = d.members.get('element.type_argument');
-		expect(argument?.get('constraint')?.kinds).toEqual(new Set(['clause.bounds']));
-		expect(argument?.get('constraint')?.optional).toBe(true);
+		expect(argument?.has('constraint')).toBe(false);
+		expect(argument?.get('bounds')?.kinds.has('identifier.type')).toBe(true);
+		expect(argument?.get('bounds')?.kinds.has('clause.bounds')).toBe(false);
+		expect(argument?.get('bounds')?.multiple).toBe(true);
+		expect(argument?.get('bounds')?.optional).toBe(true);
 		expect(argument?.get('content')?.kinds.has('element.type_binding')).toBe(true);
 		expect(d.members.get('type.generic.turbofish')?.get('typeArguments')?.kinds).toEqual(
 			new Set(['element.type_argument'])

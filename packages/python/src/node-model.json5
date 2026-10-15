@@ -1,7 +1,7 @@
 {
   "name": "python",
   "root": "module",
-  "nodeCount": 307,
+  "nodeCount": 306,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -10,7 +10,6 @@
     "_f_expression",
     "_layout",
     "_left_hand_side",
-    "_named_expression_lhs",
     "_right_hand_side",
     "_simple_statement",
     "_statement",
@@ -21,7 +20,6 @@
     "float",
     "integer",
     "integer_decimal",
-    "keyword_identifier",
     "line_continuation",
     "parameter",
     "pattern",
@@ -2622,18 +2620,39 @@
     },
     {
       "kind": "_named_expression_lhs",
-      "modelType": "supertype",
+      "modelType": "envelope",
       "typeName": "NamedExpressionLhs",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "async_keyword",
-        "await_keyword",
-        "exec_keyword",
-        "identifier",
-        "match_keyword",
-        "print_keyword",
-        "type_keyword"
+      "factoryName": "namedExpressionLhs",
+      "hidden": false,
+      "annotations": {
+        "variant": "identifier",
+        "variantOf": "_named_expression_lhs",
+        "definedBy": "enrich"
+      },
+      "slots": [
+        {
+          "name": "identifier",
+          "propertyName": "identifier",
+          "paramName": "identifier",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier"
+            }
+          ]
+        }
+      ],
+      "textLeavesThrough": [
+        "identifier"
       ]
     },
     {
@@ -2925,11 +2944,9 @@
         "assignment_eq",
         "assignment_type",
         "assignment_typed",
-        "async_keyword",
         "attribute",
         "augmented_assignment",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "break_statement",
@@ -2946,7 +2963,6 @@
         "dictionary_splat",
         "dotted_name",
         "ellipsis",
-        "exec_keyword",
         "exec_statement",
         "expression_list",
         "expression_statement",
@@ -2973,7 +2989,6 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "names",
         "none",
@@ -2985,7 +3000,6 @@
         "parenthesized_list_splat",
         "pass_statement",
         "print_arguments",
-        "print_keyword",
         "print_statement",
         "print_statement_chevron",
         "print_statement_plain",
@@ -3000,7 +3014,6 @@
         "tuple",
         "tuple_elements",
         "type_alias_statement",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -3226,10 +3239,8 @@
       "bareAccepts": [
         "argument_list_elements",
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -3242,7 +3253,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -3262,14 +3272,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -3277,7 +3285,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -3365,10 +3372,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -3381,7 +3386,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -3401,14 +3405,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -3416,7 +3418,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -3531,10 +3532,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -3547,7 +3546,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -3566,14 +3564,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -3581,7 +3577,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -4024,6 +4019,11 @@
         [
           "primaryExpression",
           "attribute"
+        ],
+        [
+          "expression",
+          "primary",
+          "attribute"
         ]
       ],
       "hidden": false,
@@ -4279,6 +4279,11 @@
         [
           "primaryExpression",
           "await"
+        ],
+        [
+          "expression",
+          "primary",
+          "await"
         ]
       ],
       "hidden": false,
@@ -4311,10 +4316,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -4327,7 +4330,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -4346,14 +4348,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -4361,7 +4361,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -4398,6 +4397,11 @@
       "builderPathAlternates": [
         [
           "primaryExpression",
+          "binary"
+        ],
+        [
+          "expression",
+          "primary",
           "binary"
         ]
       ],
@@ -4723,6 +4727,11 @@
       "builderPathAlternates": [
         [
           "primaryExpression",
+          "call"
+        ],
+        [
+          "expression",
+          "primary",
           "call"
         ]
       ],
@@ -5265,10 +5274,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -5281,7 +5288,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -5300,14 +5306,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -5315,7 +5319,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -5574,10 +5577,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -5590,7 +5591,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -5609,14 +5609,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -5624,7 +5622,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -6081,6 +6078,11 @@
         [
           "primaryExpression",
           "concatenatedString"
+        ],
+        [
+          "expression",
+          "primary",
+          "concatenatedString"
         ]
       ],
       "hidden": false,
@@ -6430,10 +6432,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -6446,7 +6446,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -6465,14 +6464,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -6480,7 +6477,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -6630,10 +6626,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -6646,7 +6640,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -6665,14 +6658,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -6680,7 +6671,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -6804,6 +6794,11 @@
         [
           "primaryExpression",
           "dictionary"
+        ],
+        [
+          "expression",
+          "primary",
+          "dictionary"
         ]
       ],
       "hidden": false,
@@ -6837,10 +6832,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -6853,7 +6846,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -6872,14 +6864,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -6887,7 +6877,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -6905,6 +6894,11 @@
       "builderPathAlternates": [
         [
           "primaryExpression",
+          "dictionaryComprehension"
+        ],
+        [
+          "expression",
+          "primary",
           "dictionaryComprehension"
         ]
       ],
@@ -7016,10 +7010,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -7032,7 +7024,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -7051,14 +7042,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -7066,7 +7055,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -7110,10 +7098,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -7126,7 +7112,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -7145,14 +7130,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -7160,7 +7143,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -7190,7 +7172,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "identifier",
             "subscript",
@@ -7201,42 +7183,6 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "print",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "exec",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "async",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "await",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "type",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "match",
               "parseKind": "identifier"
             },
             {
@@ -7391,6 +7337,11 @@
         [
           "primaryExpression",
           "ellipsis"
+        ],
+        [
+          "expression",
+          "primary",
+          "ellipsis"
         ]
       ],
       "hidden": false,
@@ -7445,11 +7396,9 @@
         "assignment_eq",
         "assignment_type",
         "assignment_typed",
-        "async_keyword",
         "attribute",
         "augmented_assignment",
         "await",
-        "await_keyword",
         "binary_operator",
         "block",
         "boolean_operator",
@@ -7467,7 +7416,6 @@
         "dictionary_splat",
         "dotted_name",
         "ellipsis",
-        "exec_keyword",
         "exec_statement",
         "expression_list",
         "expression_statement",
@@ -7494,7 +7442,6 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "names",
         "none",
@@ -7506,7 +7453,6 @@
         "parenthesized_list_splat",
         "pass_statement",
         "print_arguments",
-        "print_keyword",
         "print_statement",
         "print_statement_chevron",
         "print_statement_plain",
@@ -7524,7 +7470,6 @@
         "tuple",
         "tuple_elements",
         "type_alias_statement",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -8536,10 +8481,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -8552,7 +8495,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -8571,14 +8513,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -8586,7 +8526,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -8673,11 +8612,9 @@
         "assignment_eq",
         "assignment_type",
         "assignment_typed",
-        "async_keyword",
         "attribute",
         "augmented_assignment",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -8690,7 +8627,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "expression_statement_tuple",
         "false",
@@ -8710,14 +8646,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -8725,7 +8659,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -8793,10 +8726,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -8809,7 +8740,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -8828,14 +8758,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -8843,7 +8771,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -8861,6 +8788,11 @@
       "builderPathAlternates": [
         [
           "primaryExpression",
+          "false"
+        ],
+        [
+          "expression",
+          "primary",
           "false"
         ]
       ],
@@ -8915,11 +8847,9 @@
         "assignment_eq",
         "assignment_type",
         "assignment_typed",
-        "async_keyword",
         "attribute",
         "augmented_assignment",
         "await",
-        "await_keyword",
         "binary_operator",
         "block",
         "boolean_operator",
@@ -8937,7 +8867,6 @@
         "dictionary_splat",
         "dotted_name",
         "ellipsis",
-        "exec_keyword",
         "exec_statement",
         "expression_list",
         "expression_statement",
@@ -8964,7 +8893,6 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "names",
         "none",
@@ -8976,7 +8904,6 @@
         "parenthesized_list_splat",
         "pass_statement",
         "print_arguments",
-        "print_keyword",
         "print_statement",
         "print_statement_chevron",
         "print_statement_plain",
@@ -8994,7 +8921,6 @@
         "tuple",
         "tuple_elements",
         "type_alias_statement",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -9022,6 +8948,11 @@
         [
           "primaryExpression",
           "float"
+        ],
+        [
+          "expression",
+          "primary",
+          "float"
         ]
       ],
       "hidden": true,
@@ -9048,6 +8979,12 @@
         ],
         [
           "primaryExpression",
+          "float",
+          "leadingPoint"
+        ],
+        [
+          "expression",
+          "primary",
           "float",
           "leadingPoint"
         ]
@@ -9223,6 +9160,12 @@
           "primaryExpression",
           "float",
           "point"
+        ],
+        [
+          "expression",
+          "primary",
+          "float",
+          "point"
         ]
       ],
       "hidden": false,
@@ -9394,6 +9337,12 @@
         ],
         [
           "primaryExpression",
+          "float",
+          "scientific"
+        ],
+        [
+          "expression",
+          "primary",
           "float",
           "scientific"
         ]
@@ -10115,6 +10064,11 @@
         [
           "primaryExpression",
           "generator"
+        ],
+        [
+          "expression",
+          "primary",
+          "generator"
         ]
       ],
       "hidden": false,
@@ -10185,7 +10139,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -10194,12 +10148,6 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "type",
               "parseKind": "identifier"
             }
           ]
@@ -10342,6 +10290,11 @@
         [
           "primaryExpression",
           "identifier"
+        ],
+        [
+          "expression",
+          "primary",
+          "identifier"
         ]
       ],
       "hidden": false,
@@ -10388,10 +10341,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -10404,7 +10355,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -10423,14 +10373,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -10438,7 +10386,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -10797,6 +10744,11 @@
         [
           "primaryExpression",
           "integer"
+        ],
+        [
+          "expression",
+          "primary",
+          "integer"
         ]
       ],
       "hidden": true,
@@ -10824,6 +10776,12 @@
         ],
         [
           "primaryExpression",
+          "integer",
+          "binary"
+        ],
+        [
+          "expression",
+          "primary",
           "integer",
           "binary"
         ]
@@ -10939,6 +10897,12 @@
           "primaryExpression",
           "integer",
           "decimal"
+        ],
+        [
+          "expression",
+          "primary",
+          "integer",
+          "decimal"
         ]
       ],
       "hidden": true,
@@ -10970,6 +10934,13 @@
         ],
         [
           "primaryExpression",
+          "integer",
+          "decimal",
+          "imaginary"
+        ],
+        [
+          "expression",
+          "primary",
           "integer",
           "decimal",
           "imaginary"
@@ -11006,6 +10977,13 @@
           "integer",
           "decimal",
           "long"
+        ],
+        [
+          "expression",
+          "primary",
+          "integer",
+          "decimal",
+          "long"
         ]
       ],
       "hidden": false,
@@ -11039,6 +11017,13 @@
           "integer",
           "decimal",
           "plain"
+        ],
+        [
+          "expression",
+          "primary",
+          "integer",
+          "decimal",
+          "plain"
         ]
       ],
       "hidden": false,
@@ -11069,6 +11054,12 @@
         ],
         [
           "primaryExpression",
+          "integer",
+          "hex"
+        ],
+        [
+          "expression",
+          "primary",
           "integer",
           "hex"
         ]
@@ -11183,6 +11174,12 @@
         ],
         [
           "primaryExpression",
+          "integer",
+          "octal"
+        ],
+        [
+          "expression",
+          "primary",
           "integer",
           "octal"
         ]
@@ -11590,7 +11587,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -11599,42 +11596,6 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "print",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "exec",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "async",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "await",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "type",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "match",
               "parseKind": "identifier"
             }
           ]
@@ -11664,21 +11625,6 @@
       "factoryFields": [
         "name",
         "value"
-      ]
-    },
-    {
-      "kind": "keyword_identifier",
-      "modelType": "supertype",
-      "typeName": "KeywordIdentifier",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "async_keyword",
-        "await_keyword",
-        "exec_keyword",
-        "match_keyword",
-        "print_keyword",
-        "type_keyword"
       ]
     },
     {
@@ -11979,25 +11925,19 @@
         "parameters_elements"
       ],
       "bareAccepts": [
-        "async_keyword",
         "attribute",
-        "await_keyword",
         "default_parameter",
         "dictionary_splat_pattern",
-        "exec_keyword",
         "identifier",
         "keyword_separator",
         "list_pattern",
         "list_splat_pattern",
-        "match_keyword",
         "parameters_elements",
         "patterns",
         "positional_separator",
-        "print_keyword",
         "subscript",
         "tuple_pattern",
         "tuple_pattern_elements",
-        "type_keyword",
         "typed_default_parameter",
         "typed_parameter"
       ]
@@ -12156,6 +12096,11 @@
         [
           "primaryExpression",
           "list"
+        ],
+        [
+          "expression",
+          "primary",
+          "list"
         ]
       ],
       "hidden": false,
@@ -12189,10 +12134,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -12205,7 +12148,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -12224,14 +12166,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -12239,7 +12179,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -12257,6 +12196,11 @@
       "builderPathAlternates": [
         [
           "primaryExpression",
+          "listComprehension"
+        ],
+        [
+          "expression",
+          "primary",
           "listComprehension"
         ]
       ],
@@ -12355,20 +12299,14 @@
         "patterns"
       ],
       "bareAccepts": [
-        "async_keyword",
         "attribute",
-        "await_keyword",
-        "exec_keyword",
         "identifier",
         "list_pattern",
         "list_splat_pattern",
-        "match_keyword",
         "patterns",
-        "print_keyword",
         "subscript",
         "tuple_pattern",
-        "tuple_pattern_elements",
-        "type_keyword"
+        "tuple_pattern_elements"
       ]
     },
     {
@@ -12482,10 +12420,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -12498,7 +12434,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -12517,14 +12452,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -12532,7 +12465,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -12559,6 +12491,11 @@
         [
           "primaryExpression",
           "listSplat"
+        ],
+        [
+          "expression",
+          "primary",
+          "listSplat"
         ]
       ],
       "hidden": false,
@@ -12570,7 +12507,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "identifier",
             "subscript",
@@ -12581,42 +12518,6 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "print",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "exec",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "async",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "await",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "type",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "match",
               "parseKind": "identifier"
             },
             {
@@ -13066,7 +12967,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -13075,42 +12976,6 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "print",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "exec",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "async",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "await",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "type",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "match",
               "parseKind": "identifier"
             }
           ]
@@ -13192,6 +13057,11 @@
       "builderPathAlternates": [
         [
           "primaryExpression",
+          "none"
+        ],
+        [
+          "expression",
+          "primary",
           "none"
         ]
       ],
@@ -13327,10 +13197,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -13343,7 +13211,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -13362,14 +13229,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -13377,7 +13242,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -13511,25 +13375,19 @@
         "elements"
       ],
       "bareAccepts": [
-        "async_keyword",
         "attribute",
-        "await_keyword",
         "default_parameter",
         "dictionary_splat_pattern",
-        "exec_keyword",
         "identifier",
         "keyword_separator",
         "list_pattern",
         "list_splat_pattern",
-        "match_keyword",
         "parameters_elements",
         "patterns",
         "positional_separator",
-        "print_keyword",
         "subscript",
         "tuple_pattern",
         "tuple_pattern_elements",
-        "type_keyword",
         "typed_default_parameter",
         "typed_parameter"
       ]
@@ -13579,24 +13437,18 @@
         "item"
       ],
       "bareAccepts": [
-        "async_keyword",
         "attribute",
-        "await_keyword",
         "default_parameter",
         "dictionary_splat_pattern",
-        "exec_keyword",
         "identifier",
         "keyword_separator",
         "list_pattern",
         "list_splat_pattern",
-        "match_keyword",
         "patterns",
         "positional_separator",
-        "print_keyword",
         "subscript",
         "tuple_pattern",
         "tuple_pattern_elements",
-        "type_keyword",
         "typed_default_parameter",
         "typed_parameter"
       ]
@@ -13613,6 +13465,11 @@
       "builderPathAlternates": [
         [
           "primaryExpression",
+          "parenthesized"
+        ],
+        [
+          "expression",
+          "primary",
           "parenthesized"
         ]
       ],
@@ -13653,10 +13510,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -13669,7 +13524,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -13688,14 +13542,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -13703,7 +13555,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -13818,10 +13669,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -13834,7 +13683,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -13853,14 +13701,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -13868,7 +13714,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -13918,18 +13763,12 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "async_keyword",
         "attribute",
-        "await_keyword",
-        "exec_keyword",
         "identifier",
         "list_pattern",
         "list_splat_pattern",
-        "match_keyword",
-        "print_keyword",
         "subscript",
-        "tuple_pattern",
-        "type_keyword"
+        "tuple_pattern"
       ]
     },
     {
@@ -13977,20 +13816,14 @@
         "item"
       ],
       "bareAccepts": [
-        "async_keyword",
         "attribute",
-        "await_keyword",
-        "exec_keyword",
         "identifier",
         "list_pattern",
         "list_splat_pattern",
-        "match_keyword",
         "patterns",
-        "print_keyword",
         "subscript",
         "tuple_pattern",
-        "tuple_pattern_elements",
-        "type_keyword"
+        "tuple_pattern_elements"
       ]
     },
     {
@@ -14038,20 +13871,14 @@
         "item"
       ],
       "bareAccepts": [
-        "async_keyword",
         "attribute",
-        "await_keyword",
-        "exec_keyword",
         "identifier",
         "list_pattern",
         "list_splat_pattern",
-        "match_keyword",
         "patterns",
-        "print_keyword",
         "subscript",
         "tuple_pattern",
-        "tuple_pattern_elements",
-        "type_keyword"
+        "tuple_pattern_elements"
       ]
     },
     {
@@ -14139,20 +13966,23 @@
       "builderPath": [
         "primaryExpression"
       ],
+      "builderPathAlternates": [
+        [
+          "expression",
+          "primary"
+        ]
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "call",
         "concatenated_string",
         "dictionary",
         "dictionary_comprehension",
         "ellipsis",
-        "exec_keyword",
         "false",
         "float",
         "generator_expression",
@@ -14161,17 +13991,14 @@
         "list",
         "list_comprehension",
         "list_splat_pattern",
-        "match_keyword",
         "none",
         "parenthesized_expression",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
         "subscript",
         "true",
         "tuple",
-        "type_keyword",
         "unary_operator"
       ]
     },
@@ -14221,10 +14048,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -14237,7 +14062,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -14256,14 +14080,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -14271,7 +14093,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -14324,10 +14145,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -14340,7 +14159,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -14359,14 +14177,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -14374,7 +14190,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -14442,10 +14257,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -14458,7 +14271,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -14477,7 +14289,6 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
@@ -14485,7 +14296,6 @@
         "parenthesized_expression",
         "parenthesized_list_splat",
         "print_arguments",
-        "print_keyword",
         "print_statement_chevron",
         "print_statement_plain",
         "set",
@@ -14495,7 +14305,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -14606,10 +14415,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -14622,7 +14429,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -14641,7 +14447,6 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
@@ -14649,7 +14454,6 @@
         "parenthesized_expression",
         "parenthesized_list_splat",
         "print_arguments",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -14657,7 +14461,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -14883,10 +14686,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -14899,7 +14700,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -14918,14 +14718,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -14933,7 +14731,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -14960,6 +14757,11 @@
       "builderPathAlternates": [
         [
           "primaryExpression",
+          "set"
+        ],
+        [
+          "expression",
+          "primary",
           "set"
         ]
       ],
@@ -14994,10 +14796,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -15010,7 +14810,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -15029,14 +14828,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -15044,7 +14841,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -15062,6 +14858,11 @@
       "builderPathAlternates": [
         [
           "primaryExpression",
+          "setComprehension"
+        ],
+        [
+          "expression",
+          "primary",
           "setComprehension"
         ]
       ],
@@ -15239,11 +15040,9 @@
         "assignment_eq",
         "assignment_type",
         "assignment_typed",
-        "async_keyword",
         "attribute",
         "augmented_assignment",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "break_statement",
@@ -15260,7 +15059,6 @@
         "dictionary_splat",
         "dotted_name",
         "ellipsis",
-        "exec_keyword",
         "exec_statement",
         "expression_list",
         "expression_statement",
@@ -15287,7 +15085,6 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "names",
         "none",
@@ -15299,7 +15096,6 @@
         "parenthesized_list_splat",
         "pass_statement",
         "print_arguments",
-        "print_keyword",
         "print_statement",
         "print_statement_chevron",
         "print_statement_plain",
@@ -15313,7 +15109,6 @@
         "tuple",
         "tuple_elements",
         "type_alias_statement",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -15477,10 +15272,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -15493,7 +15286,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -15512,14 +15304,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -15527,7 +15317,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -15712,6 +15501,11 @@
       "builderPathAlternates": [
         [
           "primaryExpression",
+          "string"
+        ],
+        [
+          "expression",
+          "primary",
           "string"
         ]
       ],
@@ -15945,10 +15739,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -15961,7 +15753,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -15980,14 +15771,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -15995,7 +15784,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -16017,6 +15805,11 @@
         ],
         [
           "primaryExpression",
+          "subscript"
+        ],
+        [
+          "expression",
+          "primary",
           "subscript"
         ]
       ],
@@ -16131,10 +15924,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -16147,7 +15938,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -16166,14 +15956,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "slice",
@@ -16182,7 +15970,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -16351,11 +16138,9 @@
         "assignment_eq",
         "assignment_type",
         "assignment_typed",
-        "async_keyword",
         "attribute",
         "augmented_assignment",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "break_statement",
@@ -16372,7 +16157,6 @@
         "dictionary_splat",
         "dotted_name",
         "ellipsis",
-        "exec_keyword",
         "exec_statement",
         "expression_list",
         "expression_statement",
@@ -16399,7 +16183,6 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "names",
         "none",
@@ -16411,7 +16194,6 @@
         "parenthesized_list_splat",
         "pass_statement",
         "print_arguments",
-        "print_keyword",
         "print_statement",
         "print_statement_chevron",
         "print_statement_plain",
@@ -16426,7 +16208,6 @@
         "tuple",
         "tuple_elements",
         "type_alias_statement",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -16453,6 +16234,11 @@
       "builderPathAlternates": [
         [
           "primaryExpression",
+          "true"
+        ],
+        [
+          "expression",
+          "primary",
           "true"
         ]
       ],
@@ -16597,6 +16383,11 @@
         [
           "primaryExpression",
           "tuple"
+        ],
+        [
+          "expression",
+          "primary",
+          "tuple"
         ]
       ],
       "hidden": false,
@@ -16630,10 +16421,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -16646,7 +16435,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -16665,14 +16453,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -16680,7 +16466,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -16756,10 +16541,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -16772,7 +16555,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -16791,14 +16573,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -16806,7 +16586,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -16860,20 +16639,14 @@
         "elements"
       ],
       "bareAccepts": [
-        "async_keyword",
         "attribute",
-        "await_keyword",
-        "exec_keyword",
         "identifier",
         "list_pattern",
         "list_splat_pattern",
-        "match_keyword",
         "patterns",
-        "print_keyword",
         "subscript",
         "tuple_pattern",
-        "tuple_pattern_elements",
-        "type_keyword"
+        "tuple_pattern_elements"
       ]
     },
     {
@@ -16921,20 +16694,14 @@
         "item"
       ],
       "bareAccepts": [
-        "async_keyword",
         "attribute",
-        "await_keyword",
-        "exec_keyword",
         "identifier",
         "list_pattern",
         "list_splat_pattern",
-        "match_keyword",
         "patterns",
-        "print_keyword",
         "subscript",
         "tuple_pattern",
-        "tuple_pattern_elements",
-        "type_keyword"
+        "tuple_pattern_elements"
       ]
     },
     {
@@ -17010,10 +16777,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -17027,7 +16792,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -17047,7 +16811,6 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "member_type",
         "named_expression",
         "none",
@@ -17055,7 +16818,6 @@
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "splat_type",
@@ -17064,7 +16826,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "union_type",
         "yield",
@@ -17200,10 +16961,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -17217,7 +16976,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -17237,7 +16995,6 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "member_type",
         "named_expression",
         "none",
@@ -17245,7 +17002,6 @@
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "splat_type",
@@ -17255,7 +17011,6 @@
         "tuple",
         "tuple_elements",
         "type",
-        "type_keyword",
         "types",
         "unary_operator",
         "union_type",
@@ -17478,10 +17233,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -17495,7 +17248,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -17515,7 +17267,6 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "member_type",
         "named_expression",
         "none",
@@ -17523,7 +17274,6 @@
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "splat_type",
@@ -17533,7 +17283,6 @@
         "tuple",
         "tuple_elements",
         "type",
-        "type_keyword",
         "unary_operator",
         "union_type",
         "yield",
@@ -17552,6 +17301,11 @@
       "builderPathAlternates": [
         [
           "primaryExpression",
+          "unary"
+        ],
+        [
+          "expression",
+          "primary",
           "unary"
         ]
       ],
@@ -18030,10 +17784,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -18046,7 +17798,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -18065,14 +17816,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -18080,7 +17829,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "with_item",
         "yield",
@@ -18138,10 +17886,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -18154,7 +17900,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -18173,14 +17918,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -18188,7 +17931,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "with_clause_with_items",
         "with_item",
@@ -18246,10 +17988,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -18262,7 +18002,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -18281,14 +18020,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -18296,7 +18033,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "with_item",
         "yield",
@@ -18341,10 +18077,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -18357,7 +18091,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -18376,14 +18109,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -18391,7 +18122,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -18553,10 +18283,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -18569,7 +18297,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -18588,14 +18315,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -18603,7 +18328,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"
@@ -18653,10 +18377,8 @@
       ],
       "bareAccepts": [
         "as_pattern",
-        "async_keyword",
         "attribute",
         "await",
-        "await_keyword",
         "binary_operator",
         "boolean_operator",
         "call",
@@ -18669,7 +18391,6 @@
         "dictionary_elements",
         "dictionary_splat",
         "ellipsis",
-        "exec_keyword",
         "expression_list",
         "false",
         "float_leading_point",
@@ -18688,14 +18409,12 @@
         "list_comprehension",
         "list_splat",
         "list_splat_pattern",
-        "match_keyword",
         "named_expression",
         "none",
         "not_operator",
         "pair",
         "parenthesized_expression",
         "parenthesized_list_splat",
-        "print_keyword",
         "set",
         "set_comprehension",
         "string",
@@ -18703,7 +18422,6 @@
         "true",
         "tuple",
         "tuple_elements",
-        "type_keyword",
         "unary_operator",
         "yield",
         "yield_from_clause"

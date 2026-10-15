@@ -2860,6 +2860,12 @@ Every kind with a parser id that a kind id alone renders as text (`compiler/mode
 
 `SURFACE_KINDS` also carries the depth pair's kind ids (`indent`, `dedent`, 0 for none, from `depthMembersOf`) and `depth: super::options::DEPTH_REGIONS`, the structural indentation `options.rs` writes, so the trivia table reads every surface fact from the one constant.
 
+Also emits `RELAXED_KEYWORDS`, the token ids of the keywords the grammar relaxes into its word rule (`relaxedKeywordIds`, from the node map's `relaxedLiterals`), and `relaxes(grammar, display)`, true for a node displayed as the word rule whose grammar id is one of them. The generated engine grammar returns it from `EngineGrammar::relaxes`, and `ReadCtx::stamped_kind` stamps such a node as the word rule.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::relaxedKeywordIds`
+
+The catalog ids of the tokens of a node map's `relaxedLiterals`: the keywords the grammar aliases to its word rule. Resolves each literal through `findKindEntryForLiteral`, preserving the canonical anonymous-token, literal-rule, then terminal precedence independently of catalog row order. Shared by the reader's relaxed-keyword table and identifier transport folding.
+
 ### `packages/codegen/src/emitters/kind-id-rust.ts::KindConstant`
 
 One `kind_ids.rs` constant: its name and the kind id it holds.
@@ -10207,7 +10213,7 @@ How the parser delivers a slot's children: a named slot by its field alone, and 
 
 ### `packages/codegen/src/emitters/client-utils.ts::querySlotRows`
 
-Each kind's slots, by stamped kind id: the accessor a node reads the slot through (`propertyName`), the slot's parser routes (`queryRoutesOf`), and, for a slot that holds one keyword's presence (`shared.ts::keywordPresenceValue`), that keyword. A reader of the slot value `true` takes it as that keyword's text, which is what the parser holds there. A query condition compiles on the client to these routes, so the native evaluator knows no slot names. A kind with no slots has no row. Two nodes stamped with one kind id must agree on the row, and the emitter throws when they do not.
+Each kind's slots, by stamped kind id: the accessor a node reads the slot through (`propertyName`), the slot's parser routes (`queryRoutesOf`), and, for a slot that holds a keyword's presence, that keyword (`keywordPresenceValue`). The keyword is the one fact that tells a boolean slot from a text slot: the recorder gives such a slot a member with only `eq(boolean)`, and a portable read reads its `true` as the keyword's text, the source text the native walk reads. A query condition compiles on the client to these routes, so the native evaluator knows no slot names. A kind with no slots has no row. Two nodes stamped with one kind id must agree on the row, and the emitter throws when they do not.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitQuerySlots`
 
@@ -13691,6 +13697,18 @@ mirrors the child's at every depth; otherwise the key is the child's own
 arm name. A nested arm whose child no parent arm reaches stays flat, and a
 clash on the short key falls back to the flattened name.
 
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::armTargetAt`
+
+The node a sub-factory's path ends on: each step is a sub-factory name of the node reached so far (its own arm's target, followed through that arm's path) or, failing that, a variant route of it (`variantChildAt`).
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::isNestedNamespaceArm`
+
+Whether a sub-factory with a path ends on a supertype that is itself a variant parent with no default variant. Such an arm is a namespace like a top-level one: it has no builder of its own, its leaves are the nested arms spelled under it, and it takes no route.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::isConstantLeafArm`
+
+Whether a sub-factory with a path ends on a kind that is stored as a kind id (`true`, `none`, `...`). Its factory is a constant, not a function, so the polymorph has no sub-factory to wire for it.
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emittedArmPath`
 
 How an arm is spelled on its emitted entry: its own name at the top, or its
@@ -15296,6 +15314,12 @@ What the transport printers share while they state the read facts: the facts' co
 ### `packages/codegen/src/emitters/render-module.ts::readPrintOf`
 
 Builds the `ReadPrint` of one emit: the names are the kind and field constants, and the list owners are the kinds whose read reaches their items.
+
+The fold table it reads is the parser's own plus `foldsWithRelaxed`: the relaxed keyword tokens fold into the word rule's transport, so a slot that holds the word rule admits a relaxed keyword node by its grammar id and reads it as the word.
+
+### `packages/codegen/src/emitters/render-module.ts::foldsWithRelaxed`
+
+The parser's fold table with the relaxed keyword tokens added under the word rule's kind id, which `foldedTokens` then lists on the word's transport.
 
 ### `packages/codegen/src/emitters/render-module.ts::admit`
 

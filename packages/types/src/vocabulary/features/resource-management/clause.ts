@@ -11,6 +11,7 @@ export namespace Clause {
 		export interface Item<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Resource<G>> {
 			// claimed by p
 			readonly $kind: 'clause.resource.item';
+			readonly name?: G['slots']['clause.resource.item']['name'];
 			readonly value: G['slots']['clause.resource.item']['value'];
 		}
 	}

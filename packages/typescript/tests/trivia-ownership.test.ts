@@ -92,36 +92,14 @@ describe('unit items keep their own comments in an array', () => {
 	});
 });
 
-describe('a large list edit aligns its units in linear time', () => {
-	const reverse = (count: number): string => {
-		const root = ts.parse(`// A\n;\n${Array.from({ length: count }, (_, i) => `x${i}();`).join('\n')}\n`);
-		return root.$with.statements(...[...root.statements()].reverse()).$render();
-	};
-	const timed = (count: number): number => {
-		const start = performance.now();
-		reverse(count);
-		return performance.now() - start;
-	};
-
+describe('a list edit carries its units through a reversal', () => {
 	it('carries a unit comment through the reversal of a list', () => {
 		const count = 200;
-		const reversed = reverse(count);
+		const root = ts.parse(`// A\n;\n${Array.from({ length: count }, (_, i) => `x${i}();`).join('\n')}\n`);
+		const reversed = root.$with.statements(...[...root.statements()].reverse()).$render();
 		expect(reversed.startsWith(`x${count - 1}();\n`)).toBe(true);
 		expect(reversed.endsWith('x0();\n// A\n;\n')).toBe(true);
 	});
-
-	it('takes time that grows with the list linearly, not quadratically', () => {
-		const small = 500;
-		const large = small * 4;
-		timed(small);
-		let smallMs = Infinity;
-		let largeMs = Infinity;
-		for (let round = 0; round < 3; round++) {
-			smallMs = Math.min(smallMs, timed(small));
-			largeMs = Math.min(largeMs, timed(large));
-		}
-		expect(largeMs / smallMs).toBeLessThan(8);
-	}, 60_000);
 });
 
 describe('an empty container whose inside is only layout takes its first child', () => {

@@ -314,17 +314,6 @@
           ]
         },
         {
-          "name": "bounds",
-          "route": "slot",
-          "slot": "bounds",
-          "path": [
-            {
-              "owner": "associated_type",
-              "slot": "bounds"
-            }
-          ]
-        },
-        {
           "name": "whereClause",
           "route": "slot",
           "slot": "where_clause",
@@ -332,6 +321,31 @@
             {
               "owner": "associated_type",
               "slot": "where_clause"
+            }
+          ]
+        },
+        {
+          "name": "bounds",
+          "route": "nested",
+          "via": [
+            {
+              "field": "bounds",
+              "kind": "trait_bounds",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "trait_bounds",
+          "slot": "bounds",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "associated_type",
+              "slot": "bounds"
+            },
+            {
+              "owner": "trait_bounds",
+              "slot": "bounds"
             }
           ]
         }
@@ -1737,15 +1751,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -1933,7 +1938,7 @@
       ]
     },
     "captured_pattern": {
-      "vocab": "pattern.captured",
+      "vocab": "pattern.as",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -1945,7 +1950,7 @@
           "test": []
         },
         {
-          "vocab": "pattern.captured",
+          "vocab": "pattern.as",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1980,15 +1985,6 @@
     "char_keyword": {
       "vocab": "type.primitive",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -3360,20 +3356,6 @@
         "terminals": [],
         "list": true
       }
-    },
-    "default_keyword": {
-      "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
     },
     "delim_token_tree": {
       "vocab": "element.macro.token_tree.delimited",
@@ -6263,15 +6245,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -6284,15 +6257,6 @@
     "f64_keyword": {
       "vocab": "type.primitive",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -10905,20 +10869,6 @@
         }
       ]
     },
-    "gen_keyword": {
-      "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "generic_function": {
       "vocab": "expression.instantiation",
       "read": [
@@ -11112,15 +11062,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -11133,15 +11074,6 @@
     "i16_keyword": {
       "vocab": "type.primitive",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -11156,15 +11088,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -11178,15 +11101,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -11199,15 +11113,6 @@
     "i8_keyword": {
       "vocab": "type.primitive",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -11740,15 +11645,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -12072,11 +11968,25 @@
         },
         {
           "name": "bounds",
-          "route": "slot",
+          "route": "nested",
+          "via": [
+            {
+              "field": "bounds",
+              "kind": "trait_bounds",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "trait_bounds",
           "slot": "bounds",
+          "multiple": false,
           "path": [
             {
               "owner": "lifetime_parameter",
+              "slot": "bounds"
+            },
+            {
+              "owner": "trait_bounds",
               "slot": "bounds"
             }
           ]
@@ -15220,10 +15130,10 @@
       ]
     },
     "self": {
-      "vocab": "identifier.self",
+      "vocab": "identifier.receiver",
       "read": [
         {
-          "vocab": "identifier.self",
+          "vocab": "identifier.receiver",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15233,10 +15143,10 @@
       "members": []
     },
     "self_parameter": {
-      "vocab": "declaration.parameter.self",
+      "vocab": "declaration.parameter.receiver",
       "read": [
         {
-          "vocab": "declaration.parameter.self",
+          "vocab": "declaration.parameter.receiver",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15336,7 +15246,7 @@
       ]
     },
     "slice_pattern": {
-      "vocab": "pattern.slice",
+      "vocab": "pattern.list",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -15348,7 +15258,7 @@
           "test": []
         },
         {
-          "vocab": "pattern.slice",
+          "vocab": "pattern.list",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -15357,7 +15267,7 @@
       ],
       "members": [
         {
-          "name": "patterns",
+          "name": "elements",
           "route": "slot",
           "slot": "patterns",
           "path": [
@@ -15910,15 +15820,6 @@
     "str_keyword": {
       "vocab": "type.primitive",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -18382,17 +18283,6 @@
           ]
         },
         {
-          "name": "extends",
-          "route": "slot",
-          "slot": "bounds",
-          "path": [
-            {
-              "owner": "trait_item",
-              "slot": "bounds"
-            }
-          ]
-        },
-        {
           "name": "whereClause",
           "route": "slot",
           "slot": "where_clause",
@@ -18411,6 +18301,31 @@
             {
               "owner": "trait_item",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "extends",
+          "route": "nested",
+          "via": [
+            {
+              "field": "bounds",
+              "kind": "trait_bounds",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "trait_bounds",
+          "slot": "bounds",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "trait_item",
+              "slot": "bounds"
+            },
+            {
+              "owner": "trait_bounds",
+              "slot": "bounds"
             }
           ]
         },
@@ -18768,13 +18683,27 @@
           ]
         },
         {
-          "name": "constraint",
-          "route": "slot",
-          "slot": "trait_bounds",
+          "name": "bounds",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "trait_bounds",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "trait_bounds",
+          "slot": "bounds",
+          "multiple": false,
           "path": [
             {
               "owner": "type_argument",
               "slot": "trait_bounds"
+            },
+            {
+              "owner": "trait_bounds",
+              "slot": "bounds"
             }
           ]
         }
@@ -18846,10 +18775,10 @@
       ]
     },
     "type_cast_expression": {
-      "vocab": "expression.cast.as",
+      "vocab": "expression.cast.conversion",
       "read": [
         {
-          "vocab": "expression.cast.as",
+          "vocab": "expression.cast.conversion",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -18858,7 +18787,7 @@
       ],
       "members": [
         {
-          "name": "value",
+          "name": "expression",
           "route": "slot",
           "slot": "value",
           "path": [
@@ -19441,17 +19370,6 @@
           ]
         },
         {
-          "name": "constraint",
-          "route": "slot",
-          "slot": "bounds",
-          "path": [
-            {
-              "owner": "type_parameter",
-              "slot": "bounds"
-            }
-          ]
-        },
-        {
           "name": "default",
           "route": "slot",
           "slot": "default_type",
@@ -19459,6 +19377,31 @@
             {
               "owner": "type_parameter",
               "slot": "default_type"
+            }
+          ]
+        },
+        {
+          "name": "bounds",
+          "route": "nested",
+          "via": [
+            {
+              "field": "bounds",
+              "kind": "trait_bounds",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "trait_bounds",
+          "slot": "bounds",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "type_parameter",
+              "slot": "bounds"
+            },
+            {
+              "owner": "trait_bounds",
+              "slot": "bounds"
             }
           ]
         }
@@ -19495,15 +19438,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -19516,15 +19450,6 @@
     "u16_keyword": {
       "vocab": "type.primitive",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -19539,15 +19464,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -19561,15 +19477,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -19582,15 +19489,6 @@
     "u8_keyword": {
       "vocab": "type.primitive",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -20185,20 +20083,6 @@
         }
       ]
     },
-    "union_keyword": {
-      "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": []
-    },
     "unit_expression": {
       "vocab": "expression.unit",
       "read": [
@@ -20258,10 +20142,10 @@
       }
     },
     "use_as_clause": {
-      "vocab": "clause.import.as",
+      "vocab": "clause.import.alias",
       "read": [
         {
-          "vocab": "clause.import.as",
+          "vocab": "clause.import.alias",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -20270,7 +20154,7 @@
       ],
       "members": [
         {
-          "name": "path",
+          "name": "name",
           "route": "slot",
           "slot": "path",
           "path": [
@@ -20339,10 +20223,10 @@
       "container": {
         "kinds": [
           "self",
-          "identifier",
           "metavariable",
           "super",
           "crate",
+          "identifier",
           "scoped_identifier",
           "use_as_clause",
           "use_list",
@@ -20869,15 +20753,6 @@
       "vocab": "type.primitive",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -21233,28 +21108,7 @@
           "identifier",
           "scoped_identifier"
         ],
-        "terminals": [
-          "u8",
-          "i8",
-          "u16",
-          "i16",
-          "u32",
-          "i32",
-          "u64",
-          "i64",
-          "u128",
-          "i128",
-          "isize",
-          "usize",
-          "f32",
-          "f64",
-          "bool",
-          "str",
-          "char",
-          "default",
-          "union",
-          "gen"
-        ],
+        "terminals": [],
         "list": false
       }
     },
@@ -21315,11 +21169,25 @@
         },
         {
           "name": "bounds",
-          "route": "slot",
+          "route": "nested",
+          "via": [
+            {
+              "field": "bounds",
+              "kind": "trait_bounds",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "trait_bounds",
           "slot": "bounds",
+          "multiple": false,
           "path": [
             {
               "owner": "where_predicate",
+              "slot": "bounds"
+            },
+            {
+              "owner": "trait_bounds",
               "slot": "bounds"
             }
           ]
@@ -21448,7 +21316,7 @@
       {
         "depth": 2,
         "paths": 103,
-        "kinds": 160,
+        "kinds": 157,
         "refinements": 12
       },
       {

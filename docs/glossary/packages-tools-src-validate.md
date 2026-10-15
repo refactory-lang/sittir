@@ -1790,6 +1790,10 @@ Parses a source with a grammar's native engine, hands the tree id to the caller,
 
 Every run of whitespace a side of the source's tree takes, each with the line breaks, spaces and tabs its read-time options write there (`SittirEngine::layoutBaseline`): read from the run's region, or from the whole tree's record when `whole`. The corpus test compares the two, the whole tally, for every run, so a region record that renders a token next to the run as a slice (and so cannot know its edge) shows up as a disagreement.
 
+### `packages/tools/src/validate/layout-runs.ts::layoutWorkOf`
+
+Reads, for a parsed node, the work its tree's layout reads have done so far: the nodes the region-depth walks entered and the items the sibling lookups visited, counted natively where the work is done. The growth gates compare these counts at two list lengths, so a quadratic path fails the same way on an idle machine and a loaded one; a timer only measured the machine.
+
 ### `packages/tools/src/validate/layout-runs.ts::storedLayoutOf`
 
 How much of its layout the source's tree stores apart from its read-time options (`SittirEngine::storedLayout`): the runs a side stores as a member, the list slots that store a layout, and the items that store their own separator.

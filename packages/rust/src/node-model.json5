@@ -4053,31 +4053,19 @@
         "await_expression",
         "binary_expression",
         "block",
-        "bool_keyword",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "closure_expression",
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "field_expression",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
-        "isize_keyword",
         "loop_expression",
         "macro_invocation",
         "match_expression",
@@ -4088,22 +4076,14 @@
         "return_expression",
         "scoped_identifier",
         "self",
-        "str_keyword",
         "struct_expression",
         "try_block",
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -4142,31 +4122,19 @@
         "await_expression",
         "binary_expression",
         "block",
-        "bool_keyword",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "closure_expression",
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "field_expression",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
-        "isize_keyword",
         "loop_expression",
         "macro_invocation",
         "match_expression",
@@ -4176,22 +4144,14 @@
         "return_expression",
         "scoped_identifier",
         "self",
-        "str_keyword",
         "struct_expression",
         "try_block",
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -4401,32 +4361,12 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "bool_keyword",
-        "char_keyword",
         "crate",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
-        "gen_keyword",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
-        "isize_keyword",
         "metavariable",
         "scoped_identifier",
         "self",
-        "str_keyword",
-        "super",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
-        "union_keyword",
-        "usize_keyword"
+        "super"
       ]
     },
     {
@@ -4441,22 +4381,10 @@
       "transparent": true,
       "subtypes": [
         "_literal_pattern",
-        "bool_keyword",
         "captured_pattern",
-        "char_keyword",
         "const_block",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
-        "gen_keyword",
         "generic_pattern",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
-        "isize_keyword",
         "macro_invocation",
         "mut_pattern",
         "or_pattern",
@@ -4466,17 +4394,9 @@
         "remaining_field_pattern",
         "scoped_identifier",
         "slice_pattern",
-        "str_keyword",
         "struct_pattern",
         "tuple_pattern",
         "tuple_struct_pattern",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
-        "union_keyword",
-        "usize_keyword",
         "wildcard_pattern"
       ]
     },
@@ -4770,36 +4690,16 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "bool_keyword",
-        "char_keyword",
         "crate",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
-        "gen_keyword",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
-        "isize_keyword",
         "metavariable",
         "scoped_identifier",
         "scoped_use_list",
         "self",
-        "str_keyword",
         "super",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
-        "union_keyword",
         "use_as_clause",
         "use_list",
-        "use_wildcard",
-        "usize_keyword"
+        "use_wildcard"
       ]
     },
     {
@@ -4984,11 +4884,9 @@
         "await_expression",
         "binary_expression",
         "block",
-        "bool_keyword",
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -5000,21 +4898,12 @@
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "field_expression",
         "float_literal",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
@@ -5022,7 +4911,6 @@
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -5041,7 +4929,6 @@
         "return_expression",
         "scoped_identifier",
         "self",
-        "str_keyword",
         "string_literal",
         "struct_expression",
         "true_keyword",
@@ -5049,16 +4936,9 @@
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -5131,11 +5011,9 @@
         "await_expression",
         "binary_expression",
         "block",
-        "bool_keyword",
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -5147,21 +5025,12 @@
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "field_expression",
         "float_literal",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
@@ -5169,7 +5038,6 @@
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -5188,7 +5056,6 @@
         "return_expression",
         "scoped_identifier",
         "self",
-        "str_keyword",
         "string_literal",
         "struct_expression",
         "true_keyword",
@@ -5196,16 +5063,9 @@
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -5774,108 +5634,6 @@
               "parseKind": "self"
             },
             {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "isize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "usize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "f32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "f64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "bool",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "str",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "char",
-              "parseKind": "identifier"
-            },
-            {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "metavariable",
@@ -5904,24 +5662,6 @@
               "multiplicity": "single",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "default",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "union",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "gen",
-              "parseKind": "identifier"
             }
           ]
         },
@@ -6547,11 +6287,9 @@
         "await_expression",
         "binary_expression",
         "block",
-        "bool_keyword",
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -6563,21 +6301,12 @@
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "field_expression",
         "float_literal",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
@@ -6585,7 +6314,6 @@
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -6604,7 +6332,6 @@
         "return_expression",
         "scoped_identifier",
         "self",
-        "str_keyword",
         "string_literal",
         "struct_expression",
         "true_keyword",
@@ -6612,16 +6339,9 @@
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -6699,11 +6419,9 @@
         "await_expression",
         "binary_expression",
         "block",
-        "bool_keyword",
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -6715,21 +6433,12 @@
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "field_expression",
         "float_literal",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
@@ -6737,7 +6446,6 @@
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -6756,7 +6464,6 @@
         "return_expression",
         "scoped_identifier",
         "self",
-        "str_keyword",
         "string_literal",
         "struct_expression",
         "true_keyword",
@@ -6764,16 +6471,9 @@
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -7714,126 +7414,6 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "isize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "usize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "f32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "f64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "bool",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "str",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "char",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "default",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "union",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "gen",
               "parseKind": "identifier"
             },
             {
@@ -11069,11 +10649,9 @@
         "await_expression",
         "binary_expression",
         "block",
-        "bool_keyword",
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -11085,22 +10663,13 @@
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
         "expression_statement_with_semi",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "field_expression",
         "float_literal",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
@@ -11108,7 +10677,6 @@
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -11127,7 +10695,6 @@
         "return_expression",
         "scoped_identifier",
         "self",
-        "str_keyword",
         "string_literal",
         "struct_expression",
         "true_keyword",
@@ -11135,16 +10702,9 @@
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -11207,11 +10767,9 @@
         "await_expression",
         "binary_expression",
         "block",
-        "bool_keyword",
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -11223,21 +10781,12 @@
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "field_expression",
         "float_literal",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
@@ -11245,7 +10794,6 @@
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -11264,7 +10812,6 @@
         "return_expression",
         "scoped_identifier",
         "self",
-        "str_keyword",
         "string_literal",
         "struct_expression",
         "true_keyword",
@@ -11272,16 +10819,9 @@
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -11343,11 +10883,9 @@
         "await_expression",
         "binary_expression",
         "block",
-        "bool_keyword",
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -11359,21 +10897,12 @@
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "field_expression",
         "float_literal",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
@@ -11381,7 +10910,6 @@
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -11400,7 +10928,6 @@
         "return_expression",
         "scoped_identifier",
         "self",
-        "str_keyword",
         "string_literal",
         "struct_expression",
         "true_keyword",
@@ -11408,16 +10935,9 @@
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -12018,11 +11538,9 @@
         "base_field_initializer",
         "binary_expression",
         "block",
-        "bool_keyword",
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -12034,9 +11552,6 @@
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "field_expression",
         "field_initializer",
@@ -12044,13 +11559,7 @@
         "float_literal",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
@@ -12058,7 +11567,6 @@
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -12078,7 +11586,6 @@
         "scoped_identifier",
         "self",
         "shorthand_field_initializer",
-        "str_keyword",
         "string_literal",
         "struct_expression",
         "true_keyword",
@@ -12086,16 +11593,9 @@
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -12174,11 +11674,9 @@
         "base_field_initializer",
         "binary_expression",
         "block",
-        "bool_keyword",
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -12190,22 +11688,13 @@
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "field_expression",
         "field_initializer",
         "float_literal",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
@@ -12213,7 +11702,6 @@
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -12233,7 +11721,6 @@
         "scoped_identifier",
         "self",
         "shorthand_field_initializer",
-        "str_keyword",
         "string_literal",
         "struct_expression",
         "true_keyword",
@@ -12241,16 +11728,9 @@
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -13875,9 +13355,10 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "type_identifier",
+            "identifier",
             "scoped_type_identifier"
           ],
           "values": [
@@ -13888,21 +13369,9 @@
               "parseKind": "type_identifier"
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "default",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "union",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "gen",
+              "name": "identifier",
               "parseKind": "identifier"
             },
             {
@@ -16740,7 +16209,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -16749,24 +16218,6 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "default",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "union",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "gen",
               "parseKind": "identifier"
             }
           ]
@@ -16842,7 +16293,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -16851,24 +16302,6 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "default",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "union",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "gen",
               "parseKind": "identifier"
             }
           ]
@@ -16944,7 +16377,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "identifier"
           ],
@@ -16953,24 +16386,6 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "default",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "union",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "gen",
               "parseKind": "identifier"
             }
           ]
@@ -17047,7 +16462,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "scoped_identifier",
             "identifier"
@@ -17063,24 +16478,6 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "default",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "union",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "gen",
               "parseKind": "identifier"
             }
           ]
@@ -18127,10 +17524,8 @@
       ],
       "bareAccepts": [
         "block",
-        "bool_keyword",
         "boolean_literal",
         "captured_pattern",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -18140,24 +17535,14 @@
         "closure_expression_block",
         "closure_expression_expr",
         "const_block",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "float_literal",
-        "gen_keyword",
         "generic_pattern",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "integer_literal_binary",
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "macro_invocation",
         "mut_pattern",
         "negative_literal",
@@ -18172,20 +17557,12 @@
         "remaining_field_pattern",
         "scoped_identifier",
         "slice_pattern",
-        "str_keyword",
         "string_literal",
         "struct_pattern",
         "true_keyword",
         "tuple_pattern",
         "tuple_pattern_elements",
         "tuple_struct_pattern",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
-        "union_keyword",
-        "usize_keyword",
         "wildcard_pattern"
       ]
     },
@@ -18648,10 +18025,8 @@
       ],
       "bareAccepts": [
         "block",
-        "bool_keyword",
         "boolean_literal",
         "captured_pattern",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -18661,24 +18036,14 @@
         "closure_expression_block",
         "closure_expression_expr",
         "const_block",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "float_literal",
-        "gen_keyword",
         "generic_pattern",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "integer_literal_binary",
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "macro_invocation",
         "mut_pattern",
         "negative_literal",
@@ -18693,20 +18058,12 @@
         "remaining_field_pattern",
         "scoped_identifier",
         "slice_pattern",
-        "str_keyword",
         "string_literal",
         "struct_pattern",
         "true_keyword",
         "tuple_pattern",
         "tuple_pattern_elements",
         "tuple_struct_pattern",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
-        "union_keyword",
-        "usize_keyword",
         "wildcard_pattern"
       ]
     },
@@ -19246,11 +18603,9 @@
         "await_expression",
         "binary_expression",
         "block",
-        "bool_keyword",
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -19262,21 +18617,12 @@
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "field_expression",
         "float_literal",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
@@ -19284,7 +18630,6 @@
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -19303,7 +18648,6 @@
         "return_expression",
         "scoped_identifier",
         "self",
-        "str_keyword",
         "string_literal",
         "struct_expression",
         "true_keyword",
@@ -19311,16 +18655,9 @@
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -19405,10 +18742,8 @@
       ],
       "bareAccepts": [
         "block",
-        "bool_keyword",
         "boolean_literal",
         "captured_pattern",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -19418,24 +18753,14 @@
         "closure_expression_block",
         "closure_expression_expr",
         "const_block",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "float_literal",
-        "gen_keyword",
         "generic_pattern",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "integer_literal_binary",
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "macro_invocation",
         "mut_pattern",
         "negative_literal",
@@ -19450,20 +18775,12 @@
         "remaining_field_pattern",
         "scoped_identifier",
         "slice_pattern",
-        "str_keyword",
         "string_literal",
         "struct_pattern",
         "true_keyword",
         "tuple_pattern",
         "tuple_pattern_elements",
         "tuple_struct_pattern",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
-        "union_keyword",
-        "usize_keyword",
         "wildcard_pattern"
       ]
     },
@@ -20157,11 +19474,9 @@
         "await_expression",
         "binary_expression",
         "block",
-        "bool_keyword",
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -20173,21 +19488,12 @@
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "field_expression",
         "float_literal",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
@@ -20195,7 +19501,6 @@
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -20214,7 +19519,6 @@
         "return_expression",
         "scoped_identifier",
         "self",
-        "str_keyword",
         "string_literal",
         "struct_expression",
         "true_keyword",
@@ -20222,16 +19526,9 @@
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -20300,11 +19597,9 @@
         "await_expression",
         "binary_expression",
         "block",
-        "bool_keyword",
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -20316,21 +19611,12 @@
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "field_expression",
         "float_literal",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
@@ -20338,7 +19624,6 @@
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -20357,7 +19642,6 @@
         "return_expression",
         "scoped_identifier",
         "self",
-        "str_keyword",
         "string_literal",
         "struct_expression",
         "true_keyword",
@@ -20365,16 +19649,9 @@
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -20483,108 +19760,6 @@
               "parseKind": "self"
             },
             {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "isize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "usize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "f32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "f64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "bool",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "str",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "char",
-              "parseKind": "identifier"
-            },
-            {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "metavariable",
@@ -20613,24 +19788,6 @@
               "multiplicity": "single",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "default",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "union",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "gen",
-              "parseKind": "identifier"
             }
           ]
         }
@@ -20700,108 +19857,6 @@
               "parseKind": "self"
             },
             {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "isize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "usize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "f32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "f64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "bool",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "str",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "char",
-              "parseKind": "identifier"
-            },
-            {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "metavariable",
@@ -20830,24 +19885,6 @@
               "multiplicity": "single",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "default",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "union",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "gen",
-              "parseKind": "identifier"
             }
           ]
         },
@@ -20998,108 +20035,6 @@
               "parseKind": "self"
             },
             {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "isize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "usize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "f32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "f64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "bool",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "str",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "char",
-              "parseKind": "identifier"
-            },
-            {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "metavariable",
@@ -21128,24 +20063,6 @@
               "multiplicity": "single",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "default",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "union",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "gen",
-              "parseKind": "identifier"
             }
           ]
         }
@@ -21374,10 +20291,8 @@
       ],
       "bareAccepts": [
         "block",
-        "bool_keyword",
         "boolean_literal",
         "captured_pattern",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -21387,24 +20302,14 @@
         "closure_expression_block",
         "closure_expression_expr",
         "const_block",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "float_literal",
-        "gen_keyword",
         "generic_pattern",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "integer_literal_binary",
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "macro_invocation",
         "mut_pattern",
         "negative_literal",
@@ -21419,20 +20324,12 @@
         "remaining_field_pattern",
         "scoped_identifier",
         "slice_pattern",
-        "str_keyword",
         "string_literal",
         "struct_pattern",
         "true_keyword",
         "tuple_pattern",
         "tuple_pattern_elements",
         "tuple_struct_pattern",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
-        "union_keyword",
-        "usize_keyword",
         "wildcard_pattern"
       ]
     },
@@ -21522,11 +20419,9 @@
         "await_expression",
         "binary_expression",
         "block",
-        "bool_keyword",
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -21538,21 +20433,12 @@
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "field_expression",
         "float_literal",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
@@ -21560,7 +20446,6 @@
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -21579,7 +20464,6 @@
         "return_expression",
         "scoped_identifier",
         "self",
-        "str_keyword",
         "string_literal",
         "struct_expression",
         "true_keyword",
@@ -21587,16 +20471,9 @@
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -21663,11 +20540,9 @@
         "await_expression",
         "binary_expression",
         "block",
-        "bool_keyword",
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -21679,21 +20554,12 @@
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "field_expression",
         "float_literal",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
@@ -21701,7 +20567,6 @@
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -21720,7 +20585,6 @@
         "return_expression",
         "scoped_identifier",
         "self",
-        "str_keyword",
         "string_literal",
         "struct_expression",
         "true_keyword",
@@ -21728,16 +20592,9 @@
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -21804,11 +20661,9 @@
         "await_expression",
         "binary_expression",
         "block",
-        "bool_keyword",
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -21820,21 +20675,12 @@
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "field_expression",
         "float_literal",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
@@ -21842,7 +20688,6 @@
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -21861,7 +20706,6 @@
         "return_expression",
         "scoped_identifier",
         "self",
-        "str_keyword",
         "string_literal",
         "struct_expression",
         "true_keyword",
@@ -21869,16 +20713,9 @@
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -21945,11 +20782,9 @@
         "await_expression",
         "binary_expression",
         "block",
-        "bool_keyword",
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -21961,21 +20796,12 @@
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "field_expression",
         "float_literal",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
@@ -21983,7 +20809,6 @@
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -22002,7 +20827,6 @@
         "return_expression",
         "scoped_identifier",
         "self",
-        "str_keyword",
         "string_literal",
         "struct_expression",
         "true_keyword",
@@ -22010,16 +20834,9 @@
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -22331,11 +21148,9 @@
         "await_expression",
         "binary_expression",
         "block",
-        "bool_keyword",
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -22347,21 +21162,12 @@
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "field_expression",
         "float_literal",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
@@ -22369,7 +21175,6 @@
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -22388,7 +21193,6 @@
         "return_expression",
         "scoped_identifier",
         "self",
-        "str_keyword",
         "string_literal",
         "struct_expression",
         "true_keyword",
@@ -22396,16 +21200,9 @@
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -22476,108 +21273,6 @@
               "parseKind": "self"
             },
             {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "isize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "usize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "f32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "f64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "bool",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "str",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "char",
-              "parseKind": "identifier"
-            },
-            {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "metavariable",
@@ -22606,24 +21301,6 @@
               "multiplicity": "optional",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "default",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "union",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "gen",
-              "parseKind": "identifier"
             },
             {
               "kind": "node-ref",
@@ -22717,108 +21394,6 @@
               "parseKind": "self"
             },
             {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "isize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "usize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "f32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "f64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "bool",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "str",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "char",
-              "parseKind": "identifier"
-            },
-            {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "metavariable",
@@ -22847,24 +21422,6 @@
               "multiplicity": "optional",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "default",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "union",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "gen",
-              "parseKind": "identifier"
             },
             {
               "kind": "node-ref",
@@ -22949,108 +21506,6 @@
               "parseKind": "self"
             },
             {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "isize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "usize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "f32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "f64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "bool",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "str",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "char",
-              "parseKind": "identifier"
-            },
-            {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "metavariable",
@@ -23079,24 +21534,6 @@
               "multiplicity": "optional",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "default",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "union",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "gen",
-              "parseKind": "identifier"
             },
             {
               "kind": "node-ref",
@@ -23169,108 +21606,6 @@
               "parseKind": "self"
             },
             {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "isize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "usize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "f32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "f64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "bool",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "str",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "char",
-              "parseKind": "identifier"
-            },
-            {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "metavariable",
@@ -23299,24 +21634,6 @@
               "multiplicity": "optional",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "default",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "union",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "gen",
-              "parseKind": "identifier"
             }
           ]
         },
@@ -23699,10 +22016,8 @@
       ],
       "bareAccepts": [
         "block",
-        "bool_keyword",
         "boolean_literal",
         "captured_pattern",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -23712,24 +22027,14 @@
         "closure_expression_block",
         "closure_expression_expr",
         "const_block",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "float_literal",
-        "gen_keyword",
         "generic_pattern",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "integer_literal_binary",
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "macro_invocation",
         "mut_pattern",
         "negative_literal",
@@ -23744,20 +22049,12 @@
         "remaining_field_pattern",
         "scoped_identifier",
         "slice_pattern",
-        "str_keyword",
         "string_literal",
         "struct_pattern",
         "true_keyword",
         "tuple_pattern",
         "tuple_pattern_elements",
         "tuple_struct_pattern",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
-        "union_keyword",
-        "usize_keyword",
         "wildcard_pattern"
       ]
     },
@@ -26104,11 +24401,9 @@
         "await_expression",
         "binary_expression",
         "block",
-        "bool_keyword",
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -26120,21 +24415,12 @@
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "field_expression",
         "float_literal",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
@@ -26142,7 +24428,6 @@
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -26161,7 +24446,6 @@
         "return_expression",
         "scoped_identifier",
         "self",
-        "str_keyword",
         "string_literal",
         "struct_expression",
         "true_keyword",
@@ -26169,16 +24453,9 @@
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]
@@ -26318,10 +24595,8 @@
       ],
       "bareAccepts": [
         "block",
-        "bool_keyword",
         "boolean_literal",
         "captured_pattern",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -26331,24 +24606,14 @@
         "closure_expression_block",
         "closure_expression_expr",
         "const_block",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "float_literal",
-        "gen_keyword",
         "generic_pattern",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "integer_literal_binary",
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "macro_invocation",
         "mut_pattern",
         "negative_literal",
@@ -26363,20 +24628,12 @@
         "remaining_field_pattern",
         "scoped_identifier",
         "slice_pattern",
-        "str_keyword",
         "string_literal",
         "struct_pattern",
         "true_keyword",
         "tuple_pattern",
         "tuple_pattern_elements",
         "tuple_struct_pattern",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
-        "union_keyword",
-        "usize_keyword",
         "wildcard_pattern"
       ]
     },
@@ -26438,10 +24695,8 @@
       ],
       "bareAccepts": [
         "block",
-        "bool_keyword",
         "boolean_literal",
         "captured_pattern",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -26451,24 +24706,14 @@
         "closure_expression_block",
         "closure_expression_expr",
         "const_block",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "float_literal",
-        "gen_keyword",
         "generic_pattern",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "integer_literal_binary",
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "macro_invocation",
         "mut_pattern",
         "negative_literal",
@@ -26483,20 +24728,12 @@
         "remaining_field_pattern",
         "scoped_identifier",
         "slice_pattern",
-        "str_keyword",
         "string_literal",
         "struct_pattern",
         "true_keyword",
         "tuple_pattern",
         "tuple_pattern_elements",
         "tuple_struct_pattern",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
-        "union_keyword",
-        "usize_keyword",
         "wildcard_pattern"
       ]
     },
@@ -28024,108 +26261,6 @@
               "parseKind": "self"
             },
             {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "isize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "usize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "f32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "f64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "bool",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "str",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "char",
-              "parseKind": "identifier"
-            },
-            {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "metavariable",
@@ -28154,24 +26289,6 @@
               "multiplicity": "single",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "default",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "union",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "gen",
-              "parseKind": "identifier"
             }
           ]
         },
@@ -28329,10 +26446,10 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "self",
-        "identifier",
         "metavariable",
         "super",
         "crate",
+        "identifier",
         "scoped_identifier",
         "use_as_clause",
         "use_list",
@@ -28368,108 +26485,6 @@
               "parseKind": "self"
             },
             {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "u8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "i8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "u16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "i16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "u32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "i32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "u64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "i64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "u128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "i128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "isize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "usize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "f32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "f64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "bool",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "str",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "char",
-              "parseKind": "identifier"
-            },
-            {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "metavariable",
@@ -28498,24 +26513,6 @@
               "multiplicity": "nonEmptyArray",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "default",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "union",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
-              "value": "gen",
-              "parseKind": "identifier"
             },
             {
               "kind": "node-ref",
@@ -28633,108 +26630,6 @@
               "parseKind": "self"
             },
             {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "isize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "usize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "f32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "f64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "bool",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "str",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "char",
-              "parseKind": "identifier"
-            },
-            {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "metavariable",
@@ -28763,24 +26658,6 @@
               "multiplicity": "single",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "default",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "union",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "gen",
-              "parseKind": "identifier"
             },
             {
               "kind": "node-ref",
@@ -28964,108 +26841,6 @@
               "parseKind": "self"
             },
             {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i8",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i16",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i128",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "isize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "usize",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "f32",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "f64",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "bool",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "str",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "char",
-              "parseKind": "identifier"
-            },
-            {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "metavariable",
@@ -29094,24 +26869,6 @@
               "multiplicity": "optional",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "default",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "union",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "gen",
-              "parseKind": "identifier"
             }
           ]
         }
@@ -29452,108 +27209,6 @@
               "parseKind": "self"
             },
             {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u8",
-              "parseKind": "u8_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i8",
-              "parseKind": "i8_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u16",
-              "parseKind": "u16_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i16",
-              "parseKind": "i16_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u32",
-              "parseKind": "u32_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i32",
-              "parseKind": "i32_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u64",
-              "parseKind": "u64_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i64",
-              "parseKind": "i64_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u128",
-              "parseKind": "u128_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i128",
-              "parseKind": "i128_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "isize",
-              "parseKind": "isize_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "usize",
-              "parseKind": "usize_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "f32",
-              "parseKind": "f32_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "f64",
-              "parseKind": "f64_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "bool",
-              "parseKind": "bool_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "str",
-              "parseKind": "str_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "char",
-              "parseKind": "char_keyword"
-            },
-            {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "metavariable",
@@ -29582,24 +27237,6 @@
               "multiplicity": "single",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "default",
-              "parseKind": "default_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "union",
-              "parseKind": "union_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "gen",
-              "parseKind": "gen_keyword"
             }
           ]
         }
@@ -30028,11 +27665,9 @@
         "await_expression",
         "binary_expression",
         "block",
-        "bool_keyword",
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_keyword",
         "char_literal_empty",
         "char_literal_escaped_hex",
         "char_literal_escaped_simple",
@@ -30044,21 +27679,12 @@
         "compound_assignment_expr",
         "const_block",
         "continue_expression",
-        "default_keyword",
-        "f32_keyword",
-        "f64_keyword",
         "false_keyword",
         "field_expression",
         "float_literal",
         "for_expression",
         "gen_block",
-        "gen_keyword",
         "generic_function",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "if_expression",
         "index_expression",
@@ -30066,7 +27692,6 @@
         "integer_literal_decimal",
         "integer_literal_hex",
         "integer_literal_octal",
-        "isize_keyword",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -30085,7 +27710,6 @@
         "return_expression",
         "scoped_identifier",
         "self",
-        "str_keyword",
         "string_literal",
         "struct_expression",
         "true_keyword",
@@ -30093,16 +27717,9 @@
         "try_expression",
         "tuple_expression",
         "type_cast_expression",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
         "unary_expression",
-        "union_keyword",
         "unit_expression",
         "unsafe_block",
-        "usize_keyword",
         "while_expression",
         "yield_expression"
       ]

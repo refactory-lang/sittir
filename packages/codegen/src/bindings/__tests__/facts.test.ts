@@ -134,9 +134,9 @@ describe('refineClaims', () => {
 		const claims = refineClaims(
 			[
 				claim('identifier', 'identifier'),
-				claim('identifier.self', 'identifier', { predicates: [{ operator: 'eq', capture: 'identifier.self', arguments: [{ text: 'self' }], subject: { up: 0, down: [] } }] }),
-				claim('identifier.self.token', 'identifier', { tokens: ['self'] }),
-				claim('identifier.self.token.child', 'identifier')
+				claim('identifier.receiver', 'identifier', { predicates: [{ operator: 'eq', capture: 'identifier.receiver', arguments: [{ text: 'self' }], subject: { up: 0, down: [] } }] }),
+				claim('identifier.receiver.token', 'identifier', { tokens: ['self'] }),
+				claim('identifier.receiver.token.child', 'identifier')
 			],
 			SAME
 		);
@@ -158,7 +158,7 @@ describe('refineClaims', () => {
 	});
 
 	it('keeps an unrefined claim\'s own predicate, field literal or token as its refinement kind', () => {
-		const [claimed] = refineClaims([claim('identifier.self', 'identifier', { tokens: ['self'] })], SAME);
+		const [claimed] = refineClaims([claim('identifier.receiver', 'identifier', { tokens: ['self'] })], SAME);
 		expect([claimed?.refines, claimed?.refinement]).toEqual([null, 'token']);
 	});
 });

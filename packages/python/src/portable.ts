@@ -209,7 +209,7 @@ export interface PortableIds {
 	'expression.interpolation.conversion': TSKindId.TypeConversion;
 	'expression.interpolation.format': TSKindId.FormatSpecifier;
 	'expression.lambda': TSKindId.Lambda | TSKindId.LambdaWithinForInClause;
-	'expression.member': TSKindId.Attribute;
+	'expression.member': TSKindId.Attribute | TSKindId.Call;
 	'expression.parenthesized': TSKindId.ParenthesizedExpression;
 	'expression.slice': TSKindId.Slice;
 	'expression.subscript': TSKindId.Subscript;
@@ -294,6 +294,9 @@ export interface PortableIds {
 		| TSKindId.String
 		| TSKindId.StringFragment;
 	'literal.string.bytes': TSKindId.String;
+	'literal.string.bytes.multiline': TSKindId.String;
+	'literal.string.bytes.raw': TSKindId.String;
+	'literal.string.bytes.raw.multiline': TSKindId.String;
 	'literal.string.concatenated': TSKindId.ConcatenatedString;
 	'literal.string.escape':
 		| TSKindId.EscapeInterpolation
@@ -305,12 +308,15 @@ export interface PortableIds {
 		| TSKindId.EscapeSequenceSimple
 		| TSKindId.EscapeSequenceUnicodeFixed
 		| TSKindId.EscapeSequenceUnicodeWide;
-	'literal.string.f': TSKindId.String;
+	'literal.string.interpolated': TSKindId.String;
+	'literal.string.interpolated.multiline': TSKindId.String;
+	'literal.string.interpolated.raw': TSKindId.String;
+	'literal.string.interpolated.raw.multiline': TSKindId.String;
 	'literal.string.multiline': TSKindId.String;
 	'literal.string.raw': TSKindId.String;
+	'literal.string.raw.multiline': TSKindId.String;
 	'literal.string.text': TSKindId.StringFragment;
 	pattern:
-		| TSKindId.AsPattern
 		| TSKindId.CaseAsPattern
 		| TSKindId.CaseListPattern
 		| TSKindId.CasePattern
@@ -326,9 +332,8 @@ export interface PortableIds {
 		| TSKindId.SplatPattern
 		| TSKindId.TuplePattern
 		| TSKindId.UnionPattern;
-	'pattern.as': TSKindId.AsPattern;
+	'pattern.as': TSKindId.CaseAsPattern;
 	'pattern.case':
-		| TSKindId.CaseAsPattern
 		| TSKindId.CaseListPattern
 		| TSKindId.CasePattern
 		| TSKindId.CaseTuplePattern
@@ -338,7 +343,6 @@ export interface PortableIds {
 		| TSKindId.KeywordPattern
 		| TSKindId.SplatPattern
 		| TSKindId.UnionPattern;
-	'pattern.case.as': TSKindId.CaseAsPattern;
 	'pattern.case.class': TSKindId.ClassPattern;
 	'pattern.case.complex': TSKindId.ComplexPattern;
 	'pattern.case.dictionary': TSKindId.DictPattern;
@@ -347,10 +351,10 @@ export interface PortableIds {
 	'pattern.case.or': TSKindId.UnionPattern;
 	'pattern.case.splat': TSKindId.SplatPattern;
 	'pattern.case.tuple': TSKindId.CaseTuplePattern;
-	'pattern.list': TSKindId.ListPattern;
-	'pattern.splat': TSKindId.DictionarySplatPattern | TSKindId.ListSplatPattern;
-	'pattern.splat.dictionary': TSKindId.DictionarySplatPattern;
-	'pattern.tuple': TSKindId.PatternList | TSKindId.TuplePattern;
+	'pattern.list': TSKindId.CaseListPattern | TSKindId.ListPattern;
+	'pattern.rest': TSKindId.DictionarySplatPattern | TSKindId.ListSplatPattern;
+	'pattern.rest.map': TSKindId.DictionarySplatPattern;
+	'pattern.tuple': TSKindId.CaseTuplePattern | TSKindId.PatternList | TSKindId.TuplePattern;
 	'pattern.tuple.bare': TSKindId.PatternList;
 	statement:
 		| TSKindId.AssertStatement
@@ -411,7 +415,8 @@ export interface PortableIds {
 	'type.constrained': TSKindId.ConstrainedType;
 	'type.generic': TSKindId.GenericType;
 	'type.path': TSKindId.MemberType;
-	'type.splat': TSKindId.SplatType;
+	'type.rest': TSKindId.SplatType;
+	'type.rest.map': TSKindId.SplatType;
 	'type.union': TSKindId.UnionType;
 }
 
@@ -870,30 +875,57 @@ export interface PortableKindsAt {
 		readonly bytes: PortableKindsAt['literal.string.bytes'];
 		readonly concatenated: PortableKindsAt['literal.string.concatenated'];
 		readonly escape: PortableKindsAt['literal.string.escape'];
-		readonly f: PortableKindsAt['literal.string.f'];
+		readonly interpolated: PortableKindsAt['literal.string.interpolated'];
 		readonly multiline: PortableKindsAt['literal.string.multiline'];
 		readonly raw: PortableKindsAt['literal.string.raw'];
 		readonly text: PortableKindsAt['literal.string.text'];
 	};
-	'literal.string.bytes': { readonly $ids: readonly PortableIds['literal.string.bytes'][] };
+	'literal.string.bytes': {
+		readonly $ids: readonly PortableIds['literal.string.bytes'][];
+		readonly multiline: PortableKindsAt['literal.string.bytes.multiline'];
+		readonly raw: PortableKindsAt['literal.string.bytes.raw'];
+	};
+	'literal.string.bytes.multiline': { readonly $ids: readonly PortableIds['literal.string.bytes.multiline'][] };
+	'literal.string.bytes.raw': {
+		readonly $ids: readonly PortableIds['literal.string.bytes.raw'][];
+		readonly multiline: PortableKindsAt['literal.string.bytes.raw.multiline'];
+	};
+	'literal.string.bytes.raw.multiline': { readonly $ids: readonly PortableIds['literal.string.bytes.raw.multiline'][] };
 	'literal.string.concatenated': { readonly $ids: readonly PortableIds['literal.string.concatenated'][] };
 	'literal.string.escape': { readonly $ids: readonly PortableIds['literal.string.escape'][] };
-	'literal.string.f': { readonly $ids: readonly PortableIds['literal.string.f'][] };
+	'literal.string.interpolated': {
+		readonly $ids: readonly PortableIds['literal.string.interpolated'][];
+		readonly multiline: PortableKindsAt['literal.string.interpolated.multiline'];
+		readonly raw: PortableKindsAt['literal.string.interpolated.raw'];
+	};
+	'literal.string.interpolated.multiline': {
+		readonly $ids: readonly PortableIds['literal.string.interpolated.multiline'][];
+	};
+	'literal.string.interpolated.raw': {
+		readonly $ids: readonly PortableIds['literal.string.interpolated.raw'][];
+		readonly multiline: PortableKindsAt['literal.string.interpolated.raw.multiline'];
+	};
+	'literal.string.interpolated.raw.multiline': {
+		readonly $ids: readonly PortableIds['literal.string.interpolated.raw.multiline'][];
+	};
 	'literal.string.multiline': { readonly $ids: readonly PortableIds['literal.string.multiline'][] };
-	'literal.string.raw': { readonly $ids: readonly PortableIds['literal.string.raw'][] };
+	'literal.string.raw': {
+		readonly $ids: readonly PortableIds['literal.string.raw'][];
+		readonly multiline: PortableKindsAt['literal.string.raw.multiline'];
+	};
+	'literal.string.raw.multiline': { readonly $ids: readonly PortableIds['literal.string.raw.multiline'][] };
 	'literal.string.text': { readonly $ids: readonly PortableIds['literal.string.text'][] };
 	pattern: {
 		readonly $ids: readonly PortableIds['pattern'][];
 		readonly as: PortableKindsAt['pattern.as'];
 		readonly case: PortableKindsAt['pattern.case'];
 		readonly list: PortableKindsAt['pattern.list'];
-		readonly splat: PortableKindsAt['pattern.splat'];
+		readonly rest: PortableKindsAt['pattern.rest'];
 		readonly tuple: PortableKindsAt['pattern.tuple'];
 	};
 	'pattern.as': { readonly $ids: readonly PortableIds['pattern.as'][] };
 	'pattern.case': {
 		readonly $ids: readonly PortableIds['pattern.case'][];
-		readonly as: PortableKindsAt['pattern.case.as'];
 		readonly class: PortableKindsAt['pattern.case.class'];
 		readonly complex: PortableKindsAt['pattern.case.complex'];
 		readonly dictionary: PortableKindsAt['pattern.case.dictionary'];
@@ -903,7 +935,6 @@ export interface PortableKindsAt {
 		readonly splat: PortableKindsAt['pattern.case.splat'];
 		readonly tuple: PortableKindsAt['pattern.case.tuple'];
 	};
-	'pattern.case.as': { readonly $ids: readonly PortableIds['pattern.case.as'][] };
 	'pattern.case.class': { readonly $ids: readonly PortableIds['pattern.case.class'][] };
 	'pattern.case.complex': { readonly $ids: readonly PortableIds['pattern.case.complex'][] };
 	'pattern.case.dictionary': { readonly $ids: readonly PortableIds['pattern.case.dictionary'][] };
@@ -913,11 +944,11 @@ export interface PortableKindsAt {
 	'pattern.case.splat': { readonly $ids: readonly PortableIds['pattern.case.splat'][] };
 	'pattern.case.tuple': { readonly $ids: readonly PortableIds['pattern.case.tuple'][] };
 	'pattern.list': { readonly $ids: readonly PortableIds['pattern.list'][] };
-	'pattern.splat': {
-		readonly $ids: readonly PortableIds['pattern.splat'][];
-		readonly dictionary: PortableKindsAt['pattern.splat.dictionary'];
+	'pattern.rest': {
+		readonly $ids: readonly PortableIds['pattern.rest'][];
+		readonly map: PortableKindsAt['pattern.rest.map'];
 	};
-	'pattern.splat.dictionary': { readonly $ids: readonly PortableIds['pattern.splat.dictionary'][] };
+	'pattern.rest.map': { readonly $ids: readonly PortableIds['pattern.rest.map'][] };
 	'pattern.tuple': {
 		readonly $ids: readonly PortableIds['pattern.tuple'][];
 		readonly bare: PortableKindsAt['pattern.tuple.bare'];
@@ -985,13 +1016,14 @@ export interface PortableKindsAt {
 		readonly constrained: PortableKindsAt['type.constrained'];
 		readonly generic: PortableKindsAt['type.generic'];
 		readonly path: PortableKindsAt['type.path'];
-		readonly splat: PortableKindsAt['type.splat'];
+		readonly rest: PortableKindsAt['type.rest'];
 		readonly union: PortableKindsAt['type.union'];
 	};
 	'type.constrained': { readonly $ids: readonly PortableIds['type.constrained'][] };
 	'type.generic': { readonly $ids: readonly PortableIds['type.generic'][] };
 	'type.path': { readonly $ids: readonly PortableIds['type.path'][] };
-	'type.splat': { readonly $ids: readonly PortableIds['type.splat'][] };
+	'type.rest': { readonly $ids: readonly PortableIds['type.rest'][]; readonly map: PortableKindsAt['type.rest.map'] };
+	'type.rest.map': { readonly $ids: readonly PortableIds['type.rest.map'][] };
 	'type.union': { readonly $ids: readonly PortableIds['type.union'][] };
 }
 
@@ -1364,28 +1396,48 @@ export interface PortableIsAt {
 		readonly bytes: PortableIsAt['literal.string.bytes'];
 		readonly concatenated: PortableIsAt['literal.string.concatenated'];
 		readonly escape: PortableIsAt['literal.string.escape'];
-		readonly f: PortableIsAt['literal.string.f'];
+		readonly interpolated: PortableIsAt['literal.string.interpolated'];
 		readonly multiline: PortableIsAt['literal.string.multiline'];
 		readonly raw: PortableIsAt['literal.string.raw'];
 		readonly text: PortableIsAt['literal.string.text'];
 	};
-	'literal.string.bytes': PortableGuard<PortableIds['literal.string.bytes']> & {};
+	'literal.string.bytes': PortableGuard<PortableIds['literal.string.bytes']> & {
+		readonly multiline: PortableIsAt['literal.string.bytes.multiline'];
+		readonly raw: PortableIsAt['literal.string.bytes.raw'];
+	};
+	'literal.string.bytes.multiline': PortableGuard<PortableIds['literal.string.bytes.multiline']> & {};
+	'literal.string.bytes.raw': PortableGuard<PortableIds['literal.string.bytes.raw']> & {
+		readonly multiline: PortableIsAt['literal.string.bytes.raw.multiline'];
+	};
+	'literal.string.bytes.raw.multiline': PortableGuard<PortableIds['literal.string.bytes.raw.multiline']> & {};
 	'literal.string.concatenated': PortableGuard<PortableIds['literal.string.concatenated']> & {};
 	'literal.string.escape': PortableGuard<PortableIds['literal.string.escape']> & {};
-	'literal.string.f': PortableGuard<PortableIds['literal.string.f']> & {};
+	'literal.string.interpolated': PortableGuard<PortableIds['literal.string.interpolated']> & {
+		readonly multiline: PortableIsAt['literal.string.interpolated.multiline'];
+		readonly raw: PortableIsAt['literal.string.interpolated.raw'];
+	};
+	'literal.string.interpolated.multiline': PortableGuard<PortableIds['literal.string.interpolated.multiline']> & {};
+	'literal.string.interpolated.raw': PortableGuard<PortableIds['literal.string.interpolated.raw']> & {
+		readonly multiline: PortableIsAt['literal.string.interpolated.raw.multiline'];
+	};
+	'literal.string.interpolated.raw.multiline': PortableGuard<
+		PortableIds['literal.string.interpolated.raw.multiline']
+	> & {};
 	'literal.string.multiline': PortableGuard<PortableIds['literal.string.multiline']> & {};
-	'literal.string.raw': PortableGuard<PortableIds['literal.string.raw']> & {};
+	'literal.string.raw': PortableGuard<PortableIds['literal.string.raw']> & {
+		readonly multiline: PortableIsAt['literal.string.raw.multiline'];
+	};
+	'literal.string.raw.multiline': PortableGuard<PortableIds['literal.string.raw.multiline']> & {};
 	'literal.string.text': PortableGuard<PortableIds['literal.string.text']> & {};
 	pattern: PortableGuard<PortableIds['pattern']> & {
 		readonly as: PortableIsAt['pattern.as'];
 		readonly case: PortableIsAt['pattern.case'];
 		readonly list: PortableIsAt['pattern.list'];
-		readonly splat: PortableIsAt['pattern.splat'];
+		readonly rest: PortableIsAt['pattern.rest'];
 		readonly tuple: PortableIsAt['pattern.tuple'];
 	};
 	'pattern.as': PortableGuard<PortableIds['pattern.as']> & {};
 	'pattern.case': PortableGuard<PortableIds['pattern.case']> & {
-		readonly as: PortableIsAt['pattern.case.as'];
 		readonly class: PortableIsAt['pattern.case.class'];
 		readonly complex: PortableIsAt['pattern.case.complex'];
 		readonly dictionary: PortableIsAt['pattern.case.dictionary'];
@@ -1395,7 +1447,6 @@ export interface PortableIsAt {
 		readonly splat: PortableIsAt['pattern.case.splat'];
 		readonly tuple: PortableIsAt['pattern.case.tuple'];
 	};
-	'pattern.case.as': PortableGuard<PortableIds['pattern.case.as']> & {};
 	'pattern.case.class': PortableGuard<PortableIds['pattern.case.class']> & {};
 	'pattern.case.complex': PortableGuard<PortableIds['pattern.case.complex']> & {};
 	'pattern.case.dictionary': PortableGuard<PortableIds['pattern.case.dictionary']> & {};
@@ -1405,10 +1456,8 @@ export interface PortableIsAt {
 	'pattern.case.splat': PortableGuard<PortableIds['pattern.case.splat']> & {};
 	'pattern.case.tuple': PortableGuard<PortableIds['pattern.case.tuple']> & {};
 	'pattern.list': PortableGuard<PortableIds['pattern.list']> & {};
-	'pattern.splat': PortableGuard<PortableIds['pattern.splat']> & {
-		readonly dictionary: PortableIsAt['pattern.splat.dictionary'];
-	};
-	'pattern.splat.dictionary': PortableGuard<PortableIds['pattern.splat.dictionary']> & {};
+	'pattern.rest': PortableGuard<PortableIds['pattern.rest']> & { readonly map: PortableIsAt['pattern.rest.map'] };
+	'pattern.rest.map': PortableGuard<PortableIds['pattern.rest.map']> & {};
 	'pattern.tuple': PortableGuard<PortableIds['pattern.tuple']> & { readonly bare: PortableIsAt['pattern.tuple.bare'] };
 	'pattern.tuple.bare': PortableGuard<PortableIds['pattern.tuple.bare']> & {};
 	statement: PortableGuard<PortableIds['statement']> & {
@@ -1468,13 +1517,14 @@ export interface PortableIsAt {
 		readonly constrained: PortableIsAt['type.constrained'];
 		readonly generic: PortableIsAt['type.generic'];
 		readonly path: PortableIsAt['type.path'];
-		readonly splat: PortableIsAt['type.splat'];
+		readonly rest: PortableIsAt['type.rest'];
 		readonly union: PortableIsAt['type.union'];
 	};
 	'type.constrained': PortableGuard<PortableIds['type.constrained']> & {};
 	'type.generic': PortableGuard<PortableIds['type.generic']> & {};
 	'type.path': PortableGuard<PortableIds['type.path']> & {};
-	'type.splat': PortableGuard<PortableIds['type.splat']> & {};
+	'type.rest': PortableGuard<PortableIds['type.rest']> & { readonly map: PortableIsAt['type.rest.map'] };
+	'type.rest.map': PortableGuard<PortableIds['type.rest.map']> & {};
 	'type.union': PortableGuard<PortableIds['type.union']> & {};
 }
 
@@ -1756,7 +1806,7 @@ const table: PortableTable = {
 		'expression.interpolation.conversion': { ids: [TSKindId.TypeConversion], exact: true },
 		'expression.interpolation.format': { ids: [TSKindId.FormatSpecifier], exact: true },
 		'expression.lambda': { ids: [TSKindId.Lambda, TSKindId.LambdaWithinForInClause], exact: true },
-		'expression.member': { ids: [TSKindId.Attribute], exact: true },
+		'expression.member': { ids: [TSKindId.Attribute, TSKindId.Call], exact: false },
 		'expression.parenthesized': { ids: [TSKindId.ParenthesizedExpression], exact: true },
 		'expression.slice': { ids: [TSKindId.Slice], exact: true },
 		'expression.subscript': { ids: [TSKindId.Subscript], exact: true },
@@ -1860,6 +1910,9 @@ const table: PortableTable = {
 			exact: true
 		},
 		'literal.string.bytes': { ids: [TSKindId.String], exact: false },
+		'literal.string.bytes.multiline': { ids: [TSKindId.String], exact: false },
+		'literal.string.bytes.raw': { ids: [TSKindId.String], exact: false },
+		'literal.string.bytes.raw.multiline': { ids: [TSKindId.String], exact: false },
 		'literal.string.concatenated': { ids: [TSKindId.ConcatenatedString], exact: true },
 		'literal.string.escape': {
 			ids: [
@@ -1875,13 +1928,16 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
-		'literal.string.f': { ids: [TSKindId.String], exact: false },
+		'literal.string.interpolated': { ids: [TSKindId.String], exact: false },
+		'literal.string.interpolated.multiline': { ids: [TSKindId.String], exact: false },
+		'literal.string.interpolated.raw': { ids: [TSKindId.String], exact: false },
+		'literal.string.interpolated.raw.multiline': { ids: [TSKindId.String], exact: false },
 		'literal.string.multiline': { ids: [TSKindId.String], exact: false },
 		'literal.string.raw': { ids: [TSKindId.String], exact: false },
+		'literal.string.raw.multiline': { ids: [TSKindId.String], exact: false },
 		'literal.string.text': { ids: [TSKindId.StringFragment], exact: true },
 		pattern: {
 			ids: [
-				TSKindId.AsPattern,
 				TSKindId.CaseAsPattern,
 				TSKindId.CaseListPattern,
 				TSKindId.CasePattern,
@@ -1900,10 +1956,9 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
-		'pattern.as': { ids: [TSKindId.AsPattern], exact: true },
+		'pattern.as': { ids: [TSKindId.CaseAsPattern], exact: true },
 		'pattern.case': {
 			ids: [
-				TSKindId.CaseAsPattern,
 				TSKindId.CaseListPattern,
 				TSKindId.CasePattern,
 				TSKindId.CaseTuplePattern,
@@ -1916,7 +1971,6 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
-		'pattern.case.as': { ids: [TSKindId.CaseAsPattern], exact: true },
 		'pattern.case.class': { ids: [TSKindId.ClassPattern], exact: true },
 		'pattern.case.complex': { ids: [TSKindId.ComplexPattern], exact: true },
 		'pattern.case.dictionary': { ids: [TSKindId.DictPattern], exact: true },
@@ -1925,10 +1979,10 @@ const table: PortableTable = {
 		'pattern.case.or': { ids: [TSKindId.UnionPattern], exact: true },
 		'pattern.case.splat': { ids: [TSKindId.SplatPattern], exact: true },
 		'pattern.case.tuple': { ids: [TSKindId.CaseTuplePattern], exact: true },
-		'pattern.list': { ids: [TSKindId.ListPattern], exact: true },
-		'pattern.splat': { ids: [TSKindId.DictionarySplatPattern, TSKindId.ListSplatPattern], exact: true },
-		'pattern.splat.dictionary': { ids: [TSKindId.DictionarySplatPattern], exact: true },
-		'pattern.tuple': { ids: [TSKindId.PatternList, TSKindId.TuplePattern], exact: true },
+		'pattern.list': { ids: [TSKindId.CaseListPattern, TSKindId.ListPattern], exact: true },
+		'pattern.rest': { ids: [TSKindId.DictionarySplatPattern, TSKindId.ListSplatPattern], exact: true },
+		'pattern.rest.map': { ids: [TSKindId.DictionarySplatPattern], exact: true },
+		'pattern.tuple': { ids: [TSKindId.CaseTuplePattern, TSKindId.PatternList, TSKindId.TuplePattern], exact: true },
 		'pattern.tuple.bare': { ids: [TSKindId.PatternList], exact: true },
 		statement: {
 			ids: [
@@ -2003,12 +2057,12 @@ const table: PortableTable = {
 		'type.constrained': { ids: [TSKindId.ConstrainedType], exact: true },
 		'type.generic': { ids: [TSKindId.GenericType], exact: true },
 		'type.path': { ids: [TSKindId.MemberType], exact: true },
-		'type.splat': { ids: [TSKindId.SplatType], exact: true },
+		'type.rest': { ids: [TSKindId.SplatType], exact: true },
+		'type.rest.map': { ids: [TSKindId.SplatType], exact: false },
 		'type.union': { ids: [TSKindId.UnionType], exact: true }
 	},
 	entries: {
 		[TSKindId.AliasedImport]: [{ path: 'clause.import.alias', within: [], test: [] }],
-		[TSKindId.AsPattern]: [{ path: 'pattern.as', within: [], test: [] }],
 		[TSKindId.AssertStatement]: [{ path: 'statement.assert', within: [], test: [] }],
 		[TSKindId.AssignmentEq]: [
 			{
@@ -2204,7 +2258,7 @@ const table: PortableTable = {
 			},
 			{ path: 'expression.call', within: [], test: [] }
 		],
-		[TSKindId.CaseAsPattern]: [{ path: 'pattern.case.as', within: [], test: [] }],
+		[TSKindId.CaseAsPattern]: [{ path: 'pattern.as', within: [], test: [] }],
 		[TSKindId.CaseClause]: [{ path: 'clause.case.match', within: [], test: [] }],
 		[TSKindId.CaseListPattern]: [{ path: 'pattern.case.list', within: [], test: [] }],
 		[TSKindId.CasePattern]: [{ path: 'pattern.case', within: [], test: [] }],
@@ -2419,7 +2473,7 @@ const table: PortableTable = {
 		[TSKindId.Dictionary]: [{ path: 'expression.collection.map', within: [], test: [] }],
 		[TSKindId.DictionaryComprehension]: [{ path: 'expression.comprehension.map', within: [], test: [] }],
 		[TSKindId.DictionarySplat]: [{ path: 'element.spread.map', within: [], test: [] }],
-		[TSKindId.DictionarySplatPattern]: [{ path: 'pattern.splat.dictionary', within: [], test: [] }],
+		[TSKindId.DictionarySplatPattern]: [{ path: 'pattern.rest.map', within: [], test: [] }],
 		[TSKindId.DottedName]: [{ path: 'identifier.dotted', within: [], test: [] }],
 		[TSKindId.ElifClause]: [{ path: 'clause.else_if', within: [], test: [] }],
 		[TSKindId.Ellipsis]: [{ path: 'literal.ellipsis', within: [], test: [] }],
@@ -2505,7 +2559,7 @@ const table: PortableTable = {
 		[TSKindId.ListComprehension]: [{ path: 'expression.comprehension.list', within: [], test: [] }],
 		[TSKindId.ListPattern]: [{ path: 'pattern.list', within: [], test: [] }],
 		[TSKindId.ListSplat]: [{ path: 'element.spread', within: [], test: [] }],
-		[TSKindId.ListSplatPattern]: [{ path: 'pattern.splat', within: [], test: [] }],
+		[TSKindId.ListSplatPattern]: [{ path: 'pattern.rest', within: [], test: [] }],
 		[TSKindId.MatchStatement]: [{ path: 'statement.match', within: [], test: [] }],
 		[TSKindId.MemberType]: [{ path: 'type.path', within: [], test: [] }],
 		[TSKindId.Module]: [{ path: 'file', within: [], test: [] }],
@@ -2528,22 +2582,93 @@ const table: PortableTable = {
 		[TSKindId.SetComprehension]: [{ path: 'expression.comprehension.set', within: [], test: [] }],
 		[TSKindId.Slice]: [{ path: 'expression.slice', within: [], test: [] }],
 		[TSKindId.SplatPattern]: [{ path: 'pattern.case.splat', within: [], test: [] }],
-		[TSKindId.SplatType]: [{ path: 'type.splat', within: [], test: [] }],
+		[TSKindId.SplatType]: [
+			{
+				path: 'type.rest.map',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '**', fields: ['operator'], kinds: [] } }]
+			},
+			{ path: 'type.rest', within: [], test: [] }
+		],
 		[TSKindId.String]: [
 			{
-				path: 'literal.string.f',
+				path: 'literal.string.interpolated.raw.multiline',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[fF]', fields: ['string_start'], kinds: [] } }]
+				test: [
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[fFtT]', fields: ['string_start'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', fields: ['string_start'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', fields: ['string_start'], kinds: [] } }
+				]
+			},
+			{
+				path: 'literal.string.bytes.raw.multiline',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[bB]', fields: ['string_start'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', fields: ['string_start'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', fields: ['string_start'], kinds: [] } }
+				]
+			},
+			{
+				path: 'literal.string.interpolated.raw',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[fFtT]', fields: ['string_start'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', fields: ['string_start'], kinds: [] } }
+				]
+			},
+			{
+				path: 'literal.string.interpolated.multiline',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[fFtT]', fields: ['string_start'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', fields: ['string_start'], kinds: [] } }
+				]
+			},
+			{
+				path: 'literal.string.bytes.raw',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[bB]', fields: ['string_start'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', fields: ['string_start'], kinds: [] } }
+				]
+			},
+			{
+				path: 'literal.string.bytes.multiline',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[bB]', fields: ['string_start'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', fields: ['string_start'], kinds: [] } }
+				]
+			},
+			{
+				path: 'literal.string.raw.multiline',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', fields: ['string_start'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'match', pattern: '"""|\'\'\'', fields: ['string_start'], kinds: [] } }
+				]
+			},
+			{
+				path: 'literal.string.interpolated',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[fFtT]', fields: ['string_start'], kinds: [] } }
+				]
 			},
 			{
 				path: 'literal.string.bytes',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[bB]', fields: ['string_start'], kinds: [] } }]
+				test: [
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[bB]', fields: ['string_start'], kinds: [] } }
+				]
 			},
 			{
 				path: 'literal.string.raw',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^[rR]', fields: ['string_start'], kinds: [] } }]
+				test: [
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[a-zA-Z]*[rR]', fields: ['string_start'], kinds: [] } }
+				]
 			},
 			{
 				path: 'literal.string.multiline',
@@ -2621,12 +2746,6 @@ const table: PortableTable = {
 		[TSKindId.Star]: '*',
 		[TSKindId.GtGt]: '>>',
 		[TSKindId.AssertKeyword]: 'assert',
-		[TSKindId.PrintKeyword]: 'print',
-		[TSKindId.ExecKeyword]: 'exec',
-		[TSKindId.AsyncKeyword]: 'async',
-		[TSKindId.AwaitKeyword]: 'await',
-		[TSKindId.TypeKeyword]: 'type',
-		[TSKindId.MatchKeyword]: 'match',
 		[TSKindId.ColonEq]: ':=',
 		[TSKindId.ReturnKeyword]: 'return',
 		[TSKindId.DelKeyword]: 'del',
@@ -2638,7 +2757,9 @@ const table: PortableTable = {
 		[TSKindId.Colon]: ':',
 		[TSKindId.ElifKeyword]: 'elif',
 		[TSKindId.ElseKeyword]: 'else',
+		[TSKindId.MatchKeyword]: 'match',
 		[TSKindId.CaseKeyword]: 'case',
+		[TSKindId.AsyncKeyword]: 'async',
 		[TSKindId.ForKeyword]: 'for',
 		[TSKindId.InKeyword]: 'in',
 		[TSKindId.WhileKeyword]: 'while',
@@ -2653,6 +2774,8 @@ const table: PortableTable = {
 		[TSKindId.StarStar]: '**',
 		[TSKindId.GlobalKeyword]: 'global',
 		[TSKindId.NonlocalKeyword]: 'nonlocal',
+		[TSKindId.ExecKeyword]: 'exec',
+		[TSKindId.TypeKeyword]: 'type',
 		[TSKindId.Eq]: '=',
 		[TSKindId.ClassKeyword]: 'class',
 		[TSKindId.Lbrack]: '[',
@@ -2691,6 +2814,8 @@ const table: PortableTable = {
 		[TSKindId.YieldKeyword]: 'yield',
 		[TSKindId.Comma]: ',',
 		[TSKindId.Bslash]: '\\',
+		[TSKindId.AwaitKeyword]: 'await',
+		[TSKindId.PrintKeyword]: 'print',
 		[TSKindId.Lt]: '<',
 		[TSKindId.LtEq]: '<=',
 		[TSKindId.EqEq]: '==',

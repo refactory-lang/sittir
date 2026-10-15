@@ -404,15 +404,7 @@ export function wrapNamedExpression(data: T.NamedExpression, tree: TreeHandle): 
 		...data,
 		$type: TSKindId.NamedExpression as const,
 		name() {
-			return hydrateSlot<
-				| T.Identifier
-				| TSKindId.PrintKeyword
-				| TSKindId.ExecKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.AwaitKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.MatchKeyword
-			>(this, '_name', tree);
+			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		value() {
 			return hydrateSlot<T.Expression>(this, '_value', tree);
@@ -433,6 +425,30 @@ export function wrapNamedExpression(data: T.NamedExpression, tree: TreeHandle): 
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.NamedExpression.Parsed;
+}
+
+export function wrapNamedExpressionLhs(data: T.NamedExpressionLhs, tree: TreeHandle): T.NamedExpressionLhs.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.NamedExpressionLhs as const,
+		identifier() {
+			return hydrateSlot<T.Identifier>(this, '_identifier', tree);
+		},
+		$with: {
+			identifier: (v: NonNullable<T.NamedExpressionLhs['_identifier']>) =>
+				rebuilt(node, handle, () => wrapNamedExpressionLhs({ ...$edited(data), _identifier: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.NamedExpressionLhs.Parsed;
 }
 
 export function wrapReturnStatement(data: T.ReturnStatement, tree: TreeHandle): T.ReturnStatement.Parsed {
@@ -2125,17 +2141,7 @@ export function wrapListSplatPattern(data: T.ListSplatPattern, tree: TreeHandle)
 		...data,
 		$type: TSKindId.ListSplatPattern as const,
 		target() {
-			return hydrateSlot<
-				| T.Identifier
-				| TSKindId.PrintKeyword
-				| TSKindId.ExecKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.AwaitKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.MatchKeyword
-				| T.Subscript
-				| T.Attribute
-			>(this, '_target', tree);
+			return hydrateSlot<T.Identifier | T.Subscript | T.Attribute>(this, '_target', tree);
 		},
 		$with: {
 			target: (v: NonNullable<T.ListSplatPattern['_target']>) =>
@@ -2162,17 +2168,7 @@ export function wrapDictionarySplatPattern(
 		...data,
 		$type: TSKindId.DictionarySplatPattern as const,
 		target() {
-			return hydrateSlot<
-				| T.Identifier
-				| TSKindId.PrintKeyword
-				| TSKindId.ExecKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.AwaitKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.MatchKeyword
-				| T.Subscript
-				| T.Attribute
-			>(this, '_target', tree);
+			return hydrateSlot<T.Identifier | T.Subscript | T.Attribute>(this, '_target', tree);
 		},
 		$with: {
 			target: (v: NonNullable<T.DictionarySplatPattern['_target']>) =>
@@ -2783,7 +2779,7 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.Generi
 		...data,
 		$type: TSKindId.GenericType as const,
 		name() {
-			return hydrateSlot<T.Identifier | TSKindId.TypeKeyword>(this, '_name', tree);
+			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		typeParameter() {
 			return hydrateSlot<T.TypeParameter>(this, '_type_parameter', tree);
@@ -2906,15 +2902,7 @@ export function wrapKeywordArgument(data: T.KeywordArgument, tree: TreeHandle): 
 		...data,
 		$type: TSKindId.KeywordArgument as const,
 		name() {
-			return hydrateSlot<
-				| T.Identifier
-				| TSKindId.PrintKeyword
-				| TSKindId.ExecKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.AwaitKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.MatchKeyword
-			>(this, '_name', tree);
+			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		value() {
 			return hydrateSlot<T.Expression>(this, '_value', tree);
@@ -5330,6 +5318,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.AssertStatement]: (d, t) => wrapAssertStatement(d as unknown as T.AssertStatement, t),
 	[TSKindId.ExpressionStatement]: (d, t) => wrapExpressionStatement(d as unknown as T.ExpressionStatement, t),
 	[TSKindId.NamedExpression]: (d, t) => wrapNamedExpression(d as unknown as T.NamedExpression, t),
+	[TSKindId.NamedExpressionLhs]: (d, t) => wrapNamedExpressionLhs(d as unknown as T.NamedExpressionLhs, t),
 	[TSKindId.ReturnStatement]: (d, t) => wrapReturnStatement(d as unknown as T.ReturnStatement, t),
 	[TSKindId.DeleteStatement]: (d, t) => wrapDeleteStatement(d as unknown as T.DeleteStatement, t),
 	[TSKindId.RaiseStatement]: (d, t) => wrapRaiseStatement(d as unknown as T.RaiseStatement, t),

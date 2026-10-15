@@ -536,6 +536,14 @@ describe('resolveRoutes', () => {
 		expect(routes.members.get('struct_tuple')?.map((r) => r.name)).toEqual(['fields']);
 	});
 
+	it.each([
+		{ kind: 'binary', token: '+', vocab: 'expression.binary', members: ['left', 'right'] },
+		{ kind: 'span', token: '..', vocab: 'expression.range', members: ['lo'] }
+	])('drops the slot holding the anonymous token $token on $kind, keeping its other members', async ({ kind, token, vocab, members }) => {
+		const routes = resolveRoutes(await grammar(`(${kind}) @${vocab}\n(${kind} "${token}" @dropped)`));
+		expect(routes.members.get(kind)?.map((route) => route.name)).toEqual(members);
+	});
+
 	it('tests a child of a narrower kind than its slot holds, and orders that entry before the plain one', async () => {
 		const routes = resolveRoutes(await grammar(['(call_x) @expression.call', '(call_x function: (field_expr)) @expression.call.member'].join('\n')));
 		const entries = routes.readEntries.get('call_x') ?? [];

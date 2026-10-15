@@ -432,32 +432,7 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle): T.Attribute.
 		$type: TSKindId.Attribute as const,
 		path() {
 			return hydrateSlot<
-				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
-				| T.Metavariable
-				| TSKindId.Super
-				| TSKindId.Crate
-				| T.Identifier
-				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
+				TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 			>(this, '_path', tree);
 		},
 		input() {
@@ -1822,31 +1797,11 @@ export function wrapUseDeclaration(data: T.UseDeclaration, tree: TreeHandle): T.
 		argument() {
 			return hydrateSlot<
 				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
 				| T.Identifier
 				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
 				| T.UseAsClause
 				| T.UseList
 				| T.ScopedUseList
@@ -1878,33 +1833,7 @@ export function wrapScopedUseList(data: T.ScopedUseList, tree: TreeHandle): T.Sc
 		$type: TSKindId.ScopedUseList as const,
 		path() {
 			return hydrateSlot<
-				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
-				| T.Metavariable
-				| TSKindId.Super
-				| TSKindId.Crate
-				| T.Identifier
-				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
-				| undefined
+				TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier | undefined
 			>(this, '_path', tree);
 		},
 		list() {
@@ -1982,32 +1911,7 @@ export function wrapUseAsClause(data: T.UseAsClause, tree: TreeHandle): T.UseAsC
 		$type: TSKindId.UseAsClause as const,
 		path() {
 			return hydrateSlot<
-				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
-				| T.Metavariable
-				| TSKindId.Super
-				| TSKindId.Crate
-				| T.Identifier
-				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
+				TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 			>(this, '_path', tree);
 		},
 		alias() {
@@ -2567,13 +2471,7 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.Generi
 		...data,
 		$type: TSKindId.GenericType as const,
 		type() {
-			return hydrateSlot<
-				| T.TypeIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
-				| T.ScopedTypeIdentifier
-			>(this, '_type', tree);
+			return hydrateSlot<T.TypeIdentifier | T.Identifier | T.ScopedTypeIdentifier>(this, '_type', tree);
 		},
 		typeArguments() {
 			return hydrateSlot<T.TypeArguments>(this, '_type_arguments', tree);
@@ -2939,9 +2837,7 @@ export function wrapMacroInvocation(data: T.MacroInvocation, tree: TreeHandle): 
 		...data,
 		$type: TSKindId.MacroInvocation as const,
 		macro() {
-			return hydrateSlot<
-				T.ScopedIdentifier | T.Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword
-			>(this, '_macro', tree);
+			return hydrateSlot<T.ScopedIdentifier | T.Identifier>(this, '_macro', tree);
 		},
 		arguments() {
 			return hydrateSlot<T.DelimTokenTree>(this, '_arguments', tree);
@@ -2972,31 +2868,11 @@ export function wrapScopedIdentifier(data: T.ScopedIdentifier, tree: TreeHandle)
 		path() {
 			return hydrateSlot<
 				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
 				| T.Identifier
 				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
 				| T.BracketedType
 				| T.GenericTypeWithTurbofish
 				| undefined
@@ -3034,31 +2910,11 @@ export function wrapScopedTypeIdentifierInExpressionPosition(
 		path() {
 			return hydrateSlot<
 				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
 				| T.Identifier
 				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
 				| T.GenericTypeWithTurbofish
 				| undefined
 			>(this, '_path', tree);
@@ -3095,31 +2951,11 @@ export function wrapScopedTypeIdentifier(
 		path() {
 			return hydrateSlot<
 				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
 				| T.Identifier
 				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
 				| T.GenericTypeWithTurbofish
 				| T.BracketedType
 				| T.GenericType
@@ -3399,26 +3235,6 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle): T.
 				| T.YieldExpression
 				| T.Literal
 				| T.Identifier
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
 				| TSKindId.Self
 				| T.ScopedIdentifier
 				| T.GenericFunction
@@ -5276,31 +5092,11 @@ export function wrapUseClauses(data: T.UseClauses, tree: TreeHandle): T.UseClaus
 		items() {
 			return hydrateSlots<
 				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
 				| T.Identifier
 				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
 				| T.UseAsClause
 				| T.UseList
 				| T.ScopedUseList
@@ -5708,33 +5504,7 @@ export function wrapUseWildcardGroup(data: T.UseWildcardGroup, tree: TreeHandle)
 		$type: TSKindId.UseWildcardGroup as const,
 		path() {
 			return hydrateSlot<
-				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
-				| T.Metavariable
-				| TSKindId.Super
-				| TSKindId.Crate
-				| T.Identifier
-				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
-				| undefined
+				TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier | undefined
 			>(this, '_path', tree);
 		},
 		$with: {
@@ -6712,32 +6482,7 @@ export function wrapVisibilityModifierPubScopeInPath(
 		$type: TSKindId.VisibilityModifierPubScopeInPath as const,
 		path() {
 			return hydrateSlot<
-				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
-				| T.Metavariable
-				| TSKindId.Super
-				| TSKindId.Crate
-				| T.Identifier
-				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
+				TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 			>(this, '_path', tree);
 		},
 		$with: {
@@ -7840,11 +7585,7 @@ export function wrapMacroDefinitionParen(
 		...data,
 		$type: TSKindId.MacroDefinitionParen as const,
 		name() {
-			return hydrateSlot<T.Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword>(
-				this,
-				'_name',
-				tree
-			);
+			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		macroRules() {
 			return hydrateSlot<T.MacroRules | undefined>(this, '_macro_rules', tree);
@@ -7883,11 +7624,7 @@ export function wrapMacroDefinitionBracket(
 		...data,
 		$type: TSKindId.MacroDefinitionBracket as const,
 		name() {
-			return hydrateSlot<T.Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword>(
-				this,
-				'_name',
-				tree
-			);
+			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		macroRules() {
 			return hydrateSlot<T.MacroRules | undefined>(this, '_macro_rules', tree);
@@ -7926,11 +7663,7 @@ export function wrapMacroDefinitionBrace(
 		...data,
 		$type: TSKindId.MacroDefinitionBrace as const,
 		name() {
-			return hydrateSlot<T.Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword>(
-				this,
-				'_name',
-				tree
-			);
+			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		macroRules() {
 			return hydrateSlot<T.MacroRules | undefined>(this, '_macro_rules', tree);
@@ -7972,31 +7705,11 @@ export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHan
 			return hydrateSlot<
 				| T.LiteralPattern
 				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
 				| T.Identifier
 				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
 			>(this, '_right', tree);
 		},
 		$with: {
@@ -8032,31 +7745,11 @@ export function wrapRangePatternWithLeftWithRight(
 			return hydrateSlot<
 				| T.LiteralPattern
 				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
 				| T.Identifier
 				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
 			>(this, '_right', tree);
 		},
 		$with: {
@@ -8089,31 +7782,11 @@ export function wrapRangePatternWithLeft(
 			return hydrateSlot<
 				| T.LiteralPattern
 				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
 				| T.Identifier
 				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
 			>(this, '_left', tree);
 		},
 		content() {

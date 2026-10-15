@@ -3,6 +3,7 @@ export { hostPlatform, nativeLoadFailure, platformSuffix, targetSuffix } from '.
 export type { HostPlatform, NativeBindingSpec } from './native-binding.ts';
 export type {
 	BaselineRun,
+	LayoutWork,
 	StoredLayout,
 	ParseEngine,
 	RenderOptions,
@@ -17,3 +18,4 @@ export type {
 	ParsedRoot
 } from './engine.ts';
 export { portableSurface } from './portable.ts';
+export { portablePathHasFacts } from './portable-path.ts';

@@ -31,19 +31,10 @@ export namespace Clause {
 	}
 	export namespace Import {
 		export interface Alias<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Import<G>> {
-			// claimed by pt
+			// claimed by pr
 			readonly $kind: 'clause.import.alias';
-			readonly alias?: G['identifier'];
-			// p only
-			readonly name: G['identifier'];
-			readonly value?: G['identifier'];
-			// t only
-		}
-		export interface As<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Import<G>> {
-			// claimed by r
-			readonly $kind: 'clause.import.as';
 			readonly alias: G['identifier'];
-			readonly path: G['identifier'];
+			readonly name: G['slots']['clause.import.alias']['name'];
 		}
 		export interface Attribute<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Import<G>> {
 			// claimed by t
