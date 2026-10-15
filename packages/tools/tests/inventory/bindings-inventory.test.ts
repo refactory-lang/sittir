@@ -1,18 +1,20 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join, posix, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { bindingIssues, bindingPatterns } from '../../src/inventory/bindings.ts';
+import { bindingGrammars } from '@sittir/codegen/bindings';
+import { bindingIssues } from '../../src/inventory/bindings.ts';
 import {
 	VOCABULARY_DIR,
 	compileBindings,
 	deriveVocabulary,
-	inventoryGrammars,
-	vocabularyDisagreements
+	vocabularyDisagreements,
+	vocabularyMembers
 } from '../../src/inventory/index.ts';
-import { type Derivation, levelMembers } from '../../src/inventory/derive.ts';
-import { readVocabulary } from '../../src/inventory/vocabulary.ts';
+import { type Derivation, FLAGS_PATH, bindingPatterns, camel, levelMembers } from '@sittir/codegen/bindings';
+import { type Vocabulary, readVocabulary } from '@sittir/codegen/bindings';
+import { GENERATED_FILES } from '../../src/vocabulary/write.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 const CEILING = JSON.parse(
@@ -21,12 +23,13 @@ const CEILING = JSON.parse(
 	readonly unmapped: number;
 	readonly compiling: readonly string[];
 	readonly vocabularyDisagreements: readonly string[];
+	readonly unroutedScope: readonly string[];
 };
 
 describe('bindingIssues', () => {
 	const text = [
 		'; comment (nope)',
-		'(module) @module',
+		'(module) @file',
 		'(no_such_kind) @a',
 		'(function_definition no_such_field: (identifier))',
 		'(identifier) @identifier'
@@ -44,8 +47,8 @@ describe('bindingIssues', () => {
 
 describe('compileBindings', () => {
 	it('reports each bindings file against its parser and never loses a compiling grammar', async () => {
-		const reports = await compileBindings(inventoryGrammars());
-		expect(reports.map((r) => r.grammar)).toEqual([...inventoryGrammars()]);
+		const reports = await compileBindings(bindingGrammars());
+		expect(reports.map((r) => r.grammar)).toEqual([...bindingGrammars()]);
 		for (const report of reports) {
 			if (CEILING.compiling.includes(report.grammar)) expect(report.error, report.grammar).toBeNull();
 		}
@@ -66,7 +69,7 @@ describe('deriveVocabulary', () => {
 	it('claims every namespace the spec names and derives no inclusion cycle', () => {
 		const tops = new Set([...d.allvocab].map((v) => v.split('.')[0]));
 		for (const ns of [
-			'module',
+			'file',
 			'declaration',
 			'statement',
 			'clause',
@@ -96,12 +99,16 @@ describe('deriveVocabulary', () => {
 		const method = levelMembers(d, 'declaration.method');
 		expect(method.get('name')?.optional).toBe(false);
 		expect(method.get('parameters')?.optional).toBe(false);
-		expect(method.get('accessor')?.optional).toBe(true);
+		expect(method.get('decorators')?.optional).toBe(true);
 	});
-	it('names a refinement literal by the converged member, not the grammar field', () => {
+	it('names a refinement literal by the member that holds it', () => {
 		const equal = d.refinements.get('expression.binary.comparison.equal');
 		expect([...(equal?.literals.keys() ?? [])]).toEqual(['operator']);
-		expect([...(d.refinements.get('declaration.method.getter')?.literals.keys() ?? [])]).toEqual(['accessor']);
+	});
+	it('refines by an axis value through its text alone, which no member holds', () => {
+		const constant = d.refinements.get('declaration.variable.constant');
+		expect(constant?.parent).toBe('declaration.variable');
+		expect([...(constant?.literals.values() ?? [])].flatMap((texts) => [...texts])).toEqual(['const']);
 	});
 	it('lands a container pattern capture only on the kinds its element slot names directly', () => {
 		expect(levelMembers(d, 'declaration.class').get('decorators')?.grammars.has('python')).toBe(true);
@@ -111,8 +118,8 @@ describe('deriveVocabulary', () => {
 			'declaration.enum_member',
 			'declaration.field',
 			'declaration.type_parameter',
-			'declaration.type_parameter.const',
-			'declaration.type_parameter.lifetime'
+			'declaration.type_parameter.lifetime',
+			'declaration.type_parameter.value'
 		])
 			expect(d.members.get(v)?.get('attributes')?.grammars.has('rust'), v).toBe(true);
 		expect(d.members.get('declaration.parameter')?.has('attributes')).toBe(false);
@@ -121,10 +128,26 @@ describe('deriveVocabulary', () => {
 		expect(d.untargeted).toEqual([]);
 		expect(d.uncaptured).toEqual([]);
 	});
-	it('keeps the bounds of a type argument (`Iterator<Item: Copy>`), a wrapper claimed as a kind of its own', () => {
+	it('keeps rest-type markers out of the portable members without losing the held type', () => {
+		const rest = levelMembers(d, 'type.rest');
+		expect(rest.has('type')).toBe(true);
+		for (const grammar of ['python', 'typescript']) expect(rest.get('type')?.grammars.has(grammar), grammar).toBe(true);
+		expect(rest.has('operator')).toBe(false);
+		expect(levelMembers(d, 'type.rest.map').has('operator')).toBe(false);
+	});
+	it('keeps bounds introducers out of the portable members without losing the bounds', () => {
+		const bounds = levelMembers(d, 'clause.bounds');
+		expect(bounds.has('bounds')).toBe(true);
+		for (const grammar of ['rust', 'typescript']) expect(bounds.get('bounds')?.grammars.has(grammar), grammar).toBe(true);
+		expect(bounds.has('content')).toBe(false);
+	});
+	it('keeps the bounds of a type argument (`Iterator<Item: Copy>`), a wrapper claimed as a kind of its own, as the list of bounds its clause holds', () => {
 		const argument = d.members.get('element.type_argument');
-		expect(argument?.get('constraint')?.kinds).toEqual(new Set(['clause.bounds']));
-		expect(argument?.get('constraint')?.optional).toBe(true);
+		expect(argument?.has('constraint')).toBe(false);
+		expect(argument?.get('bounds')?.kinds.has('identifier.type')).toBe(true);
+		expect(argument?.get('bounds')?.kinds.has('clause.bounds')).toBe(false);
+		expect(argument?.get('bounds')?.multiple).toBe(true);
+		expect(argument?.get('bounds')?.optional).toBe(true);
 		expect(argument?.get('content')?.kinds.has('element.type_binding')).toBe(true);
 		expect(d.members.get('type.generic.turbofish')?.get('typeArguments')?.kinds).toEqual(
 			new Set(['element.type_argument'])
@@ -146,15 +169,15 @@ describe('deriveVocabulary', () => {
 		expect(cls.has('heritage')).toBe(false);
 	});
 	it('renames the slot a positional wildcard capture stands at', () => {
-		expect([...(d.members.get('expression.unary')?.keys() ?? [])].sort()).toEqual(['argument', 'operator']);
-		expect(d.members.get('expression.try')?.has('argument')).toBe(true);
-		expect(d.members.get('expression.try')?.has('value')).toBe(false);
+		expect([...(d.members.get('expression.unary')?.keys() ?? [])].sort()).toEqual(['argument']);
+		expect(d.members.get('expression.propagate')?.has('argument')).toBe(true);
+		expect(d.members.get('expression.propagate')?.has('value')).toBe(false);
 	});
 	it('resolves a declared container, a list and an envelope to the kinds their element admits', () => {
 		const parameters = d.members.get('declaration.function')?.get('parameters')?.kinds ?? new Set();
 		expect(parameters.has('declaration.parameter')).toBe(true);
 		expect([...parameters].filter((k) => k.startsWith('<'))).toEqual([]);
-		const body = d.members.get('declaration.class.abstract')?.get('body');
+		const body = d.members.get('expression.class')?.get('body');
 		expect([...(body?.kinds ?? [])].sort()).toEqual([
 			'declaration.field',
 			'declaration.method',
@@ -166,13 +189,13 @@ describe('deriveVocabulary', () => {
 		expect(body?.multiple).toBe(true);
 	});
 	it('reads a polymorph through its forms, keeping a list form apart from a scalar form', () => {
-		const exception = d.members.get('clause.except')?.get('exception');
-		expect(exception?.multiple).toBe(true);
-		expect(exception?.scalar).toBe(true);
+		const type = d.members.get('clause.catch')?.get('type');
+		expect(type?.multiple).toBe(true);
+		expect(type?.scalar).toBe(true);
 	});
-	it('never makes a layout slot a member: an options-block address, a separator, or a slot of unclaimed kinds', () => {
+	it('never makes a layout slot a member: an options-block address or a slot of unclaimed kinds', () => {
 		for (const [v, members] of d.members) {
-			for (const name of ['terminator', 'automaticSemicolon', 'separator', 'stringStart', 'stringEnd', 'stringOpen'])
+			for (const name of ['terminator', 'automaticSemicolon', 'stringStart', 'stringEnd', 'stringOpen'])
 				expect(members.has(name), `${v}.${name}`).toBe(false);
 		}
 	});
@@ -180,11 +203,17 @@ describe('deriveVocabulary', () => {
 
 describe('the authored vocabulary', () => {
 	it('disagrees with the bindings only where the ceiling records', async () => {
-		expect(vocabularyDisagreements(await deriveVocabulary(), readVocabulary(VOCABULARY_DIR))).toEqual(CEILING.vocabularyDisagreements);
+		expect(vocabularyDisagreements(await deriveVocabulary(), await readVocabulary(VOCABULARY_DIR))).toEqual(CEILING.vocabularyDisagreements);
+	}, 120_000);
+	it('has its scope routed wherever it declares one, but where the ceiling records', async () => {
+		const d = await deriveVocabulary();
+		const vocabulary = await readVocabulary(VOCABULARY_DIR);
+		const unrouted = [...d.members].filter(([path, members]) => vocabulary.members(path).has('scope') && !members.has('scope')).map(([path]) => path);
+		expect(unrouted.sort()).toEqual(CEILING.unroutedScope);
 	}, 120_000);
 	it('reports a template hole its interface does not declare', async () => {
 		const d = await deriveVocabulary();
-		const vocabulary = readVocabulary(VOCABULARY_DIR);
+		const vocabulary = await readVocabulary(VOCABULARY_DIR);
 		const [path, holes] = [...d.holes].find(([, h]) => h.size > 0) ?? [];
 		const [hole] = holes?.keys() ?? [];
 		expect(hole).toBeDefined();
@@ -195,15 +224,31 @@ describe('the authored vocabulary', () => {
 		};
 		expect(vocabularyDisagreements(d, withoutHole)).toContain(`${path}.${hole}: templated, but its interface does not declare it`);
 	}, 120_000);
+	it('needs no declaration for a refinement pinned slot: the read tells it, so it is no member', async () => {
+		const d = await deriveVocabulary();
+		const vocabulary = await readVocabulary(VOCABULARY_DIR);
+		const pinned = [...d.refinements].flatMap(([v, r]) => [...r.literals.keys()].map((field) => [v, camel(field)] as const).filter(([, p]) => !d.members.get(v)?.has(p)));
+		expect(pinned.length).toBeGreaterThan(0);
+		const unpinned = {
+			...vocabulary,
+			members: (kind: string) => new Map([...vocabulary.members(kind)].filter(([m]) => !pinned.some(([v, p]) => v === kind && p === m)))
+		};
+		expect(vocabularyDisagreements(d, unpinned)).toEqual(vocabularyDisagreements(d, vocabulary));
+	}, 120_000);
 
-	it('is authored: no file says it is generated', () => {
-		for (const file of readdirSync(VOCABULARY_DIR)) {
+	it('is authored: no file but the generated ones says it is generated', () => {
+		const generated = new Set([...GENERATED_FILES, relative(VOCABULARY_DIR, FLAGS_PATH).split(sep).join(posix.sep)]);
+		for (const entry of readdirSync(VOCABULARY_DIR, { recursive: true, encoding: 'utf8' })) {
+			const file = entry.split(sep).join(posix.sep);
+			if (!file.endsWith('.ts') || generated.has(file)) continue;
 			expect(readFileSync(join(VOCABULARY_DIR, file), 'utf8'), file).not.toMatch(/^\/\/ Generated/m);
 		}
 	});
 });
 
 describe('readVocabulary', () => {
+	let vocabulary: Vocabulary;
+	beforeAll(async () => {
 	const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
 	mkdirSync(dir, { recursive: true });
 	writeFileSync(
@@ -223,8 +268,9 @@ describe('readVocabulary', () => {
 			''
 		].join('\n')
 	);
-	const vocabulary = readVocabulary(dir);
+	vocabulary = await readVocabulary(dir);
 	rmSync(dir, { recursive: true, force: true });
+	});
 
 	it('keys each interface by its kind, with its parent from a multi-line extends', () => {
 		expect(vocabulary.kinds.get('declaration.function')).toMatchObject({ name: 'Declaration.Function', parent: 'declaration' });
@@ -232,8 +278,132 @@ describe('readVocabulary', () => {
 
 	it('gives a kind its inherited members, each marked optional or required', () => {
 		expect(Object.fromEntries(vocabulary.members('declaration.function'))).toEqual({
-			body: { optional: true },
-			name: { optional: false }
+			body: { optional: true, flag: false },
+			name: { optional: false, flag: false }
 		});
+	});
+
+	it('gives the grammar-bindings derivation every member a kind declares or inherits', () => {
+		expect(vocabularyMembers(vocabulary).get('declaration.function')).toEqual(new Set(['body', 'name']));
+	});
+});
+
+describe('readVocabulary over feature folders', () => {
+	const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
+	const write = (file: string, lines: readonly string[]): void => {
+		mkdirSync(dirname(join(dir, file)), { recursive: true });
+		writeFileSync(join(dir, file), [...lines, ''].join('\n'));
+	};
+	write('decl.ts', [
+		'export interface Declaration<G> {',
+		"\treadonly $kind: 'declaration';",
+		'\treadonly name: string;',
+		'}',
+		'export namespace Declaration {',
+		'\texport interface Function<G> extends SubKindOf<V.Declaration<G>> {',
+		"\t\treadonly $kind: 'declaration.function';",
+		'\t\treadonly body?: string;',
+		'\t}',
+		'}'
+	]);
+	write('features/lambdas/index.ts', ["export type * from './decl.ts';", 'export interface Lambdas {', '\treadonly lambdas: true;', '}']);
+	write('features/lambdas/decl.ts', [
+		'export namespace Declaration {',
+		'\texport interface Function<G> {',
+		'\t\treadonly body: string;',
+		'\t\treadonly arrow?: Flag;',
+		'\t}',
+		'\texport namespace Function {',
+		'\t\texport interface Lambda<G> extends SubKindOf<V.Declaration.Function<G>> {',
+		"\t\t\treadonly $kind: 'declaration.function.lambda';",
+		'\t\t}',
+		'\t}',
+		'}'
+	]);
+	let vocabulary: Vocabulary;
+	beforeAll(async () => {
+		vocabulary = await readVocabulary(dir);
+		rmSync(dir, { recursive: true, force: true });
+	});
+
+	it('holds the kinds a feature adds, under their parents', () => {
+		expect(vocabulary.kinds.get('declaration.function.lambda')).toMatchObject({ name: 'Declaration.Function.Lambda', parent: 'declaration.function' });
+	});
+
+	it('gives a kind the members a feature adds to it, optional when any declaration of one is', () => {
+		expect(Object.fromEntries(vocabulary.members('declaration.function.lambda'))).toEqual({
+			arrow: { optional: true, flag: true },
+			body: { optional: true, flag: false },
+			name: { optional: false, flag: false }
+		});
+	});
+});
+
+describe('readVocabulary over an owner refined by a value', () => {
+	const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
+	const write = (file: string, lines: readonly string[]): void => {
+		mkdirSync(dirname(join(dir, file)), { recursive: true });
+		writeFileSync(join(dir, file), [...lines, ''].join('\n'));
+	};
+	write('decl.ts', [
+		'export interface Declaration<G> {',
+		"\treadonly $kind: 'declaration';",
+		'\treadonly name: string;',
+		'}',
+		'export namespace Declaration {',
+		'\texport interface Function<G> extends SubKindOf<V.Declaration<G>> {',
+		"\t\treadonly $kind: 'declaration.function';",
+		'\t}',
+		'\texport interface Public<G> extends RefinedBy<V.Declaration<G>, V.Modifier.Public<G>> {',
+		"\t\treadonly $kind: 'declaration.public';",
+		'\t}',
+		'\texport namespace Public {',
+		'\t\texport interface Restricted<G> extends RefinedBy<V.Declaration.Public<G>, V.Modifier.Public.Restricted<G>> {',
+		"\t\t\treadonly $kind: 'declaration.public.restricted';",
+		'\t\t}',
+		'\t}',
+		'}'
+	]);
+	write('modifier.ts', [
+		'export interface Modifier<G> {',
+		"\treadonly $kind: 'modifier';",
+		'}',
+		'export namespace Modifier {',
+		'\texport interface Public<G> extends SubKindOf<V.Modifier<G>> {',
+		"\t\treadonly $kind: 'modifier.public';",
+		'\t}',
+		'\texport namespace Public {',
+		'\t\texport interface Restricted<G> extends SubKindOf<V.Modifier.Public<G>> {',
+		"\t\t\treadonly $kind: 'modifier.public.restricted';",
+		'\t\t}',
+		'\t}',
+		'}'
+	]);
+	write('features/scoped/index.ts', ["export type * from './modifier.ts';", 'export interface Scoped {', '\treadonly scoped: true;', '}']);
+	write('features/scoped/modifier.ts', [
+		'export namespace Modifier {',
+		'\texport namespace Public {',
+		'\t\texport interface Restricted<G> {',
+		'\t\t\treadonly scope: string;',
+		'\t\t}',
+		'\t}',
+		'}'
+	]);
+	let vocabulary: Vocabulary;
+	beforeAll(async () => {
+		vocabulary = await readVocabulary(dir);
+		rmSync(dir, { recursive: true, force: true });
+	});
+
+	it('keeps the owner as the parent and records the value the kind is refined by', () => {
+		expect(vocabulary.kinds.get('declaration.public.restricted')).toMatchObject({ parent: 'declaration.public', refines: 'modifier.public.restricted' });
+	});
+
+	it("gives an owner's refinement the members its value adds, beside the owner's", () => {
+		expect(Object.fromEntries(vocabulary.members('declaration.public.restricted'))).toEqual({
+			name: { optional: false, flag: false },
+			scope: { optional: false, flag: false }
+		});
+		expect(vocabularyMembers(vocabulary).get('declaration.public')).toEqual(new Set(['name']));
 	});
 });

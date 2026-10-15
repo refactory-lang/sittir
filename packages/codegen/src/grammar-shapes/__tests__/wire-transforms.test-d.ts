@@ -123,7 +123,7 @@ describe('wire() checks the options block', () => {
 					body: { before: preference('indent'), after: preference('dedent') },
 					block: { '"{"/after': preference('space'), 'statements:/(_)/after': preference('newline') },
 					_: { '_/separator/","/before': preference('tight'), '"/="/after': preference('space') },
-					_bindings: { 'block/"{"/after': 'body/before' }
+					_labels: { 'block/"{"/after': 'body/before' }
 				}
 			},
 			enriched
@@ -137,7 +137,7 @@ describe('wire() checks the options block', () => {
 				options: {
 					body: { before: preference('indent') },
 					// @ts-expect-error — body/after is declared nowhere
-					_bindings: { 'block/"{"/after': 'body/after' }
+					_labels: { 'block/"{"/after': 'body/after' }
 				}
 			},
 			enriched
@@ -151,7 +151,7 @@ describe('wire() checks the options block', () => {
 				options: {
 					block: { before: preference('space') },
 					// @ts-expect-error — block is a rule of the grammar, a label's kind is virtual
-					_bindings: { 'match_block/before': 'block/before' }
+					_labels: { 'match_block/before': 'block/before' }
 				}
 			},
 			enriched

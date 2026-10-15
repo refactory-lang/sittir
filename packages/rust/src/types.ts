@@ -8311,76 +8311,76 @@ export interface IntegerLiteralOctal {
 
 export interface CharLiteralPlain {
 	readonly $type: TSKindId.CharLiteralPlain;
-	readonly _b: boolean;
+	readonly _byte: boolean;
 	readonly _content: string;
 	readonly __inputHints__?: {
-		readonly b?: BaseBooleanKeyword<'b'>;
+		readonly byte?: BaseBooleanKeyword<'b'>;
 	};
 	readonly __slotHints__?: {
-		readonly b: SlotHint<NonNullable<T.CharLiteralPlain.Config>['b'], true>;
+		readonly byte: SlotHint<NonNullable<T.CharLiteralPlain.Config>['byte'], true>;
 		readonly content: SlotHint<string>;
 	};
-	b(): boolean;
+	byte(): boolean;
 	content(): string;
 }
 
 export interface CharLiteralEscapedSimple {
 	readonly $type: TSKindId.CharLiteralEscapedSimple;
-	readonly _b: boolean;
+	readonly _byte: boolean;
 	readonly _content: string;
 	readonly __inputHints__?: {
-		readonly b?: BaseBooleanKeyword<'b'>;
+		readonly byte?: BaseBooleanKeyword<'b'>;
 	};
 	readonly __slotHints__?: {
-		readonly b: SlotHint<NonNullable<T.CharLiteralEscapedSimple.Config>['b'], true>;
+		readonly byte: SlotHint<NonNullable<T.CharLiteralEscapedSimple.Config>['byte'], true>;
 		readonly content: SlotHint<string>;
 	};
-	b(): boolean;
+	byte(): boolean;
 	content(): string;
 }
 
 export interface CharLiteralEscapedUnicodeFixed {
 	readonly $type: TSKindId.CharLiteralEscapedUnicodeFixed;
-	readonly _b: boolean;
+	readonly _byte: boolean;
 	readonly _content: string;
 	readonly __inputHints__?: {
-		readonly b?: BaseBooleanKeyword<'b'>;
+		readonly byte?: BaseBooleanKeyword<'b'>;
 	};
 	readonly __slotHints__?: {
-		readonly b: SlotHint<NonNullable<T.CharLiteralEscapedUnicodeFixed.Config>['b'], true>;
+		readonly byte: SlotHint<NonNullable<T.CharLiteralEscapedUnicodeFixed.Config>['byte'], true>;
 		readonly content: SlotHint<string>;
 	};
-	b(): boolean;
+	byte(): boolean;
 	content(): string;
 }
 
 export interface CharLiteralEscapedUnicodeBraced {
 	readonly $type: TSKindId.CharLiteralEscapedUnicodeBraced;
-	readonly _b: boolean;
+	readonly _byte: boolean;
 	readonly _content: string;
 	readonly __inputHints__?: {
-		readonly b?: BaseBooleanKeyword<'b'>;
+		readonly byte?: BaseBooleanKeyword<'b'>;
 	};
 	readonly __slotHints__?: {
-		readonly b: SlotHint<NonNullable<T.CharLiteralEscapedUnicodeBraced.Config>['b'], true>;
+		readonly byte: SlotHint<NonNullable<T.CharLiteralEscapedUnicodeBraced.Config>['byte'], true>;
 		readonly content: SlotHint<string>;
 	};
-	b(): boolean;
+	byte(): boolean;
 	content(): string;
 }
 
 export interface CharLiteralEscapedHex {
 	readonly $type: TSKindId.CharLiteralEscapedHex;
-	readonly _b: boolean;
+	readonly _byte: boolean;
 	readonly _content: string;
 	readonly __inputHints__?: {
-		readonly b?: BaseBooleanKeyword<'b'>;
+		readonly byte?: BaseBooleanKeyword<'b'>;
 	};
 	readonly __slotHints__?: {
-		readonly b: SlotHint<NonNullable<T.CharLiteralEscapedHex.Config>['b'], true>;
+		readonly byte: SlotHint<NonNullable<T.CharLiteralEscapedHex.Config>['byte'], true>;
 		readonly content: SlotHint<string>;
 	};
-	b(): boolean;
+	byte(): boolean;
 	content(): string;
 }
 

@@ -1,0 +1,29 @@
+name: Bootstrap the pinned build
+description: >
+  Builds the commit bootstrap.json pins (the @sittir/scm and @sittir/typescript
+  codegen reads bindings.scm and the vocabulary with) into
+  scratchpad/bootstrap/<sha>, restoring it from a cache keyed by that commit
+  and the bootstrap recipe. Bumping the pin or changing the recipe changes the key.
+runs:
+  using: composite
+  steps:
+    - name: Read the pin
+      id: pin
+      shell: bash
+      run: echo "sha=$(jq -r .sha bootstrap.json)" >> "$GITHUB_OUTPUT"
+    - name: Restore the pinned build
+      uses: actions/cache@v4
+      with:
+        path: |
+          scratchpad/bootstrap/${{ steps.pin.outputs.sha }}
+          !scratchpad/bootstrap/${{ steps.pin.outputs.sha }}/target
+        key: sittir-bootstrap-${{ runner.os }}-${{ runner.arch }}-${{ steps.pin.outputs.sha }}-${{ hashFiles('packages/codegen/src/bootstrap/bootstrap.ts') }}
+    - name: Fetch the pinned commit
+      shell: bash
+      run: |
+        if [ ! -f "scratchpad/bootstrap/${{ steps.pin.outputs.sha }}/.complete" ]; then
+          git fetch --no-tags --depth=1 origin "${{ steps.pin.outputs.sha }}"
+        fi
+    - name: Build the pin
+      shell: bash
+      run: pnpm exec tsx packages/cli/src/cli.ts bootstrap

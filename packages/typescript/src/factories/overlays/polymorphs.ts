@@ -361,101 +361,6 @@ export const importClause = Object.freeze({
 	};
 };
 
-const forInStatement$lhs =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'forHeader'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'left' || key === 'operator' || key === 'right') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, forHeader: _c(child)(inner) } as never, options as never);
-	};
-const forInStatement$lhs$strict = forInStatement$lhs(F.buildForInStatement, F.buildForHeaderLhs);
-const forInStatement$lhs$coerce = forInStatement$lhs(C.coerceToForInStatement, C.coerceToForHeaderLhs);
-const forInStatement$varKind =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'forHeader'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'left' || key === 'value' || key === 'operator' || key === 'right') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, forHeader: _c(child)(inner) } as never, options as never);
-	};
-const forInStatement$varKind$strict = forInStatement$varKind(F.buildForInStatement, F.buildForHeaderVarKind);
-const forInStatement$varKind$coerce = forInStatement$varKind(C.coerceToForInStatement, C.coerceToForHeaderVarKind);
-const forInStatement$letConstKind =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'forHeader'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'kind' || key === 'left' || key === 'terminator' || key === 'operator' || key === 'right')
-				inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, forHeader: _c(child)(inner) } as never, options as never);
-	};
-const forInStatement$letConstKind$strict = forInStatement$letConstKind(
-	F.buildForInStatement,
-	F.buildForHeaderLetConstKind
-);
-const forInStatement$letConstKind$coerce = forInStatement$letConstKind(
-	C.coerceToForInStatement,
-	C.coerceToForHeaderLetConstKind
-);
-export const forInStatement = Object.freeze({
-	...B.forInStatement,
-	lhs: bundle(forInStatement$lhs$strict, forInStatement$lhs$coerce, { key: 'forInStatement.lhs', max: 2 }),
-	varKind: bundle(forInStatement$varKind$strict, forInStatement$varKind$coerce, {
-		key: 'forInStatement.varKind',
-		max: 2
-	}),
-	letConstKind: bundle(forInStatement$letConstKind$strict, forInStatement$letConstKind$coerce, {
-		key: 'forInStatement.letConstKind',
-		max: 2
-	})
-}) as unknown as typeof B.forInStatement & {
-	lhs: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildForInStatement>[0], 'forHeader'> & ArgsOf<typeof F.buildForHeaderLhs>[0],
-			options?: OptionsArg<typeof F.buildForInStatement>
-		) => ReturnType<typeof F.buildForInStatement>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToForInStatement>[0], 'forHeader'> &
-				ArgsOf<typeof C.coerceToForHeaderLhs>[0],
-			options?: OptionsArg<typeof C.coerceToForInStatement>
-		) => ReturnType<typeof C.coerceToForInStatement>;
-	};
-	varKind: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildForInStatement>[0], 'forHeader'> &
-				ArgsOf<typeof F.buildForHeaderVarKind>[0],
-			options?: OptionsArg<typeof F.buildForInStatement>
-		) => ReturnType<typeof F.buildForInStatement>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToForInStatement>[0], 'forHeader'> &
-				ArgsOf<typeof C.coerceToForHeaderVarKind>[0],
-			options?: OptionsArg<typeof C.coerceToForInStatement>
-		) => ReturnType<typeof C.coerceToForInStatement>;
-	};
-	letConstKind: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildForInStatement>[0], 'forHeader'> &
-				ArgsOf<typeof F.buildForHeaderLetConstKind>[0],
-			options?: OptionsArg<typeof F.buildForInStatement>
-		) => ReturnType<typeof F.buildForInStatement>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToForInStatement>[0], 'forHeader'> &
-				ArgsOf<typeof C.coerceToForHeaderLetConstKind>[0],
-			options?: OptionsArg<typeof C.coerceToForInStatement>
-		) => ReturnType<typeof C.coerceToForInStatement>;
-	};
-};
-
 const catchClause$flatten$catchClauseGroup =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: unknown, options?: unknown): ReturnType<PF> => {
@@ -6850,7 +6755,7 @@ export const statement: {
 	readonly if: typeof B.ifStatement;
 	readonly switch: typeof B.switchStatement;
 	readonly for: typeof B.forStatement;
-	readonly forIn: typeof forInStatement;
+	readonly forIn: typeof B.forInStatement;
 	readonly while: typeof B.whileStatement;
 	readonly do: typeof B.doStatement;
 	readonly try: typeof B.tryStatement;
@@ -6871,7 +6776,7 @@ export const statement: {
 	if: B.ifStatement,
 	switch: B.switchStatement,
 	for: B.forStatement,
-	forIn: forInStatement,
+	forIn: B.forInStatement,
 	while: B.whileStatement,
 	do: B.doStatement,
 	try: B.tryStatement,

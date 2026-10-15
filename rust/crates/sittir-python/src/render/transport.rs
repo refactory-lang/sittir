@@ -11633,9 +11633,9 @@ pub struct ExceptClauseTransport {
     #[wire(key = "_exception")]
     #[slot(field = field::EXCEPTION, word = 3, width = 5)]
     pub exception: Option<::sittir_core::SlotValue<ExceptClauseExceptionTransport>>,
-    #[wire(key = "_suite")]
-    #[slot(word = 8, width = 5)]
-    pub suite: ::sittir_core::SlotValue<SuiteTransport>,
+    #[wire(key = "_body")]
+    #[slot(field = field::BODY, word = 8, width = 5)]
+    pub body: ::sittir_core::SlotValue<SuiteTransport>,
 }
 
 impl ::sittir_core::view::KindOf for ExceptClauseTransport {
@@ -11662,7 +11662,7 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.group.prepare(ctx)?;
         self.exception.prepare(ctx)?;
-        self.suite.prepare(ctx)?;
+        self.body.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -24866,9 +24866,9 @@ fn render_try_statement(node: &TryStatementTransport, w: &mut dyn ::sittir_core:
 }
 
 fn render_except_clause(node: &ExceptClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let body = &node.body;
     let exception = View::new(&node.exception, "{}");
     let group = View::new(&node.group, "*");
-    let suite = &node.suite;
     w.edge(::sittir_core::types::KindId(159), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text("except")?;
     w.site_at(options::SITE_EXCEPT_CLAUSE_EXCEPT_KEYWORD_AFTER);
@@ -24881,7 +24881,7 @@ fn render_except_clause(node: &ExceptClauseTransport, w: &mut dyn ::sittir_core:
     w.site_at(options::SITE_EXCEPT_CLAUSE_COLON_BEFORE);
     w.text(":")?;
     w.site_at(options::SITE_EXCEPT_CLAUSE_COLON_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_suite", 0, w, |w| suite.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
     w.edge(::sittir_core::types::KindId(159), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }

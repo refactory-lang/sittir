@@ -1,10 +1,11 @@
+import type { BindingEffect } from '../bind.ts';
 import { withHoistedAnnotation } from '../annotations.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import type { AnyRule } from '../../types/rule.ts';
 import { RuleWalker } from '../rule-walker.ts';
 import { transform as transformFn } from '../transform/transform.ts';
 import { isPreference, type PreferencePlaceholder } from '../primitives/preference.ts';
-import { BINDINGS_KEY, INDENT_KEY, type OptionsConfig } from './options-block.ts';
+import { INDENT_KEY, LABELS_KEY, type OptionsConfig } from './options-block.ts';
 import type { ReparseHostsConfig } from './reparse-hosts.ts';
 import type { IsPreferencePath } from '../primitives/preference-path.ts';
 import {
@@ -82,6 +83,8 @@ export interface WireContext {
 	readonly ruleCauses: ReadonlyMap<string, RuleCauseDeclaration>;
 	readonly undeclaredRules: ReadonlySet<string>;
 	readonly patchSites: Map<string, PatchSite>;
+	readonly bindingEffects: BindingEffect[];
+	recordingBindingEffects: boolean;
 	readonly extraRuleNames: ReadonlySet<string>;
 	readonly precedenceRankedNames: ReadonlySet<string>;
 	readonly flattenedParents: Set<string>;
@@ -201,6 +204,26 @@ export function wireRecordPatchSite(site: PatchSite): void {
 	currentContext?.patchSites.set(patchSiteKey(site), site);
 }
 
+export function wireWithBindingEffects<T>(fn: () => T): T {
+	const context = currentContext;
+	if (!context) return fn();
+	const prior = context.recordingBindingEffects;
+	context.recordingBindingEffects = true;
+	try {
+		return fn();
+	} finally {
+		context.recordingBindingEffects = prior;
+	}
+}
+
+export function wireRecordBindingEffect(effect: BindingEffect): void {
+	if (currentContext?.recordingBindingEffects === true) currentContext.bindingEffects.push(effect);
+}
+
+export function wireBindingEffects(opts: unknown): readonly BindingEffect[] {
+	return (opts as { __wireContext__?: WireContext }).__wireContext__?.bindingEffects ?? [];
+}
+
 export function wireWithPatchSites<T>(sites: readonly PatchSite[], fn: () => T): T {
 	const context = currentContext;
 	if (!context) return fn();
@@ -314,6 +337,8 @@ export function withWireContext<T>(
 		ruleCauses: new Map(),
 		undeclaredRules: new Set(),
 		patchSites: new Map(),
+		bindingEffects: [],
+		recordingBindingEffects: false,
 		extraRuleNames: new Set(),
 		precedenceRankedNames: new Set(),
 		flattenedParents: new Set(),
@@ -401,8 +426,8 @@ export type PatchesCheck<B, P> = IsShaped<B> extends false
 	: { readonly [K in keyof P]: K extends keyof RulesOf<B> ? PatchEntryCheck<RulesOf<B>[K], P[K]> : P[K] };
 
 type DeclaredLabels<O> = {
-	[K in Exclude<keyof O, typeof BINDINGS_KEY | typeof INDENT_KEY> & string]: `${K}/${keyof O[K] & string}`;
-}[Exclude<keyof O, typeof BINDINGS_KEY | typeof INDENT_KEY> & string];
+	[K in Exclude<keyof O, typeof LABELS_KEY | typeof INDENT_KEY> & string]: `${K}/${keyof O[K] & string}`;
+}[Exclude<keyof O, typeof LABELS_KEY | typeof INDENT_KEY> & string];
 
 type PreferencePathCheck<M> = {
 	readonly [Path in keyof M]: Path extends string
@@ -414,12 +439,12 @@ type PreferencePathCheck<M> = {
 		: M[Path];
 };
 
-type BindingsCheck<B, O, M> = {
+type LabelsCheck<B, O, M> = {
 	readonly [Address in keyof M]: Address extends string
 		? string extends Address
 			? M[Address]
 			: IsPreferencePath<Address> extends false
-				? { readonly 'options: _bindings address is not a path': Address }
+				? { readonly 'options: _labels address is not a path': Address }
 				: M[Address] extends DeclaredLabels<O>
 					? M[Address] extends `${infer Root}/${string}`
 						? IsShaped<B> extends true
@@ -428,13 +453,13 @@ type BindingsCheck<B, O, M> = {
 								: M[Address]
 							: M[Address]
 						: M[Address]
-					: { readonly 'options: _bindings names no declared label': M[Address] }
+					: { readonly 'options: _labels names no declared label': M[Address] }
 		: M[Address];
 };
 
 export type OptionsCheck<B, O> = {
-	readonly [K in keyof O]: K extends typeof BINDINGS_KEY
-		? BindingsCheck<B, O, O[K]>
+	readonly [K in keyof O]: K extends typeof LABELS_KEY
+		? LabelsCheck<B, O, O[K]>
 		: K extends typeof INDENT_KEY
 			? PreferencePlaceholder
 			: PreferencePathCheck<O[K]>;
@@ -531,6 +556,8 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {})),
 		...declaredRuleCauses(cfg.rules ?? {}),
 		patchSites: new Map(),
+		bindingEffects: [],
+		recordingBindingEffects: false,
 		extraRuleNames: extraRuleNames(cfg, baseArg),
 		precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
 		flattenedParents: new Set(),

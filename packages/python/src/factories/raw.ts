@@ -1055,7 +1055,7 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause.Bound {
 	const _group = coerceBooleanKeywordStorage(rejectBareText(config.group, 'ExceptClause.group', 'a boolean'));
 	const _exception = rejectBareText(config.exception, 'ExceptClause.exception', 'a built ExceptClauseException');
-	const _suite = rejectBareText(config.suite, 'ExceptClause.suite', 'a built Suite');
+	const _body = rejectBareText(config.body, 'ExceptClause.body', 'a built Suite');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExceptClause as const,
@@ -1063,17 +1063,17 @@ export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause
 		$named: true as const,
 		_group,
 		_exception,
-		_suite,
+		_body,
 		$with: {
 			group: (value?: Admit<NonNullable<T.ExceptClause.Config>['group']>) =>
 				rebuilt(node, handle, () => buildExceptClause({ ...config, group: value })),
 			exception: (value?: Admit<T.ExceptClauseException>) =>
 				rebuilt(node, handle, () => buildExceptClause({ ...config, exception: value })),
-			suite: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildExceptClause({ ...config, suite: value }))
+			body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildExceptClause({ ...config, body: value }))
 		},
 		group: () => _group,
 		exception: () => hydrateStoredSlot(node, '_exception'),
-		suite: () => hydrateStoredSlot(node, '_suite'),
+		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),

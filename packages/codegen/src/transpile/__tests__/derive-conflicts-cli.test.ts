@@ -31,7 +31,7 @@ describe('deriving conflicts against the tree-sitter CLI', () => {
 	it('converges on an ambiguous binary rule by declaring its conflict', async () => {
 		const result = await deriveConflictResolutions({
 			ruleCount: 4,
-			upstream: { upstreamConflicts: [], sourceEdges: {} },
+			upstream: { upstreamConflicts: [], sourceEdges: {}, baseNames: {} },
 			generate: async (resolutions) => {
 				writeFileSync(join(dir, 'conflicts.json'), JSON.stringify(resolutions.map((entry) => entry.resolution.symbols)));
 				const run = runTreeSitterCliCapturing(['generate', '--json-summary'], dir);
@@ -45,7 +45,7 @@ describe('deriving conflicts against the tree-sitter CLI', () => {
 	it('records the conflict as upstream-declared when upstream listed the same set', async () => {
 		const result = await deriveConflictResolutions({
 			ruleCount: 4,
-			upstream: { upstreamConflicts: [['binary']], sourceEdges: {} },
+			upstream: { upstreamConflicts: [['binary']], sourceEdges: {}, baseNames: {} },
 			generate: async (resolutions) => {
 				writeFileSync(join(dir, 'conflicts.json'), JSON.stringify(resolutions.map((entry) => entry.resolution.symbols)));
 				const run = runTreeSitterCliCapturing(['generate', '--json-summary'], dir);
@@ -71,7 +71,7 @@ describe('deriving conflicts against the tree-sitter CLI', () => {
 			saved: { grammarHash: 'h', resolutions: [bogus] },
 			grammarHash: 'h',
 			ruleCount: 4,
-			upstream: { upstreamConflicts: [], sourceEdges: {} },
+			upstream: { upstreamConflicts: [], sourceEdges: {}, baseNames: {} },
 			generate,
 			generateSaved: () => generate([bogus])
 		});

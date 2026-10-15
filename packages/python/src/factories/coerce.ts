@@ -2668,7 +2668,7 @@ export function resolveExceptClause_exception(
 	return _resolveOneBranch<T.ExceptClauseException>(value, 'except_clause_exception', undefined, true);
 }
 
-export function resolveExceptClause_suite(value: T.ExceptClause.LooseConfig['suite']): Admit<T.ExceptClause['_suite']> {
+export function resolveExceptClause_body(value: T.ExceptClause.LooseConfig['body']): Admit<T.ExceptClause['_body']> {
 	return _resolveOne<T.Suite>(value, _K0, _super_suite);
 }
 
@@ -2678,7 +2678,7 @@ export function coerceToExceptClause(input: T.ExceptClause.Loose): ReturnType<ty
 	return F.buildExceptClause({
 		group: resolveExceptClause_group(input.group),
 		exception: resolveExceptClause_exception(input.exception),
-		suite: _requireField('except_clause', 'suite', resolveExceptClause_suite(input.suite))
+		body: _requireField('except_clause', 'body', resolveExceptClause_body(input.body))
 	});
 }
 

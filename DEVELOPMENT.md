@@ -9,18 +9,18 @@ Prerequisites: Node 20+, [pnpm](https://pnpm.io), and a Rust toolchain
 (the native render engines are N-API crates built with `napi`).
 
 ```bash
-pnpm run bootstrap
+pnpm run setup
 ```
 
-`bootstrap` installs dependencies, installs the tracked git hooks from
+`setup` installs dependencies, installs the tracked git hooks from
 `.githooks/` (the generated-output pre-commit gate, and a post-checkout hook), and
 builds every grammar's native binding. Git never copies hooks into a clone, so
-a fresh clone runs it once by hand; after that, every new worktree bootstraps
-itself on checkout when its commit is already on a local or origin branch. A
+a fresh clone runs it once by hand; after that, every new worktree sets
+itself up on checkout when its commit is already on a local or origin branch. A
 worktree of anything else, such as a fork's pull request, skips it until you
-have reviewed the code and run `pnpm run bootstrap` yourself. Set
-`SITTIR_NO_BOOTSTRAP=1` to skip it for a throwaway checkout, and re-run
-`pnpm run bootstrap` by hand after pulling a lockfile or native crate change.
+have reviewed the code and run `pnpm run setup` yourself. Set
+`SITTIR_NO_SETUP=1` to skip it for a throwaway checkout, and re-run
+`pnpm run setup` by hand after pulling a lockfile or native crate change.
 An existing hook sittir does not manage is kept as `<name>.pre-sittir`.
 
 `pnpm exec tsx packages/cli/src/cli.ts tool sync-base [--base origin/master]` brings a branch up to date with its base: it merges, and when the only conflicts are generated files it takes the base's side; after any merge it verifies every grammar and regenerates the grammars whose files conflicted or went stale, then commits the merge. Any other conflict, or a regeneration that changes a file outside the generated roots, stops it for review.

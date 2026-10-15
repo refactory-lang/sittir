@@ -8,9 +8,17 @@ describe('rust text-leaf factories always run their guard', () => {
 	it('builds text that matches the whole token', () => {
 		expect(() => rs.build.identifier('abc')).not.toThrow();
 		expect(rs.build.charLiteral('a').$render!()).toBe("'a'");
-		expect(rs.build.charLiteral({ content: 'a', b: true }).$render!()).toBe("b'a'");
+		expect(rs.build.charLiteral({ content: 'a', byte: true }).$render!()).toBe("b'a'");
 		expect(rs.build.integerLiteral({ content: '1_000', suffix: 'u8' }).$render!()).toBe('1_000u8');
 		expect(rs.build.metavariable('x').$render!()).toBe('$x');
+	});
+
+	it('names the byte prefix `byte` on every char form that holds a character', () => {
+		expect(rs.build.charLiteral.plain({ content: 'a', byte: true }).$render!()).toBe("b'a'");
+		expect(rs.build.charLiteral.escaped.simple({ content: '\\n', byte: true }).$render!()).toBe("b'\\n'");
+		expect(rs.build.charLiteral.escaped.unicodeFixed({ content: '\\u0041', byte: true }).$render!()).toBe("b'\\u0041'");
+		expect(rs.build.charLiteral.escaped.unicodeBraced({ content: '\\u{41}', byte: true }).$render!()).toBe("b'\\u{41}'");
+		expect(rs.build.charLiteral.escaped.hex({ content: '\\x41', byte: true }).$render!()).toBe("b'\\x41'");
 	});
 
 	it('rejects empty text', () => {

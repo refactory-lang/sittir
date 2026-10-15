@@ -1,6 +1,6 @@
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { ALIAS, SUPERTYPE, SYMBOL } from '../types/rule-types.ts';
-import type { AliasRule, LabelProvenance, Rule, RuleAnnotations, SymbolRule } from '../types/rule.ts';
+import type { AliasRule, LabelProvenance, Rule, RuleAnnotations, SymbolRef, SymbolRule } from '../types/rule.ts';
 import { automaticVariantKey, type AutomaticVariants } from '../dsl/automatic-variants.ts';
 
 export function isAliasMintedRef(rule: Rule<'link'>, rules: Record<string, Rule<'link'>>): boolean {
@@ -97,4 +97,19 @@ export function deriveVariantChildren(rules: Record<string, Rule<'link'>>): Map<
 		if (children.length > 0) out.set(kind, children);
 	}
 	return out;
+}
+
+export function ownedVariants(
+	children: ReadonlyMap<string, readonly VariantChild[]>,
+	references: readonly SymbolRef[]
+): Readonly<Record<string, string>> | undefined {
+	const parents = new Map<string, string[]>();
+	for (const ref of references) (parents.get(ref.to) ?? parents.set(ref.to, []).get(ref.to)!).push(ref.from);
+	const out: Record<string, string> = {};
+	for (const [owner, arms] of children)
+		for (const arm of arms) {
+			const from = parents.get(arm.kind);
+			if (from?.length === 1 && from[0] === owner) out[arm.kind] = owner;
+		}
+	return Object.keys(out).length > 0 ? out : undefined;
 }

@@ -141,6 +141,8 @@ The python docstring's `doc` member resolves through the `_simple_statements` si
 ## Stage 3: the runtime bindings generator
 
 The runtime bindings are what the portable engine runs, generated per grammar from the routes. The vocabulary's mapped types (owner × value crossings, per-kind flag unions) are authored in the vocabulary, not generated here.
+
+- Honor the authored numeric and boolean scalar value contracts in high-to-low runtime builds and built-node crossings, through the [scalar-contract follow-up](2026-10-06-binding-generator.md#follow-up-high-to-low-runtime-scalar-bindings-october-15) in the generator plan.
 - `build`, `is` and `kinds` per vocabulary path, keyed by `$type`;
 - the builder-chain steps and their guards: an `is` guard per segment carries the segment's read test and its flag bits;
 - each language's `$exclusions`: per kind, the flag pairs the grammar never spells together, derived from the rule by the generator, not declared by the vocabulary. The vocabulary's mapped types read them for the typed chains, so after a step the incompatible steps are gone, and the runtime check refuses a structure whose `$flags` break them;

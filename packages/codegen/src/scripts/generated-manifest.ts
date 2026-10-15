@@ -2,11 +2,15 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, statSync, writeFileSync } from 'node:fs';
 import { basename, join, relative, dirname } from 'node:path';
+import { BINDINGS_FILE, VOCABULARY_DIR } from '../bindings/facts.ts';
+import { isVocabularySource, vocabularySources } from '../bindings/vocabulary.ts';
+import { PIN_FILE } from '../bootstrap/bootstrap.ts';
 import { hostBinaryFreshnessFor } from './native-binary-freshness.ts';
 import {
 	GRAMMAR_ENTRY,
 	NATIVE_LOADER,
 	REPO_ROOT,
+	allGrammars,
 	grammarPackageDir,
 	nativeBindingRelDir,
 	nativeCrateRelDir,
@@ -128,9 +132,25 @@ const samePair = (a: GenerationPair, b: GenerationPair): boolean => a.source ===
 
 const CODEGEN_SOURCE_DIR = 'packages/codegen/src';
 
-function grammarSourceInputs(grammar: GrammarName): string[] {
+const VOCABULARY_SOURCE_DIR = relative(REPO_ROOT, VOCABULARY_DIR);
+
+const isVocabularyInput = (rel: string): boolean => rel.startsWith(`${VOCABULARY_SOURCE_DIR}/`) && isVocabularySource(rel.slice(VOCABULARY_SOURCE_DIR.length + 1));
+
+const bindingsInput = (grammar: GrammarName): string => `${relative(REPO_ROOT, grammarPackageDir(grammar))}/${BINDINGS_FILE}`;
+
+const isBound = (grammar: GrammarName, src: ManifestSource): boolean => existsSync(join(src.root, bindingsInput(grammar)));
+
+function grammarSourceInputs(grammar: GrammarName, src: ManifestSource): string[] {
 	const dir = relative(REPO_ROOT, grammarPackageDir(grammar));
-	return [`${dir}/${GRAMMAR_ENTRY}`, `${dir}/package.json`];
+	const own = [`${dir}/${GRAMMAR_ENTRY}`, `${dir}/package.json`, bindingsInput(grammar)];
+	if (!isBound(grammar, src)) return own;
+	const vocabularyDir = join(src.root, VOCABULARY_SOURCE_DIR);
+	const vocabulary = existsSync(vocabularyDir) ? vocabularySources(vocabularyDir).map((name) => `${VOCABULARY_SOURCE_DIR}/${name}`) : [];
+	return [...own, PIN_FILE, ...vocabulary];
+}
+
+export function stagedInputPathspecs(): string[] {
+	return [CODEGEN_SOURCE_DIR, PIN_FILE, VOCABULARY_SOURCE_DIR, ...allGrammars().flatMap((grammar) => [`packages/${grammar}`, nativeCrateRelDir(grammar)])];
 }
 
 function isCodegenSourceInput(relPath: string): boolean {
@@ -181,12 +201,14 @@ function trustedCommits(checkout: string): string[] {
 }
 
 function differencesFromTrustedCommit(grammar: GrammarName, src: ManifestSource): string[] {
-	const sourceInputs = grammarSourceInputs(grammar);
+	const sourceInputs = grammarSourceInputs(grammar, src);
+	const bound = isBound(grammar, src);
 	const roots = generatedRootsFor(grammar);
-	const pathspecs = [CODEGEN_SOURCE_DIR, ...sourceInputs, ...roots];
+	const pathspecs = [CODEGEN_SOURCE_DIR, ...sourceInputs, ...(bound ? [VOCABULARY_SOURCE_DIR] : []), ...roots];
 	const matters = (rel: string): boolean =>
 		isCodegenSourceInput(rel) ||
 		sourceInputs.includes(rel) ||
+		(bound && isVocabularyInput(rel)) ||
 		(!landsOnItsOwnCadence(rel) && roots.some((root) => rel === root || rel.startsWith(`${root}/`)));
 	const untracked = isCheckout(src)
 		? gitPaths(src.checkout, ['ls-files', '-z', '--others', '--exclude-standard', '--', ...pathspecs])
@@ -201,7 +223,7 @@ function differencesFromTrustedCommit(grammar: GrammarName, src: ManifestSource)
 
 export function computeSourceHash(grammar: GrammarName, src: ManifestSource = worktreeSource()): string {
 	const hash = createHash('sha256');
-	for (const rel of grammarSourceInputs(grammar)) {
+	for (const rel of grammarSourceInputs(grammar, src)) {
 		const input = join(src.root, rel);
 		if (existsSync(input)) {
 			hash.update(`${rel}\0`);
@@ -321,7 +343,7 @@ export function assertGeneratedManifestsClean(
 		lines.push(`  ${r.grammar}:`);
 		if (r.sourceChanged) {
 			lines.push(
-				`    SOURCE INPUTS CHANGED (grammar.sittir.ts, package.json, or packages/codegen/src/** edited since last regen)`
+				`    SOURCE INPUTS CHANGED (grammar.sittir.ts, package.json, bindings.scm, the vocabulary, bootstrap.json, or packages/codegen/src/** edited since last regen)`
 			);
 		}
 		for (const f of r.modified) lines.push(`    MODIFIED: ${f}`);

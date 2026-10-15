@@ -186,9 +186,9 @@ export function deriveAddressTables(
 	if (declared !== undefined) {
 		const addressed = addressSites(sites, kindEntries, nodeMap);
 		const reached = new Map<string, AddressedSite<SitePreference>[]>();
-		for (const binding of declared.bindings) {
-			const hits = matchAddress(addressSegments(binding.address), addressed, membersOf);
-			reached.set(binding.label, [...(reached.get(binding.label) ?? []), ...hits]);
+		for (const label of declared.labels) {
+			const hits = matchAddress(addressSegments(label.address), addressed, membersOf);
+			reached.set(label.label, [...(reached.get(label.label) ?? []), ...hits]);
 		}
 		for (const declaration of declared.declarations) {
 			if (matchAddress(addressSegments(declaration.path), addressed, membersOf).length > 0) continue;

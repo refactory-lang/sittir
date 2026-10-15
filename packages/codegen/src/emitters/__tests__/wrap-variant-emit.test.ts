@@ -26,7 +26,7 @@ function makeHiddenGroupNodeMap() {
 function makeNoFactoryHiddenGroupNodeMap() {
 	const nodeMap = makeHiddenGroupNodeMap();
 	const helper = nodeMap.nodes.get('_assignment_eq');
-	if (!helper || !(helper instanceof AbstractAssembledCompound) || helper.annotations?.hoisted !== true)
+	if (!helper || !(helper instanceof AbstractAssembledCompound) || !helper.seated)
 		throw new Error('Missing hidden helper group');
 	Object.defineProperty(helper, 'rawFactoryName', { value: undefined });
 	return nodeMap;

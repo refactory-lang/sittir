@@ -1088,7 +1088,7 @@
 	"char_literal_escaped_hex": [
 		{
 			"kind": "slot",
-			"name": "b"
+			"name": "byte"
 		},
 		{
 			"kind": "adjacent"
@@ -1115,7 +1115,7 @@
 	"char_literal_escaped_simple": [
 		{
 			"kind": "slot",
-			"name": "b"
+			"name": "byte"
 		},
 		{
 			"kind": "adjacent"
@@ -1142,7 +1142,7 @@
 	"char_literal_escaped_unicode_braced": [
 		{
 			"kind": "slot",
-			"name": "b"
+			"name": "byte"
 		},
 		{
 			"kind": "adjacent"
@@ -1169,7 +1169,7 @@
 	"char_literal_escaped_unicode_fixed": [
 		{
 			"kind": "slot",
-			"name": "b"
+			"name": "byte"
 		},
 		{
 			"kind": "adjacent"
@@ -1196,7 +1196,7 @@
 	"char_literal_plain": [
 		{
 			"kind": "slot",
-			"name": "b"
+			"name": "byte"
 		},
 		{
 			"kind": "adjacent"

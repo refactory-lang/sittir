@@ -2694,7 +2694,7 @@
       }
     },
     "char_literal_plain": {
-      "b": {
+      "byte": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2710,7 +2710,7 @@
       }
     },
     "char_literal_escaped_simple": {
-      "b": {
+      "byte": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2726,7 +2726,7 @@
       }
     },
     "char_literal_escaped_unicode_fixed": {
-      "b": {
+      "byte": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2742,7 +2742,7 @@
       }
     },
     "char_literal_escaped_unicode_braced": {
-      "b": {
+      "byte": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2758,7 +2758,7 @@
       }
     },
     "char_literal_escaped_hex": {
-      "b": {
+      "byte": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4505,36 +4505,124 @@
       "typeName": "TokenKeywords",
       "factoryName": "tokenKeywords",
       "hidden": false,
-      "values": [
-        "'",
-        "as",
-        "async",
-        "await",
-        "break",
-        "const",
-        "continue",
-        "default",
-        "enum",
-        "fn",
-        "for",
-        "gen",
-        "if",
-        "impl",
-        "let",
-        "loop",
-        "match",
-        "mod",
-        "pub",
-        "return",
-        "static",
-        "struct",
-        "trait",
-        "type",
-        "union",
-        "unsafe",
-        "use",
-        "where",
-        "while"
+      "variantOf": "non_special_token",
+      "members": [
+        {
+          "kind": "squote",
+          "text": "'"
+        },
+        {
+          "kind": "as_keyword",
+          "text": "as"
+        },
+        {
+          "kind": "async_keyword",
+          "text": "async"
+        },
+        {
+          "kind": "await_keyword",
+          "text": "await"
+        },
+        {
+          "kind": "break_keyword",
+          "text": "break"
+        },
+        {
+          "kind": "const_keyword",
+          "text": "const"
+        },
+        {
+          "kind": "continue_keyword",
+          "text": "continue"
+        },
+        {
+          "kind": "default_keyword",
+          "text": "default"
+        },
+        {
+          "kind": "enum_keyword",
+          "text": "enum"
+        },
+        {
+          "kind": "fn_keyword",
+          "text": "fn"
+        },
+        {
+          "kind": "for_keyword",
+          "text": "for"
+        },
+        {
+          "kind": "gen_keyword",
+          "text": "gen"
+        },
+        {
+          "kind": "if_keyword",
+          "text": "if"
+        },
+        {
+          "kind": "impl_keyword",
+          "text": "impl"
+        },
+        {
+          "kind": "let_keyword",
+          "text": "let"
+        },
+        {
+          "kind": "loop_keyword",
+          "text": "loop"
+        },
+        {
+          "kind": "match_keyword",
+          "text": "match"
+        },
+        {
+          "kind": "mod_keyword",
+          "text": "mod"
+        },
+        {
+          "kind": "pub_keyword",
+          "text": "pub"
+        },
+        {
+          "kind": "return_keyword",
+          "text": "return"
+        },
+        {
+          "kind": "static_keyword",
+          "text": "static"
+        },
+        {
+          "kind": "struct_keyword",
+          "text": "struct"
+        },
+        {
+          "kind": "trait_keyword",
+          "text": "trait"
+        },
+        {
+          "kind": "type_keyword",
+          "text": "type"
+        },
+        {
+          "kind": "union_keyword",
+          "text": "union"
+        },
+        {
+          "kind": "unsafe_keyword",
+          "text": "unsafe"
+        },
+        {
+          "kind": "use_keyword",
+          "text": "use"
+        },
+        {
+          "kind": "where_keyword",
+          "text": "where"
+        },
+        {
+          "kind": "while_keyword",
+          "text": "while"
+        }
       ],
       "factoryShape": "text"
     },
@@ -4630,6 +4718,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_type",
       "slots": [
         {
           "name": "type_parameters",
@@ -4882,6 +4971,32 @@
           "shape": "elements"
         }
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "attributed_argument"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "attributed_argument",
+              "parseKind": "attributed_argument",
+              "seat": {
+                "kind": "attributed_argument",
+                "shape": "elements"
+              }
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -4970,6 +5085,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_expression_except_range",
       "transparent": true,
       "subtypes": [
         "array_expression_list",
@@ -5001,6 +5117,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "array_expression",
       "slots": [
         {
           "name": "attributes",
@@ -5079,6 +5196,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "array_expression",
       "slots": [
         {
           "name": "attributes",
@@ -5239,6 +5357,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "left",
@@ -5307,6 +5426,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "name",
@@ -5413,6 +5533,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_ending_with_block",
       "slots": [
         {
           "name": "move",
@@ -5590,6 +5711,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "attribute",
       "slots": [
         {
           "name": "value",
@@ -6129,6 +6251,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "expression",
@@ -6371,6 +6494,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "left",
@@ -6641,6 +6765,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "comment",
       "slots": [
         {
           "name": "content",
@@ -6734,6 +6859,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "block_comment",
       "slots": [
         {
           "name": "doc",
@@ -6799,6 +6925,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "block_comment",
       "slots": [
         {
           "name": "doc",
@@ -6853,6 +6980,7 @@
         "blockCommentRegular"
       ],
       "hidden": false,
+      "variantOf": "block_comment",
       "pattern": "[^]*",
       "leafPattern": "/^(?:(?:[^]*))$/u",
       "oneSurface": true,
@@ -6884,9 +7012,15 @@
       "typeName": "BooleanLiteral",
       "factoryName": "booleanLiteral",
       "hidden": false,
-      "values": [
-        "true",
-        "false"
+      "members": [
+        {
+          "kind": "true_keyword",
+          "text": "true"
+        },
+        {
+          "kind": "false_keyword",
+          "text": "false"
+        }
       ],
       "factoryShape": "text"
     },
@@ -7083,6 +7217,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "label",
@@ -7157,6 +7292,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "function",
@@ -7487,6 +7623,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "slots": [
         {
           "name": "name",
@@ -7616,6 +7753,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "char_literal",
       "leafPattern": "/^(?:(?:b)?'')$/u",
       "oneSurface": true,
       "factoryShape": "text"
@@ -7648,6 +7786,7 @@
       "annotations": {
         "tokenForm": true
       },
+      "variantOf": "char_literal",
       "transparent": true,
       "subtypes": [
         "char_literal_escaped_hex",
@@ -7694,11 +7833,12 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "char_literal_escaped",
       "slots": [
         {
-          "name": "b",
-          "propertyName": "b",
-          "paramName": "b",
+          "name": "byte",
+          "propertyName": "byte",
+          "paramName": "byte",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -7733,7 +7873,7 @@
       "interior": {
         "entries": [
           {
-            "flag": "b",
+            "flag": "byte",
             "text": "b"
           },
           {
@@ -7747,11 +7887,11 @@
             "lit": "'"
           }
         ],
-        "regex": "^(?<b>b)?'(?<content>\\\\(?:x[0-9a-fA-F]{2}))'$",
+        "regex": "^(?<byte>b)?'(?<content>\\\\(?:x[0-9a-fA-F]{2}))'$",
         "slots": [
           {
-            "name": "b",
-            "configKey": "b",
+            "name": "byte",
+            "configKey": "byte",
             "flag": true
           },
           {
@@ -7762,7 +7902,7 @@
       },
       "factoryShape": "config",
       "factoryFields": [
-        "b",
+        "byte",
         "content"
       ]
     },
@@ -7804,11 +7944,12 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "char_literal_escaped",
       "slots": [
         {
-          "name": "b",
-          "propertyName": "b",
-          "paramName": "b",
+          "name": "byte",
+          "propertyName": "byte",
+          "paramName": "byte",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -7843,7 +7984,7 @@
       "interior": {
         "entries": [
           {
-            "flag": "b",
+            "flag": "byte",
             "text": "b"
           },
           {
@@ -7857,11 +7998,11 @@
             "lit": "'"
           }
         ],
-        "regex": "^(?<b>b)?'(?<content>\\\\(?:[^xu]))'$",
+        "regex": "^(?<byte>b)?'(?<content>\\\\(?:[^xu]))'$",
         "slots": [
           {
-            "name": "b",
-            "configKey": "b",
+            "name": "byte",
+            "configKey": "byte",
             "flag": true
           },
           {
@@ -7872,7 +8013,7 @@
       },
       "factoryShape": "config",
       "factoryFields": [
-        "b",
+        "byte",
         "content"
       ]
     },
@@ -7914,11 +8055,12 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "char_literal_escaped",
       "slots": [
         {
-          "name": "b",
-          "propertyName": "b",
-          "paramName": "b",
+          "name": "byte",
+          "propertyName": "byte",
+          "paramName": "byte",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -7953,7 +8095,7 @@
       "interior": {
         "entries": [
           {
-            "flag": "b",
+            "flag": "byte",
             "text": "b"
           },
           {
@@ -7967,11 +8109,11 @@
             "lit": "'"
           }
         ],
-        "regex": "^(?<b>b)?'(?<content>\\\\(?:u\\{[0-9a-fA-F]+\\}))'$",
+        "regex": "^(?<byte>b)?'(?<content>\\\\(?:u\\{[0-9a-fA-F]+\\}))'$",
         "slots": [
           {
-            "name": "b",
-            "configKey": "b",
+            "name": "byte",
+            "configKey": "byte",
             "flag": true
           },
           {
@@ -7982,7 +8124,7 @@
       },
       "factoryShape": "config",
       "factoryFields": [
-        "b",
+        "byte",
         "content"
       ]
     },
@@ -8024,11 +8166,12 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "char_literal_escaped",
       "slots": [
         {
-          "name": "b",
-          "propertyName": "b",
-          "paramName": "b",
+          "name": "byte",
+          "propertyName": "byte",
+          "paramName": "byte",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8063,7 +8206,7 @@
       "interior": {
         "entries": [
           {
-            "flag": "b",
+            "flag": "byte",
             "text": "b"
           },
           {
@@ -8077,11 +8220,11 @@
             "lit": "'"
           }
         ],
-        "regex": "^(?<b>b)?'(?<content>\\\\(?:u[0-9a-fA-F]{4}))'$",
+        "regex": "^(?<byte>b)?'(?<content>\\\\(?:u[0-9a-fA-F]{4}))'$",
         "slots": [
           {
-            "name": "b",
-            "configKey": "b",
+            "name": "byte",
+            "configKey": "byte",
             "flag": true
           },
           {
@@ -8092,7 +8235,7 @@
       },
       "factoryShape": "config",
       "factoryFields": [
-        "b",
+        "byte",
         "content"
       ]
     },
@@ -8127,11 +8270,12 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "char_literal",
       "slots": [
         {
-          "name": "b",
-          "propertyName": "b",
-          "paramName": "b",
+          "name": "byte",
+          "propertyName": "byte",
+          "paramName": "byte",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8166,7 +8310,7 @@
       "interior": {
         "entries": [
           {
-            "flag": "b",
+            "flag": "byte",
             "text": "b"
           },
           {
@@ -8180,11 +8324,11 @@
             "lit": "'"
           }
         ],
-        "regex": "^(?<b>b)?'(?<content>(?:[^\\\\']))'$",
+        "regex": "^(?<byte>b)?'(?<content>(?:[^\\\\']))'$",
         "slots": [
           {
-            "name": "b",
-            "configKey": "b",
+            "name": "byte",
+            "configKey": "byte",
             "flag": true
           },
           {
@@ -8195,7 +8339,7 @@
       },
       "factoryShape": "config",
       "factoryFields": [
-        "b",
+        "byte",
         "content"
       ]
     },
@@ -8245,6 +8389,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "closure_expression",
       "slots": [
         {
           "name": "static",
@@ -8397,6 +8542,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "closure_expression",
       "slots": [
         {
           "name": "static",
@@ -8611,6 +8757,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "left",
@@ -8803,6 +8950,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -8913,6 +9061,7 @@
         "constParameter"
       ],
       "hidden": false,
+      "variantOf": "attributed_type_parameter",
       "slots": [
         {
           "name": "name",
@@ -9019,6 +9168,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "label",
@@ -9187,6 +9337,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "delim_token_tree",
       "slots": [
         {
           "name": "delim_tokens",
@@ -9248,6 +9399,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "delim_token_tree",
       "slots": [
         {
           "name": "delim_tokens",
@@ -9309,6 +9461,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "delim_token_tree",
       "slots": [
         {
           "name": "delim_tokens",
@@ -9445,6 +9598,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_type",
       "slots": [
         {
           "name": "trait",
@@ -9625,6 +9779,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "isParameterless": true,
       "stampExpression": "\";\" as const",
       "text": ";",
@@ -9651,6 +9806,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -9951,6 +10107,32 @@
           "shape": "elements"
         }
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "attributed_enum_variant"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "attributed_enum_variant",
+              "parseKind": "attributed_enum_variant",
+              "seat": {
+                "kind": "attributed_enum_variant",
+                "shape": "elements"
+              }
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -10025,6 +10207,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -10101,6 +10284,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -10177,6 +10361,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -10253,6 +10438,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -10344,6 +10530,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_statement",
       "slots": [
         {
           "name": "content",
@@ -10543,6 +10730,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "expression_statement",
       "slots": [
         {
           "name": "expression",
@@ -10660,6 +10848,28 @@
       "elementKinds": [
         "_expression"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "_expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "_expression",
+              "parseKind": "_expression"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -10752,6 +10962,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -11050,6 +11261,32 @@
         {
           "kind": "attributed_field_declaration",
           "shape": "elements"
+        }
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "attributed_field_declaration"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "attributed_field_declaration",
+              "parseKind": "attributed_field_declaration",
+              "seat": {
+                "kind": "attributed_field_declaration",
+                "shape": "elements"
+              }
+            }
+          ]
         }
       ],
       "factoryShape": "elements",
@@ -11387,6 +11624,42 @@
         "field_initializer",
         "base_field_initializer"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "shorthand_field_initializer",
+            "field_initializer",
+            "base_field_initializer"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "shorthand_field_initializer",
+              "parseKind": "shorthand_field_initializer"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "field_initializer",
+              "parseKind": "field_initializer"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "base_field_initializer",
+              "parseKind": "base_field_initializer"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -11497,6 +11770,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "field_pattern",
       "slots": [
         {
           "name": "ref",
@@ -11606,6 +11880,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "field_pattern",
       "slots": [
         {
           "name": "ref",
@@ -11725,6 +12000,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_ending_with_block",
       "slots": [
         {
           "name": "label",
@@ -11887,6 +12163,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_declaration_statement",
       "transparent": true,
       "subtypes": [
         "foreign_mod_item_body",
@@ -11923,6 +12200,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "foreign_mod_item",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -12023,6 +12301,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "foreign_mod_item",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -12078,22 +12357,67 @@
       "typeName": "FragmentSpecifier",
       "factoryName": "fragmentSpecifier",
       "hidden": false,
-      "values": [
-        "block",
-        "expr",
-        "expr_2021",
-        "ident",
-        "item",
-        "lifetime",
-        "literal",
-        "meta",
-        "pat",
-        "pat_param",
-        "path",
-        "stmt",
-        "tt",
-        "ty",
-        "vis"
+      "members": [
+        {
+          "kind": "block_keyword",
+          "text": "block"
+        },
+        {
+          "kind": "expr_keyword",
+          "text": "expr"
+        },
+        {
+          "kind": "expr_2021_keyword",
+          "text": "expr_2021"
+        },
+        {
+          "kind": "ident_keyword",
+          "text": "ident"
+        },
+        {
+          "kind": "item_keyword",
+          "text": "item"
+        },
+        {
+          "kind": "lifetime_keyword",
+          "text": "lifetime"
+        },
+        {
+          "kind": "literal_keyword",
+          "text": "literal"
+        },
+        {
+          "kind": "meta_keyword",
+          "text": "meta"
+        },
+        {
+          "kind": "pat_keyword",
+          "text": "pat"
+        },
+        {
+          "kind": "pat_param_keyword",
+          "text": "pat_param"
+        },
+        {
+          "kind": "path_keyword",
+          "text": "path"
+        },
+        {
+          "kind": "stmt_keyword",
+          "text": "stmt"
+        },
+        {
+          "kind": "tt_keyword",
+          "text": "tt"
+        },
+        {
+          "kind": "ty_keyword",
+          "text": "ty"
+        },
+        {
+          "kind": "vis_keyword",
+          "text": "vis"
+        }
       ],
       "factoryShape": "text"
     },
@@ -12117,6 +12441,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -12379,6 +12704,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -12684,6 +13010,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "function_type",
       "slots": [
         {
           "name": "function_modifiers",
@@ -12739,6 +13066,7 @@
         "definedBy": "enrich"
       },
       "seated": true,
+      "variantOf": "function_type",
       "slots": [
         {
           "name": "trait",
@@ -12795,6 +13123,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_ending_with_block",
       "slots": [
         {
           "name": "move",
@@ -12867,6 +13196,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "function",
@@ -12945,6 +13275,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "slots": [
         {
           "name": "name",
@@ -13450,6 +13781,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_declaration_statement",
       "transparent": true,
       "subtypes": [
         "impl_item_body",
@@ -13486,6 +13818,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "impl_item",
       "slots": [
         {
           "name": "unsafe",
@@ -13785,6 +14118,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "impl_item",
       "slots": [
         {
           "name": "unsafe",
@@ -13953,6 +14287,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "object",
@@ -14142,6 +14477,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer_literal",
       "slots": [
         {
           "name": "content",
@@ -14319,6 +14655,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer_literal",
       "slots": [
         {
           "name": "content",
@@ -14496,6 +14833,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer_literal",
       "slots": [
         {
           "name": "content",
@@ -14673,6 +15011,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer_literal",
       "slots": [
         {
           "name": "content",
@@ -15097,6 +15436,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "mutable",
@@ -15291,6 +15631,7 @@
         "lifetimeParameter"
       ],
       "hidden": false,
+      "variantOf": "attributed_type_parameter",
       "slots": [
         {
           "name": "name",
@@ -15361,6 +15702,28 @@
       "elementKinds": [
         "lifetime"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "lifetime"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "lifetime",
+              "parseKind": "lifetime"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -15386,6 +15749,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "comment",
       "slots": [
         {
           "name": "content",
@@ -15492,6 +15856,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "line_comment",
       "slots": [
         {
           "name": "doc",
@@ -15557,6 +15922,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "line_comment",
       "slots": [
         {
           "name": "doc",
@@ -15626,6 +15992,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "line_comment",
       "leafPattern": "/^(?:(?:\\/\\/)(?:.*))$/u",
       "oneSurface": true,
       "factoryShape": "text"
@@ -15640,6 +16007,7 @@
         "lineCommentRegular"
       ],
       "hidden": false,
+      "variantOf": "line_comment",
       "pattern": ".*",
       "leafPattern": "/^(?:(?:.*))$/u",
       "oneSurface": true,
@@ -15671,6 +16039,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_ending_with_block",
       "slots": [
         {
           "name": "label",
@@ -15793,6 +16162,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_declaration_statement",
       "transparent": true,
       "subtypes": [
         "macro_definition_brace",
@@ -15830,6 +16200,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "macro_definition",
       "slots": [
         {
           "name": "name",
@@ -15913,6 +16284,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "macro_definition",
       "slots": [
         {
           "name": "name",
@@ -15996,6 +16368,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "macro_definition",
       "slots": [
         {
           "name": "name",
@@ -16216,6 +16589,28 @@
       "elementKinds": [
         "macro_rule"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "macro_rule"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "macro_rule",
+              "parseKind": "macro_rule"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -16268,6 +16663,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "match_arm",
       "slots": [
         {
           "name": "attributes",
@@ -16439,6 +16835,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "match_arm",
       "slots": [
         {
           "name": "attributes",
@@ -16640,6 +17037,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_ending_with_block",
       "slots": [
         {
           "name": "value",
@@ -16873,6 +17271,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_declaration_statement",
       "transparent": true,
       "subtypes": [
         "mod_item_external",
@@ -16909,6 +17308,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "mod_item",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -16988,6 +17388,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "mod_item",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -17094,6 +17495,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "slots": [
         {
           "name": "pattern",
@@ -17253,6 +17655,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_type",
       "isParameterless": true,
       "stampExpression": "\"!\" as const",
       "text": "!",
@@ -17483,6 +17886,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_pattern",
       "transparent": true,
       "subtypes": [
         "or_pattern_binary",
@@ -17514,6 +17918,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "or_pattern",
       "slots": [
         {
           "name": "left",
@@ -17590,6 +17995,7 @@
         "definedBy": "enrich"
       },
       "seated": true,
+      "variantOf": "or_pattern",
       "slots": [
         {
           "name": "right",
@@ -17767,6 +18173,32 @@
         {
           "kind": "attributed_ordered_field",
           "shape": "elements"
+        }
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "attributed_ordered_field"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "attributed_ordered_field",
+              "parseKind": "attributed_ordered_field",
+              "seat": {
+                "kind": "attributed_ordered_field",
+                "shape": "elements"
+              }
+            }
+          ]
         }
       ],
       "factoryShape": "elements",
@@ -18044,6 +18476,32 @@
           "shape": "elements"
         }
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "attributed_parameter"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "attributed_parameter",
+              "parseKind": "attributed_parameter",
+              "seat": {
+                "kind": "attributed_parameter",
+                "shape": "elements"
+              }
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -18109,6 +18567,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "expression",
@@ -18254,6 +18713,28 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "_pattern"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "_pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "_pattern",
+              "parseKind": "_pattern"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -18412,6 +18893,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "pointer_type",
       "slots": [
         {
           "name": "type",
@@ -18505,6 +18987,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "pointer_type",
       "slots": [
         {
           "name": "type",
@@ -18588,24 +19071,75 @@
       "typeName": "PrimitiveType",
       "factoryName": "primitiveType",
       "hidden": false,
-      "values": [
-        "u8",
-        "i8",
-        "u16",
-        "i16",
-        "u32",
-        "i32",
-        "u64",
-        "i64",
-        "u128",
-        "i128",
-        "isize",
-        "usize",
-        "f32",
-        "f64",
-        "bool",
-        "str",
-        "char"
+      "members": [
+        {
+          "kind": "u8_keyword",
+          "text": "u8"
+        },
+        {
+          "kind": "i8_keyword",
+          "text": "i8"
+        },
+        {
+          "kind": "u16_keyword",
+          "text": "u16"
+        },
+        {
+          "kind": "i16_keyword",
+          "text": "i16"
+        },
+        {
+          "kind": "u32_keyword",
+          "text": "u32"
+        },
+        {
+          "kind": "i32_keyword",
+          "text": "i32"
+        },
+        {
+          "kind": "u64_keyword",
+          "text": "u64"
+        },
+        {
+          "kind": "i64_keyword",
+          "text": "i64"
+        },
+        {
+          "kind": "u128_keyword",
+          "text": "u128"
+        },
+        {
+          "kind": "i128_keyword",
+          "text": "i128"
+        },
+        {
+          "kind": "isize_keyword",
+          "text": "isize"
+        },
+        {
+          "kind": "usize_keyword",
+          "text": "usize"
+        },
+        {
+          "kind": "f32_keyword",
+          "text": "f32"
+        },
+        {
+          "kind": "f64_keyword",
+          "text": "f64"
+        },
+        {
+          "kind": "bool_keyword",
+          "text": "bool"
+        },
+        {
+          "kind": "str_keyword",
+          "text": "str"
+        },
+        {
+          "kind": "char_keyword",
+          "text": "char"
+        }
       ],
       "factoryShape": "text"
     },
@@ -18701,6 +19235,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_expression",
       "transparent": true,
       "subtypes": [
         "range_expression_bare",
@@ -18734,6 +19269,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "range_expression",
       "isParameterless": true,
       "slots": [
         {
@@ -18793,6 +19329,7 @@
         "definedBy": "enrich"
       },
       "seated": true,
+      "variantOf": "range_expression",
       "slots": [
         {
           "name": "start",
@@ -18900,6 +19437,7 @@
         "definedBy": "enrich"
       },
       "seated": true,
+      "variantOf": "range_expression",
       "slots": [
         {
           "name": "start",
@@ -19022,6 +19560,7 @@
         "definedBy": "enrich"
       },
       "seated": true,
+      "variantOf": "range_expression",
       "slots": [
         {
           "name": "end",
@@ -19132,6 +19671,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_pattern",
       "transparent": true,
       "subtypes": [
         "range_pattern_prefix",
@@ -19163,6 +19703,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "range_pattern",
       "slots": [
         {
           "name": "content",
@@ -19283,6 +19824,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "range_pattern",
       "slots": [
         {
           "name": "left",
@@ -19396,6 +19938,7 @@
         "rangePatternWithLeftBare"
       ],
       "hidden": false,
+      "variantOf": "range_pattern_with_left",
       "isParameterless": true,
       "stampExpression": "\"..\" as const",
       "text": "..",
@@ -19429,6 +19972,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "range_pattern_with_left",
       "slots": [
         {
           "name": "content",
@@ -19718,6 +20262,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "slots": [
         {
           "name": "pattern",
@@ -19803,6 +20348,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_expression_except_range",
       "transparent": true,
       "subtypes": [
         "reference_expression_bare",
@@ -19836,6 +20382,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "reference_expression",
       "slots": [
         {
           "name": "value",
@@ -19956,6 +20503,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "reference_expression",
       "slots": [
         {
           "name": "value",
@@ -20076,6 +20624,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "reference_expression",
       "slots": [
         {
           "name": "value",
@@ -20196,6 +20745,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "reference_expression",
       "slots": [
         {
           "name": "value",
@@ -20307,6 +20857,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "slots": [
         {
           "name": "mutable",
@@ -20561,6 +21112,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "expression",
@@ -21028,6 +21580,7 @@
         "scopedUseList"
       ],
       "hidden": false,
+      "variantOf": "_use_clause",
       "slots": [
         {
           "name": "path",
@@ -21143,6 +21696,7 @@
         "selfParameter"
       ],
       "hidden": false,
+      "variantOf": "attributed_parameter",
       "slots": [
         {
           "name": "reference",
@@ -21432,6 +21986,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "slots": [
         {
           "name": "patterns",
@@ -21617,6 +22172,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -21898,6 +22454,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "name",
@@ -21979,6 +22536,7 @@
         ]
       ],
       "hidden": true,
+      "variantOf": "_declaration_statement",
       "transparent": true,
       "subtypes": [
         "struct_item_brace",
@@ -22016,6 +22574,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "struct_item",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -22158,6 +22717,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "struct_item",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -22300,6 +22860,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "struct_item",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -22396,6 +22957,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "slots": [
         {
           "name": "type",
@@ -22478,6 +23040,35 @@
         "field_pattern",
         "remaining_field_pattern"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "field_pattern",
+            "remaining_field_pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "field_pattern",
+              "parseKind": "field_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "remaining_field_pattern",
+              "parseKind": "remaining_field_pattern"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -22514,6 +23105,7 @@
         "tokenBindingPattern"
       ],
       "hidden": false,
+      "variantOf": "_token_pattern",
       "slots": [
         {
           "name": "name",
@@ -22572,6 +23164,7 @@
         "tokenRepetition"
       ],
       "hidden": false,
+      "variantOf": "_tokens",
       "slots": [
         {
           "name": "tokens",
@@ -22682,6 +23275,7 @@
         "tokenRepetitionPattern"
       ],
       "hidden": false,
+      "variantOf": "_token_pattern",
       "slots": [
         {
           "name": "token_patterns",
@@ -22840,6 +23434,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "token_tree",
       "slots": [
         {
           "name": "tokens",
@@ -22909,6 +23504,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "token_tree",
       "slots": [
         {
           "name": "tokens",
@@ -22978,6 +23574,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "token_tree",
       "slots": [
         {
           "name": "tokens",
@@ -23063,6 +23660,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "token_tree_pattern",
       "slots": [
         {
           "name": "token_patterns",
@@ -23139,6 +23737,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "token_tree_pattern",
       "slots": [
         {
           "name": "token_patterns",
@@ -23215,6 +23814,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "token_tree_pattern",
       "slots": [
         {
           "name": "token_patterns",
@@ -23277,51 +23877,184 @@
       "typeName": "TokenTreePunctuation",
       "factoryName": "tokenTreePunctuation",
       "hidden": false,
-      "values": [
-        "+",
-        "-",
-        "*",
-        "/",
-        "%",
-        "^",
-        "!",
-        "&",
-        "|",
-        "&&",
-        "||",
-        "<<",
-        ">>",
-        "+=",
-        "-=",
-        "*=",
-        "/=",
-        "%=",
-        "^=",
-        "&=",
-        "|=",
-        "<<=",
-        ">>=",
-        "=",
-        "==",
-        "!=",
-        ">",
-        "<",
-        ">=",
-        "<=",
-        "@",
-        "_",
-        ".",
-        "..",
-        "...",
-        "..=",
-        ",",
-        ";",
-        ":",
-        "::",
-        "->",
-        "=>",
-        "#",
-        "?"
+      "variantOf": "non_special_token",
+      "members": [
+        {
+          "kind": "plus",
+          "text": "+"
+        },
+        {
+          "kind": "dash",
+          "text": "-"
+        },
+        {
+          "kind": "star",
+          "text": "*"
+        },
+        {
+          "kind": "slash",
+          "text": "/"
+        },
+        {
+          "kind": "percent",
+          "text": "%"
+        },
+        {
+          "kind": "caret",
+          "text": "^"
+        },
+        {
+          "kind": "bang",
+          "text": "!"
+        },
+        {
+          "kind": "amp",
+          "text": "&"
+        },
+        {
+          "kind": "pipe",
+          "text": "|"
+        },
+        {
+          "kind": "amp_amp",
+          "text": "&&"
+        },
+        {
+          "kind": "pipe_pipe",
+          "text": "||"
+        },
+        {
+          "kind": "lt_lt",
+          "text": "<<"
+        },
+        {
+          "kind": "gt_gt",
+          "text": ">>"
+        },
+        {
+          "kind": "plus_eq",
+          "text": "+="
+        },
+        {
+          "kind": "dash_eq",
+          "text": "-="
+        },
+        {
+          "kind": "star_eq",
+          "text": "*="
+        },
+        {
+          "kind": "slash_eq",
+          "text": "/="
+        },
+        {
+          "kind": "percent_eq",
+          "text": "%="
+        },
+        {
+          "kind": "caret_eq",
+          "text": "^="
+        },
+        {
+          "kind": "amp_eq",
+          "text": "&="
+        },
+        {
+          "kind": "pipe_eq",
+          "text": "|="
+        },
+        {
+          "kind": "lt_lt_eq",
+          "text": "<<="
+        },
+        {
+          "kind": "gt_gt_eq",
+          "text": ">>="
+        },
+        {
+          "kind": "eq",
+          "text": "="
+        },
+        {
+          "kind": "eq_eq",
+          "text": "=="
+        },
+        {
+          "kind": "bang_eq",
+          "text": "!="
+        },
+        {
+          "kind": "gt",
+          "text": ">"
+        },
+        {
+          "kind": "lt",
+          "text": "<"
+        },
+        {
+          "kind": "gt_eq",
+          "text": ">="
+        },
+        {
+          "kind": "lt_eq",
+          "text": "<="
+        },
+        {
+          "kind": "at",
+          "text": "@"
+        },
+        {
+          "kind": "underscore",
+          "text": "_"
+        },
+        {
+          "kind": "dot",
+          "text": "."
+        },
+        {
+          "kind": "dot_dot",
+          "text": ".."
+        },
+        {
+          "kind": "dot_dot_dot",
+          "text": "..."
+        },
+        {
+          "kind": "dot_dot_eq",
+          "text": "..="
+        },
+        {
+          "kind": "comma",
+          "text": ","
+        },
+        {
+          "kind": "semi",
+          "text": ";"
+        },
+        {
+          "kind": "colon",
+          "text": ":"
+        },
+        {
+          "kind": "colon_colon",
+          "text": "::"
+        },
+        {
+          "kind": "dash_gt",
+          "text": "->"
+        },
+        {
+          "kind": "eq_gt",
+          "text": "=>"
+        },
+        {
+          "kind": "pound",
+          "text": "#"
+        },
+        {
+          "kind": "qmark",
+          "text": "?"
+        }
       ],
       "factoryShape": "text"
     },
@@ -23396,6 +24129,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -23583,6 +24317,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_ending_with_block",
       "slots": [
         {
           "name": "body",
@@ -23630,6 +24365,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "value",
@@ -23760,6 +24496,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "attributes",
@@ -23828,6 +24565,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "slots": [
         {
           "name": "elements",
@@ -23922,6 +24660,35 @@
         "_pattern",
         "closure_expression"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "_pattern",
+            "closure_expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "_pattern",
+              "parseKind": "_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "closure_expression",
+              "parseKind": "closure_expression"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -23986,6 +24753,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "slots": [
         {
           "name": "type",
@@ -24360,6 +25128,32 @@
           "shape": "elements"
         }
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "type_argument"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "type_argument",
+              "parseKind": "type_argument",
+              "seat": {
+                "kind": "type_argument",
+                "shape": "elements"
+              }
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -24435,6 +25229,7 @@
         "typeBinding"
       ],
       "hidden": false,
+      "variantOf": "type_argument",
       "slots": [
         {
           "name": "name",
@@ -24520,6 +25315,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "value",
@@ -24624,6 +25420,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -24776,6 +25573,7 @@
         "typeParameter"
       ],
       "hidden": false,
+      "variantOf": "attributed_type_parameter",
       "slots": [
         {
           "name": "name",
@@ -24919,6 +25717,32 @@
           "shape": "elements"
         }
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "attributed_type_parameter"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "attributed_type_parameter",
+              "parseKind": "attributed_type_parameter",
+              "seat": {
+                "kind": "attributed_type_parameter",
+                "shape": "elements"
+              }
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -24952,6 +25776,28 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "_type"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "_type"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "_type",
+              "parseKind": "_type"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -25064,6 +25910,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "operator",
@@ -25152,6 +25999,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -25289,6 +26137,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "isParameterless": true,
       "stampExpression": "\"()\" as const",
       "text": "()",
@@ -25311,6 +26160,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_type",
       "isParameterless": true,
       "stampExpression": "\"()\" as const",
       "text": "()",
@@ -25333,6 +26183,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_ending_with_block",
       "slots": [
         {
           "name": "body",
@@ -25384,6 +26235,7 @@
         "useAsClause"
       ],
       "hidden": false,
+      "variantOf": "_use_clause",
       "slots": [
         {
           "name": "path",
@@ -25534,6 +26386,35 @@
         "lifetime",
         "type_identifier"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "lifetime",
+            "type_identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "lifetime",
+              "parseKind": "lifetime"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "type_identifier",
+              "parseKind": "type_identifier"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -25575,6 +26456,91 @@
         "scoped_use_list",
         "use_wildcard"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "self",
+            "metavariable",
+            "super",
+            "crate",
+            "identifier",
+            "scoped_identifier",
+            "use_as_clause",
+            "use_list",
+            "scoped_use_list",
+            "use_wildcard"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "self",
+              "parseKind": "self"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "metavariable",
+              "parseKind": "metavariable"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "super",
+              "parseKind": "super"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "crate",
+              "parseKind": "crate"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "identifier",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "scoped_identifier",
+              "parseKind": "scoped_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "use_as_clause",
+              "parseKind": "use_as_clause"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "use_list",
+              "parseKind": "use_list"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "scoped_use_list",
+              "parseKind": "scoped_use_list"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "use_wildcard",
+              "parseKind": "use_wildcard"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -25614,6 +26580,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_declaration_statement",
       "slots": [
         {
           "name": "visibility_modifier",
@@ -25797,6 +26764,7 @@
         "useWildcard"
       ],
       "hidden": false,
+      "variantOf": "_use_clause",
       "slots": [
         {
           "name": "use_wildcard_group",
@@ -25939,6 +26907,7 @@
         "variadicParameter"
       ],
       "hidden": false,
+      "variantOf": "attributed_parameter",
       "slots": [
         {
           "name": "mutable",
@@ -26072,6 +27041,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "visibility_modifier",
       "slots": [
         {
           "name": "visibility_modifier_pub_scope",
@@ -26132,6 +27102,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "visibility_modifier_pub",
       "slots": [
         {
           "name": "content",
@@ -26212,6 +27183,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "visibility_modifier_pub_scope",
       "slots": [
         {
           "name": "path",
@@ -26478,6 +27450,28 @@
       "elementKinds": [
         "where_predicate"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "where_predicate"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "where_predicate",
+              "parseKind": "where_predicate"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -26502,6 +27496,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_ending_with_block",
       "slots": [
         {
           "name": "label",
@@ -26611,6 +27606,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_pattern",
       "isParameterless": true,
       "stampExpression": "\"_\" as const",
       "text": "_",
@@ -26633,6 +27629,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_expression_except_range",
       "slots": [
         {
           "name": "expression",

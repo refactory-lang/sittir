@@ -88,7 +88,7 @@ elsewhere. It is what a literal segment matches against.
  * @param rule - The prec wrapper to descend through.
  * @param segments - Remaining path segments (not consumed by this descent).
  * @param patch - Patch value or function to apply at the addressed position.
- * @param precStack - Previously accumulated prec wrappers.
+ * @param enclosing - The prec and token wrappers the walk has descended through.
  * @returns Reconstructed prec wrapper with the patched inner content.
  */
 ```
@@ -118,7 +118,7 @@ can travel through it (see `descendThroughGroupLiftSymbol`).
  * Travel through an enrich group-lift symbol by LOOKING UP its referenced rule
  * body (not by descending into carried content). Descends into the resolved
  * body without consuming a path segment, patches it, and records the patched
- * body in the active wire context's lift overlay (`wireSetLiftBody`). The
+ * body in the active wire context's patched lift bodies (`wireSetLiftBody`). The
  * lift's own wire rule fn (`passthroughBaseRuleFn`) returns that body, so the
  * hidden group rule reflects the patch in both pipelines. The symbol ref
  * itself is returned unchanged (it still points at the same name).
@@ -150,6 +150,10 @@ single-content / index-0 behaviour).
  */
 ```
 
+### `packages/codegen/src/dsl/transform/transform-path.ts::insideLexicalToken`
+
+Whether the wrappers the walk has descended through (`enclosing`) include a token. A patch landing there edits a lexeme's interior, where tree-sitter admits no symbol. `descendThroughSingleWrapper` adds a token wrapper to the stack as `descendThroughPrecWrapper` adds a prec wrapper.
+
 ### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughSingleWrapper`
 
 ```text
@@ -165,7 +169,7 @@ single-content / index-0 behaviour).
  * @param head - The current path segment (index or wildcard).
  * @param rest - Remaining path segments after this descent.
  * @param patch - Patch value or function to apply at the addressed position.
- * @param precStack - Accumulated prec wrappers for the patch callback.
+ * @param enclosing - The prec and token wrappers the walk has descended through.
  * @returns Reconstructed wrapper with the patched inner content.
  * @throws {ApplyPathSkip} If the index is out of range for a single-slot wrapper.
  */
@@ -226,7 +230,7 @@ single-content / index-0 behaviour).
  * @param fieldName - The expected field name.
  * @param rest - Remaining path segments after this descent.
  * @param patch - Patch value or function to apply at the addressed position.
- * @param precStack - Accumulated prec wrappers for the patch callback.
+ * @param enclosing - The prec and token wrappers the walk has descended through.
  * @returns Reconstructed field wrapper with the patched inner content.
  * @throws {Error} If the rule is not a field wrapper, or if the field name doesn't match.
  */
@@ -251,7 +255,7 @@ single-content / index-0 behaviour).
  * @param kindName - The symbol kind name to match against.
  * @param rest - Remaining path segments after the kind-match step.
  * @param patch - Patch value or function to apply at each matched symbol.
- * @param precStack - Accumulated prec wrappers for the patch callback.
+ * @param enclosing - The prec and token wrappers the walk has descended through.
  * @returns The rule with all matching occurrences patched.
  */
 ```
@@ -296,7 +300,7 @@ single-content / index-0 behaviour).
  * @param targetKind - The kind name that must match `rule.name`.
  * @param rest - Remaining path segments after the kind-match step.
  * @param patch - Patch value or function to apply when the name matches.
- * @param precStack - Accumulated prec wrappers for the patch callback.
+ * @param enclosing - The prec and token wrappers the walk has descended through.
  * @param insideNamedField - Whether this symbol is already inside a named field.
  * @returns `{ rule, matched }` — `matched` is `false` when name or field guard fails.
  */
@@ -402,10 +406,10 @@ whether a group seats on its parent.
 
 ```text
 /**
- * Wrap `content` in the accumulated prec stack collected during path
- * descent. Each entry in `precStack` is the original prec wrapper the
- * path crossed; we reapply them inner-first so the outer-most prec is
- * the outermost in the result.
+ * Wrap `content` in the prec wrappers the path descent crossed. The stack
+ * also holds the token wrappers crossed, which are not reapplied; the prec
+ * wrappers are reapplied inner-first so the outer-most prec is the outermost
+ * in the result.
  */
 ```
 
@@ -425,7 +429,7 @@ whether a group seats on its parent.
  * @param indexValue - The raw index value (may be negative).
  * @param rest - Remaining path segments after this step.
  * @param patch - Patch value or function.
- * @param precStack - Accumulated prec wrappers.
+ * @param enclosing - The prec and token wrappers the walk has descended through.
  * @returns Reconstructed container with the patched member.
  * @throws {ApplyPathSkip} If the resolved index is out of bounds.
  */
@@ -449,7 +453,7 @@ whether a group seats on its parent.
  * @param members - Mutable copy of the container's members.
  * @param rest - Remaining path segments after the wildcard step.
  * @param patch - Patch value or function.
- * @param precStack - Accumulated prec wrappers.
+ * @param enclosing - The prec and token wrappers the walk has descended through.
  * @returns Reconstructed container with all matching members patched.
  * @throws {ApplyPathSkip} If the container is empty or no member accepted the patch.
  */
@@ -957,7 +961,7 @@ built from the name-neutral `$` and compared as `canonicalRuleText`
  *
  * @param patch - The AliasPlaceholder with the desired alias name.
  * @param originalMember - The rule currently at the target position.
- * @param precStack - Accumulated prec wrappers for the hidden rule body.
+ * @param enclosing - The wrappers the walk descended through; their prec wrappers wrap the hidden rule body.
  * @returns A new alias rule wrapping the hidden rule.
  */
 ```
@@ -1508,6 +1512,8 @@ Only a HIDDEN group lift (`isHiddenKind`) is looked through. A visible lift is a
 
 ### `packages/codegen/src/dsl/transform/transform.ts::resolveFieldPlaceholder`
 
+A one-arg `field(name)` patch at its site. Content that is a keyword string (or an optional one) is indirected through a hidden `_kw_<name>` symbol so the field survives tree-sitter's normalizer (`primitives/field.ts::maybeKeywordSymbol`), except inside a token (`transform-path.ts::insideLexicalToken`): there the field names an interior part of the lexeme, which the parser ignores, and the string stays, since a token cannot reference a symbol.
+
 #### body
 
 ```text
@@ -1813,3 +1819,19 @@ The precedence wrappers above a rule, outermost first, and the rule beneath them
 
 Rewrites `choice(optional(x), optional(y), …, optional(n))` to `optional(choice(x, y, …, n))` wherever every member of a choice (two or more) is optional, bottom-up, so a choice nested in a choice is factored first. The two spellings match the same text; the factored one keeps the blank case in one place, so the token-form hoist splits the inner choice into disjoint arms plus one blank arm, instead of one arm per optional member that each also accepts the blank. A mixed choice is left alone. The result of a rewrite no longer matches (its members are the inner choice and a blank), so the rewrite is idempotent; an unchanged rule is returned as the same object. Enrich runs it on every rule, so the rewrite reaches both the parser and the IR, and the DSL builders stay faithful to what the grammar wrote.
 
+
+### `packages/codegen/src/dsl/transform/transform.ts::applyPatchSet`
+
+Applies one patch set: records its sites, then applies it in path mode when any key is a path or any value a placeholder of the listed kinds, and flat otherwise. A flat set indexes the members of the first SEQ under the rule; on a CHOICE it indexes inside every arm, so a plain index there never selects an arm.
+
+### `packages/codegen/src/dsl/transform/transform.ts::isAliasOfSymbol`
+
+Whether a patch is an `alias()` of the same symbol the patched member is. `resolvePatch` then aliases the member itself, so the site keeps what it carries (variant labels, metadata) instead of taking the patch's bare symbol.
+
+### `packages/codegen/src/dsl/transform/transform.ts::recordFieldEffect`
+
+The option-path segment a `field()` patch renames on the patched kind: an existing field's `name:`, a wrapped symbol's `kind:`, or a wrapped token's quoted text, each becoming the new field's `name:`. Recorded only while a binding set applies.
+
+### `packages/codegen/src/dsl/transform/transform.ts::recordAliasEffect`
+
+A named `alias()` of a symbol renames that kind in option paths; recorded only while a binding set applies.

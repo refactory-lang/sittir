@@ -836,7 +836,11 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_token_tree_punctuation"
+              "name": "_token_tree_punctuation",
+              "annotations": {
+                "variant": "token_tree_punctuation",
+                "variantOf": "_non_special_token"
+              }
             },
             "named": true,
             "value": "token_tree_punctuation"
@@ -844,7 +848,11 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_token_keywords"
+          "name": "_token_keywords",
+          "annotations": {
+            "variant": "token_keywords",
+            "variantOf": "_non_special_token"
+          }
         }
       ]
     },
@@ -10416,179 +10424,311 @@
       "members": [
         {
           "type": "STRING",
-          "value": "+"
+          "value": "+",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "-"
+          "value": "-",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "*"
+          "value": "*",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "/"
+          "value": "/",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "%"
+          "value": "%",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "^"
+          "value": "^",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "!"
+          "value": "!",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "&"
+          "value": "&",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "|"
+          "value": "|",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "&&"
+          "value": "&&",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "||"
+          "value": "||",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "<<"
+          "value": "<<",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": ">>"
+          "value": ">>",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "+="
+          "value": "+=",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "-="
+          "value": "-=",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "*="
+          "value": "*=",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "/="
+          "value": "/=",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "%="
+          "value": "%=",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "^="
+          "value": "^=",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "&="
+          "value": "&=",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "|="
+          "value": "|=",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "<<="
+          "value": "<<=",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": ">>="
+          "value": ">>=",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "="
+          "value": "=",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "=="
+          "value": "==",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "!="
+          "value": "!=",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": ">"
+          "value": ">",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "<"
+          "value": "<",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": ">="
+          "value": ">=",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "<="
+          "value": "<=",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "@"
+          "value": "@",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "_"
+          "value": "_",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "."
+          "value": ".",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": ".."
+          "value": "..",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "..."
+          "value": "...",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "..="
+          "value": "..=",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": ","
+          "value": ",",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": ";"
+          "value": ";",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": ":"
+          "value": ":",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "::"
+          "value": "::",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "->"
+          "value": "->",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "=>"
+          "value": "=>",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "#"
+          "value": "#",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         },
         {
           "type": "STRING",
-          "value": "?"
+          "value": "?",
+          "annotations": {
+            "variantOf": "_token_tree_punctuation"
+          }
         }
       ]
     },
@@ -10597,119 +10737,206 @@
       "members": [
         {
           "type": "STRING",
-          "value": "'"
+          "value": "'",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "as"
+          "value": "as",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "async"
+          "value": "async",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "await"
+          "value": "await",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "break"
+          "value": "break",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "const"
+          "value": "const",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "continue"
+          "value": "continue",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "default"
+          "value": "default",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "enum"
+          "value": "enum",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "fn"
+          "value": "fn",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "for"
+          "value": "for",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "gen"
+          "value": "gen",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "if"
+          "value": "if",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "impl"
+          "value": "impl",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "let"
+          "value": "let",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "loop"
+          "value": "loop",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "match"
+          "value": "match",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "mod"
+          "value": "mod",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "pub"
+          "value": "pub",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "return"
+          "value": "return",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "static"
+          "value": "static",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "struct"
+          "value": "struct",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "trait"
+          "value": "trait",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "type"
+          "value": "type",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "union"
+          "value": "union",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "unsafe"
+          "value": "unsafe",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "use"
+          "value": "use",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "where"
+          "value": "where",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         },
         {
           "type": "STRING",
-          "value": "while"
+          "value": "while",
+          "annotations": {
+            "variantOf": "_token_keywords"
+          }
         }
       ]
     },
@@ -11120,16 +11347,23 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "b"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+            "type": "FIELD",
+            "name": "byte",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "b"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "STRING",
@@ -11188,16 +11422,23 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "b"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+            "type": "FIELD",
+            "name": "byte",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "b"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "STRING",
@@ -11233,16 +11474,23 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "b"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+            "type": "FIELD",
+            "name": "byte",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "b"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "STRING",
@@ -11278,16 +11526,23 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "b"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+            "type": "FIELD",
+            "name": "byte",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "b"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "STRING",
@@ -11323,16 +11578,23 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "b"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+            "type": "FIELD",
+            "name": "byte",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "b"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "STRING",
@@ -14351,23 +14613,42 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "parameter"
+              "name": "parameter",
+              "annotations": {
+                "variant": "parameter",
+                "variantOf": "_attributed_parameter"
+              }
             },
             {
               "type": "SYMBOL",
-              "name": "self_parameter"
+              "name": "self_parameter",
+              "annotations": {
+                "variant": "self_parameter",
+                "variantOf": "_attributed_parameter"
+              }
             },
             {
               "type": "SYMBOL",
-              "name": "variadic_parameter"
+              "name": "variadic_parameter",
+              "annotations": {
+                "variant": "variadic_parameter",
+                "variantOf": "_attributed_parameter"
+              }
             },
             {
               "type": "STRING",
-              "value": "_"
+              "value": "_",
+              "annotations": {
+                "variantOf": "_attributed_parameter"
+              }
             },
             {
               "type": "SYMBOL",
-              "name": "_type"
+              "name": "_type",
+              "annotations": {
+                "variant": "type",
+                "variantOf": "_attributed_parameter"
+              }
             }
           ]
         }
@@ -14391,19 +14672,35 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "metavariable"
+              "name": "metavariable",
+              "annotations": {
+                "variant": "metavariable",
+                "variantOf": "_attributed_type_parameter"
+              }
             },
             {
               "type": "SYMBOL",
-              "name": "type_parameter"
+              "name": "type_parameter",
+              "annotations": {
+                "variant": "type_parameter",
+                "variantOf": "_attributed_type_parameter"
+              }
             },
             {
               "type": "SYMBOL",
-              "name": "lifetime_parameter"
+              "name": "lifetime_parameter",
+              "annotations": {
+                "variant": "lifetime_parameter",
+                "variantOf": "_attributed_type_parameter"
+              }
             },
             {
               "type": "SYMBOL",
-              "name": "const_parameter"
+              "name": "const_parameter",
+              "annotations": {
+                "variant": "const_parameter",
+                "variantOf": "_attributed_type_parameter"
+              }
             }
           ]
         }
@@ -14477,23 +14774,43 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "_type"
+              "name": "_type",
+              "annotations": {
+                "variant": "type",
+                "variantOf": "_type_argument"
+              }
             },
             {
               "type": "SYMBOL",
-              "name": "type_binding"
+              "name": "type_binding",
+              "annotations": {
+                "variant": "type_binding",
+                "variantOf": "_type_argument"
+              }
             },
             {
               "type": "SYMBOL",
-              "name": "lifetime"
+              "name": "lifetime",
+              "annotations": {
+                "variant": "lifetime",
+                "variantOf": "_type_argument"
+              }
             },
             {
               "type": "SYMBOL",
-              "name": "_literal"
+              "name": "_literal",
+              "annotations": {
+                "variant": "literal",
+                "variantOf": "_type_argument"
+              }
             },
             {
               "type": "SYMBOL",
-              "name": "block"
+              "name": "block",
+              "annotations": {
+                "variant": "block",
+                "variantOf": "_type_argument"
+              }
             }
           ]
         },

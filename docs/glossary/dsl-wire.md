@@ -321,7 +321,7 @@ The `prec.dynamic` values in each rule's body, wherever the wrapper sits, for th
 
 ### `packages/codegen/src/dsl/wire/derivation-records.ts::ConflictConfig`
 
-What the config says about conflicts: the resolutions the grammar imported, and whether it authors a `conflicts` block, which is never applied (`compiler/diagnostics/conflicts.ts::conflictRecords` blocks on it).
+What the config says about conflicts: the resolutions the grammar imported (`resolutions`, the base sets, and `boundResolutions`, the bound sets the bound grammar carries, empty under an unbound evaluation), and whether it authors a `conflicts` block, which is never applied (`compiler/diagnostics/conflicts.ts::conflictRecords` blocks on it).
 
 ### `packages/codegen/src/dsl/wire/derivation-records.ts::variantEdgesOf`
 
@@ -955,21 +955,21 @@ once counts once.
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.baseRuleBodies`
 
 The rule bodies of the base `wire()` received (the enriched grammar's
-rules), read-only. The lift overlay falls back to them.
+rules), read-only. A lift with no patched body falls back to them.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.liftBodies`
 
-The lift overlay: every enrich group-lift body a patch rewrote, by lift
+The patched lift bodies: every enrich group-lift body a patch rewrote, by lift
 name. Patches write here, never into the base, so the upstream grammar and
 its enriched form stay untouched.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireGetLiftBody`
 
-A lift's current body: the overlay's patched body, else the base body.
+A lift's current body: its patched body, else the base body.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireSetLiftBody`
 
-Records a patched lift body in the active wire context's overlay, and credits the lift to the patch sites
+Records a patched lift body in the active wire context's patched lift bodies, and credits the lift to the patch sites
 applying (`recordLiftClaim`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireWithLiftScope`
@@ -1272,15 +1272,15 @@ invalid key fails assignability at its own line.
 ### `packages/codegen/src/dsl/wire/wire.ts::DeclaredLabels`
 
 Every `kind/relative` path the `options:` block declares — what a
-`_bindings` value must name, as `readOptionsBlock` requires at load time.
+`_labels` value must name, as `readOptionsBlock` requires at load time.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::PreferencePathCheck`
 
 One kind's map of relative paths with each key judged by `IsPreferencePath`.
 
-### `packages/codegen/src/dsl/wire/wire.ts::BindingsCheck`
+### `packages/codegen/src/dsl/wire/wire.ts::LabelsCheck`
 
-The `_bindings` map: each address must be a path, each label must be a
+The `_labels` map: each address must be a path, each label must be a
 declared one, and a label's root must not be a rule of the grammar — the
 three refusals `readOptionsBlock` makes at load time, brought forward to the
 type check where a shaped base allows.
@@ -1954,11 +1954,19 @@ collision is always the author's to resolve.
 
 `indent` is the other reserved top-level key, and is not a kind: `indent: preference('<unit>')` declares the grammar's render indent unit and comes back as `OptionsDeclarations.indent` (undefined when absent). It mirrors the runtime options object's top-level `indent` key. The reader only checks the value is a `preference`; whether the unit suits the grammar is `indentUnitOf`'s check, made where the grammar's indent characters are in hand. `OptionsCheck` types the key as a bare `PreferencePlaceholder` and `DeclaredLabels` leaves it out, so it is never a label root.
 
-`_bindings` maps an address to a label and carries nothing else. Membership and
+`_labels` maps an address to a label and carries nothing else. Membership and
 default live in the two halves: the binding says which label an address belongs
 to, the declaration under its kind says what its arm is. Welded together, as
 `preference(label, arm)` repeated at every site does today, neither can be
 stated once.
+
+### `packages/codegen/src/dsl/wire/options-block.ts::AddressLabel`
+
+One entry of the options block's labels: an address and the label it names.
+
+### `packages/codegen/src/dsl/wire/options-block.ts::LABELS_KEY`
+
+The options key under which addresses are labelled. Its keys are addresses whose heads are kinds, which a kind rename has to follow.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::declaredGroupMintName`
 
@@ -1995,6 +2003,26 @@ Every `liftNames` key must be a rule enrich minted, else it throws. A renamed li
 ### `packages/codegen/src/dsl/wire/reparse-hosts.ts::ReparseHostsConfig`
 
 The grammar's `reparseHosts` block: a template per supertype or kind whose `$r` hole takes rendered text so it parses as a whole file, the priority order between reachable supertype hosts, and the kinds whose own host applies only when a variant is adopted. It passes through wire, evaluate and generate untouched and is emitted as data; the validator and the delimiter check both read it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.bindingEffects`
+
+The effects the binding patch sets had, in the order they applied (`bind.ts::BindingEffect`). `sittirGrammar` reads them through `wireBindingEffects` to rewrite the authored options.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.recordingBindingEffects`
+
+True while a binding patch set applies (`wireWithBindingEffects`); `wireRecordBindingEffect` records only then, so authored patches leave no effects.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireWithBindingEffects`
+
+Runs `fn` with `recordingBindingEffects` set, restoring the prior value after.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireRecordBindingEffect`
+
+Records one effect while a binding patch set applies; outside one it does nothing.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireBindingEffects`
+
+The effects recorded on the wire context that `wire()` attached to `opts`.
 
 ### `packages/codegen/src/dsl/wire/reparse-hosts.ts::assertReparseHostKeys`
 

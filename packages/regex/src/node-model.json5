@@ -621,6 +621,7 @@
         "alternation"
       ],
       "hidden": false,
+      "variantOf": "pattern",
       "slots": [
         {
           "name": "terms",
@@ -658,6 +659,7 @@
         "anonymousCapturingGroup"
       ],
       "hidden": false,
+      "variantOf": "term_group",
       "slots": [
         {
           "name": "pattern",
@@ -701,6 +703,7 @@
         "anyCharacter"
       ],
       "hidden": false,
+      "variantOf": "term_group",
       "isParameterless": true,
       "stampExpression": "\".\" as const",
       "text": ".",
@@ -717,6 +720,7 @@
         "backreferenceEscape"
       ],
       "hidden": false,
+      "variantOf": "term_group",
       "slots": [
         {
           "name": "group_name",
@@ -779,6 +783,7 @@
         "boundaryAssertion"
       ],
       "hidden": false,
+      "variantOf": "term_group",
       "isParameterless": true,
       "stampExpression": "\"\\\\b\" as const",
       "text": "\\b",
@@ -822,6 +827,7 @@
         "characterClass"
       ],
       "hidden": false,
+      "variantOf": "term_group",
       "slots": [
         {
           "name": "negation",
@@ -1031,6 +1037,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "character_class_escape",
       "slots": [
         {
           "name": "character_class_escape_text2",
@@ -1135,6 +1142,7 @@
         "classRange"
       ],
       "hidden": false,
+      "variantOf": "_class_atom",
       "slots": [
         {
           "name": "start",
@@ -1274,6 +1282,7 @@
         "controlLetterEscape"
       ],
       "hidden": false,
+      "variantOf": "_character_escape",
       "pattern": "\\\\c[a-zA-Z]",
       "leafPattern": "/^(?:(?:\\\\c[a-zA-Z]))$/u",
       "oneSurface": true,
@@ -1361,6 +1370,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "count_quantifier",
       "slots": [
         {
           "name": "decimal_digits",
@@ -1502,6 +1512,7 @@
         "decimalEscape"
       ],
       "hidden": false,
+      "variantOf": "term_group",
       "pattern": "\\\\[1-9][0-9]*",
       "leafPattern": "/^(?:(?:\\\\[1-9][0-9]*))$/u",
       "oneSurface": true,
@@ -1517,6 +1528,7 @@
         "endAssertion"
       ],
       "hidden": false,
+      "variantOf": "term_group",
       "isParameterless": true,
       "stampExpression": "\"$\" as const",
       "text": "$",
@@ -1581,6 +1593,7 @@
         "identityEscape"
       ],
       "hidden": false,
+      "variantOf": "_character_escape",
       "slots": [
         {
           "name": "content",
@@ -1644,6 +1657,7 @@
         "inlineFlagsGroup"
       ],
       "hidden": true,
+      "variantOf": "term_group",
       "transparent": true,
       "subtypes": [
         "inline_flags_group_disable",
@@ -1671,6 +1685,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "inline_flags_group",
       "slots": [
         {
           "name": "disabled",
@@ -1740,6 +1755,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "inline_flags_group",
       "slots": [
         {
           "name": "enabled",
@@ -1809,6 +1825,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "inline_flags_group",
       "slots": [
         {
           "name": "enabled",
@@ -1948,6 +1965,7 @@
         "lookaheadAssertion"
       ],
       "hidden": false,
+      "variantOf": "lookaround_assertion",
       "slots": [
         {
           "name": "content",
@@ -2010,6 +2028,7 @@
         "lookaroundAssertion"
       ],
       "hidden": false,
+      "variantOf": "term_group",
       "slots": [
         {
           "name": "content",
@@ -2058,6 +2077,7 @@
         "lookbehindAssertion"
       ],
       "hidden": false,
+      "variantOf": "lookaround_assertion",
       "slots": [
         {
           "name": "content",
@@ -2183,6 +2203,7 @@
         "namedCapturingGroup"
       ],
       "hidden": false,
+      "variantOf": "term_group",
       "slots": [
         {
           "name": "content",
@@ -2266,6 +2287,7 @@
         "namedGroupBackreference"
       ],
       "hidden": false,
+      "variantOf": "term_group",
       "slots": [
         {
           "name": "group_name",
@@ -2335,6 +2357,7 @@
         "nonBoundaryAssertion"
       ],
       "hidden": false,
+      "variantOf": "term_group",
       "isParameterless": true,
       "stampExpression": "\"\\\\B\" as const",
       "text": "\\B",
@@ -2351,6 +2374,7 @@
         "nonCapturingGroup"
       ],
       "hidden": false,
+      "variantOf": "term_group",
       "slots": [
         {
           "name": "pattern",
@@ -2512,6 +2536,7 @@
         "patternCharacter"
       ],
       "hidden": false,
+      "variantOf": "term_group",
       "pattern": "[^\\^\\$\\\\\\.\\*\\+\\?\\(\\)\\[\\]\\|\\r?\\n]",
       "leafPattern": "/^(?:(?:[^^$\\\\.*+?()[\\]|\\r?\\n]))$/u",
       "oneSurface": true,
@@ -2649,6 +2674,7 @@
         "startAssertion"
       ],
       "hidden": false,
+      "variantOf": "term_group",
       "isParameterless": true,
       "stampExpression": "\"^\" as const",
       "text": "^",
@@ -2715,6 +2741,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "term",
       "slots": [
         {
           "name": "content",
@@ -2928,6 +2955,7 @@
         "unicodeCharacterEscape"
       ],
       "hidden": false,
+      "variantOf": "character_class_escape",
       "leafPattern": "/^(?:(?:(?:\\\\u[0-9a-fA-F]{4})|(?:\\\\u\\{[0-9a-fA-F]{1,6}\\})))$/u",
       "oneSurface": true,
       "factoryShape": "text"

@@ -146,7 +146,7 @@ options: {
 
   keyword_argument: { '"="/before': preference('tight') },
 
-  _bindings: {
+  _labels: {
     'block/"{"/after':                  'body/before',
     'block/"}"/before':                 'body/after',
     'object_type/opening:/after':       'body/before',
@@ -178,7 +178,7 @@ written, so the collision is always the author's to resolve and the error can
 name the kind that was shadowed.
 
 **Membership and default are declared separately, in the two halves.**
-`_bindings` says an address belongs to a label; a declaration under the
+`_labels` says an address belongs to a label; a declaration under the
 address's kind says what its arm is. `keyword_argument`'s assignment gap is
 bound to `assignment/before` and declared `tight`, so a consumer setting
 `assignment/before` still moves it while its own default differs — which is
@@ -193,7 +193,7 @@ broader path that also reaches it.
 
 ### The generated surface
 
-`_bindings` is the single source for both faces of the TypeScript `Options`
+`_labels` is the single source for both faces of the TypeScript `Options`
 type. A binding's value becomes a flat named key; its key becomes a nested
 path:
 
@@ -218,7 +218,7 @@ flattening it into a `<slot>_<label>` string.
 `LABELS` stops being a table derived by scanning repeated label strings and
 becomes what was written.
 
-`_bindings` keys are full paths, so the block is flat and its keys are distinct
+`_labels` keys are full paths, so the block is flat and its keys are distinct
 by construction. Both blocks reject a duplicate key at load time rather than
 letting the object literal silently keep the last one.
 
@@ -323,7 +323,7 @@ never exposes them, so no caller can set one and none does.
 | `<kind>_start` / `_end` flanks | retired — the delimiter's seams reach the same gap |
 | `<kind>_before` / `_after` kind edges | `<kind>/before` / `/after` |
 | flank-supertype fan-out, `SUPERTYPE_MEMBERS` | a `(supertype)` segment expanding to its members |
-| `LABELS` as a derived scan | `options._bindings` as written |
+| `LABELS` as a derived scan | `options._labels` as written |
 | `FillOptions`, per-node option fields | the render context |
 
 `DEPTH_SITES` validation is unchanged: indent/dedent balance is checked against
@@ -336,9 +336,9 @@ which is the duplication this design exists to remove.
 
 Writing labels as paths also dates the binding block. `body/before` is already
 shaped like a role-scoped address and simply cannot be resolved as one yet, so
-`_bindings` enumerates its members by hand. The role-interfaces design already
+`_labels` enumerates its members by hand. The role-interfaces design already
 captures `@body`; when roles land, the same label path becomes a query and the
-enumeration deletes itself. `_bindings` is scaffolding with a known removal
+enumeration deletes itself. `_labels` is scaffolding with a known removal
 date, not a permanent namespace.
 
 ## Non-goals
@@ -354,7 +354,7 @@ date, not a permanent namespace.
 
 ## Resolved: the binding value
 
-A `_bindings` value is a label path. Nothing else: an address with a differing
+A `_labels` value is a label path. Nothing else: an address with a differing
 default declares it under its kind, and an address in no group is only a
 declaration. The union of value shapes an earlier draft carried was the
 membership and the default fighting for one slot.

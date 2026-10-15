@@ -9,7 +9,7 @@ import { type AssembledNode, AbstractAssembledCompound, AssembledEnum, Assembled
 import { slotElementKinds } from '../../emitters/transport-common.ts';
 import { supertypeMembersByDisplayName } from './supertype-members.ts';
 import { lineTerminatedKinds, triviaKinds } from './trivia.ts';
-import { addressSites, resolveBindings, type PreferenceOrigin } from './site-addresses.ts';
+import { addressSites, resolveLabels, type PreferenceOrigin } from './site-addresses.ts';
 import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
 import { defaultWhitespaceKindOf, depthMembersOf, lineBreakingKinds, rootEdgeKinds, whitespaceKindsOf, layoutKindsOf, layoutSymbolsOf, type DepthMembers } from './layout-kinds.ts';
@@ -68,6 +68,7 @@ export interface SpacedSeparator {
 export interface EdgeArmDefault {
 	readonly arm: Layout;
 	readonly origin: SeamOrigin;
+	readonly kindId?: number;
 }
 
 export interface RenderRules {
@@ -79,7 +80,7 @@ export interface RenderRules {
 
 export interface RenderRulesConfig {
 	readonly nodeMap: NodeMap;
-	readonly kindEntries: readonly KindEntryLike[];
+	readonly kindEntries: readonly (KindEntryLike & { readonly id: number })[];
 	readonly options?: OptionsConfig;
 	readonly whitespaceText?: ReadonlyMap<string, string>;
 	readonly normalizedRules?: Record<string, RenderRule>;
@@ -101,6 +102,7 @@ function isImmediateWhenPresent(rule: RenderRule, config: RenderRulesConfig): bo
 
 export interface SeatedChild {
 	readonly kind: string;
+	readonly display: string;
 	readonly field: string;
 }
 
@@ -117,12 +119,14 @@ export interface RuleSpacingSite {
 	readonly path?: readonly PreferenceSegment[];
 	readonly edgeLiterals?: readonly string[];
 	readonly edgeArm?: EdgeArm;
+	readonly kindEdge?: true;
 	readonly padding?: true;
 }
 
 export interface EdgeArm {
 	readonly parent: string;
 	readonly token: string;
+	readonly kindId?: number;
 }
 
 type Bag = {
@@ -837,9 +841,10 @@ function withKindEdges(
 		if (first.size < 2) return;
 		for (const token of first) {
 			const address = seamLabel(token, side);
-			const text = findEntryForKindName(config.kindEntries, token)?.literalText;
+			const entry = findEntryForKindName(config.kindEntries, token);
+			const text = entry?.literalText;
 			const { arm, origin } = resolver.resolveSeam(kind, address, seamsOf(side), text !== undefined && isKeywordText(text, config));
-			edgeArms.set(edgeArmKey(kind, address), { arm, origin });
+			edgeArms.set(edgeArmKey(kind, address), { arm, origin, ...(entry === undefined ? {} : { kindId: entry.id }) });
 		}
 	};
 	if (!isImmediateRight(rule, config)) recordArms('before');
@@ -930,11 +935,11 @@ export function declaredOptionArms(
 	const block: OptionsConfig | undefined = config.options;
 	if (block === undefined) return undefined;
 	const kinds = displayedKinds(config.nodeMap);
-	const { declarations, bindings } = readOptionsBlock(block, kinds);
+	const { declarations, labels } = readOptionsBlock(block, kinds);
 	if (declarations.length === 0) return undefined;
 	const addressed = addressSites(sites, config.kindEntries, config.nodeMap);
 	const arms = new Map<string, DeclaredArm>();
-	for (const [index, { arm, origin }] of resolveBindings(declarations, bindings, addressed, supertypeMembersByDisplayName(config.nodeMap), false)) {
+	for (const [index, { arm, origin }] of resolveLabels(declarations, labels, addressed, supertypeMembersByDisplayName(config.nodeMap), false)) {
 		const site = addressed[index]!;
 		arms.set(declaredKey(site.kind, site.address), { arm, origin });
 	}
@@ -943,7 +948,7 @@ export function declaredOptionArms(
 
 export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): RuleSpacingSite[] {
 	const out = new Map<string, RuleSpacingSite>();
-	const add = (kind: string, slot: string, part: SpacingPart, address: string, edgeArm?: EdgeArm, padding: boolean = false): void => {
+	const add = (kind: string, slot: string, part: SpacingPart, address: string, stamp: Pick<RuleSpacingSite, 'edgeArm' | 'kindEdge' | 'padding'> = {}): void => {
 		const key = `${kind} ${part.fieldName}`;
 		const prior = out.get(key);
 		if (prior !== undefined && prior.defaultArm !== part.defaultArm) {
@@ -960,8 +965,7 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 				arms: part.arms,
 				...(part.origin === 'word-default' ? { origin: part.origin } : {}),
 				...(part.edgeLiterals === undefined ? {} : { edgeLiterals: part.edgeLiterals }),
-				...(edgeArm === undefined ? {} : { edgeArm }),
-				...(padding ? { padding: true as const } : {})
+				...stamp
 			});
 		}
 	};
@@ -983,7 +987,7 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 			const part = seamPartOf(m);
 			const seam = parseSeamLabel(part.fieldName)!;
 			const kindEdge = seam.token === displayNameOf(kind, nodeMap);
-			add(kind, seam.token, part, part.fieldName, undefined, !kindEdge && seamChoiceDefault(m)?.origin === 'preference' && part.defaultArm === 'space');
+			add(kind, seam.token, part, part.fieldName, kindEdge ? { kindEdge } : seamChoiceDefault(m)?.origin === 'preference' && part.defaultArm === 'space' ? { padding: true } : {});
 			if (!kindEdge) continue;
 			for (const token of part.edgeLiterals ?? []) {
 				const address = seamLabel(token, seam.side);
@@ -994,7 +998,7 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 					token,
 					{ ...part, fieldName: address, label: address, defaultArm: armDefault.arm, origin: armDefault.origin, edgeLiterals: undefined },
 					address,
-					{ parent: part.fieldName, token }
+					{ edgeArm: { parent: part.fieldName, token, ...(armDefault.kindId === undefined ? {} : { kindId: armDefault.kindId }) } }
 				);
 			}
 		}
@@ -1088,14 +1092,13 @@ function seatedSites(
 ): RuleSpacingSite[] {
 	const edgeOf = new Map<string, Pick<RuleSpacingSite, 'address' | 'label' | 'side' | 'defaultArm' | 'arms'>>();
 	for (const site of sites) {
-		const own = displayNameOf(site.kind, nodeMap);
-		if (site.side === 'seam' && site.address === seamLabel(own, 'after')) edgeOf.set(own, site);
+		if (site.side === 'seam' && site.address === seamLabel(displayNameOf(site.kind, nodeMap), 'after')) edgeOf.set(site.kind, site);
 	}
-	for (const [kind, part] of unitEdges ?? []) edgeOf.set(displayNameOf(kind, nodeMap), { ...part, address: part.fieldName });
-	const admitted = seatedElementKinds(seats, nodeMap, (kind) => edgeOf.has(displayNameOf(kind, nodeMap)));
+	for (const [kind, part] of unitEdges ?? []) edgeOf.set(kind, { ...part, address: part.fieldName });
+	const admitted = seatedElementKinds(seats, nodeMap, (kind) => edgeOf.has(kind));
 	const out: RuleSpacingSite[] = [];
 	for (const seat of admitted.values()) {
-		const children = [...new Set([...seat.children].map((child) => displayNameOf(child, nodeMap)))].sort();
+		const children = [...seat.children].sort();
 		const parent = displayNameOf(seat.kind, nodeMap);
 		for (const child of children) {
 			const edge = edgeOf.get(child);
@@ -1113,11 +1116,11 @@ function seatedSites(
 				side: edge.side,
 				defaultArm: arm === undefined ? edge.defaultArm : (arm as Layout),
 				arms: edge.arms,
-				seat: { kind: child, field: edge.address },
+				seat: { kind: child, display: displayNameOf(child, nodeMap), field: edge.address },
 				path: [
 					{ kind: 'kind-match', name: parent },
 					{ kind: 'fieldName', name: seat.slot },
-					{ kind: 'kind-match', name: child },
+					{ kind: 'kind-match', name: displayNameOf(child, nodeMap) },
 					{ kind: 'name', name: 'after' }
 				]
 			});

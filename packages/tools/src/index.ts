@@ -16,6 +16,7 @@ export {
 export { run as probeKind, type ProbeKindOptions } from './probe/kind.ts';
 export { run as probeStages, type ProbeStagesOptions } from './probe/stages.ts';
 export { run as variantDerivationProbe, type VariantDerivationProbeOptions } from './probe/variant-derivation.ts';
+export { run as astDiff, type AstDiffOptions } from './probe/ast-diff.ts';
 export { run as probeParity, type ProbeParityOptions } from './probe/parity.ts';
 export { run as probeValidate, type ProbeValidateOptions } from './probe/validate.ts';
 export { run as profile, type ProfileOptions } from './profile/failures.ts';
@@ -124,5 +125,6 @@ export { run as hoistedCensus, type HoistedCensusOptions } from './census/hoiste
 export { run as spelledTrivia, type SpelledTriviaOptions } from './census/spelled-trivia.ts';
 export { run as textKindOverlap, type TextKindOverlapOptions } from './census/text-kind-overlap.ts';
 export { run as bindingsInventory, type BindingsInventoryOptions } from './inventory/index.ts';
+export { run as vocabularyFeatures, type VocabularyFeaturesOptions } from './vocabulary/index.ts';
 export { bootstrapGrammar, type BootstrapGrammarOptions } from './bootstrap/grammar.ts';
 export { fetchUpstreamCorpus, type CorpusSource, type FetchCorpusOptions } from './corpus/fetch.ts';
