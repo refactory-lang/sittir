@@ -452,6 +452,9 @@ and feed the phantom-kind ratchet; they are not grammar diagnostics.
 
 The codes no `expectDiagnostics` entry may name: a grammar tree-sitter rejects (`dangling-internal-ref`, `unpredictable-symbol-table`) a config declaration that does not fit the grammar (`groups-config-invalid`, `refine-config-invalid`), a `rules:` or `renderAs:` declaration that contradicts the grammar (`rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`), a definition of a name enrich mints for the whitespace vocabulary (`whitespace-mint-collision`), and a conflict the grammar authors or the derivation cannot settle (`conflict-authored`, `conflict-unresolvable`, `conflict-resolutions-stale`), and dynamic precedence reshaping lost (`conflict-dynamic-precedence-lost`). Each is fixed at its cause, never accepted. The debt codes `rule-reauthored-without-cause` and `patch-without-cause` stay floorable.
 
+`patch-credit-ambiguous` is also unexpectable: multiple `rule()` patches on
+one owner would otherwise receive indistinguishable owner-level credit.
+
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::unexpectableExpectEntries`
 
 One blocking `expect-diagnostics-invalid` record per `expectDiagnostics` key in `UNEXPECTABLE_CODES`, so an entry that could never take effect is reported rather than silently ignored.
@@ -696,6 +699,18 @@ wire otherwise repairs also reads as resolving. Only `diagnosePatchSites` acts o
 credited with none resolves nothing. It blocks;
 a floor for it applies at the gate. Authoring
 forms (`field`, `variant`, `alias` used to name) are never judged.
+
+Also reports `patch-credit-ambiguous` when an owner has more than one distinct
+`rule()` patch site. The diagnostic names every conflicting site because
+resolution credit is owner-level until per-site attribution is implemented.
+It is a config error and cannot be accepted with `expectDiagnostics`.
+
+### `packages/codegen/src/compiler/diagnostics/patch-sites.ts::ambiguousRulePatches`
+
+Groups `rule()` sites by owner using the existing `patchSiteKey` identity,
+so repeated metadata for one site counts once. Emits one blocking
+`patch-credit-ambiguous` diagnostic per owner with multiple sites, regardless
+of their authoring/resolving labels. Other patch forms do not participate.
 
 ### `packages/codegen/src/compiler/diagnostics/patch-sites.ts::sameSite`
 

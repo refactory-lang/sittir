@@ -40,24 +40,26 @@ function withPredictedKinds(raw: RawGrammar): RawGrammar {
 }
 
 function collisionGrammar(): RawGrammar {
-	return withPredictedKinds(buildRawGrammar({
-		host: structuralBuilder.choice(
-			structuralBuilder.alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
-			{ type: 'SYMBOL', name: 'shared' },
-			structuralBuilder.alias({ type: 'SYMBOL', name: 'right' }, { type: 'SYMBOL', name: 'shared' })
-		),
-		left: { type: 'PATTERN', value: '[a-z]+' },
-		shared: {
-			type: 'SEQ',
-			members: [
-				{ type: 'SYMBOL', name: 'identifier', fieldName: 'body' },
-				{ type: 'SYMBOL', name: 'identifier2', fieldName: 'tail' }
-			]
-		},
-		right: { type: 'PATTERN', value: '[0-9]+' },
-		identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
-		identifier2: { type: 'PATTERN', value: '[A-Z_]\\w*' }
-	}));
+	return withPredictedKinds(
+		buildRawGrammar({
+			host: structuralBuilder.choice(
+				structuralBuilder.alias({ type: 'SYMBOL', name: 'left' }, { type: 'SYMBOL', name: 'shared' }),
+				{ type: 'SYMBOL', name: 'shared' },
+				structuralBuilder.alias({ type: 'SYMBOL', name: 'right' }, { type: 'SYMBOL', name: 'shared' })
+			),
+			left: { type: 'PATTERN', value: '[a-z]+' },
+			shared: {
+				type: 'SEQ',
+				members: [
+					{ type: 'SYMBOL', name: 'identifier', fieldName: 'body' },
+					{ type: 'SYMBOL', name: 'identifier2', fieldName: 'tail' }
+				]
+			},
+			right: { type: 'PATTERN', value: '[0-9]+' },
+			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
+			identifier2: { type: 'PATTERN', value: '[A-Z_]\\w*' }
+		})
+	);
 }
 
 describe('grammar diagnostics preflight', () => {
@@ -78,10 +80,14 @@ describe('grammar diagnostics preflight', () => {
 	});
 
 	it('an AssembledEnum with fewer than two values is unreachable past the record, so its constructor still refuses one', () => {
-		const tail = (head: string, last: string) => ({ type: SEQ, members: [head, '.', last].map((value) => ({ type: STRING, value })) });
-		expect(() => new AssembledEnum('meta_property', { type: CHOICE, members: [tail('new', 'target'), tail('import', 'meta')] })).toThrow(
-			/assemble records single-literal-choice before constructing one/
-		);
+		const tail = (head: string, last: string) => ({
+			type: SEQ,
+			members: [head, '.', last].map((value) => ({ type: STRING, value }))
+		});
+		expect(
+			() =>
+				new AssembledEnum('meta_property', { type: CHOICE, members: [tail('new', 'target'), tail('import', 'meta')] })
+		).toThrow(/assemble records single-literal-choice before constructing one/);
 	});
 
 	it('records groups-config-invalid for a lift that does not resolve and applies the others', () => {
@@ -91,7 +97,13 @@ describe('grammar diagnostics preflight', () => {
 					type: 'SEQ',
 					members: [
 						{ type: 'SYMBOL', name: 'a' },
-						{ type: 'SEQ', members: [{ type: 'STRING', value: '(' }, { type: 'SYMBOL', name: 'b' }] }
+						{
+							type: 'SEQ',
+							members: [
+								{ type: 'STRING', value: '(' },
+								{ type: 'SYMBOL', name: 'b' }
+							]
+						}
 					]
 				},
 				a: { type: 'PATTERN', value: 'a' },
@@ -113,12 +125,22 @@ describe('grammar diagnostics preflight', () => {
 	it('rejects an expectDiagnostics entry that names a code no entry can expect', () => {
 		const rawGrammar = { ...collisionGrammar(), expectDiagnostics: { 'refine-config-invalid': ['host'] } };
 		expect(evaluateRecords(rawGrammar)).toContainEqual(
-			expect.objectContaining({ code: 'expect-diagnostics-invalid', canProceed: false, details: { code: 'refine-config-invalid' } })
+			expect.objectContaining({
+				code: 'expect-diagnostics-invalid',
+				canProceed: false,
+				details: { code: 'refine-config-invalid' }
+			})
 		);
 	});
 
 	it('rejects floors on the declaration codes, and keeps the debt codes floorable', () => {
-		const declarationCodes = ['rule-cause-missing', 'rule-cause-mismatch', 'render-only-not-external', 'vocabulary-replaces-upstream'];
+		const declarationCodes = [
+			'rule-cause-missing',
+			'rule-cause-mismatch',
+			'render-only-not-external',
+			'vocabulary-replaces-upstream',
+			'patch-credit-ambiguous'
+		];
 		const debtCodes = ['rule-reauthored-without-cause', 'patch-without-cause'];
 		const rawGrammar = {
 			...collisionGrammar(),
@@ -208,7 +230,9 @@ describe('grammar diagnostics preflight', () => {
 				}
 			]
 		});
-		expect(diagnostics).toEqual([expect.objectContaining({ code: 'parsekind-noninjective', ownerKind: 'host', canProceed: false })]);
+		expect(diagnostics).toEqual([
+			expect.objectContaining({ code: 'parsekind-noninjective', ownerKind: 'host', canProceed: false })
+		]);
 	});
 
 	it("files a display union's members by the predicted catalog, so an enrich-skipping fixture over a terminal and a nonterminal trips the mixed-display guard", () => {
@@ -293,7 +317,9 @@ describe('grammar diagnostics preflight', () => {
 		});
 		const { diagnostics } = collectGrammarDiagnosticsForGrammar({ rawGrammar });
 		expect(diagnostics).toEqual(
-			expect.arrayContaining([expect.objectContaining({ code: 'token-interior-unstructurable', ownerKind: 'tok', canProceed: false })])
+			expect.arrayContaining([
+				expect.objectContaining({ code: 'token-interior-unstructurable', ownerKind: 'tok', canProceed: false })
+			])
 		);
 	});
 
@@ -351,9 +377,7 @@ describe('grammar diagnostics preflight', () => {
 				host: { type: 'SYMBOL', name: 'known' },
 				known: { type: 'PATTERN', value: 'x' }
 			}),
-			desugarDivergences: [
-				{ site: 'body-pattern-group', name: '_orphan_group' }
-			]
+			desugarDivergences: [{ site: 'body-pattern-group', name: '_orphan_group' }]
 		};
 		expect(evaluateRecords(rawGrammar)).toEqual(
 			expect.arrayContaining([
@@ -495,10 +519,18 @@ describe('grammar diagnostics preflight', () => {
 describe('unsupported shapes block unless floor-listed for their own code', () => {
 	const warning = (code: string) => ({ code, ownerKind: 'k', message: 'm', details: {} });
 
-	for (const code of ['unclassifiable-shape', 'union-slot-mixed-row', 'union-slot-unaddressable', 'union-slot-routed-repeated']) {
+	for (const code of [
+		'unclassifiable-shape',
+		'union-slot-mixed-row',
+		'union-slot-unaddressable',
+		'union-slot-routed-repeated'
+	]) {
 		it(`${code} blocks, is accepted when the owner is floor-listed for it, and still blocks when listed for another code`, () => {
-			const records = collectGrammarDiagnostics({ grammar: 'synth', parseKindCollisions: [], assembleWarnings: [warning(code)] })
-				.diagnostics;
+			const records = collectGrammarDiagnostics({
+				grammar: 'synth',
+				parseKindCollisions: [],
+				assembleWarnings: [warning(code)]
+			}).diagnostics;
 			expect(records).toEqual([expect.objectContaining({ code, canProceed: false })]);
 			expect(blockedRecords(records, undefined)).toHaveLength(1);
 			expect(blockedRecords(records, { [code]: ['k'] })).toEqual([]);
@@ -525,8 +557,11 @@ describe('unsupported shapes block unless floor-listed for their own code', () =
 			slotCount: 2,
 			proposal: 'p'
 		};
-		const records = collectGrammarDiagnostics({ grammar: 'synth', parseKindCollisions: [], slotGroupingDiagnostics: [record] })
-			.diagnostics;
+		const records = collectGrammarDiagnostics({
+			grammar: 'synth',
+			parseKindCollisions: [],
+			slotGroupingDiagnostics: [record]
+		}).diagnostics;
 		expect(blockedRecords(records, undefined)).toHaveLength(1);
 		expect(blockedRecords(records, { 'multi-slot-nested-seq': ['k'] })).toEqual([]);
 		expect(blockedRecords(records, { 'content-collision': ['k'] })).toHaveLength(1);
@@ -540,9 +575,17 @@ describe('the grammar root must be a non-terminal', () => {
 		);
 
 	it('a choice-of-literals root is a blocking record naming the root', () => {
-		expect(rootRecords({ mode: { type: 'CHOICE', members: [{ type: 'STRING', value: 'on' }, { type: 'STRING', value: 'off' }] } })).toEqual([
-			expect.objectContaining({ ownerKind: 'mode', severity: 'error', canProceed: false })
-		]);
+		expect(
+			rootRecords({
+				mode: {
+					type: 'CHOICE',
+					members: [
+						{ type: 'STRING', value: 'on' },
+						{ type: 'STRING', value: 'off' }
+					]
+				}
+			})
+		).toEqual([expect.objectContaining({ ownerKind: 'mode', severity: 'error', canProceed: false })]);
 	});
 
 	it('a single-pattern root is a blocking record naming the root', () => {

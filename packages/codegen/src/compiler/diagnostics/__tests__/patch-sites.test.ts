@@ -24,7 +24,9 @@ describe('labelPatchSites', () => {
 			[site('field')],
 			[record('storagename-collision', byWire(site('field'))), record('content-collision', byWire(site('field')))]
 		);
-		expect(labelled).toEqual(expect.objectContaining({ label: 'resolving', claims: ['content-collision', 'storagename-collision'] }));
+		expect(labelled).toEqual(
+			expect.objectContaining({ label: 'resolving', claims: ['content-collision', 'storagename-collision'] })
+		);
 	});
 
 	it('records enrich resolved, records left unresolved and records credited to another site claim nothing', () => {
@@ -43,7 +45,9 @@ describe('labelPatchSites', () => {
 describe('diagnosePatchSites', () => {
 	it('a rule() site that claims nothing is patch-without-cause, blocking', () => {
 		const ds = diagnosePatchSites({ grammar: 'synth', sites: labelPatchSites([site('rule')], []) });
-		expect(ds).toEqual([expect.objectContaining({ code: 'patch-without-cause', ownerKind: 'host', canProceed: false })]);
+		expect(ds).toEqual([
+			expect.objectContaining({ code: 'patch-without-cause', ownerKind: 'host', canProceed: false })
+		]);
 		expect(ds[0]!.message).toMatch(/rule\('x'\)/);
 	});
 
@@ -61,5 +65,47 @@ describe('diagnosePatchSites', () => {
 		const ds = diagnosePatchSites({ grammar: 'synth', sites: labelPatchSites([site('rule')], []) });
 		expect(ds).toEqual([expect.objectContaining({ code: 'patch-without-cause', canProceed: false })]);
 		expect(blockedRecords(ds, { 'patch-without-cause': ['host'] })).toEqual([]);
+	});
+
+	it('blocks distinct rule() sites on one owner even when owner-level credit labels both resolving', () => {
+		const left = { ...site('rule'), path: '1', name: 'left' };
+		const right = { ...site('rule'), path: '2', name: 'right' };
+		const labelled = labelPatchSites([left, right], [record('unclassifiable-shape', byWire(left, right))]);
+		const ds = diagnosePatchSites({ grammar: 'synth', sites: labelled });
+		expect(ds).toEqual([
+			expect.objectContaining({
+				code: 'patch-credit-ambiguous',
+				ownerKind: 'host',
+				canProceed: false,
+				details: {
+					sites: [
+						{ path: '1', form: 'rule', name: 'left' },
+						{ path: '2', form: 'rule', name: 'right' }
+					]
+				}
+			})
+		]);
+		expect(ds[0]!.message).toContain('owner-level');
+		expect(ds[0]!.message).toContain("rule('left') at path '1'");
+		expect(ds[0]!.message).toContain("rule('right') at path '2'");
+		expect(blockedRecords(ds, {})).toEqual(ds);
+	});
+
+	it('also detects ambiguity between uncredited sites', () => {
+		const sites = [site('rule'), { ...site('rule'), path: '2' }];
+		const ds = diagnosePatchSites({ grammar: 'synth', sites: labelPatchSites(sites, []) });
+		expect(ds.filter(({ code }) => code === 'patch-credit-ambiguous')).toHaveLength(1);
+	});
+
+	it('permits one rule() per owner alongside non-rule patches on the same owner', () => {
+		const sites = [site('rule'), site('rule', 'other'), site('field'), site('variant'), site('alias')];
+		const labelled = labelPatchSites(sites, [record('unclassifiable-shape', byWire(...sites))]);
+		expect(diagnosePatchSites({ grammar: 'synth', sites: labelled })).toEqual([]);
+	});
+
+	it('counts one physical site once when its metadata is repeated', () => {
+		const rule = site('rule');
+		const labelled = labelPatchSites([rule, { ...rule }], [record('unclassifiable-shape', byWire(rule))]);
+		expect(diagnosePatchSites({ grammar: 'synth', sites: labelled })).toEqual([]);
 	});
 });

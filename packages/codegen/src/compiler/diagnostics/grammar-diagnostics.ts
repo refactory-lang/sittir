@@ -11,7 +11,15 @@ import { undeclaredSeparatorSites, type SitePreferencesConfig } from '../model/s
 import { makeSlotGroupingCollector } from '../simplify.ts';
 import { diagnoseRepeatedSeqGrouping, type SlotGroupingDiagnostic } from './slot-grouping.ts';
 import { isLiteralOnlyRule, isTerminalRootRule } from '../../dsl/rule-transforms.ts';
-import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, DesugarDivergenceEvent, ReservedWordsets, RuleCatalog } from '../types.ts';
+import type {
+	RawGrammar,
+	LinkedGrammar,
+	NormalizedGrammar,
+	IncludeFilter,
+	DesugarDivergenceEvent,
+	ReservedWordsets,
+	RuleCatalog
+} from '../types.ts';
 import {
 	kindCatalogOf,
 	predictedEntriesOf,
@@ -52,7 +60,9 @@ export function blockedRecords(
 ): GrammarDiagnostic[] {
 	return records.filter(
 		(record) =>
-			record.canProceed === false && !allow.has(record.code) && !isExpectedDiagnostic(floors, record.code, record.ownerKind)
+			record.canProceed === false &&
+			!allow.has(record.code) &&
+			!isExpectedDiagnostic(floors, record.code, record.ownerKind)
 	);
 }
 
@@ -188,7 +198,9 @@ export interface HiddenTerminalSite {
 
 const LAYOUT_ROLES: ReadonlySet<string> = new Set(['indent', 'dedent']);
 
-export function hiddenTerminalNonliteralSites(grammar: Pick<RawGrammar, 'rules' | 'externals' | 'externalRoles'>): HiddenTerminalSite[] {
+export function hiddenTerminalNonliteralSites(
+	grammar: Pick<RawGrammar, 'rules' | 'externals' | 'externalRoles'>
+): HiddenTerminalSite[] {
 	const externals = new Set(ruleListParts(grammar.externals).names);
 	const nonliteral = (name: string): boolean => {
 		if (!isParserHiddenName(name)) return false;
@@ -328,14 +340,20 @@ export function collectGrammarDiagnostics(input: {
 		...fromParseKindCollision(input.grammar, diagnostic),
 		canProceed: false
 	}));
-	const assembleWarningMapped = (input.assembleWarnings ?? []).map((warning) => fromAssembleWarning(input.grammar, warning));
+	const assembleWarningMapped = (input.assembleWarnings ?? []).map((warning) =>
+		fromAssembleWarning(input.grammar, warning)
+	);
 	const slotGroupingMapped = (input.slotGroupingDiagnostics ?? []).map((diagnostic) =>
 		fromSlotGrouping(input.grammar, diagnostic)
 	);
 	return { diagnostics: [...parseKindMapped, ...assembleWarningMapped, ...slotGroupingMapped] };
 }
 
-const SURFACED_COMPILER_CODES: ReadonlySet<string> = new Set(['groups-config-invalid', 'refine-config-invalid', 'token-interior-unstructurable']);
+const SURFACED_COMPILER_CODES: ReadonlySet<string> = new Set([
+	'groups-config-invalid',
+	'refine-config-invalid',
+	'token-interior-unstructurable'
+]);
 
 const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'dangling-internal-ref',
@@ -345,6 +363,7 @@ const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'refine-config-invalid',
 	'rule-cause-missing',
 	'rule-cause-mismatch',
+	'patch-credit-ambiguous',
 	'render-only-not-external',
 	'vocabulary-replaces-upstream',
 	'whitespace-mint-collision',
@@ -404,14 +423,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 			slotGroupingCollector
 		})
 	);
-	const nodeMap = assemble(
-		AssembleCtx.from(
-			normalized,
-			linked.generatedIdTables,
-			compilerDiagnostics,
-			kindEntries
-		)
-	);
+	const nodeMap = assemble(AssembleCtx.from(normalized, linked.generatedIdTables, compilerDiagnostics, kindEntries));
 	const slotGroupingDiagnostics = slotGroupingCollector.all;
 	const contentAliasDiagnostics = diagnoseContentAliasInjectivity({
 		grammar: rawGrammar.name,
@@ -512,7 +524,10 @@ export function diagnoseStage(raw: RawGrammar): { diagnostics: GrammarDiagnostic
 	return { diagnostics: [...records, ...diagnostics], ruleCatalog: collapsed.ruleCatalog };
 }
 
-function withoutOrphanedGroups(raw: Pick<RawGrammar, 'orphanedSyntheticGroups'>, records: GrammarDiagnostic[]): GrammarDiagnostic[] {
+function withoutOrphanedGroups(
+	raw: Pick<RawGrammar, 'orphanedSyntheticGroups'>,
+	records: GrammarDiagnostic[]
+): GrammarDiagnostic[] {
 	const orphaned = new Set(raw.orphanedSyntheticGroups ?? []);
 	return orphaned.size === 0 ? records : records.filter((d) => d.ownerKind === undefined || !orphaned.has(d.ownerKind));
 }
