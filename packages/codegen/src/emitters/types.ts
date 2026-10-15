@@ -162,8 +162,8 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	const scalars = scalarLeafKinds(nodeMap);
 	const scalarEntries = new Map<string, string>();
 	if (scalars.boolean !== undefined) {
-		scalarEntries.set(scalars.boolean.trueKind, 'boolean');
-		scalarEntries.set(scalars.boolean.falseKind, 'boolean');
+		scalarEntries.set(scalars.boolean.trueKind, 'true');
+		scalarEntries.set(scalars.boolean.falseKind, 'false');
 	}
 	for (const [kind, input] of numericLeafInputTypes(nodeMap)) scalarEntries.set(kind, input);
 	for (const kind of leafKinds) {

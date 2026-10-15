@@ -248,7 +248,6 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	readonly read: (path: string, options?: ParseOptions) => Promise<API['root']>;
 	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API> | SnapshotInput<API>>;
 	readonly create: (path: string, fn: (build: API['build']) => API['root']) => Pending;
-	readonly edit: (path: string, fn: (root: API['root']) => API['root']) => Pending;
 	readonly write: (path: string, node: API['root']) => Pending;
 	readonly dispose: () => void;
 }
@@ -327,7 +326,7 @@ export interface Interceptor<API extends LanguageAPI> {
 	render?(call: { readonly node: RenderInput<API>; readonly options: API['options'] }, next: () => string): string;
 	parse?(call: { readonly source: string }, next: () => API['root']): API['root'];
 	file?(
-		change: FileChange & { readonly verb: 'create' | 'edit' | 'write' },
+		change: FileChange & { readonly verb: 'create' | 'write' },
 		next: () => Promise<void>
 	): Promise<void>;
 }
@@ -338,7 +337,7 @@ export interface Project extends AsyncDisposable {
 	staged(): readonly string[];
 	diff(): readonly FileChange[];
 	files(): ReadonlyMap<string, string>;
-	commit(): Promise<void>;
+	save(): Promise<void>;
 	discard(): void;
 }
 

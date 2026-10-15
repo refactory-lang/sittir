@@ -4853,9 +4853,11 @@ grammar has no such enum, the two keyword kinds with those texts (typescript
 `true` / `false`, python `True` / `False`). `trueKind` / `falseKind` are the
 kinds whose ids `_resolveScalar` returns, which the slot admits as a stored
 kind id (through `_ENUMS_OF_MEMBER` when the slot names the enum), and the
-two ids `LeafScalarMap` widens to `boolean`: a slot stores the member ids,
-never the enum's own, so the map is keyed on the members and the types
-package's `WidenScalarKindId` lets a bare id with a scalar entry admit it.
+two ids `LeafScalarMap` maps to `true` and `false`, respectively. A slot
+stores the member ids, never the enum's own. The types package's distributive
+`WidenScalarKindId` admits the literal for each member present in the slot:
+`true`, `false`, or their union `boolean`. Numeric entries remain keyed by
+their individual leaf ids.
 
 ### `packages/codegen/src/emitters/shared.ts::testConstructsWithChildren`
 
@@ -8896,12 +8898,10 @@ The types module of `emitTypesModules`, for callers that need only the public su
 #### body
 
 ```text
-// `LeafScalarMap` / `LeafStringMap` are keyed by each leaf's `$type`
-// discriminant (`kindDiscriminantOrLiteral`), because the widening indexes
-// them with the leaf member's inferred `$type` — a map keyed by grammar
-// name is unreachable from a numeric id and silently widens every leaf to
-// `string`. The scalar rows come from `scalarLeafKinds`, the same table
-// the runtime scalar resolver is emitted from.
+// `LeafScalarMap` / `LeafStringMap` use each leaf's `$type` discriminant
+// (`kindDiscriminantOrLiteral`). Boolean scalar rows map each member id to
+// its literal input, so distributive widening admits only the slot's values.
+// Boolean ids come from `scalarLeafKinds`, the runtime resolver's source.
 ```
 
 #### body
