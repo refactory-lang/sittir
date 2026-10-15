@@ -28,9 +28,11 @@ const emit = async (scm: string) =>
 		readTest: (entry) =>
 			entry.pins.length === 0
 				? []
-				: [{ up: 0, via: [], plan: { op: 'eq', text: '+', fields: ['operator'], kinds: [] } }],
+				: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { 1: 0 } } }],
 		kindIdOf: (kind) => `TSKindId.${kind[0]!.toUpperCase()}${kind.slice(1)}`,
-		fixedText: [['TSKindId.Plus', '+']]
+		fixedText: [['TSKindId.Plus', '+']],
+		flags: [],
+		flagTypes: []
 	});
 
 const SCM = [
@@ -86,7 +88,7 @@ describe('emitPortableSurface', () => {
 			textTokens: new Set(),
 			layoutSlots: []
 		});
-		const text = emitPortableSurface({ routes, readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [] });
+		const text = emitPortableSurface({ routes, readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [], flags: [], flagTypes: [] });
 		expect(text).toContain('\t"expression.call": TSKindId.Call;');
 		expect(text).toContain('\t\t"expression.call": { ids: [TSKindId.Call], exact: true },');
 		expect(text.match(/\[TSKindId\.Call\]: \[/g)).toHaveLength(1);
@@ -118,7 +120,7 @@ describe('emitPortableSurface', () => {
 		expect(text).toContain('\t\t"expression.call.nested": { ids: [TSKindId.Call], exact: false },');
 		expect(text).not.toContain('aliases');
 		expect(text).toContain(
-			'\t\t[TSKindId.Binary]: [{ path: "expression.binary.add", within: [], test: [{"up":0,"via":[],"plan":{"op":"eq","text":"+","fields":["operator"],"kinds":[]}}] }, { path: "expression.binary", within: [], test: [] }],'
+			'\t\t[TSKindId.Binary]: [{ path: "expression.binary.add", within: [], test: [{"up":0,"via":[],"plan":{"op":"eq","text":"+","slots":{"1":0}}}] }, { path: "expression.binary", within: [], test: [] }],'
 		);
 		expect(text).toContain(
 			'\t\t[TSKindId.Call]: [{ path: "expression.call.nested", within: [TSKindId.Block], test: [] }, { path: "expression.call", within: [], test: [] }],'
@@ -131,5 +133,19 @@ describe('emitPortableSurface', () => {
 		const text = await emit(['(assign) @expression.assignment.add', '(assign) @expression.assignment'].join('\n'));
 		expect(text).toContain('\t\t[TSKindId.Assign]: [{ path: "expression.assignment.add", within: [], test: [] }, { path: "expression.assignment", within: [], test: [] }],');
 		expect(text).toContain('\t\t"expression.assignment.add": { ids: [TSKindId.Assign], exact: true },');
+	});
+
+	it('declares each kind\'s flags on its node interface, so a where condition\'s is takes only them', async () => {
+		const text = emitPortableSurface({
+			routes: resolveRoutes(await input(SCM)),
+			readTest: () => [],
+			kindIdOf: () => 'TSKindId.Call',
+			fixedText: [],
+			flags: [],
+			flagTypes: [['Call', ['async', 'static']]]
+		});
+		expect(text).toContain(["declare module './types.js' {", '\tinterface Call {', '\t\treadonly __flags__?: "async" | "static";', '\t}', '}'].join('\n'));
+		const none = emitPortableSurface({ routes: resolveRoutes(await input(SCM)), readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [], flags: [], flagTypes: [] });
+		expect(none).not.toContain('declare module');
 	});
 });

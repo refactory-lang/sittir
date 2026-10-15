@@ -1,0 +1,132 @@
+121 flag members over 69 kinds
+route {('python', 'slot'): 8, ('rust', 'kind'): 4, ('rust', 'presence'): 10, ('rust', 'slot'): 23, ('typescript', 'kind'): 15, ('typescript', 'nested'): 1, ('typescript', 'presence'): 19, ('typescript', 'slot'): 41}
+depth {('python', 1): 8, ('rust', 0): 2, ('rust', 1): 30, ('rust', 2): 4, ('rust', 3): 1, ('typescript', 0): 6, ('typescript', 1): 69, ('typescript', 2): 1}
+leaf {('python', 'eq'): 2, ('python', 'present'): 6, ('rust', 'eq'): 14, ('rust', 'is'): 4, ('rust', 'no path'): 2, ('rust', 'present'): 17, ('typescript', 'eq'): 19, ('typescript', 'is'): 16, ('typescript', 'no path'): 6, ('typescript', 'present'): 35}
+alternatives {('python', 1): 8, ('rust', 1): 37, ('typescript', 1): 74, ('typescript', 2): 2}
+anchored []
+no path [('rust', 'reference_expression_raw_const', 'raw'), ('rust', 'reference_expression_raw_mut', 'raw'), ('typescript', 'abstract_class_declaration', 'abstract'), ('typescript', 'call_expression_member', 'optionalChain'), ('typescript', 'generator_function', 'generator'), ('typescript', 'generator_function_declaration', 'generator'), ('typescript', 'optional_parameter', 'optional'), ('typescript', 'variable_declarator_definite', 'definite')]
+alternatives > 1 [('typescript', 'method_definition', 'optional')]
+
+| grammar | kind | flag | route | depth | anchors | leaf |
+|---|---|---|---|---:|---|---|
+| rust | async_block | move | slot | 1 | — | present |
+| rust | char_literal_escaped_hex | byte | slot | 1 | — | present |
+| rust | char_literal_escaped_simple | byte | slot | 1 | — | present |
+| rust | char_literal_escaped_unicode_braced | byte | slot | 1 | — | present |
+| rust | char_literal_escaped_unicode_fixed | byte | slot | 1 | — | present |
+| rust | char_literal_plain | byte | slot | 1 | — | present |
+| rust | closure_expression_block | async | slot | 1 | — | present |
+| rust | closure_expression_block | move | slot | 1 | — | present |
+| rust | closure_expression_block | static | slot | 1 | — | present |
+| rust | closure_expression_expr | async | slot | 1 | — | present |
+| rust | closure_expression_expr | move | slot | 1 | — | present |
+| rust | closure_expression_expr | static | slot | 1 | — | present |
+| rust | const_parameter | default | slot | 1 | — | eq |
+| rust | field_pattern_named | byReference | presence | 1 | — | present |
+| rust | field_pattern_named | mutable | slot | 1 | — | eq |
+| rust | field_pattern_shorthand | byReference | presence | 1 | — | present |
+| rust | field_pattern_shorthand | mutable | slot | 1 | — | eq |
+| rust | function_item | async | presence | 2 | — | eq |
+| rust | function_item | const | presence | 2 | — | eq |
+| rust | function_item | default | presence | 2 | — | eq |
+| rust | function_item | unsafe | presence | 2 | — | eq |
+| rust | function_type | unsafe | presence | 3 | — | eq |
+| rust | gen_block | move | slot | 1 | — | present |
+| rust | impl_item_body | unsafe | slot | 1 | — | eq |
+| rust | impl_item_semi | unsafe | slot | 1 | — | eq |
+| rust | let_declaration | mutable | slot | 1 | — | eq |
+| rust | parameter | mutable | kind | 1 | — | is |
+| rust | reference_expression_raw_const | raw | presence | 0 | — | no path |
+| rust | reference_expression_raw_mut | raw | presence | 0 | — | no path |
+| rust | reference_pattern | exclusive | kind | 1 | — | is |
+| rust | reference_type | exclusive | kind | 1 | — | is |
+| rust | self_parameter | mutable | kind | 1 | — | is |
+| rust | static_item | byReference | presence | 1 | — | present |
+| rust | static_item | mutable | slot | 1 | — | eq |
+| rust | trait_item | unsafe | slot | 1 | — | present |
+| rust | type_parameter | default | slot | 1 | — | eq |
+| rust | variadic_parameter | mutable | slot | 1 | — | eq |
+| typescript | abstract_class_declaration | abstract | presence | 0 | — | no path |
+| typescript | abstract_method_signature | computed | kind | 1 | — | is |
+| typescript | abstract_method_signature | generator | presence | 1 | — | eq |
+| typescript | abstract_method_signature | optional | slot | 1 | — | present |
+| typescript | abstract_method_signature | override | slot | 1 | — | eq |
+| typescript | abstract_method_signature | privateName | kind | 1 | — | is |
+| typescript | arrow_function | async | slot | 1 | — | present |
+| typescript | assignment_expression | disposable | presence | 1 | — | present |
+| typescript | call_expression_member | optionalChain | presence | 0 | — | no path |
+| typescript | construct_signature | abstract | slot | 1 | — | present |
+| typescript | constructor_type | abstract | slot | 1 | — | present |
+| typescript | enum_declaration | const | slot | 1 | — | present |
+| typescript | export_specifier | typeOnly | presence | 1 | — | eq |
+| typescript | export_statement_default_from | typeOnly | presence | 1 | — | present |
+| typescript | for_in_statement | async | presence | 1 | — | present |
+| typescript | function_declaration | async | slot | 1 | — | present |
+| typescript | function_expression | async | slot | 1 | — | present |
+| typescript | function_signature | async | slot | 1 | — | present |
+| typescript | generator_function | async | slot | 1 | — | present |
+| typescript | generator_function | generator | presence | 0 | — | no path |
+| typescript | generator_function_declaration | async | slot | 1 | — | present |
+| typescript | generator_function_declaration | generator | presence | 0 | — | no path |
+| typescript | import_clause | default | nested | 2 | — | is |
+| typescript | import_specifier_as | typeOnly | presence | 1 | — | eq |
+| typescript | import_specifier_name | typeOnly | presence | 1 | — | eq |
+| typescript | import_statement | typeOnly | presence | 1 | — | eq |
+| typescript | index_signature_colon | readonly | slot | 1 | — | present |
+| typescript | index_signature_mapped_type_clause | readonly | slot | 1 | — | present |
+| typescript | member_expression | optionalChain | kind | 1 | — | is |
+| typescript | member_expression | privateName | kind | 1 | — | is |
+| typescript | method_definition | async | slot | 1 | — | present |
+| typescript | method_definition | computed | kind | 1 | — | is |
+| typescript | method_definition | generator | presence | 1 | — | eq |
+| typescript | method_definition | optional | slot | 1 | — | present |
+| typescript | method_definition | optional | presence | 1 | — | present |
+| typescript | method_definition | override | slot | 1 | — | eq |
+| typescript | method_definition | privateName | kind | 1 | — | is |
+| typescript | method_definition | readonly | slot | 1 | — | present |
+| typescript | method_definition | static | slot | 1 | — | present |
+| typescript | method_signature | async | slot | 1 | — | present |
+| typescript | method_signature | computed | kind | 1 | — | is |
+| typescript | method_signature | generator | presence | 1 | — | eq |
+| typescript | method_signature | optional | slot | 1 | — | present |
+| typescript | method_signature | override | slot | 1 | — | eq |
+| typescript | method_signature | privateName | kind | 1 | — | is |
+| typescript | method_signature | readonly | slot | 1 | — | present |
+| typescript | method_signature | static | slot | 1 | — | present |
+| typescript | optional_parameter | default | slot | 1 | — | eq |
+| typescript | optional_parameter | optional | presence | 0 | — | no path |
+| typescript | optional_parameter | override | slot | 1 | — | eq |
+| typescript | optional_parameter | readonly | slot | 1 | — | present |
+| typescript | pair | computed | kind | 1 | — | is |
+| typescript | pair_pattern | computed | kind | 1 | — | is |
+| typescript | property_signature | computed | kind | 1 | — | is |
+| typescript | property_signature | optional | slot | 1 | — | present |
+| typescript | property_signature | override | slot | 1 | — | eq |
+| typescript | property_signature | privateName | kind | 1 | — | is |
+| typescript | property_signature | readonly | slot | 1 | — | present |
+| typescript | property_signature | static | slot | 1 | — | present |
+| typescript | public_field_definition | abstract | slot | 1 | — | present |
+| typescript | public_field_definition | accessor | slot | 1 | — | present |
+| typescript | public_field_definition | computed | kind | 1 | — | is |
+| typescript | public_field_definition | declare | slot | 1 | — | present |
+| typescript | public_field_definition | definite | presence | 1 | — | eq |
+| typescript | public_field_definition | optional | presence | 1 | — | eq |
+| typescript | public_field_definition | override | slot | 1 | — | eq |
+| typescript | public_field_definition | privateName | kind | 1 | — | is |
+| typescript | public_field_definition | readonly | slot | 1 | — | present |
+| typescript | public_field_definition | static | slot | 1 | — | present |
+| typescript | required_parameter | default | slot | 1 | — | eq |
+| typescript | required_parameter | override | slot | 1 | — | eq |
+| typescript | required_parameter | readonly | slot | 1 | — | present |
+| typescript | subscript_expression | optionalChain | kind | 1 | — | is |
+| typescript | type_parameter | const | slot | 1 | — | present |
+| typescript | type_parameter | default | slot | 1 | — | eq |
+| typescript | variable_declarator_definite | definite | presence | 0 | — | no path |
+| python | default_parameter | default | slot | 1 | — | eq |
+| python | except_clause | group | slot | 1 | — | present |
+| python | for_in_clause | async | slot | 1 | — | present |
+| python | for_statement | async | slot | 1 | — | present |
+| python | function_definition | async | slot | 1 | — | present |
+| python | interpolation | debug | slot | 1 | — | present |
+| python | typed_default_parameter | default | slot | 1 | — | eq |
+| python | with_statement | async | slot | 1 | — | present |

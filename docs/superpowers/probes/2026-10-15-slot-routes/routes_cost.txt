@@ -1,0 +1,17 @@
+Release build; run as an example of sittir-rust (--no-default-features); best of 7.
+"router walk" is the query's walk: each child routed on the stack through the
+kind's router (Router::Children), as Plan::holds does.
+crates/sittir-rust/src/render/options.rs: 1143523 bytes, 366410 nodes
+nodes with routes: 127824, children routed to a slot: 229897
+goto_descendant only            12.35 ms  (  33.7 ns/node)
+string compare (field|kind)     30.24 ms  (  82.5 ns/node)
+stack Child walk                31.43 ms  (  85.8 ns/node)
+router walk (no alloc)          32.85 ms  (  89.6 ns/node)
+routes_at (Routed alloc)        37.92 ms  ( 103.5 ns/node)
+crates/sittir-rust/src/render/transport.rs: 2251653 bytes, 857576 nodes
+nodes with routes: 353652, children routed to a slot: 554653
+goto_descendant only            24.31 ms  (  28.3 ns/node)
+string compare (field|kind)     61.81 ms  (  72.1 ns/node)
+stack Child walk                63.93 ms  (  74.5 ns/node)
+router walk (no alloc)          67.86 ms  (  79.1 ns/node)
+routes_at (Routed alloc)        77.76 ms  (  90.7 ns/node)

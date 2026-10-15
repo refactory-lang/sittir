@@ -9,31 +9,18 @@ const CEILING: Readonly<Record<string, readonly string[]>> = {
 		'class_definition.doc',
 		'function_definition.doc'
 	],
-	rust: [
-		'impl_item_body.implements',
-		// flag told by the variant form's own text; the build picks the kind
-		'reference_expression_raw_const.raw',
-		'reference_expression_raw_mut.raw'
-	],
-	typescript: [
-		// flag told by the variant form's own text; the build picks the kind
-		'abstract_class_declaration.abstract',
-		'call_expression_member.optionalChain',
-		'generator_function.generator',
-		'generator_function_declaration.generator',
-		'optional_parameter.optional',
-		'variable_declarator_definite.definite'
-	]
+	rust: ['impl_item_body.implements'],
+	typescript: []
 };
 
 interface PortableModel {
-	readonly kinds: Readonly<Record<string, { readonly members?: readonly { readonly name: string; readonly path: unknown }[] }>>;
+	readonly kinds: Readonly<Record<string, { readonly members?: readonly { readonly name: string; readonly path: unknown; readonly spelled?: true }[] }>>;
 }
 
 const unbuildable = (grammar: string): string[] => {
 	const model = JSON.parse(readFileSync(join(grammarPackageDir(grammar), 'src', 'node-model-portable.json5'), 'utf8')) as PortableModel;
 	return Object.entries(model.kinds)
-		.flatMap(([kind, { members = [] }]) => members.filter((m) => m.path === null).map((m) => `${kind}.${m.name}`))
+		.flatMap(([kind, { members = [] }]) => members.filter((m) => m.path === null && m.spelled !== true).map((m) => `${kind}.${m.name}`))
 		.sort();
 };
 
