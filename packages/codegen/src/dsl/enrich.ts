@@ -324,6 +324,14 @@ export function getEnrichMints(grammar: unknown): ReadonlySet<string> {
 
 export const ENRICH_WHITESPACE_KEY = '__enrichedWhitespace__' as const;
 
+export function withEnrichSidecarsOf<G extends object>(grammar: G, enriched: unknown): G {
+	const out = { ...grammar };
+	for (const key of [ENRICH_WHITESPACE_KEY, ENRICH_RULE_ORIGINS_KEY, ENRICH_AUTOMATIC_VARIANTS_KEY]) {
+		Object.defineProperty(out, key, { value: (enriched as Record<string, unknown>)[key], enumerable: false, writable: false, configurable: true });
+	}
+	return out;
+}
+
 export type EnrichWhitespaceSidecar = Pick<EnrichedWhitespace, 'bodies' | 'collisions' | 'addedExternals'>;
 
 export function getEnrichWhitespace(grammar: unknown): EnrichWhitespaceSidecar {

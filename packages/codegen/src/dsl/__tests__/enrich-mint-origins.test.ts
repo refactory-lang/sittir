@@ -31,19 +31,32 @@ function addedRuleNames(base: unknown, enriched: unknown): string[] {
 
 async function expectEveryAddedRuleRecorded(load: () => Promise<unknown>): Promise<void> {
 	enrichCalls.length = 0;
-	await load();
-	expect(enrichCalls.length).toBeGreaterThan(0);
-	for (const { base, enriched } of enrichCalls.splice(0)) {
-		expect([...getEnrichMints(enriched)].sort()).toEqual(addedRuleNames(base, enriched));
+	try {
+		await load();
+	} finally {
+		expect(enrichCalls.length).toBeGreaterThan(0);
+		for (const { base, enriched } of enrichCalls.splice(0)) {
+			const prior = getEnrichMints(base);
+			expect([...getEnrichMints(enriched)].sort()).toEqual(
+				[...new Set([...prior, ...addedRuleNames(base, enriched)])].sort()
+			);
+			if (prior.size > 0) expect(baseRulesOf(enriched)).toEqual(baseRulesOf(base));
+		}
 	}
 }
 
-describe('the enrich mint list is exactly the rules enrich adds', () => {
+describe('the enrich mint list retains prior mints and records every new rule', () => {
 	for (const grammar of ['python', 'rust', 'typescript', 'scm', 'regex']) {
 		it(`${grammar}`, () => expectEveryAddedRuleRecorded(() => evaluatePackage(grammarPackage(grammar))), 120_000);
 	}
 	for (const grammar of ['c', 'go']) {
-		it(`tree-sitter-${grammar}`, () =>
-			expectEveryAddedRuleRecorded(() => evaluateSittirGrammar(require.resolve(`tree-sitter-${grammar}/grammar.js`), grammar)), 120_000);
+		it(
+			`tree-sitter-${grammar}`,
+			() =>
+				expectEveryAddedRuleRecorded(() =>
+					evaluateSittirGrammar(require.resolve(`tree-sitter-${grammar}/grammar.js`), grammar)
+				),
+			120_000
+		);
 	}
 });

@@ -162,7 +162,7 @@ The text-token names attached to a grammar; empty when none were attached. Evalu
 
 ### `packages/codegen/src/dsl/enrich.ts::getEnrichMints`
 
-The rules enrich adds: the names in the origin map whose origin is an `EnrichMintKind`, which leaves out `promoted-group`. The set equals the enriched grammar's rule names minus the base grammar's. An upstream rule is never a mint: not one exposed through an alias (`promoted-group`), and not one enrich rewrites in place (a `liftAliasedHiddenRuleBodies` rewrite, a field-wrap pass).
+The rules enrich adds: the names in the origin map whose origin is an `EnrichMintKind`, which leaves out `promoted-group`. The set retains the base's recorded mints and adds the newly introduced rule names, so re-enriching a wired grammar preserves their provenance. An upstream rule is never a mint: not one exposed through an alias (`promoted-group`), and not one enrich rewrites in place (a `liftAliasedHiddenRuleBodies` rewrite, a field-wrap pass).
 
 ### `packages/codegen/src/dsl/enrich.ts::enrichRuleNamesOf`
 
@@ -4781,7 +4781,9 @@ for the conflict loop, and the imported resolutions and whether the config
 authors `conflicts` for the diagnostics, then `applyConflictResolutions`, which sets the
 grammar's conflicts to the base resolutions the config passes as
 `resolutions` (each grammar imports its own `.sittir/resolutions.json`).
-Its grammar bindings (`bindings`) are applied after that (`bindGrammar`), and
+When a bindings layer is configured and the evaluation is bound, the wired
+grammar must then be a base enrich leaves unchanged (`assertEnrichFixpoint`), since the grammar bindings are a layer
+over it. Its grammar bindings (`bindings`) are applied after that (`bindGrammar`), and
 last `applyBoundConflictResolutions` appends the bound section's sets.
 Every `grammar.sittir.ts` and the bootstrap template call it as
 `export default sittirGrammar(base, { … })`.
@@ -7700,3 +7702,11 @@ A `match` restriction from its authored form: an array is an unfielded child; a 
 ### `packages/codegen/src/dsl/bind.ts::match`
 
 Builds a `LeadMatch`: a kind, an optional restriction (`leadWithin`) and an optional variant name. `(required_parameter pattern: (this))` is `match('required_parameter', { pattern: [match('this')] })`.
+
+### `packages/codegen/src/dsl/enrich.ts::withEnrichSidecarsOf`
+
+A shallow copy of a grammar carrying the three sidecars an enrich result holds (whitespace, rule origins, automatic variants), read from `enriched`. `grammar()` does not carry them, so a later enrich over a wired grammar needs them to recognise its own earlier work: without them it re-mints the layout supertype over the body wire decorated and re-aliases visible groups.
+
+### `packages/codegen/src/dsl/sittir-grammar.ts::assertEnrichFixpoint`
+
+The configured grammar bindings layer's gate: enrich over the wired grammar, carrying the sittir layer's enrich sidecars (`withEnrichSidecarsOf`), changes no rule. It throws naming every rule it would change, added or removed. Wire leaves a field, label or alias enrich would add only where an authored entry or wire stamps it first, so a change here means the wired grammar is not yet a base the bindings layer can build on: the fix is on the sittir side (author the field, stamp the label), never in the gate.

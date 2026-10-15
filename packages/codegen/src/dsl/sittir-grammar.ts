@@ -1,4 +1,5 @@
-import { attachTextTokens, enrich, getEnrichTextTokens, stampWiredVariants, type EnrichedGrammar, type GrammarResult } from './enrich.ts';
+import { attachTextTokens, enrich, getEnrichTextTokens, stampWiredVariants, withEnrichSidecarsOf, type EnrichedGrammar, type GrammarResult } from './enrich.ts';
+import { baseRulesOf } from './shared.ts';
 import { authoredFieldSites, authoredGroupBodies, wire, wireBindingEffects, type OptionsCheck, type PatchesCheck, type PatchesConfig, type WireConfig, type WiredOpts } from './wire/wire.ts';
 import { blankDeadEnrichMints, getDeadEnrichMints } from './wire/dead-mints.ts';
 import { attachDerivationRecords } from './wire/derivation-records.ts';
@@ -19,6 +20,13 @@ function withBindingPatches(authored: PatchesConfig | undefined, bindingPatches:
 	const out: Record<string, unknown> = { ...authored };
 	for (const [kind, entry] of Object.entries(bindingPatches)) out[kind] = [...patchSets(out[kind]), ...patchSets(entry).map((set) => markBindingSet(set as object))];
 	return out as PatchesConfig;
+}
+
+function assertEnrichFixpoint(wired: GrammarResult, enriched: unknown): void {
+	const before = baseRulesOf<unknown>(wired) ?? {};
+	const after = baseRulesOf<unknown>(enrich(withEnrichSidecarsOf(wired, enriched))) ?? {};
+	const changed = [...new Set([...Object.keys(before), ...Object.keys(after)])].filter((name) => JSON.stringify(before[name]) !== JSON.stringify(after[name]));
+	if (changed.length > 0) throw new Error(`grammar bindings: enrich changes ${changed.sort().join(', ')} in the wired grammar, so the bindings layer's base is not enrich's fixpoint`);
 }
 
 export function sittirGrammar<B extends GrammarJson, const P = PatchesConfig<EnrichedGrammar<B>>, const O = OptionsConfig>(
@@ -51,6 +59,7 @@ export function sittirGrammar<B extends GrammarJson, const P = PatchesConfig<Enr
 	});
 	applyConflictResolutions(result.grammar, resolutions);
 	if (unbound) return result;
+	if (bindings !== undefined) assertEnrichFixpoint(result, enriched);
 	const grammarRecord = result.grammar as unknown as Record<string, unknown>;
 	const bound = bindings === undefined ? grammarRecord : bindGrammar(grammarRecord, bindings, wireBindingEffects(opts));
 	applyBoundConflictResolutions(bound, resolutions);
