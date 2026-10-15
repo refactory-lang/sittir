@@ -151,7 +151,7 @@ export function displayImplStrict() {
 							body: engine.build.matchBlock.strict({
 								// A comma-terminated arm carrying a macro invocation: the arm
 								// variant holds the whole arm, its pattern and its value.
-								matchArm: [
+								arms: [
 									engine.build.matchArm.withComma({
 										pattern: armPattern('InvalidRange', ['start', 'end'] as const),
 										value: writeCall('invalid edit range: start={start}, end={end}'),

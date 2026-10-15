@@ -1,3 +1,5 @@
+import { portablePathHasFacts } from '@sittir/common/engine';
+
 export interface NamespaceNode {
 	readonly path: string;
 	readonly kinds: readonly string[];
@@ -6,30 +8,28 @@ export interface NamespaceNode {
 
 interface MutableNode {
 	readonly path: string;
-	readonly kinds: Set<string>;
 	readonly children: Map<string, MutableNode>;
 }
 
 const joinPath = (under: string, segment: string): string => (under === '' ? segment : `${under}.${segment}`);
 
 export function namespaceTree(readEntries: ReadonlyMap<string, readonly { readonly vocab: string }[]>): NamespaceNode {
-	const root: MutableNode = { path: '', kinds: new Set(), children: new Map() };
-	for (const [kind, entries] of [...readEntries].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) {
-		for (const { vocab } of entries) {
+	const root: MutableNode = { path: '', children: new Map() };
+	const entries = [...readEntries].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+	for (const [, reads] of entries) {
+		for (const { vocab } of reads) {
 			let at = root;
-			at.kinds.add(kind);
 			for (const segment of vocab.split('.')) {
 				const path = joinPath(at.path, segment);
 				let next = at.children.get(segment);
-				if (next === undefined) at.children.set(segment, (next = { path, kinds: new Set(), children: new Map() }));
-				next.kinds.add(kind);
+				if (next === undefined) at.children.set(segment, (next = { path, children: new Map() }));
 				at = next;
 			}
 		}
 	}
 	const freeze = (node: MutableNode): NamespaceNode => ({
 		path: node.path,
-		kinds: [...node.kinds].sort(),
+		kinds: entries.filter(([, reads]) => reads.some(({ vocab }) => node === root || portablePathHasFacts(node.path, vocab))).map(([kind]) => kind),
 		children: new Map([...node.children].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)).map(([segment, child]) => [segment, freeze(child)]))
 	});
 	return freeze(root);

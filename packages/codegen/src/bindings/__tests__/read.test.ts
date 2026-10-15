@@ -26,8 +26,8 @@ describe('readBindings', () => {
 		expect(facts.members.filter(isNamedMember).map((m) => [m.route, m.owner, m.name])).toEqual([['nested', 'function_definition', 'doc']]);
 	});
 	it('still reads a lone single-segment capture on the top node as a claim', async () => {
-		const facts = await readBindings('(source_file) @module');
-		expect(facts.claims.map((c) => [c.vocab, c.kind])).toEqual([['module', 'source_file']]);
+		const facts = await readBindings('(source_file) @file');
+		expect(facts.claims.map((c) => [c.vocab, c.kind])).toEqual([['file', 'source_file']]);
 		expect(facts.members).toEqual([]);
 	});
 	it('keeps a presence capture\'s token text beside its name', async () => {
@@ -40,12 +40,12 @@ describe('readBindings', () => {
 	});
 	it('keeps every predicate with its operator, capture and arguments, and leaves directives out', async () => {
 		const facts = await readBindings(
-			'((identifier) @identifier.self (#match? @identifier.self "^self$") (#lua-match? @identifier.self "%a") (#eq? @identifier.self @identifier.self) (#set! reason "x"))'
+			'((identifier) @identifier.receiver (#match? @identifier.receiver "^self$") (#lua-match? @identifier.receiver "%a") (#eq? @identifier.receiver @identifier.receiver) (#set! reason "x"))'
 		);
 		expect(facts.claims[0]?.predicates).toEqual([
-			{ operator: 'match', capture: 'identifier.self', arguments: [{ text: '^self$' }], subject: { up: 0, down: [] } },
-			{ operator: 'lua-match', capture: 'identifier.self', arguments: [{ text: '%a' }], subject: { up: 0, down: [] } },
-			{ operator: 'eq', capture: 'identifier.self', arguments: [{ capture: 'identifier.self' }], subject: { up: 0, down: [] } }
+			{ operator: 'match', capture: 'identifier.receiver', arguments: [{ text: '^self$' }], subject: { up: 0, down: [] } },
+			{ operator: 'lua-match', capture: 'identifier.receiver', arguments: [{ text: '%a' }], subject: { up: 0, down: [] } },
+			{ operator: 'eq', capture: 'identifier.receiver', arguments: [{ capture: 'identifier.receiver' }], subject: { up: 0, down: [] } }
 		]);
 	});
 
@@ -53,7 +53,7 @@ describe('readBindings', () => {
 		const facts = await readBindings(
 			[
 				'((boolean) @literal.boolean.true (#eq? @literal.boolean.true "true"))',
-				'((string (string_start) @_p) @literal.string.f (#match? @_p "^[fF]"))',
+				'((string (string_start) @_p) @literal.string.interpolated (#match? @_p "^[a-zA-Z]*[fFtT]"))',
 				'((decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.static) (#eq? @_d "staticmethod"))'
 			].join('\n')
 		);
@@ -153,6 +153,13 @@ describe('readBindings', () => {
 	it('reads a slot a claim drops on purpose as a dropped member of the claimed kind, never a member named dropped', async () => {
 		const facts = await readBindings('(binary left: (_) @dropped) @expression.binary');
 		expect(facts.members).toEqual([{ route: 'dropped', owner: 'binary', field: 'left', kind: null, after: null, anchor: null, claims: [0] }]);
+	});
+
+	it('keeps the spelling of a dropped anonymous token so it identifies its slot', async () => {
+		const facts = await readBindings('(constraint "extends" @dropped) @clause.bounds');
+		expect(facts.members).toEqual([
+			{ route: 'dropped', owner: 'constraint', field: null, kind: null, after: null, anchor: null, token: 'extends', claims: [0] }
+		]);
 	});
 
 	it('reads each node below a claimed node as a test of its kind at its site', async () => {
@@ -255,10 +262,10 @@ describe('readBindings', () => {
 
 	it('reads a template regex as its literal runs and named holes', async () => {
 		const { templates } = await readBindings(
-			'((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))'
+			'((function_definition name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))'
 		);
 		expect(templates).toEqual([
-			{ vocabs: ['declaration.method.dunder'], target: 'name', template: '__${string}__', holes: ['stem'] }
+			{ vocabs: ['declaration.method.special'], target: 'name', template: '__${string}__', holes: ['stem'] }
 		]);
 	});
 
@@ -379,10 +386,10 @@ describe('readBindings', () => {
 	});
 
 	it.each([
-		['the claimed node', '(parameters (parameters_elements . (identifier) @declaration.parameter.self))'],
+		['the claimed node', '(parameters (parameters_elements . (identifier) @declaration.parameter.receiver))'],
 		['a node enclosing the claim', '(block . (expression_statement (identifier) @identifier.statement))']
 	])('refuses an anchor on %s: an anchor constrains only a step below the claim', async (_where, pattern) => {
-		await expect(readBindings(`(module) @module\n${pattern}`)).rejects.toThrow(/line 2: .*anchor.*@(declaration\.parameter\.self|identifier\.statement)/);
+		await expect(readBindings(`(module) @file\n${pattern}`)).rejects.toThrow(/line 2: .*anchor.*@(declaration\.parameter\.receiver|identifier\.statement)/);
 	});
 
 	it('pins a child anchored on both sides to its parent\'s only named child', async () => {
@@ -479,9 +486,9 @@ describe('readBindings: the match tree of an anchored capture', () => {
 
 describe('bindingPatterns', () => {
 	it('slices each top-level pattern by its byte span, after multibyte comments', async () => {
-		const patterns = await bindingPatterns('; ── module ──\n(module) @module\n; ── é\n(identifier) @identifier\n');
+		const patterns = await bindingPatterns('; ── file ──\n(module) @file\n; ── é\n(identifier) @identifier\n');
 		expect(patterns.map((p) => [p.line, p.source])).toEqual([
-			[2, '(module) @module'],
+			[2, '(module) @file'],
 			[4, '(identifier) @identifier']
 		]);
 	});

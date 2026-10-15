@@ -1,0 +1,455 @@
+ruled path <- the census kinds it comes from (none: an added kind or a level the renames imply); claims per grammar
+argument                                         <- argument
+argument.named                                   <- argument.keyword  p:keyword_argument
+attribute                                        <- attribute
+attribute.content                                <- attribute.content  r:attribute
+attribute.content.call                           <- attribute.content.call  t:decorator_call_expression
+attribute.content.member                         <- attribute.content.member  t:decorator_member_expression
+attribute.content.parenthesized                  <- attribute.content.parenthesized  t:decorator_parenthesized_expression
+attribute.decorator                              <- attribute.decorator  p:decorator t:decorator
+attribute.inner                                  <- attribute.inner  r:inner_attribute_item
+clause                                           <- clause
+clause.bounds                                    <- clause.bounds, clause.constraint  r:trait_bounds t:constraint
+clause.bounds.higher_ranked                      <- clause.bounds.higher_ranked  r:higher_ranked_trait_bound
+clause.bounds.removed                            <- clause.bounds.removed  r:removed_trait_bound
+clause.bounds.use                                <- clause.bounds.use  r:use_bounds
+clause.case                                      <- clause.case
+clause.case.default                              <- clause.case.default  t:switch_default
+clause.case.match                                <- clause.case.match, clause.match, clause.match.arm, clause.match.arm.last  p:case_clause r:last_match_arm r:match_arm
+clause.case.switch                               <- clause.case.switch  t:switch_case
+clause.catch                                     <- clause.catch, clause.except  p:except_clause t:catch_clause
+clause.comprehension                             <- clause.comprehension  p:comprehension_clauses
+clause.comprehension.for                         <- clause.comprehension.for  p:for_in_clause
+clause.comprehension.if                          <- clause.comprehension.if  p:if_clause
+clause.default                                   <- clause.default  t:default_type
+clause.else                                      <- clause.else  p:else_clause r:else_clause t:else_clause
+clause.else_if                                   <- clause.elif  p:elif_clause
+clause.export                                    <- clause.export  t:export_clause
+clause.export.namespace                          <- clause.export.namespace  t:namespace_export
+clause.export.specifier                          <- clause.export.specifier  t:export_specifier
+clause.extends                                   <- clause.extends  t:extends_clause
+clause.extends.type                              <- clause.extends.type  t:extends_type_clause
+clause.finally                                   <- clause.finally  p:finally_clause t:finally_clause
+clause.implements                                <- clause.implements  t:implements_clause
+clause.import                                    <- clause.import
+clause.import.alias                              <- clause.import.alias, clause.import.as  p:aliased_import t:import_alias r:use_as_clause
+clause.import.attribute                          <- clause.import.attribute  t:import_attribute
+clause.import.list                               <- clause.import.list  r:use_list
+clause.import.list.scoped                        <- clause.import.list.scoped  r:scoped_use_list
+clause.import.names                              <- clause.import.names  t:import_clause
+clause.import.namespace                          <- clause.import.namespace  t:namespace_import
+clause.import.relative                           <- clause.import.relative  p:relative_import
+clause.import.relative.prefix                    <- clause.import.relative.prefix  p:import_prefix
+clause.import.require                            <- clause.import.require  t:import_require_clause
+clause.import.specifier                          <- clause.import.specifier  t:import_specifier
+clause.import.wildcard                           <- clause.import.wildcard  p:wildcard_import r:use_wildcard
+clause.let                                       <- clause.let  r:let_condition
+clause.let.chain                                 <- clause.let.chain  r:let_chain
+clause.lifetimes                                 <- clause.lifetimes  r:for_lifetimes
+clause.macro                                     <- clause.macro
+clause.macro.rule                                <- clause.macro.rule  r:macro_rule
+clause.mapped_type                               <- clause.mapped_type  t:mapped_type_clause
+clause.print                                     <- clause.print
+clause.print.chevron                             <- clause.print.chevron  p:chevron
+clause.resource                                  <- clause.with  p:with_clause
+clause.resource.item                             <- clause.with.item  p:with_item
+clause.where                                     <- clause.where  r:where_clause
+clause.where.predicate                           <- clause.where.predicate  r:where_predicate
+comment                                          <- comment  t:comment_block,comment_line,html_comment
+comment.block                                    <- comment.block  r:block_comment t:comment_block
+comment.block.doc                                <- comment.block.doc  r:block_comment t:comment_block
+comment.block.doc.inner                          <- comment.block.doc.inner  r:block_comment
+comment.line                                     <- comment.line  p:comment r:line_comment t:comment_line
+comment.line.doc                                 <- comment.line.doc  r:line_comment
+comment.line.doc.inner                           <- comment.line.doc.inner  r:line_comment
+comment.text                                     <- comment.text  r:block_comment_regular,doc_comment,line_comment_extra_slashes,line_comm
+declaration                                      <- declaration
+declaration.ambient                              <- declaration.ambient  t:ambient_declaration
+declaration.class                                <- declaration.class  p:class_definition t:abstract_class_declaration,class_declaration
+declaration.constant                             <- declaration.constant  p:assignment_eq,assignment_type,assignment_typed r:const_item
+declaration.constructor                          <- declaration.constructor  p:function_definition t:method_definition
+declaration.enum                                 <- declaration.enum  r:enum_item t:enum_declaration
+declaration.enum_member                          <- declaration.enum_member  r:enum_variant t:enum_assignment,enum_body_element_name
+declaration.enum_member.struct                   <- declaration.enum_member.struct  r:enum_variant
+declaration.enum_member.tuple                    <- declaration.enum_member.tuple  r:enum_variant
+declaration.extension                            <- declaration.extension  r:impl_item_body,impl_item_semi
+declaration.extension.conformance                <- declaration.extension.conformance  r:impl_item_body
+declaration.field                                <- declaration.field  r:attributed_ordered_field,field_declaration t:public_field_definition
+declaration.field.signature                      <- declaration.field.signature  t:property_signature
+declaration.function                             <- declaration.function  p:function_definition r:function_item t:function_declaration,generator_function_declaration
+declaration.function.signature                   <- declaration.function.signature  r:function_signature_item t:function_signature
+declaration.interface                            <- declaration.interface  t:interface_declaration
+declaration.interface.trait                      <- declaration.interface.trait  r:trait_item
+declaration.macro                                <- declaration.macro  r:macro_definition
+declaration.method                               <- declaration.method  p:class_definition r:impl_item_body,trait_item t:method_definition
+declaration.method.signature                     <- declaration.method.signature  r:trait_item t:method_signature
+declaration.method.signature.abstract            <- declaration.method.signature.abstract  t:abstract_method_signature
+declaration.method.special                       <- declaration.method.dunder  p:function_definition
+declaration.method.static                        <- declaration.method.static  p:decorated_definition r:impl_item_body
+declaration.module                               <- declaration.module  r:mod_item,mod_item_external,mod_item_inline t:internal_module
+declaration.module.external                      <- declaration.module.external  t:module
+declaration.module.foreign                       <- declaration.module.foreign  r:foreign_mod_item,foreign_mod_item_body,foreign_mod_item_semi
+declaration.module_property                      <- declaration.module_property  t:ambient_declaration_module
+declaration.parameter                            <- declaration.parameter  p:lambda_parameters,parameters r:closure_parameters,parameter t:optional_parameter,required_parameter
+declaration.parameter.default                    <- declaration.parameter.default  p:default_parameter
+declaration.parameter.receiver                   <- declaration.parameter.self  r:self_parameter
+declaration.parameter.typed                      <- declaration.parameter.typed  p:typed_parameter
+declaration.parameter.typed_default              <- declaration.parameter.typed_default  p:typed_default_parameter
+declaration.parameter.variadic                   <- declaration.parameter.variadic  r:variadic_parameter
+declaration.property                             <- none
+declaration.property.getter                      <- declaration.method.getter  t:method_definition
+declaration.property.setter                      <- declaration.method.setter  t:method_definition
+declaration.property.signature                   <- none
+declaration.property.signature.abstract          <- none
+declaration.property.signature.abstract.getter   <- declaration.method.signature.abstract.getter  t:abstract_method_signature
+declaration.property.signature.abstract.setter   <- declaration.method.signature.abstract.setter  t:abstract_method_signature
+declaration.property.signature.getter            <- declaration.method.signature.getter  t:method_signature
+declaration.property.signature.setter            <- declaration.method.signature.setter  t:method_signature
+declaration.signature                            <- declaration.signature
+declaration.signature.call                       <- declaration.signature.call  t:call_signature
+declaration.signature.construct                  <- declaration.signature.construct  t:construct_signature
+declaration.signature.index                      <- declaration.signature.index  t:index_signature
+declaration.signature.index.mapped               <- declaration.signature.index.mapped  t:index_signature_mapped_type_clause
+declaration.struct                               <- declaration.struct  r:struct_item,struct_item_brace
+declaration.struct.tuple                         <- declaration.struct.tuple  r:struct_item_tuple
+declaration.struct.unit                          <- declaration.struct.unit  r:struct_item_unit
+declaration.type_alias                           <- declaration.type_alias  p:type_alias_statement r:type_item t:type_alias_declaration
+declaration.type_alias.associated                <- declaration.type_alias.associated  r:associated_type
+declaration.type_parameter                       <- declaration.type_parameter  p:type_parameter r:type_parameter t:type_parameter
+declaration.type_parameter.lifetime              <- declaration.type_parameter.lifetime  r:lifetime_parameter
+declaration.type_parameter.value                 <- declaration.type_parameter.value  r:const_parameter
+declaration.union                                <- declaration.union  r:union_item
+declaration.variable                             <- declaration.variable, declaration.variable.static  p:assignment_eq,assignment_type,assignment_typed r:let_declaration t:lexical_declaration,variable_declarator_definite,variable_declarator_p r:static_item
+declaration.variable.constant                    <- declaration.variable.constant  t:lexical_declaration
+declaration.variable.pattern                     <- declaration.variable.pattern  t:variable_declarator_plain
+declaration.variable.reassignable                <- declaration.variable.reassignable  t:lexical_declaration
+declaration.variable.reassignable.function_scoped <- declaration.variable.reassignable.function_scoped  t:variable_declaration
+element                                          <- element
+element.comparator                               <- element.comparator  p:comparison_operator_comparator
+element.comparator.comparison                    <- element.comparator.comparison
+element.comparator.comparison.equal              <- element.comparator.comparison.equal  p:comparison_operator_comparator
+element.comparator.comparison.greater            <- element.comparator.comparison.greater  p:comparison_operator_comparator
+element.comparator.comparison.greater_equal      <- element.comparator.comparison.greater_equal  p:comparison_operator_comparator
+element.comparator.comparison.less               <- element.comparator.comparison.less  p:comparison_operator_comparator
+element.comparator.comparison.less_equal         <- element.comparator.comparison.less_equal  p:comparison_operator_comparator
+element.comparator.comparison.not_equal          <- element.comparator.comparison.not_equal  p:comparison_operator_comparator
+element.comparator.identity                      <- element.comparator.identity
+element.comparator.identity.is                   <- element.comparator.identity.is  p:comparison_operator_comparator
+element.comparator.identity.is_not               <- element.comparator.identity.is_not  p:comparison_operator_comparator
+element.comparator.membership                    <- element.comparator.membership
+element.comparator.membership.in                 <- element.comparator.membership.in  p:comparison_operator_comparator
+element.comparator.membership.not_in             <- element.comparator.membership.not_in  p:comparison_operator_comparator
+element.macro                                    <- element.macro
+element.macro.fragment                           <- element.macro.fragment  r:fragment_specifier
+element.macro.token_binding                      <- element.macro.token_binding  r:token_binding_pattern
+element.macro.token_repetition                   <- element.macro.token_repetition  r:token_repetition
+element.macro.token_repetition.pattern           <- element.macro.token_repetition.pattern  r:token_repetition_pattern
+element.macro.token_tree                         <- element.macro.token_tree  r:token_tree
+element.macro.token_tree.delimited               <- element.macro.token_tree.delimited  r:delim_token_tree
+element.macro.token_tree.pattern                 <- element.macro.token_tree.pattern  r:token_tree_pattern
+element.pair                                     <- element.pair  p:pair t:pair
+element.spread                                   <- element.splat  p:list_splat t:spread_element
+element.spread.map                               <- element.splat.dictionary  p:dictionary_splat
+element.spread.parenthesized                     <- element.splat.parenthesized  p:parenthesized_list_splat
+element.struct                                   <- element.struct
+element.struct.base                              <- element.struct.base  r:base_field_initializer
+element.struct.field                             <- element.struct.field  r:field_initializer,shorthand_field_initializer
+element.template                                 <- element.template
+element.template.substitution                    <- element.template.substitution  t:template_type
+element.tuple                                    <- element.tuple
+element.tuple.member                             <- element.tuple.member  t:tuple_parameter
+element.tuple.member.optional                    <- element.tuple.member.optional  t:optional_tuple_parameter
+element.type_argument                            <- element.type_argument  r:type_argument
+element.type_binding                             <- element.type_binding  r:type_binding
+expression                                       <- expression
+expression.assignment                            <- expression.assignment  p:named_expression r:assignment_expression t:assignment_expression
+expression.assignment.compound                   <- expression.assignment.compound  p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression
+expression.assignment.compound.add               <- expression.assignment.compound.add  p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression
+expression.assignment.compound.and               <- expression.assignment.compound.and  t:augmented_assignment_expression
+expression.assignment.compound.bitwise_and       <- expression.assignment.compound.bitwise_and  p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression
+expression.assignment.compound.bitwise_or        <- expression.assignment.compound.bitwise_or  p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression
+expression.assignment.compound.bitwise_xor       <- expression.assignment.compound.bitwise_xor  p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression
+expression.assignment.compound.coalesce          <- expression.assignment.compound.nullish  t:augmented_assignment_expression
+expression.assignment.compound.divide            <- expression.assignment.compound.divide  p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression
+expression.assignment.compound.exponent          <- expression.assignment.compound.exponent  p:augmented_assignment t:augmented_assignment_expression
+expression.assignment.compound.floor_divide      <- expression.assignment.compound.floor_divide  p:augmented_assignment
+expression.assignment.compound.matrix_multiply   <- expression.assignment.compound.matmul  p:augmented_assignment
+expression.assignment.compound.modulo            <- expression.assignment.compound.modulo  p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression
+expression.assignment.compound.multiply          <- expression.assignment.compound.multiply  p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression
+expression.assignment.compound.or                <- expression.assignment.compound.or  t:augmented_assignment_expression
+expression.assignment.compound.shift_left        <- expression.assignment.compound.shift_left  p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression
+expression.assignment.compound.shift_right       <- expression.assignment.compound.shift_right  p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression
+expression.assignment.compound.subtract          <- expression.assignment.compound.subtract  p:augmented_assignment r:compound_assignment_expr t:augmented_assignment_expression
+expression.await                                 <- expression.await  p:await r:await_expression t:await_expression
+expression.binary                                <- expression.binary  p:binary_operator,comparison_operator r:binary_expression t:binary_expression
+expression.binary.arithmetic                     <- expression.binary.arithmetic
+expression.binary.arithmetic.add                 <- expression.binary.arithmetic.add  p:binary_operator r:binary_expression t:binary_expression
+expression.binary.arithmetic.divide              <- expression.binary.arithmetic.divide  p:binary_operator r:binary_expression t:binary_expression
+expression.binary.arithmetic.exponent            <- expression.binary.arithmetic.exponent  p:binary_operator t:binary_expression
+expression.binary.arithmetic.floor_divide        <- expression.binary.arithmetic.floor_divide  p:binary_operator
+expression.binary.arithmetic.modulo              <- expression.binary.arithmetic.modulo  p:binary_operator r:binary_expression t:binary_expression
+expression.binary.arithmetic.multiply            <- expression.binary.arithmetic.multiply  p:binary_operator r:binary_expression t:binary_expression
+expression.binary.arithmetic.subtract            <- expression.binary.arithmetic.subtract  p:binary_operator r:binary_expression t:binary_expression
+expression.binary.bitwise                        <- expression.binary.bitwise
+expression.binary.bitwise.and                    <- expression.binary.bitwise.and  p:binary_operator r:binary_expression t:binary_expression
+expression.binary.bitwise.or                     <- expression.binary.bitwise.or  p:binary_operator r:binary_expression t:binary_expression
+expression.binary.bitwise.xor                    <- expression.binary.bitwise.xor  p:binary_operator r:binary_expression t:binary_expression
+expression.binary.coalesce                       <- expression.binary.nullish  t:binary_expression
+expression.binary.comparison                     <- expression.binary.comparison
+expression.binary.comparison.chain               <- expression.binary.comparison.chain  p:comparison_operator
+expression.binary.comparison.equal               <- expression.binary.comparison.equal  p:comparison_operator r:binary_expression t:binary_expression
+expression.binary.comparison.greater             <- expression.binary.comparison.greater  p:comparison_operator r:binary_expression t:binary_expression
+expression.binary.comparison.greater_equal       <- expression.binary.comparison.greater_equal  p:comparison_operator r:binary_expression t:binary_expression
+expression.binary.comparison.less                <- expression.binary.comparison.less  p:comparison_operator r:binary_expression t:binary_expression
+expression.binary.comparison.less_equal          <- expression.binary.comparison.less_equal  p:comparison_operator r:binary_expression t:binary_expression
+expression.binary.comparison.loose_equal         <- expression.binary.comparison.loose_equal  t:binary_expression
+expression.binary.comparison.loose_not_equal     <- expression.binary.comparison.loose_not_equal  t:binary_expression
+expression.binary.comparison.not_equal           <- expression.binary.comparison.not_equal  p:comparison_operator r:binary_expression t:binary_expression
+expression.binary.identity                       <- expression.binary.identity
+expression.binary.identity.is                    <- expression.binary.identity.is  p:comparison_operator
+expression.binary.identity.is_not                <- expression.binary.identity.is_not  p:comparison_operator
+expression.binary.logical                        <- expression.binary.logical  p:boolean_operator
+expression.binary.logical.and                    <- expression.binary.logical.and  p:boolean_operator r:binary_expression t:binary_expression
+expression.binary.logical.or                     <- expression.binary.logical.or  p:boolean_operator r:binary_expression t:binary_expression
+expression.binary.matrix_multiply                <- expression.binary.matmul  p:binary_operator
+expression.binary.membership                     <- expression.binary.membership
+expression.binary.membership.in                  <- expression.binary.membership.in  p:comparison_operator t:binary_expression
+expression.binary.membership.instanceof          <- expression.binary.membership.instanceof  t:binary_expression
+expression.binary.membership.not_in              <- expression.binary.membership.not_in  p:comparison_operator
+expression.binary.shift                          <- expression.binary.shift
+expression.binary.shift.left                     <- expression.binary.shift.left  p:binary_operator r:binary_expression t:binary_expression
+expression.binary.shift.right                    <- expression.binary.shift.right  p:binary_operator r:binary_expression t:binary_expression
+expression.binary.shift.right_unsigned           <- expression.binary.shift.right_unsigned  t:binary_expression
+expression.block                                 <- expression.block
+expression.block.async                           <- expression.block.async  r:async_block
+expression.block.const                           <- expression.block.const  r:const_block
+expression.block.generator                       <- expression.block.gen  r:gen_block
+expression.block.try                             <- expression.block.try  r:try_block
+expression.block.unsafe                          <- expression.block.unsafe  r:unsafe_block
+expression.call                                  <- expression.call  p:call r:call_expression t:call_expression_call
+expression.call.construct                        <- expression.call.new  t:new_expression
+expression.call.import                           <- expression.call.import  t:import
+expression.call.macro                            <- expression.call.macro  r:macro_invocation
+expression.call.member                           <- expression.call.member  p:call r:call_expression t:call_expression_member
+expression.call.qualified                        <- expression.call.path  r:call_expression
+expression.call.template                         <- expression.call.template  t:call_expression_template_call
+expression.cast                                  <- expression.cast
+expression.cast.assertion                        <- expression.cast.assertion  t:type_assertion
+expression.cast.conversion                       <- expression.cast.as  r:type_cast_expression t:as_expression
+expression.cast.non_null                         <- expression.cast.non_null  t:non_null_expression
+expression.cast.satisfies                        <- expression.cast.satisfies  t:satisfies_expression
+expression.class                                 <- expression.class  t:class
+expression.collection                            <- expression.collection
+expression.collection.list                       <- expression.collection.list  p:list r:array_expression t:array
+expression.collection.list.repeat                <- expression.collection.list.repeat  r:array_expression_semi
+expression.collection.map                        <- expression.collection.dictionary  p:dictionary
+expression.collection.object                     <- expression.collection.object  t:object
+expression.collection.set                        <- expression.collection.set  p:set
+expression.collection.struct                     <- expression.collection.struct  r:struct_expression
+expression.collection.tuple                      <- expression.collection.tuple  p:tuple r:tuple_expression
+expression.collection.tuple.bare                 <- expression.collection.tuple.bare  p:expression_list
+expression.comprehension                         <- expression.comprehension
+expression.comprehension.generator               <- expression.comprehension.generator  p:generator_expression
+expression.comprehension.list                    <- expression.comprehension.list  p:list_comprehension
+expression.comprehension.map                     <- expression.comprehension.dictionary  p:dictionary_comprehension
+expression.comprehension.set                     <- expression.comprehension.set  p:set_comprehension
+expression.conditional                           <- expression.conditional  p:conditional_expression t:ternary_expression
+expression.function                              <- expression.function  t:function_expression,generator_function
+expression.instantiation                         <- expression.instantiation  r:generic_function t:instantiation_expression
+expression.interpolation                         <- expression.interpolation  p:interpolation t:template_substitution
+expression.interpolation.conversion              <- expression.interpolation.conversion  p:type_conversion
+expression.interpolation.format                  <- expression.interpolation.format  p:format_specifier
+expression.lambda                                <- expression.lambda  p:lambda,lambda_within_for_in_clause r:closure_expression t:arrow_function
+expression.member                                <- expression.member  p:attribute r:field_expression t:member_expression
+expression.meta                                  <- expression.meta  t:meta_property
+expression.parenthesized                         <- expression.parenthesized  p:parenthesized_expression r:parenthesized_expression t:parenthesized_expression
+expression.propagate                             <- expression.try  r:try_expression
+expression.range                                 <- expression.range  r:range_expression,range_expression_binary
+expression.range.exclusive                       <- expression.range.exclusive  r:range_expression_bare,range_expression_binary,range_expression_postfix
+expression.range.inclusive                       <- expression.range.inclusive  r:range_expression_binary
+expression.reference                             <- expression.reference  r:reference_expression
+expression.sequence                              <- expression.sequence  t:sequence_expression
+expression.slice                                 <- expression.slice  p:slice
+expression.subscript                             <- expression.subscript  p:subscript r:index_expression t:subscript_expression
+expression.unary                                 <- expression.unary  p:unary_operator r:unary_expression t:unary_expression
+expression.unary.bitwise_not                     <- expression.unary.bitwise_not  p:unary_operator t:unary_expression
+expression.unary.delete                          <- expression.unary.delete  t:unary_expression
+expression.unary.deref                           <- expression.unary.deref  r:unary_expression
+expression.unary.negation                        <- expression.unary.negation  p:unary_operator r:unary_expression t:unary_expression
+expression.unary.not                             <- expression.unary.not  p:not_operator r:unary_expression t:unary_expression
+expression.unary.plus                            <- expression.unary.plus  p:unary_operator t:unary_expression
+expression.unary.typeof                          <- expression.unary.typeof  t:unary_expression
+expression.unary.void                            <- expression.unary.void  t:unary_expression
+expression.unit                                  <- expression.unit  r:unit_expression
+expression.update                                <- expression.update  t:update_expression_postfix,update_expression_prefix
+expression.update.decrement                      <- expression.update.decrement  t:update_expression_postfix,update_expression_prefix
+expression.update.increment                      <- expression.update.increment  t:update_expression_postfix,update_expression_prefix
+expression.yield                                 <- expression.yield  p:yield r:yield_expression t:yield_expression
+expression.yield.delegate                        <- expression.yield.delegate  p:yield_from_clause t:yield_expression_delegate
+file                                             <- module  p:module r:source_file t:program
+identifier                                       <- identifier, identifier.crate, identifier.field, identifier.property, identifier.property.shorthand, identifier.type  p:identifier r:identifier t:identifier p:type r:type_identifier t:type_identifier r:crate r:field_identifier r:shorthand_field_identifier t:shorthand_property_identifier,shorthand_property_identifier_pattern t:private_property_identifier,property_identifier
+identifier.label                                 <- identifier.label  r:label t:statement_identifier
+identifier.lifetime                              <- identifier.lifetime  r:lifetime
+identifier.metavariable                          <- identifier.metavariable  r:metavariable
+identifier.qualified                             <- identifier.dotted, identifier.nested, identifier.scoped, type.path, type.path.expression  p:dotted_name p:member_type r:scoped_type_identifier t:nested_type_identifier r:scoped_identifier r:scoped_type_identifier_in_expression_position t:nested_identifier
+identifier.receiver                              <- identifier.self  r:self t:this
+identifier.super                                 <- identifier.super  r:super t:super
+literal                                          <- literal
+literal.boolean                                  <- literal.boolean  r:boolean_literal
+literal.boolean.false                            <- literal.boolean.false  p:false r:boolean_literal t:false
+literal.boolean.true                             <- literal.boolean.true  p:true r:boolean_literal t:true
+literal.character                                <- literal.char  r:char_literal
+literal.ellipsis                                 <- literal.ellipsis  p:ellipsis
+literal.null                                     <- literal.null  p:none t:null
+literal.null.undefined                           <- literal.null.undefined  t:undefined
+literal.number                                   <- literal.number  t:number
+literal.number.float                             <- literal.number.float  p:float_point r:float_literal t:number_float_point
+literal.number.float.leading_point               <- literal.number.float.leading_point  p:float_leading_point t:number_float_leading_point
+literal.number.float.scientific                  <- literal.number.float.scientific  p:float_scientific t:number_float_scientific
+literal.number.integer                           <- literal.number.integer  p:integer_decimal_plain r:integer_literal_decimal t:number_decimal
+literal.number.integer.big                       <- literal.number.integer.big  p:integer_decimal_long t:number_bigint_decimal
+literal.number.integer.big.binary                <- literal.number.integer.big.binary  t:number_bigint_binary
+literal.number.integer.big.hex                   <- literal.number.integer.big.hex  t:number_bigint_hex
+literal.number.integer.big.octal                 <- literal.number.integer.big.octal  t:number_bigint_octal
+literal.number.integer.binary                    <- literal.number.integer.binary  p:integer_binary r:integer_literal_binary t:number_binary
+literal.number.integer.hex                       <- literal.number.integer.hex  p:integer_hex r:integer_literal_hex t:number_hex
+literal.number.integer.imaginary                 <- literal.number.integer.imaginary  p:integer_decimal_imaginary
+literal.number.integer.octal                     <- literal.number.integer.octal  p:integer_octal r:integer_literal_octal t:number_octal
+literal.number.negative                          <- literal.number.negative  r:negative_literal t:literal_type_negative_number
+literal.regex                                    <- literal.regex  t:regex
+literal.regex.flags                              <- literal.regex.flags  t:regex_flags
+literal.regex.pattern                            <- literal.regex.pattern  t:regex_pattern
+literal.string                                   <- literal.string  p:string r:string_literal t:string
+literal.string.bytes                             <- literal.string.bytes  p:string
+literal.string.concatenated                      <- literal.string.concatenated  p:concatenated_string
+literal.string.escape                            <- literal.string.escape  p:escape_interpolation,escape_sequence r:escape_sequence t:escape_sequence
+literal.string.interpolated                      <- literal.string.f, literal.template  p:string t:template_string
+literal.string.multiline                         <- literal.string.triple  p:string
+literal.string.raw                               <- literal.string.raw  p:string r:raw_string_literal
+literal.string.text                              <- literal.string.text  p:string_fragment r:string_content t:string_fragment
+modifier                                         <- modifier
+modifier.extern                                  <- modifier.extern  r:extern_modifier
+modifier.visibility                              <- modifier.visibility  t:accessibility_modifier
+modifier.visibility.private                      <- modifier.visibility.private  r:visibility_modifier_pub t:accessibility_modifier
+modifier.visibility.protected                    <- modifier.visibility.protected  t:accessibility_modifier
+modifier.visibility.public                       <- modifier.visibility.public  r:visibility_modifier_pub t:accessibility_modifier
+modifier.visibility.public.internal              <- modifier.visibility.public.internal  r:visibility_modifier,visibility_modifier_pub
+modifier.visibility.public.restricted            <- modifier.visibility.public.restricted  r:visibility_modifier_pub
+pattern                                          <- pattern
+pattern.as                                       <- pattern.captured, pattern.case.as  p:case_as_pattern r:captured_pattern
+pattern.assignment                               <- pattern.assignment  t:assignment_pattern
+pattern.complex                                  <- pattern.case.complex  p:complex_pattern
+pattern.generic                                  <- pattern.generic  r:generic_pattern
+pattern.list                                     <- pattern.array, pattern.case.list, pattern.list, pattern.slice  p:case_list_pattern p:list_pattern r:slice_pattern t:array_pattern
+pattern.map                                      <- pattern.case.dictionary  p:dict_pattern
+pattern.mutable                                  <- pattern.mutable  r:mut_pattern
+pattern.object                                   <- pattern.object  t:object_pattern
+pattern.object.assignment                        <- pattern.object.assignment  t:object_assignment_pattern
+pattern.object.pair                              <- pattern.object.pair  t:pair_pattern
+pattern.or                                       <- pattern.case.or, pattern.or  p:union_pattern r:or_pattern
+pattern.range                                    <- pattern.range  r:range_pattern,range_pattern_prefix,range_pattern_with_left
+pattern.range.exclusive                          <- pattern.range.exclusive  r:range_pattern_prefix,range_pattern_with_left
+pattern.range.inclusive                          <- pattern.range.inclusive  r:range_pattern_prefix,range_pattern_with_left
+pattern.reference                                <- pattern.reference  r:ref_pattern
+pattern.reference.value                          <- pattern.reference.value  r:reference_pattern
+pattern.rest                                     <- pattern.case.splat, pattern.rest, pattern.splat  p:list_splat_pattern p:splat_pattern t:rest_pattern
+pattern.rest.map                                 <- pattern.splat.dictionary  p:dictionary_splat_pattern
+pattern.struct                                   <- pattern.case.class, pattern.struct, pattern.tuple.struct  p:class_pattern r:struct_pattern r:tuple_struct_pattern
+pattern.struct.field                             <- pattern.case.keyword, pattern.struct.field  p:keyword_pattern r:field_pattern
+pattern.struct.rest                              <- pattern.struct.rest  r:remaining_field_pattern
+pattern.tuple                                    <- pattern.case.tuple, pattern.tuple  p:case_tuple_pattern p:tuple_pattern r:tuple_pattern
+pattern.tuple.bare                               <- pattern.tuple.bare  p:pattern_list
+pattern.wildcard                                 <- pattern.wildcard  r:wildcard_pattern
+statement                                        <- statement
+statement.assert                                 <- statement.assert  p:assert_statement
+statement.block                                  <- statement.block  p:block r:block t:statement_block
+statement.block.static                           <- statement.block.static  t:class_static_block
+statement.break                                  <- statement.break  p:break_statement r:break_expression t:break_statement
+statement.continue                               <- statement.continue  p:continue_statement r:continue_expression t:continue_statement
+statement.debugger                               <- statement.debugger  t:debugger_statement
+statement.delete                                 <- statement.delete  p:delete_statement
+statement.empty                                  <- statement.empty  p:pass_statement r:empty_statement t:empty_statement
+statement.exec                                   <- statement.exec  p:exec_statement
+statement.export                                 <- statement.export  t:export_statement,export_statement_default_declaration,export_statement
+statement.export.all                             <- statement.export.all  t:export_statement_default_from
+statement.export.default                         <- statement.export.default  t:export_statement_default_declaration
+statement.expression                             <- statement.expression  p:expression_statement r:expression_statement t:expression_statement
+statement.global                                 <- statement.global  p:global_statement
+statement.if                                     <- statement.if  p:if_statement r:if_expression t:if_statement
+statement.import                                 <- statement.import  p:import_statement r:use_declaration t:import_statement
+statement.import.alias                           <- none
+statement.import.from                            <- statement.import.from  p:import_from_statement
+statement.import.future                          <- statement.import.future  p:future_import_statement
+statement.import.package                         <- statement.import.crate  r:extern_crate_declaration
+statement.import.typeof                          <- statement.import.typeof  t:import_statement
+statement.labeled                                <- statement.labeled  t:labeled_statement
+statement.loop                                   <- statement.loop  r:loop_expression
+statement.loop.counted                           <- statement.loop.counted  t:for_statement
+statement.loop.do_while                          <- statement.loop.do_while  t:do_statement
+statement.loop.for_each                          <- statement.loop.for  p:for_statement r:for_expression t:for_in_statement
+statement.loop.while                             <- statement.loop.while  p:while_statement r:while_expression t:while_statement
+statement.match                                  <- statement.match  p:match_statement r:match_expression
+statement.nonlocal                               <- statement.nonlocal  p:nonlocal_statement
+statement.print                                  <- statement.print  p:print_statement,print_statement_plain
+statement.print.chevron                          <- statement.print.chevron  p:print_statement_chevron
+statement.resource                               <- statement.with  p:with_statement
+statement.return                                 <- statement.return  p:return_statement r:return_expression t:return_statement
+statement.scope                                  <- statement.scope  t:with_statement
+statement.switch                                 <- statement.switch  t:switch_statement
+statement.throw                                  <- statement.throw  p:raise_statement t:throw_statement
+statement.try                                    <- statement.try  p:try_statement t:try_statement
+type                                             <- type  p:type
+type.abstract                                    <- type.abstract  r:abstract_type
+type.array                                       <- type.array  r:array_type t:array_type
+type.bounded                                     <- type.bounded  r:bounded_type
+type.bracketed                                   <- type.bracketed  r:bracketed_type
+type.conditional                                 <- type.conditional  t:conditional_type
+type.constrained                                 <- type.constrained  p:constrained_type
+type.dynamic                                     <- type.dynamic  r:dynamic_type
+type.existential                                 <- type.existential  t:existential_type
+type.function                                    <- type.function  r:function_type t:function_type
+type.function.constructor                        <- type.function.constructor  t:constructor_type
+type.generic                                     <- type.generic  p:generic_type r:generic_type t:generic_type
+type.generic.turbofish                           <- type.generic.turbofish  r:generic_type_with_turbofish
+type.index_query                                 <- type.index_query  t:index_type_query
+type.infer                                       <- type.infer  t:infer_type
+type.intersection                                <- type.intersection  t:intersection_type
+type.literal                                     <- type.literal  t:literal_type
+type.lookup                                      <- type.lookup  t:lookup_type
+type.nullable                                    <- type.maybe  t:flow_maybe_type
+type.object                                      <- type.object  t:object_type
+type.optional                                    <- type.optional  t:optional_type
+type.parenthesized                               <- type.parenthesized  t:parenthesized_type
+type.pointer                                     <- type.pointer  r:pointer_type
+type.predicate                                   <- type.predicate  t:type_predicate
+type.predicate.asserts                           <- type.predicate.asserts  t:asserts
+type.primitive                                   <- type.primitive  r:primitive_type t:predefined_type
+type.primitive.boolean                           <- none
+type.primitive.character                         <- none
+type.primitive.floating                          <- none
+type.primitive.floating.float32                  <- none
+type.primitive.floating.float64                  <- none
+type.primitive.integral                          <- none
+type.primitive.integral.int128                   <- none
+type.primitive.integral.int16                    <- none
+type.primitive.integral.int32                    <- none
+type.primitive.integral.int64                    <- none
+type.primitive.integral.int8                     <- none
+type.primitive.integral.size                     <- none
+type.primitive.never                             <- type.primitive.never  r:never_type t:predefined_type
+type.primitive.object                            <- none
+type.primitive.string                            <- none
+type.primitive.symbol                            <- none
+type.primitive.unchecked                         <- none
+type.primitive.unknown                           <- none
+type.primitive.void                              <- none
+type.qualified                                   <- type.qualified  r:qualified_type
+type.query                                       <- type.query  t:type_query
+type.readonly                                    <- type.readonly  t:readonly_type
+type.reference                                   <- type.reference  r:reference_type
+type.rest                                        <- type.rest, type.splat  p:splat_type t:rest_type
+type.rest.map                                    <- none
+type.template                                    <- type.template  t:template_literal_type
+type.tuple                                       <- type.tuple  r:tuple_type t:tuple_type
+type.union                                       <- type.union  p:union_type t:union_type
+type.unit                                        <- type.unit  r:unit_type

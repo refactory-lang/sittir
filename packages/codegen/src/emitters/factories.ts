@@ -284,7 +284,8 @@ function buildLeafReConsts(
 ): Map<string, string> {
 	const leafReConsts = new Map<string, string>();
 	const word = nodeMap.word ? nodeMap.nodes.get(nodeMap.word) : undefined;
-	const reserved = reservedWordset(nodeMap.reserved, 'global', kindEntries ?? []).words;
+	const relaxed = new Set(nodeMap.relaxedLiterals ?? []);
+	const reserved = reservedWordset(nodeMap.reserved, 'global', kindEntries ?? []).words.filter((text) => !relaxed.has(text));
 	if (word?.rawFactoryName && reserved.length > 0) {
 		const listName = `_reservedWordList_${word.rawFactoryName}`;
 		const constName = `_reservedWords_${word.rawFactoryName}`;
@@ -2367,11 +2368,10 @@ function emitSeparatedListFactory(
 		lines.push(`  const ${contentStorageKey} = ${admitted};`);
 	}
 	if (hasSeparatorKindOption) {
-		const separatorDefault = declaredSeparatorDefault(node, nodeMap, kindEntries);
-		if (separatorDefault === undefined) {
+		if (declaredSeparatorDefault(node, nodeMap, kindEntries) === undefined) {
 			lines.push(`  if (options.separator === undefined) throw new Error('${node.kind}: its separator has no declared default; pass options.separator');`);
-			lines.push('  const _separator = options.separator;');
-		} else lines.push(`  const _separator = options.separator ?? ${separatorDefault};`);
+		}
+		lines.push('  const _separator = options.separator;');
 	}
 	if (hasDelimiterOption) {
 		lines.push('  const _delimiter = options.delimiter;');

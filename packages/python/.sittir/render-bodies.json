@@ -542,11 +542,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "list_pattern_case_patterns",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "list_pattern_case_patterns"
+							"name": "elements"
 						}
 					]
 				}
@@ -594,11 +594,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "list_pattern_case_patterns",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "list_pattern_case_patterns"
+							"name": "elements"
 						}
 					]
 				}
@@ -1176,7 +1176,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "comprehension_clauses"
+			"name": "clauses"
 		},
 		{
 			"kind": "seam",
@@ -1473,7 +1473,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "suite"
+			"name": "body"
 		},
 		{
 			"kind": "seam",
@@ -2236,7 +2236,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "comprehension_clauses"
+			"name": "clauses"
 		},
 		{
 			"kind": "seam",
@@ -2791,7 +2791,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "comprehension_clauses"
+			"name": "clauses"
 		},
 		{
 			"kind": "seam",
@@ -3527,7 +3527,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "comprehension_clauses"
+			"name": "clauses"
 		},
 		{
 			"kind": "seam",
@@ -3745,7 +3745,7 @@
 	"string_content": [
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "elements"
 		}
 	],
 	"subjects": [

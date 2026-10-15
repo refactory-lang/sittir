@@ -2,8 +2,8 @@
 ; How `sittir tool bindings-inventory` reads a pattern: docs/glossary/packages-tools-src-inventory.md
 ; (`readBindings` for the captures, `derive` for the members a claim takes from its slots).
 
-; ── module ─────────────────────────────────────────────────────────────────────
-(program) @module
+; ── file ───────────────────────────────────────────────────────────────────────
+(program) @file
 
 ; ── declaration ────────────────────────────────────────────────────────────────
 (function_declaration) @declaration.function
@@ -16,7 +16,7 @@
 (abstract_class_declaration "abstract" @abstract)
 (abstract_class_declaration (class_heritage (class_heritage_extends_clause (_) @extends)))
 (abstract_class_declaration (class_heritage (implements_clause type: (_) @implements)))
-(interface_declaration (extends_type_clause)? @extends) @declaration.interface
+(interface_declaration (extends_type_clause type: (_) @extends)?) @declaration.interface
 (enum_declaration) @declaration.enum
 (enum_assignment) @declaration.enum_member
 (enum_body_element_name name: (_) @name) @declaration.enum_member
@@ -106,6 +106,7 @@
 (optional_parameter (accessibility_modifier "protected")) @declaration.parameter.protected
 (optional_parameter (accessibility_modifier "public")) @declaration.parameter.public
 (type_parameter value: (_)? @default) @declaration.type_parameter
+(type_parameter constraint: (constraint type: (_) @bounds))
 (ambient_declaration) @declaration.ambient
 (ambient_declaration_module) @declaration.module_property
 (internal_module) @declaration.module
@@ -121,8 +122,9 @@
 (statement_block) @statement.block
 (if_statement) @statement.if
 (for_statement) @statement.loop.counted
-(for_in_statement) @statement.loop.for
+(for_in_statement) @statement.loop.for_each
 (for_in_statement await: _ @async)
+(for_in_statement (_for_header) @header)
 (while_statement) @statement.loop.while
 (do_statement) @statement.loop.do_while
 (return_statement) @statement.return
@@ -135,15 +137,13 @@
 (import_statement from_clause: (import_statement_clause_from source: (_) @source))
 (import_statement from_clause: (import_statement_clause_from (import_clause) @importClause))
 (export_statement) @statement.export
-(export_statement_default_declaration) @statement.export
 (export_statement_default_declaration (export_statement_default_declaration_default_kw)) @statement.export.default
-(export_statement_default_from) @statement.export
 (export_statement_default_from (export_statement_default_from_star_from)) @statement.export.all
 (export_statement_default_declaration (declaration) @declaration)
 (export_statement_default_declaration (export_statement_default_declaration_default_kw (declaration) @declaration))
 (export_statement_default_declaration (export_statement_default_declaration_default_kw (export_statement_default_declaration_default_kw_value value: (_) @value)))
 (export_statement_equals_export expression: (_) @value)
-((export_statement_default_from type: _ @dropped) (#set! reason "a type-only export reads as statement.export; the vocabulary declares no fact for it"))
+(export_statement_default_from type: _ @typeOnly)
 (export_statement_default_from (export_statement_default_from_clause_from (export_clause) @exportClause))
 (export_statement_default_from (export_statement_default_from_ns_from (namespace_export) @exportClause))
 (export_statement_default_from (export_statement_default_from_clause_from source: (_) @source))
@@ -160,6 +160,8 @@
 ; ── clause ─────────────────────────────────────────────────────────────────────
 (else_clause) @clause.else
 (catch_clause) @clause.catch
+(catch_clause (catch_clause_group parameter: (_) @name))
+(catch_clause (catch_clause_group type: (_) @type))
 (finally_clause) @clause.finally
 (switch_case) @clause.case.switch
 (switch_default) @clause.case.default
@@ -173,28 +175,28 @@
 (import_require_clause) @clause.import.require
 (namespace_import) @clause.import.namespace
 (import_specifier) @clause.import.specifier
-(import_specifier_name) @clause.import.specifier
 (import_specifier_name import_kind: "type" @typeOnly)
 (import_specifier_name import_kind: "typeof") @clause.import.specifier.typeof
-(import_specifier_as) @clause.import.specifier
 (import_specifier_as import_kind: "type" @typeOnly)
 (import_specifier_as import_kind: "typeof") @clause.import.specifier.typeof
 (import_attribute) @clause.import.attribute
-(import_alias) @clause.import.alias
+(import_alias) @statement.import.alias
 (namespace_export) @clause.export.namespace
 (export_specifier) @clause.export.specifier
 (export_specifier export_kind: "type" @typeOnly)
 (export_specifier export_kind: "typeof") @clause.export.specifier.typeof
 (mapped_type_clause) @clause.mapped_type
 ; type annotations are transparent wrappers: the annotated member takes the type
-(constraint) @clause.constraint
+(constraint) @clause.bounds
+(constraint type: (_) @bounds)
+((constraint ["extends" ":"] @dropped) (#set! reason "the owning grammar rule determines the bounds introducer"))
 (default_type) @clause.default
 
 ; ── argument (pieces of a call that are not expressions) ───────────────────────
 ; none: every TypeScript argument is an expression or a spread element
 
 ; ── element (pieces of a composite expression that are not expressions) ────────
-(spread_element) @element.splat
+(spread_element) @element.spread
 (pair) @element.pair
 (pair key: (computed_property_name) @key @computed)
 (tuple_parameter) @element.tuple.member
@@ -206,7 +208,7 @@
 (call_expression_member "?." @optionalChain) @expression.call
 (call_expression_call function: (member_expression) @function) @expression.call.member
 (call_expression_template_call) @expression.call.template
-(new_expression constructor: (_)? @function) @expression.call.new
+(new_expression constructor: (_)? @function) @expression.call.construct
 (binary_expression) @expression.binary
 (binary_expression operator: "+") @expression.binary.arithmetic.add
 (binary_expression operator: "-") @expression.binary.arithmetic.subtract
@@ -230,7 +232,7 @@
 (binary_expression operator: ">>>") @expression.binary.shift.right_unsigned
 (binary_expression operator: "&&") @expression.binary.logical.and
 (binary_expression operator: "||") @expression.binary.logical.or
-(binary_expression operator: "??") @expression.binary.nullish
+(binary_expression operator: "??") @expression.binary.coalesce
 (binary_expression (binary_expression_in left: (_) @left right: (_) @right)) @expression.binary.membership.in
 (binary_expression operator: "instanceof") @expression.binary.membership.instanceof
 (unary_expression) @expression.unary
@@ -262,7 +264,7 @@
 (augmented_assignment_expression operator: ">>>=") @expression.assignment.compound.shift_right_unsigned
 (augmented_assignment_expression operator: "&&=") @expression.assignment.compound.and
 (augmented_assignment_expression operator: "||=") @expression.assignment.compound.or
-(augmented_assignment_expression operator: "??=") @expression.assignment.compound.nullish
+(augmented_assignment_expression operator: "??=") @expression.assignment.compound.coalesce
 (assignment_expression) @expression.assignment
 (assignment_expression using: _ @disposable)
 (ternary_expression) @expression.conditional
@@ -285,10 +287,13 @@
 (sequence_expression) @expression.sequence
 (object) @expression.collection.object
 (array) @expression.collection.list
-(as_expression) @expression.cast.as
+(as_expression) @expression.cast.assertion
+(as_expression type_annotation: (_) @type)
 (satisfies_expression) @expression.cast.satisfies
+(satisfies_expression type_annotation: (_) @type)
 (non_null_expression) @expression.cast.non_null
-(type_assertion) @expression.cast.assertion
+(type_assertion) @expression.cast.assertion.angle_bracket
+(type_assertion (type_arguments (_) @type))
 (instantiation_expression) @expression.instantiation
 (import) @expression.call.import
 (meta_property) @expression.meta
@@ -304,8 +309,9 @@
 (object_assignment_pattern) @pattern.object.assignment
 (pair_pattern) @pattern.object.pair
 (pair_pattern key: (computed_property_name) @key @computed)
-(array_pattern) @pattern.array
+(array_pattern) @pattern.list
 (rest_pattern) @pattern.rest
+(rest_pattern (_) @pattern)
 (assignment_pattern) @pattern.assignment
 
 ; ── type ───────────────────────────────────────────────────────────────────────
@@ -342,13 +348,13 @@
 (index_type_query) @type.index_query
 (asserts) @type.predicate.asserts
 (existential_type) @type.existential
-(flow_maybe_type) @type.maybe
+(flow_maybe_type) @type.nullable
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string) @literal.string
 (escape_sequence) @literal.string.escape
 (string_fragment) @literal.string.text
-(template_string) @literal.template
+(template_string) @literal.string.interpolated
 (regex) @literal.regex
 (number) @literal.number
 (literal_type_negative_number argument: (_) @value) @literal.number.negative
@@ -380,7 +386,7 @@
 (nested_identifier) @identifier.nested
 (nested_type_identifier) @type.path
 (statement_identifier) @identifier.label
-(this) @identifier.self
+(this) @identifier.receiver
 (super) @identifier.super
 
 
@@ -394,12 +400,10 @@
 (decorator (_)? @content) @attribute.decorator
 
 ; ── comment ────────────────────────────────────────────────────────────────────
-(comment_block) @comment
-(comment_line) @comment
-(html_comment) @comment
+(comment_block) @comment.block
+(comment_line) @comment.line
+(html_comment) @comment.html
 ((comment_block) @comment.block.doc (#match? @comment.block.doc "^/\\*\\*"))
-((comment_line) @comment.line (#match? @comment.line "^//"))
-((comment_block) @comment.block (#match? @comment.block "^/\\*"))
 
 ; ── keyword / punctuation ──────────────────────────────────────────────────────
 ["function" "class" "interface" "type" "enum" "namespace" "let" "const" "var"] @keyword.declaration

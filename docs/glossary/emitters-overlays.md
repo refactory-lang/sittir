@@ -122,7 +122,7 @@ A member route as the routes model writes it: its name, its route kind and that 
 
 ### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::readTestOf`
 
-A read entry's test, as the `PortableCondition`s that must all hold. A condition's holder is the tested node when `up` is 0, else its `up`-th enclosing context node, the one at the same place as the entry's `within` kind; each `via` step is a slot's parser routes, anchored to its first or last node where the pattern anchors it, and the plan holds over all the nodes the steps reach together, its own subject the last slot or the reached node itself (`SelfText`). Each pin is an `eq` on its slot of the claimed node. Each predicate's `CaptureSite` is resolved kind by kind, and a text comparison (`comparesText`) of a capture of an alias kind (model `modelType: 'alias'`) steps on through its one content slot, repeatedly, so its own text is compared where it lives (a kind test compares the alias node's own type, so it does not step in), as the parser sees an alias's text (`aliasContent`): the holder's slot for each selector (`bindings/routes.ts::slotFor`), and the next holder the selector's kind. Every slot becomes its parser routes through `SlotRoutesOf`, so the routes have one derivation (`emitters/client-utils.ts::queryRoutesOf`) shared with the query facet's slot table. Each child test (`bindings/routes.ts::ChildTest`) compiles as a predicate at its site (`childPredicate`). Conditions that compile alike are kept once. Only the comparisons `comparisonOf` knows compile. Any other predicate, a capture under a wildcard, or a slot with no routes refuses the whole entry, naming the kind, the vocabulary path and every reason. A partial test would classify nodes the entry does not claim.
+A read entry's test, as the `PortableCondition`s that must all hold. A condition's holder is the tested node when `up` is 0, else its `up`-th enclosing context node, the one at the same place as the entry's `within` kind; each `via` step is a slot's parser routes, anchored to its first or last node where the pattern anchors it, and the plan holds over all the nodes the steps reach together, its own subject the last slot or the reached node itself (`SelfText`). Each pin is an `eq` on its slot of the claimed node, except on a slot that holds one keyword's presence (`PresenceKeywordOf`), where the slot's value is a boolean: a pin of that keyword is a presence leaf (`present`), and a pin of any other text, which no node could hold, refuses the entry. Each predicate's `CaptureSite` is resolved kind by kind, and a text comparison (`comparesText`) of a capture of an alias kind (model `modelType: 'alias'`) steps on through its one content slot, repeatedly, so its own text is compared where it lives (a kind test compares the alias node's own type, so it does not step in), as the parser sees an alias's text (`aliasContent`): the holder's slot for each selector (`bindings/routes.ts::slotFor`), and the next holder the selector's kind. Every slot becomes its parser routes through `SlotRoutesOf`, so the routes have one derivation (`emitters/client-utils.ts::queryRoutesOf`) shared with the query facet's slot table. Each child test (`bindings/routes.ts::ChildTest`) compiles as a predicate at its site (`childPredicate`). Conditions that compile alike are kept once. Only the comparisons `comparisonOf` knows compile. Any other predicate, a capture under a wildcard, or a slot with no routes refuses the whole entry, naming the kind, the vocabulary path and every reason. A partial test would classify nodes the entry does not claim.
 
 ### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::childPredicate`
 
@@ -158,11 +158,23 @@ Whether a predicate compares one capture's text (`eq`, `match`) rather than its 
 
 ### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::comparisonOf`
 
-The plan a predicate compares with, given the subject it reads, or the reason it cannot compile: `eq` and `match` of one capture against one text, and `kind-eq` and `not-kind-eq` of one capture against kind names, which become an `is` of the kinds' ids (`TypeOf`), negated for `not-kind-eq`. A kind name with no id is refused.
+The plan a predicate compares with, given the subject it reads, or the reason it cannot compile: `eq` and `match` of one capture against one text, and `kind-eq` and `not-kind-eq` of one capture against kind names, which become an `is` of the ids of every kind a node of those kinds reads as (`readAs`), negated for `not-kind-eq`. A kind with no id is refused.
+
+### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::readAs`
+
+The kinds a node of a kind can carry as its type: the kind itself and, for an enum kind, each member's kind, from the model's stamped enum members. The typed reader holds an enum node as its member's kind (a `private` modifier reads as `private_keyword`, not `accessibility_modifier`), so a type test on the enum kind admits every member. A branch's `variantOf` parts are not members: a variant of a branch is a part of its owner.
 
 ### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::PlanOn`
 
 A comparison waiting for the subject it reads.
+
+### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::PresenceKeywordOf`
+
+The keyword a slot of a kind holds the presence of, or nothing for any other slot.
+
+### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::presenceKeywordOf`
+
+`PresenceKeywordOf` over an assembled node map: a kind's slot, found by its model name, read by `shared.ts::keywordPresenceValue`, the fact the query slot table stamps too (`client-utils.ts::querySlotRows`).
 
 ### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::TypeOf`
 
@@ -170,7 +182,7 @@ A kind name's kind id, stamped from the generated id tables, or `undefined` for 
 
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::namespaceTree`
 
-The tree of every vocabulary path a grammar reads (`NamespaceNode`), segment by segment and sorted. Each node holds the kinds read at or under it, so a path's kinds are a superset of every refinement's under it.
+The tree of every vocabulary path a grammar reads (`NamespaceNode`), segment by segment and sorted. Each node's kinds are derived once from the read entries whose paths satisfy its facts through `portablePathHasFacts`. A crossing is admitted beneath each path that names its facts, even when another refinement separates its segments.
 
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::descendants`
 
@@ -182,7 +194,7 @@ The `namespaces` section of `node-model-portable.json5`. Per depth (`NamespaceLe
 
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::NamespaceNode`
 
-One level of the portable namespace tree: its dotted path, the kinds read as exactly that path, and its child levels by segment.
+One level of the portable namespace tree: its dotted path, the kinds whose readings carry every fact it names, and its child levels by segment.
 
 ### `packages/codegen/src/emitters/overlays/portable/namespaces.ts::MutableNode`
 
@@ -210,7 +222,7 @@ The portable overlay's two emitted files: the routes model (`node-model-portable
 
 ### `packages/codegen/src/emitters/overlays/portable/surface.ts::emitPortableSurface`
 
-`src/portable.ts`: the types and the table of a bound grammar's portable surface. `PortableIds` names, per path, the union of the kind ids read at or under it (`namespaceTree`). `PortableKindsAt` and `PortableIsAt` type each path's `kinds` node and guard, both with their child segments, each referring to the next path by key. A path is reached only by its full path: no segment is linked under a further ancestor. `PortableKinds` and `PortableIs` are the roots. The `PortableTable` holds each path's ids and whether they decide it (`exact`: every read entry of each of its kinds names it or a path under it, and one of each kind's entries is unplaced and untested, so the first match always lands under it), each kind id's read entries in read order (placement kinds nearest first, `null` for a wildcard, and the compiled test; kinds the parser shows by one name share one id, so their entries are written once under it and a path's ids are listed once each), and every fixed literal's text. A placement kind without a parser id fails generation with `kindDiscriminantExpr`'s message. The module ends by building the runtime from it (`common/src/portable.ts::portableSurface`).
+`src/portable.ts`: the types and the table of a bound grammar's portable surface. `PortableIds` names, per path, the union of the kind ids read at or under it (`namespaceTree`). `PortableKindsAt` and `PortableIsAt` type each path's `kinds` node and guard, both with their child segments, each referring to the next path by key. A path is reached only by its full path: no segment is linked under a further ancestor. `PortableKinds` and `PortableIs` are the roots. The `PortableTable` holds each path's ids and whether they decide it (`exact`: each of its kinds has an unplaced, untested entry, and every entry up to and including the first such one carries all of its facts (`portablePathHasFacts`), so the first match always satisfies it; no entry after an unconditional one is ever tried), each kind id's read entries in read order (placement kinds nearest first, `null` for a wildcard, and the compiled test; kinds the parser shows by one name share one id, so their entries are written once under it and a path's ids are listed once each), and every fixed literal's text. A placement kind without a parser id fails generation with `kindDiscriminantExpr`'s message. The module ends by building the runtime from it (`common/src/portable.ts::portableSurface`).
 ### `packages/codegen/src/emitters/overlays/portable/surface.ts::PortableSurfaceConfig`
 
 What the portable surface is emitted from: the grammar's routes, the compiled test of each read entry, the kind-id expression of a kind, and the fixed text of each fixed-text kind.

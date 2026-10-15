@@ -1,4 +1,16 @@
-import type { AnyUntypedNode, Cond, KindMembership, QueryPlan, QuerySlots, QuerySubject, Recorder, SlotRef, SlotRoutes, TransportCoordinate } from '@sittir/types';
+import type {
+	AnyUntypedNode,
+	Cond,
+	KindMembership,
+	PresenceRef,
+	QueryPlan,
+	QuerySlots,
+	QuerySubject,
+	Recorder,
+	SlotRef,
+	SlotRoutes,
+	TransportCoordinate
+} from '@sittir/types';
 import { inTreeEngine } from './engine-scope.ts';
 import type { TreeHandle } from './read.ts';
 import { treeOf, treeTokenOf } from './tree-token.ts';
@@ -98,14 +110,27 @@ function kindLabel(context: Context, kind: number): string {
 	return context.hooks.kindName(kind) ?? `kind ${kind}`;
 }
 
-const slotTables = new WeakMap<QuerySlots, Map<number, ReadonlyMap<string, SlotRoutes>>>();
-const NO_SLOTS: ReadonlyMap<string, SlotRoutes> = new Map();
+interface QuerySlot {
+	readonly routes: SlotRoutes;
+	readonly keyword: string | undefined;
+}
 
-function slotsOf(table: QuerySlots, kind: number): ReadonlyMap<string, SlotRoutes> {
+const slotTables = new WeakMap<QuerySlots, Map<number, ReadonlyMap<string, QuerySlot>>>();
+const NO_SLOTS: ReadonlyMap<string, QuerySlot> = new Map();
+const NO_ROUTES: SlotRoutes = Object.freeze({ fields: [], kinds: [] });
+
+function slotsOf(table: QuerySlots, kind: number): ReadonlyMap<string, QuerySlot> {
 	let byKind = slotTables.get(table);
 	if (byKind === undefined) slotTables.set(table, (byKind = new Map()));
 	let slots = byKind.get(kind);
-	if (slots === undefined) byKind.set(kind, (slots = table[kind] === undefined ? NO_SLOTS : new Map(table[kind])));
+	if (slots === undefined)
+		byKind.set(
+			kind,
+			(slots =
+				table[kind] === undefined
+					? NO_SLOTS
+					: new Map(table[kind].map(([accessor, routes, keyword]) => [accessor, { routes, keyword }])))
+		);
 	return slots;
 }
 
@@ -194,7 +219,11 @@ function view(context: Context, source: Source, steps: readonly Step[]): QueryVi
 }
 
 function sliceStep(start: number | undefined, end: number | undefined): Step {
-	return { op: 'slice', start: toIntegerOrInfinity(start), end: end === undefined ? undefined : toIntegerOrInfinity(end) };
+	return {
+		op: 'slice',
+		start: toIntegerOrInfinity(start),
+		end: end === undefined ? undefined : toIntegerOrInfinity(end)
+	};
 }
 
 function ofTypeStep(kind: number): Step {
@@ -217,7 +246,11 @@ function* run(context: Context, source: Source, steps: readonly Step[]): Iterabl
 	yield* items;
 }
 
-function* slotEntries(context: Context, source: { readonly slot: string; readonly node: object }, early: readonly Declarative[]): Iterable<readonly Entry[]> {
+function* slotEntries(
+	context: Context,
+	source: { readonly slot: string; readonly node: object },
+	early: readonly Declarative[]
+): Iterable<readonly Entry[]> {
 	yield* declarativeSteps([slotItems(source.node, source.slot).map(entryOfItem)], early, context);
 }
 
@@ -227,13 +260,20 @@ export function slotItems(node: object, accessor: string): readonly unknown[] {
 	return Array.isArray(value) ? value : value === undefined ? [] : [value];
 }
 
-function* walkEntries(context: Context, source: { readonly from: NodeAddress; readonly depth: number | undefined }, early: readonly Declarative[]): Iterable<readonly Entry[]> {
+function* walkEntries(
+	context: Context,
+	source: { readonly from: NodeAddress; readonly depth: number | undefined },
+	early: readonly Declarative[]
+): Iterable<readonly Entry[]> {
 	const pushed = pushdown(context, early);
 	if (pushed === 'none') return;
 	yield* declarativeSteps(batches(context, source, pushed.kinds, pushed.plan), early.slice(pushed.count), context);
 }
 
-function pushdown(context: Context, early: readonly Declarative[]): { kinds: readonly number[]; plan: QueryPlan | undefined; count: number } | 'none' {
+function pushdown(
+	context: Context,
+	early: readonly Declarative[]
+): { kinds: readonly number[]; plan: QueryPlan | undefined; count: number } | 'none' {
 	let kinds: readonly number[] | undefined;
 	const plans: QueryPlan[] = [];
 	let count = 0;
@@ -248,10 +288,19 @@ function pushdown(context: Context, early: readonly Declarative[]): { kinds: rea
 		} else break;
 		count++;
 	}
-	return { kinds: kinds ?? [], plan: plans.length === 0 ? undefined : plans.length === 1 ? plans[0] : { op: 'and', of: plans }, count };
+	return {
+		kinds: kinds ?? [],
+		plan: plans.length === 0 ? undefined : plans.length === 1 ? plans[0] : { op: 'and', of: plans },
+		count
+	};
 }
 
-function* batches(context: Context, source: { readonly from: NodeAddress; readonly depth: number | undefined }, kinds: readonly number[], plan: QueryPlan | undefined): Iterable<readonly Entry[]> {
+function* batches(
+	context: Context,
+	source: { readonly from: NodeAddress; readonly depth: number | undefined },
+	kinds: readonly number[],
+	plan: QueryPlan | undefined
+): Iterable<readonly Entry[]> {
 	const { query, tree, hooks } = context;
 	let from = source.from;
 	let resume: readonly number[] | undefined;
@@ -287,7 +336,11 @@ function findIndex(items: Iterable<unknown>, predicate: Fn): number {
 	return -1;
 }
 
-function reduce(items: Iterable<unknown>, fn: (accumulated: unknown, node: unknown, index: number) => unknown, initial: readonly unknown[]): unknown {
+function reduce(
+	items: Iterable<unknown>,
+	fn: (accumulated: unknown, node: unknown, index: number) => unknown,
+	initial: readonly unknown[]
+): unknown {
 	let index = 0;
 	let started = initial.length > 0;
 	let accumulated = initial[0];
@@ -538,31 +591,51 @@ function slotRef(slot: string, routes: SlotRoutes): SlotRef {
 	});
 }
 
-const NO_ROUTES: SlotRoutes = Object.freeze({ fields: [], kinds: [] });
+function presenceRef(slot: string, routes: SlotRoutes, keyword: string): PresenceRef {
+	const refuseText = (): never =>
+		refuse(`query: ${slot} holds the presence of ${JSON.stringify(keyword)}; compare it with eq(true) or eq(false)`);
+	return Object.freeze({
+		eq(present: boolean) {
+			if (typeof present !== 'boolean') refuseText();
+			const leaf: QueryPlan = { op: 'present', fields: routes.fields, kinds: routes.kinds };
+			return cond(present ? leaf : { op: 'not', of: leaf });
+		},
+		match: refuseText
+	});
+}
+
+const refOf = (key: string, slot: QuerySlot): SlotRef | PresenceRef =>
+	slot.keyword === undefined ? slotRef(key, slot.routes) : presenceRef(key, slot.routes, slot.keyword);
+
+function shapeRef(slot: string): SlotRef {
+	const text = slotRef(slot, NO_ROUTES);
+	const presence = presenceRef(slot, NO_ROUTES, slot);
+	return Object.freeze({
+		eq: (value: string) => (typeof value === 'boolean' ? presence.eq(value) : text.eq(value)),
+		match: text.match
+	});
+}
 
 function recorder(context: Context, kind: number | undefined): Recorder<unknown> {
 	const table = context.hooks.querySlots;
-	const slots: ReadonlyMap<string, SlotRoutes> =
-		kind === undefined
-			? new Map([...everyAccessor(table)].map((accessor) => [accessor, NO_ROUTES]))
-			: slotsOf(table, kind);
 	const owner = kind === undefined ? 'this grammar' : kindLabel(context, kind);
+	const known = kind === undefined ? undefined : slotsOf(table, kind);
+	const names: ReadonlySet<string> = known === undefined ? everyAccessor(table) : new Set(known.keys());
+	const refFor = (key: string): SlotRef | PresenceRef =>
+		known === undefined ? shapeRef(key) : refOf(`${owner}.${key}`, known.get(key)!);
 	const refuseRecorder = (what: string): never =>
 		refuse(`query: ${what}; a condition reads slots and compares them (c.slot.eq / .match)`);
 	return new Proxy(Object.create(null) as Recorder<unknown>, {
 		get(_, key) {
-			if (typeof key === 'string') {
-				const routes = slots.get(key);
-				if (routes !== undefined) return slotRef(key, routes);
-			}
+			if (typeof key === 'string' && names.has(key)) return refFor(key);
 			return refuseRecorder(`${String(key)} is not a slot of ${owner}`);
 		},
 		set: () => refuseRecorder('a condition cannot assign'),
-		has: (_, key) => typeof key === 'string' && slots.has(key),
-		ownKeys: () => [...slots.keys()],
+		has: (_, key) => typeof key === 'string' && names.has(key),
+		ownKeys: () => [...names],
 		getOwnPropertyDescriptor: (_, key) =>
-			typeof key === 'string' && slots.has(key)
-				? { configurable: true, enumerable: true, value: slotRef(key, slots.get(key)!) }
+			typeof key === 'string' && names.has(key)
+				? { configurable: true, enumerable: true, value: refFor(key) }
 				: undefined
 	});
 }
@@ -581,6 +654,8 @@ export function holds(
 			const pattern = new RegExp(plan.pattern, 'u');
 			return texts(plan).some((text) => pattern.test(text));
 		}
+		case 'present':
+			return texts(plan).length > 0;
 		case 'is':
 			return types(plan).some((type) => plan.types.includes(type));
 		case 'not':

@@ -25,6 +25,12 @@ export function recorder(): unknown[] {
 	return [
 		[...defs.where((c) => c.name.eq('main'))],
 		[...defs.where((c) => c.returnType.match(/^int$/).and(c.name.eq('f').not()).or(c.parameters.match(/self/)))],
+		[...defs.where((c) => c.async.eq(true).and(c.name.eq('f')))],
+		[...defs.where((c) => c.async.eq(false))],
+		// @ts-expect-error a boolean slot compares its value, not its text
+		defs.where((c) => c.async.eq('async')),
+		// @ts-expect-error a boolean slot has no match
+		defs.where((c) => c.async.match(/async/)),
 		// @ts-expect-error a slot the kind does not have
 		defs.where((c) => c.function.eq('print')),
 		// @ts-expect-error over every kind, `name` is not a slot they all share

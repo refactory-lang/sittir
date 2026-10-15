@@ -2,8 +2,8 @@
 ; How `sittir tool bindings-inventory` reads a pattern: docs/glossary/packages-tools-src-inventory.md
 ; (`readBindings` for the captures, `derive` for the members a claim takes from its slots).
 
-; ── module ─────────────────────────────────────────────────────────────────────
-(module) @module
+; ── file ───────────────────────────────────────────────────────────────────────
+(module) @file
 
 ; ── declaration ────────────────────────────────────────────────────────────────
 (function_definition) @declaration.function
@@ -13,7 +13,7 @@
 (class_definition body: (suite_block (block (function_definition) @declaration.method)))
 (class_definition body: (suite_block (block (decorated_definition definition: (function_definition) @declaration.method))))
 ((function_definition name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))
-((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))
+((function_definition name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))
 ((decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.static) (#eq? @_d "staticmethod"))
 (decorated_definition (decorator)* @decorators definition: (_) @element)
 (parameters (parameters_elements (identifier) @declaration.parameter))
@@ -33,7 +33,7 @@
 ; ── statement ──────────────────────────────────────────────────────────────────
 (block) @statement.block
 (if_statement) @statement.if
-(for_statement) @statement.loop.for
+(for_statement) @statement.loop.for_each
 (while_statement) @statement.loop.while
 (return_statement (_)? @expression) @statement.return
 (try_statement (except_clause)* @handlers (else_clause)? @alternative (finally_clause)? @finalizer) @statement.try
@@ -41,7 +41,7 @@
 (import_statement) @statement.import
 (import_from_statement) @statement.import.from
 (match_statement (subjects subject: (_)+ @subject)) @statement.match
-(with_statement) @statement.with
+(with_statement) @statement.resource
 (assert_statement) @statement.assert
 (delete_statement) @statement.delete
 (pass_statement) @statement.empty
@@ -57,16 +57,20 @@
 (exec_statement) @statement.exec
 
 ; ── clause ─────────────────────────────────────────────────────────────────────
-(elif_clause) @clause.elif
+(elif_clause) @clause.else_if
 (else_clause) @clause.else
-(except_clause) @clause.except
-(except_clause (except_clause_exception (except_clause_exception_as value: (_) @exception)))
-(except_clause (except_clause_exception (except_clause_exception_as alias: (_) @alias)))
-(except_clause (except_clause_exception (except_clause_exception_list) @exception))
+(except_clause) @clause.catch
+(except_clause (except_clause_exception (except_clause_exception_as value: (_) @type)))
+(except_clause (except_clause_exception (except_clause_exception_as alias: (_) @name)))
+(except_clause (except_clause_exception (except_clause_exception_list) @type))
+(except_clause [(suite_block) (suite_empty) (suite_inline)] @body)
 (finally_clause) @clause.finally
+(finally_clause block: (_) @body)
 (case_clause) @clause.case.match
-(with_clause with_items: (_)? @items) @clause.with
-(with_item) @clause.with.item
+(with_clause with_items: (_)? @items) @clause.resource
+(with_item) @clause.resource.item
+(with_item value: (as_pattern expression: (_) @value))
+(with_item value: (as_pattern alias: (_) @name))
 (for_in_clause) @clause.comprehension.for
 (if_clause) @clause.comprehension.if
 (chevron) @clause.print.chevron
@@ -78,13 +82,13 @@
 (lambda_within_for_in_clause) @expression.lambda
 
 ; ── argument (pieces of a call that are not expressions) ───────────────────────
-(keyword_argument) @argument.keyword
+(keyword_argument) @argument.named
 
 ; ── element (pieces of a composite expression that are not expressions) ────────
 (pair) @element.pair
-(list_splat) @element.splat
-(dictionary_splat) @element.splat.dictionary
-(parenthesized_list_splat) @element.splat.parenthesized
+(list_splat) @element.spread
+(dictionary_splat) @element.spread.map
+(parenthesized_list_splat) @element.spread.parenthesized
 
 ; ── expression ─────────────────────────────────────────────────────────────────
 (call) @expression.call
@@ -97,7 +101,7 @@
 (binary_operator operator: "%") @expression.binary.arithmetic.modulo
 (binary_operator operator: "//") @expression.binary.arithmetic.floor_divide
 (binary_operator operator: "**") @expression.binary.arithmetic.exponent
-(binary_operator operator: "@") @expression.binary.matmul
+(binary_operator operator: "@") @expression.binary.matrix_multiply
 (binary_operator operator: "&") @expression.binary.bitwise.and
 (binary_operator operator: "|") @expression.binary.bitwise.or
 (binary_operator operator: "^") @expression.binary.bitwise.xor
@@ -146,7 +150,7 @@
 (augmented_assignment operator: "//=") @expression.assignment.compound.floor_divide
 (augmented_assignment operator: "%=") @expression.assignment.compound.modulo
 (augmented_assignment operator: "**=") @expression.assignment.compound.exponent
-(augmented_assignment operator: "@=") @expression.assignment.compound.matmul
+(augmented_assignment operator: "@=") @expression.assignment.compound.matrix_multiply
 (augmented_assignment operator: "&=") @expression.assignment.compound.bitwise_and
 (augmented_assignment operator: "|=") @expression.assignment.compound.bitwise_or
 (augmented_assignment operator: "^=") @expression.assignment.compound.bitwise_xor
@@ -164,14 +168,14 @@
 (interpolation) @expression.interpolation
 (list_comprehension) @expression.comprehension.list
 (set_comprehension) @expression.comprehension.set
-(dictionary_comprehension) @expression.comprehension.dictionary
+(dictionary_comprehension) @expression.comprehension.map
 (generator_expression) @expression.comprehension.generator
 (parenthesized_expression) @expression.parenthesized
 (list (collection_elements)? @elements) @expression.collection.list
 (tuple) @expression.collection.tuple
 (expression_list) @expression.collection.tuple.bare
 (set (collection_elements) @elements) @expression.collection.set
-(dictionary) @expression.collection.dictionary
+(dictionary) @expression.collection.map
 (ellipsis) @literal.ellipsis
 (format_specifier) @expression.interpolation.format
 (type_conversion) @expression.interpolation.conversion
@@ -180,9 +184,10 @@
 (tuple_pattern) @pattern.tuple
 (pattern_list) @pattern.tuple.bare
 (list_pattern (patterns)? @elements) @pattern.list
-(list_splat_pattern) @pattern.splat
-(dictionary_splat_pattern) @pattern.splat.dictionary
-(as_pattern) @pattern.as
+(list_splat_pattern) @pattern.rest
+(list_splat_pattern target: (_) @pattern)
+(dictionary_splat_pattern) @pattern.rest.map
+(dictionary_splat_pattern target: (_) @pattern)
 (case_pattern) @pattern.case
 (union_pattern) @pattern.case.or
 (dict_pattern) @pattern.case.dictionary
@@ -192,7 +197,9 @@
 (complex_pattern) @pattern.case.complex
 (case_tuple_pattern) @pattern.case.tuple
 (case_list_pattern) @pattern.case.list
-(case_as_pattern) @pattern.case.as
+(case_as_pattern) @pattern.as
+(case_as_pattern (case_pattern) @pattern)
+(case_as_pattern (identifier) @name)
 
 ; ── type ───────────────────────────────────────────────────────────────────────
 (type) @type
@@ -200,7 +207,10 @@
 (union_type) @type.union
 (constrained_type) @type.constrained
 (member_type) @type.path
-(splat_type) @type.splat
+(splat_type) @type.rest
+(splat_type name: (_) @type)
+(splat_type operator: "**") @type.rest.map
+((splat_type operator: ["*" "**"] @dropped) (#set! reason "the rest kind and its map refinement determine the marker"))
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string [(interpolation) (string_content)]* @elements) @literal.string
@@ -208,10 +218,17 @@
 (escape_interpolation) @literal.string.escape
 (string_fragment) @literal.string.text
 (concatenated_string) @literal.string.concatenated
-((string (string_start) @_p) @literal.string.f (#match? @_p "^[fF]"))
-((string (string_start) @_p) @literal.string.bytes (#match? @_p "^[bB]"))
-((string (string_start) @_p) @literal.string.raw (#match? @_p "^[rR]"))
-((string (string_start) @_p) @literal.string.triple (#match? @_p "\"\"\"|'''"))
+((string (string_start) @_p) @literal.string.interpolated.raw.multiline (#match? @_p "^[a-zA-Z]*[fFtT]") (#match? @_p "^[a-zA-Z]*[rR]") (#match? @_p "\"\"\"|'''"))
+((string (string_start) @_p) @literal.string.bytes.raw.multiline (#match? @_p "^[a-zA-Z]*[bB]") (#match? @_p "^[a-zA-Z]*[rR]") (#match? @_p "\"\"\"|'''"))
+((string (string_start) @_p) @literal.string.interpolated.raw (#match? @_p "^[a-zA-Z]*[fFtT]") (#match? @_p "^[a-zA-Z]*[rR]"))
+((string (string_start) @_p) @literal.string.interpolated.multiline (#match? @_p "^[a-zA-Z]*[fFtT]") (#match? @_p "\"\"\"|'''"))
+((string (string_start) @_p) @literal.string.bytes.raw (#match? @_p "^[a-zA-Z]*[bB]") (#match? @_p "^[a-zA-Z]*[rR]"))
+((string (string_start) @_p) @literal.string.bytes.multiline (#match? @_p "^[a-zA-Z]*[bB]") (#match? @_p "\"\"\"|'''"))
+((string (string_start) @_p) @literal.string.raw.multiline (#match? @_p "^[a-zA-Z]*[rR]") (#match? @_p "\"\"\"|'''"))
+((string (string_start) @_p) @literal.string.interpolated (#match? @_p "^[a-zA-Z]*[fFtT]"))
+((string (string_start) @_p) @literal.string.bytes (#match? @_p "^[a-zA-Z]*[bB]"))
+((string (string_start) @_p) @literal.string.raw (#match? @_p "^[a-zA-Z]*[rR]"))
+((string (string_start) @_p) @literal.string.multiline (#match? @_p "\"\"\"|'''"))
 (integer_decimal_plain) @literal.number.integer
 (integer_decimal_long) @literal.number.integer.big
 (integer_decimal_imaginary) @literal.number.integer.imaginary

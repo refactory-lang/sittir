@@ -74,9 +74,13 @@ The types a grammar's runtime is generic over: `namespaces` (its `NamespaceMap`)
 
 A trivia entry as input: one of the grammar's trivia kinds or a string. A string is loose input: the runtime builds it into a node through the grammar's `ir.comment` (its full spelling loses the default arm's delimiters; any other text is that arm's interior), so a stored entry is always a node.
 
+### `packages/types/src/core-types.ts::TriviaFlanks`
+
+The in-line adjacency of a trivia item the source fixes in place, as a read finds it: `$before` and `$after`, the source's whitespace on the item's line between it and the tokens beside it, absent where it touches a token or where a line break lies between. An item with either renders verbatim with them and no seam on either side (`TriviaText::verbatim`). Two items carry it: an `ErrorNode`, and a line continuation, whose own line ends inside it so the next line's alignment is its `$after`. A built continuation has neither and takes the spacing the options give its gap. Comments carry neither field.
+
 ### `packages/types/src/core-types.ts::ErrorNode`
 
-An ERROR region read as a value. `$text` is the region's own bytes. As a trivia item it also carries its in-line adjacency as `$before` and `$after`: the source's whitespace on its line between the region and the tokens beside it, absent where it touches a token or where a line break lies between. Its render writes the three verbatim and no seam on either side, because a seam beside what did not parse cannot be trusted. A line break beside it stays a layout entry of its side, and the run between two regions is the earlier one's `$after`. Comments carry neither field.
+An ERROR region read as a value. `$text` is the region's own bytes. As a trivia item it also carries its in-line adjacency (`TriviaFlanks`). Its render writes the three verbatim and no seam on either side, because a seam beside what did not parse cannot be trusted. A line break beside it stays a layout entry of its side, and the run between two regions is the earlier one's `$after`.
 
 ### `packages/types/src/core-types.ts::TriviaSetter`
 
@@ -341,3 +345,11 @@ The marker a vocabulary interface declares a yes/no fact with: `readonly static?
 ### `packages/types/src/vocabulary/flags.ts::Flags`
 
 The flags' bits, one per flag name the vocabulary declares, in name order: `Flags.Static | Flags.Async` combines two flags and `&` tests one, as a native bitflag does. The bindings inventory writes the module from the `Flag` declarations (`bindings-inventory --write`) and `--check` holds it to them, so it is never edited. It is the vocabulary's one run-time value; an `enum` is not erasable syntax, which the vocabulary may use because nothing the grammar executes imports it.
+
+### `packages/types/src/keyword-presence.ts::BooleanKeyword`
+
+The brand on a keyword-presence slot's boolean storage, carrying the keyword's text. It lives in its own module so the query types read it (`IsBooleanKeyword`) without importing the package index.
+
+### `packages/types/src/query.ts::SlotRefOf`
+
+The recorder member of one slot of a node type: a `PresenceRef` when the slot's hint takes a `BooleanKeyword`, else a `SlotRef`. Over a union it is the union of each member's, so a slot that is boolean in one kind and text in another has an `eq` taking `string & boolean`, which no argument satisfies: the union rule the recorder applies to slots, applied to their members.

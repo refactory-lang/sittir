@@ -855,25 +855,30 @@ interface TriviaTextContext {
 	readonly slotDefaults: Record<string, Record<string, string>>;
 }
 
-function seatTableSides(node: unknown, newline: number | undefined, depth = 0): void {
+function seatTableSides(node: unknown, layoutKinds: ReadonlySet<number>, depth = 0): void {
 	if (depth > 256) return;
 	if (Array.isArray(node)) {
-		for (const entry of node) seatTableSides(entry, newline, depth + 1);
+		for (const entry of node) seatTableSides(entry, layoutKinds, depth + 1);
 		return;
 	}
 	if (!isPlainObject(node)) return;
 	for (const [key, value] of Object.entries(node)) {
-		if (isStorageKey(key)) seatTableSides(value, newline, depth + 1);
+		if (isStorageKey(key)) seatTableSides(value, layoutKinds, depth + 1);
 	}
-	const kept = (entries: readonly TriviaEntry[] | undefined): readonly TriviaEntry[] | undefined =>
-		entries?.some((entry) => entry !== newline) === true ? entries : undefined;
+	const isLayout = (entry: TriviaEntry): boolean =>
+		layoutKinds.has(typeof entry === 'number' ? entry : isPlainObject(entry) && typeof entry.$type === 'number' ? entry.$type : -1);
+	const kept = (entries: readonly TriviaEntry[] | undefined): readonly TriviaEntry[] | undefined => {
+		const content = entries?.filter((entry) => !isLayout(entry));
+		return content === undefined || content.length === 0 ? undefined : content;
+	};
 	const sides = sidesOf(node);
 	const leading = kept(sides?.leading);
 	const trailing = kept(sides?.trailing);
+	const inner = kept(sides?.inner);
 	const trivia = {
 		...(leading && { leading }),
 		...(trailing && { trailing }),
-		...(sides?.inner && { inner: sides.inner })
+		...(inner && { inner })
 	};
 	const layout = node.$_layout as { trivia?: ReadTrivia } | undefined;
 	if (Object.keys(trivia).length === 0) {
@@ -1036,7 +1041,7 @@ export async function emitFactorySourceText(
 	const { findEntryForLiteralText } = await load('symbolTable');
 	const root = materialize(readNode(handle)) as ReadNodeLike;
 	const { triviaFacts } = await requireGrammarModule(grammar, 'utils.ts');
-	seatTableSides(root, triviaFacts?.whitespace?.kindIdByText['\n']);
+	seatTableSides(root, triviaFacts?.layout ?? new Set());
 	seatFormTree(root, { kindNameFromId, seats: model.seats });
 	const textLeafKinds = new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'pattern'));
 	spellTriviaTree(root, {

@@ -1244,8 +1244,15 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "_for_header"
+          "type": "FIELD",
+          "name": "header",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_for_header"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "FIELD",
@@ -5112,7 +5119,11 @@
             },
             {
               "type": "SYMBOL",
-              "name": "call_signature"
+              "name": "call_signature",
+              "annotations": {
+                "variant": "call_signature",
+                "variantOf": "arrow_function"
+              }
             }
           ]
         },
@@ -9775,13 +9786,20 @@
           "type": "SEQ",
           "members": [
             {
-              "type": "ALIAS",
+              "type": "FIELD",
+              "name": "types",
               "content": {
-                "type": "SYMBOL",
-                "name": "_extends_clause_single"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_extends_clause_single"
+                },
+                "named": true,
+                "value": "extends_clause_single"
               },
-              "named": true,
-              "value": "extends_clause_single"
+              "metadata": {
+                "fieldSource": "override"
+              }
             },
             {
               "type": "REPEAT",
@@ -9793,13 +9811,20 @@
                     "value": ","
                   },
                   {
-                    "type": "ALIAS",
+                    "type": "FIELD",
+                    "name": "types",
                     "content": {
-                      "type": "SYMBOL",
-                      "name": "_extends_clause_single"
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_extends_clause_single"
+                      },
+                      "named": true,
+                      "value": "extends_clause_single"
                     },
-                    "named": true,
-                    "value": "extends_clause_single"
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
                   }
                 ]
               }
@@ -13876,11 +13901,17 @@
               "members": [
                 {
                   "type": "STRING",
-                  "value": ","
+                  "value": ",",
+                  "annotations": {
+                    "variantOf": "object_type_content"
+                  }
                 },
                 {
                   "type": "STRING",
-                  "value": ";"
+                  "value": ";",
+                  "annotations": {
+                    "variantOf": "object_type_content"
+                  }
                 }
               ]
             },
@@ -13890,102 +13921,103 @@
           ]
         },
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "item",
-              "content": {
+          "type": "FIELD",
+          "name": "item",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "export_statement"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "property_signature"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "call_signature"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "construct_signature"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "index_signature"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "method_signature"
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
                 "type": "CHOICE",
                 "members": [
                   {
-                    "type": "SYMBOL",
-                    "name": "export_statement"
+                    "type": "STRING",
+                    "value": ",",
+                    "annotations": {
+                      "variantOf": "object_type_content"
+                    }
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "property_signature"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "call_signature"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "construct_signature"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "index_signature"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "method_signature"
-                  }
-                ]
-              },
-              "metadata": {
-                "fieldSource": "override"
-              }
-            },
-            {
-              "type": "REPEAT",
-              "content": {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "STRING",
-                        "value": ","
-                      },
-                      {
-                        "type": "STRING",
-                        "value": ";"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "FIELD",
-                    "name": "item",
-                    "content": {
-                      "type": "CHOICE",
-                      "members": [
-                        {
-                          "type": "SYMBOL",
-                          "name": "export_statement"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "property_signature"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "call_signature"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "construct_signature"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "index_signature"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "method_signature"
-                        }
-                      ]
-                    },
-                    "metadata": {
-                      "fieldSource": "override"
+                    "type": "STRING",
+                    "value": ";",
+                    "annotations": {
+                      "variantOf": "object_type_content"
                     }
                   }
                 ]
+              },
+              {
+                "type": "FIELD",
+                "name": "item",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "export_statement"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "property_signature"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "call_signature"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "construct_signature"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "index_signature"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "method_signature"
+                    }
+                  ]
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               }
-            }
-          ]
+            ]
+          }
         },
         {
           "type": "CHOICE",
@@ -13995,11 +14027,17 @@
               "members": [
                 {
                   "type": "STRING",
-                  "value": ","
+                  "value": ",",
+                  "annotations": {
+                    "variantOf": "object_type_content"
+                  }
                 },
                 {
                   "type": "STRING",
-                  "value": ";"
+                  "value": ";",
+                  "annotations": {
+                    "variantOf": "object_type_content"
+                  }
                 }
               ]
             },
@@ -16371,7 +16409,11 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "declaration"
+              "name": "declaration",
+              "annotations": {
+                "variant": "declaration",
+                "variantOf": "export_statement_default_declaration"
+              }
             },
             {
               "type": "SYMBOL",
@@ -16456,7 +16498,11 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "declaration"
+              "name": "declaration",
+              "annotations": {
+                "variant": "declaration",
+                "variantOf": "export_statement_default_declaration_default_kw"
+              }
             },
             {
               "type": "SYMBOL",

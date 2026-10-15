@@ -73,7 +73,7 @@ export type MemberFact = MemberRouteFact & { readonly claims?: readonly number[]
 
 type MemberRouteFact =
 	| ({ readonly route: 'rename'; readonly owner: string; readonly name: string; readonly token?: string; readonly flag?: boolean } & SlotSelector)
-	| ({ readonly route: 'dropped'; readonly owner: string } & SlotSelector)
+	| ({ readonly route: 'dropped'; readonly owner: string; readonly token?: string } & SlotSelector)
 	| {
 			readonly route: 'presence';
 			readonly owner: string;
@@ -221,6 +221,9 @@ export interface RefinedClaim extends ClaimFact {
 	readonly refinement: RefinementKind | null;
 }
 
+const untested = (claim: ClaimFact): boolean =>
+	claim.predicates.length === 0 && Object.keys(claim.fieldLiterals).length === 0 && claim.tokens.length === 0 && claim.children.length === 0;
+
 function refinementKindOf(claim: ClaimFact): RefinementKind {
 	if (claim.predicates.length > 0) return 'predicate';
 	if (Object.keys(claim.fieldLiterals).length > 0) return 'field-literal';
@@ -228,16 +231,17 @@ function refinementKindOf(claim: ClaimFact): RefinementKind {
 	return 'child-pattern';
 }
 
-export function refineClaims(claims: readonly ClaimFact[]): RefinedClaim[] {
+export function refineClaims(claims: readonly ClaimFact[], formsOf: (kind: string) => readonly string[]): RefinedClaim[] {
 	return claims.map((claim) => {
 		const unrefined = { ...claim, refines: null, refinement: null };
-		if (claim.kind === null || claim.kind === WILDCARD) return unrefined;
+		const kind = claim.kind;
+		if (kind === null || kind === WILDCARD) return unrefined;
 		const placement = claim.within.join('/');
 		const parent = claims
-			.filter((p) => p.kind === claim.kind && p.within.join('/') === placement && claim.vocab.startsWith(`${p.vocab}.`))
+			.filter((p) => p.kind !== null && p.kind !== WILDCARD && formsOf(p.kind).includes(kind) && p.within.join('/') === placement && claim.vocab.startsWith(`${p.vocab}.`))
 			.reduce<ClaimFact | undefined>((deepest, p) => (deepest === undefined || p.vocab.length > deepest.vocab.length ? p : deepest), undefined);
 		const refinement = refinementKindOf(claim);
-		if (parent !== undefined) return { ...claim, refines: parent.vocab, refinement };
+		if (parent !== undefined) return { ...claim, refines: parent.vocab, refinement: parent.kind !== kind && untested(claim) ? null : refinement };
 		return refinement === 'child-pattern' ? unrefined : { ...claim, refines: null, refinement };
 	});
 }

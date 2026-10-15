@@ -51,7 +51,6 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 
 const _reservedWordList_buildIdentifier = [
 	'False',
-	'await',
 	'else',
 	'import',
 	'pass',
@@ -80,7 +79,6 @@ const _reservedWordList_buildIdentifier = [
 	'global',
 	'not',
 	'with',
-	'async',
 	'elif',
 	'if',
 	'or',
@@ -590,16 +588,7 @@ export function buildExpressionStatement(
 }
 
 export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedExpression.Bound {
-	const _name = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.NamedExpression['_name']>>(config.name),
-			'NamedExpression.name',
-			'buildIdentifier(…)'
-		),
-		'NamedExpression.name',
-		TSKindId.Identifier,
-		['print', 'exec', 'async', 'await', 'type', 'match']
-	);
+	const _name = rejectBareText(config.name, 'NamedExpression.name', 'buildIdentifier(…)');
 	const _value = rejectBareText(
 		kindIdStorage<NonNullable<T.NamedExpression['_value']>>(config.value),
 		'NamedExpression.value',
@@ -613,7 +602,7 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 		_name,
 		_value,
 		$with: {
-			name: (value: Admit<NonNullable<T.NamedExpression.Config>['name']>) =>
+			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildNamedExpression({ ...config, name: value })),
 			value: (value: Admit<NonNullable<T.NamedExpression.Config>['value']>) =>
 				rebuilt(node, handle, () => buildNamedExpression({ ...config, value: value }))
@@ -628,6 +617,29 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.NamedExpression.Bound;
+}
+
+export function buildNamedExpressionLhs(config: T.NamedExpressionLhs.Config): T.NamedExpressionLhs.Bound {
+	const _identifier = rejectBareText(config.identifier, 'NamedExpressionLhs.identifier', 'buildIdentifier(…)');
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.NamedExpressionLhs as const,
+		$source: 2 as const,
+		$named: true as const,
+		_identifier,
+		$with: {
+			identifier: (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildNamedExpressionLhs({ ...config, identifier: value }))
+		},
+		identifier: () => hydrateStoredSlot(node, '_identifier'),
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.NamedExpressionLhs.Bound;
 }
 
 export function buildReturnStatement(value?: Admit<T.Expression | T.ExpressionList>): T.ReturnStatement.Bound {
@@ -1043,7 +1055,7 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause.Bound {
 	const _group = coerceBooleanKeywordStorage(rejectBareText(config.group, 'ExceptClause.group', 'a boolean'));
 	const _exception = rejectBareText(config.exception, 'ExceptClause.exception', 'a built ExceptClauseException');
-	const _suite = rejectBareText(config.suite, 'ExceptClause.suite', 'a built Suite');
+	const _body = rejectBareText(config.body, 'ExceptClause.body', 'a built Suite');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExceptClause as const,
@@ -1051,17 +1063,17 @@ export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause
 		$named: true as const,
 		_group,
 		_exception,
-		_suite,
+		_body,
 		$with: {
 			group: (value?: Admit<NonNullable<T.ExceptClause.Config>['group']>) =>
 				rebuilt(node, handle, () => buildExceptClause({ ...config, group: value })),
 			exception: (value?: Admit<T.ExceptClauseException>) =>
 				rebuilt(node, handle, () => buildExceptClause({ ...config, exception: value })),
-			suite: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildExceptClause({ ...config, suite: value }))
+			body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildExceptClause({ ...config, body: value }))
 		},
 		group: () => _group,
 		exception: () => hydrateStoredSlot(node, '_exception'),
-		suite: () => hydrateStoredSlot(node, '_suite'),
+		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2640,28 +2652,9 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 }
 
 export function buildListSplatPattern(
-	value: Admit<
-		| T.Identifier
-		| TSKindId.PrintKeyword
-		| TSKindId.ExecKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.AwaitKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.MatchKeyword
-		| T.Subscript
-		| T.Attribute
-	>
+	value: Admit<T.Identifier | T.Subscript | T.Attribute>
 ): T.ListSplatPattern.Bound {
-	const _target = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.ListSplatPattern['_target']>>(value),
-			'ListSplatPattern.target',
-			'buildIdentifier(…)'
-		),
-		'ListSplatPattern.target',
-		TSKindId.Identifier,
-		['print', 'exec', 'async', 'await', 'type', 'match']
-	);
+	const _target = rejectBareText(value, 'ListSplatPattern.target', 'buildIdentifier(…)');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ListSplatPattern as const,
@@ -2669,21 +2662,8 @@ export function buildListSplatPattern(
 		$named: true as const,
 		_target,
 		$with: {
-			target: (
-				value: Admit<
-					NonNullable<
-						| T.Identifier
-						| TSKindId.PrintKeyword
-						| TSKindId.ExecKeyword
-						| TSKindId.AsyncKeyword
-						| TSKindId.AwaitKeyword
-						| TSKindId.TypeKeyword
-						| TSKindId.MatchKeyword
-						| T.Subscript
-						| T.Attribute
-					>
-				>
-			) => rebuilt(node, handle, () => buildListSplatPattern(value))
+			target: (value: Admit<T.Identifier | T.Subscript | T.Attribute>) =>
+				rebuilt(node, handle, () => buildListSplatPattern(value))
 		},
 		target: () => hydrateStoredSlot(node, '_target'),
 		$render: () => renderText(handle, node),
@@ -2697,28 +2677,9 @@ export function buildListSplatPattern(
 }
 
 export function buildDictionarySplatPattern(
-	value: Admit<
-		| T.Identifier
-		| TSKindId.PrintKeyword
-		| TSKindId.ExecKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.AwaitKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.MatchKeyword
-		| T.Subscript
-		| T.Attribute
-	>
+	value: Admit<T.Identifier | T.Subscript | T.Attribute>
 ): T.DictionarySplatPattern.Bound {
-	const _target = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.DictionarySplatPattern['_target']>>(value),
-			'DictionarySplatPattern.target',
-			'buildIdentifier(…)'
-		),
-		'DictionarySplatPattern.target',
-		TSKindId.Identifier,
-		['print', 'exec', 'async', 'await', 'type', 'match']
-	);
+	const _target = rejectBareText(value, 'DictionarySplatPattern.target', 'buildIdentifier(…)');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DictionarySplatPattern as const,
@@ -2726,21 +2687,8 @@ export function buildDictionarySplatPattern(
 		$named: true as const,
 		_target,
 		$with: {
-			target: (
-				value: Admit<
-					NonNullable<
-						| T.Identifier
-						| TSKindId.PrintKeyword
-						| TSKindId.ExecKeyword
-						| TSKindId.AsyncKeyword
-						| TSKindId.AwaitKeyword
-						| TSKindId.TypeKeyword
-						| TSKindId.MatchKeyword
-						| T.Subscript
-						| T.Attribute
-					>
-				>
-			) => rebuilt(node, handle, () => buildDictionarySplatPattern(value))
+			target: (value: Admit<T.Identifier | T.Subscript | T.Attribute>) =>
+				rebuilt(node, handle, () => buildDictionarySplatPattern(value))
 		},
 		target: () => hydrateStoredSlot(node, '_target'),
 		$render: () => renderText(handle, node),
@@ -2764,8 +2712,8 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 		[
 			[
 				[
-					212, 206, 207, 213, 256, 208, 1, 67, 38, 68, 69, 39, 22, 247, 246, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71,
-					72, 209, 220, 221, 223, 232, 237, 235, 238, 233, 239, 234, 241, 240, 64, 200, 245, 142, 202
+					212, 206, 207, 213, 256, 208, 1, 247, 246, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71, 72, 209, 220, 221, 223,
+					232, 237, 235, 238, 233, 239, 234, 241, 240, 64, 200, 245, 142, 202
 				],
 				(v: unknown) => buildAsPatternTarget(v as never)
 			]
@@ -3451,16 +3399,7 @@ export function buildSplatType(config: T.SplatType.Config): T.SplatType.Bound {
 }
 
 export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bound {
-	const _name = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.GenericType['_name']>>(config.name),
-			'GenericType.name',
-			'buildIdentifier(…)'
-		),
-		'GenericType.name',
-		TSKindId.Identifier,
-		['type']
-	);
+	const _name = rejectBareText(config.name, 'GenericType.name', 'buildIdentifier(…)');
 	const _type_parameter = rejectBareText(config.typeParameter, 'GenericType.typeParameter', 'a built TypeParameter');
 	const handle = currentHandle();
 	const node = {
@@ -3470,8 +3409,7 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 		_name,
 		_type_parameter,
 		$with: {
-			name: (value: Admit<NonNullable<T.GenericType.Config>['name']>) =>
-				rebuilt(node, handle, () => buildGenericType({ ...config, name: value })),
+			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildGenericType({ ...config, name: value })),
 			typeParameter: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -3574,16 +3512,7 @@ export function buildMemberType(config: T.MemberType.Config): T.MemberType.Bound
 }
 
 export function buildKeywordArgument(config: T.KeywordArgument.Config): T.KeywordArgument.Bound {
-	const _name = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.KeywordArgument['_name']>>(config.name),
-			'KeywordArgument.name',
-			'buildIdentifier(…)'
-		),
-		'KeywordArgument.name',
-		TSKindId.Identifier,
-		['print', 'exec', 'async', 'await', 'type', 'match']
-	);
+	const _name = rejectBareText(config.name, 'KeywordArgument.name', 'buildIdentifier(…)');
 	const _value = rejectBareText(
 		kindIdStorage<NonNullable<T.KeywordArgument['_value']>>(config.value),
 		'KeywordArgument.value',
@@ -3597,7 +3526,7 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config): T.Keywor
 		_name,
 		_value,
 		$with: {
-			name: (value: Admit<NonNullable<T.KeywordArgument.Config>['name']>) =>
+			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildKeywordArgument({ ...config, name: value })),
 			value: (value: Admit<NonNullable<T.KeywordArgument.Config>['value']>) =>
 				rebuilt(node, handle, () => buildKeywordArgument({ ...config, value: value }))
@@ -3910,26 +3839,22 @@ export function buildListComprehension(config: T.ListComprehension.Config): T.Li
 		'ListComprehension.body',
 		'a built Expression'
 	);
-	const _comprehension_clauses = rejectBareText(
-		config.comprehensionClauses,
-		'ListComprehension.comprehensionClauses',
-		'a built ComprehensionClauses'
-	);
+	const _clauses = rejectBareText(config.clauses, 'ListComprehension.clauses', 'a built ComprehensionClauses');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ListComprehension as const,
 		$source: 2 as const,
 		$named: true as const,
 		_body,
-		_comprehension_clauses,
+		_clauses,
 		$with: {
 			body: (value: Admit<NonNullable<T.ListComprehension.Config>['body']>) =>
 				rebuilt(node, handle, () => buildListComprehension({ ...config, body: value })),
-			comprehensionClauses: (value: Admit<T.ComprehensionClauses>) =>
-				rebuilt(node, handle, () => buildListComprehension({ ...config, comprehensionClauses: value }))
+			clauses: (value: Admit<T.ComprehensionClauses>) =>
+				rebuilt(node, handle, () => buildListComprehension({ ...config, clauses: value }))
 		},
 		body: () => hydrateStoredSlot(node, '_body'),
-		comprehensionClauses: () => hydrateStoredSlot(node, '_comprehension_clauses'),
+		clauses: () => hydrateStoredSlot(node, '_clauses'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3944,26 +3869,22 @@ export function buildDictionaryComprehension(
 	config: T.DictionaryComprehension.Config
 ): T.DictionaryComprehension.Bound {
 	const _body = rejectBareText(config.body, 'DictionaryComprehension.body', 'a built Pair');
-	const _comprehension_clauses = rejectBareText(
-		config.comprehensionClauses,
-		'DictionaryComprehension.comprehensionClauses',
-		'a built ComprehensionClauses'
-	);
+	const _clauses = rejectBareText(config.clauses, 'DictionaryComprehension.clauses', 'a built ComprehensionClauses');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DictionaryComprehension as const,
 		$source: 2 as const,
 		$named: true as const,
 		_body,
-		_comprehension_clauses,
+		_clauses,
 		$with: {
 			body: (value: Admit<T.Pair>) =>
 				rebuilt(node, handle, () => buildDictionaryComprehension({ ...config, body: value })),
-			comprehensionClauses: (value: Admit<T.ComprehensionClauses>) =>
-				rebuilt(node, handle, () => buildDictionaryComprehension({ ...config, comprehensionClauses: value }))
+			clauses: (value: Admit<T.ComprehensionClauses>) =>
+				rebuilt(node, handle, () => buildDictionaryComprehension({ ...config, clauses: value }))
 		},
 		body: () => hydrateStoredSlot(node, '_body'),
-		comprehensionClauses: () => hydrateStoredSlot(node, '_comprehension_clauses'),
+		clauses: () => hydrateStoredSlot(node, '_clauses'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3980,26 +3901,22 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 		'SetComprehension.body',
 		'a built Expression'
 	);
-	const _comprehension_clauses = rejectBareText(
-		config.comprehensionClauses,
-		'SetComprehension.comprehensionClauses',
-		'a built ComprehensionClauses'
-	);
+	const _clauses = rejectBareText(config.clauses, 'SetComprehension.clauses', 'a built ComprehensionClauses');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SetComprehension as const,
 		$source: 2 as const,
 		$named: true as const,
 		_body,
-		_comprehension_clauses,
+		_clauses,
 		$with: {
 			body: (value: Admit<NonNullable<T.SetComprehension.Config>['body']>) =>
 				rebuilt(node, handle, () => buildSetComprehension({ ...config, body: value })),
-			comprehensionClauses: (value: Admit<T.ComprehensionClauses>) =>
-				rebuilt(node, handle, () => buildSetComprehension({ ...config, comprehensionClauses: value }))
+			clauses: (value: Admit<T.ComprehensionClauses>) =>
+				rebuilt(node, handle, () => buildSetComprehension({ ...config, clauses: value }))
 		},
 		body: () => hydrateStoredSlot(node, '_body'),
-		comprehensionClauses: () => hydrateStoredSlot(node, '_comprehension_clauses'),
+		clauses: () => hydrateStoredSlot(node, '_clauses'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4016,26 +3933,22 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 		'GeneratorExpression.body',
 		'a built Expression'
 	);
-	const _comprehension_clauses = rejectBareText(
-		config.comprehensionClauses,
-		'GeneratorExpression.comprehensionClauses',
-		'a built ComprehensionClauses'
-	);
+	const _clauses = rejectBareText(config.clauses, 'GeneratorExpression.clauses', 'a built ComprehensionClauses');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.GeneratorExpression as const,
 		$source: 2 as const,
 		$named: true as const,
 		_body,
-		_comprehension_clauses,
+		_clauses,
 		$with: {
 			body: (value: Admit<NonNullable<T.GeneratorExpression.Config>['body']>) =>
 				rebuilt(node, handle, () => buildGeneratorExpression({ ...config, body: value })),
-			comprehensionClauses: (value: Admit<T.ComprehensionClauses>) =>
-				rebuilt(node, handle, () => buildGeneratorExpression({ ...config, comprehensionClauses: value }))
+			clauses: (value: Admit<T.ComprehensionClauses>) =>
+				rebuilt(node, handle, () => buildGeneratorExpression({ ...config, clauses: value }))
 		},
 		body: () => hydrateStoredSlot(node, '_body'),
-		comprehensionClauses: () => hydrateStoredSlot(node, '_comprehension_clauses'),
+		clauses: () => hydrateStoredSlot(node, '_clauses'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4316,9 +4229,9 @@ export function buildStringContent(
 	>
 ): T.StringContent.Bound {
 	_assertNonEmpty(children, 'string_content.children');
-	const _content = rejectBareText(
+	const _elements = rejectBareText(
 		children,
-		'StringContent.content',
+		'StringContent.elements',
 		'buildEscapeInterpolation(…) / buildStringFragment(…)'
 	);
 	const handle = currentHandle();
@@ -4326,15 +4239,15 @@ export function buildStringContent(
 		$type: TSKindId.StringContent as const,
 		$source: 2 as const,
 		$named: true as const,
-		_content,
+		_elements,
 		$with: {
-			contents: (
+			elements: (
 				...vs: NonEmptyArray<
 					Admit<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>
 				>
-			) => rebuilt(node, handle, () => buildStringContent(...restItems('contents', vs)))
+			) => rebuilt(node, handle, () => buildStringContent(...restItems('elements', vs)))
 		},
-		contents: () => hydrateStoredSlots(node, '_content'),
+		elements: () => hydrateStoredSlots(node, '_elements'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -5388,19 +5301,19 @@ export function buildCaseTuplePattern(...args: unknown[]) {
 			);
 }
 function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.CaseTuplePattern.Bound {
-	const _list_pattern_case_patterns = hydrateStored(
-		rejectBareText(value, 'CaseTuplePattern.listPatternCasePatterns', 'a built ListPatternCasePatterns')
+	const _elements = hydrateStored(
+		rejectBareText(value, 'CaseTuplePattern.elements', 'a built ListPatternCasePatterns')
 	);
-	const listView = ownerView(_list_pattern_case_patterns, '_item');
-	if (listView.stored === undefined) refuseReadStub('_list_pattern_case_patterns');
+	const listView = ownerView(_elements, '_item');
+	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CaseTuplePattern as const,
 		$source: 2 as const,
 		$named: true as const,
-		_list_pattern_case_patterns,
+		_elements,
 		$with: {
-			listPatternCasePatterns: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -5409,10 +5322,10 @@ function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.Cas
 					)
 				)
 		},
-		listPatternCasePatterns: () => hydrateStoredSlot(node, '_list_pattern_case_patterns'),
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.listPatternCasePatterns(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -5459,19 +5372,17 @@ export function buildCaseListPattern(...args: unknown[]) {
 			);
 }
 function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.CaseListPattern.Bound {
-	const _list_pattern_case_patterns = hydrateStored(
-		rejectBareText(value, 'CaseListPattern.listPatternCasePatterns', 'a built ListPatternCasePatterns')
-	);
-	const listView = ownerView(_list_pattern_case_patterns, '_item');
-	if (listView.stored === undefined) refuseReadStub('_list_pattern_case_patterns');
+	const _elements = hydrateStored(rejectBareText(value, 'CaseListPattern.elements', 'a built ListPatternCasePatterns'));
+	const listView = ownerView(_elements, '_item');
+	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CaseListPattern as const,
 		$source: 2 as const,
 		$named: true as const,
-		_list_pattern_case_patterns,
+		_elements,
 		$with: {
-			listPatternCasePatterns: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -5480,10 +5391,10 @@ function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.Case
 					)
 				)
 		},
-		listPatternCasePatterns: () => hydrateStoredSlot(node, '_list_pattern_case_patterns'),
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.listPatternCasePatterns(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -7263,6 +7174,7 @@ export type FluentKindMap = {
 	assert_statement: T.AssertStatement.Bound;
 	expression_statement: T.ExpressionStatement.Bound;
 	named_expression: T.NamedExpression.Bound;
+	_named_expression_lhs: T.NamedExpressionLhs.Bound;
 	return_statement: T.ReturnStatement.Bound;
 	delete_statement: T.DeleteStatement.Bound;
 	raise_statement: T.RaiseStatement.Bound;
@@ -7462,6 +7374,7 @@ export const _factoryMap = {
 	assert_statement: buildAssertStatement,
 	expression_statement: buildExpressionStatement,
 	named_expression: buildNamedExpression,
+	_named_expression_lhs: buildNamedExpressionLhs,
 	return_statement: buildReturnStatement,
 	delete_statement: buildDeleteStatement,
 	raise_statement: buildRaiseStatement,

@@ -2,11 +2,11 @@ import type { GrammarContext } from '../../context.ts';
 import type { SubKindOf } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Pattern {
-	export interface Captured<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
-		// claimed by r
-		readonly $kind: 'pattern.captured';
+	export interface As<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
+		// claimed by pr
+		readonly $kind: 'pattern.as';
 		readonly name: G['identifier'];
-		readonly pattern: G['slots']['pattern.captured']['pattern'];
+		readonly pattern: G['slots']['pattern.as']['pattern'];
 	}
 	export interface Case<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
 		// claimed by p
@@ -14,12 +14,6 @@ export namespace Pattern {
 		readonly content?: G['slots']['pattern.case']['content'];
 	}
 	export namespace Case {
-		export interface As<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Case<G>> {
-			// claimed by p
-			readonly $kind: 'pattern.case.as';
-			readonly casePattern: V.Pattern.Case<G>;
-			readonly identifier: G['identifier'];
-		}
 		export interface Class<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Case<G>> {
 			// claimed by p
 			readonly $kind: 'pattern.case.class';
@@ -40,7 +34,7 @@ export namespace Pattern {
 		export interface List<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Case<G>> {
 			// claimed by p
 			readonly $kind: 'pattern.case.list';
-			readonly listPatternCasePatterns?: V.Pattern.Case<G>[];
+			readonly elements?: V.Pattern.Case<G>[];
 		}
 		export interface Or<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Case<G>> {
 			// claimed by p
@@ -56,7 +50,7 @@ export namespace Pattern {
 		export interface Tuple<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Case<G>> {
 			// claimed by p
 			readonly $kind: 'pattern.case.tuple';
-			readonly listPatternCasePatterns?: V.Pattern.Case<G>[];
+			readonly elements?: V.Pattern.Case<G>[];
 		}
 	}
 	export interface Match<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {

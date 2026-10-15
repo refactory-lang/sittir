@@ -68,7 +68,10 @@ claim in their pattern; fold each read entry's own member routes, claim by claim
 in file order, into member types (a slot route's slot resolved, a presence or
 a flag an optional `boolean`, a nested member its named kind or the kinds of the slot its
 selector finds in its parent; a member is optional when some kind the path is read from in that
-grammar does not carry it, a supertype counting as none since its forms stand in for it); fold pinned claims into refinements, each pin
+grammar does not carry it, a supertype counting as none since its forms stand in for it). An
+entry a form inherits from its supertype's claim folds in only when that path is the form's own
+vocabulary kind (`GrammarRoutes.vocabOf`): a form its own claim names by another path brings its
+members there, so the supertype's path gets none of them. Fold pinned claims into refinements, each pin
 named by the kind's converged member (a capture on the field renames it)
 rather than by the grammar's field; assign container captures to
 the kinds the element slot names directly; collapse a namespace's leaves when
@@ -169,7 +172,7 @@ A vocabulary path that refines its parent by literals rather than members: the p
 
 ### `packages/codegen/src/bindings/derive.ts::Derivation`
 
-Everything the vocabulary derivation finds across the bound grammars, which the inventory prints and checks against the authored vocabulary: the claimed paths and their prefixes, who claims each, the paths derived from content predicates, refinements, template holes, members per path, set-inclusion cycles, and the report lists (untargeted containers, uncaptured slots, unmapped references with their counts, unknown predicates, wildcard containers, wildcard claims with unrouted members).
+Everything the vocabulary derivation finds across the bound grammars, which the inventory prints and checks against the authored vocabulary: the claimed paths and their prefixes, who claims each, the paths derived from content predicates, refinements, template holes, members per path, set-inclusion cycles, and the report lists (untargeted containers, uncaptured slots, unmapped references with their counts, unknown predicates, wildcard containers, wildcard claims with unrouted members, forms left with no entry for their supertype's claim).
 
 ### `packages/codegen/src/bindings/derive.ts::commonPrefix`
 
@@ -245,7 +248,7 @@ The claim's `RefinementKind`, in order: any predicate, then any field literal, t
 
 ### `packages/codegen/src/bindings/facts.ts::refineClaims`
 
-Every claim as a `RefinedClaim`, derived from the claims alone, so the reader stays a reader and every consumer refines the same way. A wildcard or group claim refines nothing.
+Every claim as a `RefinedClaim`, derived from the claims and the forms each kind takes (`formsOf`, passed by the caller), so the reader stays a reader and every consumer refines the same way. A claim refines the deepest claim at a prefix of its path in the same placement, on its own kind or on a supertype its kind is a form of. A form's claim that refines a supertype's claim and tests nothing of its own (no predicate, field literal, token or child pattern) is no refinement: the form's kind tells its nodes apart, so the claim names the form. A wildcard or group claim refines nothing.
 
 ### `packages/codegen/src/bindings/facts.ts::bindSelector`
 
@@ -448,7 +451,7 @@ What the derivation realized and left: the claim and member totals, the aliases,
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindingsInput`
 
-The derivation's inputs: the `bindings.scm` path its diagnostics name (`file`), its binding facts in base names, its grammar evaluated without its grammar bindings, each vocabulary path's members, the ones its interface declares and the ones it inherits (a member an interface inherits is its member), and each claimed kind's member routes as `resolveRoutes` gives them over the model of the grammar compiled without its grammar bindings (`routedMembers`).
+The derivation's inputs: the `bindings.scm` path its diagnostics name (`file`), its binding facts in base names, its grammar evaluated without its grammar bindings, each vocabulary path's members, the ones its interface declares and the ones it inherits (a member an interface inherits is its member), the grammar's routes as `resolveRoutes` gives them over the model of the grammar compiled without its grammar bindings (`routes`: each claimed kind's member routes and each kind's vocabulary path, `vocabOf`), and that model (`model`), whose forms the claims refine through (`refineClaims`).
 
 ### `packages/codegen/src/bindings/names.ts::boundKindName`
 
@@ -507,13 +510,15 @@ free when its holder is renamed away; an alias target must be free too;
 clashing ones are dropped until stable, and a kind claiming its own parent's
 path is realized by the parent, its arms staying the parent's variants.
 
-Members: a member the vocabulary kind naming its owner does not declare stays
-a mapping. A flag reads structure the grammar already has and
+Members: a member the vocabulary kind the routes name its owner by
+(`GrammarRoutes.vocabOf`, the path its read entries name it by) does not
+declare stays a mapping. A flag reads structure the grammar already has and
 needs no field; every other member becomes a field. A member routed to a whole field
 renames that field; a member routed to an unfielded child, or to a token's
 presence, wraps the child or token in a field of the member's name. A child or
 token the bindings leave unfielded may already sit in a field of the enriched
-base. A vocabulary member with no route resolves implicitly when the owner has
+base. A vocabulary member with no route resolves implicitly when the owner, any
+kind the routes name (a form named through its supertype's path included), has
 an unfielded child whose kind spells it. One target feeding several members,
 or two fields routing to one member, are refused. A field in a hidden rule
 several kinds share is edited in place only when every kind reaching it asks
@@ -890,7 +895,7 @@ The `ClaimFact` for a claim capture on a visit: its kind (a grouping's first chi
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::memberFact`
 
-The `MemberFact` for a member capture on a visit. The capture belongs to its home: the nearest claimed node above it, or the top when none is claimed in between (`claimedHome`). A `@dropped` capture drops the slot its selector finds on its parent's kind. On a child of the home (or under a top grouping) it renames the slot its selector finds, or marks an unfielded token's presence. Deeper, it is a nested member of the home's kind (or the presence of a token) routed through the selectors of the nodes between. A capture directly under a grouping names no member. The fact carries the claims on its owner's node (the parent for a direct capture, the home for a deeper one) as `claims`, and, for a capture on a node anchored first, the lead match its caller read (`leadMatch`).
+The `MemberFact` for a member capture on a visit. The capture belongs to its home: the nearest claimed node above it, or the top when none is claimed in between (`claimedHome`). A `@dropped` capture drops the slot its selector finds on its parent's kind; on a token it also preserves the token's spelling, so an unfielded token identifies the slot holding that text rather than the next node slot. On a child of the home (or under a top grouping) it renames the slot its selector finds, or marks an unfielded token's presence. Deeper, it is a nested member of the home's kind (or the presence of a token) routed through the selectors of the nodes between. A capture directly under a grouping names no member. The fact carries the claims on its owner's node (the parent for a direct capture, the home for a deeper one) as `claims`, and, for a capture on a node anchored first, the lead match its caller read (`leadMatch`).
 
 ### `packages/codegen/src/bindings/pinned-reader.ts::claimedHome`
 
@@ -1106,7 +1111,7 @@ A kind's container unwrap: a kind the bindings declare with `@element` unwraps t
 
 ### `packages/codegen/src/bindings/routes.ts::specificity`
 
-The order read entries are tried in: a claim both placed (made below enclosing kinds) and tested by a predicate, then a predicate claim, then a placed claim, then a claim that pins a literal or tests the nodes below it (a pin, a token the claimed node holds, or a child test), then the plain claim. `resolveRoutes` breaks a tie by more tests the claim states (`testCount`), then by position in `bindings.scm`. Python's `__init__` inside a class reads as `declaration.constructor` (a predicate claim) before `declaration.method` (a placed one).
+The order read entries are tried in: a claim both placed (made below enclosing kinds) and tested by a predicate, then a predicate claim, then a placed claim, then a claim that pins a literal or tests the nodes below it (a pin, a token the claimed node holds, or a child test), then the plain claim. `resolveRoutes` breaks a tie first by trying a form's own entry before one a supertype's claim gives it, then by more tests the claim states (`testCount`), then by position in `bindings.scm`. Python's `__init__` inside a class reads as `declaration.constructor` (a predicate claim) before `declaration.method` (a placed one).
 
 ### `packages/codegen/src/bindings/routes.ts::testCount`
 
@@ -1162,7 +1167,7 @@ The slots from an owner kind outward through the `via` steps (walked farthest fi
 
 ### `packages/codegen/src/bindings/routes.ts::resolveRoutes`
 
-Resolves one grammar's routes. A claim on a kind reaches the kind and each of its forms (`formsOf`) that has no claim of its own: a self-claimed form reads by its own claim, and `is` still passes it for the supertype's path by the kind table. Slot names (`SlotNames`: renames, and a claim's `@dropped` slots) are collected first on every kind their claim reaches, since a pin's member name and a slot route's name both follow them, so a supertype claim's field rename or drop applies to the field on each form. A claim's read entries go on the kinds the reader produces for each kind it reaches (`readKinds`), so a claim on an enum kind is entered on its members' kinds; an entry's `claimed` is the kind the claim names. A kind's default vocabulary kind is its first top-level claim with no predicate, no pin and no child test, in file order, else the parent its refining claims' paths share (`refinedParent`); the read entries are then sorted by `specificity`. Member routes are resolved for each read entry of every claimed kind, from the kind's sorted read entries and the entry's own guarantees (`guaranteedBy`); the kind's member routes are their union, the first entry's routes as they are and then each route another entry adds, since several routes may share a member's name; and container unwraps for every kind of the model.
+Resolves one grammar's routes. A claim on a kind reaches the kind and each of its forms (`formsOf`), a form with claims of its own included: a refinement path extends its parent path and never replaces it, so a supertype's claim stays every form's least specific entry, and a form whose own claims all test something still reads by the supertype's path when none holds. Slot names (`SlotNames`: renames, and a claim's `@dropped` slots) are collected first on every kind their claim reaches, since a pin's member name and a slot route's name both follow them, so a supertype claim's field rename or drop applies to the field on each form. An unfielded dropped token finds its slot through `slotHoldingText`, the same lookup used for literal pins; a fielded capture keeps its explicit slot selector. A claim's read entries go on the kinds the reader produces for each kind it reaches (`readKinds`), so a claim on an enum kind is entered on its members' kinds; an entry's `claimed` is the kind the claim names. A kind's default vocabulary kind is its own first top-level claim with no predicate, no pin and no child test, in file order; else the first such claim it inherits as a form of a supertype; else the parent its own refining claims' paths share (`refinedParent`), or its inherited ones' when it has none of its own. The read entries are then sorted by `specificity`. Member routes are resolved for each read entry of every claimed kind, from the kind's sorted read entries and the entry's own guarantees (`guaranteedBy`); the kind's member routes are their union, the first entry's routes as they are and then each route another entry adds, since several routes may share a member's name; and container unwraps for every kind of the model.
 
 ### `packages/codegen/src/bindings/routes.ts::refinedParent`
 
@@ -1175,6 +1180,10 @@ How one grammar's routes input is assembled, for codegen and the inventory alike
 ### `packages/codegen/src/bindings/routes.ts::formsOf`
 
 The kind and, when it is a supertype, every kind the model stamps as its owned variant (`ModelNode.variantOf`), with the forms of each variant that is itself a supertype: the forms a node of the kind takes in the tree. A variant of a branch or polymorph sits under its owner as a part, so a kind that is not a supertype is its only form.
+
+### `packages/codegen/src/bindings/routes.ts::unenteredForms`
+
+Every form left with no read entry for a claim of its supertype, as a line naming the form, the supertype and the claim's path. `resolveRoutes` enters every supertype claim on every form, so in the routes it gives the list is empty; the inventory derivation reports any line (`Derivation.unenteredForms`) and fails the run, since such a form reads by no path when no claim of its own holds, and every other check passes it.
 
 ### `packages/codegen/src/bindings/routes.ts::readKinds`
 
@@ -1502,7 +1511,7 @@ Names each node of a match tree that narrows its kind (one with a restriction) b
 
 ### `packages/codegen/src/bindings/leads.ts::deriveLeads`
 
-The leads of a grammar's facts against its grammar evaluated without its bindings. A capture on the first item of a separated list (`leadMatch` on a member whose list, the parent of the captured node, is a head-form list whose element is a field, `rule-patterns.ts::separatedListBodyInfo`) contributes to that list's lead; a capture anchored first anywhere else derives nothing and stays what it was. The captures on one list derive one `lead`: the list, its item field, the captured name as the lead's field, and the union of their match trees (`unionMatch`) with its variants named (`nameVariants`). They must capture one field, and their trees must union. Each refusal is a blocking `lead-refused` grammar diagnostic naming the `bindings.scm` file and the claim lines: a match tree `match` cannot say (`matchOf`'s reason), captures of two fields, trees that do not union, and a variant two claims name. A capture deeper in the item than the item itself stays a position (no `leadMatch`), and `match` cannot say several top-level admits, so a lead derived here admits one tree.
+The leads of a grammar's facts against its grammar evaluated without its bindings. A capture on the first item of a separated list (`leadMatch` on a member whose list, the parent of the captured node, is a head-form list whose element is a field, `rule-patterns.ts::fieldedHeadListOf`) contributes to that list's lead; a capture anchored first anywhere else derives nothing and stays what it was. The captures on one list derive one `lead`: the list, its item field, the captured name as the lead's field, and the union of their match trees (`unionMatch`) with its variants named (`nameVariants`). They must capture one field, and their trees must union. Each refusal is a blocking `lead-refused` grammar diagnostic naming the `bindings.scm` file and the claim lines: a match tree `match` cannot say (`matchOf`'s reason), captures of two fields, trees that do not union, and a variant two claims name. A lead its edit cannot make is refused too, with the edit's own reason (`dsl/bind.ts::leadIssue`), checked against the leads accepted before it in the order the edit applies them: one hidden rule narrowed two ways, an owner holding the list other than as a field's content, owners holding it under different fields, and a minted name the grammar already holds. A capture deeper in the item than the item itself stays a position (no `leadMatch`), and `match` cannot say several top-level admits, so a lead derived here admits one tree.
 
 
 ### `packages/codegen/src/bindings/module.ts::matchCall`

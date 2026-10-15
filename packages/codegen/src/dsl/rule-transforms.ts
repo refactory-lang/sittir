@@ -38,6 +38,10 @@ export interface DistributeAliasCtx {
 	readonly inlineBodyOf: (name: string) => AnyRule | undefined;
 }
 
+function isGroupAlias(rule: unknown): boolean {
+	return (rule as { metadata?: { aliasSource?: string } } | null | undefined)?.metadata?.aliasSource === 'visible-group';
+}
+
 export function distributeInlineAliasChoices<R extends AnyRule>(rule: R, ctx: DistributeAliasCtx): R {
 	const walker = new SyntacticRuleWalker<R>();
 	const distributed = new WeakSet<object>();
@@ -57,7 +61,7 @@ export function distributeInlineAliasChoices<R extends AnyRule>(rule: R, ctx: Di
 			return { ...choice, members } as unknown as R;
 		}
 		const alias = r as unknown as NamedAliasShape<R>;
-		if (alias.type !== ALIAS || alias.named !== true || !alias.value) return r;
+		if (alias.type !== ALIAS || alias.named !== true || !alias.value || isGroupAlias(alias)) return r;
 		const arms = armsOf(innermostNamedAliasContent(alias.content));
 		if (arms === undefined) return r;
 		const split = {
@@ -264,7 +268,7 @@ export function unaliasOverloadedDisplays<R extends AnyRule>(rules: Record<strin
 	const walker = new SyntacticRuleWalker<R>();
 	const siteOf = (r: R): AliasSite<R> | undefined => {
 		const alias = r as unknown as NamedAliasShape<R>;
-		return alias.type === ALIAS && alias.named === true && alias.value ? (alias as AliasSite<R>) : undefined;
+		return alias.type === ALIAS && alias.named === true && alias.value && !isGroupAlias(alias) ? (alias as AliasSite<R>) : undefined;
 	};
 	const terminalContent = (content: R): boolean => terminalContentOf(content, ctx.symbols.isTerminal);
 	const storageOf = (content: R): StorageOf => {

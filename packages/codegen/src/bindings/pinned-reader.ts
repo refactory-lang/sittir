@@ -525,8 +525,8 @@ function memberFact(
 	const direct = parent === home || homeKind === null;
 	const claims = claimed.get(direct ? parent : home);
 	const of = { ...(claims === undefined ? {} : { claims }), ...(leadMatch === undefined ? {} : { leadMatch }) };
-	if (name === DROPPED) return { route: 'dropped', owner, ...selector(v), ...of };
 	const token = tokenText(v);
+	if (name === DROPPED) return { route: 'dropped', owner, ...selector(v), ...(token === null ? {} : { token }), ...of };
 	if (direct) {
 		if (token !== null && v.field === null) return { route: 'presence', owner, name, token, via: [], ...of };
 		return isGroup(v) && v.field === null ? null : { route: 'rename', owner, name, ...selector(v), ...(token === null ? {} : { token }), ...of };

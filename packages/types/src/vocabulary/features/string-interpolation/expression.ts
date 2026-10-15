@@ -6,7 +6,7 @@ export namespace Expression {
 		export interface Template<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Call<G>> {
 			// claimed by t
 			readonly $kind: 'expression.call.template';
-			readonly arguments: V.Literal.Template<G>;
+			readonly arguments: V.Literal.String.Interpolated<G>;
 			readonly function: G['slots']['expression.call.template']['function'];
 		}
 	}

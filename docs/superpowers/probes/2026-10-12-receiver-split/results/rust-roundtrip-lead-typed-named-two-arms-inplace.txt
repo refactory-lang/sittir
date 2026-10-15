@@ -1,0 +1,24 @@
+fn f() {}
+  rendered: ()
+  text: unchanged; reparse: same tree
+fn f(&self) {}
+  rendered: (&self,)
+  text: changed; reparse: same tree
+fn f(&self,) {}
+  rendered: (&self,)
+  text: unchanged; reparse: same tree
+fn f(&self, a: u8) {}
+  rendered: (&self, a: u8)
+  text: unchanged; reparse: same tree
+fn f(&self, a: u8,) {}
+  rendered: (&self, a: u8,)
+  text: unchanged; reparse: same tree
+fn f(a: u8, b: u16) {}
+  rendered: (a: u8, b: u16)
+  text: unchanged; reparse: same tree
+fn f(self: Box<Self>, a: u8) {}
+  rendered: (self: Box<Self>, a: u8)
+  text: unchanged; reparse: same tree
+fn f(#[cfg(x)] self) {}
+  rendered: (#[cfg(x)] self,)
+  text: changed; reparse: same tree

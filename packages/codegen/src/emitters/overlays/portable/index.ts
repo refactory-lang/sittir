@@ -2,7 +2,7 @@ import { resolveRoutes, type GrammarInput, type ReadEntry } from '../../../bindi
 import type { NodeMap } from '../../../compiler/types.ts';
 import { findKindEntry, fixedTextKinds, kindDiscriminantExpr, type KindEnumEntry } from '../../kind-discriminant.ts';
 import { emitPortableNodeModel } from './node-model.ts';
-import { readTestOf, slotRoutesOf } from './read-tests.ts';
+import { presenceKeywordOf, readTestOf, slotRoutesOf } from './read-tests.ts';
 import { emitPortableSurface } from './surface.ts';
 
 export interface PortableOutputs {
@@ -13,7 +13,7 @@ export interface PortableOutputs {
 export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): PortableOutputs {
 	const routes = resolveRoutes(input);
 	const typeOf = (kind: string) => (kindEntries === undefined ? undefined : findKindEntry(kindEntries, kind)?.id);
-	const readTest = (entry: ReadEntry) => readTestOf(entry, input.model, slotRoutesOf(nodeMap), typeOf);
+	const readTest = (entry: ReadEntry) => readTestOf(entry, input.model, slotRoutesOf(nodeMap), presenceKeywordOf(nodeMap), typeOf);
 	const kindIdOf = (kind: string) => kindDiscriminantExpr(kind, nodeMap, kindEntries);
 	return {
 		nodeModel: emitPortableNodeModel(routes, readTest),
