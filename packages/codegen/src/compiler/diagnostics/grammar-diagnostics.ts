@@ -35,6 +35,7 @@ import { ALIAS, SYMBOL } from '../../types/rule-types.ts';
 import type { Rule } from '../../types/rule.ts';
 import { lineTerminated, triviaKinds } from '../model/trivia.ts';
 import type { NodeMap } from '../types.ts';
+import { diagnosePatchCredit } from './patch-sites.ts';
 
 export type { GrammarDiagnostic };
 
@@ -511,6 +512,7 @@ export function predictionRecords(raw: Pick<RawGrammar, 'name' | 'predictedKinds
 export function evaluateRecords(raw: RawGrammar): GrammarDiagnostic[] {
 	return withoutOrphanedGroups(raw, [
 		...predictionRecords(raw),
+		...diagnosePatchCredit(raw.patchSites ?? [], { grammar: raw.name }),
 		...unexpectableExpectEntries(raw.name, raw.expectDiagnostics),
 		...(raw.bodyPatternZeroMatches ?? []).map((name) => fromBodyPatternZeroMatch(raw.name, name)),
 		...(raw.desugarDivergences ?? []).map((event) => fromDesugarDivergence(raw.name, event))

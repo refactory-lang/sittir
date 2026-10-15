@@ -40,28 +40,25 @@ export function diagnosePatchSites(input: {
 	readonly grammar: string;
 	readonly sites: readonly LabelledPatchSite[];
 }): GrammarDiagnostic[] {
-	return [
-		...ambiguousRulePatches(input.sites, input),
-		...input.sites
-			.filter((site) => site.label === 'authoring' && RESOLVING_ONLY.has(site.form))
-			.map((site) => ({
-				scope: 'grammar' as const,
-				grammar: input.grammar,
-				code: 'patch-without-cause',
-				severity: 'error' as const,
-				ownerKind: site.ownerKind,
-				message: `patches: ${site.form}('${site.name ?? ''}') at '${site.ownerKind}' path '${site.path}' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands`,
-				canProceed: false,
-				details: { path: site.path, form: site.form, name: site.name }
-			}))
-	];
+	return input.sites
+		.filter((site) => site.label === 'authoring' && RESOLVING_ONLY.has(site.form))
+		.map((site) => ({
+			scope: 'grammar' as const,
+			grammar: input.grammar,
+			code: 'patch-without-cause',
+			severity: 'error' as const,
+			ownerKind: site.ownerKind,
+			message: `patches: ${site.form}('${site.name ?? ''}') at '${site.ownerKind}' path '${site.path}' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands`,
+			canProceed: false,
+			details: { path: site.path, form: site.form, name: site.name }
+		}));
 }
 
-function ambiguousRulePatches(sites: readonly LabelledPatchSite[], ctx: PatchSiteDiagnosticCtx): GrammarDiagnostic[] {
-	const byOwner = new Map<string, Map<string, LabelledPatchSite>>();
+export function diagnosePatchCredit(sites: readonly PatchSite[], ctx: PatchSiteDiagnosticCtx): GrammarDiagnostic[] {
+	const byOwner = new Map<string, Map<string, PatchSite>>();
 	for (const site of sites) {
 		if (site.form !== 'rule') continue;
-		const ownerSites = byOwner.get(site.ownerKind) ?? new Map<string, LabelledPatchSite>();
+		const ownerSites = byOwner.get(site.ownerKind) ?? new Map<string, PatchSite>();
 		ownerSites.set(patchSiteKey(site), site);
 		byOwner.set(site.ownerKind, ownerSites);
 	}

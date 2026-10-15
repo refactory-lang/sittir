@@ -495,7 +495,8 @@ throw; the hydrate-time unresolved reference in `assemble.ts::hydrateValues` is 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::evaluateRecords`
 
 The records answerable from the evaluated grammar alone, before link: the prediction records, the
-`expect-diagnostics-invalid` entries, and evaluate's own events (`body-pattern-zero-match`,
+`expect-diagnostics-invalid` entries, ambiguous rule-patch credit from `diagnosePatchCredit`,
+and evaluate's own events (`body-pattern-zero-match`,
 `desugar-divergence-*`).
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::diagnoseStage`
@@ -700,17 +701,15 @@ credited with none resolves nothing. It blocks;
 a floor for it applies at the gate. Authoring
 forms (`field`, `variant`, `alias` used to name) are never judged.
 
-Also reports `patch-credit-ambiguous` when an owner has more than one distinct
-`rule()` patch site. The diagnostic names every conflicting site because
-resolution credit is owner-level until per-site attribution is implemented.
-It is a config error and cannot be accepted with `expectDiagnostics`.
-
-### `packages/codegen/src/compiler/diagnostics/patch-sites.ts::ambiguousRulePatches`
+### `packages/codegen/src/compiler/diagnostics/patch-sites.ts::diagnosePatchCredit`
 
 Groups `rule()` sites by owner using the existing `patchSiteKey` identity,
 so repeated metadata for one site counts once. Emits one blocking
-`patch-credit-ambiguous` diagnostic per owner with multiple sites, regardless
-of their authoring/resolving labels. Other patch forms do not participate.
+`patch-credit-ambiguous` diagnostic per owner with multiple sites, naming every
+conflicting site because credit is owner-level until per-site attribution is
+implemented. `evaluateRecords` runs this config check without needing stage
+history or authoring/resolving labels. Other patch forms do not participate,
+and `expectDiagnostics` cannot accept this config error.
 
 ### `packages/codegen/src/compiler/diagnostics/patch-sites.ts::sameSite`
 

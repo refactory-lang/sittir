@@ -9,6 +9,7 @@ import {
 	GrammarDiagnosticError
 } from '../diagnostics/grammar-diagnostics.ts';
 import { diagnoseSlotGrouping } from '../diagnostics/slot-grouping.ts';
+import { diagnoseGrammar } from '../compile.ts';
 import type { SimplifiedRule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
 import { predictedKindsOf, type GeneratedIdTables } from '../../dsl/symbol-table.ts';
@@ -63,6 +64,34 @@ function collisionGrammar(): RawGrammar {
 }
 
 describe('grammar diagnostics preflight', () => {
+	it('blocks ambiguous rule patch credit without stage history', () => {
+		const evaluated: RawGrammar = {
+			...withPredictedKinds(
+				buildRawGrammar({
+					program: {
+						type: 'SEQ',
+						members: [
+							{ type: 'STRING', value: '(' },
+							{ type: 'SYMBOL', name: 'host', fieldName: 'value' },
+							{ type: 'STRING', value: ')' }
+						]
+					},
+					host: { type: 'PATTERN', value: '[a-z]+' }
+				})
+			),
+			patchSites: [
+				{ ownerKind: 'host', path: '1', form: 'rule', name: 'left' },
+				{ ownerKind: 'host', path: '2', form: 'rule', name: 'right' }
+			]
+		};
+		expect(evaluated.stages).toBeUndefined();
+		const diagnosis = diagnoseGrammar({ grammar: 'synth', evaluated });
+		expect(diagnosis.passed).toBe(false);
+		expect(diagnosis.blocked).toContainEqual(
+			expect.objectContaining({ code: 'patch-credit-ambiguous', ownerKind: 'host', canProceed: false })
+		);
+	});
+
 	it('records single-literal-choice and leaves the kind out when a literal choice yields fewer than two values', () => {
 		const seq = (...values: string[]) => ({ type: 'SEQ', members: values.map((value) => ({ type: 'STRING', value })) });
 		const rawGrammar = withPredictedKinds(

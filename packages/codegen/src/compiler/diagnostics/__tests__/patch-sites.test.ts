@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { blockedRecords } from '../grammar-diagnostics.ts';
-import { diagnosePatchSites, labelPatchSites } from '../patch-sites.ts';
+import { diagnosePatchCredit, diagnosePatchSites, labelPatchSites } from '../patch-sites.ts';
 import type { DiagnosticRecord } from '../diagnostic-records.ts';
 import type { PatchSite } from '../../../dsl/wire/wire.ts';
 
@@ -66,12 +66,14 @@ describe('diagnosePatchSites', () => {
 		expect(ds).toEqual([expect.objectContaining({ code: 'patch-without-cause', canProceed: false })]);
 		expect(blockedRecords(ds, { 'patch-without-cause': ['host'] })).toEqual([]);
 	});
+});
 
+describe('diagnosePatchCredit', () => {
 	it('blocks distinct rule() sites on one owner even when owner-level credit labels both resolving', () => {
 		const left = { ...site('rule'), path: '1', name: 'left' };
 		const right = { ...site('rule'), path: '2', name: 'right' };
 		const labelled = labelPatchSites([left, right], [record('unclassifiable-shape', byWire(left, right))]);
-		const ds = diagnosePatchSites({ grammar: 'synth', sites: labelled });
+		const ds = diagnosePatchCredit(labelled, { grammar: 'synth' });
 		expect(ds).toEqual([
 			expect.objectContaining({
 				code: 'patch-credit-ambiguous',
@@ -93,19 +95,19 @@ describe('diagnosePatchSites', () => {
 
 	it('also detects ambiguity between uncredited sites', () => {
 		const sites = [site('rule'), { ...site('rule'), path: '2' }];
-		const ds = diagnosePatchSites({ grammar: 'synth', sites: labelPatchSites(sites, []) });
+		const ds = diagnosePatchCredit(sites, { grammar: 'synth' });
 		expect(ds.filter(({ code }) => code === 'patch-credit-ambiguous')).toHaveLength(1);
 	});
 
 	it('permits one rule() per owner alongside non-rule patches on the same owner', () => {
 		const sites = [site('rule'), site('rule', 'other'), site('field'), site('variant'), site('alias')];
 		const labelled = labelPatchSites(sites, [record('unclassifiable-shape', byWire(...sites))]);
-		expect(diagnosePatchSites({ grammar: 'synth', sites: labelled })).toEqual([]);
+		expect(diagnosePatchCredit(labelled, { grammar: 'synth' })).toEqual([]);
 	});
 
 	it('counts one physical site once when its metadata is repeated', () => {
 		const rule = site('rule');
 		const labelled = labelPatchSites([rule, { ...rule }], [record('unclassifiable-shape', byWire(rule))]);
-		expect(diagnosePatchSites({ grammar: 'synth', sites: labelled })).toEqual([]);
+		expect(diagnosePatchCredit(labelled, { grammar: 'synth' })).toEqual([]);
 	});
 });
