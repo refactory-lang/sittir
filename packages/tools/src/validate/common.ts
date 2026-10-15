@@ -964,6 +964,7 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 export type { FactoryEntry, Hydrate } from '../grammar-internals.ts';
 
 export interface NodeToConfigOpts {
+	readonly placeText?: boolean;
 	readonly shownKind?: string;
 	readonly interiorOf?: (kind: string) => TokenInterior | undefined;
 	readonly tree?: TreeHandle;
@@ -1026,6 +1027,10 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	const { tree, factoryMap, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts;
 	if (shouldHaltRecursion(_depth, tree, factoryMap)) return child;
 	const hydrated = hydrateForConfig(c, opts);
+	if (opts.placeText === true && _parentKind !== undefined && opts.factoryShapes?.[_parentKind] === 'placed') {
+		const text = readNodeText(hydrated, opts);
+		if (text !== '') return text;
+	}
 	const rawTypeId = hydrated.$type ?? c.$type;
 	const rawKind =
 		rawTypeId !== undefined
@@ -1065,20 +1070,13 @@ function soleWrappedNode(hydrated: ReadNodeLike, opts: NodeToConfigOpts): ReadNo
 
 function readNodeText(node: ReadNodeLike, opts: NodeToConfigOpts): string {
 	if (typeof node.$text === 'string') return node.$text;
-	const source = opts.tree?.source;
+	const source = (opts.tree ?? treeOf(node as object))?.source;
 	const span = spanOf(node);
 	if (span !== undefined && source !== undefined) return sliceSpan(source, span);
-	const wrapped = soleWrappedContent(node);
-	if (typeof wrapped === 'number') return opts.kindNameFromId?.(wrapped) ?? '';
-	return wrapped === undefined ? '' : readNodeText(wrapped, opts);
-}
-
-function soleWrappedContent(node: ReadNodeLike): ReadNodeLike | number | undefined {
 	const rec = node as unknown as Record<string, unknown>;
 	const keys = Object.keys(rec).filter((k) => k.startsWith('_') && rec[k] !== undefined);
-	const value = keys.length === 1 ? rec[keys[0]!] : undefined;
-	if (typeof value === 'number') return value;
-	return value !== null && typeof value === 'object' && !Array.isArray(value) ? (value as ReadNodeLike) : undefined;
+	const wrapped = keys.length === 1 ? rec[keys[0]!] : undefined;
+	return wrapped !== null && typeof wrapped === 'object' && !Array.isArray(wrapped) ? readNodeText(wrapped as ReadNodeLike, opts) : '';
 }
 
 function hydrateForConfig(c: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike {
@@ -1769,6 +1767,7 @@ export interface FactoryDispatchOpts {
 	readonly kindNameFromId?: (id: number) => string | undefined;
 	readonly tree?: unknown;
 	readonly hydrate?: Hydrate;
+	readonly placeText?: boolean;
 }
 
 export function buildFactoryNodeFromReference(
@@ -1794,7 +1793,8 @@ export function buildFactoryNodeFromReference(
 		namedChildKindHints: opts.namedChildKindHints,
 		kindNameFromId: opts.kindNameFromId,
 		tree: opts.tree,
-		hydrate: opts.hydrate
+		hydrate: opts.hydrate,
+		placeText: opts.placeText
 	} as NodeToConfigOpts;
 	const build = () => buildWithFactory(referenceData, kind, factory, configOpts);
 	return surface?.scope === undefined ? build() : inEngine(surface.scope, build);

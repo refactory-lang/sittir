@@ -29,7 +29,7 @@ import {
 import { isStringType, realizesEmpty, type EmptinessCtx } from '../../types/runtime-shapes.ts';
 import { DEDENT_TEXT, isDepthText } from '../../dsl/primitives/spacing.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
-import { GLOBAL_WORDSET, readRuleMetadata } from '../../dsl/rule-metadata.ts';
+import { GLOBAL_WORDSET, reservedWordsetsOf } from '../../dsl/rule-metadata.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, isAliasedHiddenStorage, seatedOf, surfaceHiddenOf } from '../../dsl/symbol-table.ts';
 import { stampDisplay, type DisplayStamp, type RowlessDisplaySource } from './display-name.ts';
@@ -1194,7 +1194,7 @@ export class AssembledNonterminal {
 		return this.fieldName === undefined;
 	}
 	get reservedWordsets(): readonly string[] {
-		return readRuleMetadata(this.ruleMetadata)?.reservedWordsets ?? [GLOBAL_WORDSET];
+		return reservedWordsetsOf(this.ruleMetadata) ?? [GLOBAL_WORDSET];
 	}
 	get arity(): 'one' | 'many' {
 		return isMultiple(this) ? 'many' : 'one';

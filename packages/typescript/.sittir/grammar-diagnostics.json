@@ -1801,14 +1801,14 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
-    "message": "conflict between primary_expression, for_header_arm3 on 'in' resolved by AddConflict (upstream-declared)",
+    "message": "conflict between primary_expression, for_header_using_kind on 'in' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
       "resolution": {
         "kind": "AddConflict",
         "symbols": [
           "primary_expression",
-          "for_header_arm3"
+          "for_header_using_kind"
         ]
       },
       "step": "upstream-declared",
@@ -1817,7 +1817,7 @@
           "primary_expression"
         ],
         [
-          "for_header_arm3",
+          "for_header_using_kind",
           "_for_header"
         ]
       ],
@@ -1831,7 +1831,7 @@
         "lookahead": "'in'",
         "interpretations": [
           "primary_expression",
-          "for_header_arm3"
+          "for_header_using_kind"
         ]
       }
     }

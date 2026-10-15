@@ -316,7 +316,6 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		word: raw.word,
 		wordMatcher: wordMatcherRegex,
 		reserved: raw.reserved,
-		reservedContexts: raw.reservedContexts,
 		relaxedLiterals: raw.relaxedLiterals,
 		fileTypes: raw.fileTypes,
 		references,
@@ -867,7 +866,6 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 			raw.reserved === undefined
 				? undefined
 				: Object.fromEntries(Object.entries(raw.reserved).map(([wordset, members]) => [wordset, members.map(renameRule)])),
-		reservedContexts: raw.reservedContexts,
 		externalRoles: renameMap(raw.externalRoles),
 		refineForms: renameMap(raw.refineForms),
 		groups:

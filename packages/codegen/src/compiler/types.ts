@@ -99,7 +99,6 @@ export interface DisplayUnionMember {
 export type DisplayUnions = ReadonlyMap<string, readonly DisplayUnionMember[]>;
 
 export type ReservedWordsets = Readonly<Record<string, readonly Rule<'evaluate'>[]>>;
-export type ReservedContexts = Readonly<Record<string, readonly string[]>>;
 
 export interface RawGrammar {
 	readonly name: string;
@@ -115,7 +114,6 @@ export interface RawGrammar {
 	readonly precedences: string[][];
 	readonly word: string | null;
 	readonly reserved?: ReservedWordsets;
-	readonly reservedContexts?: ReservedContexts;
 	readonly relaxedLiterals?: readonly string[];
 	readonly fileTypes: readonly string[];
 	readonly references: SymbolRef[];
@@ -223,7 +221,6 @@ export interface LinkedGrammar {
 	readonly nodelessExtrasRun?: RegExp;
 	readonly word: string | null;
 	readonly reserved?: ReservedWordsets;
-	readonly reservedContexts?: ReservedContexts;
 	readonly relaxedLiterals?: readonly string[];
 	readonly fileTypes: readonly string[];
 	readonly references: SymbolRef[];
@@ -258,7 +255,6 @@ export interface NormalizedGrammar {
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
-	readonly reservedContexts?: ReservedContexts;
 	readonly relaxedLiterals?: readonly string[];
 	readonly fileTypes: readonly string[];
 	readonly externals?: readonly RuleListEntry[];
@@ -294,7 +290,6 @@ export interface SimplifiedGrammar {
 	readonly word: string | null;
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
-	readonly reservedContexts?: ReservedContexts;
 	readonly relaxedLiterals?: readonly string[];
 	readonly fileTypes: readonly string[];
 	readonly externals?: readonly RuleListEntry[];
@@ -337,7 +332,6 @@ export interface NodeMap {
 	readonly word?: string | null;
 	readonly wordMatcher?: RegExp;
 	readonly reserved?: ReservedWordsets;
-	readonly reservedContexts?: ReservedContexts;
 	readonly relaxedLiterals?: readonly string[];
 	readonly fileTypes: readonly string[];
 	readonly externals?: readonly RuleListEntry[];

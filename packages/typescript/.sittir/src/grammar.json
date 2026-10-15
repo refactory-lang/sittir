@@ -1369,12 +1369,9 @@
         },
         {
           "type": "SYMBOL",
-          "name": "for_header_arm3",
-          "metadata": {
-            "symbolSource": "group-lift"
-          },
+          "name": "for_header_using_kind",
           "annotations": {
-            "variant": "arm3",
+            "variant": "using_kind",
             "variantOf": "_for_header"
           }
         }
@@ -13351,109 +13348,6 @@
         "hoisted": true
       }
     },
-    "for_header_arm3": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "("
-        },
-        {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "kind",
-              "content": {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "STRING",
-                    "value": "using"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "using_declaration_arm",
-                    "metadata": {
-                      "symbolSource": "group-lift"
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              "type": "FIELD",
-              "name": "left",
-              "content": {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "identifier"
-                  },
-                  {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "STRING",
-                      "value": "of"
-                    },
-                    "named": true,
-                    "value": "identifier"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "_destructuring_pattern"
-                  }
-                ]
-              }
-            },
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_automatic_semicolon"
-                  },
-                  "named": true,
-                  "value": "automatic_semicolon"
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
-            }
-          ],
-          "annotations": {
-            "hoisted": true
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "operator",
-          "content": {
-            "type": "SYMBOL",
-            "name": "__for_header_operator"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "right",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_expressions"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": ")"
-        }
-      ],
-      "annotations": {
-        "hoisted": true
-      }
-    },
     "_jsx_attribute_optional1": {
       "type": "BLANK"
     },
@@ -17226,6 +17120,116 @@
       "annotations": {
         "hoisted": true
       }
+    },
+    "for_header_using_kind": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "kind",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "using"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "using_declaration_arm",
+                    "metadata": {
+                      "symbolSource": "group-lift"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "left",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "STRING",
+                      "value": "of"
+                    },
+                    "named": true,
+                    "value": "identifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_destructuring_pattern"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "terminator",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_automatic_semicolon"
+                    },
+                    "named": true,
+                    "value": "automatic_semicolon"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
+            }
+          ],
+          "annotations": {
+            "hoisted": true
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "operator",
+          "content": {
+            "type": "SYMBOL",
+            "name": "__for_header_operator"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "right",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_expressions"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     }
   },
   "extras": [
@@ -17440,7 +17444,7 @@
     ],
     [
       "primary_expression",
-      "for_header_arm3"
+      "for_header_using_kind"
     ],
     [
       "variable_declarator_plain",
@@ -18254,7 +18258,8 @@
     "update_expression",
     "export_statement_default",
     "variable_declarator",
-    "meta_property"
+    "meta_property",
+    "_for_header"
   ],
   "reserved": {
     "global": [

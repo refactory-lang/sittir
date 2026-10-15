@@ -388,11 +388,22 @@ export const variableDeclaratorPlain: Hoisted<typeof O.variableDeclaratorPlain> 
 export const variableDeclaratorDefinite: Hoisted<typeof O.variableDeclaratorDefinite> = hoistAs<
 	typeof O.variableDeclaratorDefinite
 >(O.variableDeclaratorDefinite);
+export const forHeaderLhs: Hoisted<typeof O.forHeaderLhs> = hoistAs<typeof O.forHeaderLhs>(O.forHeaderLhs);
+export const forHeaderVarKind: Hoisted<typeof O.forHeaderVarKind> = hoistAs<typeof O.forHeaderVarKind>(
+	O.forHeaderVarKind
+);
+export const forHeaderLetConstKind: Hoisted<typeof O.forHeaderLetConstKind> = hoistAs<typeof O.forHeaderLetConstKind>(
+	O.forHeaderLetConstKind
+);
+export const forHeaderUsingKind: Hoisted<typeof O.forHeaderUsingKind> = hoistAs<typeof O.forHeaderUsingKind>(
+	O.forHeaderUsingKind
+);
 export const declaration: Hoisted<typeof O.declaration> = hoistAs<typeof O.declaration>(O.declaration);
 export const importSpecifier: Hoisted<typeof O.importSpecifier> = hoistAs<typeof O.importSpecifier>(O.importSpecifier);
 export const variableDeclarator: Hoisted<typeof O.variableDeclarator> = hoistAs<typeof O.variableDeclarator>(
 	O.variableDeclarator
 );
+export const forHeader: Hoisted<typeof O.forHeader> = hoistAs<typeof O.forHeader>(O.forHeader);
 export const parenthesizedExpression: Hoisted<typeof O.parenthesizedExpression> = hoistAs<
 	typeof O.parenthesizedExpression
 >(O.parenthesizedExpression);

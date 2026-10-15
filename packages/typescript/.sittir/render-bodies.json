@@ -2751,70 +2751,6 @@
 			"field": "flow_maybe_type_after"
 		}
 	],
-	"for_header_arm3": [
-		{
-			"kind": "seam",
-			"field": "for_header_arm3_before"
-		},
-		{
-			"kind": "text",
-			"text": "("
-		},
-		{
-			"kind": "seam",
-			"field": "lparen_after"
-		},
-		{
-			"kind": "slot",
-			"name": "kind"
-		},
-		{
-			"kind": "slot",
-			"name": "left"
-		},
-		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "automatic_semicolon",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "automatic_semicolon"
-						}
-					]
-				}
-			]
-		},
-		{
-			"kind": "seam",
-			"field": "operator_before"
-		},
-		{
-			"kind": "slot",
-			"name": "operator"
-		},
-		{
-			"kind": "seam",
-			"field": "operator_after"
-		},
-		{
-			"kind": "slot",
-			"name": "right"
-		},
-		{
-			"kind": "seam",
-			"field": "rparen_before"
-		},
-		{
-			"kind": "text",
-			"text": ")"
-		},
-		{
-			"kind": "seam",
-			"field": "for_header_arm3_after"
-		}
-	],
 	"for_header_let_const_kind": [
 		{
 			"kind": "seam",
@@ -2931,6 +2867,70 @@
 		{
 			"kind": "seam",
 			"field": "for_header_lhs_after"
+		}
+	],
+	"for_header_using_kind": [
+		{
+			"kind": "seam",
+			"field": "for_header_using_kind_before"
+		},
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
+			"kind": "slot",
+			"name": "kind"
+		},
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "terminator",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "terminator"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "operator_before"
+		},
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "for_header_using_kind_after"
 		}
 	],
 	"for_header_var_kind": [

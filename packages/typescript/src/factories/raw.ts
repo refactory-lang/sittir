@@ -961,11 +961,7 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 
 export function buildForInStatement(config: T.ForInStatement.Config): T.ForInStatement.Bound {
 	const _await = coerceBooleanKeywordStorage(rejectBareText(config.await, 'ForInStatement.await', 'a boolean'));
-	const _for_header = rejectBareText(
-		config.forHeader,
-		'ForInStatement.forHeader',
-		'a built ForHeaderLhs / ForHeaderVarKind / ForHeaderLetConstKind / ForHeaderArm3'
-	);
+	const _for_header = rejectBareText(config.forHeader, 'ForInStatement.forHeader', 'a built ForHeader');
 	const _body = rejectBareText(
 		kindIdStorage<NonNullable<T.ForInStatement['_body']>>(config.body),
 		'ForInStatement.body',
@@ -982,7 +978,7 @@ export function buildForInStatement(config: T.ForInStatement.Config): T.ForInSta
 		$with: {
 			await: (value?: Admit<NonNullable<T.ForInStatement.Config>['await']>) =>
 				rebuilt(node, handle, () => buildForInStatement({ ...config, await: value })),
-			forHeader: (value: Admit<T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind | T.ForHeaderArm3>) =>
+			forHeader: (value: Admit<T.ForHeader>) =>
 				rebuilt(node, handle, () => buildForInStatement({ ...config, forHeader: value })),
 			body: (value: Admit<NonNullable<T.ForInStatement.Config>['body']>) =>
 				rebuilt(node, handle, () => buildForInStatement({ ...config, body: value }))
@@ -3401,38 +3397,6 @@ export function buildIdentifierUnreserved(text: string): T.Identifier.Bound {
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.Identifier.Bound;
-}
-
-const _keywordArms_buildPropertyIdentifier = new Map<string, number>([
-	['declare', TSKindId.DeclareKeyword] as const,
-	['namespace', TSKindId.NamespaceKeyword] as const,
-	['type', TSKindId.TypeKeyword] as const,
-	['public', TSKindId.PublicKeyword] as const,
-	['private', TSKindId.PrivateKeyword] as const,
-	['protected', TSKindId.ProtectedKeyword] as const,
-	['override', TSKindId.OverrideKeyword] as const,
-	['readonly', TSKindId.ReadonlyKeyword] as const,
-	['module', TSKindId.ModuleKeyword] as const,
-	['any', TSKindId.AnyKeyword] as const,
-	['number', TSKindId.NumberKeyword] as const,
-	['boolean', TSKindId.BooleanKeyword] as const,
-	['string', TSKindId.StringKeyword] as const,
-	['symbol', TSKindId.SymbolKeyword] as const,
-	['export', TSKindId.ExportKeyword] as const,
-	['object', TSKindId.ObjectKeyword] as const,
-	['new', TSKindId.NewKeyword] as const,
-	['get', TSKindId.GetKeyword] as const,
-	['set', TSKindId.SetKeyword] as const,
-	['async', TSKindId.AsyncKeyword] as const,
-	['await', TSKindId.AwaitKeyword] as const,
-	['static', TSKindId.StaticKeyword] as const,
-	['let', TSKindId.LetKeyword] as const
-]);
-
-export function buildPropertyIdentifierText(text: string): T.PropertyIdentifier.Bound {
-	return buildPropertyIdentifier(
-		(_keywordArms_buildPropertyIdentifier.get(text) ?? buildIdentifierUnreserved(text)) as never
-	);
 }
 
 export function buildPrivatePropertyIdentifier(content: string, affix?: true): T.PrivatePropertyIdentifier.Bound;
@@ -7665,63 +7629,6 @@ function _buildImportSpecifiers(
 	return node as unknown as T.ImportSpecifiers.Bound;
 }
 
-export function buildForHeaderArm3(config: T.ForHeaderArm3.Config): T.ForHeaderArm3.Bound {
-	const _kind = rejectBareText(
-		kindIdStorage<NonNullable<T.ForHeaderArm3['_kind']>>(config.kind),
-		'ForHeaderArm3.kind',
-		'a kind id'
-	);
-	const _left = rejectBareText(config.left, 'ForHeaderArm3.left', 'buildIdentifier(…)');
-	const _automatic_semicolon = coerceBooleanKeywordStorage(
-		rejectBareText(config.automaticSemicolon, 'ForHeaderArm3.automaticSemicolon', 'a boolean')
-	);
-	const _operator = rejectBareText(
-		kindIdStorage<NonNullable<T.ForHeaderArm3['_operator']>>(config.operator),
-		'ForHeaderArm3.operator',
-		'a kind id'
-	);
-	const _right = rejectBareText(
-		kindIdStorage<NonNullable<T.ForHeaderArm3['_right']>>(config.right),
-		'ForHeaderArm3.right',
-		'a built Expression / SequenceExpression'
-	);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.ForHeaderArm3 as const,
-		$source: 2 as const,
-		$named: true as const,
-		_kind,
-		_left,
-		_automatic_semicolon,
-		_operator,
-		_right,
-		$with: {
-			kind: (value: Admit<NonNullable<T.ForHeaderArm3.Config>['kind']>) =>
-				rebuilt(node, handle, () => buildForHeaderArm3({ ...config, kind: value })),
-			left: (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
-				rebuilt(node, handle, () => buildForHeaderArm3({ ...config, left: value })),
-			automaticSemicolon: (value?: Admit<NonNullable<T.ForHeaderArm3.Config>['automaticSemicolon']>) =>
-				rebuilt(node, handle, () => buildForHeaderArm3({ ...config, automaticSemicolon: value })),
-			operator: (value: Admit<NonNullable<T.ForHeaderArm3.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildForHeaderArm3({ ...config, operator: value })),
-			right: (value: Admit<NonNullable<T.ForHeaderArm3.Config>['right']>) =>
-				rebuilt(node, handle, () => buildForHeaderArm3({ ...config, right: value }))
-		},
-		kind: () => _kind,
-		left: () => hydrateStoredSlot(node, '_left'),
-		automaticSemicolon: () => _automatic_semicolon,
-		operator: () => _operator,
-		right: () => hydrateStoredSlot(node, '_right'),
-		$render: () => renderText(handle, node),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.ForHeaderArm3.Bound;
-}
-
 export function buildFormalParametersElements(
 	...elements: NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>
 ): ReturnType<typeof _buildFormalParametersElements>;
@@ -10446,6 +10353,63 @@ export function buildForHeaderLetConstKind(
 	return node as unknown as T.ForHeaderLetConstKind.Bound;
 }
 
+export function buildForHeaderUsingKind(config: T.ForHeaderUsingKind.Config): T.ForHeaderUsingKind.Bound {
+	const _kind = rejectBareText(
+		kindIdStorage<NonNullable<T.ForHeaderUsingKind['_kind']>>(config.kind),
+		'ForHeaderUsingKind.kind',
+		'a kind id'
+	);
+	const _left = rejectBareText(config.left, 'ForHeaderUsingKind.left', 'buildIdentifier(…)');
+	const _terminator = coerceBooleanKeywordStorage(
+		rejectBareText(config.terminator, 'ForHeaderUsingKind.terminator', 'a boolean')
+	);
+	const _operator = rejectBareText(
+		kindIdStorage<NonNullable<T.ForHeaderUsingKind['_operator']>>(config.operator),
+		'ForHeaderUsingKind.operator',
+		'a kind id'
+	);
+	const _right = rejectBareText(
+		kindIdStorage<NonNullable<T.ForHeaderUsingKind['_right']>>(config.right),
+		'ForHeaderUsingKind.right',
+		'a built Expression / SequenceExpression'
+	);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ForHeaderUsingKind as const,
+		$source: 2 as const,
+		$named: true as const,
+		_kind,
+		_left,
+		_terminator,
+		_operator,
+		_right,
+		$with: {
+			kind: (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['kind']>) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, kind: value })),
+			left: (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, left: value })),
+			terminator: (value?: Admit<NonNullable<T.ForHeaderUsingKind.Config>['terminator']>) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, terminator: value })),
+			operator: (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, operator: value })),
+			right: (value: Admit<NonNullable<T.ForHeaderUsingKind.Config>['right']>) =>
+				rebuilt(node, handle, () => buildForHeaderUsingKind({ ...config, right: value }))
+		},
+		kind: () => _kind,
+		left: () => hydrateStoredSlot(node, '_left'),
+		terminator: () => _terminator,
+		operator: () => _operator,
+		right: () => hydrateStoredSlot(node, '_right'),
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ForHeaderUsingKind.Bound;
+}
+
 export function buildHtmlComment(text: string): T.HtmlComment.Bound {
 	if (text.length === 0) throw new Error(`html_comment: text must be non-empty`);
 	if (!_leafRe_buildHtmlComment.test(text))
@@ -10896,7 +10860,7 @@ export function buildShorthandPropertyIdentifierPattern(
 	return node as unknown as T.ShorthandPropertyIdentifierPattern.Bound;
 }
 
-export function buildPropertyIdentifier(
+export function buildPropertyIdentifierContent(
 	value: Admit<
 		| T.Identifier
 		| TSKindId.DeclareKeyword
@@ -10994,7 +10958,7 @@ export function buildPropertyIdentifier(
 						| TSKindId.LetKeyword
 					>
 				>
-			) => rebuilt(node, handle, () => buildPropertyIdentifier(value))
+			) => rebuilt(node, handle, () => buildPropertyIdentifierContent(value))
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
@@ -11005,6 +10969,41 @@ export function buildPropertyIdentifier(
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.PropertyIdentifier.Bound;
+}
+
+const _keywordArms_buildPropertyIdentifier = new Map<string, number>([
+	['declare', TSKindId.DeclareKeyword] as const,
+	['namespace', TSKindId.NamespaceKeyword] as const,
+	['type', TSKindId.TypeKeyword] as const,
+	['public', TSKindId.PublicKeyword] as const,
+	['private', TSKindId.PrivateKeyword] as const,
+	['protected', TSKindId.ProtectedKeyword] as const,
+	['override', TSKindId.OverrideKeyword] as const,
+	['readonly', TSKindId.ReadonlyKeyword] as const,
+	['module', TSKindId.ModuleKeyword] as const,
+	['any', TSKindId.AnyKeyword] as const,
+	['number', TSKindId.NumberKeyword] as const,
+	['boolean', TSKindId.BooleanKeyword] as const,
+	['string', TSKindId.StringKeyword] as const,
+	['symbol', TSKindId.SymbolKeyword] as const,
+	['export', TSKindId.ExportKeyword] as const,
+	['object', TSKindId.ObjectKeyword] as const,
+	['new', TSKindId.NewKeyword] as const,
+	['get', TSKindId.GetKeyword] as const,
+	['set', TSKindId.SetKeyword] as const,
+	['async', TSKindId.AsyncKeyword] as const,
+	['await', TSKindId.AwaitKeyword] as const,
+	['static', TSKindId.StaticKeyword] as const,
+	['let', TSKindId.LetKeyword] as const
+]);
+export function buildPropertyIdentifier(
+	value: string | Parameters<typeof buildPropertyIdentifierContent>[0]
+): T.PropertyIdentifier.Bound {
+	return buildPropertyIdentifierContent(
+		(typeof value === 'string'
+			? (_keywordArms_buildPropertyIdentifier.get(value) ?? buildIdentifierUnreserved(value))
+			: value) as never
+	);
 }
 
 export function buildTypeIdentifier(value: Admit<T.Identifier>): T.TypeIdentifier.Bound {
@@ -11224,7 +11223,6 @@ export type FluentKindMap = {
 	function_type: T.FunctionType.Bound;
 	export_specifiers: T.ExportSpecifiers.Bound;
 	import_specifiers: T.ImportSpecifiers.Bound;
-	for_header_arm3: T.ForHeaderArm3.Bound;
 	formal_parameters_elements: T.FormalParametersElements.Bound;
 	enum_body_element_name: T.EnumBodyElementName.Bound;
 	enum_body_elements: T.EnumBodyElements.Bound;
@@ -11291,6 +11289,7 @@ export type FluentKindMap = {
 	for_header_lhs: T.ForHeaderLhs.Bound;
 	for_header_var_kind: T.ForHeaderVarKind.Bound;
 	for_header_let_const_kind: T.ForHeaderLetConstKind.Bound;
+	for_header_using_kind: T.ForHeaderUsingKind.Bound;
 	html_comment: T.HtmlComment;
 	jsx_text: T.JsxText;
 	_template_chars: T.TemplateChars;
@@ -11487,7 +11486,6 @@ export const _factoryMap = {
 	function_type: buildFunctionType,
 	export_specifiers: buildExportSpecifiers,
 	import_specifiers: buildImportSpecifiers,
-	for_header_arm3: buildForHeaderArm3,
 	formal_parameters_elements: buildFormalParametersElements,
 	enum_body_element_name: buildEnumBodyElementName,
 	enum_body_elements: buildEnumBodyElements,
@@ -11554,6 +11552,7 @@ export const _factoryMap = {
 	for_header_lhs: buildForHeaderLhs,
 	for_header_var_kind: buildForHeaderVarKind,
 	for_header_let_const_kind: buildForHeaderLetConstKind,
+	for_header_using_kind: buildForHeaderUsingKind,
 	html_comment: buildHtmlComment,
 	jsx_text: buildJsxText,
 	_template_chars: buildTemplateChars,
@@ -11572,7 +11571,7 @@ export const _factoryMap = {
 	statement_identifier: buildStatementIdentifier,
 	shorthand_property_identifier: buildShorthandPropertyIdentifier,
 	shorthand_property_identifier_pattern: buildShorthandPropertyIdentifierPattern,
-	property_identifier: buildPropertyIdentifierText,
+	property_identifier: buildPropertyIdentifier,
 	type_identifier: buildTypeIdentifier,
 	interface_body: buildInterfaceBody
 } as const;

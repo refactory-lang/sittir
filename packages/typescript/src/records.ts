@@ -502,14 +502,6 @@ export const records = {
 	},
 	ExportSpecifiersTransport: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	ImportSpecifiersTransport: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	ForHeaderArm3Transport: {
-		words: 23,
-		kind: { word: 3, width: 5 },
-		left: { word: 8, width: 5 },
-		automatic_semicolon: { word: 2, bit: 0 },
-		operator: { word: 13, width: 5 },
-		right: { word: 18, width: 5 }
-	},
 	FormalParametersElementsTransport: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	EnumBodyElementNameTransport: { words: 7, name: { word: 2, width: 5 } },
 	EnumBodyElementsTransport: { words: 4, item: { word: 2, width: 2, run: 5 } },
@@ -695,6 +687,14 @@ export const records = {
 		terminator: { word: 12, width: 5 },
 		operator: { word: 17, width: 5 },
 		right: { word: 22, width: 5 }
+	},
+	ForHeaderUsingKindTransport: {
+		words: 23,
+		kind: { word: 3, width: 5 },
+		left: { word: 8, width: 5 },
+		terminator: { word: 2, bit: 0 },
+		operator: { word: 13, width: 5 },
+		right: { word: 18, width: 5 }
 	},
 	HtmlCommentTransport: { words: 2 },
 	JsxTextTransport: { words: 2 },

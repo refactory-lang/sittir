@@ -223,6 +223,8 @@ export const importSpecifier: typeof F.importSpecifier = F.importSpecifier;
 
 export const variableDeclarator: typeof F.variableDeclarator = F.variableDeclarator;
 
+export const forHeader: typeof F.forHeader = F.forHeader;
+
 export const parenthesizedExpression: typeof F.parenthesizedExpression = F.parenthesizedExpression;
 
 export const callExpression: typeof F.callExpression = F.callExpression;
@@ -444,9 +446,14 @@ export const ir: {
 	readonly exportStatementDefaultDeclaration: typeof F.exportStatementDefaultDeclaration;
 	readonly variableDeclaratorPlain: typeof F.variableDeclaratorPlain;
 	readonly variableDeclaratorDefinite: typeof F.variableDeclaratorDefinite;
+	readonly forHeaderLhs: typeof F.forHeaderLhs;
+	readonly forHeaderVarKind: typeof F.forHeaderVarKind;
+	readonly forHeaderLetConstKind: typeof F.forHeaderLetConstKind;
+	readonly forHeaderUsingKind: typeof F.forHeaderUsingKind;
 	readonly declaration: typeof F.declaration;
 	readonly importSpecifier: typeof F.importSpecifier;
 	readonly variableDeclarator: typeof F.variableDeclarator;
+	readonly forHeader: typeof F.forHeader;
 	readonly parenthesizedExpression: typeof F.parenthesizedExpression;
 	readonly callExpression: typeof F.callExpression;
 	readonly updateExpression: typeof F.updateExpression;
@@ -695,9 +702,14 @@ export const ir: {
 	exportStatementDefaultDeclaration: F.exportStatementDefaultDeclaration,
 	variableDeclaratorPlain: F.variableDeclaratorPlain,
 	variableDeclaratorDefinite: F.variableDeclaratorDefinite,
+	forHeaderLhs: F.forHeaderLhs,
+	forHeaderVarKind: F.forHeaderVarKind,
+	forHeaderLetConstKind: F.forHeaderLetConstKind,
+	forHeaderUsingKind: F.forHeaderUsingKind,
 	declaration: F.declaration,
 	importSpecifier: F.importSpecifier,
 	variableDeclarator: F.variableDeclarator,
+	forHeader: F.forHeader,
 	parenthesizedExpression: F.parenthesizedExpression,
 	callExpression: F.callExpression,
 	updateExpression: F.updateExpression,

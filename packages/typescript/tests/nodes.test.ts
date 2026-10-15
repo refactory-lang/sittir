@@ -681,6 +681,61 @@ describe('for_in_statement', () => {
 	});
 });
 
+describe('for_in_statement sub-factories', () => {
+	it('lhs builds the parent', () => {
+		const node = ir.forInStatement.lhs({
+			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
+			left: {
+				$type: TSKindId.LhsExpression,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			} as any,
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ForInStatement);
+		expect((node as any).forHeader()?.$type).toBe(TSKindId.ForHeaderLhs);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('varKind builds the parent', () => {
+		const node = ir.forInStatement.varKind({
+			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ForInStatement);
+		expect((node as any).forHeader()?.$type).toBe(TSKindId.ForHeaderVarKind);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('letConstKind builds the parent', () => {
+		const node = ir.forInStatement.letConstKind({
+			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
+			kind: 'let',
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ForInStatement);
+		expect((node as any).forHeader()?.$type).toBe(TSKindId.ForHeaderLetConstKind);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('usingKind builds the parent', () => {
+		const node = ir.forInStatement.usingKind({
+			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
+			kind: 'using',
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ForInStatement);
+		expect((node as any).forHeader()?.$type).toBe(TSKindId.ForHeaderUsingKind);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('while_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.whileStatement({
@@ -7135,6 +7190,106 @@ describe('meta_property_new_target', () => {
 describe('meta_property_import_meta', () => {
 	it('is the kind id', () => {
 		expect(ir.metaPropertyImportMeta).toBe(TSKindId.MetaPropertyImportMeta);
+	});
+});
+
+describe('for_header_lhs', () => {
+	it('factory produces correct type', () => {
+		const node = ir.forHeaderLhs({
+			left: {
+				$type: TSKindId.LhsExpression,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			} as any,
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ForHeaderLhs);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.forHeaderLhs({
+			left: {
+				$type: TSKindId.LhsExpression,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			} as any,
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('for_header_var_kind', () => {
+	it('factory produces correct type', () => {
+		const node = ir.forHeaderVarKind({
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ForHeaderVarKind);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.forHeaderVarKind({
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('for_header_let_const_kind', () => {
+	it('factory produces correct type', () => {
+		const node = ir.forHeaderLetConstKind({
+			kind: 'let',
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ForHeaderLetConstKind);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.forHeaderLetConstKind({
+			kind: 'let',
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('for_header_using_kind', () => {
+	it('factory produces correct type', () => {
+		const node = ir.forHeaderUsingKind({
+			kind: 'using',
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ForHeaderUsingKind);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.forHeaderUsingKind({
+			kind: 'using',
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
 	});
 });
 

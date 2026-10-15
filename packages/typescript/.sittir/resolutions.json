@@ -1,5 +1,5 @@
 {
-	"grammarHash": "2087379308e1e363d5dcade73a137d58be13370091cddb8571db240e50d00d3b",
+	"grammarHash": "46e4c350d04e82be78b68e191fa65f2bf2bac1bc491076084840b484cc4d50dc",
 	"resolutions": [
 		{
 			"resolution": {
@@ -1423,7 +1423,7 @@
 				"kind": "AddConflict",
 				"symbols": [
 					"primary_expression",
-					"for_header_arm3"
+					"for_header_using_kind"
 				]
 			},
 			"step": "upstream-declared",
@@ -1432,7 +1432,7 @@
 					"primary_expression"
 				],
 				[
-					"for_header_arm3",
+					"for_header_using_kind",
 					"_for_header"
 				]
 			],
@@ -1446,7 +1446,7 @@
 				"lookahead": "'in'",
 				"interpretations": [
 					"primary_expression",
-					"for_header_arm3"
+					"for_header_using_kind"
 				]
 			}
 		},

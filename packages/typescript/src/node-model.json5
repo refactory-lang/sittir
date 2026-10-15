@@ -3249,43 +3249,6 @@
         "nonEmpty": true
       }
     },
-    "for_header_arm3": {
-      "kind": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "left": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "automatic_semicolon": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "operator": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "right": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "formal_parameters_elements": {
       "item": {
         "unnamed": false,
@@ -4295,6 +4258,43 @@
         "nonEmpty": false
       }
     },
+    "for_header_using_kind": {
+      "kind": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "left": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "terminator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "operator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "right": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "statement_identifier": {
       "content": {
         "unnamed": false,
@@ -4524,12 +4524,16 @@
       "kind": "_for_header",
       "modelType": "supertype",
       "typeName": "ForHeader",
+      "irKey": "forHeader",
+      "builderPath": [
+        "forHeader"
+      ],
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "for_header_arm3",
         "for_header_let_const_kind",
         "for_header_lhs",
+        "for_header_using_kind",
         "for_header_var_kind"
       ]
     },
@@ -12933,163 +12937,20 @@
       ]
     },
     {
-      "kind": "for_header_arm3",
-      "modelType": "branch",
-      "typeName": "ForHeaderArm3",
-      "factoryName": "forHeaderArm3",
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
-      "seated": true,
-      "slots": [
-        {
-          "name": "kind",
-          "propertyName": "kind",
-          "paramName": "kind",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "kindEnum",
-          "kinds": [
-            "using_declaration_arm"
-          ],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "using",
-              "parseKind": "using_keyword"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "using_declaration_arm",
-              "parseKind": "using_declaration_arm"
-            }
-          ]
-        },
-        {
-          "name": "left",
-          "propertyName": "left",
-          "paramName": "left",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "identifier",
-            "object_pattern",
-            "array_pattern"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "object_pattern",
-              "parseKind": "object_pattern"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "array_pattern",
-              "parseKind": "array_pattern"
-            }
-          ]
-        },
-        {
-          "name": "automatic_semicolon",
-          "propertyName": "automaticSemicolon",
-          "paramName": "automaticSemicolon",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "boolean",
-          "kinds": [
-            "_automatic_semicolon"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_automatic_semicolon",
-              "parseKind": "automatic_semicolon"
-            }
-          ]
-        },
-        {
-          "name": "operator",
-          "propertyName": "operator",
-          "paramName": "operator",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "kindEnum",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "in",
-              "parseKind": "in_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "of",
-              "parseKind": "of_keyword"
-            }
-          ]
-        },
-        {
-          "name": "right",
-          "propertyName": "right",
-          "paramName": "right",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "expression",
-            "sequence_expression"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "expression",
-              "parseKind": "expression"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "sequence_expression",
-              "parseKind": "sequence_expression"
-            }
-          ]
-        }
-      ],
-      "name": "for_header_arm3",
-      "factoryShape": "config",
-      "factoryFields": [
-        "kind",
-        "left",
-        "automatic_semicolon",
-        "operator",
-        "right"
-      ]
-    },
-    {
       "kind": "for_header_let_const_kind",
       "modelType": "branch",
       "typeName": "ForHeaderLetConstKind",
       "factoryName": "forHeaderLetConstKind",
+      "irKey": "forHeaderLetConstKind",
+      "builderPath": [
+        "forHeaderLetConstKind"
+      ],
+      "builderPathAlternates": [
+        [
+          "forHeader",
+          "letConstKind"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -13240,6 +13101,16 @@
       "modelType": "branch",
       "typeName": "ForHeaderLhs",
       "factoryName": "forHeaderLhs",
+      "irKey": "forHeaderLhs",
+      "builderPath": [
+        "forHeaderLhs"
+      ],
+      "builderPathAlternates": [
+        [
+          "forHeader",
+          "lhs"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -13334,10 +13205,183 @@
       ]
     },
     {
+      "kind": "for_header_using_kind",
+      "modelType": "branch",
+      "typeName": "ForHeaderUsingKind",
+      "factoryName": "forHeaderUsingKind",
+      "irKey": "forHeaderUsingKind",
+      "builderPath": [
+        "forHeaderUsingKind"
+      ],
+      "builderPathAlternates": [
+        [
+          "forHeader",
+          "usingKind"
+        ]
+      ],
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "seated": true,
+      "slots": [
+        {
+          "name": "kind",
+          "propertyName": "kind",
+          "paramName": "kind",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "kindEnum",
+          "kinds": [
+            "using_declaration_arm"
+          ],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "using",
+              "parseKind": "using_keyword"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "using_declaration_arm",
+              "parseKind": "using_declaration_arm"
+            }
+          ]
+        },
+        {
+          "name": "left",
+          "propertyName": "left",
+          "paramName": "left",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "identifier",
+            "object_pattern",
+            "array_pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "object_pattern",
+              "parseKind": "object_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "array_pattern",
+              "parseKind": "array_pattern"
+            }
+          ]
+        },
+        {
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [
+            "_automatic_semicolon"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon"
+            }
+          ]
+        },
+        {
+          "name": "operator",
+          "propertyName": "operator",
+          "paramName": "operator",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "kindEnum",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "in",
+              "parseKind": "in_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "of",
+              "parseKind": "of_keyword"
+            }
+          ]
+        },
+        {
+          "name": "right",
+          "propertyName": "right",
+          "paramName": "right",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression",
+            "sequence_expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "expression",
+              "parseKind": "expression"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "sequence_expression",
+              "parseKind": "sequence_expression"
+            }
+          ]
+        }
+      ],
+      "name": "for_header_using_kind",
+      "factoryShape": "config",
+      "factoryFields": [
+        "kind",
+        "left",
+        "terminator",
+        "operator",
+        "right"
+      ]
+    },
+    {
       "kind": "for_header_var_kind",
       "modelType": "branch",
       "typeName": "ForHeaderVarKind",
       "factoryName": "forHeaderVarKind",
+      "irKey": "forHeaderVarKind",
+      "builderPath": [
+        "forHeaderVarKind"
+      ],
+      "builderPathAlternates": [
+        [
+          "forHeader",
+          "varKind"
+        ]
+      ],
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -13503,35 +13547,14 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "for_header_lhs",
-            "for_header_var_kind",
-            "for_header_let_const_kind",
-            "for_header_arm3"
+            "_for_header"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "for_header_lhs",
-              "parseKind": "for_header_lhs"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "for_header_var_kind",
-              "parseKind": "for_header_var_kind"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "for_header_let_const_kind",
-              "parseKind": "for_header_let_const_kind"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "for_header_arm3",
-              "parseKind": "for_header_arm3"
+              "name": "_for_header",
+              "parseKind": "_for_header"
             }
           ]
         },
@@ -23276,7 +23299,7 @@
           ]
         }
       ],
-      "factoryShape": "text",
+      "factoryShape": "placed",
       "factoryFields": [
         "content"
       ],

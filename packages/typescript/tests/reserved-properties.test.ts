@@ -12,6 +12,6 @@ describe('the reserved set in effect at a position', () => {
 	});
 
 	it('still refuses the keyword at a plain identifier', () => {
-		expect(() => ts.build.identifier('for')).toThrow("identifier: 'for' is a reserved word");
+		expect(() => (ts.build.identifier as (text: string) => unknown)('for')).toThrow("identifier: 'for' is a reserved word");
 	});
 });

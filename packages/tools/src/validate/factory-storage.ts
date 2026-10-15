@@ -22,6 +22,7 @@
 
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import { sourceOf, spanOf } from '@sittir/common/utils';
+import type { TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
 import { importGrammarModule, type FactoryEntry } from '../grammar-internals.ts';
@@ -499,7 +500,8 @@ function buildFactoryUntypedNode(
 		input?: string;
 		rendered?: string;
 	}[],
-	kindNameFromId?: (id: number) => string | undefined
+	kindNameFromId?: (id: number) => string | undefined,
+	tree?: TreeHandle
 ): AnyUntypedNode | null {
 	const factory = factoryMap[renderedKind];
 	if (!factory) return null;
@@ -508,7 +510,7 @@ function buildFactoryUntypedNode(
 			referenceData,
 			renderedKind,
 			{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface },
-			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId }
+			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId, tree, placeText: tree !== undefined }
 		) as AnyUntypedNode | null;
 	} catch (e) {
 		errors.push({
@@ -717,22 +719,21 @@ export async function validateFactoryStorage(
 						node,
 						innerKind,
 						{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface: innerSurface },
-						{ kindNameFromId }
+						{ kindNameFromId, tree: handle, placeText: true }
 					);
 				};
 				const buildErrors: typeof errors = [];
 				let builtTree: AnyUntypedNode | null = null;
 				try {
+					const takesText = (node: Record<string, unknown>): boolean => {
+						const name = typeof node.$type === 'number' ? kindNameFromId?.(node.$type) : undefined;
+						return name !== undefined && factoryShapes[name] === 'placed';
+					};
+					const root = referenceData as unknown as Record<string, unknown>;
 					builtTree = buildFactoryUntypedNode(
-						rebuildChildren(
-							referenceData as unknown as Record<string, unknown>,
-							buildInner,
-							(read, rebuild) => tableSides(read, handle, rebuild),
-							(node) => {
-								const name = typeof node.$type === 'number' ? kindNameFromId?.(node.$type) : undefined;
-								return name !== undefined && factoryShapes[name] === 'text';
-							}
-						) as unknown as AnyUntypedNode,
+						(takesText(root)
+							? root
+							: rebuildChildren(root, buildInner, (read, rebuild) => tableSides(read, handle, rebuild), takesText)) as unknown as AnyUntypedNode,
 						kind,
 						node1?.type,
 						cstNamedChildKinds[0],
@@ -746,7 +747,8 @@ export async function validateFactoryStorage(
 						entry.name,
 						inputSource,
 						buildErrors,
-						kindNameFromId
+						kindNameFromId,
+						handle
 					);
 				} catch (e) {
 					buildErrors.push({ kind, message: `factory threw: ${(e as Error)?.message ?? String(e)}` });

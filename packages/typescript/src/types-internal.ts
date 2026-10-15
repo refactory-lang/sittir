@@ -15,10 +15,6 @@ import type {
 	OptionalTupleParameter,
 	OptionalType,
 	RestType,
-	ForHeaderArm3,
-	ForHeaderLhs,
-	ForHeaderVarKind,
-	ForHeaderLetConstKind,
 	PropertyIdentifier,
 	Identifier,
 	Undefined,
@@ -32,8 +28,6 @@ import type {
 export type * from './types.js';
 
 export type ModuleExportName = Identifier | String;
-
-export type ForHeader = ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind | ForHeaderArm3;
 
 export type Expressions = Expression | SequenceExpression;
 
@@ -56,10 +50,6 @@ export type TupleTypeMember = TupleParameter | OptionalTupleParameter | Optional
 
 export namespace ModuleExportName {
 	export type Kind = '_module_export_name';
-}
-
-export namespace ForHeader {
-	export type Kind = '_for_header';
 }
 
 export namespace Expressions {
@@ -127,6 +117,10 @@ export interface SubBuilderRowKind {
 	'exportStatement.namespaceExport': TSKindId.ExportStatementNamespaceExport;
 	'exportStatementDefault.declaration': TSKindId.ExportStatementDefaultDeclaration;
 	'exportStatementDefault.from': TSKindId.ExportStatementDefaultFrom;
+	'forHeader.letConstKind': TSKindId.ForHeaderLetConstKind;
+	'forHeader.lhs': TSKindId.ForHeaderLhs;
+	'forHeader.usingKind': TSKindId.ForHeaderUsingKind;
+	'forHeader.varKind': TSKindId.ForHeaderVarKind;
 	'importSpecifier.as': TSKindId.ImportSpecifierAs;
 	'importSpecifier.name': TSKindId.ImportSpecifierName;
 	'indexSignature.colon': TSKindId.IndexSignatureColon;

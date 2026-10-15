@@ -674,11 +674,7 @@ export function wrapForInStatement(data: T.ForInStatement, tree: TreeHandle): T.
 			return this._await;
 		},
 		forHeader() {
-			return hydrateSlot<T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind | T.ForHeaderArm3>(
-				this,
-				'_for_header',
-				tree
-			);
+			return hydrateSlot<T.ForHeader>(this, '_for_header', tree);
 		},
 		body() {
 			return hydrateSlot<T.Statement>(this, '_body', tree);
@@ -5958,50 +5954,6 @@ export function wrapImportSpecifiers(data: T.ImportSpecifiers, tree: TreeHandle)
 	return node as unknown as T.ImportSpecifiers.Parsed;
 }
 
-export function wrapForHeaderArm3(data: T.ForHeaderArm3, tree: TreeHandle): T.ForHeaderArm3.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.ForHeaderArm3 as const,
-		kind() {
-			return this._kind;
-		},
-		left() {
-			return hydrateSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, '_left', tree);
-		},
-		automaticSemicolon() {
-			return this._automatic_semicolon;
-		},
-		operator() {
-			return this._operator;
-		},
-		right() {
-			return hydrateSlot<T.Expression | T.SequenceExpression>(this, '_right', tree);
-		},
-		$with: {
-			kind: (v: NonNullable<T.ForHeaderArm3['_kind']>) =>
-				rebuilt(node, handle, () => wrapForHeaderArm3({ ...$edited(data), _kind: v }, tree)),
-			left: (v: NonNullable<T.ForHeaderArm3['_left']>) =>
-				rebuilt(node, handle, () => wrapForHeaderArm3({ ...$edited(data), _left: v }, tree)),
-			automaticSemicolon: (v: NonNullable<T.ForHeaderArm3['_automatic_semicolon']>) =>
-				rebuilt(node, handle, () => wrapForHeaderArm3({ ...$edited(data), _automatic_semicolon: v }, tree)),
-			operator: (v: NonNullable<T.ForHeaderArm3['_operator']>) =>
-				rebuilt(node, handle, () => wrapForHeaderArm3({ ...$edited(data), _operator: v }, tree)),
-			right: (v: NonNullable<T.ForHeaderArm3['_right']>) =>
-				rebuilt(node, handle, () => wrapForHeaderArm3({ ...$edited(data), _right: v }, tree))
-		},
-		$render: () => renderText(handle, node),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.ForHeaderArm3.Parsed;
-}
-
 export function wrapFormalParametersElements(
 	data: T.FormalParametersElements,
 	tree: TreeHandle
@@ -8006,6 +7958,50 @@ export function wrapForHeaderLetConstKind(
 	return node as unknown as T.ForHeaderLetConstKind.Parsed;
 }
 
+export function wrapForHeaderUsingKind(data: T.ForHeaderUsingKind, tree: TreeHandle): T.ForHeaderUsingKind.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ForHeaderUsingKind as const,
+		kind() {
+			return this._kind;
+		},
+		left() {
+			return hydrateSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, '_left', tree);
+		},
+		terminator() {
+			return this._terminator;
+		},
+		operator() {
+			return this._operator;
+		},
+		right() {
+			return hydrateSlot<T.Expression | T.SequenceExpression>(this, '_right', tree);
+		},
+		$with: {
+			kind: (v: NonNullable<T.ForHeaderUsingKind['_kind']>) =>
+				rebuilt(node, handle, () => wrapForHeaderUsingKind({ ...$edited(data), _kind: v }, tree)),
+			left: (v: NonNullable<T.ForHeaderUsingKind['_left']>) =>
+				rebuilt(node, handle, () => wrapForHeaderUsingKind({ ...$edited(data), _left: v }, tree)),
+			terminator: (v: NonNullable<T.ForHeaderUsingKind['_terminator']>) =>
+				rebuilt(node, handle, () => wrapForHeaderUsingKind({ ...$edited(data), _terminator: v }, tree)),
+			operator: (v: NonNullable<T.ForHeaderUsingKind['_operator']>) =>
+				rebuilt(node, handle, () => wrapForHeaderUsingKind({ ...$edited(data), _operator: v }, tree)),
+			right: (v: NonNullable<T.ForHeaderUsingKind['_right']>) =>
+				rebuilt(node, handle, () => wrapForHeaderUsingKind({ ...$edited(data), _right: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ForHeaderUsingKind.Parsed;
+}
+
 export function wrapStatementIdentifier(data: T.StatementIdentifier, tree: TreeHandle): T.StatementIdentifier.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -8430,7 +8426,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.FunctionType]: (d, t) => wrapFunctionType(d as unknown as T.FunctionType, t),
 	[TSKindId.ExportSpecifiers]: (d, t) => wrapExportSpecifiers(d as unknown as T.ExportSpecifiers, t),
 	[TSKindId.ImportSpecifiers]: (d, t) => wrapImportSpecifiers(d as unknown as T.ImportSpecifiers, t),
-	[TSKindId.ForHeaderArm3]: (d, t) => wrapForHeaderArm3(d as unknown as T.ForHeaderArm3, t),
 	[TSKindId.FormalParametersElements]: (d, t) =>
 		wrapFormalParametersElements(d as unknown as T.FormalParametersElements, t),
 	[TSKindId.EnumBodyElementName]: (d, t) => wrapEnumBodyElementName(d as unknown as T.EnumBodyElementName, t),
@@ -8521,6 +8516,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.ForHeaderLhs]: (d, t) => wrapForHeaderLhs(d as unknown as T.ForHeaderLhs, t),
 	[TSKindId.ForHeaderVarKind]: (d, t) => wrapForHeaderVarKind(d as unknown as T.ForHeaderVarKind, t),
 	[TSKindId.ForHeaderLetConstKind]: (d, t) => wrapForHeaderLetConstKind(d as unknown as T.ForHeaderLetConstKind, t),
+	[TSKindId.ForHeaderUsingKind]: (d, t) => wrapForHeaderUsingKind(d as unknown as T.ForHeaderUsingKind, t),
 	[TSKindId.StatementIdentifier]: (d, t) => wrapStatementIdentifier(d as unknown as T.StatementIdentifier, t),
 	[TSKindId.ShorthandPropertyIdentifier]: (d, t) =>
 		wrapShorthandPropertyIdentifier(d as unknown as T.ShorthandPropertyIdentifier, t),

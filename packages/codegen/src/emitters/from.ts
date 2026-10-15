@@ -64,7 +64,7 @@ import {
 	looseElementType,
 	leadingOptionsOf,
 	aliasPatternLeaf,
-	placedTextFactoryName,
+	placedAlias,
 	type LeadingOptions
 } from './shared.ts';
 import {
@@ -1165,11 +1165,10 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 			const guard = leafReDeclaration(leaf.kind, leaf);
 			if (pattern === undefined || guard === undefined) continue;
 			textChecks.push({ kind, pattern });
-			const placedFactory = placedTextFactoryName(node, nodeMap);
 			registryEntries.push(
-				placedFactory === undefined
-					? `  ${JSON.stringify(kind)}: { pattern: F.${guard.constName}, factory: (text: string) => ${factory}(F.${leaf.rawFactoryName}(text) as never) },`
-					: `  ${JSON.stringify(kind)}: { pattern: F.${guard.constName}, factory: F.${placedFactory} },`
+				placedAlias(node, nodeMap)
+					? `  ${JSON.stringify(kind)}: { pattern: F.${guard.constName}, factory: F.${node.rawFactoryName} },`
+					: `  ${JSON.stringify(kind)}: { pattern: F.${guard.constName}, factory: (text: string) => ${factory}(F.${leaf.rawFactoryName}(text) as never) },`
 			);
 		}
 	}

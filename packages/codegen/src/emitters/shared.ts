@@ -55,6 +55,7 @@ import {
 } from '../compiler/model/node-map.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 import { type KindEntryLike, findEntryForLiteralText, findOwnKindEntry } from '../dsl/symbol-table.ts';
+import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
 import { sameCharMergePairs } from '../compiler/model/first-tokens.ts';
 import type { RenderRule } from '../types/rule.ts';
 
@@ -147,21 +148,45 @@ export function aliasPatternLeaf(node: AssembledAlias, nodeMap: NodeMap): Assemb
 	return leaf instanceof AssembledPattern && leaf.rawFactoryName !== undefined ? leaf : undefined;
 }
 
+export function placedAlias(node: AssembledNode, nodeMap: NodeMap): node is AssembledAlias {
+	return node instanceof AssembledAlias && unreservedWordFactory(node, nodeMap) !== undefined;
+}
+
 export interface UnreservedWordFactory {
 	readonly name: string;
 	readonly leaf: AssembledPattern;
 }
 
+const placedAliasKinds = new WeakMap<NodeMap, ReadonlySet<string>>();
+
+export function slotAliases(f: AssembledNonterminal, nodeMap: NodeMap): AssembledAlias[] {
+	const aliases: AssembledAlias[] = [];
+	for (const kind of expandAndDedupeContentTypes(slotKindNames(f), nodeMap)) {
+		const node = nodeMap.nodes.get(kind);
+		if (node instanceof AssembledAlias && node.rawFactoryName !== undefined) aliases.push(node);
+	}
+	return aliases;
+}
+
+function placedAliasKindsOf(nodeMap: NodeMap): ReadonlySet<string> {
+	const cached = placedAliasKinds.get(nodeMap);
+	if (cached !== undefined) return cached;
+	const kinds = new Set<string>();
+	for (const node of nodeMap.nodes.values()) {
+		for (const slot of node.slots) {
+			if (slot.reservedWordsets.every((id) => id === GLOBAL_WORDSET)) continue;
+			for (const alias of slotAliases(slot, nodeMap)) kinds.add(alias.kind);
+		}
+	}
+	placedAliasKinds.set(nodeMap, kinds);
+	return kinds;
+}
+
 export function unreservedWordFactory(alias: AssembledAlias, nodeMap: NodeMap): UnreservedWordFactory | undefined {
-	const contexts = nodeMap.reservedContexts?.[alias.kind];
-	if (contexts === undefined) return undefined;
+	if (!placedAliasKindsOf(nodeMap).has(alias.kind)) return undefined;
 	const leaf = aliasPatternLeaf(alias, nodeMap);
 	if (leaf === undefined || leaf.kind !== nodeMap.word) return undefined;
 	return { name: `${leaf.rawFactoryName}Unreserved`, leaf };
-}
-
-export function placedTextFactoryName(alias: AssembledAlias, nodeMap: NodeMap): string | undefined {
-	return unreservedWordFactory(alias, nodeMap) === undefined ? undefined : `${alias.rawFactoryName}Text`;
 }
 
 export function slotKindNames(slot: { values: readonly NodeOrTerminal[] }): string[] {
@@ -634,7 +659,8 @@ export function resolveFieldStorageInfo(
 	return field.storageInfo;
 }
 
-export type FactoryShape = 'config' | 'spread' | 'text' | 'constant' | 'direct' | 'elements' | 'forwarded';
+export type ClassifiedFactoryShape = 'config' | 'spread' | 'text' | 'constant' | 'direct' | 'elements' | 'forwarded';
+export type FactoryShape = ClassifiedFactoryShape | 'placed';
 export type ChildFactorySurface = 'direct' | 'spread';
 
 export function stringConstructibleTexts(kind: string, nodeMap: NodeMap): string[] {
@@ -983,20 +1009,11 @@ export function leadingOptionsOf(node: AssembledNode, nodeMap: NodeMap): Leading
 		: { type: `T.${node.typeName}.Options`, keys: registered.map((slot) => slot.configKey), storageKeys: registered.map((slot) => slot.storageKey) };
 }
 
-export function builderMapShape(
-	node: AssembledNode,
-	nodeMap: NodeMap,
-	options?: { includeTokenText?: boolean }
-): FactoryShape | null {
-	if (node instanceof AssembledAlias && placedTextFactoryName(node, nodeMap) !== undefined) return 'text';
-	return classifyFactoryShape(node, nodeMap, options);
-}
-
 export function classifyFactoryShape(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	options?: { includeTokenText?: boolean }
-): FactoryShape | null {
+): ClassifiedFactoryShape | null {
 	if (isBuilderTextLeaf(node)) return 'constant';
 	if (node instanceof AssembledPattern || node instanceof AssembledEnum || isWordOrBuilderTextLeaf(node)) return 'text';
 	if (isBuilderlessPunctuationLeaf(node)) return options?.includeTokenText ? 'text' : null;

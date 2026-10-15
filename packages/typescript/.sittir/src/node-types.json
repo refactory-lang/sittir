@@ -40,6 +40,28 @@
     ]
   },
   {
+    "type": "_for_header",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "for_header_let_const_kind",
+        "named": true
+      },
+      {
+        "type": "for_header_lhs",
+        "named": true
+      },
+      {
+        "type": "for_header_using_kind",
+        "named": true
+      },
+      {
+        "type": "for_header_var_kind",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "call_expression",
     "named": true,
     "subtypes": [
@@ -3167,82 +3189,6 @@
     }
   },
   {
-    "type": "for_header_arm3",
-    "named": true,
-    "fields": {
-      "kind": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "using",
-            "named": false
-          },
-          {
-            "type": "using_declaration_arm",
-            "named": true
-          }
-        ]
-      },
-      "left": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "array_pattern",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "object_pattern",
-            "named": true
-          }
-        ]
-      },
-      "operator": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "in",
-            "named": false
-          },
-          {
-            "type": "of",
-            "named": false
-          }
-        ]
-      },
-      "right": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "expression",
-            "named": true
-          },
-          {
-            "type": "sequence_expression",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "automatic_semicolon",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "for_header_let_const_kind",
     "named": true,
     "fields": {
@@ -3367,6 +3313,82 @@
     }
   },
   {
+    "type": "for_header_using_kind",
+    "named": true,
+    "fields": {
+      "kind": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "using",
+            "named": false
+          },
+          {
+            "type": "using_declaration_arm",
+            "named": true
+          }
+        ]
+      },
+      "left": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "array_pattern",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "object_pattern",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "in",
+            "named": false
+          },
+          {
+            "type": "of",
+            "named": false
+          }
+        ]
+      },
+      "right": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          },
+          {
+            "type": "sequence_expression",
+            "named": true
+          }
+        ]
+      },
+      "terminator": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "automatic_semicolon",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "for_header_var_kind",
     "named": true,
     "fields": {
@@ -3468,19 +3490,7 @@
       "required": true,
       "types": [
         {
-          "type": "for_header_arm3",
-          "named": true
-        },
-        {
-          "type": "for_header_let_const_kind",
-          "named": true
-        },
-        {
-          "type": "for_header_lhs",
-          "named": true
-        },
-        {
-          "type": "for_header_var_kind",
+          "type": "_for_header",
           "named": true
         }
       ]

@@ -532,3 +532,16 @@ export const variableDeclaratorDefinite = bundle(
 	C.coerceToVariableDeclaratorDefinite,
 	{ key: 'variableDeclaratorDefinite', max: 1 }
 );
+export const forHeaderLhs = bundle(F.buildForHeaderLhs, C.coerceToForHeaderLhs, { key: 'forHeaderLhs', max: 1 });
+export const forHeaderVarKind = bundle(F.buildForHeaderVarKind, C.coerceToForHeaderVarKind, {
+	key: 'forHeaderVarKind',
+	max: 1
+});
+export const forHeaderLetConstKind = bundle(F.buildForHeaderLetConstKind, C.coerceToForHeaderLetConstKind, {
+	key: 'forHeaderLetConstKind',
+	max: 2
+});
+export const forHeaderUsingKind = bundle(F.buildForHeaderUsingKind, C.coerceToForHeaderUsingKind, {
+	key: 'forHeaderUsingKind',
+	max: 1
+});

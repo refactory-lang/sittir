@@ -5484,7 +5484,7 @@ A closer that is a leaf rather than a literal has no closer text, so only the la
 | regex | 16 | 0 | 0 | 0 |
 | rust | 25 | 0 | 1 | 0 |
 | scm | 7 | 0 | 1 | 0 |
-| typescript | 12 | 0 | 2 | 0 |
+| typescript | 13 | 0 | 2 | 0 |
 
 ### `packages/codegen/src/compiler/model/delimited.ts::DelimitedGrammarFacts`
 

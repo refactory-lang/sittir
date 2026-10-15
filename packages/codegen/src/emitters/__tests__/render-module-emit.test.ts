@@ -791,7 +791,7 @@ describe('the wire codec facts', () => {
 	it("states an envelope's wire ids", async () => {
 		const src = await getTypescriptTransportRs();
 		const member = src.slice(src.indexOf('pub enum MemberExpressionPropertyTransportSlot {'));
-		expect(member).toMatch(/    #\[kind\(kind::_PROPERTY_IDENTIFIER, display, decodes\(kind::\w+(?:, kind::\w+){21}\)\)\]\n    PropertyIdentifier\(/);
+		expect(member).toMatch(/    #\[kind\(kind::_PROPERTY_IDENTIFIER, display, decodes\(kind::\w+(?:, kind::\w+){22}\)\)\]\n    PropertyIdentifier\(/);
 	});
 
 	it('derives the codec alone for trivia', async () => {

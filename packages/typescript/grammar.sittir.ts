@@ -558,7 +558,9 @@ export default sittirGrammar(base, {
 			'1/0': variant('lhs'),
 			'1/1': variant('var_kind'),
 			'1/2': variant('let_const_kind'),
-			'1/2/2': field('terminator')
+			'1/2/2': field('terminator'),
+			'1/3': variant('using_kind'),
+			'1/3/2': field('terminator')
 		}
 	},
 	extras: ($, previous) => [...(previous ?? [])],
