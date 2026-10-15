@@ -1486,35 +1486,35 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
-    "message": "conflict between _parameter_name, primary_type on ')' resolved by AddConflict (upstream-declared)",
+    "message": "conflict between _lhs_expression, literal_type on ')' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
       "resolution": {
         "kind": "AddConflict",
         "symbols": [
-          "_parameter_name",
-          "primary_type"
+          "_lhs_expression",
+          "literal_type"
         ]
       },
-      "step": "upstream-declared",
+      "step": "default",
       "sourceChains": [
         [
-          "_parameter_name"
+          "_lhs_expression"
         ],
         [
-          "primary_type"
+          "literal_type"
         ]
       ],
       "conflict": {
         "symbolSequence": [
           "'<'",
           "'('",
-          "this"
+          "undefined"
         ],
         "lookahead": "')'",
         "interpretations": [
-          "_parameter_name",
-          "primary_type"
+          "_lhs_expression",
+          "literal_type"
         ]
       }
     }
@@ -1547,7 +1547,7 @@
         "symbolSequence": [
           "'<'",
           "'('",
-          "true"
+          "undefined"
         ],
         "lookahead": "'['",
         "interpretations": [
@@ -1562,35 +1562,35 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
-    "message": "conflict between _lhs_expression, literal_type on ')' resolved by AddConflict (default)",
+    "message": "conflict between _parameter_name, primary_type on ')' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
       "resolution": {
         "kind": "AddConflict",
         "symbols": [
-          "_lhs_expression",
-          "literal_type"
+          "_parameter_name",
+          "primary_type"
         ]
       },
-      "step": "default",
+      "step": "upstream-declared",
       "sourceChains": [
         [
-          "_lhs_expression"
+          "_parameter_name"
         ],
         [
-          "literal_type"
+          "primary_type"
         ]
       ],
       "conflict": {
         "symbolSequence": [
           "'<'",
           "'('",
-          "undefined"
+          "this"
         ],
         "lookahead": "')'",
         "interpretations": [
-          "_lhs_expression",
-          "literal_type"
+          "_parameter_name",
+          "primary_type"
         ]
       }
     }
@@ -2174,50 +2174,6 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
-    "message": "conflict between primary_expression, _parameter_name, primary_type on ')' resolved by AddConflict (upstream-declared)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "primary_expression",
-          "_parameter_name",
-          "primary_type"
-        ]
-      },
-      "step": "upstream-declared",
-      "sourceChains": [
-        [
-          "primary_expression"
-        ],
-        [
-          "_parameter_name"
-        ],
-        [
-          "primary_type"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'<'",
-          "'('",
-          "'('",
-          "this"
-        ],
-        "lookahead": "')'",
-        "interpretations": [
-          "primary_expression",
-          "_parameter_name",
-          "primary_type"
-        ]
-      }
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "grammar": "typescript",
     "message": "conflict between primary_expression, _lhs_expression, literal_type on ')' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
@@ -2253,6 +2209,50 @@
           "primary_expression",
           "_lhs_expression",
           "literal_type"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
+    "message": "conflict between primary_expression, _parameter_name, primary_type on ')' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "_parameter_name",
+          "primary_type"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "_parameter_name"
+        ],
+        [
+          "primary_type"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'<'",
+          "'('",
+          "'('",
+          "this"
+        ],
+        "lookahead": "')'",
+        "interpretations": [
+          "primary_expression",
+          "_parameter_name",
+          "primary_type"
         ]
       }
     }

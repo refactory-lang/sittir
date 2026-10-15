@@ -2028,7 +2028,51 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 			return this._separator;
 		},
 		property() {
-			return hydrateSlot<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(this, '_property', tree);
+			return hydrateSlot<
+				| T.PrivatePropertyIdentifier
+				| T.Identifier
+				| TSKindId.BreakKeyword
+				| TSKindId.CaseKeyword
+				| TSKindId.CatchKeyword
+				| TSKindId.ClassKeyword
+				| TSKindId.ConstKeyword
+				| TSKindId.ContinueKeyword
+				| TSKindId.DebuggerKeyword
+				| TSKindId.DefaultKeyword
+				| TSKindId.DeleteKeyword
+				| TSKindId.DoKeyword
+				| TSKindId.ElseKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ExtendsKeyword
+				| TSKindId.FalseKeyword
+				| TSKindId.FinallyKeyword
+				| TSKindId.ForKeyword
+				| TSKindId.FunctionKeyword
+				| TSKindId.IfKeyword
+				| TSKindId.ImportKeyword
+				| TSKindId.InKeyword
+				| TSKindId.InstanceofKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.NullKeyword
+				| TSKindId.ReturnKeyword
+				| TSKindId.SuperKeyword
+				| TSKindId.SwitchKeyword
+				| TSKindId.ThisKeyword
+				| TSKindId.ThrowKeyword
+				| TSKindId.TrueKeyword
+				| TSKindId.TryKeyword
+				| TSKindId.TypeofKeyword
+				| TSKindId.VarKeyword
+				| TSKindId.VoidKeyword
+				| TSKindId.WhileKeyword
+				| TSKindId.WithKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.AwaitKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+			>(this, '_property', tree);
 		},
 		$with: {
 			object: (v: NonNullable<T.MemberExpression['_object']>) =>
@@ -8163,6 +8207,47 @@ export function wrapPropertyIdentifier(data: T.PropertyIdentifier, tree: TreeHan
 		content() {
 			return hydrateSlot<
 				| T.Identifier
+				| TSKindId.BreakKeyword
+				| TSKindId.CaseKeyword
+				| TSKindId.CatchKeyword
+				| TSKindId.ClassKeyword
+				| TSKindId.ConstKeyword
+				| TSKindId.ContinueKeyword
+				| TSKindId.DebuggerKeyword
+				| TSKindId.DefaultKeyword
+				| TSKindId.DeleteKeyword
+				| TSKindId.DoKeyword
+				| TSKindId.ElseKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ExtendsKeyword
+				| TSKindId.FalseKeyword
+				| TSKindId.FinallyKeyword
+				| TSKindId.ForKeyword
+				| TSKindId.FunctionKeyword
+				| TSKindId.IfKeyword
+				| TSKindId.ImportKeyword
+				| TSKindId.InKeyword
+				| TSKindId.InstanceofKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.NullKeyword
+				| TSKindId.ReturnKeyword
+				| TSKindId.SuperKeyword
+				| TSKindId.SwitchKeyword
+				| TSKindId.ThisKeyword
+				| TSKindId.ThrowKeyword
+				| TSKindId.TrueKeyword
+				| TSKindId.TryKeyword
+				| TSKindId.TypeofKeyword
+				| TSKindId.VarKeyword
+				| TSKindId.VoidKeyword
+				| TSKindId.WhileKeyword
+				| TSKindId.WithKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.AwaitKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
 				| TSKindId.DeclareKeyword
 				| TSKindId.NamespaceKeyword
 				| TSKindId.TypeKeyword
@@ -8177,15 +8262,7 @@ export function wrapPropertyIdentifier(data: T.PropertyIdentifier, tree: TreeHan
 				| TSKindId.BooleanKeyword
 				| TSKindId.StringKeyword
 				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
 				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.AwaitKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
 			>(this, '_content', tree, contentRole(this, this._content));
 		},
 		$with: {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { evaluateGrammar, invoke } from '../codegen-surface.ts';
-import { loadWebTreeSitter, upstreamWasmPath } from '../validate/common.ts';
+import { loadWebTreeSitter, witnessBaselineWasmPath } from '../validate/common.ts';
 import type { RuleCause } from '../../../codegen/src/dsl/primitives/rule-cause.ts';
 
 interface WitnessCase {
@@ -27,7 +27,7 @@ for (const grammar of await invoke('grammars', 'allGrammars')) {
 }
 
 async function upstreamKindsOf(grammar: string, text: string): Promise<{ kinds: Set<string>; hasError: boolean }> {
-	const wasm = upstreamWasmPath(grammar);
+	const wasm = await witnessBaselineWasmPath(grammar);
 	if (wasm === undefined) throw new Error(`no upstream parser for ${grammar}`);
 	const { Parser, Language } = await loadWebTreeSitter();
 	const parser = new Parser();
@@ -57,5 +57,5 @@ describe('reauthoring grammar witnesses', () => {
 		expect(hasError).toBe(false);
 		expect(kinds.has(kind)).toBe(true);
 		if (cause === 'accepts-other-kind') expect(kinds.has(rule)).toBe(false);
-	});
+	}, 180_000);
 });

@@ -802,10 +802,12 @@ function booleanLeafKinds(nodeMap: NodeMap): BooleanLeafKinds | undefined {
 		return { trueKind: byText.get('true')!, falseKind: byText.get('false')! };
 	}
 	const keywords = new Map<string, string>();
+	const hiddenKeywords = new Map<string, string>();
 	for (const [kind, node] of nodeMap.nodes) {
 		if (node instanceof AssembledKeyword && BOOLEAN_TEXTS.includes(node.text.toLowerCase() as 'true' | 'false'))
-			keywords.set(node.text.toLowerCase(), node.resolvedKind ?? kind);
+			(node.hidden ? hiddenKeywords : keywords).set(node.text.toLowerCase(), node.hidden ? (node.resolvedKind ?? kind) : kind);
 	}
+	for (const [text, kind] of hiddenKeywords) if (!keywords.has(text)) keywords.set(text, kind);
 	if (!BOOLEAN_TEXTS.every((t) => keywords.has(t))) return undefined;
 	return { trueKind: keywords.get('true')!, falseKind: keywords.get('false')! };
 }

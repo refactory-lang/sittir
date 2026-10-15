@@ -42,7 +42,7 @@ import type * as TS from 'web-tree-sitter';
 import type { AnyUntypedNode, Engine, LanguageAPI, NativeLanguageEngine, NodeLayout, NodeTrivia, ParseOptions, TransportCoordinate, TriviaEntry } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
-import { load } from '../codegen-surface.ts';
+import { invoke, load } from '../codegen-surface.ts';
 import { languageByName } from '../languages.ts';
 import {
 	grammarModulePath,
@@ -384,6 +384,12 @@ export function wrapForReparse(
 		throw new Error(`reparse hosts for '${grammar}' are not loaded; await loadReparseHosts('${grammar}') first`);
 	const template = hostTemplateFor(kind, hosts, kindToSupertypes, opts);
 	return template === undefined ? null : applyHost(template, rendered, opts?.parse);
+}
+
+export async function witnessBaselineWasmPath(grammar: string): Promise<string | undefined> {
+	if (grammar !== 'typescript') return upstreamWasmPath(grammar);
+	const from = grammarRequire(grammar).resolve(`${upstreamPackage(grammar)}/package.json`);
+	return invoke('pinnedUpstreamWasm', 'pinnedTypescriptWasmPath', from);
 }
 
 export function upstreamWasmPath(grammar: string): string | undefined {

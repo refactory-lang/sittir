@@ -35,6 +35,7 @@ const MODULES = {
 	evaluate: '../../codegen/src/compiler/evaluate.ts',
 	evaluatePackage: '../../codegen/src/compiler/evaluate-package.ts',
 	grammars: '../../codegen/src/grammars.ts',
+	pinnedUpstreamWasm: '../../codegen/src/transpile/pinned-upstream-wasm.ts',
 	link: '../../codegen/src/compiler/link.ts',
 	normalize: '../../codegen/src/compiler/normalize.ts',
 	assemble: '../../codegen/src/compiler/assemble.ts',
@@ -76,6 +77,7 @@ export interface CodegenSurface {
 	evaluate: typeof import('../../codegen/src/compiler/evaluate.ts');
 	evaluatePackage: typeof import('../../codegen/src/compiler/evaluate-package.ts');
 	grammars: typeof import('../../codegen/src/grammars.ts');
+	pinnedUpstreamWasm: typeof import('../../codegen/src/transpile/pinned-upstream-wasm.ts');
 	link: typeof import('../../codegen/src/compiler/link.ts');
 	normalize: typeof import('../../codegen/src/compiler/normalize.ts');
 	assemble: typeof import('../../codegen/src/compiler/assemble.ts');

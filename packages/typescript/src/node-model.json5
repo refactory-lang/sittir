@@ -1,7 +1,7 @@
 {
   "name": "typescript",
   "root": "program",
-  "nodeCount": 435,
+  "nodeCount": 440,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -12778,6 +12778,16 @@
       "factoryShape": "constant"
     },
     {
+      "kind": "false_keyword",
+      "modelType": "keyword",
+      "typeName": "FalseKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"false\" as const",
+      "text": "false",
+      "factoryShape": "text"
+    },
+    {
       "kind": "finally_clause",
       "modelType": "envelope",
       "typeName": "FinallyClause",
@@ -17776,10 +17786,10 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "verbatim",
+          "storage": "mixedEnum",
           "kinds": [
             "private_property_identifier",
-            "property_identifier"
+            "identifier"
           ],
           "values": [
             {
@@ -17791,8 +17801,254 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "property_identifier",
-              "parseKind": "property_identifier"
+              "name": "identifier",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "break",
+              "parseKind": "break_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "case",
+              "parseKind": "case_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "catch",
+              "parseKind": "catch_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "class",
+              "parseKind": "class_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "const",
+              "parseKind": "const_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "continue",
+              "parseKind": "continue_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "debugger",
+              "parseKind": "debugger_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "default",
+              "parseKind": "default_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "delete",
+              "parseKind": "delete_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "do",
+              "parseKind": "do_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "else",
+              "parseKind": "else_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "export_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "extends",
+              "parseKind": "extends_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "false",
+              "parseKind": "false_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "finally",
+              "parseKind": "finally_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "for",
+              "parseKind": "for_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "function",
+              "parseKind": "function_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "if",
+              "parseKind": "if_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "import",
+              "parseKind": "import_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "in",
+              "parseKind": "in_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "instanceof",
+              "parseKind": "instanceof_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "new_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "null",
+              "parseKind": "null_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "return",
+              "parseKind": "return_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "super",
+              "parseKind": "super_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "switch",
+              "parseKind": "switch_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "this",
+              "parseKind": "this_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "throw",
+              "parseKind": "throw_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "true",
+              "parseKind": "true_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "try",
+              "parseKind": "try_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "typeof",
+              "parseKind": "typeof_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "var",
+              "parseKind": "var_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "void",
+              "parseKind": "void_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "while",
+              "parseKind": "while_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "with",
+              "parseKind": "with_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "get_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "set_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "async_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "await",
+              "parseKind": "await_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "static_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
+              "parseKind": "let_keyword"
             }
           ]
         }
@@ -19380,6 +19636,16 @@
       "text": "null",
       "oneSurface": true,
       "factoryShape": "constant"
+    },
+    {
+      "kind": "null_keyword",
+      "modelType": "keyword",
+      "typeName": "NullKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"null\" as const",
+      "text": "null",
+      "factoryShape": "text"
     },
     {
       "kind": "number",
@@ -23161,6 +23427,252 @@
             {
               "kind": "terminal",
               "multiplicity": "single",
+              "value": "break",
+              "parseKind": "break_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "case",
+              "parseKind": "case_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "catch",
+              "parseKind": "catch_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "class",
+              "parseKind": "class_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "const",
+              "parseKind": "const_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "continue",
+              "parseKind": "continue_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "debugger",
+              "parseKind": "debugger_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "default",
+              "parseKind": "default_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "delete",
+              "parseKind": "delete_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "do",
+              "parseKind": "do_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "else",
+              "parseKind": "else_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "export_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "extends",
+              "parseKind": "extends_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "false",
+              "parseKind": "false_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "finally",
+              "parseKind": "finally_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "for",
+              "parseKind": "for_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "function",
+              "parseKind": "function_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "if",
+              "parseKind": "if_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "import",
+              "parseKind": "import_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "in",
+              "parseKind": "in_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "instanceof",
+              "parseKind": "instanceof_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "new_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "null",
+              "parseKind": "null_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "return",
+              "parseKind": "return_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "super",
+              "parseKind": "super_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "switch",
+              "parseKind": "switch_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "this",
+              "parseKind": "this_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "throw",
+              "parseKind": "throw_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "true",
+              "parseKind": "true_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "try",
+              "parseKind": "try_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "typeof",
+              "parseKind": "typeof_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "var",
+              "parseKind": "var_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "void",
+              "parseKind": "void_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "while",
+              "parseKind": "while_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "with",
+              "parseKind": "with_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "get_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "set_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "async_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "await",
+              "parseKind": "await_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "static_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
+              "parseKind": "let_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
               "value": "declare",
               "parseKind": "declare_keyword"
             },
@@ -23245,56 +23757,8 @@
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "export",
-              "parseKind": "export_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
               "value": "object",
               "parseKind": "object_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "new",
-              "parseKind": "new_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "get",
-              "parseKind": "get_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "set",
-              "parseKind": "set_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "async",
-              "parseKind": "async_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "await",
-              "parseKind": "await_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "static",
-              "parseKind": "static_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "let",
-              "parseKind": "let_keyword"
             }
           ]
         }
@@ -26116,6 +26580,16 @@
       "factoryShape": "constant"
     },
     {
+      "kind": "super_keyword",
+      "modelType": "keyword",
+      "typeName": "SuperKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"super\" as const",
+      "text": "super",
+      "factoryShape": "text"
+    },
+    {
       "kind": "switch_body",
       "modelType": "envelope",
       "typeName": "SwitchBody",
@@ -26784,6 +27258,16 @@
       "factoryShape": "constant"
     },
     {
+      "kind": "this_keyword",
+      "modelType": "keyword",
+      "typeName": "ThisKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"this\" as const",
+      "text": "this",
+      "factoryShape": "text"
+    },
+    {
       "kind": "throw_keyword",
       "modelType": "keyword",
       "typeName": "ThrowKeyword",
@@ -26956,6 +27440,16 @@
       "text": "true",
       "oneSurface": true,
       "factoryShape": "constant"
+    },
+    {
+      "kind": "true_keyword",
+      "modelType": "keyword",
+      "typeName": "TrueKeyword",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"true\" as const",
+      "text": "true",
+      "factoryShape": "text"
     },
     {
       "kind": "try_keyword",

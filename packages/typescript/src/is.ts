@@ -1254,46 +1254,46 @@ function _vg<G extends object>(guard: G, variants: object): G {
 	return Object.freeze(Object.defineProperties(guard, Object.getOwnPropertyDescriptors(variants)));
 }
 
-const _supertype_exportStatement_ids = new Set<number>([422, 423, 395, 394]);
+const _supertype_exportStatement_ids = new Set<number>([427, 428, 400, 399]);
 const _supertype_declaration_ids = new Set<number>([
-	247, 249, 244, 206, 205, 207, 296, 307, 308, 309, 318, 315, 313, 311, 306
+	247, 249, 244, 206, 205, 207, 301, 312, 313, 314, 323, 320, 318, 316, 311
 ]);
-const _supertype_importSpecifier_ids = new Set<number>([408, 409]);
+const _supertype_importSpecifier_ids = new Set<number>([413, 414]);
 const _supertype_statement_ids = new Set<number>([
-	422, 423, 395, 394, 196, 222, 204, 247, 249, 244, 206, 205, 207, 296, 307, 308, 309, 318, 315, 313, 311, 306, 209,
+	427, 428, 400, 399, 196, 222, 204, 247, 249, 244, 206, 205, 207, 301, 312, 313, 314, 323, 320, 318, 316, 311, 209,
 	211, 212, 213, 214, 216, 217, 218, 219, 220, 221, 223, 224, 225, 226
 ]);
-const _supertype_variableDeclarator_ids = new Set<number>([429, 430]);
-const _supertype_forHeader_ids = new Set<number>([433, 434, 435, 436]);
-const _supertype_parenthesizedExpression_ids = new Set<number>([410, 411]);
+const _supertype_variableDeclarator_ids = new Set<number>([434, 435]);
+const _supertype_forHeader_ids = new Set<number>([438, 439, 440, 441]);
+const _supertype_parenthesizedExpression_ids = new Set<number>([415, 416]);
 const _supertype_expression_ids = new Set<number>([
-	299, 300, 301, 309, 298, 258, 257, 410, 411, 125, 1, 120, 121, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164,
-	415, 416, 272, 274, 122, 123, 124, 236, 240, 246, 250, 248, 243, 431, 432, 412, 413, 414, 293, 260, 262, 256, 268,
-	267, 266, 417, 418, 255, 235
+	304, 305, 306, 314, 303, 258, 257, 415, 416, 128, 1, 277, 278, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164,
+	420, 421, 272, 274, 279, 280, 281, 236, 240, 246, 250, 248, 243, 436, 437, 417, 418, 419, 298, 260, 262, 256, 268,
+	267, 266, 422, 423, 255, 235
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	258, 257, 410, 411, 125, 1, 120, 121, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 415, 416, 272, 274, 122,
-	123, 124, 236, 240, 246, 250, 248, 243, 431, 432, 412, 413, 414, 293
+	258, 257, 415, 416, 128, 1, 277, 278, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 420, 421, 272, 274, 279,
+	280, 281, 236, 240, 246, 250, 248, 243, 436, 437, 417, 418, 419, 298
 ]);
-const _supertype_callExpression_ids = new Set<number>([412, 413, 414]);
-const _supertype_updateExpression_ids = new Set<number>([417, 418]);
-const _supertype_string_ids = new Set<number>([415, 416]);
+const _supertype_callExpression_ids = new Set<number>([417, 418, 419]);
+const _supertype_updateExpression_ids = new Set<number>([422, 423]);
+const _supertype_string_ids = new Set<number>([420, 421]);
 const _supertype_comment_ids = new Set<number>([152, 153]);
 const _supertype_number_ids = new Set<number>([154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164]);
-const _supertype_metaProperty_ids = new Set<number>([431, 432]);
-const _supertype_pattern_ids = new Set<number>([259, 285]);
+const _supertype_metaProperty_ids = new Set<number>([436, 437]);
+const _supertype_pattern_ids = new Set<number>([259, 290]);
 const _supertype_type_ids = new Set<number>([
-	470, 469, 359, 360, 312, 344, 362, 371, 372, 358, 351, 352, 120, 357, 355, 353, 343, 341, 375, 374, 376, 373, 338,
-	342, 328, 329
+	475, 474, 364, 365, 317, 349, 367, 376, 377, 363, 356, 357, 277, 362, 360, 358, 348, 346, 380, 379, 381, 378, 343,
+	347, 333, 334
 ]);
 const _supertype_primaryType_ids = new Set<number>([
-	470, 469, 359, 360, 312, 344, 362, 371, 372, 358, 351, 352, 120, 357, 355, 353, 343, 341, 375, 374
+	475, 474, 364, 365, 317, 349, 367, 376, 377, 363, 356, 357, 277, 362, 360, 358, 348, 346, 380, 379
 ]);
-const _supertype_indexSignature_ids = new Set<number>([403, 404]);
-const _supertype_classBodyMember_ids = new Set<number>([400, 401, 283, 402, 399]);
-const _supertype_enumBodyElement_ids = new Set<number>([381, 317]);
+const _supertype_indexSignature_ids = new Set<number>([408, 409]);
+const _supertype_classBodyMember_ids = new Set<number>([405, 406, 288, 407, 404]);
+const _supertype_enumBodyElement_ids = new Set<number>([386, 322]);
 const _supertype_layout_ids = new Set<number>([180, 181, 182, 183, 184, 185, 186, 187]);
-const _supertype_exportStatementDefault_ids = new Set<number>([422, 423]);
+const _supertype_exportStatementDefault_ids = new Set<number>([427, 428]);
 const _supertype_numberBigint_ids = new Set<number>([161, 162, 163, 164]);
 
 const _members = new Map<number, ReadonlySet<number>>([
@@ -1311,14 +1311,14 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[271, _supertype_string_ids],
 	[275, _supertype_number_ids],
 	[276, _supertype_metaProperty_ids],
-	[284, _supertype_pattern_ids],
-	[332, _supertype_type_ids],
-	[339, _supertype_primaryType_ids],
-	[370, _supertype_indexSignature_ids],
-	[379, _supertype_classBodyMember_ids],
-	[382, _supertype_enumBodyElement_ids],
-	[393, _supertype_exportStatementDefault_ids],
-	[397, _supertype_numberBigint_ids]
+	[289, _supertype_pattern_ids],
+	[337, _supertype_type_ids],
+	[344, _supertype_primaryType_ids],
+	[375, _supertype_indexSignature_ids],
+	[384, _supertype_classBodyMember_ids],
+	[387, _supertype_enumBodyElement_ids],
+	[398, _supertype_exportStatementDefault_ids],
+	[402, _supertype_numberBigint_ids]
 ]);
 export function isMember(kind: number, type: number): boolean {
 	return _members.get(kind)?.has(type) ?? type === kind;
@@ -1381,27 +1381,27 @@ const _supertype_metaProperty_guard = _vg(_mg(276), {
 	newTarget: _g(TSKindId.MetaPropertyNewTarget),
 	importMeta: _g(TSKindId.MetaPropertyImportMeta)
 });
-const _supertype_pattern_guard = _vg(_mg(284), { lhs: _g(TSKindId.LhsExpression), rest: _g(TSKindId.RestPattern) });
-const _supertype_indexSignature_guard = _vg(_mg(370), {
+const _supertype_pattern_guard = _vg(_mg(289), { lhs: _g(TSKindId.LhsExpression), rest: _g(TSKindId.RestPattern) });
+const _supertype_indexSignature_guard = _vg(_mg(375), {
 	colon: _g(TSKindId.IndexSignatureColon),
 	mappedTypeClause: _g(TSKindId.IndexSignatureMappedTypeClause)
 });
-const _supertype_classBodyMember_guard = _vg(_mg(379), {
+const _supertype_classBodyMember_guard = _vg(_mg(384), {
 	method: _g(TSKindId.ClassBodyMemberMethod),
 	methodSig: _g(TSKindId.ClassBodyMemberMethodSig),
 	staticBlock: _g(TSKindId.ClassStaticBlock),
 	declaration: _g(TSKindId.ClassBodyMemberDeclaration),
 	empty: _g(TSKindId.EmptyMember)
 });
-const _supertype_enumBodyElement_guard = _vg(_mg(382), {
+const _supertype_enumBodyElement_guard = _vg(_mg(387), {
 	name: _g(TSKindId.EnumBodyElementName),
 	assignment: _g(TSKindId.EnumAssignment)
 });
-const _supertype_exportStatementDefault_guard = _vg(_mg(393), {
+const _supertype_exportStatementDefault_guard = _vg(_mg(398), {
 	from: _g(TSKindId.ExportStatementDefaultFrom),
 	declaration: _g(TSKindId.ExportStatementDefaultDeclaration)
 });
-const _supertype_numberBigint_guard = _vg(_mg(397), {
+const _supertype_numberBigint_guard = _vg(_mg(402), {
 	hex: _g(TSKindId.NumberBigintHex),
 	binary: _g(TSKindId.NumberBigintBinary),
 	octal: _g(TSKindId.NumberBigintOctal),
@@ -1672,8 +1672,8 @@ export const is = Object.freeze({
 	number: _supertype_number_guard,
 	metaProperty: _supertype_metaProperty_guard,
 	pattern: _supertype_pattern_guard,
-	type: _mg(332),
-	primaryType: _mg(339),
+	type: _mg(337),
+	primaryType: _mg(344),
 	indexSignature: _supertype_indexSignature_guard,
 	classBodyMember: _supertype_classBodyMember_guard,
 	enumBodyElement: _supertype_enumBodyElement_guard,

@@ -2114,7 +2114,11 @@ export function buildNestedIdentifier(config: T.NestedIdentifier.Config): T.Nest
 		),
 		[
 			[
-				[1, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53],
+				[
+					1, 27, 55, 56, 63, 67, 28, 29, 9, 68, 25, 17, 45, 69, 70, 57, 20, 64, 18, 10, 71, 72, 47, 73, 30, 74, 19, 75,
+					31, 76, 26, 8, 14, 77, 24, 12, 48, 49, 50, 51, 52, 53, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
+					46
+				],
 				(v: unknown) => buildPropertyIdentifier(v as never)
 			]
 		]
@@ -2754,22 +2758,56 @@ export function buildMemberExpression(config: T.MemberExpression.Config): T.Memb
 		'MemberExpression.separator',
 		'a kind id'
 	);
-	const _property = admitAliasContent<NonNullable<T.MemberExpression['_property']>>(
-		rejectReservedText(
-			rejectBareText(
-				config.property,
-				'MemberExpression.property',
-				'a built PrivatePropertyIdentifier / PropertyIdentifier'
-			),
+	const _property = rejectKeywordText(
+		rejectBareText(
+			kindIdStorage<NonNullable<T.MemberExpression['_property']>>(config.property),
 			'MemberExpression.property',
-			TSKindId.Identifier,
-			_reservedWordset_properties
+			'buildIdentifier(…)'
 		),
+		'MemberExpression.property',
+		TSKindId.Identifier,
 		[
-			[
-				[1, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53],
-				(v: unknown) => buildPropertyIdentifier(v as never)
-			]
+			'break',
+			'case',
+			'catch',
+			'class',
+			'const',
+			'continue',
+			'debugger',
+			'default',
+			'delete',
+			'do',
+			'else',
+			'export',
+			'extends',
+			'false',
+			'finally',
+			'for',
+			'function',
+			'if',
+			'import',
+			'in',
+			'instanceof',
+			'new',
+			'null',
+			'return',
+			'super',
+			'switch',
+			'this',
+			'throw',
+			'true',
+			'try',
+			'typeof',
+			'var',
+			'void',
+			'while',
+			'with',
+			'get',
+			'set',
+			'async',
+			'await',
+			'static',
+			'let'
 		]
 	);
 	const handle = currentHandle();
@@ -2785,7 +2823,7 @@ export function buildMemberExpression(config: T.MemberExpression.Config): T.Memb
 				rebuilt(node, handle, () => buildMemberExpression({ ...config, object: value })),
 			separator: (value: Admit<NonNullable<T.MemberExpression.Config>['separator']>) =>
 				rebuilt(node, handle, () => buildMemberExpression({ ...config, separator: value })),
-			property: (value: Admit<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
+			property: (value: Admit<NonNullable<T.MemberExpression.Config>['property']>) =>
 				rebuilt(node, handle, () => buildMemberExpression({ ...config, property: value }))
 		},
 		object: () => hydrateStoredSlot(node, '_object'),
@@ -3519,7 +3557,11 @@ export function buildDecoratorMemberExpression(
 		),
 		[
 			[
-				[1, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53],
+				[
+					1, 27, 55, 56, 63, 67, 28, 29, 9, 68, 25, 17, 45, 69, 70, 57, 20, 64, 18, 10, 71, 72, 47, 73, 30, 74, 19, 75,
+					31, 76, 26, 8, 14, 77, 24, 12, 48, 49, 50, 51, 52, 53, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
+					46
+				],
 				(v: unknown) => buildPropertyIdentifier(v as never)
 			]
 		]
@@ -3836,7 +3878,15 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config): T.Meth
 			TSKindId.Identifier,
 			_reservedWordset_properties
 		),
-		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+		[
+			[
+				[
+					1, 27, 55, 56, 63, 67, 28, 29, 9, 68, 25, 17, 69, 70, 57, 20, 64, 18, 10, 71, 72, 73, 30, 74, 19, 75, 31, 76,
+					26, 8, 14, 77, 24, 12
+				],
+				(v: unknown) => buildPropertyIdentifier(v as never)
+			]
+		]
 	);
 	const _optional = coerceBooleanKeywordStorage(
 		rejectBareText(config.optional, 'MethodDefinition.optional', 'a boolean')
@@ -3950,7 +4000,15 @@ export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 			TSKindId.Identifier,
 			_reservedWordset_properties
 		),
-		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+		[
+			[
+				[
+					1, 27, 55, 56, 63, 67, 28, 29, 9, 68, 25, 17, 69, 70, 57, 20, 64, 18, 10, 71, 72, 73, 30, 74, 19, 75, 31, 76,
+					26, 8, 14, 77, 24, 12
+				],
+				(v: unknown) => buildPropertyIdentifier(v as never)
+			]
+		]
 	);
 	const _value = rejectBareText(
 		kindIdStorage<NonNullable<T.Pair['_value']>>(config.value),
@@ -3994,7 +4052,15 @@ export function buildPairPattern(config: T.PairPattern.Config): T.PairPattern.Bo
 			TSKindId.Identifier,
 			_reservedWordset_properties
 		),
-		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+		[
+			[
+				[
+					1, 27, 55, 56, 63, 67, 28, 29, 9, 68, 25, 17, 69, 70, 57, 20, 64, 18, 10, 71, 72, 73, 30, 74, 19, 75, 31, 76,
+					26, 8, 14, 77, 24, 12
+				],
+				(v: unknown) => buildPropertyIdentifier(v as never)
+			]
+		]
 	);
 	const _value = rejectBareText(config.value, 'PairPattern.value', 'a built Pattern / AssignmentPattern');
 	const handle = currentHandle();
@@ -4085,7 +4151,15 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 			TSKindId.Identifier,
 			_reservedWordset_properties
 		),
-		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+		[
+			[
+				[
+					1, 27, 55, 56, 63, 67, 28, 29, 9, 68, 25, 17, 69, 70, 57, 20, 64, 18, 10, 71, 72, 73, 30, 74, 19, 75, 31, 76,
+					26, 8, 14, 77, 24, 12
+				],
+				(v: unknown) => buildPropertyIdentifier(v as never)
+			]
+		]
 	);
 	const _optionality = rejectBareText(
 		kindIdStorage<NonNullable<T.PublicFieldDefinition['_optionality']>>(config.optionality),
@@ -4222,7 +4296,15 @@ export function buildMethodSignature(config: T.MethodSignature.Config): T.Method
 			TSKindId.Identifier,
 			_reservedWordset_properties
 		),
-		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+		[
+			[
+				[
+					1, 27, 55, 56, 63, 67, 28, 29, 9, 68, 25, 17, 69, 70, 57, 20, 64, 18, 10, 71, 72, 73, 30, 74, 19, 75, 31, 76,
+					26, 8, 14, 77, 24, 12
+				],
+				(v: unknown) => buildPropertyIdentifier(v as never)
+			]
+		]
 	);
 	const _optional = coerceBooleanKeywordStorage(
 		rejectBareText(config.optional, 'MethodSignature.optional', 'a boolean')
@@ -4342,7 +4424,15 @@ export function buildAbstractMethodSignature(
 			TSKindId.Identifier,
 			_reservedWordset_properties
 		),
-		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+		[
+			[
+				[
+					1, 27, 55, 56, 63, 67, 28, 29, 9, 68, 25, 17, 69, 70, 57, 20, 64, 18, 10, 71, 72, 73, 30, 74, 19, 75, 31, 76,
+					26, 8, 14, 77, 24, 12
+				],
+				(v: unknown) => buildPropertyIdentifier(v as never)
+			]
+		]
 	);
 	const _optional = coerceBooleanKeywordStorage(
 		rejectBareText(config.optional, 'AbstractMethodSignature.optional', 'a boolean')
@@ -5043,7 +5133,7 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 	);
 	const _body = admitAliasContent<NonNullable<T.InterfaceDeclaration['_body']>>(
 		rejectBareText(config.body, 'InterfaceDeclaration.body', 'a built InterfaceBody'),
-		[[[362], (v: unknown) => buildInterfaceBody(v as never)]]
+		[[[367], (v: unknown) => buildInterfaceBody(v as never)]]
 	);
 	const handle = currentHandle();
 	const node = {
@@ -5236,7 +5326,15 @@ export function buildEnumAssignment(config: T.EnumAssignment.Config): T.EnumAssi
 			TSKindId.Identifier,
 			_reservedWordset_properties
 		),
-		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+		[
+			[
+				[
+					1, 27, 55, 56, 63, 67, 28, 29, 9, 68, 25, 17, 69, 70, 57, 20, 64, 18, 10, 71, 72, 73, 30, 74, 19, 75, 31, 76,
+					26, 8, 14, 77, 24, 12
+				],
+				(v: unknown) => buildPropertyIdentifier(v as never)
+			]
+		]
 	);
 	const _value = rejectBareText(
 		kindIdStorage<NonNullable<T.EnumAssignment['_value']>>(config.value),
@@ -5612,7 +5710,11 @@ export function buildTypeQueryMemberExpressionInTypeAnnotation(
 		),
 		[
 			[
-				[1, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53],
+				[
+					1, 27, 55, 56, 63, 67, 28, 29, 9, 68, 25, 17, 45, 69, 70, 57, 20, 64, 18, 10, 71, 72, 47, 73, 30, 74, 19, 75,
+					31, 76, 26, 8, 14, 77, 24, 12, 48, 49, 50, 51, 52, 53, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
+					46
+				],
 				(v: unknown) => buildPropertyIdentifier(v as never)
 			]
 		]
@@ -6239,7 +6341,11 @@ export function buildTypeQueryMemberExpression(
 		),
 		[
 			[
-				[1, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53],
+				[
+					1, 27, 55, 56, 63, 67, 28, 29, 9, 68, 25, 17, 45, 69, 70, 57, 20, 64, 18, 10, 71, 72, 47, 73, 30, 74, 19, 75,
+					31, 76, 26, 8, 14, 77, 24, 12, 48, 49, 50, 51, 52, 53, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
+					46
+				],
 				(v: unknown) => buildPropertyIdentifier(v as never)
 			]
 		]
@@ -6948,7 +7054,15 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 			TSKindId.Identifier,
 			_reservedWordset_properties
 		),
-		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+		[
+			[
+				[
+					1, 27, 55, 56, 63, 67, 28, 29, 9, 68, 25, 17, 69, 70, 57, 20, 64, 18, 10, 71, 72, 73, 30, 74, 19, 75, 31, 76,
+					26, 8, 14, 77, 24, 12
+				],
+				(v: unknown) => buildPropertyIdentifier(v as never)
+			]
+		]
 	);
 	const _optional = coerceBooleanKeywordStorage(
 		rejectBareText(config.optional, 'PropertySignature.optional', 'a boolean')
@@ -7738,7 +7852,15 @@ export function buildEnumBodyElementName(
 			TSKindId.Identifier,
 			_reservedWordset_properties
 		),
-		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+		[
+			[
+				[
+					1, 27, 55, 56, 63, 67, 28, 29, 9, 68, 25, 17, 69, 70, 57, 20, 64, 18, 10, 71, 72, 73, 30, 74, 19, 75, 31, 76,
+					26, 8, 14, 77, 24, 12
+				],
+				(v: unknown) => buildPropertyIdentifier(v as never)
+			]
+		]
 	);
 	const handle = currentHandle();
 	const node = {
@@ -8199,7 +8321,11 @@ export function buildAmbientDeclarationModule(
 		),
 		[
 			[
-				[1, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53],
+				[
+					1, 27, 55, 56, 63, 67, 28, 29, 9, 68, 25, 17, 45, 69, 70, 57, 20, 64, 18, 10, 71, 72, 47, 73, 30, 74, 19, 75,
+					31, 76, 26, 8, 14, 77, 24, 12, 48, 49, 50, 51, 52, 53, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
+					46
+				],
 				(v: unknown) => buildPropertyIdentifier(v as never)
 			]
 		]
@@ -10863,6 +10989,47 @@ export function buildShorthandPropertyIdentifierPattern(
 export function buildPropertyIdentifierContent(
 	value: Admit<
 		| T.Identifier
+		| TSKindId.BreakKeyword
+		| TSKindId.CaseKeyword
+		| TSKindId.CatchKeyword
+		| TSKindId.ClassKeyword
+		| TSKindId.ConstKeyword
+		| TSKindId.ContinueKeyword
+		| TSKindId.DebuggerKeyword
+		| TSKindId.DefaultKeyword
+		| TSKindId.DeleteKeyword
+		| TSKindId.DoKeyword
+		| TSKindId.ElseKeyword
+		| TSKindId.ExportKeyword
+		| TSKindId.ExtendsKeyword
+		| TSKindId.FalseKeyword
+		| TSKindId.FinallyKeyword
+		| TSKindId.ForKeyword
+		| TSKindId.FunctionKeyword
+		| TSKindId.IfKeyword
+		| TSKindId.ImportKeyword
+		| TSKindId.InKeyword
+		| TSKindId.InstanceofKeyword
+		| TSKindId.NewKeyword
+		| TSKindId.NullKeyword
+		| TSKindId.ReturnKeyword
+		| TSKindId.SuperKeyword
+		| TSKindId.SwitchKeyword
+		| TSKindId.ThisKeyword
+		| TSKindId.ThrowKeyword
+		| TSKindId.TrueKeyword
+		| TSKindId.TryKeyword
+		| TSKindId.TypeofKeyword
+		| TSKindId.VarKeyword
+		| TSKindId.VoidKeyword
+		| TSKindId.WhileKeyword
+		| TSKindId.WithKeyword
+		| TSKindId.GetKeyword
+		| TSKindId.SetKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.StaticKeyword
+		| TSKindId.LetKeyword
 		| TSKindId.DeclareKeyword
 		| TSKindId.NamespaceKeyword
 		| TSKindId.TypeKeyword
@@ -10877,15 +11044,7 @@ export function buildPropertyIdentifierContent(
 		| TSKindId.BooleanKeyword
 		| TSKindId.StringKeyword
 		| TSKindId.SymbolKeyword
-		| TSKindId.ExportKeyword
 		| TSKindId.ObjectKeyword
-		| TSKindId.NewKeyword
-		| TSKindId.GetKeyword
-		| TSKindId.SetKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.AwaitKeyword
-		| TSKindId.StaticKeyword
-		| TSKindId.LetKeyword
 	>
 ): T.PropertyIdentifier.Bound {
 	const _content = rejectKeywordText(
@@ -10897,6 +11056,47 @@ export function buildPropertyIdentifierContent(
 		'PropertyIdentifier.content',
 		TSKindId.Identifier,
 		[
+			'break',
+			'case',
+			'catch',
+			'class',
+			'const',
+			'continue',
+			'debugger',
+			'default',
+			'delete',
+			'do',
+			'else',
+			'export',
+			'extends',
+			'false',
+			'finally',
+			'for',
+			'function',
+			'if',
+			'import',
+			'in',
+			'instanceof',
+			'new',
+			'null',
+			'return',
+			'super',
+			'switch',
+			'this',
+			'throw',
+			'true',
+			'try',
+			'typeof',
+			'var',
+			'void',
+			'while',
+			'with',
+			'get',
+			'set',
+			'async',
+			'await',
+			'static',
+			'let',
 			'declare',
 			'namespace',
 			'type',
@@ -10911,15 +11111,7 @@ export function buildPropertyIdentifierContent(
 			'boolean',
 			'string',
 			'symbol',
-			'export',
-			'object',
-			'new',
-			'get',
-			'set',
-			'async',
-			'await',
-			'static',
-			'let'
+			'object'
 		]
 	);
 	const handle = currentHandle();
@@ -10933,6 +11125,47 @@ export function buildPropertyIdentifierContent(
 				value: Admit<
 					NonNullable<
 						| T.Identifier
+						| TSKindId.BreakKeyword
+						| TSKindId.CaseKeyword
+						| TSKindId.CatchKeyword
+						| TSKindId.ClassKeyword
+						| TSKindId.ConstKeyword
+						| TSKindId.ContinueKeyword
+						| TSKindId.DebuggerKeyword
+						| TSKindId.DefaultKeyword
+						| TSKindId.DeleteKeyword
+						| TSKindId.DoKeyword
+						| TSKindId.ElseKeyword
+						| TSKindId.ExportKeyword
+						| TSKindId.ExtendsKeyword
+						| TSKindId.FalseKeyword
+						| TSKindId.FinallyKeyword
+						| TSKindId.ForKeyword
+						| TSKindId.FunctionKeyword
+						| TSKindId.IfKeyword
+						| TSKindId.ImportKeyword
+						| TSKindId.InKeyword
+						| TSKindId.InstanceofKeyword
+						| TSKindId.NewKeyword
+						| TSKindId.NullKeyword
+						| TSKindId.ReturnKeyword
+						| TSKindId.SuperKeyword
+						| TSKindId.SwitchKeyword
+						| TSKindId.ThisKeyword
+						| TSKindId.ThrowKeyword
+						| TSKindId.TrueKeyword
+						| TSKindId.TryKeyword
+						| TSKindId.TypeofKeyword
+						| TSKindId.VarKeyword
+						| TSKindId.VoidKeyword
+						| TSKindId.WhileKeyword
+						| TSKindId.WithKeyword
+						| TSKindId.GetKeyword
+						| TSKindId.SetKeyword
+						| TSKindId.AsyncKeyword
+						| TSKindId.AwaitKeyword
+						| TSKindId.StaticKeyword
+						| TSKindId.LetKeyword
 						| TSKindId.DeclareKeyword
 						| TSKindId.NamespaceKeyword
 						| TSKindId.TypeKeyword
@@ -10947,15 +11180,7 @@ export function buildPropertyIdentifierContent(
 						| TSKindId.BooleanKeyword
 						| TSKindId.StringKeyword
 						| TSKindId.SymbolKeyword
-						| TSKindId.ExportKeyword
 						| TSKindId.ObjectKeyword
-						| TSKindId.NewKeyword
-						| TSKindId.GetKeyword
-						| TSKindId.SetKeyword
-						| TSKindId.AsyncKeyword
-						| TSKindId.AwaitKeyword
-						| TSKindId.StaticKeyword
-						| TSKindId.LetKeyword
 					>
 				>
 			) => rebuilt(node, handle, () => buildPropertyIdentifierContent(value))
@@ -10972,6 +11197,47 @@ export function buildPropertyIdentifierContent(
 }
 
 const _keywordArms_buildPropertyIdentifier = new Map<string, number>([
+	['break', TSKindId.BreakKeyword] as const,
+	['case', TSKindId.CaseKeyword] as const,
+	['catch', TSKindId.CatchKeyword] as const,
+	['class', TSKindId.ClassKeyword] as const,
+	['const', TSKindId.ConstKeyword] as const,
+	['continue', TSKindId.ContinueKeyword] as const,
+	['debugger', TSKindId.DebuggerKeyword] as const,
+	['default', TSKindId.DefaultKeyword] as const,
+	['delete', TSKindId.DeleteKeyword] as const,
+	['do', TSKindId.DoKeyword] as const,
+	['else', TSKindId.ElseKeyword] as const,
+	['export', TSKindId.ExportKeyword] as const,
+	['extends', TSKindId.ExtendsKeyword] as const,
+	['false', TSKindId.FalseKeyword] as const,
+	['finally', TSKindId.FinallyKeyword] as const,
+	['for', TSKindId.ForKeyword] as const,
+	['function', TSKindId.FunctionKeyword] as const,
+	['if', TSKindId.IfKeyword] as const,
+	['import', TSKindId.ImportKeyword] as const,
+	['in', TSKindId.InKeyword] as const,
+	['instanceof', TSKindId.InstanceofKeyword] as const,
+	['new', TSKindId.NewKeyword] as const,
+	['null', TSKindId.NullKeyword] as const,
+	['return', TSKindId.ReturnKeyword] as const,
+	['super', TSKindId.SuperKeyword] as const,
+	['switch', TSKindId.SwitchKeyword] as const,
+	['this', TSKindId.ThisKeyword] as const,
+	['throw', TSKindId.ThrowKeyword] as const,
+	['true', TSKindId.TrueKeyword] as const,
+	['try', TSKindId.TryKeyword] as const,
+	['typeof', TSKindId.TypeofKeyword] as const,
+	['var', TSKindId.VarKeyword] as const,
+	['void', TSKindId.VoidKeyword] as const,
+	['while', TSKindId.WhileKeyword] as const,
+	['with', TSKindId.WithKeyword] as const,
+	['get', TSKindId.GetKeyword] as const,
+	['set', TSKindId.SetKeyword] as const,
+	['async', TSKindId.AsyncKeyword] as const,
+	['await', TSKindId.AwaitKeyword] as const,
+	['static', TSKindId.StaticKeyword] as const,
+	['let', TSKindId.LetKeyword] as const,
 	['declare', TSKindId.DeclareKeyword] as const,
 	['namespace', TSKindId.NamespaceKeyword] as const,
 	['type', TSKindId.TypeKeyword] as const,
@@ -10986,15 +11252,7 @@ const _keywordArms_buildPropertyIdentifier = new Map<string, number>([
 	['boolean', TSKindId.BooleanKeyword] as const,
 	['string', TSKindId.StringKeyword] as const,
 	['symbol', TSKindId.SymbolKeyword] as const,
-	['export', TSKindId.ExportKeyword] as const,
-	['object', TSKindId.ObjectKeyword] as const,
-	['new', TSKindId.NewKeyword] as const,
-	['get', TSKindId.GetKeyword] as const,
-	['set', TSKindId.SetKeyword] as const,
-	['async', TSKindId.AsyncKeyword] as const,
-	['await', TSKindId.AwaitKeyword] as const,
-	['static', TSKindId.StaticKeyword] as const,
-	['let', TSKindId.LetKeyword] as const
+	['object', TSKindId.ObjectKeyword] as const
 ]);
 export function buildPropertyIdentifier(
 	value: string | Parameters<typeof buildPropertyIdentifierContent>[0]

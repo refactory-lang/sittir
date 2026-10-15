@@ -18,6 +18,7 @@ import {
 	preference,
 	regex,
 	prec,
+	reserved,
 	token,
 	reauthored,
 	vocabulary,
@@ -606,6 +607,26 @@ export default sittirGrammar(base, {
 					: m
 			)
 		})),
+
+		member_expression: reauthored(
+			'rejects-valid-syntax',
+			{
+				text: 'a?.for;',
+				form: [{ symbol: 'expression' }, { symbol: 'optional_chain' }, 'for'],
+				kind: 'member_expression'
+			},
+			($, original) => {
+				const widen = (rule: any): any => {
+					if (rule.type === 'ALIAS' && rule.value === 'property_identifier') {
+						return { ...rule, content: choice(rule.content, 'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'export', 'extends', 'false', 'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof', 'new', 'null', 'return', 'super', 'switch', 'this', 'throw', 'true', 'try', 'typeof', 'var', 'void', 'while', 'with', 'get', 'set', 'async', 'await', 'static', 'let') };
+					}
+					if (Array.isArray(rule.members)) return { ...rule, members: rule.members.map(widen) };
+					if (rule.content !== undefined) return { ...rule, content: widen(rule.content) };
+					return rule;
+				};
+				return widen(original);
+			}
+		),
 
 		decorator_member_expression: reauthored(
 			'rejects-valid-syntax',
