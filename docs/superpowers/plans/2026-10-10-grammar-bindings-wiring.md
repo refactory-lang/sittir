@@ -51,7 +51,7 @@ Each gets its own red test before its fix:
 
 ### 2b. Wire the grammar bindings, minus kind renames
 
-- `grammar.sittir.ts` passes the generated grammar bindings to `sittirGrammar` for each bound grammar; `bindGrammar` applies everything but `renames`.
+- `grammar.sittir.ts` passes the generated grammar bindings to `sittirGrammar` for each bound grammar; `bindGrammar` applies everything but `renames` and `splits`. Rust passes its bindings with `splits: []`: a split turns on only together with the claim-following that keeps its base kind's claims reading on the split kind (2c with 2e).
 - `bindFacts` maps field names through the grammar bindings' field renames, so claims and member routes resolve against the bound fields.
 - **The receiver split** (bindings spec §9, "A receiver is no parameter"). The edit, its shape and every ruling on it are in the receiver-split probe, `docs/superpowers/probes/2026-10-12-receiver-split/README.md` ("The edit", "Proposal", "Questions"). In short:
   - A claim that anchors a parameter list's first element as `@receiver` derives a `lead` (the derivation is on `feat/bindings`); every owner captures the rest as `@parameters` against the grammar's own list.
@@ -64,6 +64,8 @@ Each gets its own red test before its fix:
 - **Gate:** validation rows equal to the unbound baseline, or each moved row named in the census and ruled.
 
 ### 2c. Contextual aliases
+
+**2c and 2e land as one change.** A split turns on only with the claim-following that keeps its base kind's claims reading on the split kind: once the parser emits `method_declaration` where it emitted `function_item`, every `declaration.method` read keyed on `function_item` reads false until claims follow the split (2e). The `static` claims below also read the split kinds and, for python, the class-body clone. So the aliases, the clone projection (2e), the `variantOf` repair and one split per site ship together, behind one census and one gate.
 
 Ruled to be parser aliases at a context-unique site, with the ancestor clones kept and no target clone:
 - rust's three context splits: `function_signature_item` → `signature_method_declaration` in a trait, and `function_item` → `method_declaration` in a trait and in an impl body. Today's grammar bindings derive only the two trait splits: the impl-body one went when rust's impl methods became claimed by a read test (receiver or not), an interim. Ruled: all three are aliases, so the impl-body alias comes back; the census confirms its cost. With the alias, `$type` says method, and the no-receiver read test only sets the `static` flag (stage 1);
@@ -98,8 +100,11 @@ Each alias kind gets its own low-level builder beside the aliased kind's (`build
 
 ### 2e. Clones are forms
 
-`formsOf` adds the kind's split clones (stamped `splitFrom`) to its supertype forms, so a base kind's claims reach its visible clones (bindings §9). Python's `decorated_definition` container claim (decorators to the element, `static` from `@staticmethod`) then reaches `decorated_definition_class_declaration`.
-- **Census:** each clone, its base, and the members it gains.
+Lands with 2c (see there). `formsOf` adds the kind's split clones (stamped `splitFrom`) to its supertype forms, so a base kind's claims reach its visible clones (bindings §9). `splitFrom` reaches `ModelNode` (the node model serializes it; `slotModelOf` drops it today), and the one `formsOf` expansion covers the physical clones and the ancestor contexts a read entry's `within` names. Python's `decorated_definition` container claim (decorators to the element, `static` from `@staticmethod`) then reaches `decorated_definition_class_declaration`.
+- **`variantOf` survives the split.** Splitting clones a supertype the split kind's base belongs to: rust's `_declaration_statement` becomes `_declaration_statement_impl_item_body` and `_declaration_statement_trait_item`, and 17 of the 18 kinds stamped `variantOf: _declaration_statement` lose the stamp. A clone of a supertype keeps its members' `variantOf`; the stamp is never narrowed.
+- **One split per site.** The derived rust grammar bindings list the impl-body split twice, one per receiver claim (`self_parameter` and typed `self`). The derivation emits one split per (kind, context).
+- **Tests:** rust's `is` method tests find `method_declaration`; the receiver-routes inventory test checks that `method_declaration`'s read entries include `declaration.method`; the inline codemod acceptance test accepts `method_declaration` beside `function_item`.
+- **Census:** each clone, its base, and the members it gains; rust's callable builders gain `methodDeclaration`, `signatureMethodDeclaration`, `traitInterfaceDeclarationBody` and `extensionDeclarationBody`, and its list setters the two cloned body lists.
 
 ### 2f. The docstring path
 
