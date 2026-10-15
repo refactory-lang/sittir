@@ -7,6 +7,7 @@ export namespace Literal {
 			export interface Big<G extends GrammarContext<G>> extends SubKindOf<V.Literal.Number.Integer<G>> {
 				// claimed by pt
 				readonly $kind: 'literal.number.integer.big';
+				readonly $value: bigint;
 			}
 			export namespace Big {
 				export interface Binary<G extends GrammarContext<G>> extends SubKindOf<V.Literal.Number.Integer.Big<G>> {

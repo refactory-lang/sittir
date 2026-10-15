@@ -126,6 +126,15 @@ The causes the probe reports, each on the side that owns it:
 - A portable round-trip lane joins `validate:native`: parse with the portable engine, build every node again from its members, render, and parse-equal over the corpus.
 - Gate: the existing rows are equal; the new lane's row is recorded as its baseline. Type tests: a typescript field's `.optional` step offers no `.definite`, and a getter's builder no `.generator`; a structure stating an excluded pair is refused, naming both.
 
+### Follow-up: high-to-low runtime scalar bindings (October 15)
+
+The vocabulary now declares scalar `$value` contracts directly: `Literal.Number` is `number | bigint`, `Literal.Number.Float` narrows it to `number`, and the arbitrary-precision `Integer.Big` feature narrows it to `bigint`. Integer/base refinements inherit their contract. `Literal.Boolean` is `boolean`, with `True` and `False` narrowed to their respective literal types. Syntax members such as content, prefix, suffix, and the negative literal's operand remain as authored.
+
+- This follow-up belongs to the **high-to-low runtime bindings**: stage 7's portable build entries and stage 8's built-node crossing into the grammar engine. Derive their input types from the inherited interface `$value` contract. `$value` is a scalar value contract, not an ordinary captured member requiring an `@value` route. A varying leaf without such a contract keeps its existing text value.
+- Add the scalar-to-grammar adaptation once at that runtime boundary, using the existing low-level builders and routes. Honor the interface type without a numeric-role-name switch, a second scalar-type registry, or a mandatory role/regex agreement check. Numeric vocabulary paths classify syntax; low-level numeric input widening continues to use the grammar's regex shape.
+- Preserve integer precision and honor `number` versus `bigint`, including the selected grammar form's base prefixes and suffixes. Boolean inputs select the appropriate grammar literal rather than being treated as token text or kind IDs.
+- Gates: high-to-low builds and built-node crossings cover ordinary and large integers, base refinements, floats, big integers, both boolean literals, and a nonnumeric text leaf. Assert exact `true`/`false` refinement input types, rejection of incompatible scalars, and the resulting low-level kind and rendered value. The interface change itself adds no runtime behavior and does not change the parser grammar-bindings generator.
+
 ## Stage 8: crossing
 
 - `attach` on both engines, overload-typed from `Backward`, `ViewByKind` and the build map.

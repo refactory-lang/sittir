@@ -9,15 +9,18 @@ export namespace Literal {
 	export interface Boolean<G extends GrammarContext<G>> extends SubKindOf<V.Literal<G>> {
 		// claimed by r
 		readonly $kind: 'literal.boolean';
+		readonly $value: boolean;
 	}
 	export namespace Boolean {
 		export interface False<G extends GrammarContext<G>> extends SubKindOf<V.Literal.Boolean<G>> {
 			// claimed by prt
 			readonly $kind: 'literal.boolean.false';
+			readonly $value: false;
 		}
 		export interface True<G extends GrammarContext<G>> extends SubKindOf<V.Literal.Boolean<G>> {
 			// claimed by prt
 			readonly $kind: 'literal.boolean.true';
+			readonly $value: true;
 		}
 	}
 	export interface Ellipsis<G extends GrammarContext<G>> extends SubKindOf<V.Literal<G>> {
@@ -37,11 +40,13 @@ export namespace Literal {
 	export interface Number<G extends GrammarContext<G>> extends SubKindOf<V.Literal<G>> {
 		// claimed by t
 		readonly $kind: 'literal.number';
+		readonly $value: number | bigint;
 	}
 	export namespace Number {
 		export interface Float<G extends GrammarContext<G>> extends SubKindOf<V.Literal.Number<G>> {
 			// claimed by prt
 			readonly $kind: 'literal.number.float';
+			readonly $value: number;
 			readonly exponent?: G['slots']['literal.number.float']['exponent'];
 			// pt only
 			readonly fraction?: G['slots']['literal.number.float']['fraction'];
