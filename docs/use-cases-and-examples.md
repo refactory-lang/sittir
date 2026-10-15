@@ -6,6 +6,8 @@ These examples target `master` and are type-checked and executed by the document
 
 A grammar package exports a language descriptor and its generated types. Create an engine from the descriptor, then use its `build`, `is`, `kinds`, `parse`, and `render` surface. A node's rendering and query operations depend on its engine. A `using` declaration disposes the engine when its scope exits, including when an exception is thrown; keep the node operations inside that scope.
 
+At module scope, `using` disposes the engine when module evaluation finishes, so exported engines or callbacks that run later need an explicitly managed, longer-lived engine.
+
 ```ts
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
