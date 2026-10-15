@@ -17,26 +17,12 @@ import type {
 	RenderArgument,
 	CreateEngineOptions
 } from '@sittir/types';
-import {
-	bindTree,
-	engineOf,
-	inEngine,
-	sameLanguage,
-	type EngineHandle,
-	type TreeEngineHandle
-} from './engine-scope.ts';
+import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { createRenderHandle } from './engine.ts';
-import {
-	isEmptyNode as isEmptyUntypedNode,
-	isErrorNode,
-	isFactoryNode,
-	isNode,
-	isParsedNode,
-	wrapRegistered
-} from './utils.ts';
+import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered } from './utils.ts';
 
 type Middleware<Call, Result> = (call: Call, next: () => Result) => Result;
 
@@ -231,7 +217,12 @@ function assembleEngine<API extends LanguageAPI>(
 		isErrorNode: (value): value is ErrorNode => isErrorNode(value) && inLanguage(value),
 		isEmptyNode: ((node: AnyUntypedNode): boolean => {
 			const kind = hooks.trivia.kindName(node.$type);
-			return engine.isNode(node) && kind !== undefined && hooks.trivia.innerKinds.has(kind) && isEmptyUntypedNode(node);
+			return (
+				engine.isNode(node) &&
+				kind !== undefined &&
+				hooks.trivia.innerKinds.has(kind) &&
+				isEmptyUntypedNode(node)
+			);
 		}) as Engine<API>['isEmptyNode'],
 		parse(source, parseOptions) {
 			const run = (): API['root'] => {

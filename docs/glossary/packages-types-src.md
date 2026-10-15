@@ -186,7 +186,7 @@ Middleware around an engine's operations. Each hook receives the call and a `nex
 
 ### `packages/types/src/engine-api.ts::Project`
 
-A group of engines over one file set. Their file changes are staged, inspected with `staged`, `diff` and `files`, and written all or none by `save`. Disposal discards what was not saved and disposes the engines. Draft `commit` updates a parsed tree; project `save` writes committed files to disk. The runtime project implementation remains pending.
+A group of engines over one file set. Their file changes are staged, inspected with `staged`, `diff` and `files`, and written all or none by `save`. Disposal discards what was not saved and disposes the engines. Draft `commit` updates a parsed tree; project `save` writes committed files to disk.
 
 ### `packages/types/src/engine-api.ts::KindTypes`
 
