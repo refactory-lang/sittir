@@ -240,6 +240,42 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
+    "message": "conflict between primary_expression, await_expression on '(' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "await_expression"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "await_expression"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'await'"
+        ],
+        "lookahead": "'('",
+        "interpretations": [
+          "primary_expression",
+          "await_expression"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
     "message": "conflict between primary_expression, _property_name on '(' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
@@ -512,6 +548,48 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
+    "message": "conflict between primary_expression, await_expression, _property_name on '(' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "await_expression",
+          "_property_name"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "await_expression"
+        ],
+        [
+          "_property_name"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'{'",
+          "'await'"
+        ],
+        "lookahead": "'('",
+        "interpretations": [
+          "primary_expression",
+          "await_expression",
+          "_property_name"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
     "message": "conflict between binary_expression, unary_expression, instantiation_expression, call_expression_call on '<' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
@@ -551,6 +629,82 @@
           "instantiation_expression",
           "call_expression_call",
           "unary_expression"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
+    "message": "conflict between _lhs_expression, variable_declarator_plain on '=' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "_lhs_expression",
+          "variable_declarator_plain"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "_lhs_expression"
+        ],
+        [
+          "variable_declarator_plain",
+          "variable_declarator"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'using'",
+          "identifier"
+        ],
+        "lookahead": "'='",
+        "interpretations": [
+          "_lhs_expression",
+          "variable_declarator_plain"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
+    "message": "conflict between primary_expression, variable_declarator_definite on '!' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "variable_declarator_definite"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "variable_declarator_definite",
+          "variable_declarator"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'using'",
+          "identifier"
+        ],
+        "lookahead": "'!'",
+        "interpretations": [
+          "primary_expression",
+          "variable_declarator_definite"
         ]
       }
     }
@@ -671,34 +825,34 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
-    "message": "conflict between array, array_pattern on ',' resolved by AddConflict (upstream-declared)",
+    "message": "conflict between assignment_expression, using_declaration_arm on '{' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
       "resolution": {
         "kind": "AddConflict",
         "symbols": [
-          "array",
-          "array_pattern"
+          "assignment_expression",
+          "using_declaration_arm"
         ]
       },
-      "step": "upstream-declared",
+      "step": "default",
       "sourceChains": [
         [
-          "array"
+          "assignment_expression"
         ],
         [
-          "array_pattern"
+          "using_declaration_arm"
         ]
       ],
       "conflict": {
         "symbolSequence": [
-          "'['",
-          "','"
+          "'await'",
+          "'using'"
         ],
-        "lookahead": "','",
+        "lookahead": "'{'",
         "interpretations": [
-          "array_repeat1",
-          "array_pattern_repeat1"
+          "assignment_expression",
+          "using_declaration_arm"
         ]
       }
     }
@@ -794,6 +948,43 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
+    "message": "conflict between array, array_pattern on ',' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "array",
+          "array_pattern"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "array"
+        ],
+        [
+          "array_pattern"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'['",
+          "','"
+        ],
+        "lookahead": "','",
+        "interpretations": [
+          "array_repeat1",
+          "array_pattern_repeat1"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
     "message": "conflict between primary_type, type_parameter on ',' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
@@ -822,6 +1013,46 @@
         "interpretations": [
           "primary_type",
           "type_parameter"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
+    "message": "conflict between _lhs_expression, for_header_let_const_kind on 'of' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "_lhs_expression",
+          "for_header_let_const_kind"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "_lhs_expression"
+        ],
+        [
+          "for_header_let_const_kind",
+          "_for_header"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'for'",
+          "'('",
+          "'let'"
+        ],
+        "lookahead": "'of'",
+        "interpretations": [
+          "_lhs_expression",
+          "for_header_let_const_kind",
+          "for_header_let_const_kind"
         ]
       }
     }
@@ -1561,6 +1792,46 @@
         "interpretations": [
           "array",
           "computed_property_name"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
+    "message": "conflict between primary_expression, for_header_arm3 on 'in' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "for_header_arm3"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "for_header_arm3",
+          "_for_header"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'for'",
+          "'('",
+          "'using'",
+          "identifier"
+        ],
+        "lookahead": "'in'",
+        "interpretations": [
+          "primary_expression",
+          "for_header_arm3"
         ]
       }
     }

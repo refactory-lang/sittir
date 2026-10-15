@@ -2,10 +2,13 @@ import type { RuleMetadata } from '../types/rule-metadata-brand.ts';
 import type { ChoiceRule, StringRule } from '../types/rule.ts';
 import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
 
+export const GLOBAL_WORDSET = 'global';
+
 export interface RuleMetadataShape {
 	fieldSource?: 'grammar' | 'override' | 'enriched';
 	symbolSource?: 'grammar' | 'link' | 'group-lift';
 	aliasSource?: 'visible-group';
+	reservedWordsets?: readonly string[];
 }
 
 export function makeRuleMetadata(shape: RuleMetadataShape): RuleMetadata {

@@ -1,11 +1,11 @@
 import { CHOICE, FIELD, IMMEDIATE_TOKEN, OPTIONAL, REPEAT, REPEAT1, SEQ, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
 import type { FieldRule, Rule } from '../types/rule.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
-import { makeRuleMetadata } from '../dsl/rule-metadata.ts';
+import { GLOBAL_WORDSET, makeRuleMetadata, readRuleMetadata } from '../dsl/rule-metadata.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { grammarRootNames, pruneOrphanedRules } from '../util/reachable-rules.ts';
 import { buildRuleCatalog, collectReferences } from './rule-catalog.ts';
-import type { EvaluatedGrammar, EvaluationStages, RawGrammar, StageEvaluation } from './types.ts';
+import type { EvaluatedGrammar, EvaluationStages, RawGrammar, ReservedContexts, StageEvaluation } from './types.ts';
 import { predictedKindsOf, type PredictedKinds } from '../dsl/symbol-table.ts';
 
 type EvalRule = Rule<'evaluate'>;
@@ -77,6 +77,10 @@ function canonicalTokenRule(rule: EvalRule): EvalRule {
 }
 
 function canonicalRule(rule: EvalRule): EvalRule {
+	if (rule.type === 'RESERVED') {
+		const metadata = makeRuleMetadata({ ...readRuleMetadata((rule as { metadata?: unknown }).metadata), reservedWordsets: [rule.context_name] });
+		return canonicalRule(peelWrapper({ ...rule, metadata } as unknown as EvalRule));
+	}
 	if (isPrecWrapper(rule)) return canonicalRule(peelWrapper(rule));
 	switch (rule.type) {
 		case OPTIONAL:
@@ -118,9 +122,27 @@ function canonicalStages(
 	return { raw: canonicalStage(stages.raw, fileTypes), enriched: canonicalStage(stages.enriched, fileTypes) };
 }
 
+export function reservedContextsOf(rules: Readonly<Record<string, EvalRule>>): ReservedContexts | undefined {
+	const contexts = new Map<string, Set<string>>();
+	const walker = new RuleWalker<EvalRule>({});
+	const visit = (rule: EvalRule, context: string): void => {
+		if (rule.type === 'RESERVED') return visit(rule.content, rule.context_name);
+		if (rule.type === 'ALIAS' && rule.named && typeof rule.value === 'string') {
+			const sites = contexts.get(rule.value) ?? new Set<string>();
+			sites.add(context);
+			contexts.set(rule.value, sites);
+		}
+		for (const child of walker.childrenOf(rule)) visit(child, context);
+	};
+	for (const body of Object.values(rules)) visit(body, GLOBAL_WORDSET);
+	const scoped = [...contexts].filter(([, sites]) => [...sites].some((site) => site !== GLOBAL_WORDSET));
+	return scoped.length === 0 ? undefined : Object.fromEntries(scoped.map(([kind, sites]) => [kind, [...sites].sort()]));
+}
+
 export function canonicalGrammar(evaluated: EvaluatedGrammar, fileTypes: readonly string[]): RawGrammar {
 	const { protectedRuleNames, stages, renderAs, visibleExternals, ...rest } = evaluated;
 	const canonical = { rules: canonicalRuleBodies(evaluated.rules), inline: rest.inline, conflicts: rest.conflicts };
+	const reservedContexts = reservedContextsOf(evaluated.rules);
 	const roots = [...grammarRootNames(evaluated), ...evaluated.supertypes, ...(protectedRuleNames ?? [])];
 	const { rules, inline, conflicts } = protectedRuleNames === undefined ? canonical : pruneOrphanedRules(canonical, new Set(roots));
 	const identified = buildRuleCatalog(rules, { roots });
@@ -128,6 +150,7 @@ export function canonicalGrammar(evaluated: EvaluatedGrammar, fileTypes: readonl
 		...rest,
 		inline,
 		conflicts,
+		...(reservedContexts === undefined ? {} : { reservedContexts }),
 		rules: identified.rules,
 		ruleCatalog: identified.ruleCatalog,
 		references: collectReferences(identified.rules, { ruleCatalog: identified.ruleCatalog }),

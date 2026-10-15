@@ -10,6 +10,8 @@ import {
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, ChoiceRule, RuleBase, Multiplicity, SeqRule, SimplifiedRule } from '../types/rule.ts';
 import { isLiteralChoiceContent } from '../dsl/rule-patterns.ts';
+import type { RuleMetadata } from '../types/rule-metadata-brand.ts';
+import { makeRuleMetadata, readRuleMetadata } from '../dsl/rule-metadata.ts';
 import { sharedArmAttrs } from '../dsl/rule-attrs.ts';
 import {
 	AssembledNonterminal,
@@ -219,6 +221,19 @@ function slotMultiplicity(rule: AnyRule, inherited: Multiplicity): Multiplicity 
 	return inherited;
 }
 
+function stampedWordsets(rule: SimplifiedRule, out: Set<string>): void {
+	for (const id of readRuleMetadata(rule.metadata)?.reservedWordsets ?? []) out.add(id);
+	const bag = rule as { members?: readonly SimplifiedRule[]; content?: SimplifiedRule };
+	for (const child of bag.members ?? (bag.content === undefined ? [] : [bag.content])) stampedWordsets(child, out);
+}
+
+function withSlotReservedWordsets(rule: SimplifiedRule): RuleMetadata | undefined {
+	const found = new Set<string>();
+	stampedWordsets(rule, found);
+	if (found.size === 0) return rule.metadata;
+	return makeRuleMetadata({ ...readRuleMetadata(rule.metadata), reservedWordsets: [...found].sort() });
+}
+
 function buildSlot(
 	rule: SimplifiedRule,
 	kindForName: string | undefined,
@@ -291,7 +306,7 @@ function buildSlot(
 		trailingDelimiter,
 		leadingDelimiter,
 		sourceRuleIds,
-		ruleMetadata: rule.metadata
+		ruleMetadata: withSlotReservedWordsets(rule)
 	});
 }
 

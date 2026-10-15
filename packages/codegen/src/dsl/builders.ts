@@ -8,6 +8,7 @@ import {
 	PATTERN,
 	REPEAT,
 	REPEAT1,
+	RESERVED,
 	SEQ,
 	STRING,
 	SUPERTYPE,
@@ -27,6 +28,7 @@ import type {
 	PrecLeftRule,
 	PrecRightRule,
 	PrecRule,
+	ReservedRule,
 	Repeat1Rule,
 	RepeatRule,
 	PhaseName,
@@ -89,6 +91,7 @@ export interface StructuralPrec extends PrecBuilder<'evaluate'> {
 }
 
 export interface StructuralBuilder extends RuleBuilder<'evaluate'> {
+	reserved(contextName: string, content: Rule<'evaluate'>): ReservedRule<'evaluate'>;
 	seq(...members: Rule<'evaluate'>[]): SeqRule<'evaluate'>;
 	choice(...members: Rule<'evaluate'>[]): ChoiceRule<'evaluate'>;
 	optional(content: Rule<'evaluate'>): OptionalRule<'evaluate'>;
@@ -173,6 +176,7 @@ export const structuralBuilder: StructuralBuilder = {
 	alias: structuralAlias,
 	token: structuralToken,
 	prec: structuralPrec,
+	reserved: (contextName, content) => ({ type: RESERVED, content, context_name: contextName }),
 	string: (value) => ({ type: STRING, value }),
 	pattern: (value) => ({ type: PATTERN, value }),
 	symbol: sym,

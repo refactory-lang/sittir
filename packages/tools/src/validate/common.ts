@@ -1061,7 +1061,18 @@ function readNodeText(node: ReadNodeLike, opts: NodeToConfigOpts): string {
 	if (typeof node.$text === 'string') return node.$text;
 	const source = opts.tree?.source;
 	const span = spanOf(node);
-	return span !== undefined && source !== undefined ? sliceSpan(source, span) : '';
+	if (span !== undefined && source !== undefined) return sliceSpan(source, span);
+	const wrapped = soleWrappedContent(node);
+	if (typeof wrapped === 'number') return opts.kindNameFromId?.(wrapped) ?? '';
+	return wrapped === undefined ? '' : readNodeText(wrapped, opts);
+}
+
+function soleWrappedContent(node: ReadNodeLike): ReadNodeLike | number | undefined {
+	const rec = node as unknown as Record<string, unknown>;
+	const keys = Object.keys(rec).filter((k) => k.startsWith('_') && rec[k] !== undefined);
+	const value = keys.length === 1 ? rec[keys[0]!] : undefined;
+	if (typeof value === 'number') return value;
+	return value !== null && typeof value === 'object' && !Array.isArray(value) ? (value as ReadNodeLike) : undefined;
 }
 
 function hydrateForConfig(c: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike {

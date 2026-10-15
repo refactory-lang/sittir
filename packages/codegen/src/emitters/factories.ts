@@ -3,7 +3,8 @@ import { hostTemplateFor } from '@sittir/common';
 import type { ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
 import { REPARSE_HOST_PRIORITY } from '../dsl/wire/reparse-hosts.ts';
 import { groupSeatParts, innerPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, spelledGroupSlots, triviaInnerImports, type SetterEntry, type StoredAccessor } from './node-members.ts';
-import { findOwnKindEntry, reservedWordset } from '../dsl/symbol-table.ts';
+import { findOwnKindEntry, reservedWordset, reservedWordsAdmittedIn } from '../dsl/symbol-table.ts';
+import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { holdsFixedText, isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired, slotFilledWhenOmitted, storesNodes } from '../compiler/model/node-map.ts';
@@ -63,6 +64,7 @@ import {
 	valueStorageOf,
 	resolveFieldStorageInfo,
 	classifyFactoryShape,
+	builderMapShape,
 	factoryTakesSpreadChildren,
 	isSlotBearingCompound,
 	classifyFactoryEmission,
@@ -91,6 +93,9 @@ import {
 	pruneUnusedImports,
 	blankFromInput,
 	leadingOptionsOf,
+	unreservedWordFactory,
+	placedTextFactoryName,
+	type UnreservedWordFactory,
 	type LeadingOptions
 } from './shared.ts';
 import {
@@ -143,6 +148,7 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 			if (!isMultiple(slot) && emptyDefaultOf(slot, nodeMap, kindEntries)) imports.add('orDefault');
 			if (strictNodeExpectation(slot, nodeMap) !== undefined) imports.add('rejectBareText');
 			if (seatedKeywordTexts(slot, nodeMap, kindEntries).length > 0) imports.add('rejectKeywordText');
+			if (kindEntries !== undefined && slotUnreservedAliases(slot, nodeMap).length > 0) imports.add('rejectReservedText');
 			if (kindEntries !== undefined && slotAliases(slot, nodeMap).length > 0) imports.add('admitAliasContent');
 		}
 		if (kindEntries !== undefined && node instanceof AssembledList && slotAliases(buildSeparatedListContentSlot(node), nodeMap).length > 0)
@@ -295,6 +301,13 @@ function buildLeafReConsts(
 		lines.push(`type ${typeName} = (typeof ${listName})[number];`);
 		lines.push(`const ${constName}: ReadonlySet<string> = new Set(${listName});`);
 	}
+	if (word?.rawFactoryName) {
+		for (const ids of checkedSlotWordsets(nodeMap)) {
+			if (ids.length === 1 && ids[0] === GLOBAL_WORDSET) continue;
+			const words = reservedWordsAdmittedIn(nodeMap.reserved, ids, kindEntries ?? []);
+			lines.push(`const ${wordsetConstName(ids, nodeMap)}: ReadonlySet<string> = new Set<string>(${JSON.stringify(words)});`);
+		}
+	}
 	for (const [kind, node] of nodeMap.nodes) {
 		const declaration = leafReDeclaration(kind, node);
 		if (declaration === undefined) continue;
@@ -342,9 +355,31 @@ function keywordTextRejection(
 	typeName: string
 ): string {
 	const keywords = seatedKeywordTexts(f, nodeMap, kindEntries);
-	if (keywords.length === 0) return expr;
-	const word = kindDiscriminantExpr(nodeMap.word!, nodeMap, kindEntries!);
-	return `rejectKeywordText(${expr}, '${typeName}.${f.configKey}', ${word}, ${JSON.stringify(keywords)})`;
+	const word = kindEntries === undefined || !nodeMap.word ? undefined : kindDiscriminantExpr(nodeMap.word, nodeMap, kindEntries);
+	const keywordChecked =
+		keywords.length === 0 ? expr : `rejectKeywordText(${expr}, '${typeName}.${f.configKey}', ${word!}, ${JSON.stringify(keywords)})`;
+	if (word === undefined || kindEntries === undefined || slotUnreservedAliases(f, nodeMap).length === 0) return keywordChecked;
+	return `rejectReservedText(${keywordChecked}, '${typeName}.${f.configKey}', ${word}, ${wordsetConstName(f.reservedWordsets, nodeMap)})`;
+}
+
+function wordsetConstName(ids: readonly string[], nodeMap: NodeMap): string {
+	if (ids.length === 1 && ids[0] === GLOBAL_WORDSET) return `_reservedWords_${nodeMap.nodes.get(nodeMap.word!)!.rawFactoryName}`;
+	return `_reservedWordset_${ids.join('_')}`;
+}
+
+export function slotUnreservedAliases(f: AssembledNonterminal, nodeMap: NodeMap): AssembledAlias[] {
+	return slotAliases(f, nodeMap).filter((alias) => unreservedWordFactory(alias, nodeMap) !== undefined);
+}
+
+function checkedSlotWordsets(nodeMap: NodeMap): string[][] {
+	const found = new Map<string, string[]>();
+	for (const node of nodeMap.nodes.values()) {
+		for (const slot of node.slots) {
+			if (slotUnreservedAliases(slot, nodeMap).length === 0) continue;
+			found.set(slot.reservedWordsets.join('\0'), [...slot.reservedWordsets]);
+		}
+	}
+	return [...found.values()];
 }
 
 export function seatedKeywordTexts(
@@ -395,12 +430,12 @@ function buildFactoryMapEntries(
 		if (isHiddenPresenceMarker(node)) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const fluent = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries });
-		const classified = classifyFactoryShape(node, nodeMap, { includeTokenText: true });
+		const classified = builderMapShape(node, nodeMap, { includeTokenText: true });
 		if (!classified) continue;
 		const shape = classified === 'spread' || classified === 'elements' ? 'children' : classified;
 		mapEntries.push({
 			kind,
-			factory: node.rawFactoryName,
+			factory: (node instanceof AssembledAlias ? placedTextFactoryName(node, nodeMap) : undefined) ?? node.rawFactoryName,
 			typeName: node.typeName,
 			fluent,
 			shape
@@ -476,6 +511,24 @@ export namespace factory {
 				break;
 		}
 		if (result) output.push(result);
+		if (result && node.kind === nodeMap.word) {
+			const placed = [...nodeMap.nodes.values()].filter(
+				(candidate): candidate is AssembledAlias =>
+					candidate instanceof AssembledAlias && unreservedWordFactory(candidate, nodeMap) !== undefined
+			);
+			const unreserved = placed.length === 0 ? undefined : unreservedWordFactory(placed[0]!, nodeMap);
+			if (unreserved !== undefined) output.push(emitUnreservedWordFactory(unreserved, nodeMap, leafReConsts, kindEntries));
+			for (const alias of placed) {
+				const arms = alias.slots.length === 1 ? keywordArmTextEntries(alias.slots[0]!, nodeMap, kindEntries) : [];
+				const armConst = `_keywordArms_${alias.rawFactoryName}`;
+				if (arms.length > 0) output.push(`const ${armConst} = new Map<string, number>(${textMapExpr(arms)});`);
+				const content =
+					arms.length > 0 ? `${armConst}.get(text) ?? ${unreserved!.name}(text)` : `${unreserved!.name}(text)`;
+				output.push(
+					`export function ${placedTextFactoryName(alias, nodeMap)!}(text: string): T.${alias.typeName}.Bound {\n  return ${alias.rawFactoryName}((${content}) as never);\n}`
+				);
+			}
+		}
 	}
 
 	export function branch(
@@ -524,6 +577,25 @@ function buildLeafGuards(node: { kind: string; textPattern?: string }, leafReCon
 		guards.unshift(`if (text.length === 0) throw new Error(\`${node.kind}: text must be non-empty\`);`);
 	}
 	return guards;
+}
+
+function emitUnreservedWordFactory(
+	unreserved: UnreservedWordFactory,
+	nodeMap: NodeMap,
+	leafReConsts: Map<string, string>,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	const { leaf } = unreserved;
+	const consts = new Map(leafReConsts);
+	consts.delete(reservedGuardKey(leaf.kind));
+	return emitTextFactory(
+		{ kind: leaf.kind, typeName: leaf.typeName, rawFactoryName: unreserved.name },
+		'text: string',
+		'text',
+		buildLeafGuards(leaf, consts).join(' '),
+		kindEntries,
+		nodeMap
+	);
 }
 
 function reservedGuardKey(kind: string): string {

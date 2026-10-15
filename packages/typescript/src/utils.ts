@@ -22,11 +22,11 @@ export const triviaFacts = Object.freeze({
 	]),
 	innerKinds: INNER_SITES,
 	rebuildWrappers: new Set<number>([
-		152, 153, 154, 155, 156, 157, 159, 160, 161, 162, 163, 164, 376, 377, 379, 380, 382, 383, 384, 385, 386, 387, 392,
-		393, 394, 396, 398, 399, 400, 401, 402, 403, 404, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418,
-		419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 431, 432, 433, 459, 461, 462, 463, 464, 466
+		152, 153, 154, 155, 156, 157, 159, 160, 161, 162, 163, 164, 377, 378, 379, 381, 382, 384, 385, 386, 387, 388, 390,
+		395, 396, 397, 399, 401, 402, 403, 404, 405, 406, 407, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420,
+		421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 434, 435, 436, 463, 465, 466, 467, 468, 470
 	]),
-	listKinds: new Set<number>([376, 377, 379, 382, 383, 384, 385, 390]),
+	listKinds: new Set<number>([377, 378, 381, 384, 385, 386, 387, 393]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]))+)$/u,
 		kindIdByText: Object.freeze({ ' ': 181, '\t': 182, '\n': 183, '\n\n': 184, '\n\n\n': 185 })
@@ -35,8 +35,8 @@ export const triviaFacts = Object.freeze({
 
 export const querySlots: QuerySlots = Object.freeze({
 	2: [['content', { fields: ['content'], kinds: [] }]],
-	111: [['content', { fields: ['content'], kinds: [] }]],
-	118: [['content', { fields: ['content'], kinds: [] }]],
+	112: [['content', { fields: ['content'], kinds: [] }]],
+	119: [['content', { fields: ['content'], kinds: [] }]],
 	152: [['content', { fields: ['content'], kinds: [] }]],
 	153: [['content', { fields: ['content'], kinds: [] }]],
 	154: [
@@ -78,7 +78,9 @@ export const querySlots: QuerySlots = Object.freeze({
 		['hashBangLine', { fields: ['hash_bang_line'], kinds: [] }],
 		['statements', { fields: ['statements'], kinds: [] }]
 	],
-	190: [['moduleExportName', { fields: [], kinds: ['identifier', 'string_double', 'string_single'] }]],
+	190: [
+		['moduleExportName', { fields: [], kinds: ['identifier', 'string_double', 'string_single', 'default_keyword'] }]
+	],
 	191: [['exportSpecifiers', { fields: [], kinds: ['export_specifiers'] }]],
 	192: [
 		['exportKind', { fields: ['export_kind'], kinds: [] }],
@@ -111,130 +113,129 @@ export const querySlots: QuerySlots = Object.freeze({
 		['declarators', { fields: ['declarators'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	208: [
+	207: [
+		['kind', { fields: ['kind'], kinds: [] }],
+		['variableDeclarators', { fields: ['variable_declarator'], kinds: [] }],
+		['automaticSemicolon', { fields: [], kinds: ['automatic_semicolon', 'semi'] }]
+	],
+	209: [
 		['statements', { fields: ['statements'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	209: [['body', { fields: ['body'], kinds: [] }]],
-	210: [
+	210: [['body', { fields: ['body'], kinds: [] }]],
+	211: [
 		['condition', { fields: ['condition'], kinds: [] }],
 		['consequence', { fields: ['consequence'], kinds: [] }],
 		['alternative', { fields: ['alternative'], kinds: [] }]
 	],
-	211: [
+	212: [
 		['value', { fields: ['value'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
-	212: [
+	213: [
 		['initializer', { fields: ['initializer'], kinds: [] }],
 		['condition', { fields: ['condition'], kinds: [] }],
 		['increment', { fields: ['increment'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
-	213: [
+	214: [
 		['await', { fields: ['await'], kinds: [] }],
-		['forHeader', { fields: [], kinds: ['for_header_lhs', 'for_header_var_kind', 'for_header_let_const_kind'] }],
-		['body', { fields: ['body'], kinds: [] }]
-	],
-	215: [
-		['condition', { fields: ['condition'], kinds: [] }],
+		[
+			'forHeader',
+			{ fields: [], kinds: ['for_header_lhs', 'for_header_var_kind', 'for_header_let_const_kind', 'for_header_arm3'] }
+		],
 		['body', { fields: ['body'], kinds: [] }]
 	],
 	216: [
+		['condition', { fields: ['condition'], kinds: [] }],
+		['body', { fields: ['body'], kinds: [] }]
+	],
+	217: [
 		['body', { fields: ['body'], kinds: [] }],
 		['condition', { fields: ['condition'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	217: [
+	218: [
 		['body', { fields: ['body'], kinds: [] }],
 		['handler', { fields: ['handler'], kinds: [] }],
 		['finalizer', { fields: ['finalizer'], kinds: [] }]
 	],
-	218: [
+	219: [
 		['object', { fields: ['object'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
-	],
-	219: [
-		['label', { fields: ['label'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
 	220: [
 		['label', { fields: ['label'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	221: [['terminator', { fields: ['terminator'], kinds: [] }]],
-	222: [
-		['expression', { fields: ['expression'], kinds: [] }],
+	221: [
+		['label', { fields: ['label'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
+	222: [['terminator', { fields: ['terminator'], kinds: [] }]],
 	223: [
 		['expression', { fields: ['expression'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	225: [
+	224: [
+		['expression', { fields: ['expression'], kinds: [] }],
+		['terminator', { fields: ['terminator'], kinds: [] }]
+	],
+	226: [
 		['label', { fields: ['label'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
-	226: [['cases', { fields: ['cases'], kinds: [] }]],
-	227: [
+	227: [['cases', { fields: ['cases'], kinds: [] }]],
+	228: [
 		['value', { fields: ['value'], kinds: [] }],
 		['bodies', { fields: ['body'], kinds: [] }]
 	],
-	228: [['bodies', { fields: ['body'], kinds: [] }]],
-	229: [
+	229: [['bodies', { fields: ['body'], kinds: [] }]],
+	230: [
 		['catchClauseGroup', { fields: [], kinds: ['catch_clause_group'] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
-	230: [['body', { fields: ['body'], kinds: [] }]],
-	234: [['expression', { fields: ['expression'], kinds: [] }]],
-	235: [['properties', { fields: ['properties'], kinds: [] }]],
+	231: [['body', { fields: ['body'], kinds: [] }]],
+	235: [['expression', { fields: ['expression'], kinds: [] }]],
 	236: [['properties', { fields: ['properties'], kinds: [] }]],
-	237: [
-		['left', { fields: ['left'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
-	],
+	237: [['properties', { fields: ['properties'], kinds: [] }]],
 	238: [
 		['left', { fields: ['left'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }]
 	],
-	239: [['elements', { fields: ['elements'], kinds: [] }]],
+	239: [
+		['left', { fields: ['left'], kinds: [] }],
+		['right', { fields: ['right'], kinds: [] }]
+	],
 	240: [['elements', { fields: ['elements'], kinds: [] }]],
-	241: [
+	241: [['elements', { fields: ['elements'], kinds: [] }]],
+	242: [
 		['object', { fields: ['object'], kinds: [] }],
 		['property', { fields: ['property'], kinds: [] }]
-	],
-	242: [
-		['decorators', { fields: ['decorator'], kinds: [] }],
-		['name', { fields: ['name'], kinds: [] }],
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['heritage', { fields: ['heritage'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
 	],
 	243: [
 		['decorators', { fields: ['decorator'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['heritage', { fields: ['heritage'], kinds: [] }],
+		['body', { fields: ['body'], kinds: [] }]
+	],
+	244: [
+		['decorators', { fields: ['decorator'], kinds: [] }],
+		['name', { fields: ['name'], kinds: [] }],
+		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
+		['heritage', { fields: ['heritage'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	244: [['content', { fields: [], kinds: ['class_heritage_extends_clause', 'implements_clause'] }]],
-	245: [
-		['async', { fields: ['async'], kinds: [] }],
-		['name', { fields: ['name'], kinds: [] }],
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['parameters', { fields: ['parameters'], kinds: [] }],
-		['returnType', { fields: ['return_type'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
-	],
+	245: [['content', { fields: [], kinds: ['class_heritage_extends_clause', 'implements_clause'] }]],
 	246: [
 		['async', { fields: ['async'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['parameters', { fields: ['parameters'], kinds: [] }],
 		['returnType', { fields: ['return_type'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['body', { fields: ['body'], kinds: [] }]
 	],
 	247: [
 		['async', { fields: ['async'], kinds: [] }],
@@ -242,9 +243,18 @@ export const querySlots: QuerySlots = Object.freeze({
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['parameters', { fields: ['parameters'], kinds: [] }],
 		['returnType', { fields: ['return_type'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['body', { fields: ['body'], kinds: [] }],
+		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
 	248: [
+		['async', { fields: ['async'], kinds: [] }],
+		['name', { fields: ['name'], kinds: [] }],
+		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
+		['parameters', { fields: ['parameters'], kinds: [] }],
+		['returnType', { fields: ['return_type'], kinds: [] }],
+		['body', { fields: ['body'], kinds: [] }]
+	],
+	249: [
 		['async', { fields: ['async'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
@@ -253,28 +263,28 @@ export const querySlots: QuerySlots = Object.freeze({
 		['body', { fields: ['body'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	249: [
+	250: [
 		['async', { fields: ['async'], kinds: [] }],
 		['content', { fields: [], kinds: ['arrow_function_parameter', 'call_signature'] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
-	254: [
+	255: [
 		['constructor_', { fields: ['constructor'], kinds: [] }],
 		['typeArguments', { fields: ['type_arguments'], kinds: [] }],
 		['arguments', { fields: ['arguments'], kinds: [] }]
 	],
-	255: [['expression', { fields: ['expression'], kinds: [] }]],
-	256: [
+	256: [['expression', { fields: ['expression'], kinds: [] }]],
+	257: [
 		['object', { fields: ['object'], kinds: [] }],
 		['separator', { fields: ['separator'], kinds: [] }],
 		['property', { fields: ['property'], kinds: [] }]
 	],
-	257: [
+	258: [
 		['object', { fields: ['object'], kinds: [] }],
 		['optionalChain', { fields: ['optional_chain'], kinds: [] }],
 		['index', { fields: ['index'], kinds: [] }]
 	],
-	258: [
+	259: [
 		[
 			'content',
 			{
@@ -304,6 +314,7 @@ export const querySlots: QuerySlots = Object.freeze({
 					'get_keyword',
 					'set_keyword',
 					'async_keyword',
+					'await_keyword',
 					'static_keyword',
 					'let_keyword',
 					'object_pattern',
@@ -313,57 +324,57 @@ export const querySlots: QuerySlots = Object.freeze({
 			}
 		]
 	],
-	259: [
+	260: [
 		['using', { fields: ['using'], kinds: [] }],
 		['left', { fields: ['left'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }]
 	],
-	261: [
+	262: [
 		['left', { fields: ['left'], kinds: [] }],
 		['operator', { fields: ['operator'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }]
 	],
-	264: [['expression', { fields: ['expression'], kinds: [] }]],
-	265: [
+	265: [['expression', { fields: ['expression'], kinds: [] }]],
+	266: [
 		['condition', { fields: ['condition'], kinds: [] }],
 		['consequence', { fields: ['consequence'], kinds: [] }],
 		['alternative', { fields: ['alternative'], kinds: [] }]
 	],
-	266: [
+	267: [
 		['left', { fields: ['left'], kinds: [] }],
 		['operator', { fields: ['operator'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }],
 		['binaryExpressionIn', { fields: [], kinds: ['binary_expression_in'] }]
 	],
-	267: [
+	268: [
 		['operator', { fields: ['operator'], kinds: [] }],
 		['argument', { fields: ['argument'], kinds: [] }]
 	],
-	269: [['expressions', { fields: ['expression'], kinds: [] }]],
-	271: [['elements', { fields: ['elements'], kinds: [] }]],
-	272: [['expression', { fields: ['expression'], kinds: [] }]],
-	273: [
+	270: [['expressions', { fields: ['expression'], kinds: [] }]],
+	272: [['elements', { fields: ['elements'], kinds: [] }]],
+	273: [['expression', { fields: ['expression'], kinds: [] }]],
+	274: [
 		['pattern', { fields: ['pattern'], kinds: [] }],
 		['flags', { fields: ['flags'], kinds: [] }]
 	],
-	276: [['elements', { fields: ['elements'], kinds: [] }]],
-	277: [['expression', { fields: ['expression'], kinds: [] }]],
-	278: [
+	277: [['elements', { fields: ['elements'], kinds: [] }]],
+	278: [['expression', { fields: ['expression'], kinds: [] }]],
+	279: [
 		['object', { fields: ['object'], kinds: [] }],
 		['property', { fields: ['property'], kinds: [] }]
 	],
-	279: [
+	280: [
 		['function', { fields: ['function'], kinds: [] }],
 		['typeArguments', { fields: ['type_arguments'], kinds: [] }],
 		['arguments', { fields: ['arguments'], kinds: [] }]
 	],
-	280: [['members', { fields: ['members'], kinds: [] }]],
-	281: [['elements', { fields: ['elements'], kinds: [] }]],
-	282: [
+	281: [['members', { fields: ['members'], kinds: [] }]],
+	282: [['elements', { fields: ['elements'], kinds: [] }]],
+	283: [
 		['terminator', { fields: ['terminator'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
-	284: [
+	285: [
 		[
 			'lhsExpression',
 			{
@@ -393,6 +404,7 @@ export const querySlots: QuerySlots = Object.freeze({
 					'get_keyword',
 					'set_keyword',
 					'async_keyword',
+					'await_keyword',
 					'static_keyword',
 					'let_keyword',
 					'object_pattern',
@@ -402,7 +414,7 @@ export const querySlots: QuerySlots = Object.freeze({
 			}
 		]
 	],
-	285: [
+	286: [
 		['accessibilityModifier', { fields: ['accessibility_modifier'], kinds: [] }],
 		['static', { fields: ['static'], kinds: [] }],
 		['override', { fields: ['override'], kinds: [] }],
@@ -416,16 +428,16 @@ export const querySlots: QuerySlots = Object.freeze({
 		['returnType', { fields: ['return_type'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
-	286: [
-		['key', { fields: ['key'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }]
-	],
 	287: [
 		['key', { fields: ['key'], kinds: [] }],
 		['value', { fields: ['value'], kinds: [] }]
 	],
-	289: [['expression', { fields: ['expression'], kinds: [] }]],
-	290: [
+	288: [
+		['key', { fields: ['key'], kinds: [] }],
+		['value', { fields: ['value'], kinds: [] }]
+	],
+	290: [['expression', { fields: ['expression'], kinds: [] }]],
+	291: [
 		['decorators', { fields: ['decorator'], kinds: [] }],
 		['declare', { fields: ['declare'], kinds: [] }],
 		['accessibilityModifier', { fields: ['accessibility_modifier'], kinds: [] }],
@@ -439,8 +451,8 @@ export const querySlots: QuerySlots = Object.freeze({
 		['type', { fields: ['type'], kinds: [] }],
 		['value', { fields: ['value'], kinds: [] }]
 	],
-	292: [['expression', { fields: ['expression'], kinds: [] }]],
-	293: [
+	293: [['expression', { fields: ['expression'], kinds: [] }]],
+	294: [
 		['accessibilityModifier', { fields: ['accessibility_modifier'], kinds: [] }],
 		['static', { fields: ['static'], kinds: [] }],
 		['override', { fields: ['override'], kinds: [] }],
@@ -453,7 +465,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['parameters', { fields: ['parameters'], kinds: [] }],
 		['returnType', { fields: ['return_type'], kinds: [] }]
 	],
-	294: [
+	295: [
 		['accessibilityModifier', { fields: ['accessibility_modifier'], kinds: [] }],
 		['override', { fields: ['override'], kinds: [] }],
 		['accessorKind', { fields: ['accessor_kind'], kinds: [] }],
@@ -463,7 +475,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['parameters', { fields: ['parameters'], kinds: [] }],
 		['returnType', { fields: ['return_type'], kinds: [] }]
 	],
-	295: [
+	296: [
 		['async', { fields: ['async'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
@@ -471,14 +483,10 @@ export const querySlots: QuerySlots = Object.freeze({
 		['returnType', { fields: ['return_type'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	296: [['expression', { fields: ['expression'], kinds: [] }]],
-	297: [
+	297: [['expression', { fields: ['expression'], kinds: [] }]],
+	298: [
 		['typeArguments', { fields: ['type_arguments'], kinds: [] }],
 		['expression', { fields: ['expression'], kinds: [] }]
-	],
-	298: [
-		['expression', { fields: ['expression'], kinds: [] }],
-		['typeAnnotation', { fields: ['type_annotation'], kinds: [] }]
 	],
 	299: [
 		['expression', { fields: ['expression'], kinds: [] }],
@@ -486,19 +494,23 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	300: [
 		['expression', { fields: ['expression'], kinds: [] }],
-		['typeArguments', { fields: ['type_arguments'], kinds: [] }]
+		['typeAnnotation', { fields: ['type_annotation'], kinds: [] }]
 	],
 	301: [
+		['expression', { fields: ['expression'], kinds: [] }],
+		['typeArguments', { fields: ['type_arguments'], kinds: [] }]
+	],
+	302: [
 		['name', { fields: ['name'], kinds: [] }],
 		['source', { fields: ['source'], kinds: [] }]
 	],
-	302: [['types', { fields: ['types'], kinds: [] }]],
-	303: [
+	303: [['types', { fields: ['types'], kinds: [] }]],
+	304: [
 		['value', { fields: ['value'], kinds: [] }],
 		['typeArguments', { fields: ['type_arguments'], kinds: [] }]
 	],
-	304: [['types', { fields: ['type'], kinds: [] }]],
-	305: [
+	305: [['types', { fields: ['type'], kinds: [] }]],
+	306: [
 		[
 			'content',
 			{
@@ -509,6 +521,7 @@ export const querySlots: QuerySlots = Object.freeze({
 					'class_declaration',
 					'lexical_declaration',
 					'variable_declaration',
+					'using_declaration',
 					'function_signature',
 					'abstract_class_declaration',
 					'module',
@@ -524,61 +537,52 @@ export const querySlots: QuerySlots = Object.freeze({
 			}
 		]
 	],
-	306: [
+	307: [
 		['decorators', { fields: ['decorator'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['heritage', { fields: ['heritage'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
-	307: [
-		['name', { fields: ['name'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
-	],
 	308: [
 		['name', { fields: ['name'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
-	310: [
+	309: [
+		['name', { fields: ['name'], kinds: [] }],
+		['body', { fields: ['body'], kinds: [] }]
+	],
+	311: [
 		['name', { fields: ['name'], kinds: [] }],
 		['value', { fields: ['value'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	311: [
+	312: [
 		['module', { fields: ['module'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }]
 	],
-	312: [
+	313: [
 		['name', { fields: ['name'], kinds: [] }],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['extendsTypeClause', { fields: ['extends_type_clause'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
-	313: [['types', { fields: ['type'], kinds: [] }]],
-	314: [
+	314: [['types', { fields: ['type'], kinds: [] }]],
+	315: [
 		['const', { fields: ['const'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
-	315: [['elements', { fields: ['elements'], kinds: [] }]],
-	316: [
+	316: [['elements', { fields: ['elements'], kinds: [] }]],
+	317: [
 		['name', { fields: ['name'], kinds: [] }],
 		['value', { fields: ['value'], kinds: [] }]
 	],
-	317: [
+	318: [
 		['name', { fields: ['name'], kinds: [] }],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['value', { fields: ['value'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
-	],
-	320: [
-		['decorators', { fields: ['decorator'], kinds: [] }],
-		['accessibilityModifier', { fields: [], kinds: ['accessibility_modifier'] }],
-		['override', { fields: ['override'], kinds: [] }],
-		['readonly', { fields: ['readonly'], kinds: [] }],
-		['pattern', { fields: ['pattern'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }]
 	],
 	321: [
 		['decorators', { fields: ['decorator'], kinds: [] }],
@@ -589,87 +593,96 @@ export const querySlots: QuerySlots = Object.freeze({
 		['type', { fields: ['type'], kinds: [] }],
 		['value', { fields: ['value'], kinds: [] }]
 	],
-	323: [['type', { fields: ['type'], kinds: [] }]],
+	322: [
+		['decorators', { fields: ['decorator'], kinds: [] }],
+		['accessibilityModifier', { fields: [], kinds: ['accessibility_modifier'] }],
+		['override', { fields: ['override'], kinds: [] }],
+		['readonly', { fields: ['readonly'], kinds: [] }],
+		['pattern', { fields: ['pattern'], kinds: [] }],
+		['type', { fields: ['type'], kinds: [] }],
+		['value', { fields: ['value'], kinds: [] }]
+	],
 	324: [['type', { fields: ['type'], kinds: [] }]],
 	325: [['type', { fields: ['type'], kinds: [] }]],
 	326: [['type', { fields: ['type'], kinds: [] }]],
-	327: [
+	327: [['type', { fields: ['type'], kinds: [] }]],
+	328: [
 		['object', { fields: ['object'], kinds: [] }],
 		['property', { fields: ['property'], kinds: [] }]
 	],
-	328: [
+	329: [
 		['function', { fields: ['function'], kinds: [] }],
 		['arguments', { fields: ['arguments'], kinds: [] }]
 	],
-	329: [['value', { fields: ['value'], kinds: [] }]],
-	330: [['asserts', { fields: [], kinds: ['asserts'] }]],
-	332: [
-		['name', { fields: ['name'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }]
-	],
+	330: [['value', { fields: ['value'], kinds: [] }]],
+	331: [['asserts', { fields: [], kinds: ['asserts'] }]],
 	333: [
 		['name', { fields: ['name'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }]
 	],
-	334: [['type', { fields: ['type'], kinds: [] }]],
+	334: [
+		['name', { fields: ['name'], kinds: [] }],
+		['type', { fields: ['type'], kinds: [] }]
+	],
 	335: [['type', { fields: ['type'], kinds: [] }]],
-	337: [
+	336: [['type', { fields: ['type'], kinds: [] }]],
+	338: [
 		['abstract', { fields: ['abstract'], kinds: [] }],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['parameters', { fields: ['parameters'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }]
 	],
-	339: [['type', { fields: ['type'], kinds: [] }]],
-	340: [['elements', { fields: ['elements'], kinds: [] }]],
-	341: [
+	340: [['type', { fields: ['type'], kinds: [] }]],
+	341: [['elements', { fields: ['elements'], kinds: [] }]],
+	342: [
 		['name', { fields: ['name'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }]
 	],
-	342: [
+	343: [
 		['left', { fields: ['left'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }],
 		['consequence', { fields: ['consequence'], kinds: [] }],
 		['alternative', { fields: ['alternative'], kinds: [] }]
 	],
-	343: [
+	344: [
 		['name', { fields: ['name'], kinds: [] }],
 		['typeArguments', { fields: ['type_arguments'], kinds: [] }]
 	],
-	344: [
+	345: [
 		['name', { fields: ['name'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }]
 	],
-	345: [['typePredicate', { fields: [], kinds: ['type_predicate'] }]],
-	346: [
+	346: [['typePredicate', { fields: [], kinds: ['type_predicate'] }]],
+	347: [
 		['object', { fields: ['object'], kinds: [] }],
 		['content', { fields: [], kinds: ['dot', 'qmark_dot'] }],
 		['property', { fields: ['property'], kinds: [] }]
 	],
-	347: [
+	348: [
 		['object', { fields: ['object'], kinds: [] }],
 		['optionalChain', { fields: ['optional_chain'], kinds: [] }],
 		['index', { fields: ['index'], kinds: [] }]
 	],
-	348: [
+	349: [
 		['function', { fields: ['function'], kinds: [] }],
 		['arguments', { fields: ['arguments'], kinds: [] }]
 	],
-	349: [
+	350: [
 		['function', { fields: ['function'], kinds: [] }],
 		['typeArguments', { fields: ['type_arguments'], kinds: [] }]
 	],
-	350: [['expression', { fields: ['expression'], kinds: [] }]],
-	351: [['type', { fields: ['type'], kinds: [] }]],
-	352: [
+	351: [['expression', { fields: ['expression'], kinds: [] }]],
+	352: [['type', { fields: ['type'], kinds: [] }]],
+	353: [
 		['type', { fields: ['type'], kinds: [] }],
 		['indexType', { fields: ['index_type'], kinds: [] }]
 	],
-	353: [
+	354: [
 		['name', { fields: ['name'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }],
 		['alias', { fields: ['alias'], kinds: [] }]
 	],
-	354: [
+	355: [
 		[
 			'content',
 			{
@@ -697,20 +710,20 @@ export const querySlots: QuerySlots = Object.freeze({
 			}
 		]
 	],
-	357: [['type', { fields: ['type'], kinds: [] }]],
 	358: [['type', { fields: ['type'], kinds: [] }]],
-	360: [['types', { fields: [], kinds: ['types'] }]],
-	361: [
+	359: [['type', { fields: ['type'], kinds: [] }]],
+	361: [['types', { fields: [], kinds: ['types'] }]],
+	362: [
 		['opening', { fields: ['opening'], kinds: [] }],
 		['members', { fields: ['members'], kinds: [] }],
 		['closing', { fields: ['closing'], kinds: [] }]
 	],
-	362: [
+	363: [
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['parameters', { fields: ['parameters'], kinds: [] }],
 		['returnType', { fields: ['return_type'], kinds: [] }]
 	],
-	363: [
+	364: [
 		['accessibilityModifier', { fields: ['accessibility_modifier'], kinds: [] }],
 		['static', { fields: ['static'], kinds: [] }],
 		['override', { fields: ['override'], kinds: [] }],
@@ -719,107 +732,114 @@ export const querySlots: QuerySlots = Object.freeze({
 		['optional', { fields: ['optional'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }]
 	],
-	364: [['elements', { fields: ['elements'], kinds: [] }]],
-	365: [
+	365: [['elements', { fields: ['elements'], kinds: [] }]],
+	366: [
 		['const', { fields: ['const'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }],
 		['constraint', { fields: ['constraint'], kinds: [] }],
 		['value', { fields: ['value'], kinds: [] }]
 	],
-	366: [['type', { fields: ['type'], kinds: [] }]],
-	367: [
+	367: [['type', { fields: ['type'], kinds: [] }]],
+	368: [
 		['content', { fields: [], kinds: ['extends_keyword', 'colon'] }],
 		['type', { fields: ['type'], kinds: [] }]
 	],
-	368: [
+	369: [
 		['abstract', { fields: ['abstract'], kinds: [] }],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['parameters', { fields: ['parameters'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }]
 	],
-	370: [['type', { fields: ['type'], kinds: [] }]],
-	371: [['tupleTypeMembers', { fields: [], kinds: ['tuple_type_members'] }]],
-	372: [['type', { fields: ['type'], kinds: [] }]],
-	373: [
-		['left', { fields: ['left'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
-	],
+	371: [['type', { fields: ['type'], kinds: [] }]],
+	372: [['tupleTypeMembers', { fields: [], kinds: ['tuple_type_members'] }]],
+	373: [['type', { fields: ['type'], kinds: [] }]],
 	374: [
 		['left', { fields: ['left'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }]
 	],
 	375: [
+		['left', { fields: ['left'], kinds: [] }],
+		['right', { fields: ['right'], kinds: [] }]
+	],
+	376: [
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['parameters', { fields: ['parameters'], kinds: [] }],
 		['returnType', { fields: ['return_type'], kinds: [] }]
 	],
-	376: [['items', { fields: ['item'], kinds: [] }]],
 	377: [['items', { fields: ['item'], kinds: [] }]],
-	379: [['items', { fields: ['item'], kinds: [] }]],
-	380: [['name', { fields: ['name'], kinds: [] }]],
-	382: [['items', { fields: ['item'], kinds: [] }]],
-	383: [['items', { fields: ['item'], kinds: [] }]],
+	378: [['items', { fields: ['item'], kinds: [] }]],
+	379: [
+		['kind', { fields: ['kind'], kinds: [] }],
+		['left', { fields: ['left'], kinds: [] }],
+		['automaticSemicolon', { fields: [], kinds: ['automatic_semicolon'] }],
+		['operator', { fields: ['operator'], kinds: [] }],
+		['right', { fields: ['right'], kinds: [] }]
+	],
+	381: [['items', { fields: ['item'], kinds: [] }]],
+	382: [['name', { fields: ['name'], kinds: [] }]],
 	384: [['items', { fields: ['item'], kinds: [] }]],
 	385: [['items', { fields: ['item'], kinds: [] }]],
-	386: [['content', { fields: [], kinds: ['namespace_import', 'named_imports'] }]],
-	387: [
+	386: [['items', { fields: ['item'], kinds: [] }]],
+	387: [['items', { fields: ['item'], kinds: [] }]],
+	388: [['content', { fields: [], kinds: ['namespace_import', 'named_imports'] }]],
+	390: [
 		['parameter', { fields: ['parameter'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }]
 	],
-	388: [['body', { fields: ['body'], kinds: [] }]],
-	389: [
+	391: [['body', { fields: ['body'], kinds: [] }]],
+	392: [
 		['name', { fields: ['name'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	390: [['items', { fields: ['item'], kinds: [] }]],
-	392: [
+	393: [['items', { fields: ['item'], kinds: [] }]],
+	395: [
 		['name', { fields: ['name'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	393: [
+	396: [
 		['expression', { fields: ['expression'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	394: [
+	397: [
 		['operator', { fields: ['operator'], kinds: [] }],
 		['argument', { fields: ['argument'], kinds: [] }]
 	],
-	396: [
+	399: [
 		['left', { fields: ['left'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }]
 	],
-	398: [
+	401: [
 		['decorators', { fields: ['decorator'], kinds: [] }],
 		['methodDefinition', { fields: [], kinds: ['method_definition'] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	399: [
+	402: [
 		['methodSignature', { fields: [], kinds: ['method_signature'] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	400: [
+	403: [
 		['member', { fields: ['member'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	401: [
+	404: [
 		['sign', { fields: ['sign'], kinds: [] }],
 		['readonly', { fields: ['readonly'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }],
 		['indexType', { fields: ['index_type'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }]
 	],
-	402: [
+	405: [
 		['sign', { fields: ['sign'], kinds: [] }],
 		['readonly', { fields: ['readonly'], kinds: [] }],
 		['mappedTypeClause', { fields: [], kinds: ['mapped_type_clause'] }],
 		['type', { fields: ['type'], kinds: [] }]
 	],
-	403: [
+	406: [
 		['importClause', { fields: [], kinds: ['import_clause'] }],
 		['source', { fields: ['source'], kinds: [] }]
 	],
-	404: [
+	407: [
 		[
 			'expression',
 			{
@@ -856,6 +876,7 @@ export const querySlots: QuerySlots = Object.freeze({
 					'get_keyword',
 					'set_keyword',
 					'async_keyword',
+					'await_keyword',
 					'static_keyword',
 					'let_keyword',
 					'this',
@@ -904,16 +925,16 @@ export const querySlots: QuerySlots = Object.freeze({
 			}
 		]
 	],
-	406: [
+	409: [
 		['importKind', { fields: ['import_kind'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }]
 	],
-	407: [
+	410: [
 		['importKind', { fields: ['import_kind'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }],
 		['alias', { fields: ['alias'], kinds: [] }]
 	],
-	408: [
+	411: [
 		[
 			'expression',
 			{
@@ -950,6 +971,7 @@ export const querySlots: QuerySlots = Object.freeze({
 					'get_keyword',
 					'set_keyword',
 					'async_keyword',
+					'await_keyword',
 					'static_keyword',
 					'let_keyword',
 					'this',
@@ -999,41 +1021,41 @@ export const querySlots: QuerySlots = Object.freeze({
 		],
 		['type', { fields: ['type'], kinds: [] }]
 	],
-	409: [['sequenceExpression', { fields: [], kinds: ['sequence_expression'] }]],
-	410: [
+	412: [['sequenceExpression', { fields: [], kinds: ['sequence_expression'] }]],
+	413: [
 		['function', { fields: ['function'], kinds: [] }],
 		['typeArguments', { fields: ['type_arguments'], kinds: [] }],
 		['arguments', { fields: ['arguments'], kinds: [] }]
 	],
-	411: [
+	414: [
 		['function', { fields: ['function'], kinds: [] }],
 		['arguments', { fields: ['arguments'], kinds: [] }]
 	],
-	412: [
-		['function', { fields: ['function'], kinds: [] }],
-		['typeArguments', { fields: ['type_arguments'], kinds: [] }],
-		['arguments', { fields: ['arguments'], kinds: [] }]
-	],
-	413: [['elements', { fields: ['elements'], kinds: [] }]],
-	414: [['elements', { fields: ['elements'], kinds: [] }]],
 	415: [
+		['function', { fields: ['function'], kinds: [] }],
+		['typeArguments', { fields: ['type_arguments'], kinds: [] }],
+		['arguments', { fields: ['arguments'], kinds: [] }]
+	],
+	416: [['elements', { fields: ['elements'], kinds: [] }]],
+	417: [['elements', { fields: ['elements'], kinds: [] }]],
+	418: [
 		['argument', { fields: ['argument'], kinds: [] }],
 		['operator', { fields: ['operator'], kinds: [] }]
 	],
-	416: [
+	419: [
 		['operator', { fields: ['operator'], kinds: [] }],
 		['argument', { fields: ['argument'], kinds: [] }]
 	],
-	417: [['parameter', { fields: ['parameter'], kinds: [] }]],
-	418: [
+	420: [['parameter', { fields: ['parameter'], kinds: [] }]],
+	421: [
 		['extendsClause', { fields: ['extends_clause'], kinds: [] }],
 		['implementsClause', { fields: [], kinds: ['implements_clause'] }]
 	],
-	419: [
+	422: [
 		['identifier', { fields: [], kinds: ['identifier', 'type_keyword'] }],
 		['importClauseGroup', { fields: [], kinds: ['import_clause_group'] }]
 	],
-	420: [
+	423: [
 		['type', { fields: ['type'], kinds: [] }],
 		[
 			'content',
@@ -1048,7 +1070,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	421: [
+	424: [
 		['decorators', { fields: ['decorator'], kinds: [] }],
 		[
 			'content',
@@ -1060,6 +1082,7 @@ export const querySlots: QuerySlots = Object.freeze({
 					'class_declaration',
 					'lexical_declaration',
 					'variable_declaration',
+					'using_declaration',
 					'function_signature',
 					'abstract_class_declaration',
 					'module',
@@ -1074,16 +1097,16 @@ export const querySlots: QuerySlots = Object.freeze({
 			}
 		]
 	],
-	422: [['source', { fields: ['source'], kinds: [] }]],
-	423: [
+	425: [['source', { fields: ['source'], kinds: [] }]],
+	426: [
 		['namespaceExport', { fields: [], kinds: ['namespace_export'] }],
 		['source', { fields: ['source'], kinds: [] }]
 	],
-	424: [
+	427: [
 		['exportClause', { fields: [], kinds: ['export_clause'] }],
 		['source', { fields: ['source'], kinds: [] }]
 	],
-	425: [
+	428: [
 		[
 			'content',
 			{
@@ -1094,6 +1117,7 @@ export const querySlots: QuerySlots = Object.freeze({
 					'class_declaration',
 					'lexical_declaration',
 					'variable_declaration',
+					'using_declaration',
 					'function_signature',
 					'abstract_class_declaration',
 					'module',
@@ -1108,43 +1132,43 @@ export const querySlots: QuerySlots = Object.freeze({
 			}
 		]
 	],
-	426: [
+	429: [
 		['value', { fields: ['value'], kinds: [] }],
 		['automaticSemicolon', { fields: [], kinds: ['automatic_semicolon', 'semi'] }]
 	],
-	427: [
+	430: [
 		['name', { fields: ['name'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }],
 		['value', { fields: ['value'], kinds: [] }]
 	],
-	428: [
+	431: [
 		['name', { fields: ['name'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }]
 	],
-	431: [
+	434: [
 		['left', { fields: ['left'], kinds: [] }],
 		['operator', { fields: ['operator'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }]
 	],
-	432: [
+	435: [
 		['left', { fields: ['left'], kinds: [] }],
 		['value', { fields: ['value'], kinds: [] }],
 		['operator', { fields: ['operator'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }]
 	],
-	433: [
+	436: [
 		['kind', { fields: ['kind'], kinds: [] }],
 		['left', { fields: ['left'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }],
 		['operator', { fields: ['operator'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }]
 	],
-	459: [['content', { fields: ['content'], kinds: [] }]],
-	461: [['content', { fields: ['content'], kinds: [] }]],
-	462: [['content', { fields: ['content'], kinds: [] }]],
 	463: [['content', { fields: ['content'], kinds: [] }]],
-	464: [['content', { fields: ['content'], kinds: [] }]],
-	466: [['content', { fields: ['content'], kinds: [] }]]
+	465: [['content', { fields: ['content'], kinds: [] }]],
+	466: [['content', { fields: ['content'], kinds: [] }]],
+	467: [['content', { fields: ['content'], kinds: [] }]],
+	468: [['content', { fields: ['content'], kinds: [] }]],
+	470: [['content', { fields: ['content'], kinds: [] }]]
 });
 
 export const { isNode } = bindRuntime<TypescriptTypeMap>();

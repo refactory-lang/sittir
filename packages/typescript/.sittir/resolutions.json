@@ -1,5 +1,5 @@
 {
-	"grammarHash": "14589b023036ecc73d36a8c44a4cafd168df28df2bd35c724b905d3773330497",
+	"grammarHash": "2087379308e1e363d5dcade73a137d58be13370091cddb8571db240e50d00d3b",
 	"resolutions": [
 		{
 			"resolution": {
@@ -174,6 +174,34 @@
 					"primary_expression",
 					"arrow_function",
 					"arrow_function"
+				]
+			}
+		},
+		{
+			"resolution": {
+				"kind": "AddConflict",
+				"symbols": [
+					"primary_expression",
+					"await_expression"
+				]
+			},
+			"step": "upstream-declared",
+			"sourceChains": [
+				[
+					"primary_expression"
+				],
+				[
+					"await_expression"
+				]
+			],
+			"conflict": {
+				"symbolSequence": [
+					"'await'"
+				],
+				"lookahead": "'('",
+				"interpretations": [
+					"primary_expression",
+					"await_expression"
 				]
 			}
 		},
@@ -397,6 +425,40 @@
 			"resolution": {
 				"kind": "AddConflict",
 				"symbols": [
+					"primary_expression",
+					"await_expression",
+					"_property_name"
+				]
+			},
+			"step": "upstream-declared",
+			"sourceChains": [
+				[
+					"primary_expression"
+				],
+				[
+					"await_expression"
+				],
+				[
+					"_property_name"
+				]
+			],
+			"conflict": {
+				"symbolSequence": [
+					"'{'",
+					"'await'"
+				],
+				"lookahead": "'('",
+				"interpretations": [
+					"primary_expression",
+					"await_expression",
+					"_property_name"
+				]
+			}
+		},
+		{
+			"resolution": {
+				"kind": "AddConflict",
+				"symbols": [
 					"binary_expression",
 					"unary_expression",
 					"instantiation_expression",
@@ -430,6 +492,66 @@
 					"instantiation_expression",
 					"call_expression_call",
 					"unary_expression"
+				]
+			}
+		},
+		{
+			"resolution": {
+				"kind": "AddConflict",
+				"symbols": [
+					"_lhs_expression",
+					"variable_declarator_plain"
+				]
+			},
+			"step": "default",
+			"sourceChains": [
+				[
+					"_lhs_expression"
+				],
+				[
+					"variable_declarator_plain",
+					"variable_declarator"
+				]
+			],
+			"conflict": {
+				"symbolSequence": [
+					"'using'",
+					"identifier"
+				],
+				"lookahead": "'='",
+				"interpretations": [
+					"_lhs_expression",
+					"variable_declarator_plain"
+				]
+			}
+		},
+		{
+			"resolution": {
+				"kind": "AddConflict",
+				"symbols": [
+					"primary_expression",
+					"variable_declarator_definite"
+				]
+			},
+			"step": "default",
+			"sourceChains": [
+				[
+					"primary_expression"
+				],
+				[
+					"variable_declarator_definite",
+					"variable_declarator"
+				]
+			],
+			"conflict": {
+				"symbolSequence": [
+					"'using'",
+					"identifier"
+				],
+				"lookahead": "'!'",
+				"interpretations": [
+					"primary_expression",
+					"variable_declarator_definite"
 				]
 			}
 		},
@@ -524,28 +646,28 @@
 			"resolution": {
 				"kind": "AddConflict",
 				"symbols": [
-					"array",
-					"array_pattern"
+					"assignment_expression",
+					"using_declaration_arm"
 				]
 			},
-			"step": "upstream-declared",
+			"step": "default",
 			"sourceChains": [
 				[
-					"array"
+					"assignment_expression"
 				],
 				[
-					"array_pattern"
+					"using_declaration_arm"
 				]
 			],
 			"conflict": {
 				"symbolSequence": [
-					"'['",
-					"','"
+					"'await'",
+					"'using'"
 				],
-				"lookahead": "','",
+				"lookahead": "'{'",
 				"interpretations": [
-					"array_repeat1",
-					"array_pattern_repeat1"
+					"assignment_expression",
+					"using_declaration_arm"
 				]
 			}
 		},
@@ -623,6 +745,35 @@
 			"resolution": {
 				"kind": "AddConflict",
 				"symbols": [
+					"array",
+					"array_pattern"
+				]
+			},
+			"step": "upstream-declared",
+			"sourceChains": [
+				[
+					"array"
+				],
+				[
+					"array_pattern"
+				]
+			],
+			"conflict": {
+				"symbolSequence": [
+					"'['",
+					"','"
+				],
+				"lookahead": "','",
+				"interpretations": [
+					"array_repeat1",
+					"array_pattern_repeat1"
+				]
+			}
+		},
+		{
+			"resolution": {
+				"kind": "AddConflict",
+				"symbols": [
 					"primary_type",
 					"type_parameter"
 				]
@@ -645,6 +796,38 @@
 				"interpretations": [
 					"primary_type",
 					"type_parameter"
+				]
+			}
+		},
+		{
+			"resolution": {
+				"kind": "AddConflict",
+				"symbols": [
+					"_lhs_expression",
+					"for_header_let_const_kind"
+				]
+			},
+			"step": "default",
+			"sourceChains": [
+				[
+					"_lhs_expression"
+				],
+				[
+					"for_header_let_const_kind",
+					"_for_header"
+				]
+			],
+			"conflict": {
+				"symbolSequence": [
+					"'for'",
+					"'('",
+					"'let'"
+				],
+				"lookahead": "'of'",
+				"interpretations": [
+					"_lhs_expression",
+					"for_header_let_const_kind",
+					"for_header_let_const_kind"
 				]
 			}
 		},
@@ -1232,6 +1415,38 @@
 				"interpretations": [
 					"array",
 					"computed_property_name"
+				]
+			}
+		},
+		{
+			"resolution": {
+				"kind": "AddConflict",
+				"symbols": [
+					"primary_expression",
+					"for_header_arm3"
+				]
+			},
+			"step": "upstream-declared",
+			"sourceChains": [
+				[
+					"primary_expression"
+				],
+				[
+					"for_header_arm3",
+					"_for_header"
+				]
+			],
+			"conflict": {
+				"symbolSequence": [
+					"'for'",
+					"'('",
+					"'using'",
+					"identifier"
+				],
+				"lookahead": "'in'",
+				"interpretations": [
+					"primary_expression",
+					"for_header_arm3"
 				]
 			}
 		},

@@ -10,6 +10,7 @@ overrides:
   js-yaml@4: ^4.3.1
   nanoid@3: ^3.3.18
   postcss@8: ^8.5.23
+  tree-sitter-typescript>tree-sitter-javascript: 0.25.0
 
 importers:
 
@@ -2397,14 +2398,6 @@ packages:
       tree-sitter:
         optional: true
 
-  tree-sitter-javascript@0.23.1:
-    resolution: {integrity: sha512-/bnhbrTD9frUYHQTiYnPcxyHORIw157ERBa6dqzaKxvR/x3PC4Yzd+D1pZIMS6zNg2v3a8BZ0oK7jHqsQo9fWA==}
-    peerDependencies:
-      tree-sitter: ^0.21.1
-    peerDependenciesMeta:
-      tree-sitter:
-        optional: true
-
   tree-sitter-javascript@0.25.0:
     resolution: {integrity: sha512-1fCbmzAskZkxcZzN41sFZ2br2iqTYP3tKls1b/HKGNPQUVOpsUxpmGxdN/wMqAk3jYZnYBR1dd/y/0avMeU7dw==}
     peerDependencies:
@@ -4334,11 +4327,6 @@ snapshots:
       node-addon-api: 8.7.0
       node-gyp-build: 4.8.4
 
-  tree-sitter-javascript@0.23.1:
-    dependencies:
-      node-addon-api: 8.7.0
-      node-gyp-build: 4.8.4
-
   tree-sitter-javascript@0.25.0:
     dependencies:
       node-addon-api: 8.7.0
@@ -4372,7 +4360,7 @@ snapshots:
     dependencies:
       node-addon-api: 8.7.0
       node-gyp-build: 4.8.4
-      tree-sitter-javascript: 0.23.1
+      tree-sitter-javascript: 0.25.0
 
   tree-sitter@0.22.4:
     dependencies:

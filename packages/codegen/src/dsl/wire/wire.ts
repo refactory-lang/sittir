@@ -1207,6 +1207,7 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 		t === 'PREC_LEFT' ||
 		t === 'PREC_RIGHT' ||
 		t === 'PREC_DYNAMIC' ||
+		t === 'RESERVED' ||
 		t === 'TOKEN'
 	) {
 		const newContent = replaceInBodyRt(r.content, candidates, automatic);
@@ -1264,6 +1265,7 @@ function rewriteVisibleExternalRefsRt(rule: unknown, hiddenToVisible: ReadonlyMa
 		t === 'PREC_LEFT' ||
 		t === 'PREC_RIGHT' ||
 		t === 'PREC_DYNAMIC' ||
+		t === 'RESERVED' ||
 		t === 'TOKEN' ||
 		t === 'ALIAS'
 	) {

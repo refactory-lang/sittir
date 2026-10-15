@@ -605,6 +605,24 @@ export default sittirGrammar(base, {
 			)
 		})),
 
+		decorator_member_expression: reauthored(
+			'rejects-valid-syntax',
+			{
+				text: '@(super.decorate) method() {}',
+				form: ['super', '.', { symbol: 'identifier' }],
+				kind: 'decorator_member_expression'
+			},
+			($) =>
+				prec(
+					'member',
+					seq(
+						field('object', choice($.identifier, $.super, alias($.decorator_member_expression, $.member_expression))),
+						'.',
+						field('property', alias($.identifier, $.property_identifier))
+					)
+				)
+		),
+
 		export_statement: reauthored(
 			'rejects-valid-syntax',
 			{

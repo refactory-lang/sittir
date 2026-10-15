@@ -22,6 +22,7 @@ import { runToFixpoint } from './fixpoint.ts';
 import { attributeBuilder, buildOptional, overlaySeq } from '../dsl/builders.ts';
 import { withId, withKindFacts, withAttrsFrom, sharedArmAttrs, absorbIds, structuralKey } from '../dsl/rule-attrs.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
+import { makeRuleMetadata, readRuleMetadata } from '../dsl/rule-metadata.ts';
 
 function applySelfReferentialFold(ownName: string, rule: Rule<'link'>): Rule<'link'> {
 	if (rule.type !== CHOICE) return rule;
@@ -68,8 +69,12 @@ function construct(node: Input): Output {
 			return b.repeat1(withSeparator(rebuild(node.content), node.separator));
 		case FIELD:
 			return withKindFacts(b.field(node.name, rebuild(node.content)), node);
-		case ALIAS:
-			return b.alias(rebuild(node.content), node.named ? { ...b.symbol(node.value), kindId: node.kindId } : node.value);
+		case ALIAS: {
+			const aliased = b.alias(rebuild(node.content), node.named ? { ...b.symbol(node.value), kindId: node.kindId } : node.value);
+			const reservedWordsets = readRuleMetadata(node.metadata)?.reservedWordsets;
+			if (reservedWordsets === undefined) return aliased;
+			return { ...aliased, metadata: makeRuleMetadata({ ...readRuleMetadata(aliased.metadata), reservedWordsets }) };
+		}
 		case TOKEN:
 			return node.immediate ? b.token.immediate(rebuild(node.content)) : b.token(rebuild(node.content));
 		case STRING:

@@ -319,12 +319,16 @@ const SOURCE_KEYS: ReadonlySet<string> = new Set(['$treeHandle', '$span', '$sour
 function rebuildChildren(
 	node: Record<string, unknown>,
 	build: (node: Record<string, unknown>) => unknown,
-	sides: (node: ReadNodeLike, rebuild: (read: unknown) => unknown) => NodeTrivia | undefined
+	sides: (node: ReadNodeLike, rebuild: (read: unknown) => unknown) => NodeTrivia | undefined,
+	takesText: (node: Record<string, unknown>) => boolean = () => false
 ): Record<string, unknown> {
 	const rebuild = (value: unknown): unknown => {
 		if (Array.isArray(value)) return value.map(rebuild);
 		if (typeof value !== 'object' || value === null) return value;
-		const data = rebuildChildren(value as Record<string, unknown>, build, sides);
+		if (isComparableNode(value) && takesText(value as Record<string, unknown>)) {
+			return build(value as Record<string, unknown>) ?? value;
+		}
+		const data = rebuildChildren(value as Record<string, unknown>, build, sides, takesText);
 		if (!isComparableNode(value)) return data;
 		return build(data) ?? data;
 	};
@@ -722,7 +726,11 @@ export async function validateFactoryStorage(
 						rebuildChildren(
 							referenceData as unknown as Record<string, unknown>,
 							buildInner,
-							(read, rebuild) => tableSides(read, handle, rebuild)
+							(read, rebuild) => tableSides(read, handle, rebuild),
+							(node) => {
+								const name = typeof node.$type === 'number' ? kindNameFromId?.(node.$type) : undefined;
+								return name !== undefined && factoryShapes[name] === 'text';
+							}
 						) as unknown as AnyUntypedNode,
 						kind,
 						node1?.type,

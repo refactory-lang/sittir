@@ -49,6 +49,7 @@ import {
 	orDefault,
 	rejectBareText,
 	rejectKeywordText,
+	rejectReservedText,
 	unaffixed
 } from '@sittir/common/utils';
 
@@ -58,6 +59,46 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 	}
 }
 
+const _reservedWordList_buildIdentifier = [
+	'break',
+	'case',
+	'catch',
+	'class',
+	'const',
+	'continue',
+	'debugger',
+	'default',
+	'delete',
+	'do',
+	'else',
+	'export',
+	'extends',
+	'false',
+	'finally',
+	'for',
+	'function',
+	'if',
+	'import',
+	'in',
+	'instanceof',
+	'new',
+	'null',
+	'return',
+	'super',
+	'switch',
+	'this',
+	'throw',
+	'true',
+	'try',
+	'typeof',
+	'var',
+	'void',
+	'while',
+	'with'
+] as const;
+type _ReservedWord_buildIdentifier = (typeof _reservedWordList_buildIdentifier)[number];
+const _reservedWords_buildIdentifier: ReadonlySet<string> = new Set(_reservedWordList_buildIdentifier);
+const _reservedWordset_properties: ReadonlySet<string> = new Set<string>([]);
 const _leafRe_buildUnescapedDoubleStringFragment = /^(?:(?:[^"\\\r\n]+))$/u;
 const _leafRe_buildUnescapedSingleStringFragment = /^(?:(?:[^'\\\r\n]+))$/u;
 const _leafRe_buildRegexPattern = /^(?:(?:(?:\[(?:(?:\\(?:.)|(?:[^\]\n\\])))*\]|\\(?:.)|(?:[^/\\[\n])))+)$/u;
@@ -170,8 +211,19 @@ export function buildHashBangLine(input: string, affix: boolean = true): T.HashB
 	return node as unknown as T.HashBangLine.Bound;
 }
 
-export function buildNamespaceExport(value: Admit<T.Identifier | T.String>): T.NamespaceExport.Bound {
-	const _module_export_name = rejectBareText(value, 'NamespaceExport.moduleExportName', 'buildIdentifier(…)');
+export function buildNamespaceExport(
+	value: Admit<T.Identifier | T.String | TSKindId.DefaultKeyword>
+): T.NamespaceExport.Bound {
+	const _module_export_name = rejectKeywordText(
+		rejectBareText(
+			kindIdStorage<NonNullable<T.NamespaceExport['_module_export_name']>>(value),
+			'NamespaceExport.moduleExportName',
+			'buildIdentifier(…)'
+		),
+		'NamespaceExport.moduleExportName',
+		TSKindId.Identifier,
+		['default']
+	);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NamespaceExport as const,
@@ -179,7 +231,7 @@ export function buildNamespaceExport(value: Admit<T.Identifier | T.String>): T.N
 		$named: true as const,
 		_module_export_name,
 		$with: {
-			moduleExportName: (value: Admit<T.Identifier | T.String>) =>
+			moduleExportName: (value: Admit<NonNullable<T.Identifier | T.String | TSKindId.DefaultKeyword>>) =>
 				rebuilt(node, handle, () => buildNamespaceExport(value))
 		},
 		moduleExportName: () => hydrateStoredSlot(node, '_module_export_name'),
@@ -197,10 +249,10 @@ export function buildExportClause(): T.EmptyExportClause;
 export function buildExportClause(value?: Admit<T.ExportSpecifiers>): ReturnType<typeof _buildExportClause>;
 export function buildExportClause(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String>>
+	...elements: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>
 ): ReturnType<typeof _buildExportClause>;
 export function buildExportClause(
-	...elements: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String>>
+	...elements: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>
 ): ReturnType<typeof _buildExportClause>;
 export function buildExportClause(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -271,8 +323,26 @@ export function buildExportSpecifier(config: T.ExportSpecifier.Config): T.Export
 		'ExportSpecifier.exportKind',
 		'a kind id'
 	);
-	const _name = rejectBareText(config.name, 'ExportSpecifier.name', 'buildIdentifier(…)');
-	const _alias = rejectBareText(config.alias, 'ExportSpecifier.alias', 'buildIdentifier(…)');
+	const _name = rejectKeywordText(
+		rejectBareText(
+			kindIdStorage<NonNullable<T.ExportSpecifier['_name']>>(config.name),
+			'ExportSpecifier.name',
+			'buildIdentifier(…)'
+		),
+		'ExportSpecifier.name',
+		TSKindId.Identifier,
+		['default']
+	);
+	const _alias = rejectKeywordText(
+		rejectBareText(
+			kindIdStorage<NonNullable<T.ExportSpecifier['_alias']>>(config.alias),
+			'ExportSpecifier.alias',
+			'buildIdentifier(…)'
+		),
+		'ExportSpecifier.alias',
+		TSKindId.Identifier,
+		['default']
+	);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExportSpecifier as const,
@@ -284,9 +354,9 @@ export function buildExportSpecifier(config: T.ExportSpecifier.Config): T.Export
 		$with: {
 			exportKind: (value?: Admit<NonNullable<T.ExportSpecifier.Config>['exportKind']>) =>
 				rebuilt(node, handle, () => buildExportSpecifier({ ...config, exportKind: value })),
-			name: (value: Admit<T.Identifier | T.String>) =>
+			name: (value: Admit<NonNullable<T.ExportSpecifier.Config>['name']>) =>
 				rebuilt(node, handle, () => buildExportSpecifier({ ...config, name: value })),
-			alias: (value?: Admit<T.Identifier | T.String>) =>
+			alias: (value?: Admit<NonNullable<T.ExportSpecifier.Config>['alias']>) =>
 				rebuilt(node, handle, () => buildExportSpecifier({ ...config, alias: value }))
 		},
 		exportKind: () => _export_kind,
@@ -648,6 +718,55 @@ export function buildLexicalDeclaration(
 	return node as unknown as T.LexicalDeclaration.Bound;
 }
 
+export function buildUsingDeclaration(
+	config: T.UsingDeclaration.Config,
+	options?: T.UsingDeclaration.Options
+): T.UsingDeclaration.Bound {
+	const _kind = rejectBareText(
+		kindIdStorage<NonNullable<T.UsingDeclaration['_kind']>>(config.kind),
+		'UsingDeclaration.kind',
+		'a kind id'
+	);
+	const _variable_declarator = rejectBareText(
+		config.variableDeclarator,
+		'UsingDeclaration.variableDeclarator',
+		'a built VariableDeclarator'
+	);
+	const _automatic_semicolon = coerceKindEnumStorage<NonNullable<T.UsingDeclaration['_automatic_semicolon']>>(
+		options?.automaticSemicolon,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.UsingDeclaration as const,
+		$source: 2 as const,
+		$named: true as const,
+		_kind,
+		_variable_declarator,
+		_automatic_semicolon,
+		$with: {
+			kind: (value: Admit<NonNullable<T.UsingDeclaration.Config>['kind']>) =>
+				rebuilt(node, handle, () => buildUsingDeclaration({ ...config, kind: value }, options)),
+			variableDeclarators: (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () =>
+					buildUsingDeclaration({ ...config, variableDeclarator: restItems('variableDeclarators', values) }, options)
+				),
+			automaticSemicolon: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildUsingDeclaration(config, { ...options, automaticSemicolon: spelling }))
+		},
+		kind: () => _kind,
+		variableDeclarators: () => hydrateStoredSlots(node, '_variable_declarator'),
+		automaticSemicolon: () => _automatic_semicolon,
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.UsingDeclaration.Bound;
+}
+
 export function buildStatementBlock(): T.EmptyStatementBlock;
 export function buildStatementBlock(...children: Admit<T.Statement[]>): T.StatementBlock.Bound;
 export function buildStatementBlock(
@@ -845,7 +964,11 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 
 export function buildForInStatement(config: T.ForInStatement.Config): T.ForInStatement.Bound {
 	const _await = coerceBooleanKeywordStorage(rejectBareText(config.await, 'ForInStatement.await', 'a boolean'));
-	const _for_header = rejectBareText(config.forHeader, 'ForInStatement.forHeader', 'a built ForHeader');
+	const _for_header = rejectBareText(
+		config.forHeader,
+		'ForInStatement.forHeader',
+		'a built ForHeaderLhs / ForHeaderVarKind / ForHeaderLetConstKind / ForHeaderArm3'
+	);
 	const _body = rejectBareText(
 		kindIdStorage<NonNullable<T.ForInStatement['_body']>>(config.body),
 		'ForInStatement.body',
@@ -862,7 +985,7 @@ export function buildForInStatement(config: T.ForInStatement.Config): T.ForInSta
 		$with: {
 			await: (value?: Admit<NonNullable<T.ForInStatement.Config>['await']>) =>
 				rebuilt(node, handle, () => buildForInStatement({ ...config, await: value })),
-			forHeader: (value: Admit<T.ForHeader>) =>
+			forHeader: (value: Admit<T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind | T.ForHeaderArm3>) =>
 				rebuilt(node, handle, () => buildForInStatement({ ...config, forHeader: value })),
 			body: (value: Admit<NonNullable<T.ForInStatement.Config>['body']>) =>
 				rebuilt(node, handle, () => buildForInStatement({ ...config, body: value }))
@@ -1048,6 +1171,7 @@ export function buildBreakStatement(
 		| TSKindId.GetKeyword
 		| TSKindId.SetKeyword
 		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
 		| TSKindId.StaticKeyword
 		| TSKindId.LetKeyword
 	>
@@ -1077,7 +1201,7 @@ function _buildBreakStatement(
 		rejectBareText(value, 'BreakStatement.label', 'a built StatementIdentifier'),
 		[
 			[
-				[1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50],
+				[1, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53],
 				(v: unknown) => buildStatementIdentifier(v as never)
 			]
 		]
@@ -1138,6 +1262,7 @@ export function buildContinueStatement(
 		| TSKindId.GetKeyword
 		| TSKindId.SetKeyword
 		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
 		| TSKindId.StaticKeyword
 		| TSKindId.LetKeyword
 	>
@@ -1170,7 +1295,7 @@ function _buildContinueStatement(
 		rejectBareText(value, 'ContinueStatement.label', 'a built StatementIdentifier'),
 		[
 			[
-				[1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50],
+				[1, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53],
 				(v: unknown) => buildStatementIdentifier(v as never)
 			]
 		]
@@ -1619,6 +1744,7 @@ export function buildObject(
 					| TSKindId.GetKeyword
 					| TSKindId.SetKeyword
 					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
 					| TSKindId.StaticKeyword
 					| TSKindId.LetKeyword
 			  )
@@ -1654,6 +1780,7 @@ export function buildObject(
 					| TSKindId.GetKeyword
 					| TSKindId.SetKeyword
 					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
 					| TSKindId.StaticKeyword
 					| TSKindId.LetKeyword
 			  )
@@ -1703,6 +1830,7 @@ export function buildObject(
 							| TSKindId.GetKeyword
 							| TSKindId.SetKeyword
 							| TSKindId.AsyncKeyword
+							| TSKindId.AwaitKeyword
 							| TSKindId.StaticKeyword
 							| TSKindId.LetKeyword
 					  )
@@ -1751,6 +1879,7 @@ export function buildObjectPattern(
 					| TSKindId.GetKeyword
 					| TSKindId.SetKeyword
 					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
 					| TSKindId.StaticKeyword
 					| TSKindId.LetKeyword
 			  )
@@ -1786,6 +1915,7 @@ export function buildObjectPattern(
 					| TSKindId.GetKeyword
 					| TSKindId.SetKeyword
 					| TSKindId.AsyncKeyword
+					| TSKindId.AwaitKeyword
 					| TSKindId.StaticKeyword
 					| TSKindId.LetKeyword
 			  )
@@ -1835,6 +1965,7 @@ export function buildObjectPattern(
 							| TSKindId.GetKeyword
 							| TSKindId.SetKeyword
 							| TSKindId.AsyncKeyword
+							| TSKindId.AwaitKeyword
 							| TSKindId.StaticKeyword
 							| TSKindId.LetKeyword
 					  )
@@ -1982,10 +2113,15 @@ export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPa
 export function buildNestedIdentifier(config: T.NestedIdentifier.Config): T.NestedIdentifier.Bound {
 	const _object = rejectBareText(config.object, 'NestedIdentifier.object', 'buildIdentifier(…)');
 	const _property = admitAliasContent<NonNullable<T.NestedIdentifier['_property']>>(
-		rejectBareText(config.property, 'NestedIdentifier.property', 'a built PropertyIdentifier'),
+		rejectReservedText(
+			rejectBareText(config.property, 'NestedIdentifier.property', 'a built PropertyIdentifier'),
+			'NestedIdentifier.property',
+			TSKindId.Identifier,
+			_reservedWords_buildIdentifier
+		),
 		[
 			[
-				[1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50],
+				[1, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53],
 				(v: unknown) => buildPropertyIdentifier(v as never)
 			]
 		]
@@ -2626,14 +2762,19 @@ export function buildMemberExpression(config: T.MemberExpression.Config): T.Memb
 		'a kind id'
 	);
 	const _property = admitAliasContent<NonNullable<T.MemberExpression['_property']>>(
-		rejectBareText(
-			config.property,
+		rejectReservedText(
+			rejectBareText(
+				config.property,
+				'MemberExpression.property',
+				'a built PrivatePropertyIdentifier / PropertyIdentifier'
+			),
 			'MemberExpression.property',
-			'a built PrivatePropertyIdentifier / PropertyIdentifier'
+			TSKindId.Identifier,
+			_reservedWordset_properties
 		),
 		[
 			[
-				[1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50],
+				[1, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53],
 				(v: unknown) => buildPropertyIdentifier(v as never)
 			]
 		]
@@ -2736,6 +2877,7 @@ export function buildLhsExpression(
 		| TSKindId.GetKeyword
 		| TSKindId.SetKeyword
 		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
 		| TSKindId.StaticKeyword
 		| TSKindId.LetKeyword
 		| T.ObjectPattern
@@ -2773,6 +2915,7 @@ export function buildLhsExpression(
 			'get',
 			'set',
 			'async',
+			'await',
 			'static',
 			'let'
 		]
@@ -2811,6 +2954,7 @@ export function buildLhsExpression(
 						| TSKindId.GetKeyword
 						| TSKindId.SetKeyword
 						| TSKindId.AsyncKeyword
+						| TSKindId.AwaitKeyword
 						| TSKindId.StaticKeyword
 						| TSKindId.LetKeyword
 						| T.ObjectPattern
@@ -2904,6 +3048,7 @@ export function buildAugmentedAssignmentExpression(
 			'get',
 			'set',
 			'async',
+			'await',
 			'static',
 			'let'
 		]
@@ -3319,7 +3464,30 @@ export function buildRegexFlags(text: string): T.RegexFlags.Bound {
 	return node as unknown as T.RegexFlags.Bound;
 }
 
-export function buildIdentifier(text: string): T.Identifier.Bound {
+export function buildIdentifier<const W extends string>(
+	text: W extends _ReservedWord_buildIdentifier ? never : W
+): T.Identifier.Bound {
+	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
+	if (!_leafRe_buildIdentifier.test(text))
+		throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
+	if (_reservedWords_buildIdentifier.has(text)) throw new Error(`identifier: '${text}' is a reserved word`);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.Identifier as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text,
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.Identifier.Bound;
+}
+
+export function buildIdentifierUnreserved(text: string): T.Identifier.Bound {
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
 	if (!_leafRe_buildIdentifier.test(text))
 		throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
@@ -3337,6 +3505,38 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 		$engine: handle && (() => handle.current)
 	};
 	return node as unknown as T.Identifier.Bound;
+}
+
+const _keywordArms_buildPropertyIdentifier = new Map<string, number>([
+	['declare', TSKindId.DeclareKeyword] as const,
+	['namespace', TSKindId.NamespaceKeyword] as const,
+	['type', TSKindId.TypeKeyword] as const,
+	['public', TSKindId.PublicKeyword] as const,
+	['private', TSKindId.PrivateKeyword] as const,
+	['protected', TSKindId.ProtectedKeyword] as const,
+	['override', TSKindId.OverrideKeyword] as const,
+	['readonly', TSKindId.ReadonlyKeyword] as const,
+	['module', TSKindId.ModuleKeyword] as const,
+	['any', TSKindId.AnyKeyword] as const,
+	['number', TSKindId.NumberKeyword] as const,
+	['boolean', TSKindId.BooleanKeyword] as const,
+	['string', TSKindId.StringKeyword] as const,
+	['symbol', TSKindId.SymbolKeyword] as const,
+	['export', TSKindId.ExportKeyword] as const,
+	['object', TSKindId.ObjectKeyword] as const,
+	['new', TSKindId.NewKeyword] as const,
+	['get', TSKindId.GetKeyword] as const,
+	['set', TSKindId.SetKeyword] as const,
+	['async', TSKindId.AsyncKeyword] as const,
+	['await', TSKindId.AwaitKeyword] as const,
+	['static', TSKindId.StaticKeyword] as const,
+	['let', TSKindId.LetKeyword] as const
+]);
+
+export function buildPropertyIdentifierText(text: string): T.PropertyIdentifier.Bound {
+	return buildPropertyIdentifier(
+		(_keywordArms_buildPropertyIdentifier.get(text) ?? buildIdentifierUnreserved(text)) as never
+	);
 }
 
 export function buildPrivatePropertyIdentifier(content: string, affix?: true): T.PrivatePropertyIdentifier.Bound;
@@ -3440,12 +3640,26 @@ export function buildDecorator(
 export function buildDecoratorMemberExpression(
 	config: T.DecoratorMemberExpression.Config
 ): T.DecoratorMemberExpression.Bound {
-	const _object = rejectBareText(config.object, 'DecoratorMemberExpression.object', 'buildIdentifier(…)');
+	const _object = rejectKeywordText(
+		rejectBareText(
+			kindIdStorage<NonNullable<T.DecoratorMemberExpression['_object']>>(config.object),
+			'DecoratorMemberExpression.object',
+			'buildIdentifier(…)'
+		),
+		'DecoratorMemberExpression.object',
+		TSKindId.Identifier,
+		['super']
+	);
 	const _property = admitAliasContent<NonNullable<T.DecoratorMemberExpression['_property']>>(
-		rejectBareText(config.property, 'DecoratorMemberExpression.property', 'a built PropertyIdentifier'),
+		rejectReservedText(
+			rejectBareText(config.property, 'DecoratorMemberExpression.property', 'a built PropertyIdentifier'),
+			'DecoratorMemberExpression.property',
+			TSKindId.Identifier,
+			_reservedWords_buildIdentifier
+		),
 		[
 			[
-				[1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50],
+				[1, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53],
 				(v: unknown) => buildPropertyIdentifier(v as never)
 			]
 		]
@@ -3458,7 +3672,7 @@ export function buildDecoratorMemberExpression(
 		_object,
 		_property,
 		$with: {
-			object: (value: Admit<T.Identifier | T.DecoratorMemberExpression>) =>
+			object: (value: Admit<NonNullable<T.DecoratorMemberExpression.Config>['object']>) =>
 				rebuilt(node, handle, () => buildDecoratorMemberExpression({ ...config, object: value })),
 			property: (value: Admit<T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildDecoratorMemberExpression({ ...config, property: value }))
@@ -3705,6 +3919,7 @@ export function buildRestPattern(
 		| TSKindId.GetKeyword
 		| TSKindId.SetKeyword
 		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
 		| TSKindId.StaticKeyword
 		| TSKindId.LetKeyword
 		| T.ObjectPattern
@@ -3742,6 +3957,7 @@ export function buildRestPattern(
 			'get',
 			'set',
 			'async',
+			'await',
 			'static',
 			'let'
 		]
@@ -3780,6 +3996,7 @@ export function buildRestPattern(
 						| TSKindId.GetKeyword
 						| TSKindId.SetKeyword
 						| TSKindId.AsyncKeyword
+						| TSKindId.AwaitKeyword
 						| TSKindId.StaticKeyword
 						| TSKindId.LetKeyword
 						| T.ObjectPattern
@@ -3820,10 +4037,15 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config): T.Meth
 		'a kind id'
 	);
 	const _name = admitAliasContent<NonNullable<T.MethodDefinition['_name']>>(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.MethodDefinition['_name']>>(config.name),
+		rejectReservedText(
+			rejectBareText(
+				kindIdStorage<NonNullable<T.MethodDefinition['_name']>>(config.name),
+				'MethodDefinition.name',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			),
 			'MethodDefinition.name',
-			'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			TSKindId.Identifier,
+			_reservedWordset_properties
 		),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
@@ -3929,10 +4151,15 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config): T.Meth
 
 export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 	const _key = admitAliasContent<NonNullable<T.Pair['_key']>>(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.Pair['_key']>>(config.key),
+		rejectReservedText(
+			rejectBareText(
+				kindIdStorage<NonNullable<T.Pair['_key']>>(config.key),
+				'Pair.key',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			),
 			'Pair.key',
-			'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			TSKindId.Identifier,
+			_reservedWordset_properties
 		),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
@@ -3968,10 +4195,15 @@ export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 
 export function buildPairPattern(config: T.PairPattern.Config): T.PairPattern.Bound {
 	const _key = admitAliasContent<NonNullable<T.PairPattern['_key']>>(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.PairPattern['_key']>>(config.key),
+		rejectReservedText(
+			rejectBareText(
+				kindIdStorage<NonNullable<T.PairPattern['_key']>>(config.key),
+				'PairPattern.key',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			),
 			'PairPattern.key',
-			'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			TSKindId.Identifier,
+			_reservedWordset_properties
 		),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
@@ -4054,10 +4286,15 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 		rejectBareText(config.accessor, 'PublicFieldDefinition.accessor', 'a boolean')
 	);
 	const _name = admitAliasContent<NonNullable<T.PublicFieldDefinition['_name']>>(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.PublicFieldDefinition['_name']>>(config.name),
+		rejectReservedText(
+			rejectBareText(
+				kindIdStorage<NonNullable<T.PublicFieldDefinition['_name']>>(config.name),
+				'PublicFieldDefinition.name',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			),
 			'PublicFieldDefinition.name',
-			'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			TSKindId.Identifier,
+			_reservedWordset_properties
 		),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
@@ -4186,10 +4423,15 @@ export function buildMethodSignature(config: T.MethodSignature.Config): T.Method
 		'a kind id'
 	);
 	const _name = admitAliasContent<NonNullable<T.MethodSignature['_name']>>(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.MethodSignature['_name']>>(config.name),
+		rejectReservedText(
+			rejectBareText(
+				kindIdStorage<NonNullable<T.MethodSignature['_name']>>(config.name),
+				'MethodSignature.name',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			),
 			'MethodSignature.name',
-			'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			TSKindId.Identifier,
+			_reservedWordset_properties
 		),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
@@ -4301,10 +4543,15 @@ export function buildAbstractMethodSignature(
 		'a kind id'
 	);
 	const _name = admitAliasContent<NonNullable<T.AbstractMethodSignature['_name']>>(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.AbstractMethodSignature['_name']>>(config.name),
+		rejectReservedText(
+			rejectBareText(
+				kindIdStorage<NonNullable<T.AbstractMethodSignature['_name']>>(config.name),
+				'AbstractMethodSignature.name',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			),
 			'AbstractMethodSignature.name',
-			'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			TSKindId.Identifier,
+			_reservedWordset_properties
 		),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
@@ -5007,7 +5254,7 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 	);
 	const _body = admitAliasContent<NonNullable<T.InterfaceDeclaration['_body']>>(
 		rejectBareText(config.body, 'InterfaceDeclaration.body', 'a built InterfaceBody'),
-		[[[361], (v: unknown) => buildInterfaceBody(v as never)]]
+		[[[362], (v: unknown) => buildInterfaceBody(v as never)]]
 	);
 	const handle = currentHandle();
 	const node = {
@@ -5190,10 +5437,15 @@ function _buildEnumBody(value?: Admit<T.EnumBodyElements>): T.EnumBody.Bound {
 
 export function buildEnumAssignment(config: T.EnumAssignment.Config): T.EnumAssignment.Bound {
 	const _name = admitAliasContent<NonNullable<T.EnumAssignment['_name']>>(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.EnumAssignment['_name']>>(config.name),
+		rejectReservedText(
+			rejectBareText(
+				kindIdStorage<NonNullable<T.EnumAssignment['_name']>>(config.name),
+				'EnumAssignment.name',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			),
 			'EnumAssignment.name',
-			'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			TSKindId.Identifier,
+			_reservedWordset_properties
 		),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
@@ -5559,14 +5811,19 @@ export function buildTypeQueryMemberExpressionInTypeAnnotation(
 		'a built TypeQueryMemberExpressionInTypeAnnotation / TypeQueryCallExpressionInTypeAnnotation'
 	);
 	const _property = admitAliasContent<NonNullable<T.TypeQueryMemberExpressionInTypeAnnotation['_property']>>(
-		rejectBareText(
-			config.property,
+		rejectReservedText(
+			rejectBareText(
+				config.property,
+				'TypeQueryMemberExpressionInTypeAnnotation.property',
+				'a built PrivatePropertyIdentifier / PropertyIdentifier'
+			),
 			'TypeQueryMemberExpressionInTypeAnnotation.property',
-			'a built PrivatePropertyIdentifier / PropertyIdentifier'
+			TSKindId.Identifier,
+			_reservedWords_buildIdentifier
 		),
 		[
 			[
-				[1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50],
+				[1, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53],
 				(v: unknown) => buildPropertyIdentifier(v as never)
 			]
 		]
@@ -6181,14 +6438,19 @@ export function buildTypeQueryMemberExpression(
 		'a kind id'
 	);
 	const _property = admitAliasContent<NonNullable<T.TypeQueryMemberExpression['_property']>>(
-		rejectBareText(
-			config.property,
+		rejectReservedText(
+			rejectBareText(
+				config.property,
+				'TypeQueryMemberExpression.property',
+				'a built PrivatePropertyIdentifier / PropertyIdentifier'
+			),
 			'TypeQueryMemberExpression.property',
-			'a built PrivatePropertyIdentifier / PropertyIdentifier'
+			TSKindId.Identifier,
+			_reservedWords_buildIdentifier
 		),
 		[
 			[
-				[1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50],
+				[1, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53],
 				(v: unknown) => buildPropertyIdentifier(v as never)
 			]
 		]
@@ -6887,10 +7149,15 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 		rejectBareText(config.readonly, 'PropertySignature.readonly', 'a boolean')
 	);
 	const _name = admitAliasContent<NonNullable<T.PropertySignature['_name']>>(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.PropertySignature['_name']>>(config.name),
+		rejectReservedText(
+			rejectBareText(
+				kindIdStorage<NonNullable<T.PropertySignature['_name']>>(config.name),
+				'PropertySignature.name',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			),
 			'PropertySignature.name',
-			'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			TSKindId.Identifier,
+			_reservedWordset_properties
 		),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
@@ -7435,14 +7702,17 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 }
 
 export function buildExportSpecifiers(
-	...elements: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String>>
+	...elements: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>
 ): ReturnType<typeof _buildExportSpecifiers>;
 export function buildExportSpecifiers(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String>>
+	...elements: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>
 ): ReturnType<typeof _buildExportSpecifiers>;
 export function buildExportSpecifiers(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.ExportSpecifier | T.Identifier | T.String>)[]
+	...args: (
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
+		| Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>
+	)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -7452,12 +7722,12 @@ export function buildExportSpecifiers(
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		Admit<T.ExportSpecifier | T.Identifier | T.String>
+		Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>
 	>;
 	return _buildExportSpecifiers(elements, options);
 }
 function _buildExportSpecifiers(
-	elements: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String>>,
+	elements: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ExportSpecifiers.Bound {
 	_assertNonEmpty(elements, 'export_specifiers.elements');
@@ -7479,7 +7749,7 @@ function _buildExportSpecifiers(
 		_item,
 		_delimiter,
 		$with: {
-			items: (...vs: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String>>) =>
+			items: (...vs: NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>) =>
 				rebuilt(node, handle, () => buildExportSpecifiers(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildExportSpecifiers({ ...options, delimiter: v }, ...elements))
@@ -7570,6 +7840,72 @@ function _buildImportSpecifiers(
 	return node as unknown as T.ImportSpecifiers.Bound;
 }
 
+export function buildForHeaderArm3(config: T.ForHeaderArm3.Config): T.ForHeaderArm3.Bound {
+	const _kind = rejectBareText(
+		kindIdStorage<NonNullable<T.ForHeaderArm3['_kind']>>(config.kind),
+		'ForHeaderArm3.kind',
+		'a kind id'
+	);
+	const _left = rejectKeywordText(
+		rejectBareText(
+			kindIdStorage<NonNullable<T.ForHeaderArm3['_left']>>(config.left),
+			'ForHeaderArm3.left',
+			'buildIdentifier(…)'
+		),
+		'ForHeaderArm3.left',
+		TSKindId.Identifier,
+		['of']
+	);
+	const _automatic_semicolon = coerceBooleanKeywordStorage(
+		rejectBareText(config.automaticSemicolon, 'ForHeaderArm3.automaticSemicolon', 'a boolean')
+	);
+	const _operator = rejectBareText(
+		kindIdStorage<NonNullable<T.ForHeaderArm3['_operator']>>(config.operator),
+		'ForHeaderArm3.operator',
+		'a kind id'
+	);
+	const _right = rejectBareText(
+		kindIdStorage<NonNullable<T.ForHeaderArm3['_right']>>(config.right),
+		'ForHeaderArm3.right',
+		'a built Expression / SequenceExpression'
+	);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ForHeaderArm3 as const,
+		$source: 2 as const,
+		$named: true as const,
+		_kind,
+		_left,
+		_automatic_semicolon,
+		_operator,
+		_right,
+		$with: {
+			kind: (value: Admit<NonNullable<T.ForHeaderArm3.Config>['kind']>) =>
+				rebuilt(node, handle, () => buildForHeaderArm3({ ...config, kind: value })),
+			left: (value: Admit<NonNullable<T.ForHeaderArm3.Config>['left']>) =>
+				rebuilt(node, handle, () => buildForHeaderArm3({ ...config, left: value })),
+			automaticSemicolon: (value?: Admit<NonNullable<T.ForHeaderArm3.Config>['automaticSemicolon']>) =>
+				rebuilt(node, handle, () => buildForHeaderArm3({ ...config, automaticSemicolon: value })),
+			operator: (value: Admit<NonNullable<T.ForHeaderArm3.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildForHeaderArm3({ ...config, operator: value })),
+			right: (value: Admit<NonNullable<T.ForHeaderArm3.Config>['right']>) =>
+				rebuilt(node, handle, () => buildForHeaderArm3({ ...config, right: value }))
+		},
+		kind: () => _kind,
+		left: () => hydrateStoredSlot(node, '_left'),
+		automaticSemicolon: () => _automatic_semicolon,
+		operator: () => _operator,
+		right: () => hydrateStoredSlot(node, '_right'),
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ForHeaderArm3.Bound;
+}
+
 export function buildFormalParametersElements(
 	...elements: NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>
 ): ReturnType<typeof _buildFormalParametersElements>;
@@ -7657,6 +7993,7 @@ export function buildEnumBodyElementName(
 				| TSKindId.GetKeyword
 				| TSKindId.SetKeyword
 				| TSKindId.AsyncKeyword
+				| TSKindId.AwaitKeyword
 				| TSKindId.StaticKeyword
 				| TSKindId.LetKeyword
 				| T.PrivatePropertyIdentifier
@@ -7668,10 +8005,15 @@ export function buildEnumBodyElementName(
 	>
 ): T.EnumBodyElementName.Bound {
 	const _name = admitAliasContent<NonNullable<T.EnumBodyElementName['_name']>>(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.EnumBodyElementName['_name']>>(value),
+		rejectReservedText(
+			rejectBareText(
+				kindIdStorage<NonNullable<T.EnumBodyElementName['_name']>>(value),
+				'EnumBodyElementName.name',
+				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			),
 			'EnumBodyElementName.name',
-			'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+			TSKindId.Identifier,
+			_reservedWordset_properties
 		),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
@@ -7707,6 +8049,7 @@ export function buildEnumBodyElementName(
 								| TSKindId.GetKeyword
 								| TSKindId.SetKeyword
 								| TSKindId.AsyncKeyword
+								| TSKindId.AwaitKeyword
 								| TSKindId.StaticKeyword
 								| TSKindId.LetKeyword
 								| T.PrivatePropertyIdentifier
@@ -8036,6 +8379,8 @@ export function buildImportClauseGroup(value: Admit<T.NamespaceImport | T.NamedI
 	return node as unknown as T.ImportClauseGroup.Bound;
 }
 
+export const buildUsingDeclarationArm: TSKindId.UsingDeclarationArm = TSKindId.UsingDeclarationArm;
+
 export function buildCatchClauseGroup(config: T.CatchClauseGroup.Config): T.CatchClauseGroup.Bound {
 	const _parameter = rejectBareText(config.parameter, 'CatchClauseGroup.parameter', 'buildIdentifier(…)');
 	const _type = rejectBareText(config.type, 'CatchClauseGroup.type', 'a built TypeAnnotation');
@@ -8123,10 +8468,15 @@ export function buildAmbientDeclarationModule(
 	options?: T.AmbientDeclarationModule.Options
 ): T.AmbientDeclarationModule.Bound {
 	const _name = admitAliasContent<NonNullable<T.AmbientDeclarationModule['_name']>>(
-		rejectBareText(config.name, 'AmbientDeclarationModule.name', 'a built PropertyIdentifier'),
+		rejectReservedText(
+			rejectBareText(config.name, 'AmbientDeclarationModule.name', 'a built PropertyIdentifier'),
+			'AmbientDeclarationModule.name',
+			TSKindId.Identifier,
+			_reservedWords_buildIdentifier
+		),
 		[
 			[
-				[1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50],
+				[1, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53],
 				(v: unknown) => buildPropertyIdentifier(v as never)
 			]
 		]
@@ -9133,6 +9483,7 @@ export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): 
 			'get',
 			'set',
 			'async',
+			'await',
 			'static',
 			'let'
 		]
@@ -9361,7 +9712,7 @@ export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.Im
 		),
 		'ImportSpecifierAs.name',
 		TSKindId.Identifier,
-		['type']
+		['default', 'type']
 	);
 	const _alias = rejectKeywordText(
 		rejectBareText(
@@ -9776,6 +10127,7 @@ export function buildArrowFunctionParameter(
 		| TSKindId.GetKeyword
 		| TSKindId.SetKeyword
 		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
 		| TSKindId.StaticKeyword
 		| TSKindId.LetKeyword
 		| T.Identifier
@@ -9810,6 +10162,7 @@ export function buildArrowFunctionParameter(
 			'get',
 			'set',
 			'async',
+			'await',
 			'static',
 			'let'
 		]
@@ -9844,6 +10197,7 @@ export function buildArrowFunctionParameter(
 						| TSKindId.GetKeyword
 						| TSKindId.SetKeyword
 						| TSKindId.AsyncKeyword
+						| TSKindId.AwaitKeyword
 						| TSKindId.StaticKeyword
 						| TSKindId.LetKeyword
 						| T.Identifier
@@ -10315,7 +10669,16 @@ export function buildForHeaderLhs(config: T.ForHeaderLhs.Config): T.ForHeaderLhs
 }
 
 export function buildForHeaderVarKind(config: T.ForHeaderVarKind.Config): T.ForHeaderVarKind.Bound {
-	const _left = rejectBareText(config.left, 'ForHeaderVarKind.left', 'buildIdentifier(…)');
+	const _left = rejectKeywordText(
+		rejectBareText(
+			kindIdStorage<NonNullable<T.ForHeaderVarKind['_left']>>(config.left),
+			'ForHeaderVarKind.left',
+			'buildIdentifier(…)'
+		),
+		'ForHeaderVarKind.left',
+		TSKindId.Identifier,
+		['of']
+	);
 	const _value = rejectBareText(
 		kindIdStorage<NonNullable<T.ForHeaderVarKind['_value']>>(config.value),
 		'ForHeaderVarKind.value',
@@ -10341,7 +10704,7 @@ export function buildForHeaderVarKind(config: T.ForHeaderVarKind.Config): T.ForH
 		_operator,
 		_right,
 		$with: {
-			left: (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
+			left: (value: Admit<NonNullable<T.ForHeaderVarKind.Config>['left']>) =>
 				rebuilt(node, handle, () => buildForHeaderVarKind({ ...config, left: value })),
 			value: (value?: Admit<NonNullable<T.ForHeaderVarKind.Config>['value']>) =>
 				rebuilt(node, handle, () => buildForHeaderVarKind({ ...config, value: value })),
@@ -10373,7 +10736,16 @@ export function buildForHeaderLetConstKind(
 		'ForHeaderLetConstKind.kind',
 		'a kind id'
 	);
-	const _left = rejectBareText(config.left, 'ForHeaderLetConstKind.left', 'buildIdentifier(…)');
+	const _left = rejectKeywordText(
+		rejectBareText(
+			kindIdStorage<NonNullable<T.ForHeaderLetConstKind['_left']>>(config.left),
+			'ForHeaderLetConstKind.left',
+			'buildIdentifier(…)'
+		),
+		'ForHeaderLetConstKind.left',
+		TSKindId.Identifier,
+		['of']
+	);
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ForHeaderLetConstKind['_terminator']>>(
 		options?.terminator === null ? 0 : options?.terminator,
 		[['\n', TSKindId.AutomaticSemicolon] as const]
@@ -10401,7 +10773,7 @@ export function buildForHeaderLetConstKind(
 		$with: {
 			kind: (value: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['kind']>) =>
 				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, kind: value }, options)),
-			left: (value: Admit<T.Identifier | T.ObjectPattern | T.ArrayPattern>) =>
+			left: (value: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['left']>) =>
 				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, left: value }, options)),
 			operator: (value: Admit<NonNullable<T.ForHeaderLetConstKind.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildForHeaderLetConstKind({ ...config, operator: value }, options)),
@@ -10565,6 +10937,7 @@ export function buildStatementIdentifier(
 		| TSKindId.GetKeyword
 		| TSKindId.SetKeyword
 		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
 		| TSKindId.StaticKeyword
 		| TSKindId.LetKeyword
 	>
@@ -10598,6 +10971,7 @@ export function buildStatementIdentifier(
 			'get',
 			'set',
 			'async',
+			'await',
 			'static',
 			'let'
 		]
@@ -10633,6 +11007,7 @@ export function buildStatementIdentifier(
 						| TSKindId.GetKeyword
 						| TSKindId.SetKeyword
 						| TSKindId.AsyncKeyword
+						| TSKindId.AwaitKeyword
 						| TSKindId.StaticKeyword
 						| TSKindId.LetKeyword
 					>
@@ -10673,6 +11048,7 @@ export function buildShorthandPropertyIdentifier(
 		| TSKindId.GetKeyword
 		| TSKindId.SetKeyword
 		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
 		| TSKindId.StaticKeyword
 		| TSKindId.LetKeyword
 	>
@@ -10706,6 +11082,7 @@ export function buildShorthandPropertyIdentifier(
 			'get',
 			'set',
 			'async',
+			'await',
 			'static',
 			'let'
 		]
@@ -10741,6 +11118,7 @@ export function buildShorthandPropertyIdentifier(
 						| TSKindId.GetKeyword
 						| TSKindId.SetKeyword
 						| TSKindId.AsyncKeyword
+						| TSKindId.AwaitKeyword
 						| TSKindId.StaticKeyword
 						| TSKindId.LetKeyword
 					>
@@ -10781,6 +11159,7 @@ export function buildShorthandPropertyIdentifierPattern(
 		| TSKindId.GetKeyword
 		| TSKindId.SetKeyword
 		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
 		| TSKindId.StaticKeyword
 		| TSKindId.LetKeyword
 	>
@@ -10814,6 +11193,7 @@ export function buildShorthandPropertyIdentifierPattern(
 			'get',
 			'set',
 			'async',
+			'await',
 			'static',
 			'let'
 		]
@@ -10849,6 +11229,7 @@ export function buildShorthandPropertyIdentifierPattern(
 						| TSKindId.GetKeyword
 						| TSKindId.SetKeyword
 						| TSKindId.AsyncKeyword
+						| TSKindId.AwaitKeyword
 						| TSKindId.StaticKeyword
 						| TSKindId.LetKeyword
 					>
@@ -10889,6 +11270,7 @@ export function buildPropertyIdentifier(
 		| TSKindId.GetKeyword
 		| TSKindId.SetKeyword
 		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
 		| TSKindId.StaticKeyword
 		| TSKindId.LetKeyword
 	>
@@ -10922,6 +11304,7 @@ export function buildPropertyIdentifier(
 			'get',
 			'set',
 			'async',
+			'await',
 			'static',
 			'let'
 		]
@@ -10957,6 +11340,7 @@ export function buildPropertyIdentifier(
 						| TSKindId.GetKeyword
 						| TSKindId.SetKeyword
 						| TSKindId.AsyncKeyword
+						| TSKindId.AwaitKeyword
 						| TSKindId.StaticKeyword
 						| TSKindId.LetKeyword
 					>
@@ -11033,6 +11417,7 @@ export type FluentKindMap = {
 	expression_statement: T.ExpressionStatement.Bound;
 	variable_declaration: T.VariableDeclaration.Bound;
 	lexical_declaration: T.LexicalDeclaration.Bound;
+	using_declaration: T.UsingDeclaration.Bound;
 	statement_block: T.StatementBlock.Bound;
 	else_clause: T.ElseClause.Bound;
 	if_statement: T.IfStatement.Bound;
@@ -11190,6 +11575,7 @@ export type FluentKindMap = {
 	function_type: T.FunctionType.Bound;
 	export_specifiers: T.ExportSpecifiers.Bound;
 	import_specifiers: T.ImportSpecifiers.Bound;
+	for_header_arm3: T.ForHeaderArm3.Bound;
 	formal_parameters_elements: T.FormalParametersElements.Bound;
 	enum_body_element_name: T.EnumBodyElementName.Bound;
 	enum_body_elements: T.EnumBodyElements.Bound;
@@ -11197,6 +11583,7 @@ export type FluentKindMap = {
 	type_parameters_elements: T.TypeParametersElements.Bound;
 	tuple_type_members: T.TupleTypeMembers.Bound;
 	import_clause_group: T.ImportClauseGroup.Bound;
+	using_declaration_arm: T.UsingDeclarationArm;
 	catch_clause_group: T.CatchClauseGroup.Bound;
 	ambient_declaration_global: T.AmbientDeclarationGlobal.Bound;
 	ambient_declaration_module: T.AmbientDeclarationModule.Bound;
@@ -11293,6 +11680,7 @@ export const _factoryMap = {
 	expression_statement: buildExpressionStatement,
 	variable_declaration: buildVariableDeclaration,
 	lexical_declaration: buildLexicalDeclaration,
+	using_declaration: buildUsingDeclaration,
 	statement_block: buildStatementBlock,
 	else_clause: buildElseClause,
 	if_statement: buildIfStatement,
@@ -11450,6 +11838,7 @@ export const _factoryMap = {
 	function_type: buildFunctionType,
 	export_specifiers: buildExportSpecifiers,
 	import_specifiers: buildImportSpecifiers,
+	for_header_arm3: buildForHeaderArm3,
 	formal_parameters_elements: buildFormalParametersElements,
 	enum_body_element_name: buildEnumBodyElementName,
 	enum_body_elements: buildEnumBodyElements,
@@ -11457,6 +11846,7 @@ export const _factoryMap = {
 	type_parameters_elements: buildTypeParametersElements,
 	tuple_type_members: buildTupleTypeMembers,
 	import_clause_group: buildImportClauseGroup,
+	using_declaration_arm: buildUsingDeclarationArm,
 	catch_clause_group: buildCatchClauseGroup,
 	ambient_declaration_global: buildAmbientDeclarationGlobal,
 	ambient_declaration_module: buildAmbientDeclarationModule,
@@ -11533,7 +11923,7 @@ export const _factoryMap = {
 	statement_identifier: buildStatementIdentifier,
 	shorthand_property_identifier: buildShorthandPropertyIdentifier,
 	shorthand_property_identifier_pattern: buildShorthandPropertyIdentifierPattern,
-	property_identifier: buildPropertyIdentifier,
+	property_identifier: buildPropertyIdentifierText,
 	type_identifier: buildTypeIdentifier,
 	interface_body: buildInterfaceBody
 } as const;

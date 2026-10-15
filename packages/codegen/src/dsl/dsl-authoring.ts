@@ -17,6 +17,7 @@ import type {
 	PrecLeftRule,
 	PrecRightRule,
 	PrecDynamicRule,
+	ReservedRule,
 	TokenRule,
 	ImmediateTokenRule
 } from '../grammar-shapes/grammar-json.ts';
@@ -71,6 +72,11 @@ interface AuthoringPrec {
 	dynamic<R extends AuthoringRule>(value: number, rule: R): PrecDynamicRule<ToGrammarRule<R>>;
 }
 export const prec = (globalThis as unknown as { prec: unknown }).prec as unknown as AuthoringPrec;
+
+interface AuthoringReserved {
+	<R extends AuthoringRule>(contextName: string, rule: R): ReservedRule<ToGrammarRule<R>>;
+}
+export const reserved = (globalThis as unknown as { reserved: unknown }).reserved as unknown as AuthoringReserved;
 
 interface AuthoringToken {
 	<R extends AuthoringRule>(rule: R): TokenRule<ToGrammarRule<R>>;

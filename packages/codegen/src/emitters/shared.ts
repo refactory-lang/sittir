@@ -139,6 +139,31 @@ export function referencedKinds(nodeMap: NodeMap): Set<string> {
 	return referenced;
 }
 
+export function aliasPatternLeaf(node: AssembledAlias, nodeMap: NodeMap): AssembledPattern | undefined {
+	if (node.slots.length !== 1) return undefined;
+	const kinds = slotKindNames(node.slots[0]!);
+	if (kinds.length !== 1) return undefined;
+	const leaf = nodeMap.nodes.get(kinds[0]!);
+	return leaf instanceof AssembledPattern && leaf.rawFactoryName !== undefined ? leaf : undefined;
+}
+
+export interface UnreservedWordFactory {
+	readonly name: string;
+	readonly leaf: AssembledPattern;
+}
+
+export function unreservedWordFactory(alias: AssembledAlias, nodeMap: NodeMap): UnreservedWordFactory | undefined {
+	const contexts = nodeMap.reservedContexts?.[alias.kind];
+	if (contexts === undefined) return undefined;
+	const leaf = aliasPatternLeaf(alias, nodeMap);
+	if (leaf === undefined || leaf.kind !== nodeMap.word) return undefined;
+	return { name: `${leaf.rawFactoryName}Unreserved`, leaf };
+}
+
+export function placedTextFactoryName(alias: AssembledAlias, nodeMap: NodeMap): string | undefined {
+	return unreservedWordFactory(alias, nodeMap) === undefined ? undefined : `${alias.rawFactoryName}Text`;
+}
+
 export function slotKindNames(slot: { values: readonly NodeOrTerminal[] }): string[] {
 	const out: string[] = [];
 	for (const v of slot.values) {
@@ -956,6 +981,15 @@ export function leadingOptionsOf(node: AssembledNode, nodeMap: NodeMap): Leading
 	return registered.length === 0
 		? undefined
 		: { type: `T.${node.typeName}.Options`, keys: registered.map((slot) => slot.configKey), storageKeys: registered.map((slot) => slot.storageKey) };
+}
+
+export function builderMapShape(
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	options?: { includeTokenText?: boolean }
+): FactoryShape | null {
+	if (node instanceof AssembledAlias && placedTextFactoryName(node, nodeMap) !== undefined) return 'text';
+	return classifyFactoryShape(node, nodeMap, options);
 }
 
 export function classifyFactoryShape(

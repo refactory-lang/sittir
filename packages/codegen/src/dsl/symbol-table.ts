@@ -124,6 +124,7 @@ const LITERAL_WRAPPERS = new Set([
 	'PREC_LEFT',
 	'PREC_RIGHT',
 	'PREC_DYNAMIC',
+	'RESERVED',
 	'OPTIONAL',
 	'REPEAT',
 	'REPEAT1',
@@ -360,7 +361,7 @@ function tokenLexicalPrec(rule: GrammarJsonRule | undefined): number {
 
 function isFixedTextRule(rule: GrammarJsonRule | undefined): boolean {
 	let current = rule;
-	while (current?.type === 'TOKEN' || current?.type === 'IMMEDIATE_TOKEN' || current?.type === 'PREC')
+	while (current?.type === 'TOKEN' || current?.type === 'IMMEDIATE_TOKEN' || current?.type === 'PREC' || current?.type === 'RESERVED')
 		current = current.content;
 	return current?.type === 'STRING';
 }
@@ -590,6 +591,16 @@ export function reservedWordset(
 		else words.push(text);
 	}
 	return { words, nonLiteral };
+}
+
+export function reservedWordsAdmittedIn(
+	reserved: ReservedWordsets | undefined,
+	contexts: readonly string[],
+	entries: readonly KindEntryLike[]
+): readonly string[] {
+	const [first, ...rest] = contexts.map((context) => new Set(reservedWordset(reserved, context, entries).words));
+	if (first === undefined) return [];
+	return [...first].filter((word) => rest.every((set) => set.has(word)));
 }
 
 const visibleTreeNameCounts = new WeakMap<readonly KindEntryLike[], ReadonlyMap<string, number>>();
@@ -864,6 +875,8 @@ function internRule(rule: PredictorRule, resolve: (name: string) => string): Int
 			return withMeta(internRule(rule.content, resolve), (params) => {
 				params.prec = { ...params.prec, [rule.type]: rule.value };
 			});
+		case 'RESERVED':
+			return internRule(rule.content, resolve);
 		case SUPERTYPE:
 		case INDENT:
 		case DEDENT:

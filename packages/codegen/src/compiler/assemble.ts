@@ -354,6 +354,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		word: normalized.word,
 		wordMatcher: normalized.wordMatcher,
 		reserved: normalized.reserved,
+		reservedContexts: normalized.reservedContexts,
 		fileTypes: normalized.fileTypes,
 		externals: normalized.externals,
 		extras: normalized.extras,

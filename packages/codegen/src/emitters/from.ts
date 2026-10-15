@@ -63,6 +63,8 @@ import {
 	resolvesLooseInput,
 	looseElementType,
 	leadingOptionsOf,
+	aliasPatternLeaf,
+	placedTextFactoryName,
 	type LeadingOptions
 } from './shared.ts';
 import {
@@ -1160,8 +1162,11 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 			const pattern = anchoredLeafRegex(leaf.kind, leaf.textPattern);
 			if (pattern === undefined) continue;
 			textChecks.push({ kind, pattern });
+			const placedFactory = placedTextFactoryName(node, nodeMap);
 			registryEntries.push(
-				`  ${JSON.stringify(kind)}: { pattern: /${pattern.source}/${pattern.flags}, factory: (text: string) => ${factory}(F.${leaf.rawFactoryName}(text) as never) },`
+				placedFactory === undefined
+					? `  ${JSON.stringify(kind)}: { pattern: /${pattern.source}/${pattern.flags}, factory: (text: string) => ${factory}(F.${leaf.rawFactoryName}(text) as never) },`
+					: `  ${JSON.stringify(kind)}: { pattern: /${pattern.source}/${pattern.flags}, factory: F.${placedFactory} },`
 			);
 		}
 	}
@@ -1176,14 +1181,6 @@ function rankTextKinds(checks: readonly TextKindCheck[], kindEntries: readonly K
 		return rank;
 	};
 	return [...checks].sort((a, b) => rankOf(a) - rankOf(b));
-}
-
-function aliasPatternLeaf(node: AssembledAlias, nodeMap: NodeMap): AssembledPattern | undefined {
-	if (node.slots.length !== 1) return undefined;
-	const kinds = slotKindNames(node.slots[0]!);
-	if (kinds.length !== 1) return undefined;
-	const leaf = nodeMap.nodes.get(kinds[0]!);
-	return leaf instanceof AssembledPattern && leaf.rawFactoryName !== undefined ? leaf : undefined;
 }
 
 function emitResolveByKindHelper(lines: string[]): void {

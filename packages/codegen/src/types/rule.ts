@@ -108,7 +108,8 @@ export type Rule<Phase extends PhaseName = 'normalize'> =
 	| PrecRule<Phase>
 	| PrecLeftRule<Phase>
 	| PrecRightRule<Phase>
-	| PrecDynamicRule<Phase>;
+	| PrecDynamicRule<Phase>
+	| ReservedRule<Phase>;
 
 export type RenderRule = Rule<'normalize'> & {
 	readonly __renderRule?: never;
@@ -319,6 +320,10 @@ export type TokenRule<Phase extends PhaseName = 'link'> = Phase extends WrapperP
 
 export type ImmediateTokenRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate'
 	? RuleBase<Phase> & { readonly type: 'IMMEDIATE_TOKEN'; readonly content: Rule<Phase> }
+	: never;
+
+export type ReservedRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate'
+	? RuleBase<Phase> & { readonly type: 'RESERVED'; readonly content: Rule<Phase>; readonly context_name: string }
 	: never;
 
 export type PrecRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate'

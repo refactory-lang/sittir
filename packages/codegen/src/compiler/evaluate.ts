@@ -955,6 +955,7 @@ function saveAndInjectDslGlobals(g: Record<string, unknown>): Record<string, unk
 		field,
 		token,
 		prec,
+		reserved: (contextName: string, content: Input) => structuralBuilder.reserved(contextName, coerceToRule(content)),
 		alias,
 		blank,
 		indent: () => structuralBuilder.indent(),

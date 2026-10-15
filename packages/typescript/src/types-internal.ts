@@ -15,11 +15,16 @@ import type {
 	OptionalTupleParameter,
 	OptionalType,
 	RestType,
+	ForHeaderArm3,
+	ForHeaderLhs,
+	ForHeaderVarKind,
+	ForHeaderLetConstKind,
 	PropertyIdentifier,
 	Identifier,
 	Undefined,
 	TypeKeyword,
 	LetKeyword,
+	AwaitKeyword,
 	DeclareKeyword,
 	NamespaceKeyword,
 	PublicKeyword,
@@ -51,6 +56,8 @@ export type * from './types.js';
 
 export type ModuleExportName = Identifier | String;
 
+export type ForHeader = ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind | ForHeaderArm3;
+
 export type Expressions = Expression | SequenceExpression;
 
 export type FormalParameter = RequiredParameter | OptionalParameter;
@@ -78,6 +85,7 @@ export type AugmentedAssignmentLhs =
 	| GetKeyword
 	| SetKeyword
 	| AsyncKeyword
+	| AwaitKeyword
 	| StaticKeyword
 	| LetKeyword
 	| Identifier
@@ -96,6 +104,10 @@ export type TupleTypeMember = TupleParameter | OptionalTupleParameter | Optional
 
 export namespace ModuleExportName {
 	export type Kind = '_module_export_name';
+}
+
+export namespace ForHeader {
+	export type Kind = '_for_header';
 }
 
 export namespace Expressions {
@@ -157,6 +169,7 @@ export interface SubBuilderRowKind {
 	'declaration.lexical': TSKindId.LexicalDeclaration;
 	'declaration.module': TSKindId.Module;
 	'declaration.typeAlias': TSKindId.TypeAliasDeclaration;
+	'declaration.using': TSKindId.UsingDeclaration;
 	'declaration.variable': TSKindId.VariableDeclaration;
 	'enumBodyElement.assignment': TSKindId.EnumAssignment;
 	'enumBodyElement.name': TSKindId.EnumBodyElementName;
@@ -166,9 +179,6 @@ export interface SubBuilderRowKind {
 	'exportStatement.namespaceExport': TSKindId.ExportStatementNamespaceExport;
 	'exportStatementDefault.declaration': TSKindId.ExportStatementDefaultDeclaration;
 	'exportStatementDefault.from': TSKindId.ExportStatementDefaultFrom;
-	'forHeader.letConstKind': TSKindId.ForHeaderLetConstKind;
-	'forHeader.lhs': TSKindId.ForHeaderLhs;
-	'forHeader.varKind': TSKindId.ForHeaderVarKind;
 	'importSpecifier.as': TSKindId.ImportSpecifierAs;
 	'importSpecifier.name': TSKindId.ImportSpecifierName;
 	'indexSignature.colon': TSKindId.IndexSignatureColon;
@@ -215,6 +225,7 @@ export interface SubBuilderRowKind {
 	'statement.declaration.lexical': TSKindId.LexicalDeclaration;
 	'statement.declaration.module': TSKindId.Module;
 	'statement.declaration.typeAlias': TSKindId.TypeAliasDeclaration;
+	'statement.declaration.using': TSKindId.UsingDeclaration;
 	'statement.declaration.variable': TSKindId.VariableDeclaration;
 	'statement.do': TSKindId.DoStatement;
 	'statement.empty': TSKindId.EmptyStatement;
