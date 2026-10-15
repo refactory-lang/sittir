@@ -219,6 +219,11 @@ describe('readTestOf', () => {
 		]);
 	});
 
+	it('leaves out a comparison of an enum member\'s own text its fixed text decides', async () => {
+		expect(await testsOf('((modifier) @access.private (#eq? @access.private "private"))', 'private_keyword')).toEqual([['access.private', []]]);
+		expect(await testsOf('((modifier) @access.private (#eq? @access.private "private"))', 'public_keyword')).toEqual([]);
+	});
+
 	it('refuses a pin on a boolean slot whose text is not the slot\'s keyword, which no node could hold', async () => {
 		await expect(testsOf('(field_def accessor: "readonly") @declaration.property', 'field_def')).rejects.toThrow(
 			/declaration\.property.*accessor.*keyword 'accessor'/

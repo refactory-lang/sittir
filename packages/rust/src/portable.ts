@@ -3450,9 +3450,9 @@ const table: PortableTable = {
 			],
 			exact: false
 		},
-		'literal.boolean': { ids: [TSKindId.FalseKeyword, TSKindId.TrueKeyword], exact: false },
-		'literal.boolean.false': { ids: [TSKindId.FalseKeyword], exact: false },
-		'literal.boolean.true': { ids: [TSKindId.TrueKeyword], exact: false },
+		'literal.boolean': { ids: [TSKindId.FalseKeyword, TSKindId.TrueKeyword], exact: true },
+		'literal.boolean.false': { ids: [TSKindId.FalseKeyword], exact: true },
+		'literal.boolean.true': { ids: [TSKindId.TrueKeyword], exact: true },
 		'literal.character': {
 			ids: [
 				TSKindId.CharLiteral,
@@ -3709,11 +3709,11 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
-		'type.primitive.boolean': { ids: [TSKindId.BoolKeyword], exact: false },
-		'type.primitive.character': { ids: [TSKindId.CharKeyword], exact: false },
-		'type.primitive.floating': { ids: [TSKindId.F32Keyword, TSKindId.F64Keyword], exact: false },
-		'type.primitive.floating.float32': { ids: [TSKindId.F32Keyword], exact: false },
-		'type.primitive.floating.float64': { ids: [TSKindId.F64Keyword], exact: false },
+		'type.primitive.boolean': { ids: [TSKindId.BoolKeyword], exact: true },
+		'type.primitive.character': { ids: [TSKindId.CharKeyword], exact: true },
+		'type.primitive.floating': { ids: [TSKindId.F32Keyword, TSKindId.F64Keyword], exact: true },
+		'type.primitive.floating.float32': { ids: [TSKindId.F32Keyword], exact: true },
+		'type.primitive.floating.float64': { ids: [TSKindId.F64Keyword], exact: true },
 		'type.primitive.integral': {
 			ids: [
 				TSKindId.I128Keyword,
@@ -3729,16 +3729,16 @@ const table: PortableTable = {
 				TSKindId.U8Keyword,
 				TSKindId.UsizeKeyword
 			],
-			exact: false
+			exact: true
 		},
-		'type.primitive.integral.int128': { ids: [TSKindId.I128Keyword, TSKindId.U128Keyword], exact: false },
-		'type.primitive.integral.int16': { ids: [TSKindId.I16Keyword, TSKindId.U16Keyword], exact: false },
-		'type.primitive.integral.int32': { ids: [TSKindId.I32Keyword, TSKindId.U32Keyword], exact: false },
-		'type.primitive.integral.int64': { ids: [TSKindId.I64Keyword, TSKindId.U64Keyword], exact: false },
-		'type.primitive.integral.int8': { ids: [TSKindId.I8Keyword, TSKindId.U8Keyword], exact: false },
-		'type.primitive.integral.size': { ids: [TSKindId.IsizeKeyword, TSKindId.UsizeKeyword], exact: false },
+		'type.primitive.integral.int128': { ids: [TSKindId.I128Keyword, TSKindId.U128Keyword], exact: true },
+		'type.primitive.integral.int16': { ids: [TSKindId.I16Keyword, TSKindId.U16Keyword], exact: true },
+		'type.primitive.integral.int32': { ids: [TSKindId.I32Keyword, TSKindId.U32Keyword], exact: true },
+		'type.primitive.integral.int64': { ids: [TSKindId.I64Keyword, TSKindId.U64Keyword], exact: true },
+		'type.primitive.integral.int8': { ids: [TSKindId.I8Keyword, TSKindId.U8Keyword], exact: true },
+		'type.primitive.integral.size': { ids: [TSKindId.IsizeKeyword, TSKindId.UsizeKeyword], exact: true },
 		'type.primitive.never': { ids: [TSKindId.NeverType], exact: true },
-		'type.primitive.string': { ids: [TSKindId.StrKeyword], exact: false },
+		'type.primitive.string': { ids: [TSKindId.StrKeyword], exact: true },
 		'type.qualified': { ids: [TSKindId.QualifiedType], exact: true },
 		'type.reference': { ids: [TSKindId.ReferenceType], exact: true },
 		'type.tuple': { ids: [TSKindId.TupleType], exact: true },
@@ -3940,11 +3940,7 @@ const table: PortableTable = {
 		[TSKindId.BlockCommentRegular]: [{ path: 'comment.text', within: [], test: [] }],
 		[TSKindId.BlockKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.BoolKeyword]: [
-			{
-				path: 'type.primitive.boolean',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'bool', self: true } }]
-			},
+			{ path: 'type.primitive.boolean', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.BoundedType]: [{ path: 'type.bounded', within: [], test: [] }],
@@ -3968,11 +3964,7 @@ const table: PortableTable = {
 			{ path: 'pattern.as', within: [], test: [] }
 		],
 		[TSKindId.CharKeyword]: [
-			{
-				path: 'type.primitive.character',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'char', self: true } }]
-			},
+			{ path: 'type.primitive.character', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.CharLiteral]: [{ path: 'literal.character', within: [], test: [] }],
@@ -4507,27 +4499,15 @@ const table: PortableTable = {
 		],
 		[TSKindId.ExternModifier]: [{ path: 'modifier.extern', within: [], test: [] }],
 		[TSKindId.F32Keyword]: [
-			{
-				path: 'type.primitive.floating.float32',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'f32', self: true } }]
-			},
+			{ path: 'type.primitive.floating.float32', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.F64Keyword]: [
-			{
-				path: 'type.primitive.floating.float64',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'f64', self: true } }]
-			},
+			{ path: 'type.primitive.floating.float64', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.FalseKeyword]: [
-			{
-				path: 'literal.boolean.false',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'false', self: true } }]
-			},
+			{ path: 'literal.boolean.false', within: [], test: [] },
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'literal.boolean', within: [], test: [] }
 		],
@@ -5115,43 +5095,23 @@ const table: PortableTable = {
 		[TSKindId.GenericTypeWithTurbofish]: [{ path: 'type.generic.turbofish', within: [], test: [] }],
 		[TSKindId.HigherRankedTraitBound]: [{ path: 'clause.bounds.higher_ranked', within: [], test: [] }],
 		[TSKindId.I128Keyword]: [
-			{
-				path: 'type.primitive.integral.int128',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'i128', self: true } }]
-			},
+			{ path: 'type.primitive.integral.int128', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.I16Keyword]: [
-			{
-				path: 'type.primitive.integral.int16',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'i16', self: true } }]
-			},
+			{ path: 'type.primitive.integral.int16', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.I32Keyword]: [
-			{
-				path: 'type.primitive.integral.int32',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'i32', self: true } }]
-			},
+			{ path: 'type.primitive.integral.int32', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.I64Keyword]: [
-			{
-				path: 'type.primitive.integral.int64',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'i64', self: true } }]
-			},
+			{ path: 'type.primitive.integral.int64', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.I8Keyword]: [
-			{
-				path: 'type.primitive.integral.int8',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'i8', self: true } }]
-			},
+			{ path: 'type.primitive.integral.int8', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.IdentKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
@@ -5188,11 +5148,7 @@ const table: PortableTable = {
 			{ path: 'literal.number.integer.octal', within: [], test: [] }
 		],
 		[TSKindId.IsizeKeyword]: [
-			{
-				path: 'type.primitive.integral.size',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'isize', self: true } }]
-			},
+			{ path: 'type.primitive.integral.size', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.ItemKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
@@ -5590,11 +5546,7 @@ const table: PortableTable = {
 		],
 		[TSKindId.StmtKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.StrKeyword]: [
-			{
-				path: 'type.primitive.string',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'str', self: true } }]
-			},
+			{ path: 'type.primitive.string', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.StringContent]: [{ path: 'literal.string.text', within: [], test: [] }],
@@ -5901,11 +5853,7 @@ const table: PortableTable = {
 			{ path: 'declaration.interface.trait', within: [], test: [] }
 		],
 		[TSKindId.TrueKeyword]: [
-			{
-				path: 'literal.boolean.true',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'true', self: true } }]
-			},
+			{ path: 'literal.boolean.true', within: [], test: [] },
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'literal.boolean', within: [], test: [] }
 		],
@@ -6010,43 +5958,23 @@ const table: PortableTable = {
 		],
 		[TSKindId.TypeParameter]: [{ path: 'declaration.type_parameter', within: [], test: [] }],
 		[TSKindId.U128Keyword]: [
-			{
-				path: 'type.primitive.integral.int128',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'u128', self: true } }]
-			},
+			{ path: 'type.primitive.integral.int128', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.U16Keyword]: [
-			{
-				path: 'type.primitive.integral.int16',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'u16', self: true } }]
-			},
+			{ path: 'type.primitive.integral.int16', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.U32Keyword]: [
-			{
-				path: 'type.primitive.integral.int32',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'u32', self: true } }]
-			},
+			{ path: 'type.primitive.integral.int32', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.U64Keyword]: [
-			{
-				path: 'type.primitive.integral.int64',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'u64', self: true } }]
-			},
+			{ path: 'type.primitive.integral.int64', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.U8Keyword]: [
-			{
-				path: 'type.primitive.integral.int8',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'u8', self: true } }]
-			},
+			{ path: 'type.primitive.integral.int8', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.UnaryExpression]: [
@@ -6211,11 +6139,7 @@ const table: PortableTable = {
 		[TSKindId.UseList]: [{ path: 'clause.import.list', within: [], test: [] }],
 		[TSKindId.UseWildcard]: [{ path: 'clause.import.wildcard', within: [], test: [] }],
 		[TSKindId.UsizeKeyword]: [
-			{
-				path: 'type.primitive.integral.size',
-				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'usize', self: true } }]
-			},
+			{ path: 'type.primitive.integral.size', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
 		],
 		[TSKindId.VariadicParameter]: [{ path: 'declaration.parameter.variadic', within: [], test: [] }],
@@ -6476,11 +6400,11 @@ export const queryFlags: QueryFlags = Object.freeze({
 		byReference: { op: 'present', slots: { '206': 1 } }
 	},
 	[TSKindId.TraitItem]: { unsafe: { op: 'present', slots: { '214': 1 } } },
-	[TSKindId.U128Keyword]: { unsigned: null },
-	[TSKindId.U16Keyword]: { unsigned: null },
-	[TSKindId.U32Keyword]: { unsigned: null },
-	[TSKindId.U64Keyword]: { unsigned: null },
-	[TSKindId.U8Keyword]: { unsigned: null },
-	[TSKindId.UsizeKeyword]: { unsigned: null },
+	[TSKindId.U128Keyword]: { unsigned: { op: 'and', of: [] } },
+	[TSKindId.U16Keyword]: { unsigned: { op: 'and', of: [] } },
+	[TSKindId.U32Keyword]: { unsigned: { op: 'and', of: [] } },
+	[TSKindId.U64Keyword]: { unsigned: { op: 'and', of: [] } },
+	[TSKindId.U8Keyword]: { unsigned: { op: 'and', of: [] } },
+	[TSKindId.UsizeKeyword]: { unsigned: { op: 'and', of: [] } },
 	[TSKindId.VariadicParameter]: { mutable: { op: 'present', slots: { '232': 0 } } }
 } satisfies QueryFlags);

@@ -74,11 +74,11 @@ describe('flagPlansOf', () => {
 		expect(plans([name]).size).toBe(0);
 	});
 
-	it('marks a claim flag that depends on the node\'s context, and lowers a node-local one', () => {
+	it('marks a claim flag that depends on the node\'s context, lowers a node-local one, and refuses one comparing its own text undecided', () => {
 		const local: PortableCondition = { up: 0, via: [SLOTS['fn.mods']], plan: { op: 'present', ...SLOTS['mods.async'] } };
 		expect(plans([], [['static', [local], false]]).get('static')).toEqual({ op: 'child', ...SLOTS['fn.mods'], of: { op: 'present', ...SLOTS['mods.async'] } });
 		expect(plans([], [['static', [local], true]]).get('static')).toBeNull();
 		expect(plans([], [['static', [{ ...local, up: 1 }], false]]).get('static')).toBeNull();
-		expect(plans([], [['static', [{ up: 0, via: [], plan: { op: 'eq', text: 'x', self: true } }], false]]).get('static')).toBeNull();
+		expect(() => plans([], [['static', [{ up: 0, via: [], plan: { op: 'eq', text: 'x', self: true } }], false]])).toThrow(/k's flag static: .*own text/);
 	});
 });

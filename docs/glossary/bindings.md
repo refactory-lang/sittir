@@ -1063,7 +1063,7 @@ One grammar as the bindings derivation sees it: its binding facts (bound to the 
 
 ### `packages/codegen/src/bindings/routes.ts::ReadEntry`
 
-A grammar kind read as one vocabulary kind: the kind the claim captured (`claimed`; the kind itself unless the reader stores the captured node as a member's kind id, `readKinds`), the claim, its position in `bindings.scm` (`index`), the pins that tell its nodes apart (`Pin`), the tests on the nodes below it (`ChildTest`), the template it builds from when its predicate has named holes, and its own member routes (`membersOf` under the entry's `guaranteedBy`).
+A grammar kind read as one vocabulary kind: the kind the claim captured (`claimed`; the kind itself unless the reader stores the captured node as a member's kind id, `readKinds`), the claim, its position in `bindings.scm` (`index`), the pins that tell its nodes apart (`Pin`), the tests on the nodes below it (`ChildTest`), the template it builds from when its predicate has named holes, and its own member routes (`membersOf` under the entry's `guaranteedBy`). `spelled` marks an enum member the claim's tests of its own text were decided on (`readKinds`): those tests always hold on it, so its read test leaves them out and a flag the claim carries holds on every node of the member.
 
 ### `packages/codegen/src/bindings/routes.ts::Pin`
 
@@ -1191,11 +1191,19 @@ Every form left with no read entry for a claim of its supertype, as a line namin
 
 ### `packages/codegen/src/bindings/routes.ts::readKinds`
 
-The kinds the typed reader produces for a node of `kind`: the kind, or its members when it is an enum, and every kind the parser shows by `kind`'s name (`shownKinds`), since a claim names what the parser shows. A kind with no enum members is read as itself. An enum kind is stored as one member's kind id, so a node of it reads as that member's kind (`ModelNode.enumMembers`): every member whose text equals each text the claim requires of the node's own text (`ownTextEquals`). Any other test on that text keeps every member, and the claim's read test decides at run time on the member's fixed text. The claim itself is entered unchanged, so its specificity and its read test are those of the claim as written.
+The kinds the typed reader produces for a node of `kind`: the kind, or its members when it is an enum, and every kind the parser shows by `kind`'s name (`shownKinds`), since a claim names what the parser shows. A kind with no enum members is read as itself. An enum kind is stored as one member's kind id, so a node of it reads as that member's kind (`ModelNode.enumMembers`): every member whose fixed text the claim's tests of the node's own text admit (`ownTextAdmits`), decided here once, so no read tests that text again. A member kept by such a test is stamped `spelled` (`ReadEntry.spelled`); a claim with no test of its own text keeps every member unstamped. The claim itself is entered unchanged, so its specificity is that of the claim as written.
 
-### `packages/codegen/src/bindings/routes.ts::ownTextEquals`
+### `packages/codegen/src/bindings/routes.ts::ReadKind`
 
-The texts a claim requires of the claimed node's own text: its tokens, which on an enum kind are the member's own literal, and each `eq` whose subject is the claimed node itself (`up` 0, no step down) and that compares it with one text.
+A kind `readKinds` produces for a claim, and whether the member's fixed text decided the claim's tests of its own text (`spelled`).
+
+### `packages/codegen/src/bindings/routes.ts::comparesOwnText`
+
+Whether a predicate compares the claimed node's own text: an `eq` or `match` whose subject is the claimed node itself (`up` 0, no step down) and that compares it with one text. `readKinds` decides such a predicate on an enum member's fixed text, and the read test leaves it out where it did (`read-tests.ts::readTestOf`).
+
+### `packages/codegen/src/bindings/routes.ts::ownTextAdmits`
+
+Whether a claim's tests of the node's own text admit `text`: each token equals it, each `eq` (`comparesOwnText`) equals it, and each `match` finds it as tree-sitter's `#match?` does (an unanchored JavaScript regular expression).
 
 ### `packages/codegen/src/bindings/input.ts::NodeModelRecord`
 

@@ -1,4 +1,4 @@
-import { WILDCARD, isFixedText, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type EnumMember, type MemberFact, type ModelNode, type ModelSlot, type Sibling, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
+import { WILDCARD, isFixedText, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type EnumMember, type MemberFact, type ModelNode, type ModelSlot, type PredicateFact, type Sibling, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
 import { camel, snake } from './names.ts';
 
 export interface LayoutSlot {
@@ -44,6 +44,7 @@ export interface ReadEntry {
 	readonly children: readonly ChildTest[];
 	readonly template: TemplateFact | undefined;
 	readonly members: readonly MemberRoute[];
+	readonly spelled?: true;
 }
 
 export type MemberRoute = (
@@ -641,15 +642,20 @@ function admittedKinds(model: SlotModel, claim: ClaimFact): string[] {
 	return concreteKinds(model, admitted);
 }
 
-function ownTextEquals(claim: ClaimFact): readonly string[] {
-	return [
-		...claim.tokens,
-		...claim.predicates.flatMap((p) => {
-			const [argument, ...rest] = p.arguments;
-			const own = p.subject !== null && p.subject.up === 0 && p.subject.down.length === 0;
-			return own && p.operator === 'eq' && argument !== undefined && 'text' in argument && rest.length === 0 ? [argument.text] : [];
+export function comparesOwnText(predicate: PredicateFact): boolean {
+	const [argument, ...rest] = predicate.arguments;
+	const own = predicate.subject !== null && predicate.subject.up === 0 && predicate.subject.down.length === 0;
+	return own && (predicate.operator === 'eq' || predicate.operator === 'match') && argument !== undefined && 'text' in argument && rest.length === 0;
+}
+
+function ownTextAdmits(claim: ClaimFact, text: string): boolean {
+	return (
+		claim.tokens.every((token) => token === text) &&
+		claim.predicates.filter(comparesOwnText).every((p) => {
+			const [argument] = p.arguments as [{ readonly text: string }];
+			return p.operator === 'eq' ? argument.text === text : new RegExp(argument.text).test(text);
 		})
-	];
+	);
 }
 
 export function formsOf(model: SlotModel, kind: string): readonly string[] {
@@ -657,12 +663,17 @@ export function formsOf(model: SlotModel, kind: string): readonly string[] {
 	return [kind, ...[...model.values()].filter((node) => node.variantOf === kind).flatMap((node) => formsOf(model, node.kind))];
 }
 
-function readKinds(model: SlotModel, kind: string, claim: ClaimFact): readonly string[] {
-	const [, ...shown] = shownKinds(model, kind);
+interface ReadKind {
+	readonly kind: string;
+	readonly spelled: boolean;
+}
+
+function readKinds(model: SlotModel, kind: string, claim: ClaimFact): readonly ReadKind[] {
+	const [, ...shown] = shownKinds(model, kind).map((k) => ({ kind: k, spelled: false }));
 	const members = modelNode(model, kind)?.enumMembers ?? [];
-	if (members.length === 0) return [kind, ...shown];
-	const texts = ownTextEquals(claim);
-	return [...members.filter((member: EnumMember) => texts.every((text) => text === member.text)).map((member) => member.kind), ...shown];
+	if (members.length === 0) return [{ kind, spelled: false }, ...shown];
+	const decides = claim.tokens.length > 0 || claim.predicates.some(comparesOwnText);
+	return [...members.filter((member: EnumMember) => ownTextAdmits(claim, member.text)).map((member) => ({ kind: member.kind, spelled: decides })), ...shown];
 }
 
 export function resolveRoutes(input: GrammarInput): GrammarRoutes {
@@ -690,7 +701,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 			owner === WILDCARD
 				? admittedKinds(input.model, claim).filter((kind) => !claimsOwn.has(`${kind} ${claim.vocab}`))
 				: formsOf(input.model, owner);
-		for (const [form, kind] of forms.flatMap((form) => readKinds(input.model, form, claim).map((read) => [form, read] as const))) {
+		for (const [form, { kind, spelled }] of forms.flatMap((form) => readKinds(input.model, form, claim).map((read) => [form, read] as const))) {
 			const claimed = owner === WILDCARD ? form : owner;
 			const entry: ReadEntry = {
 				kind,
@@ -701,7 +712,8 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 				pins: pinsOf(input.model, modelNode(input.model, kind), claim, slotNamesOf(kind)),
 				children: modelNode(input.model, kind)?.modelType === 'supertype' ? [] : claim.children.flatMap((child) => childTestsOf(input.model, kind, child, claim.children)),
 				template: input.bindings.templates.find((t) => t.vocabs.includes(claim.vocab)),
-				members: []
+				members: [],
+				...(spelled ? { spelled: true as const } : {})
 			};
 			if (form !== claimed) inherited.add(entry);
 			(readEntries.get(kind) ?? readEntries.set(kind, []).get(kind))?.push(entry);
@@ -751,7 +763,7 @@ export function unenteredForms(input: GrammarInput, routes: GrammarRoutes): stri
 		if (owner === null || owner === WILDCARD) return [];
 		return formsOf(input.model, owner)
 			.filter((form) => form !== owner)
-			.flatMap((form) => readKinds(input.model, form, claim).filter((kind) => !(routes.readEntries.get(kind) ?? []).some((e) => e.index === index)))
+			.flatMap((form) => readKinds(input.model, form, claim).flatMap(({ kind }) => ((routes.readEntries.get(kind) ?? []).some((e) => e.index === index) ? [] : [kind])))
 			.map((kind) => `${input.grammar}: ${kind} has no entry for its supertype ${owner}'s claim @${claim.vocab}, so it reads by no path there when no claim of its own holds`);
 	});
 }

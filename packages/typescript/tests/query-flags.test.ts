@@ -2,6 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import typescript from '../src/index.ts';
 import { hooks } from '../src/api.ts';
+import { slotItems } from '../../common/src/query.ts';
+
+/** Every kind-id leaf the reader gives a slot of a node the walk reaches: the stamped id an enum kind's member is read as. */
+const leavesRead = (nodes: Iterable<{ readonly $type: number }>): number[] =>
+	[...nodes].flatMap((node) => (hooks.querySlots[node.$type] ?? []).flatMap(([accessor]) => slotItems(node, accessor).filter((item): item is number => typeof item === 'number')));
 import { queryFlags } from '../src/portable.ts';
 import { TSKindId } from '../src/types.ts';
 
@@ -36,5 +41,12 @@ describe('a flag a boolean slot holds', () => {
 		);
 		const asyncSlot = hooks.querySlots[TSKindId.ArrowFunction]!.find(([name]) => name === 'async')![1];
 		expect(queryFlags[TSKindId.ArrowFunction]!['async']).toEqual({ op: 'present', slots: { [TSKindId.ArrowFunction]: asyncSlot } });
+	});
+
+	it('keys the unique flag by the stamped kind the reader gives a parsed unique symbol, and no other predefined type', () => {
+		const types = (source: string) => leavesRead((ts.parse(source) as unknown as { $query(): { $descendants: Iterable<{ readonly $type: number }> } }).$query().$descendants);
+		expect(types('let a: unique symbol; let b: symbol;').filter((type) => queryFlags[type]?.['unique'] !== undefined)).toEqual([TSKindId.Unique]);
+		expect(queryFlags[TSKindId.Unique]!['unique']).toEqual({ op: 'and', of: [] });
+		expect(queryFlags[TSKindId.SymbolKeyword]?.['unique']).toBeUndefined();
 	});
 });

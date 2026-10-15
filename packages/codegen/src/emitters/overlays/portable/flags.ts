@@ -75,7 +75,8 @@ export function flagPlansOf(input: FlagPlansInput): Map<string, QueryPlan | null
 	const contextual = new Set<string>();
 	for (const { flag, test, placed } of input.claimFlags) {
 		const lowered = test.map(conditionPlan);
-		if (placed || test.some((condition) => condition.up > 0) || !lowered.every(isNative)) contextual.add(flag);
+		if (placed || test.some((condition) => condition.up > 0)) contextual.add(flag);
+		else if (!lowered.every(isNative)) refuse(flag, 'its claim compares the node\'s own text, which only a kind with fixed text decides');
 		else add(flag, lowered.length === 1 ? lowered[0]! : { op: 'and', of: lowered });
 	}
 	const plans = new Map<string, QueryPlan | null>();

@@ -63,6 +63,13 @@ const MODEL = [
 		]
 	}),
 	node('true_keyword', [], { modelType: 'keyword', text: 'true' }),
+	node('predefined', [], {
+		modelType: 'enum',
+		enumMembers: [
+			{ kind: 'unique_symbol', text: 'unique symbol' },
+			{ kind: 'symbol_kw', text: 'symbol' }
+		]
+	}),
 	node('_struct', [], { modelType: 'supertype', subtypes: ['struct_unit', 'struct_tuple', 'struct_named'] }),
 	node('struct_unit', [slot('name', ['identifier'])], { variantOf: '_struct' }),
 	node('struct_tuple', [slot('name', ['identifier']), slot('fields', ['identifier'], { multiple: true })], { variantOf: '_struct' }),
@@ -396,6 +403,24 @@ describe('resolveRoutes', () => {
 		expect(routes.readEntries.get('false_keyword')?.map((e) => e.vocab)).toEqual(['literal.boolean']);
 	});
 
+	it('decides a match on an enum kind\'s own text by each member\'s fixed text, as tree-sitter\'s unanchored match reads it, and stamps the members it keeps', async () => {
+		const routes = resolveRoutes(
+			await grammar(['(predefined) @type.primitive.symbol', '((predefined) @type.primitive.symbol.unique (#match? @type.primitive.symbol.unique "^unique"))'].join('\n'))
+		);
+		expect(routes.readEntries.get('unique_symbol')?.map((e) => [e.vocab, e.spelled])).toEqual([
+			['type.primitive.symbol.unique', true],
+			['type.primitive.symbol', undefined]
+		]);
+		expect(routes.readEntries.get('symbol_kw')?.map((e) => e.vocab)).toEqual(['type.primitive.symbol']);
+	});
+
+	it('stamps a member an equality on its own text keeps, and no member of a claim that tests no own text', async () => {
+		const routes = resolveRoutes(
+			await grammar(['(bool) @literal.boolean', '((bool) @literal.boolean.true (#eq? @literal.boolean.true "true"))'].join('\n'))
+		);
+		expect(routes.readEntries.get('true_keyword')?.map((e) => e.spelled)).toEqual([true, undefined]);
+	});
+
 	it('enters a claim on a kind on each variant the kind owns, and on a variant with claims of its own as its least specific entry', async () => {
 		const routes = resolveRoutes(await grammar(['(_struct) @declaration.struct', '(struct_named) @declaration.struct.named'].join('\n')));
 		expect(routes.readEntries.get('struct_unit')?.map((e) => [e.claimed, e.vocab])).toEqual([['_struct', 'declaration.struct']]);
@@ -459,9 +484,9 @@ describe('resolveRoutes', () => {
 		expect(routes.readEntries.get('true_keyword')?.map((e) => e.vocab)).toEqual(['literal.boolean']);
 	});
 
-	it('leaves a pattern test on a kind the reader stores as its member\'s kind id to every member, for the read to decide', async () => {
+	it('enters a pattern test on a kind the reader stores as its member\'s kind id only on the members whose fixed text it matches', async () => {
 		const routes = resolveRoutes(await grammar('((bool) @literal.boolean.true (#match? @literal.boolean.true "^t"))'));
-		expect([...routes.readEntries.keys()].filter((k) => k.endsWith('_keyword')).sort()).toEqual(['false_keyword', 'true_keyword']);
+		expect([...routes.readEntries.keys()].filter((k) => k.endsWith('_keyword')).sort()).toEqual(['true_keyword']);
 	});
 
 	it('enters a claim on the forms of a form that is itself a supertype', async () => {

@@ -1,6 +1,6 @@
 import type { PortableCondition, PortableStep, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
 import { WILDCARD, type CaptureSite, type PredicateFact, type SlotModel } from '../../../bindings/facts.ts';
-import { slotAnchor, slotFor, type ChildTest, type ReadEntry } from '../../../bindings/routes.ts';
+import { comparesOwnText, slotAnchor, slotFor, type ChildTest, type ReadEntry } from '../../../bindings/routes.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { transportSlotNumbers } from '../../render-module.ts';
 import { keywordPresenceValue } from '../../shared.ts';
@@ -118,7 +118,7 @@ export function readTestOf(entry: ReadEntry, model: SlotModel, subjectOf: SlotSu
 		const plan = keywordTestOf(entry.kind, pin.slot, pin.text, subjectOf, presenceOf);
 		return typeof plan === 'string' ? plan : { up: 0, via: [], plan };
 	});
-	const predicates = [...entry.claim.predicates, ...entry.children.map(childPredicate)];
+	const predicates = [...entry.claim.predicates.filter((p) => entry.spelled !== true || !comparesOwnText(p)), ...entry.children.map(childPredicate)];
 	const conditions = [...pins, ...predicates.map((p) => (typeof p === 'string' ? p : conditionOf(entry, p, model, subjectOf, typeOf)))];
 	const refused = conditions.filter((c) => typeof c === 'string');
 	if (refused.length > 0) throw new Error(`portable: cannot test ${entry.kind} as ${entry.vocab}: ${refused.join('; ')}`);

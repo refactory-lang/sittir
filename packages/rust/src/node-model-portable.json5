@@ -1680,17 +1680,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "bool",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
           "vocab": "type.primitive",
@@ -1930,17 +1920,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "char",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
           "vocab": "type.primitive",
@@ -5883,17 +5863,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "f32",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
           "vocab": "type.primitive",
@@ -5913,17 +5883,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "f64",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
           "vocab": "type.primitive",
@@ -5943,17 +5903,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "false",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
           "vocab": "declaration.parameter",
@@ -10276,17 +10226,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "i128",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
           "vocab": "type.primitive",
@@ -10306,17 +10246,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "i16",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
           "vocab": "type.primitive",
@@ -10336,17 +10266,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "i32",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
           "vocab": "type.primitive",
@@ -10366,17 +10286,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "i64",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
           "vocab": "type.primitive",
@@ -10396,17 +10306,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "i8",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
           "vocab": "type.primitive",
@@ -10945,17 +10845,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "isize",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
           "vocab": "type.primitive",
@@ -14979,17 +14869,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "str",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
           "vocab": "type.primitive",
@@ -17338,17 +17218,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "true",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
           "vocab": "declaration.parameter",
@@ -18353,17 +18223,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "u128",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
           "vocab": "type.primitive",
@@ -18383,17 +18243,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "u16",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
           "vocab": "type.primitive",
@@ -18413,17 +18263,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "u32",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
           "vocab": "type.primitive",
@@ -18443,17 +18283,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "u64",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
           "vocab": "type.primitive",
@@ -18473,17 +18303,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "u8",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
           "vocab": "type.primitive",
@@ -19646,17 +19466,7 @@
           "toplevel": true,
           "within": [],
           "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "usize",
-                "self": true
-              }
-            }
-          ]
+          "test": []
         },
         {
           "vocab": "type.primitive",
