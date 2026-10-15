@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { cpSync, existsSync, mkdtempSync, rmSync, statSync } from 'node:fs';
+import { appendFileSync, cpSync, existsSync, mkdtempSync, rmSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { Language, Parser } from 'web-tree-sitter';
-import { buildUpstreamWasm, ensureParserWasm } from '../compile-parser.ts';
+import { buildUpstreamWasm, ensureParserWasm, upstreamKeyOf, withUpstreamGrammar } from '../compile-parser.ts';
 
 const realPythonDir = join(__dirname, '../../../../', 'python');
 const realPythonSittir = join(realPythonDir, '.sittir');
@@ -42,6 +42,16 @@ describe('ensureParserWasm', () => {
 		};
 		for (const source of ['x = 1\n', 'def f(a, /, b, *, c=1, d):\n    return a\n', 'match p:\n    case [x, *_]: pass\n', 'f"{x!r:>{w}}"\n'])
 			expect(await treeOf(built, source)).toBe(await treeOf(published, source));
+	}, 300_000);
+
+	it("keys the upstream judge on every scanner file it stages, a header the scanner includes among them", () => {
+		withUpstreamGrammar(join(realPythonDir, '..', 'typescript'), (dir, scannerFiles) => {
+			const header = scannerFiles.find((file) => file.endsWith(join('common', 'scanner.h')));
+			expect(header).toBeDefined();
+			const before = upstreamKeyOf(dir, scannerFiles);
+			appendFileSync(header!, '\n// changed\n');
+			expect(upstreamKeyOf(dir, scannerFiles)).not.toBe(before);
+		});
 	}, 300_000);
 
 	it('leaves a present parser.wasm untouched', () => {

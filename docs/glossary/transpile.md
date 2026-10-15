@@ -104,16 +104,18 @@ build fails with "Missing symbols" for the
 `tree_sitter_<lang>_external_scanner_*` functions, so the base grammar's
 `scanner.c` (and any header it relatively-includes) is copied into the
 target's `src/` before building: `.sittir/` for sittir's parser, the staging
-directory for the upstream judge.
+directory for the upstream judge. It returns the files it copied, none when
+the target already has a scanner or the upstream ships none.
 
 ### `packages/codegen/src/transpile/compile-parser.ts::copyRelativeScannerIncludes`
 
 ```text
 /**
  * Mirrors any header the scanner reaches via a relative `#include "..."`
- * alongside the copied scanner, at the same relative position from the new
- * .sittir/src/scanner.c location. Same-directory includes and tree-sitter's
- * own runtime headers are already resolvable and don't need copying.
+ * alongside the copied scanner, at the same relative position from the copied
+ * scanner, following the copied headers' own relative includes in turn.
+ * Same-directory includes and tree-sitter's own runtime headers are already
+ * resolvable and don't need copying. Returns the files it copied.
  */
 ```
 
@@ -547,11 +549,11 @@ Builds the wasm only when `.sittir/parser.wasm` is missing, and reports whether 
 
 ### `packages/codegen/src/transpile/compile-parser.ts::withUpstreamGrammar`
 
-Stages the unmodified upstream grammar in a fresh temporary directory: a `grammar.js` that re-exports the package's `base.ts` (the grammar sittir builds on, with whatever its dependencies resolve to, overrides included), the grammar's `.sittir` `package.json` and `tree-sitter.json`, and the upstream scanner. The directory sits two levels deep so a scanner's relative includes (typescript's `../../common/scanner.h`) stay inside it, and it is removed afterwards.
+Stages the unmodified upstream grammar in a fresh temporary directory: a `grammar.js` that re-exports the package's `base.ts` (the grammar sittir builds on, with whatever its dependencies resolve to, overrides included), the grammar's `.sittir` `package.json` and `tree-sitter.json`, and the upstream scanner with every file it includes. The directory sits two levels deep so a scanner's relative includes (typescript's `../../common/scanner.h`) stay inside it, and it is removed afterwards. The callback receives the staged scanner files, which are the key's scanner input.
 
 ### `packages/codegen/src/transpile/compile-parser.ts::upstreamKeyOf`
 
-The staged grammar's key: the tree-sitter CLI version, the `grammar.json` that `generate --no-parser` writes, and the scanner. Equal keys mean the same parser, so the key decides whether the judge is rebuilt without generating a parser.
+The staged grammar's key: the tree-sitter CLI version, the `grammar.json` that `generate --no-parser` writes, and each staged scanner file by its path in the staging directory and its contents, in sorted order. A scanner that delegates to a header (typescript's) is keyed on the header too. Equal keys mean the same parser, so the key decides whether the judge is rebuilt without generating a parser.
 
 ### `packages/codegen/src/transpile/compile-parser.ts::buildUpstreamWasm`
 
