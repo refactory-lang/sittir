@@ -67,7 +67,7 @@ function nativeEngineOptions<API extends LanguageAPI>(
 	return options?.render === undefined ? {} : { options: options.render };
 }
 
-function unimplementedVerb(verb: 'read' | 'create' | 'edit' | 'write'): Error {
+function unimplementedVerb(verb: 'read' | 'create' | 'write'): Error {
 	return new Error(`file verb "${verb}" is not implemented`);
 }
 
@@ -277,9 +277,6 @@ function assembleEngine<API extends LanguageAPI>(
 		},
 		create(): Pending {
 			throw unimplementedVerb('create');
-		},
-		edit(): Pending {
-			throw unimplementedVerb('edit');
 		},
 		write(): Pending {
 			throw unimplementedVerb('write');
