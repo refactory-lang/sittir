@@ -255,7 +255,7 @@ export function transportArgs(
 ): string {
 	if (node instanceof AssembledAlias) {
 		const wraps = node.slots.some((slot) => slotKindNames(slot).some((name) => ctx.nodeMap.nodes.get(name) instanceof AssembledSupertype));
-		return `kind = ${ctx.names.kind(node.aliasTypeId)}, display, envelope, content = content${wraps ? ', wraps_hidden' : ''}`;
+		return `kind = ${ctx.names.kind(node.aliasTypeId)}, display, content = content${wraps ? ', wraps_hidden' : ''}`;
 	}
 	if (ownId === undefined) throw new Error(`transport read facts: ${node.kind} has no parser symbol, so no reader can claim it`);
 	const folded = foldedTokens(ownId, ctx);
@@ -271,7 +271,7 @@ export function transportArgs(
 	const layout = node instanceof AbstractAssembledCompound ? layoutTokenIds(node, ctx, slots) : [];
 	if (layout.length > 0) args.push(`layout = [${layout.map((id) => tokenGroup(id, ctx)).join(', ')}]`);
 	const item = listItemSlot(node);
-	if (item !== undefined) args.push(`list, item = ${rustFieldIdent(item.storageName)}`);
+	if (item !== undefined) args.push(`item = ${rustFieldIdent(item.storageName)}`);
 	return args.join(', ');
 }
 

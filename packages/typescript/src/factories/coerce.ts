@@ -2,7 +2,7 @@
 
 import * as F from './raw.js';
 import { TOKEN_INTERIORS } from '../consts.js';
-import { lexedConfig, numberText, spelledForm, spelledInterior } from '@sittir/common/utils';
+import { lexedConfig, interiorPattern, numberText, spelledForm, spelledInterior } from '@sittir/common/utils';
 import type * as T from '../types-internal.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
 import { Delimiter } from '@sittir/common/utils';
@@ -284,24 +284,17 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	empty_statement: { values: [';'], factory: () => F.buildEmptyStatement },
 	optional_chain: { values: ['?.'], factory: () => F.buildOptionalChain },
 	unescaped_double_string_fragment: {
-		pattern: /^(?:(?:[^"\\\r\n]+))$/u,
+		pattern: F._leafRe_buildUnescapedDoubleStringFragment,
 		factory: F.buildUnescapedDoubleStringFragment
 	},
 	unescaped_single_string_fragment: {
-		pattern: /^(?:(?:[^'\\\r\n]+))$/u,
+		pattern: F._leafRe_buildUnescapedSingleStringFragment,
 		factory: F.buildUnescapedSingleStringFragment
 	},
 	escape_sequence: { factory: (content: string) => _resolveByKind('escape_sequence', content) },
-	regex_pattern: {
-		pattern: /^(?:(?:(?:\[(?:(?:\\(?:.)|(?:[^\]\n\\])))*\]|\\(?:.)|(?:[^/\\[\n])))+)$/u,
-		factory: F.buildRegexPattern
-	},
-	regex_flags: { pattern: /^(?:(?:[a-z]+))$/u, factory: F.buildRegexFlags },
-	identifier: {
-		pattern:
-			/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u,
-		factory: F.buildIdentifier
-	},
+	regex_pattern: { pattern: F._leafRe_buildRegexPattern, factory: F.buildRegexPattern },
+	regex_flags: { pattern: F._leafRe_buildRegexFlags, factory: F.buildRegexFlags },
+	identifier: { pattern: F._leafRe_buildIdentifier, factory: F.buildIdentifier },
 	private_property_identifier: { factory: (content: string) => _resolveByKind('private_property_identifier', content) },
 	this: { values: ['this'], factory: () => F.buildThis },
 	super: { values: ['super'], factory: () => F.buildSuper },
@@ -314,43 +307,43 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	comment_line: { factory: (content: string) => _resolveByKind('comment_line', content) },
 	comment_block: { factory: (content: string) => _resolveByKind('comment_block', content) },
 	number_hex: {
-		pattern: new RegExp(TOKEN_INTERIORS['number_hex'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['number_hex']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['number_hex'], 'number_hex');
 			return F.buildNumberHex(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
 		}
 	},
 	number_float_point: {
-		pattern: new RegExp(TOKEN_INTERIORS['number_float_point'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['number_float_point']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['number_float_point'], 'number_float_point');
 			return F.buildNumberFloatPoint(cfg as never, { marker: cfg['marker'] } as never);
 		}
 	},
 	number_float_leading_point: {
-		pattern: new RegExp(TOKEN_INTERIORS['number_float_leading_point'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['number_float_leading_point']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['number_float_leading_point'], 'number_float_leading_point');
 			return F.buildNumberFloatLeadingPoint(cfg as never, { marker: cfg['marker'] } as never);
 		}
 	},
 	number_float_scientific: {
-		pattern: new RegExp(TOKEN_INTERIORS['number_float_scientific'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['number_float_scientific']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['number_float_scientific'], 'number_float_scientific');
 			return F.buildNumberFloatScientific(cfg as never, { marker: cfg['marker'] } as never);
 		}
 	},
-	number_decimal: { pattern: /^(?:(?:\d(_?\d)*))$/u, factory: F.buildNumberDecimal },
+	number_decimal: { pattern: F._leafRe_buildNumberDecimal, factory: F.buildNumberDecimal },
 	number_binary: {
-		pattern: new RegExp(TOKEN_INTERIORS['number_binary'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['number_binary']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['number_binary'], 'number_binary');
 			return F.buildNumberBinary(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
 		}
 	},
 	number_octal: {
-		pattern: new RegExp(TOKEN_INTERIORS['number_octal'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['number_octal']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['number_octal'], 'number_octal');
 			return F.buildNumberOctal(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
@@ -364,9 +357,9 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	optional_chain_marker: { values: ['?.'], factory: () => F.buildOptionalChainMarker },
 	meta_property_new_target: { values: ['new.target'], factory: () => F.buildMetaPropertyNewTarget },
 	meta_property_import_meta: { values: ['import.meta'], factory: () => F.buildMetaPropertyImportMeta },
-	html_comment: { pattern: /^(?:(?:<!--[\s\S]*?-->))$/u, factory: F.buildHtmlComment },
-	jsx_text: { pattern: /^(?:(?:[^{}<>]+))$/u, factory: F.buildJsxText },
-	_template_chars: { pattern: /^(?:(?:[^`\\$]+))$/u, factory: F.buildTemplateChars },
+	html_comment: { pattern: F._leafRe_buildHtmlComment, factory: F.buildHtmlComment },
+	jsx_text: { pattern: F._leafRe_buildJsxText, factory: F.buildJsxText },
+	_template_chars: { pattern: F._leafRe_buildTemplateChars, factory: F.buildTemplateChars },
 	_automatic_semicolon: { values: ['\n'], factory: () => F.buildAutomaticSemicolon },
 	_function_signature_automatic_semicolon: {
 		values: ['\n'],
@@ -381,28 +374,23 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	_indent: { values: ['﷐\n'], factory: () => F.buildIndent },
 	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent },
 	statement_identifier: {
-		pattern:
-			/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u,
+		pattern: F._leafRe_buildIdentifier,
 		factory: (text: string) => F.buildStatementIdentifier(F.buildIdentifier(text) as never)
 	},
 	shorthand_property_identifier: {
-		pattern:
-			/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u,
+		pattern: F._leafRe_buildIdentifier,
 		factory: (text: string) => F.buildShorthandPropertyIdentifier(F.buildIdentifier(text) as never)
 	},
 	shorthand_property_identifier_pattern: {
-		pattern:
-			/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u,
+		pattern: F._leafRe_buildIdentifier,
 		factory: (text: string) => F.buildShorthandPropertyIdentifierPattern(F.buildIdentifier(text) as never)
 	},
 	property_identifier: {
-		pattern:
-			/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u,
+		pattern: F._leafRe_buildIdentifier,
 		factory: (text: string) => F.buildPropertyIdentifier(F.buildIdentifier(text) as never)
 	},
 	type_identifier: {
-		pattern:
-			/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u,
+		pattern: F._leafRe_buildIdentifier,
 		factory: (text: string) => F.buildTypeIdentifier(F.buildIdentifier(text) as never)
 	}
 };
@@ -422,9 +410,6 @@ function _buildGuardedText(v: string, kind: string): AnyUntypedNode | number {
 	const entry = _leafRegistry[kind]!;
 	if (entry.values !== undefined && !entry.values.includes(v)) {
 		throw new Error(`${JSON.stringify(v)} is not the text of ${kind}: expected one of ${JSON.stringify(entry.values)}`);
-	}
-	if (entry.pattern !== undefined && !entry.pattern.test(v)) {
-		throw new Error(`${JSON.stringify(v)} is not a ${kind}: it does not match ${entry.pattern}`);
 	}
 	return entry.factory(v);
 }

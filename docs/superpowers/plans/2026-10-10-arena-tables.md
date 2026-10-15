@@ -23,6 +23,14 @@
 
 The typed-reader plan's Global Constraints hold here too.
 
+**Reader attributes and diagnostics (the maintainer, 2026-10-14).** Field types supply arity,
+payload shape and kind admission. Attributes add parser routing and shared record layout facts,
+without repeating type shape: `content = field` alone selects an envelope, and `item = field`
+alone selects a list. Keep the layout-token allowlist for the core's default-off
+`read-debug-checks` diagnostic. Normal reads skip leftovers after typed routing; required-slot,
+cardinality and kind-admission checks remain active. This supersedes unconditional refusal of
+unrouted children in the inherited typed-reader constraints, per shared-arena ruling 7.
+
 ---
 
 ## 3a, the parsed-tree trivia table
@@ -464,7 +472,7 @@ Each record prototype and measuring tool the arena steps already hold, with its 
    - **Reused by Task 6:** the construction probes' method (one literal form against another, the same members, heap and time per node).
 2. **The typed-transport and derive prototype**, `…/transport/proto/` (`probe/`, `slot-derive/`, `synthetic/`).
    - **Reused:** the record cell (`rt.rs`: a five-word cell of tag, kind and three payload words; a list as an offset and length into a run outside the record) is the starting layout that Task 7 states as codegen facts. The probe's three forms with identical members, checked slot by slot before timing, are Task 6's harness.
-   - **Superseded:** the probe's macro (`slot-derive`). The real derive (`sittir-transport-macros`) already expands the reader, the refusal and the object codec from the generated declarations, and Task 8 adds the record codec to it.
+   - **Superseded:** the probe's macro (`slot-derive`). The real derive (`sittir-transport-macros`) already expands the reader, the opt-in debug diagnostic and the object codec from the generated declarations, and Task 8 adds the record codec to it.
    - **Measured against:** the probe's numbers, the spec's § The wire table. Task 10 re-takes them in the engine.
    - **Reused unchanged:** `synthetic/` and `time-synthetic.sh`, the compile-cost probe re-run for Verification 12 at the cutover.
 3. **The measuring tools**, re-taken unchanged so the numbers compare like for like:
@@ -504,6 +512,12 @@ Each record prototype and measuring tool the arena steps already hold, with its 
   - python: 169 over 159.
 
   That is 11, 37 and 10 duplicates, against the outline's 3, 32 and 3. No two generated bodies are identical once names are normalized, so the duplicates differ in a name or an attribute. Task 7 states which differences are facts (a blank arm, a `display` claim) and which are naming. It declares each content once before stamping a layout.
+- **No duplicate choice folds (Task 7, step 1).** On feat/records, the per-slot choices (`*TransportSlot`) whose variant sets repeat another's number 3 in rust, 25 in typescript and 1 in python, in 12 groups. `shareIdenticalChoices` already declares each identical choice once, so every remaining duplicate differs in a fact:
+  - 10 groups in the owner's seam sites a literal arm writes;
+  - 1 in a variant's claimed ids (rust `if_expression.condition` against `let_chain.left`);
+  - 1 in arm order only (typescript `assignment_expression.left` against `for_header.left`, whose claims are disjoint). Folding it would take a canonical variant order in every choice, a reorder of every generated transport for one declaration, so the grammar's order stays.
+
+  The glossary entry for `shareIdenticalChoices` lists the three facts.
 - **Match-all in the engine is not one call.** `$descendants` returns a JSON batch of coordinates (`engine.descendants`), and each match is then read by its own `engine.read` (`packages/common/src/engine.ts`, `tree.query.descendants` and `readAt`). The probe's "every match in one call" has no engine counterpart on the object wire. Task 8 adds one for both wires (ruling 2).
 - **A transport's `$_layout` is wire too.** `TransportLayout` crosses with every node: `edges`, `gap`, `flank`, `at`, `span`, `sides`, `changed`, `units`, and, on built nodes, `trivia`. The probe had none of it. The record layout must place it, which Task 7 does as a side record.
 - **Built-node trivia today** is written by `setTriviaData` (`packages/common/src/utils.ts`, from `rebuilt` and the trivia writer `write`). It crosses as `TransportLayout::trivia` (`TransportTrivia`, `TriviaEntry`). 3b-ii moves it into records.
@@ -620,9 +634,18 @@ Building `$with` and `$trivia` lazily is revisited later. The measurements are t
 1. Each choice is declared once for its content (Corrections). A duplicate that differs only in its name becomes one declaration. One that differs in a fact keeps its own and is listed in the glossary entry with the fact.
 2. A model pass computes once, per kind, each slot's `word` and cell width, each presence slot's `bit` and the kind's `words`. Per list slot, it computes the run's cell width.
 3. The emitters stamp the results: `words = …` on `#[transport]`, `word = …` on `#[slot]` (`bit = …` on a presence slot), and the same numbers as literal offsets in `records.ts`.
+   `width` and list-item `run` describe this shared layout and are checked against Rust type
+   requirements; they do not supply routing or arity. Do not add separate envelope/list mode
+   booleans beside the valued `content`/`item` attributes.
 4. The derive parses the attributes and checks them: each slot's type fits its width, a presence slot is a `bool` with a `bit`, no two slots share a word or a bit, and the last slot ends within `words`. Each check is a compile error naming the field. The derive emits nothing else from them yet.
 
 **Gate:** generated outputs change only in the new attributes, the deduplicated choices and the new `records.ts`. Every render, fixture and validation row is unchanged. A test proves the derive's fit check refuses a field one word short.
+
+**Attribute/reader follow-up gate (2026-10-14):** regenerate all five grammars after consolidating
+mode attributes; slot contents, wire keys and rendered bytes stay unchanged. Run typed-reader
+tests with and without `read-debug-checks`: punctuation or a deliberately omitted child route is
+skipped normally and diagnosed in debug mode; missing and overfull slots fail in both. Retain
+raw-string routing metadata where the type alone cannot express its parser behavior.
 
 ### Task 8: The record codec in the derive, beside the object codec
 

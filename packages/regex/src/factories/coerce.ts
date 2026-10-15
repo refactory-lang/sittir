@@ -86,30 +86,33 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	end_assertion: { values: ['$'], factory: () => F.buildEndAssertion },
 	boundary_assertion: { values: ['\\b'], factory: () => F.buildBoundaryAssertion },
 	non_boundary_assertion: { values: ['\\B'], factory: () => F.buildNonBoundaryAssertion },
-	pattern_character: { pattern: /^(?:(?:[^^$\\.*+?()[\]|\r?\n]))$/u, factory: F.buildPatternCharacter },
-	posix_class_name: { pattern: /^(?:(?:[a-zA-Z]+))$/u, factory: F.buildPosixClassName },
-	class_character: { pattern: /^(?:(?:[^\\\]-]))$/u, factory: F.buildClassCharacter },
-	flags: { pattern: /^(?:(?:[a-zA-Z]+))$/u, factory: F.buildFlags },
-	decimal_escape: { pattern: /^(?:(?:\\[1-9][0-9]*))$/u, factory: F.buildDecimalEscape },
-	unicode_character_escape: {
-		pattern: /^(?:(?:(?:\\u[0-9a-fA-F]{4})|(?:\\u\{[0-9a-fA-F]{1,6}\})))$/u,
-		factory: F.buildUnicodeCharacterEscape
-	},
-	unicode_property_value: { pattern: /^(?:(?:[a-zA-Z_0-9]+))$/u, factory: F.buildUnicodePropertyValue },
-	control_escape: { pattern: /^(?:(?:(?:\\[bfnrtv0])|(?:\\x[0-9a-fA-F]{2})))$/u, factory: F.buildControlEscape },
-	control_letter_escape: { pattern: /^(?:(?:\\c[a-zA-Z]))$/u, factory: F.buildControlLetterEscape },
+	pattern_character: { pattern: F._leafRe_buildPatternCharacter, factory: F.buildPatternCharacter },
+	posix_class_name: { pattern: F._leafRe_buildPosixClassName, factory: F.buildPosixClassName },
+	class_character: { pattern: F._leafRe_buildClassCharacter, factory: F.buildClassCharacter },
+	flags: { pattern: F._leafRe_buildFlags, factory: F.buildFlags },
+	decimal_escape: { pattern: F._leafRe_buildDecimalEscape, factory: F.buildDecimalEscape },
+	unicode_character_escape: { pattern: F._leafRe_buildUnicodeCharacterEscape, factory: F.buildUnicodeCharacterEscape },
+	unicode_property_value: { pattern: F._leafRe_buildUnicodePropertyValue, factory: F.buildUnicodePropertyValue },
+	control_escape: { pattern: F._leafRe_buildControlEscape, factory: F.buildControlEscape },
+	control_letter_escape: { pattern: F._leafRe_buildControlLetterEscape, factory: F.buildControlLetterEscape },
 	identity_escape: { factory: (content: string) => _resolveByKind('identity_escape', content) },
-	group_name: { pattern: /^(?:(?:[A-Za-z_][A-Za-z0-9_]*))$/u, factory: F.buildGroupName },
-	decimal_digits: { pattern: /^(?:(?:\d+))$/u, factory: F.buildDecimalDigits },
-	character_class_escape_text1: { pattern: /^(?:(?:\\[dDsSwW]))$/u, factory: F.buildCharacterClassEscapeText1 },
-	character_class_escape_text2: { pattern: /^(?:(?:\\[pP]))$/u, factory: F.buildCharacterClassEscapeText2 },
+	group_name: { pattern: F._leafRe_buildGroupName, factory: F.buildGroupName },
+	decimal_digits: { pattern: F._leafRe_buildDecimalDigits, factory: F.buildDecimalDigits },
+	character_class_escape_text1: {
+		pattern: F._leafRe_buildCharacterClassEscapeText1,
+		factory: F.buildCharacterClassEscapeText1
+	},
+	character_class_escape_text2: {
+		pattern: F._leafRe_buildCharacterClassEscapeText2,
+		factory: F.buildCharacterClassEscapeText2
+	},
 	negation: { values: ['^'], factory: () => F.buildNegation },
 	_tight: { values: [''], factory: () => F.buildTight },
 	_newline: { values: ['\n'], factory: () => F.buildNewline },
 	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline },
 	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline },
 	unicode_property_name: {
-		pattern: /^(?:(?:[a-zA-Z_0-9]+))$/u,
+		pattern: F._leafRe_buildUnicodePropertyValue,
 		factory: (text: string) => F.buildUnicodePropertyName(F.buildUnicodePropertyValue(text) as never)
 	}
 };
@@ -119,9 +122,6 @@ function _buildGuardedText(v: string, kind: string): AnyUntypedNode | number {
 	const entry = _leafRegistry[kind]!;
 	if (entry.values !== undefined && !entry.values.includes(v)) {
 		throw new Error(`${JSON.stringify(v)} is not the text of ${kind}: expected one of ${JSON.stringify(entry.values)}`);
-	}
-	if (entry.pattern !== undefined && !entry.pattern.test(v)) {
-		throw new Error(`${JSON.stringify(v)} is not a ${kind}: it does not match ${entry.pattern}`);
 	}
 	return entry.factory(v);
 }

@@ -216,7 +216,7 @@ The grammar's `api.ts`: the implementation a language descriptor loads. It decla
 
 ### `packages/codegen/src/emitters/factories.ts::buildLeafReConsts`
 
-The whole-text guard of every text-leaf factory. For each pattern-model kind that has a factory and a `textPattern`, it emits one module-scope constant `_leafRe_<factory>` holding the anchored literal `/^(?:<pattern>)$/`, and returns the kind → constant map the leaf guards read. The literal comes from `anchoredLeafRegexLiteral`, so the compile test and the emitted constant cannot drift. A kind with no derivable pattern (an external scanner token with no interior, an indent or dedent mark) gets no constant and keeps only its non-empty guard. Hidden fixed-text leaves have no factory and no constant.
+The whole-text guard of every text-leaf factory. For each pattern-model kind that has a factory and a `textPattern`, it emits one module-scope constant `_leafRe_<factory>` holding the anchored literal `/^(?:<pattern>)$/`, and returns the kind → constant map the leaf guards read. The literal comes from `anchoredLeafRegexLiteral`, so the compile test and the emitted constant cannot drift. Each distinct literal is written once per module: a later constant whose literal is already declared (a shared sub-rule such as a digit run, or two kinds with one pattern) is declared as the first constant (`export const _leafRe_b = _leafRe_a;`). The constants are exported, and the coercer's leaf registry reads them, so the factories hold one literal per leaf pattern; a test ratchets that at no copies. A kind with no derivable pattern (an external scanner token with no interior, an indent or dedent mark) gets no constant and keeps only its non-empty guard. Hidden fixed-text leaves have no factory and no constant.
 
 The guards themselves (`buildLeafGuards`) always run: a non-empty check on every text leaf whose pattern does not accept the empty string (an empty doc comment is valid text for a `.*` leaf, so the pattern alone decides there) and, where a constant exists, `!_leafRe_<factory>.test(text)`. Neither is conditional on a debug flag; the guard is the factory's contract.
 
@@ -2124,7 +2124,7 @@ A single branch kind at an optional slot resolves through `_resolveOneBranch(val
  */
 ```
 
-Every text kind's check is built once as a `TextKindCheck` — fixed `values` for a visible fixed-text leaf, the compiled `pattern` (`anchoredLeafRegex`, or the token interior's `su` regex) otherwise — and the registry row prints that same check, so the emitted row and `leafTextChecks` cannot drift. The checks come back ordered by `rankTextKinds`, and their kinds are emitted as `_TEXT_KINDS_BY_RANK`. Hidden and visible leaves register alike; a kind the factory emitter does not emit (`classifyFactoryEmission`) is skipped, and a pattern kind with no text pattern is skipped when no slot references it and is an error otherwise.
+Every text kind's check is built once as a `TextKindCheck` — fixed `values` for a visible fixed-text leaf, the compiled `pattern` (`anchoredLeafRegex`, or the token interior's `su` regex) otherwise — and the registry row carries that same check, so the emitted row and `leafTextChecks` cannot drift. A pattern row names the leaf builder's own guard constant (`F._leafRe_<factory>`, from `leafReDeclaration`; an alias names its pattern leaf's constant), and a lexed row compiles the interior through `interiorPattern`; the registry never prints a regex of its own. The checks come back ordered by `rankTextKinds`, and their kinds are emitted as `_TEXT_KINDS_BY_RANK`. Hidden and visible leaves register alike; a kind the factory emitter does not emit (`classifyFactoryEmission`) is skipped, and a pattern kind with no text pattern is skipped when no slot references it and is an error otherwise.
 
 ```text
 // ---------------------------------------------------------------------------
@@ -3253,7 +3253,8 @@ render.
 
 Emits the render module for a grammar: `transport.rs` (the transport
 types, their `Display` impls and the per-kind render functions), the
-options module, the hash files and `mod.rs`. Takes the emitted bodies —
+options module, the hash files, `mod.rs`, and `records.ts` (`recordsTs`),
+the record layouts the transport structs stamp. Takes the emitted bodies —
 the per-kind bodies are what the render functions and the validators'
 sidecar are both read from — the assembled node map, and the parser's
 kind-id tables. The tables are required: every transport decodes by kind id,
@@ -3525,6 +3526,21 @@ names are set aside — the same variants, ids, aliases, seams and prepare
 fill — share the first one's declaration and name, in node order. A choice
 whose arms write its owner's seam sites differs from another owner's and
 stays its own.
+
+Choices with the same variants that stay their own differ in one of three
+facts:
+
+- **The owner's seam sites** a literal arm writes. The fifteen typescript
+  statement `terminator` choices are one such set: each `;` arm writes its
+  own owner's sites.
+- **The kind ids a variant claims.** Rust `if_expression`'s `condition`
+  claims `_LET_CHAIN` and `LET_CHAIN` for its `LetChain` arm, and
+  `let_chain`'s `left` claims `_LET_CHAIN` only.
+- **The order of the arms**, which is the grammar's: typescript
+  `assignment_expression`'s `left` and `for_header`'s `left` list
+  `_lhs_expression` and the parenthesized expressions in opposite orders.
+  The claims are disjoint, so the order decides nothing, but the generated
+  choice follows the grammar rather than a canonical order.
 
 ### `packages/codegen/src/emitters/render-module.ts::choiceNameOf`
 
@@ -3856,10 +3872,10 @@ besides its slots, keyed `#[wire(key = "$_layout")]` (`wireKeyAttr`). A
 compound declares no text field — its content is its slots, and a node that
 arrives with storage renders from that storage.
 
-### `packages/codegen/src/emitters/render-module.ts::renderLeafTransportPlainFields`
+### `packages/codegen/src/emitters/render-module.ts::renderLeafTextField`
 
-A text leaf's transport fields: the layout field (`renderLayoutField`), then
-`text: String` keyed `$text`, the leaf's own content. The struct's
+A text leaf's `text: String` field, keyed `$text`: the leaf's own content,
+after its layout field (`renderLayoutField`). The struct's
 `#[transport(…, text …)]` (`transportArgs`) has the derive expand the text
 leaf codec: a bare string is its text, a number its fixed text, and an object
 its `$text` and its layout.
@@ -7288,6 +7304,8 @@ other; `elementKinds` stays the kinds the items admit.
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::RustRenderModuleEmit`
+
+`recordsTs` is `packages/<lang>/src/records.ts` (`recordsTs`).
 
 ```text
 /**
@@ -12378,7 +12396,7 @@ The node resolvers (`_resolveOne`, `_resolveMany`, `_resolveOneLeaf`, `_resolveO
 
 #### _TEXT_KINDS_BY_RANK
 
-A mixed-enum slot resolves a bare string by keyword extraction first, then lexical rank, as tree-sitter does. `_keywordOf(v, [[text, kindId], …])` (table from `keywordArmTextMapExpr`) returns the kind id of the slot's keyword arm whose text equals the string, and only a string that is no keyword arm goes on to the resolver below; a slot with no keyword arm emits no `_keywordOf`. An array slot applies the same rule per element: each element is `_keywordOf(e, …) ?? <the slot's scalar resolution of e>`, so an element that is a keyword arm's text is stored as the arm's kind id before the element resolver could build a leaf or a scalar from it. Elements that resolve to `undefined` are dropped, as the whole-array storage coercion drops them, so an absent element never reaches the transport. Non-keyword fixed-text arms keep going through the rank. The emitted from-module lists every registered text kind in `lexicalRank` order. `_resolveBareText(v, kinds)` walks that list, skips kinds the slot does not admit, and builds the first kind whose row accepts the text; the runtime never ranks anything itself. When a slot admits text kinds and none accepts, `_resolveOne` throws `"<text>" matches none of [<kinds>]`. `_resolveOneLeaf` builds a single-leaf slot through `_buildGuardedText`, which throws `"<text>" is not a <kind>` on a mismatch. The keyword-text table (`_KEYWORD_BRANCH_BY_TEXT`) keeps exact identity and is asserted unique at codegen: one keyword text building two branches is an error.
+A mixed-enum slot resolves a bare string by keyword extraction first, then lexical rank, as tree-sitter does. `_keywordOf(v, [[text, kindId], …])` (table from `keywordArmTextMapExpr`) returns the kind id of the slot's keyword arm whose text equals the string, and only a string that is no keyword arm goes on to the resolver below; a slot with no keyword arm emits no `_keywordOf`. An array slot applies the same rule per element: each element is `_keywordOf(e, …) ?? <the slot's scalar resolution of e>`, so an element that is a keyword arm's text is stored as the arm's kind id before the element resolver could build a leaf or a scalar from it. Elements that resolve to `undefined` are dropped, as the whole-array storage coercion drops them, so an absent element never reaches the transport. Non-keyword fixed-text arms keep going through the rank. The emitted from-module lists every registered text kind in `lexicalRank` order. `_resolveBareText(v, kinds)` walks that list, skips kinds the slot does not admit, and builds the first kind whose row accepts the text; the runtime never ranks anything itself. When a slot admits text kinds and none accepts, `_resolveOne` throws `"<text>" matches none of [<kinds>]`. `_resolveOneLeaf` builds a single-leaf slot through `_buildGuardedText`, which throws `"<text>" is not the text of <kind>` when a fixed-text kind's `values` do not hold the text; a pattern or lexed kind's text is refused by the builder it calls (the leaf guard, or the interior projection), so the text is checked once. The keyword-text table (`_KEYWORD_BRANCH_BY_TEXT`) keeps exact identity and is asserted unique at codegen: one keyword text building two branches is an error.
 
 ### `packages/codegen/src/emitters/from.ts::FromEmitter`
 
@@ -13198,6 +13216,15 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTransportDataStruct`
+
+Emits a kind's transport struct. The struct's record layout
+(`recordLayoutOf`) is computed once from its slots, kept on
+`ReadPrint.records` for `records.ts`, and stamped as `words = …` on
+`#[transport(…)]` and each slot's place on its `#[slot(…)]` (`slotAttr`). A
+leaf's record is its header alone: its text lives in the cell that holds the
+leaf. The fields that are not slots (a list's `delimiter` and
+`separator_kind`, a spacing site's per-node value) are layout and take no
+cell.
 
 #### body
 
@@ -14782,7 +14809,7 @@ The storage coercion of one slot value (boolean keyword, bitflag, kind enum, mix
 
 ### `packages/codegen/src/emitters/factories.ts::leafReDeclaration`
 
-The anchored pattern constant a text leaf's factory declares: its `_leafRe_<factory>` name and its regex literal, or nothing for a fixed-text hidden leaf or a kind with no derivable pattern. The guard constants and the hidden-leaf admission table read it, so both name the same constant.
+The anchored pattern constant a text leaf's factory declares: its `_leafRe_<factory>` name and its regex literal, or nothing for a fixed-text hidden leaf or a kind with no derivable pattern. The guard constants, the hidden-leaf admission table and the coercer's leaf registry read it, so all three name the same constant.
 
 ### `packages/codegen/src/emitters/factories.ts::constructionChildElementType`
 
@@ -15266,7 +15293,7 @@ The item slot of a separated list that has a delimiter flank or a separator, or 
 
 ### `packages/codegen/src/emitters/transport-projection.ts::transportArgs`
 
-The `#[transport(…)]` arguments of a struct: an alias envelope reads by its display id, a text leaf as its text (with the fixed text it reads when its span is empty), a token interior by its pattern, and every other kind by its own id with its minimum depth, layout tokens and list marker. The reader seats no trivia, so no inner gap is named here: a node's sides are the trivia table's. Each fact comes from the derivation the wrap already uses.
+The `#[transport(…)]` arguments of a struct: an alias envelope reads by its display id and selects envelope reading through `content = content`, a text leaf as its text (with the fixed text it reads when its span is empty), a token interior by its pattern, and every other kind by its own id with its minimum depth, layout tokens and `item = <slot>` when it selects list reading. The content and item field arguments select their reader modes without separate marker flags. The reader seats no trivia, so no inner gap is named here: a node's sides are the trivia table's. Each fact comes from the derivation the wrap already uses.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::takesUntagged`
 
@@ -15274,7 +15301,7 @@ Whether a slot takes children that carry no field: when it has no field route or
 
 ### `packages/codegen/src/emitters/transport-projection.ts::slotArgs`
 
-The `#[slot(…)]` arguments of one slot: its field routes, `untagged` when it also takes untagged kinds, the keyword a presence slot reads (`display(KIND)` for an aliased one, `presenceKeyword`), its separators, read from the stamps (`slotDropKindIds`; a list's item slot also takes the list's separator candidates), and `scalar` for a text slot stored as a unit. An unaliased keyword and each separator are printed with the raw symbols folded into them (`tokenGroup`). Empty means a bare `#[slot]`.
+The `#[slot(…)]` arguments of one slot: its field routes, `untagged` when it also takes untagged kinds, the keyword a presence slot reads (`display(KIND)` for an aliased one, `presenceKeyword`), its separators, read from the stamps (`slotDropKindIds`; a list's item slot also takes the list's separator candidates), and `scalar` for a text slot stored as a unit. An unaliased keyword and each separator are printed with the raw symbols folded into them (`tokenGroup`). The `scalar` fact controls unit trivia-side capture for routed text slots; token interior captures use `captureArgs` instead. Empty means a bare `#[slot]`.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::captureArgs`
 
@@ -15314,7 +15341,7 @@ Whether a presence slot's value is a keyword the site wraps in an alias, read fr
 
 ### `packages/codegen/src/emitters/render-module.ts::ReadPrint`
 
-What the transport printers share while they state the read facts: the facts' context, the template bodies by kind, the kind ids each printed type admits, the choices that carry a blank arm, the payload types the choices hold (`choicePayloads`), which the ceiling assertions check, and the transports printed (`transports`), which `grammarTriviaStatement` lists. One value is threaded through every printer so a type's ids and name are recorded where it is printed and checked after all of them are.
+What the transport printers share while they state the read facts: the facts' context, the template bodies by kind, the kind ids each printed type admits, the choices that carry a blank arm, the payload types the choices hold (`choicePayloads`), which the ceiling assertions check, and the transports printed (`transports`), which `grammarTriviaStatement` lists. One value is threaded through every printer so a type's ids and name are recorded where it is printed and checked after all of them are. The record layout of each struct it prints is kept on `records`, by struct name, for `records.ts`.
 
 ### `packages/codegen/src/emitters/render-module.ts::readPrintOf`
 
@@ -15374,9 +15401,9 @@ The ids a fixed-literal transport takes: its accepted ids, or its own id. The de
 
 The slots a struct has fields for, in order: the slot model's named and unnamed slots in the node's own slot order, then the named slots of each hidden helper node an unnamed slot hoists, all optional. The field order is the order the read writes the transport's keys, so a read transport's keys follow the model's slots. The printer and the check that follows it walk the same list.
 
-### `packages/codegen/src/emitters/render-module.ts::slotReadAttr`
+### `packages/codegen/src/emitters/render-module.ts::slotAttr`
 
-The `#[slot]` attribute of one field: a capture for each slot of a token interior, else the routes, presence keyword, separators and scalar mark `slotArgs` computes. An alias envelope's content has none: it is not a parser field, and the derive's envelope mode names it by `content = …`.
+The `#[slot]` attribute of one slot, its one attribute: its read facts, then its record place (`recordArgs`). The read facts are a capture for each slot of a token interior, else the routes, presence keyword, separators and scalar mark `slotArgs` computes. An alias envelope's content has no read facts, only its place: it is not a parser field but the aliased node itself, which the derive's envelope mode reads as the slot `content = …` names.
 
 ### `packages/codegen/src/emitters/render-module.ts::readsItsSlots`
 
@@ -15430,3 +15457,80 @@ Recognizes distinct parser identities merged under one explicit display alias, e
 
 
 The internal serialized node model carries `displayUnions` directly from `NodeMap.displayUnions`. It preserves the compiler's complete canonical parser-display family, including default catalog members, without inferring another alias registry from slots. Validators use this projection to retain physical factory and template coverage behind shared display names.
+
+### `packages/codegen/src/emitters/render-module.ts::recordsTs`
+
+`records.ts` for a grammar: `RECORD_HEADER_WORDS` and `records`, each struct's
+words and its fields' places by Rust field name, the same numbers
+`transport.rs` stamps. JavaScript reads a record through these literal offsets
+and never computes one.
+
+### `packages/codegen/src/emitters/record-layout.ts::RECORD_HEADER_WORDS`
+
+The words every record opens with: word 0 the kind's grammar id, word 1 its
+side record's address (0 for none). The presence words follow, then the cells.
+
+### `packages/codegen/src/emitters/record-layout.ts::PRESENCE_BITS_PER_WORD`
+
+A presence word holds 32 presence bits, one word of the `u32` arena.
+
+### `packages/codegen/src/emitters/record-layout.ts::CELL_WORDS`
+
+The cell widths, one per form a slot holds:
+
+- `node`, 5: anything carried in a `SlotValue`, whose arms may all be units,
+  since `SlotValue::Coord` holds an untouched parsed child (tag, kind, index,
+  byte start and end);
+- `text`, 4: a leaf's text (tag, kind, and a byte span, or a string-table
+  offset and length);
+- `list`, 2: a run's offset and length, its items in cells of their own width.
+
+The derive checks each against the slot's type (`sittir_core::record`).
+
+### `packages/codegen/src/emitters/record-layout.ts::RecordForm`
+
+What a slot needs in its record: a presence `bit`, or a `cell` of `width`
+words, with a `run` of words per item for a list.
+
+### `packages/codegen/src/emitters/record-layout.ts::RecordField`
+
+A slot that holds part of its struct's record, by Rust field name, with its
+form.
+
+### `packages/codegen/src/emitters/record-layout.ts::RecordPlace`
+
+Where a slot sits in its record: a `bit` of presence word `word`, or a cell of
+`width` words at `word` (with its `run`).
+
+### `packages/codegen/src/emitters/record-layout.ts::RecordLayout`
+
+A struct's record: its `words` and each placed slot.
+
+### `packages/codegen/src/emitters/record-layout.ts::slotRecordForm`
+
+A slot's record form, from its stamped `TransportSlotShape` and whether it is
+a list: a presence is a bit, text a text cell, anything else a node cell; a
+list holds a list cell with runs of that width.
+
+### `packages/codegen/src/emitters/record-layout.ts::recordLayoutOf`
+
+The one derivation of a struct's record layout. The presence bits fill words
+from `RECORD_HEADER_WORDS`, 32 to a word, and each cell follows in slot
+order. Codegen is the single source of every word, width and bit: Rust reads
+them from each slot's `#[slot(…)]` and the struct's `#[transport(words = …)]`,
+JavaScript from `records.ts`, and neither computes one. A slot's one
+attribute holds its read facts and its layout together.
+
+A record holds structure, and its side record holds layout. Every record
+cell is a slot: a node, a list, text, a presence bit, and an alias
+envelope's `content`, the envelope's one slot. A field that states how to
+print goes in the side record beside `edges`, `gap` and `flank` and takes no
+cell here: a spacing site's per-node value, and a preference the tree
+records, such as the separator or delimiter a list's occurrence used
+(`delimiter`, `separator_kind`). A leaf holds no cell of its own: its text is
+in the cell that holds it. A field added later lands by the same split.
+
+### `packages/codegen/src/emitters/record-layout.ts::recordArgs`
+
+A slot's place, spelled as the derive reads it inside the slot's `#[slot(…)]`:
+`word` and `width` (and `run`) for a cell, `word` and `bit` for a presence.

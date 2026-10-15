@@ -2,7 +2,7 @@
 
 import * as F from './raw.js';
 import { TOKEN_INTERIORS } from '../consts.js';
-import { lexedConfig, numberText, spelledForm, spelledInterior } from '@sittir/common/utils';
+import { lexedConfig, interiorPattern, numberText, spelledForm, spelledInterior } from '@sittir/common/utils';
 import type * as T from '../types-internal.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
 import { Delimiter } from '@sittir/common/utils';
@@ -220,63 +220,66 @@ interface _LeafEntry {
 	readonly factory: (text: string) => AnyUntypedNode | number;
 }
 const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
-	import_prefix: { pattern: /^(?:(?:\.)+)$/u, factory: F.buildImportPrefix },
+	import_prefix: { pattern: F._leafRe_buildImportPrefix, factory: F.buildImportPrefix },
 	wildcard_import: { values: ['*'], factory: () => F.buildWildcardImport },
 	pass_statement: { values: ['pass'], factory: () => F.buildPassStatement },
 	break_statement: { values: ['break'], factory: () => F.buildBreakStatement },
 	continue_statement: { values: ['continue'], factory: () => F.buildContinueStatement },
 	ellipsis: { values: ['...'], factory: () => F.buildEllipsis },
 	not_escape_sequence: { values: ['\\'], factory: () => F.buildNotEscapeSequence },
-	type_conversion: { pattern: /^(?:(?:![a-z]))$/u, factory: F.buildTypeConversion },
-	identifier: { pattern: /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u, factory: F.buildIdentifier },
+	type_conversion: { pattern: F._leafRe_buildTypeConversion, factory: F.buildTypeConversion },
+	identifier: { pattern: F._leafRe_buildIdentifier, factory: F.buildIdentifier },
 	true: { values: ['True'], factory: () => F.buildTrue },
 	false: { values: ['False'], factory: () => F.buildFalse },
 	none: { values: ['None'], factory: () => F.buildNone },
 	comment: { factory: (content: string) => _resolveByKind('comment', content) },
 	positional_separator: { values: ['/'], factory: () => F.buildPositionalSeparator },
 	keyword_separator: { values: ['*'], factory: () => F.buildKeywordSeparator },
-	format_specifier_text: { pattern: /^(?:(?:[^{}\n]+))$/u, factory: F.buildFormatSpecifierText },
+	format_specifier_text: { pattern: F._leafRe_buildFormatSpecifierText, factory: F.buildFormatSpecifierText },
 	wildcard_pattern: { values: ['_'], factory: () => F.buildWildcardPattern },
 	integer_hex: {
-		pattern: new RegExp(TOKEN_INTERIORS['integer_hex'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['integer_hex']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_hex'], 'integer_hex');
 			return F.buildIntegerHex(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
 		}
 	},
 	integer_octal: {
-		pattern: new RegExp(TOKEN_INTERIORS['integer_octal'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['integer_octal']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_octal'], 'integer_octal');
 			return F.buildIntegerOctal(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
 		}
 	},
 	integer_binary: {
-		pattern: new RegExp(TOKEN_INTERIORS['integer_binary'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['integer_binary']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_binary'], 'integer_binary');
 			return F.buildIntegerBinary(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
 		}
 	},
-	integer_decimal_long: { pattern: /^(?:(?:(?:[0-9]+_?))+(?:[Ll]))$/u, factory: F.buildIntegerDecimalLong },
-	integer_decimal_imaginary: { pattern: /^(?:(?:(?:[0-9]+_?))+(?:[jJ]))$/u, factory: F.buildIntegerDecimalImaginary },
-	integer_decimal_plain: { pattern: /^(?:(?:(?:[0-9]+_?))+)$/u, factory: F.buildIntegerDecimalPlain },
+	integer_decimal_long: { pattern: F._leafRe_buildIntegerDecimalLong, factory: F.buildIntegerDecimalLong },
+	integer_decimal_imaginary: {
+		pattern: F._leafRe_buildIntegerDecimalImaginary,
+		factory: F.buildIntegerDecimalImaginary
+	},
+	integer_decimal_plain: { pattern: F._leafRe_buildIntegerDecimalPlain, factory: F.buildIntegerDecimalPlain },
 	float_point: {
-		pattern: new RegExp(TOKEN_INTERIORS['float_point'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['float_point']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['float_point'], 'float_point');
 			return F.buildFloatPoint(cfg as never);
 		}
 	},
 	float_leading_point: {
-		pattern: new RegExp(TOKEN_INTERIORS['float_leading_point'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['float_leading_point']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['float_leading_point'], 'float_leading_point');
 			return F.buildFloatLeadingPoint(cfg as never);
 		}
 	},
 	float_scientific: {
-		pattern: new RegExp(TOKEN_INTERIORS['float_scientific'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['float_scientific']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['float_scientific'], 'float_scientific');
 			return F.buildFloatScientific(cfg as never);
@@ -293,12 +296,15 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	escape_sequence_line_break: { factory: (content: string) => _resolveByKind('escape_sequence_line_break', content) },
 	escape_sequence_simple: { factory: (content: string) => _resolveByKind('escape_sequence_simple', content) },
 	escape_sequence_named: { factory: (content: string) => _resolveByKind('escape_sequence_named', content) },
-	line_continuation_newline: { pattern: /^(?:\\(?:\r)?\n)$/u, factory: F.buildLineContinuationNewline },
+	line_continuation_newline: {
+		pattern: F._leafRe_buildLineContinuationNewline,
+		factory: F.buildLineContinuationNewline
+	},
 	line_continuation_nul: { values: ['\\\u0000'], factory: () => F.buildLineContinuationNul },
-	string_start: { pattern: /^(?:(?:[a-zA-Z]*["'`]+))$/u, factory: F.buildStringStart },
-	string_fragment: { pattern: /^(?:(?:[\s\S]+))$/u, factory: F.buildStringFragment },
-	escape_interpolation: { pattern: /^(?:(?:\{\{|\}\}))$/u, factory: F.buildEscapeInterpolation },
-	string_end: { pattern: /^(?:(?:\\*["'`]+))$/u, factory: F.buildStringEnd },
+	string_start: { pattern: F._leafRe_buildStringStart, factory: F.buildStringStart },
+	string_fragment: { pattern: F._leafRe_buildStringFragment, factory: F.buildStringFragment },
+	escape_interpolation: { pattern: F._leafRe_buildEscapeInterpolation, factory: F.buildEscapeInterpolation },
+	string_end: { pattern: F._leafRe_buildStringEnd, factory: F.buildStringEnd },
 	_indent: { values: ['﷐\n'], factory: () => F.buildIndent },
 	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent },
 	_tight: { values: [''], factory: () => F.buildTight },
@@ -323,9 +329,6 @@ function _buildGuardedText(v: string, kind: string): AnyUntypedNode | number {
 	const entry = _leafRegistry[kind]!;
 	if (entry.values !== undefined && !entry.values.includes(v)) {
 		throw new Error(`${JSON.stringify(v)} is not the text of ${kind}: expected one of ${JSON.stringify(entry.values)}`);
-	}
-	if (entry.pattern !== undefined && !entry.pattern.test(v)) {
-		throw new Error(`${JSON.stringify(v)} is not a ${kind}: it does not match ${entry.pattern}`);
 	}
 	return entry.factory(v);
 }

@@ -28,16 +28,6 @@ reported with tree-sitter's own message. `compileQuery` stops at the first
 failure of the whole file; this is what turns a failing compile into a list
 that can be worked through. The patterns and the names each one references come from the pinned reader (`bindingPatterns`).
 
-### `packages/tools/src/inventory/model.ts::loadSlotModel`
-
-```text
-The grammar's slot model from `packages/<grammar>/src/node-model.json5`, the
-one source for slots (name, property name, required, multiple, storage,
-admitted kinds, terminal texts), supertypes (`subtypes`), a list's element
-kinds (`elementKinds`), enum texts and token texts. The derivation reads
-nothing from the generated `types.ts`.
-```
-
 ### `packages/tools/src/inventory/index.ts::loadInputs`
 
 Each grammar's binding facts (`readBindings`), named by their bound kinds through the node model's stamped `renamedFrom` (`bindFacts` over `loadBoundNameOf`, the identity with the grammar bindings off), slot model, the text tokens its evaluation minted (`RawGrammar.textTokens`), and its layout slots. A minted text kind is the same fact as the inline token it replaced, so `derive` reads it as that token's text (`text:<pattern>`), not as an unmapped kind. The layout slots are every address in the grammar options' bindings block that names an owner and a field (`readOptionsBlock`, parsed by `parsePreferencePath`; the owner `_` stands for any kind). A separated list's separator is no slot of the model, so no slot is layout by its name alone: a branch's slot named `separator` (typescript's `member_expression`, rust's `token_repetition`) is a member like any other.

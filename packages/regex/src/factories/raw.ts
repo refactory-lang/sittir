@@ -29,19 +29,19 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 	}
 }
 
-const _leafRe_buildPatternCharacter = /^(?:(?:[^^$\\.*+?()[\]|\r?\n]))$/u;
-const _leafRe_buildPosixClassName = /^(?:(?:[a-zA-Z]+))$/u;
-const _leafRe_buildClassCharacter = /^(?:(?:[^\\\]-]))$/u;
-const _leafRe_buildFlags = /^(?:(?:[a-zA-Z]+))$/u;
-const _leafRe_buildDecimalEscape = /^(?:(?:\\[1-9][0-9]*))$/u;
-const _leafRe_buildUnicodeCharacterEscape = /^(?:(?:(?:\\u[0-9a-fA-F]{4})|(?:\\u\{[0-9a-fA-F]{1,6}\})))$/u;
-const _leafRe_buildUnicodePropertyValue = /^(?:(?:[a-zA-Z_0-9]+))$/u;
-const _leafRe_buildControlEscape = /^(?:(?:(?:\\[bfnrtv0])|(?:\\x[0-9a-fA-F]{2})))$/u;
-const _leafRe_buildControlLetterEscape = /^(?:(?:\\c[a-zA-Z]))$/u;
-const _leafRe_buildGroupName = /^(?:(?:[A-Za-z_][A-Za-z0-9_]*))$/u;
-const _leafRe_buildDecimalDigits = /^(?:(?:\d+))$/u;
-const _leafRe_buildCharacterClassEscapeText1 = /^(?:(?:\\[dDsSwW]))$/u;
-const _leafRe_buildCharacterClassEscapeText2 = /^(?:(?:\\[pP]))$/u;
+export const _leafRe_buildPatternCharacter = /^(?:(?:[^^$\\.*+?()[\]|\r?\n]))$/u;
+export const _leafRe_buildPosixClassName = /^(?:(?:[a-zA-Z]+))$/u;
+export const _leafRe_buildClassCharacter = /^(?:(?:[^\\\]-]))$/u;
+export const _leafRe_buildFlags = _leafRe_buildPosixClassName;
+export const _leafRe_buildDecimalEscape = /^(?:(?:\\[1-9][0-9]*))$/u;
+export const _leafRe_buildUnicodeCharacterEscape = /^(?:(?:(?:\\u[0-9a-fA-F]{4})|(?:\\u\{[0-9a-fA-F]{1,6}\})))$/u;
+export const _leafRe_buildUnicodePropertyValue = /^(?:(?:[a-zA-Z_0-9]+))$/u;
+export const _leafRe_buildControlEscape = /^(?:(?:(?:\\[bfnrtv0])|(?:\\x[0-9a-fA-F]{2})))$/u;
+export const _leafRe_buildControlLetterEscape = /^(?:(?:\\c[a-zA-Z]))$/u;
+export const _leafRe_buildGroupName = /^(?:(?:[A-Za-z_][A-Za-z0-9_]*))$/u;
+export const _leafRe_buildDecimalDigits = /^(?:(?:\d+))$/u;
+export const _leafRe_buildCharacterClassEscapeText1 = /^(?:(?:\\[dDsSwW]))$/u;
+export const _leafRe_buildCharacterClassEscapeText2 = /^(?:(?:\\[pP]))$/u;
 export const _slotRe_buildIdentityEscape_content = /^(?:(?:[^kdDsSpPwWbfnrtv0-9]))$/u;
 
 export function buildPattern(value: Admit<T.Alternation | T.Term>): T.Pattern.Bound {

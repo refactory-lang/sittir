@@ -622,18 +622,18 @@ describe('transport read facts', () => {
 		);
 	});
 
-	it('marks a separated list, its item slot, its separator and the flank it leaves optional', () => {
+	it('selects list reading from its item slot and preserves its separator and optional flank', () => {
 		const list = node('ParametersElementsTransport') as AssembledList;
-		expect(args('ParametersElementsTransport')).toBe('kind = kind::PARAMETERS_ELEMENTS, list, item = item');
+		expect(args('ParametersElementsTransport')).toBe('kind = kind::PARAMETERS_ELEMENTS, item = item');
 		expect(slotArgs(slot('ParametersElementsTransport', 'item'), list, shape(slot('ParametersElementsTransport', 'item')), ctx)).toBe('field = field::ITEM, separator = kind::COMMA');
 		expect(flankArgs(list)).toBe('trailing = 0');
 	});
 
-	it('reads a token interior by its pattern and an envelope by its display id', () => {
+	it('reads a token interior by its pattern and selects envelope reading from its content slot', () => {
 		expect(args('IntegerLiteralDecimalTransport')).toBe(
 			'kind = kind::INTEGER_LITERAL_DECIMAL, interior = "^(?<content>(?:[0-9][0-9_]*))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$"'
 		);
-		expect(args('TypeIdentifierTransport')).toBe('kind = kind::_TYPE_IDENTIFIER, display, envelope, content = content');
+		expect(args('TypeIdentifierTransport')).toBe('kind = kind::_TYPE_IDENTIFIER, display, content = content');
 	});
 
 	it('reads a leaf as its text', () => {
@@ -718,9 +718,9 @@ describe('transport attributes', () => {
 		const src = await getRustTemplatesRs();
 		expect(src).toContain('use super::{field_ids as field, kind_ids as kind};');
 		expect(src).toMatch(
-			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Transport\)\]\n#\[transport\(kind = kind::FUNCTION_ITEM, layout = \[kind::FN_KEYWORD, kind::DASH_GT\]\)\]\npub struct FunctionItemTransport \{/
+			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Transport\)\]\n#\[transport\(kind = kind::FUNCTION_ITEM, layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 42\)\]\npub struct FunctionItemTransport \{/
 		);
-		expect(extractStructBody(src, 'FunctionItemTransport')).toMatch(/    #\[slot\(field = field::NAME\)\]\n    pub name: /);
+		expect(extractStructBody(src, 'FunctionItemTransport')).toMatch(/    #\[slot\(field = field::NAME, word = 12, width = 5\)\]\n    pub name: /);
 		expect(extractStructBody(src, 'ParametersElementsTransport')).toMatch(/    #\[flank\(trailing = 0\)\]\n    pub delimiter: Option<u8>,/);
 	});
 
@@ -799,7 +799,7 @@ describe('the wire codec facts', () => {
 		expect(src).toContain('use ::sittir_core::VerbatimTransport;');
 		const item = extractStructBody(src, 'FunctionItemTransport');
 		expect(item).toMatch(/    #\[wire\(key = "\$_layout"\)\]\n    pub layout: Option<Box<TransportLayout>>,/);
-		expect(item).toMatch(/    #\[wire\(key = "_name"\)\]\n    #\[slot\(field = field::NAME\)\]\n    pub name: /);
+		expect(item).toMatch(/    #\[wire\(key = "_name"\)\]\n    #\[slot\(field = field::NAME, word = 12, width = 5\)\]\n    pub name: /);
 		expect(extractStructBody(src, 'IdentifierTransport')).toMatch(/    #\[wire\(key = "\$text"\)\]\n    pub text: String,/);
 	});
 
