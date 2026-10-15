@@ -24,6 +24,7 @@
   {"grammar": "typescript", "refs": ["javascript#259"], "class": "misparse", "title": "a labelled statement", "witness": null, "route": 3},
   {"grammar": "typescript", "refs": ["javascript#318"], "class": "misparse", "title": "a destructuring assignment", "witness": null, "route": 3},
   {"grammar": "typescript", "refs": ["javascript#354 (PR)"], "class": "misparse", "title": "ASI after an arrow function followed by a parenthesized expression", "witness": null, "route": 2},
+  {"grammar": "typescript", "refs": [], "class": "misparse", "title": "`bigint` is not a predefined type: `let x: bigint` reads it as a type_identifier", "witness": "export let x: bigint = 1n;\n", "route": 3, "note": "no upstream issue or PR; upstream master's predefined_type lacks bigint too"},
   {"grammar": "rust", "refs": ["rust#277", "rust#288 (in 0.24.1)"], "class": "under", "title": "&raw[..] when the identifier is named raw", "witness": "pub fn f(raw: &[u8]) -> &[u8] {\n    &raw[..]\n}\n", "route": 1, "note": "fixed by v0.24.1, a git tag only: npm still publishes 0.24.0 (rust#318)"},
   {"grammar": "rust", "refs": ["rust#306 (in 0.24.1)", "rust#307 (in 0.24.2)"], "class": "misparse", "title": "string literals with unexpected prefixes, and recovery after repeated string literals", "witness": null, "route": 1, "note": "git tags only (rust#318)"},
   {"grammar": "rust", "refs": ["rust#315", "rust#316 (PR)"], "class": "under", "title": "a block comment with multibyte characters", "witness": "pub fn f() {\n    /*是个*/\n}\n", "route": 2},

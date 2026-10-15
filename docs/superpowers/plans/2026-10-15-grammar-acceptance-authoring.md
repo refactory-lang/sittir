@@ -2,12 +2,14 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** sittir's parsers reject what each language's grammar productions exclude, take the upstream fixes already released, and port rust's open upstream fixes.
+**Goal:** sittir's parsers reject what each language's grammar productions exclude, take the upstream fixes already released, port rust's open upstream fixes, and then accept the valid syntax the trackers report as rejected.
 
 **Architecture:**
 - A new rule cause, `reauthored('accepts-invalid-syntax', witnesses, body)`, is the mirror of `rejects-valid-syntax`. Each witness names the production that excludes its text, and the gate proves that upstream derives the form while the authored body does not.
+- Every witnessed cause takes a non-empty witness array, even for one witness. The three existing declarations migrate: python's `tuple` and `tuple_pattern`, and typescript's `export_statement`.
 - The pins come first, so authoring is written against the grammars it will ship on.
 - Then one authoring stage per grammar, each a set of `grammar.sittir.ts` rules.
+- A last stage takes the valid syntax the trackers report as rejected. Each row there is dropped when upstream releases its fix.
 - Early errors (context, labels, strict mode, duplicate names) are not parser work. They are the stated bound of "valid by construction", and the contexts spec takes the context rules into the builder.
 
 **Tech Stack:** the grammar DSL (`packages/codegen/src/dsl`), the rule-cause gate (`packages/codegen/src/compiler/diagnostics/rule-causes.ts`), web-tree-sitter, vitest, pnpm overrides.
@@ -19,6 +21,8 @@
 - The line is the spec's own line. Author only what the language's grammar productions exclude: ECMAScript productions, the TypeScript 1.8 spec's productions for TypeScript-only syntax, Python's PEG grammar, the Rust Reference grammar.
 - Early errors are out of scope, and so are tsc checker rules on syntax newer than the TypeScript 1.8 spec, CPython symtable and compiler errors, and rustc's AST validation and later checks.
 - No context cloning: no rule is duplicated per enclosing context (`[Await]`, `[Yield]`, `[Return]`, loop, trait body).
+- One deliberate exception, ruled by the user: TypeScript tuple element order (TS1257, TS1265, TS1266) is authored, although it is a checker rule on syntax newer than the 1.8 spec. Its witnesses cite the tsc diagnostics. Task 2.6 carries it.
+- No scanner patches and no fork pins. A fix that needs an upstream external scanner waits for a release and is listed under "Known gaps".
 - Each authored rule declares its cause. Over-acceptance rules use `accepts-invalid-syntax`, and ported upstream fixes use `rejects-valid-syntax`, each with its witnesses.
 - Generated outputs are never hand-edited. Regenerate with `pnpm run validate:native`.
 - PR branches never commit `validation-history.jsonl` or `test-history.jsonl` (`SITTIR_HISTORY_NO_COMMIT=1`). The rows go in the PR body.
@@ -36,7 +40,7 @@
 
 ## Stage 0: the `accepts-invalid-syntax` cause
 
-### Task 0.1: the cause, its witnesses and its gate
+### Task 0.1: witness arrays, the new cause and its gate
 
 **Files:**
 - Modify: `packages/codegen/src/dsl/primitives/rule-cause.ts`
@@ -47,23 +51,24 @@
 **Interfaces:**
 - Produces:
   ```ts
+  export type Witnesses<W> = readonly [W, ...W[]];
   export interface InvalidSyntaxWitness extends OtherKindWitness {
   	/** The production that excludes `text`, cited from the language's grammar. */
   	readonly production: string;
   }
-  export function reauthored<F extends (...args: never[]) => unknown>(
-  	cause: 'accepts-invalid-syntax',
-  	witnesses: readonly [InvalidSyntaxWitness, ...InvalidSyntaxWitness[]],
-  	body: F
-  ): F;
+  export function reauthored<F extends (...args: never[]) => unknown>(cause: 'accepts-other-kind', witnesses: Witnesses<OtherKindWitness>, body: F): F;
+  export function reauthored<F extends (...args: never[]) => unknown>(cause: 'semantic-gap', witnesses: Witnesses<SemanticGapWitness>, body: F): F;
+  export function reauthored<F extends (...args: never[]) => unknown>(cause: 'rejects-valid-syntax', witnesses: Witnesses<OtherKindWitness>, body: F): F;
+  export function reauthored<F extends (...args: never[]) => unknown>(cause: 'accepts-invalid-syntax', witnesses: Witnesses<InvalidSyntaxWitness>, body: F): F;
   ```
-  `RuleCauseDeclaration`'s reauthored arm gains `readonly witnesses?: readonly InvalidSyntaxWitness[]`.
+  `RuleCauseDeclaration`'s reauthored arm replaces `witness?` with `readonly witnesses?: Witnesses<OtherKindWitness>`. Every reader of `.witness` moves to the array: `judgeOtherKindWitness`, `judgeRejectedWitness`, `override-census.ts` and the reauthor-witness test.
+- Migrates: `packages/python/grammar.sittir.ts` `tuple` and `tuple_pattern`, and `packages/typescript/grammar.sittir.ts` `export_statement`, each wrapping its one witness in an array.
 - The witness reads the same way as `rejects-valid-syntax`'s, turned around:
   - `text` is source the language rejects and upstream's parser accepts;
   - `form` is its token sequence;
   - `kind` is the upstream rule that derives the form;
   - `production` cites the excluding production.
-- One rule carries several witnesses because one rule excludes several forms. `formal_parameters` alone excludes five.
+- One rule carries several witnesses because one rule excludes several forms. `formal_parameters` alone excludes five. All witnessed causes share the array shape, so no cause is a special case.
 
 - [ ] **Step 1: Write the failing tests.**
   - A rule declared `accepts-invalid-syntax` whose witness form upstream does not derive is a `rule-cause-mismatch`: "upstream 'X' does not derive the witness form".
@@ -75,7 +80,7 @@
 - [ ] **Step 2: Run them and confirm they fail.**
   `pnpm exec vitest run packages/codegen/src/compiler/diagnostics/__tests__/rule-causes.test.ts`
 - [ ] **Step 3: Implement.**
-  - Add the overload and the type.
+  - Change the witnessed overloads to arrays and add the new one. Then migrate the three grammar declarations, and make the existing judges iterate their witnesses. Each witness is judged as before, and a mismatch names the witness's index.
   - Add `'accepts-invalid-syntax': []` to `PROVOKING_CODES`.
   - Add `judgeInvalidWitnesses(grammar, name, witnesses, upstreamRules, authoredRules)`. For each witness, `derivesForm(upstreamRules, upstreamRules[w.kind], w.form)` must be true, and `derivesForm(authoredRules, authoredRules[w.kind], w.form)` must be false. `authoredRules` are the rules after `rules:` are applied, the same record `judgeReauthored` already reads for the rule names.
 - [ ] **Step 4: Run the tests and confirm they pass.**
@@ -93,7 +98,7 @@
   - every ERROR node lies inside the witness's own top-level statement. That is Review Focus 4.
 - [ ] **Step 3: Run the test.** It passes vacuously until a stage declares a witness. The first stage task fails it, as designed.
   `pnpm exec vitest run packages/tools/src/__tests__/reauthor-witness.test.ts`
-- [ ] **Step 4: Commit Tasks 0.1 and 0.2 together.** Run the gates first: suite, type-check, lint and `validate:native`, whose rows must be unchanged since no grammar declares the cause yet.
+- [ ] **Step 4: Commit Tasks 0.1 and 0.2 together.** Run the gates first: suite, type-check, lint and `validate:native`. Rows and generated output must be byte-identical: the migration only changes the declaration shape, and no grammar declares the new cause yet.
 
 ## Stage 1: pins
 
@@ -239,6 +244,19 @@ formal_parameters: reauthored('accepts-invalid-syntax', [/* six witnesses */], (
 - Measure parser states before and after (`pnpm exec tsx packages/cli/src/cli.ts tool --help` lists the state census). Report the cost before committing.
 - This is the one TypeScript row whose authoring copies a rule family. If the cost is large, it goes to brainstorm as a choice between authoring it and listing it in the bound.
 
+### Task 2.6: tuple element order
+
+**Rule:** `tuple_type`.
+**Census rows:** `required tuple element after an optional one`, `optional tuple element after a rest` and `two rest elements`.
+**Witness judge:** the tsc diagnostics TS1257, TS1266 and TS1265. This is the deliberate exception to the 1.8-spec rule (Global Constraints), so each witness's `production` field cites the diagnostic and says so.
+
+- The element list becomes required elements, then optional elements, then at most one rest, with optional elements after the rest excluded: `[A, B?, ...C[]]`.
+- TypeScript 4.2 also allows required elements after a rest (`[...A[], B]`), so the authored order is `required* optional* | required* rest required*`, matching what tsc accepts.
+- Named members (`[a: A, b?: B]`) follow the same order.
+
+- [ ] **Steps 1–5:** As in Task 2.1.
+  - Valid neighbours: `[A, B?]`, `[A, ...B[]]`, `[...A[], B]`, `[a: A, b?: B, ...c: C[]]` and `[]`.
+
 ## Stage 3: Python authoring
 
 The same pattern applies, in `packages/python/grammar.sittir.ts`, with the test in `packages/python/src/__tests__/acceptance.test.ts`.
@@ -328,21 +346,28 @@ The work is in `packages/rust/grammar.sittir.ts`, with the test in `packages/rus
 
 - `default` is the specialization modifier and precedes the qualifiers in rustc's parser. Check that `default unsafe fn` and `const unsafe fn` stay valid, and that `const async fn` still parses: the Reference admits it, and rustc rejects it later.
 
-## Open questions
+## Stage 5: valid syntax the trackers report as rejected
 
-These are listed for brainstorm; none of them blocks Stages 0–1.
+These are ports or authored structure, each with a witness array: `rejects-valid-syntax` for input upstream rejects, and `accepts-other-kind` for a mis-parse into the wrong kind (5.3, 5.9). Each is dropped from `grammar.sittir.ts` when upstream releases its fix and a pin takes it: the gate then reports that upstream already derives the witness form. The tasks follow the Task 2.1 step pattern, each with the tracker's own reproduction as its witness.
 
-1. **Under-acceptance and mis-parse rows other than rust's ports.**
-   - Typescript route 2 has open PRs: variance annotations (ts#364), `import()` type members (ts#365) and method decorators (ts#310).
-   - Typescript route 3 has no PR: a member named `accessor`, call signatures over line breaks, and `type` as an export name.
-   - Python: PEP 696 defaults.
-   - Rust: two attributes on a parameter.
+| task | grammar | row | route | change |
+| --- | --- | --- | --- | --- |
+| 5.1 | typescript | ts#370 variance annotations (TS 4.7) | port of PR ts#364 (ts#361 is the older alternative) | `type_parameter` takes an optional `in`, `out` or `in out` before the name |
+| 5.2 | typescript | ts#352 and ts#322, members of an `import()` type | port of PR ts#365 | the `import()` type takes a member path and type arguments |
+| 5.3 | typescript | ts#309, method decorators outside `method_definition` (mis-parse) | port of PR ts#310 | decorators move into the method rule |
+| 5.4 | typescript | ts#369, a class member named `accessor` | authored | `accessor` is both a modifier and a property name, as `get` already is |
+| 5.5 | typescript | ts#335, call signatures split by line breaks | authored | the object-type member separator admits the line break the issue shows |
+| 5.6 | typescript | ts#313, `type` as an exported name | authored | `export { type }` and `export { type as t }` parse as a specifier named `type` |
+| 5.7 | python | py#346, PEP 696 type-parameter defaults | authored | `type_parameter` takes `= default` after its bound |
+| 5.8 | rust | rust#276, two attributes on a parameter | authored | `parameters`' `optional($.attribute_item)` becomes `repeat($.attribute_item)` |
+| 5.9 | typescript | `bigint` missing from `predefined_type` (mis-parse; no upstream issue or PR) | authored | `predefined_type` gains `'bigint'`; afterwards `bindings.scm` claims it as a primitive, named by the vocabulary's primitives-by-width ruling |
 
-   They are productions by definition, since the input is valid. Should this plan take them, one task per row in each grammar's stage?
-2. **rust#316 (block comments with multibyte characters) changes the external scanner.**
-   - `grammar.sittir.ts` cannot express it, and sittir builds upstream's `scanner.c` as is.
-   - Options: (a) wait for an upstream release; (b) pin a fork commit with the fix; (c) give sittir a scanner patch mechanism.
-   - The same question covers the line break before an arrow (`[no LineTerminator here]`), and the TypeScript ASI row ts#373.
-3. **The witness list shape.**
-   - `accepts-invalid-syntax` takes a non-empty array of witnesses, unlike the other causes' single witness, because one rule excludes several forms.
-   - Recommended: the array for this cause only. Alternative: every witnessed cause takes an array.
+For each port, fetch the PR's diff with `gh pr diff <n> -R tree-sitter/tree-sitter-typescript` and author it against the pinned rule. Use its corpus case as the witness, and add that case to `local.txt`.
+
+## Known gaps
+
+Each of these needs a change to an upstream external scanner, so it waits for an upstream release:
+
+- **rust#316: a block comment with multibyte characters fails to parse.** The fix is in `src/scanner.c` (open PR rust#316). https://github.com/tree-sitter/tree-sitter-rust/issues/315 and https://github.com/tree-sitter/tree-sitter-rust/pull/316
+- **ts#373: no ASI before a member named `in…`.** The automatic-semicolon scanner treats `in` as an operator. https://github.com/tree-sitter/tree-sitter-typescript/issues/373
+- **A line break before `=>` is accepted.** ECMAScript 15.3 ArrowFunction `[no LineTerminator here]`. The parser sees no line terminators outside the scanner. There is no tracker issue; the census witness is `line break before an arrow`.

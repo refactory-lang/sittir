@@ -122,6 +122,7 @@ From `results/upstream.tsv`. Observed: what the run saw at our pin. Route is the
 | typescript | mis-parse | ts#282 | `await` of a call with type arguments | clean | 3 |
 | typescript | mis-parse | js#323 | an anonymous default-exported function is an expression | clean | 3 |
 | typescript | mis-parse | ts#299, js#259, js#318, PR js#354 | non-null precedence; labelled statements; destructuring assignment; ASI after an arrow | not witnessed | 2 for js#354, otherwise 3 |
+| typescript | mis-parse | none upstream | `bigint` is not a predefined type; `let x: bigint` reads it as a `type_identifier` (upstream master lacks it too) | clean, wrong kind | 3 |
 | typescript | over | js#209 | `export default let a = 42` | parses clean | 3 |
 | typescript | over | js#204 | a reserved word as a binding name (`var enum`) | parses clean | 3 |
 | typescript | over | js#303 | `await` and `yield` regardless of context | parses clean | 4 short of cloning |
@@ -157,7 +158,7 @@ Each over-accepted witness in `witnesses.json` carries its line and a citation, 
 
 | grammar | over-accepted | production (authored) | early error (the bound) |
 | --- | --- | --- | --- |
-| typescript | 66 | 33 | 33 |
+| typescript | 66 | 36 | 30 |
 | python | 18 | 11 | 7 |
 | rust | 10 | 3 | 7 |
 
@@ -169,8 +170,8 @@ Each grammar's judge:
 - **TypeScript-only syntax:**
   - TypeScript has no normative grammar after its 1.8 spec. tsc's parser is permissive: TypeScript 6's `parseDiagnostics` reject only 8 of the 97 witnesses. tsc's own grammar rules live in the checker's `checkGrammar*` functions.
   - So the line is drawn this way. Syntax the 1.8 spec covers is judged by its productions: accessors (§4.5), parameter lists (§3.9.2), type members (§3.9) and ambient functions (§12.1.2).
-  - A checker rule on syntax newer than the 1.8 spec counts as an early error, since its only definition is a check. That covers tuple element order (TS1257, TS1265, TS1266), `this` not first, `readonly` and `abstract` placement, type-only import shape, and `readonly`/computed members in types and enums.
-  - Tuple order is the one call worth a second look: it is positional, and an authored rule could state it. By this line it is in the bound.
+  - A checker rule on syntax newer than the 1.8 spec counts as an early error, since its only definition is a check. That covers `this` not first, `readonly` and `abstract` placement, type-only import shape, and `readonly`/computed members in types and enums.
+  - Tuple element order is the user's deliberate exception: it is authored although only the checker defines it, and its witnesses cite TS1257, TS1265 and TS1266.
 - **Python:** the PEG grammar, observed directly. `ast.parse` runs only the parser, and it rejects exactly the 11 production rows. The other 7 parse and then fail in the symtable or the compiler: duplicate parameters, the five context rows, and the bare starred expression.
 - **Rust:** the Rust Reference grammar.
   - The productions are `self` only first, and the qualifier order `const? async? ItemSafety? extern?`.
@@ -187,8 +188,8 @@ The authoring work is [the acceptance authoring plan](../../plans/2026-10-15-gra
    - Rust's v0.24.2 tag fixes `&raw[..]` and two string-literal reads, but only as a git dependency, since npm has 0.24.0 (rust#318).
 2. **Rust's open PRs cover most of its confirmed under-acceptance:** seven of its nine rows have an open PR, all stable syntax that fails to parse today. They port as authored structure if upstream does not release.
 3. **About half of the over-acceptance is a grammar production, and that half is plain authoring.** Arity, order, placement and module items are stated as rules. The other half is early errors, the bound. Authoring those would need cloned rules (async, generator, function body, loop, trait body), name equality, labels or strict-mode state.
-4. **A clean parse is not evidence of a right tree.** Of the rows that parse clean at our pin, six TypeScript, one rust and four python rows are known mis-parses. The witnesses check only for ERROR, so every mis-parse here comes from a tracker; none was found by the probe.
-5. **"Valid by construction" is bounded by the language's grammar productions.** A node sittir builds or parses conforms to the language's grammar productions. That holds once the authoring plan lands; the production rows above are the gap until then. Rules the language enforces after parsing are outside it: early errors, symbol tables, AST validation. That covers context (`break` outside a loop, `await` outside an async function), labels in scope, strict-mode restrictions, duplicate names, and TypeScript checker rules on syntax newer than its 1.8 spec. The context rules are taken up by builder-side context checks, specified separately. The others stay outside the bound.
+4. **A clean parse is not evidence of a right tree.** Of the rows that parse clean at our pin, seven TypeScript, one rust and four python rows are known mis-parses. The witnesses check only for ERROR, so every mis-parse here comes from a tracker; none was found by the probe.
+5. **"Valid by construction" is bounded by the grammar Sittir generates.** A node sittir builds or parses conforms to the grammar Sittir generates. Rules the language enforces after parsing are outside it: early errors, symbol tables, AST validation. That covers context (`break` outside a loop, `await` outside an async function), labels in scope, strict-mode restrictions, duplicate names, and TypeScript checker rules on syntax newer than its 1.8 spec. The production rows above are the distance between the grammar Sittir generates and the language's own productions, and the authoring plan closes it.
 
 ## Rulings
 
@@ -197,4 +198,6 @@ From the user, via brainstorm:
 1. Author every production class, one stage per grammar.
 2. Take the pins: override `tree-sitter-javascript` to 0.25.0 under the TypeScript grammar, and take rust from the v0.24.2 git tag.
 3. Port rust's open upstream PRs as authored structure.
-4. The line is the spec's own line: author grammar productions; early errors are the stated bound; no context cloning.
+4. The line is the spec's own line: author grammar productions; early errors are the stated bound; no context cloning. TypeScript tuple element order is a deliberate exception, and is authored.
+5. Under-acceptance and mis-parse rows are later stages of the same plan, each dropped when upstream releases it.
+6. Fixes in upstream external scanners (rust#316, ts#373, the line break before `=>`) wait for an upstream release: no scanner patches, no fork pins.

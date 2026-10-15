@@ -24,6 +24,7 @@ typescript	misparse	javascript#323	an anonymous default-exported function is an 
 typescript	misparse	javascript#259	a labelled statement	3	production	-	-	-	not witnessed	
 typescript	misparse	javascript#318	a destructuring assignment	3	production	-	-	-	not witnessed	
 typescript	misparse	javascript#354 (PR)	ASI after an arrow function followed by a parenthesized expression	2	production	-	-	-	not witnessed	
+typescript	misparse		`bigint` is not a predefined type: `let x: bigint` reads it as a type_identifier	3	production	clean	clean	accepts	parses clean	no upstream issue or PR; upstream master's predefined_type lacks bigint too
 rust	under	rust#277, rust#288 (in 0.24.1)	&raw[..] when the identifier is named raw	1	production	ERROR@2:6	ERROR@2:6	accepts	under-accepted	fixed by v0.24.1, a git tag only: npm still publishes 0.24.0 (rust#318)
 rust	misparse	rust#306 (in 0.24.1), rust#307 (in 0.24.2)	string literals with unexpected prefixes, and recovery after repeated string literals	1	production	-	-	-	not witnessed	git tags only (rust#318)
 rust	under	rust#315, rust#316 (PR)	a block comment with multibyte characters	2	production	ERROR@1:1	ERROR@1:1	accepts	under-accepted	
