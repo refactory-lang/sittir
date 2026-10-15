@@ -1,7 +1,8 @@
 import { describe, expectTypeOf, it } from 'vitest';
-import type { QueryPlan, QuerySubject } from '../src/index.ts';
+import type { QueryPlan, QuerySubject, View } from '../src/index.ts';
 
 const NAME = { fields: ['name'], kinds: [] } as const;
+declare const view: View<{ readonly $type: 1 }>;
 
 describe('a query plan', () => {
 	it('compares slots only, unless its subject admits the node\'s own text', () => {
@@ -25,5 +26,12 @@ describe('a query plan', () => {
 		expectTypeOf({ op: 'child', ...NAME, anchor: 'only', of: { op: 'and', of: [] } } as const).toExtend<QueryPlan>();
 		expectTypeOf({ op: 'child', ...NAME, anchor: 'middle', of: { op: 'and', of: [] } } as const).not.toExtend<QueryPlan>();
 		expectTypeOf({ op: 'child', self: true, of: { op: 'and', of: [] } } as const).not.toExtend<QueryPlan<QuerySubject>>();
+	});
+
+	it('reaches a where condition only through the recorder, never as a raw plan', () => {
+		// @ts-expect-error a where condition is a recorded Cond; a plan is the compiled wire shape
+		view.where(() => ({ op: 'is', types: [1], ...NAME }));
+		// @ts-expect-error a child step is wire shape too
+		view.where(() => ({ op: 'child', ...NAME, of: { op: 'and', of: [] } }));
 	});
 });
