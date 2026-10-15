@@ -16,20 +16,27 @@ export interface DerivedResolution extends ConflictResolutionRecord {
 	readonly step: PolicyStep;
 }
 
-export interface ConflictResolutionsFile {
+export interface ResolutionSection {
 	readonly grammarHash: string;
 	readonly resolutions: readonly DerivedResolution[];
 }
 
+export interface ConflictResolutionsFile extends ResolutionSection {
+	readonly bound: ResolutionSection;
+}
+
 export interface ConflictResolutionsInput {
 	readonly resolutions: readonly ConflictResolutionRecord[];
+	readonly bound: { readonly resolutions: readonly ConflictResolutionRecord[] };
 }
 
 export const CONFLICT_RESOLUTIONS_FILE = 'resolutions.json';
 
 export const UNVERIFIED_GRAMMAR_HASH = '';
 
-export const EMPTY_CONFLICT_RESOLUTIONS: ConflictResolutionsFile = { grammarHash: UNVERIFIED_GRAMMAR_HASH, resolutions: [] };
+const UNVERIFIED_SECTION: ResolutionSection = { grammarHash: UNVERIFIED_GRAMMAR_HASH, resolutions: [] };
+
+export const EMPTY_CONFLICT_RESOLUTIONS: ConflictResolutionsFile = { ...UNVERIFIED_SECTION, bound: UNVERIFIED_SECTION };
 
 export function sameConflictSet(left: readonly string[], right: readonly string[]): boolean {
 	const members = new Set(left);
@@ -49,6 +56,12 @@ export function upstreamSourcesOf(sourceChains: readonly (readonly string[])[]):
 	return [...new Set(sourceChains.map((chain) => chain[chain.length - 1]!))];
 }
 
+const conflictSetsOf = (resolutions: readonly ConflictResolutionRecord[]): string[][] => resolutions.map((entry) => [...entry.resolution.symbols]);
+
 export function applyConflictResolutions(grammar: Record<string, unknown>, input: ConflictResolutionsInput): void {
-	grammar.conflicts = input.resolutions.map((entry) => [...entry.resolution.symbols]);
+	grammar.conflicts = conflictSetsOf(input.resolutions);
+}
+
+export function applyBoundConflictResolutions(grammar: Record<string, unknown>, input: ConflictResolutionsInput): void {
+	grammar.conflicts = [...(grammar.conflicts as readonly string[][]), ...conflictSetsOf(input.bound.resolutions)];
 }

@@ -44,8 +44,13 @@ from the same grammar, so its conflicts must be derived again.
 ```text
 Runs the tree-sitter CLI with `args` in `cwd` under the current Node binary,
 with the given stdio. It and `runTreeSitterCliCapturing` are the only ways to
-run the CLI, and both resolve it through `treeSitterCliPath`.
+run the CLI, and both resolve it through `treeSitterCliPath` and run it in the
+environment `treeSitterCliEnv` builds.
 ```
+
+### `packages/codegen/src/transpile/tree-sitter-cli.ts::treeSitterCliEnv`
+
+The environment a CLI run gets: the parent's, without `UNBOUND_ENV`, plus the variables the caller asks for. `importUnbound` sets `UNBOUND_ENV` on the parent process while an unbound evaluation is in flight, so an inherited toggle would make `tree-sitter generate` build the parser without the bindings overlay; a run gets it only when its caller passes it.
 
 ### `packages/codegen/src/transpile/compile-parser.ts::syncExternalScanner`
 
@@ -233,6 +238,18 @@ the reshaping records' one-step edges toward each reshaped rule's upstream
 source (`dsl/wire/derivation-records.ts::DerivationRecords`).
 ```
 
+`baseNames` maps a bound name to the base name it stands for
+(`dsl/bind.ts::baseNamesOf`), and is empty for the base grammar. It is kept
+apart from `sourceEdges`: the edges are keyed by base names, and a bound
+name may spell a base name for another rule (a clone that reuses the name a
+rename freed), so one map over both would chain the wrong rule or cycle.
+
+### `packages/codegen/src/transpile/derive-conflicts.ts::sourceChainOf`
+
+The source chain of a name a report gives: a bound name with a base name of
+its own steps to it first, then follows the base edges; any other name
+follows the base edges from itself.
+
 ### `packages/codegen/src/transpile/derive-conflicts.ts::PolicyChoice`
 
 ```text
@@ -304,8 +321,8 @@ resolution list.
 ### `packages/codegen/src/transpile/derive-conflicts.ts::reuseOrDeriveConflictResolutions`
 
 ```text
-Skips the derivation when nothing it depends on changed. When the saved
-resolutions carry the evaluated grammar's hash, they are tried in a single
+Skips the derivation of one section when nothing it depends on changed. When the saved
+section carries the evaluated grammar's hash, they are tried in a single
 `generate` (`generateSaved`, which runs them without writing them); a clean run is `reused`. Any failure of that run, a conflict or a
 build error such as a rule the set names that does not exist, is `stale`
 with the failed outcome, not a cue to derive again: the hash covers every input of the derivation, so the
@@ -317,10 +334,16 @@ survives.
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::DerivationInputs`
 
 ```text
-What one conflict derivation needs from the evaluated grammar: its hash, its
+What the conflict derivation needs from a grammar package: the base grammar's
+inputs and the bound grammar's (`GrammarDerivationInputs`), one per section of
+the resolutions file.
+```
+
+### `packages/codegen/src/transpile/evaluate-for-derivation.ts::GrammarDerivationInputs`
+
+What one section's derivation needs from its evaluated grammar: its hash, its
 rule count (the loop's cap), and the upstream context (declared conflicts and
 reshaping edges).
-```
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::DERIVATION_INPUTS_MARKER`
 
@@ -359,6 +382,12 @@ The derivation inputs of an evaluated grammar. A grammar without derivation
 records was not built by `sittirGrammar`, which the loop cannot derive for.
 ```
 
+The edges are the records' `sourceEdges`, the same for both grammars, since
+bindings run after the records are taken. `baseNames` comes from the bound
+grammar's own `renamedFrom` and `splitFrom` stamps (`dsl/bind.ts::baseNamesOf`),
+so a bound name chains through its base name to the upstream rule. The base
+grammar has neither stamp, so its `baseNames` is empty.
+
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::requireFromHere`
 
 ```text
@@ -370,8 +399,8 @@ same loader whatever the caller's working directory.
 
 ```text
 Evaluates a grammar package's `grammar.sittir.ts` in a fresh Node process
-(tsx loader, `evaluate-for-derivation.child.ts`) and returns its derivation
-inputs. A fresh process because Node caches an ES module, and the JSON it
+(tsx loader, `evaluate-for-derivation.child.ts`), once without its bindings
+and once with them, and returns the derivation inputs of both. A fresh process because Node caches an ES module, and the JSON it
 imports, for the life of the process: evaluating the grammar in the regen
 process would pin the `resolutions.json` it imported, and the compile that
 follows the loop would read those stale resolutions.
@@ -384,6 +413,10 @@ The child entry of `evaluateForDerivation`: evaluates the entry path given as
 its argument and writes the marker and the derivation inputs as JSON to
 stdout.
 ```
+
+It evaluates the entry unbound, so the grammar hash, the upstream conflicts and
+the derived resolutions are those of the base grammar, in base names; a
+its grammar bindings rename them with the grammar after `grammar()`.
 
 ### `packages/codegen/src/transpile/conflict-resolutions-file.ts::conflictResolutionsPath`
 
@@ -432,23 +465,51 @@ its `generate`.
 ### `packages/codegen/src/transpile/conflict-driver.ts::settleConflictResolutions`
 
 ```text
-Reuses the saved resolutions or derives new ones against a store. The reuse
-probe leaves the saved file untouched: it only generates, so a stale
-set stays stamped and keeps failing on every run until someone intervenes,
-rather than a rerun re-deriving and hiding an input the hash misses. Every
-derivation probe writes its candidate set with `UNVERIFIED_GRAMMAR_HASH`, and
-only a `converged` result is stamped with the grammar hash, once, after its
-clean run. A derivation that fails or throws therefore leaves an unverified
-file, and the next run derives again instead of reporting the partial set
-stale.
+Reuses the saved resolutions or derives new ones against a store, one section
+at a time. The reuse probe leaves the saved file untouched: it only generates,
+so a stale section stays stamped and keeps failing on every run until someone
+intervenes, rather than a rerun re-deriving and hiding an input the hash
+misses. Every derivation probe writes its candidate list into its section with
+`UNVERIFIED_GRAMMAR_HASH`, and only a `converged` list is stamped with its
+grammar's hash, once, after its clean run. A derivation that fails or throws
+therefore leaves an unverified section, and the next run derives it again
+instead of reporting the partial list stale.
 ```
+
+The base section is derived against the base grammar: each of its runs
+generates with `GeneratedGrammar` `base`, so tree-sitter reports conflicts in
+the base names the base sets are applied in. A base section whose hash matches
+is generated on its own (`base`) only when the bound section must be derived,
+so a base section that no longer generates is reported stale before a bound
+derivation could absorb its missing sets; when both hashes match, the one
+`bound` reuse probe checks both. The bound section follows, against the bound
+grammar: each of its runs generates `bound`, which carries the renamed base
+sets and the bound candidates, so it reports only the conflicts the bindings
+add, in bound names. A split clone gets its sets here, never by copying its
+origin's. Every finished run ends in a clean `bound` generate, which builds the
+parser that ships and is what verifies the bound section, and a base section
+it reused: the run is `settled`, or `failed` with the grammar whose section
+did not settle. Only the bound hash changing (the bindings changed) keeps the
+base section and derives the bound one from an empty list.
+
+### `packages/codegen/src/transpile/conflict-driver.ts::SettledConflicts`
+
+What settling a package's resolutions gives: `settled`, with each section's
+result (`reused` or `converged`), or `failed`, with the grammar whose section
+did not settle and its `stale` or `unresolvable` result. A bound section is
+never derived after a base section fails.
+
+### `packages/codegen/src/transpile/conflict-driver.ts::GeneratedGrammar`
+
+Which grammar a `tree-sitter generate` run builds: `base` (with
+`UNBOUND_ENV` set, the grammar bindings skipped) or `bound`.
 
 ### `packages/codegen/src/transpile/conflict-driver.ts::generateWithDerivedConflicts`
 
 ```text
 The conflict loop for one grammar package: read the saved resolutions
 (seeding them if missing), evaluate the grammar once in a fresh process for
-the hash, rule count and upstream context, then settle the resolutions
+each section's hash, rule count and upstream context, then settle the resolutions
 (`settleConflictResolutions`). Each probe writes its candidate set and
 runs `tree-sitter generate --json-summary`; the last, clean
 run leaves the generate outputs in place. Saved resolutions that turn
@@ -456,7 +517,7 @@ out stale, or a derivation that cannot converge, become the blocking
 `conflict-resolutions-stale` or `conflict-unresolvable` record
 (`compiler/diagnostics/conflicts.ts`): the driver writes it as the package's
 `grammar-diagnostics.json` and throws `GrammarDiagnosticError`, which stops
-the regen.
+the regen. A settled run logs both sections' counts.
 ```
 
 ### `packages/codegen/src/transpile/tree-sitter-cli.ts::runTreeSitterCliCapturing`
@@ -466,6 +527,10 @@ Runs the tree-sitter CLI like `runTreeSitterCli`, with stdout passed through
 and stderr captured, and returns the exit status with stderr: the
 `--json-summary` report is written to stderr.
 ```
+
+`env` is the variables the caller asks for (conflict derivation passes
+`UNBOUND_ENV` for a base generate); `treeSitterCliEnv` builds the run's
+environment from them.
 
 ### `packages/codegen/src/transpile/compile-parser.ts::buildParserWasm`
 

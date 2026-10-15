@@ -2,50 +2,97 @@
 ; How `sittir tool bindings-inventory` reads a pattern: docs/glossary/packages-tools-src-inventory.md
 ; (`readBindings` for the captures, `derive` for the members a claim takes from its slots).
 
-; ── module ─────────────────────────────────────────────────────────────────────
-(program) @module
+; ── file ───────────────────────────────────────────────────────────────────────
+(program) @file
 
 ; ── declaration ────────────────────────────────────────────────────────────────
 (function_declaration) @declaration.function
-(generator_function_declaration) @declaration.function.generator
+(generator_function_declaration) @declaration.function
 (generator_function_declaration "*" @generator)
 (class_declaration) @declaration.class
 (class_declaration (class_heritage (class_heritage_extends_clause (_) @extends)))
 (class_declaration (class_heritage (implements_clause type: (_) @implements)))
-(abstract_class_declaration) @declaration.class.abstract
+(abstract_class_declaration) @declaration.class
 (abstract_class_declaration "abstract" @abstract)
 (abstract_class_declaration (class_heritage (class_heritage_extends_clause (_) @extends)))
 (abstract_class_declaration (class_heritage (implements_clause type: (_) @implements)))
-(interface_declaration (extends_type_clause)? @extends) @declaration.interface
+(interface_declaration (extends_type_clause type: (_) @extends)?) @declaration.interface
 (enum_declaration) @declaration.enum
 (enum_assignment) @declaration.enum_member
-(enum_body (enum_body_elements (_) @declaration.enum_member))
+(enum_body_element_name name: (_) @name) @declaration.enum_member
 (type_alias_declaration) @declaration.type_alias
 (method_definition) @declaration.method
-(method_definition (accessibility_modifier) @visibility)
-(method_definition "*" @generator)
+(method_definition accessor_kind: "*" @generator)
 (method_definition "?" @optional)
-(method_definition accessor_kind: _ @accessor)
-(method_definition accessor_kind: "get") @declaration.method.getter
-(method_definition accessor_kind: "set") @declaration.method.setter
+(method_definition name: (private_property_identifier) @name @privateName)
+(method_definition name: (computed_property_name) @name @computed)
+(method_definition (accessibility_modifier "private")) @declaration.method.private
+(method_definition (accessibility_modifier "protected")) @declaration.method.protected
+(method_definition (accessibility_modifier "public")) @declaration.method.public
+(method_definition accessor_kind: "get") @declaration.property.getter
+(method_definition (accessibility_modifier "private") accessor_kind: "get") @declaration.property.getter.private
+(method_definition (accessibility_modifier "protected") accessor_kind: "get") @declaration.property.getter.protected
+(method_definition (accessibility_modifier "public") accessor_kind: "get") @declaration.property.getter.public
+(method_definition accessor_kind: "set") @declaration.property.setter
+(method_definition (accessibility_modifier "private") accessor_kind: "set") @declaration.property.setter.private
+(method_definition (accessibility_modifier "protected") accessor_kind: "set") @declaration.property.setter.protected
+(method_definition (accessibility_modifier "public") accessor_kind: "set") @declaration.property.setter.public
 ((method_definition name: (property_identifier) @name) @declaration.constructor (#eq? @name "constructor"))
+((method_definition (accessibility_modifier "private") name: (property_identifier) @name) @declaration.constructor.private (#eq? @name "constructor"))
+((method_definition (accessibility_modifier "protected") name: (property_identifier) @name) @declaration.constructor.protected (#eq? @name "constructor"))
+((method_definition (accessibility_modifier "public") name: (property_identifier) @name) @declaration.constructor.public (#eq? @name "constructor"))
 (method_signature) @declaration.method.signature
-(method_signature (accessibility_modifier) @visibility)
-(method_signature accessor_kind: _ @accessor)
+(method_signature accessor_kind: "*" @generator)
+(method_signature name: (private_property_identifier) @name @privateName)
+(method_signature name: (computed_property_name) @name @computed)
+(method_signature (accessibility_modifier "private")) @declaration.method.signature.private
+(method_signature (accessibility_modifier "protected")) @declaration.method.signature.protected
+(method_signature (accessibility_modifier "public")) @declaration.method.signature.public
+(method_signature accessor_kind: "get") @declaration.property.signature.getter
+(method_signature (accessibility_modifier "private") accessor_kind: "get") @declaration.property.signature.getter.private
+(method_signature (accessibility_modifier "protected") accessor_kind: "get") @declaration.property.signature.getter.protected
+(method_signature (accessibility_modifier "public") accessor_kind: "get") @declaration.property.signature.getter.public
+(method_signature accessor_kind: "set") @declaration.property.signature.setter
+(method_signature (accessibility_modifier "private") accessor_kind: "set") @declaration.property.signature.setter.private
+(method_signature (accessibility_modifier "protected") accessor_kind: "set") @declaration.property.signature.setter.protected
+(method_signature (accessibility_modifier "public") accessor_kind: "set") @declaration.property.signature.setter.public
 (abstract_method_signature) @declaration.method.signature.abstract
-(abstract_method_signature "abstract" @abstract)
-(abstract_method_signature (accessibility_modifier) @visibility)
+(abstract_method_signature accessor_kind: "*" @generator)
+(abstract_method_signature name: (private_property_identifier) @name @privateName)
+(abstract_method_signature name: (computed_property_name) @name @computed)
+(abstract_method_signature (accessibility_modifier "private")) @declaration.method.signature.abstract.private
+(abstract_method_signature (accessibility_modifier "protected")) @declaration.method.signature.abstract.protected
+(abstract_method_signature (accessibility_modifier "public")) @declaration.method.signature.abstract.public
+(abstract_method_signature accessor_kind: "get") @declaration.property.signature.abstract.getter
+(abstract_method_signature (accessibility_modifier "private") accessor_kind: "get") @declaration.property.signature.abstract.getter.private
+(abstract_method_signature (accessibility_modifier "protected") accessor_kind: "get") @declaration.property.signature.abstract.getter.protected
+(abstract_method_signature (accessibility_modifier "public") accessor_kind: "get") @declaration.property.signature.abstract.getter.public
+(abstract_method_signature accessor_kind: "set") @declaration.property.signature.abstract.setter
+(abstract_method_signature (accessibility_modifier "private") accessor_kind: "set") @declaration.property.signature.abstract.setter.private
+(abstract_method_signature (accessibility_modifier "protected") accessor_kind: "set") @declaration.property.signature.abstract.setter.protected
+(abstract_method_signature (accessibility_modifier "public") accessor_kind: "set") @declaration.property.signature.abstract.setter.public
 (property_signature) @declaration.field.signature
-(property_signature (accessibility_modifier) @visibility)
+(property_signature name: (private_property_identifier) @name @privateName)
+(property_signature name: (computed_property_name) @name @computed)
+(property_signature (accessibility_modifier "private")) @declaration.field.signature.private
+(property_signature (accessibility_modifier "protected")) @declaration.field.signature.protected
+(property_signature (accessibility_modifier "public")) @declaration.field.signature.public
 (public_field_definition) @declaration.field
-(public_field_definition (accessibility_modifier) @visibility)
 (public_field_definition "?" @optional)
 (public_field_definition "!" @definite)
+(public_field_definition name: (private_property_identifier) @name @privateName)
+(public_field_definition name: (computed_property_name) @name @computed)
+(public_field_definition (accessibility_modifier "private")) @declaration.field.private
+(public_field_definition (accessibility_modifier "protected")) @declaration.field.protected
+(public_field_definition (accessibility_modifier "public")) @declaration.field.public
+(public_field_definition accessor: "accessor") @declaration.property
+(public_field_definition (accessibility_modifier "private") accessor: "accessor") @declaration.property.private
+(public_field_definition (accessibility_modifier "protected") accessor: "accessor") @declaration.property.protected
+(public_field_definition (accessibility_modifier "public") accessor: "accessor") @declaration.property.public
 (class_body_member_declaration (_) @element)
 (class_body_member_method (decorator)* @decorators (_) @element)
 (class_body_member_method_sig (_) @element)
 (lexical_declaration) @declaration.variable
-(lexical_declaration kind: _ @binding)
 (lexical_declaration kind: "const") @declaration.variable.constant
 (lexical_declaration kind: "let") @declaration.variable.reassignable
 (variable_declaration) @declaration.variable.reassignable.function_scoped
@@ -54,11 +101,16 @@
 (variable_declarator_definite "!" @definite)
 (variable_declarator_plain name: [(array_pattern) (object_pattern)]) @declaration.variable.pattern
 (required_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter
-(required_parameter (accessibility_modifier) @visibility)
-(optional_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter.optional
+(required_parameter (accessibility_modifier "private")) @declaration.parameter.private
+(required_parameter (accessibility_modifier "protected")) @declaration.parameter.protected
+(required_parameter (accessibility_modifier "public")) @declaration.parameter.public
+(optional_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter
 (optional_parameter "?" @optional)
-(optional_parameter (accessibility_modifier) @visibility)
+(optional_parameter (accessibility_modifier "private")) @declaration.parameter.private
+(optional_parameter (accessibility_modifier "protected")) @declaration.parameter.protected
+(optional_parameter (accessibility_modifier "public")) @declaration.parameter.public
 (type_parameter value: (_)? @default) @declaration.type_parameter
+(type_parameter constraint: (constraint type: (_) @bounds))
 (ambient_declaration) @declaration.ambient
 (ambient_declaration_module) @declaration.module_property
 (internal_module) @declaration.module
@@ -68,12 +120,15 @@
 (call_signature) @declaration.signature.call
 (construct_signature) @declaration.signature.construct
 (index_signature) @declaration.signature.index
+(index_signature_mapped_type_clause) @declaration.signature.index.mapped
 
 ; ── statement ──────────────────────────────────────────────────────────────────
 (statement_block) @statement.block
 (if_statement) @statement.if
 (for_statement) @statement.loop.counted
-(for_in_statement) @statement.loop.for
+(for_in_statement) @statement.loop.for_each
+(for_in_statement await: _ @async)
+(for_in_statement (_for_header) @header)
 (while_statement) @statement.loop.while
 (do_statement) @statement.loop.do_while
 (return_statement) @statement.return
@@ -81,7 +136,23 @@
 (try_statement handler: (_)? @handlers) @statement.try
 (throw_statement) @statement.throw
 (import_statement) @statement.import
+(import_statement import_clause: "type" @typeOnly)
+(import_statement import_clause: "typeof") @statement.import.typeof
+(import_statement from_clause: (import_statement_clause_from source: (_) @source))
+(import_statement from_clause: (import_statement_clause_from (import_clause) @importClause))
 (export_statement) @statement.export
+(export_statement_default_declaration (export_statement_default_declaration_default_kw)) @statement.export.default
+(export_statement_default_from (export_statement_default_from_star_from)) @statement.export.all
+(export_statement_default_declaration (declaration) @declaration)
+(export_statement_default_declaration (export_statement_default_declaration_default_kw (declaration) @declaration))
+(export_statement_default_declaration (export_statement_default_declaration_default_kw (export_statement_default_declaration_default_kw_value value: (_) @value)))
+(export_statement_equals_export expression: (_) @value)
+(export_statement_default_from type: _ @typeOnly)
+(export_statement_default_from (export_statement_default_from_clause_from (export_clause) @exportClause))
+(export_statement_default_from (export_statement_default_from_ns_from (namespace_export) @exportClause))
+(export_statement_default_from (export_statement_default_from_clause_from source: (_) @source))
+(export_statement_default_from (export_statement_default_from_ns_from source: (_) @source))
+(export_statement_default_from (export_statement_default_from_star_from source: (_) @source))
 (expression_statement) @statement.expression
 (break_statement) @statement.break
 (continue_statement) @statement.continue
@@ -93,41 +164,55 @@
 ; ── clause ─────────────────────────────────────────────────────────────────────
 (else_clause) @clause.else
 (catch_clause) @clause.catch
+(catch_clause (catch_clause_group parameter: (_) @name))
+(catch_clause (catch_clause_group type: (_) @type))
 (finally_clause) @clause.finally
-(switch_case) @clause.case
+(switch_case) @clause.case.switch
 (switch_default) @clause.case.default
 (extends_clause) @clause.extends
 (extends_type_clause) @clause.extends.type
 (implements_clause) @clause.implements
 (export_clause) @clause.export
 (import_clause) @clause.import.names
+(import_clause (import_clause_default_import (identifier) @default))
+(import_clause (import_clause_default_import (import_clause_group (_) @content)))
 (import_require_clause) @clause.import.require
 (namespace_import) @clause.import.namespace
 (import_specifier) @clause.import.specifier
+(import_specifier_name import_kind: "type" @typeOnly)
+(import_specifier_name import_kind: "typeof") @clause.import.specifier.typeof
+(import_specifier_as import_kind: "type" @typeOnly)
+(import_specifier_as import_kind: "typeof") @clause.import.specifier.typeof
 (import_attribute) @clause.import.attribute
-(import_alias) @clause.import.alias
+(import_alias) @statement.import.alias
 (namespace_export) @clause.export.namespace
 (export_specifier) @clause.export.specifier
+(export_specifier export_kind: "type" @typeOnly)
+(export_specifier export_kind: "typeof") @clause.export.specifier.typeof
 (mapped_type_clause) @clause.mapped_type
 ; type annotations are transparent wrappers: the annotated member takes the type
-(constraint) @clause.constraint
+(constraint) @clause.bounds
+(constraint type: (_) @bounds)
+((constraint ["extends" ":"] @dropped) (#set! reason "the owning grammar rule determines the bounds introducer"))
 (default_type) @clause.default
 
 ; ── argument (pieces of a call that are not expressions) ───────────────────────
 ; none: every TypeScript argument is an expression or a spread element
 
 ; ── element (pieces of a composite expression that are not expressions) ────────
-(spread_element) @element.splat
+(spread_element) @element.spread
 (pair) @element.pair
+(pair key: (computed_property_name) @key @computed)
 (tuple_parameter) @element.tuple.member
 (optional_tuple_parameter) @element.tuple.member.optional
 (template_type) @element.template.substitution
 
 ; ── expression ─────────────────────────────────────────────────────────────────
 (call_expression_call) @expression.call
-(call_expression_member) @expression.call.member
+(call_expression_member "?." @optionalChain) @expression.call
+(call_expression_call function: (member_expression) @function) @expression.call.member
 (call_expression_template_call) @expression.call.template
-(new_expression constructor: (_)? @function) @expression.call.new
+(new_expression constructor: (_)? @function) @expression.call.construct
 (binary_expression) @expression.binary
 (binary_expression operator: "+") @expression.binary.arithmetic.add
 (binary_expression operator: "-") @expression.binary.arithmetic.subtract
@@ -135,10 +220,10 @@
 (binary_expression operator: "/") @expression.binary.arithmetic.divide
 (binary_expression operator: "%") @expression.binary.arithmetic.modulo
 (binary_expression operator: "**") @expression.binary.arithmetic.exponent
-(binary_expression operator: "==") @expression.binary.comparison.equal
-(binary_expression operator: "!=") @expression.binary.comparison.not_equal
-(binary_expression operator: "===") @expression.binary.comparison.strict_equal
-(binary_expression operator: "!==") @expression.binary.comparison.strict_not_equal
+(binary_expression operator: "==") @expression.binary.comparison.loose_equal
+(binary_expression operator: "!=") @expression.binary.comparison.loose_not_equal
+(binary_expression operator: "===") @expression.binary.comparison.equal
+(binary_expression operator: "!==") @expression.binary.comparison.not_equal
 (binary_expression operator: "<") @expression.binary.comparison.less
 (binary_expression operator: ">") @expression.binary.comparison.greater
 (binary_expression operator: "<=") @expression.binary.comparison.less_equal
@@ -151,8 +236,8 @@
 (binary_expression operator: ">>>") @expression.binary.shift.right_unsigned
 (binary_expression operator: "&&") @expression.binary.logical.and
 (binary_expression operator: "||") @expression.binary.logical.or
-(binary_expression operator: "??") @expression.binary.nullish
-(binary_expression operator: "in") @expression.binary.membership.in
+(binary_expression operator: "??") @expression.binary.coalesce
+(binary_expression (binary_expression_in left: (_) @left right: (_) @right)) @expression.binary.membership.in
 (binary_expression operator: "instanceof") @expression.binary.membership.instanceof
 (unary_expression) @expression.unary
 (unary_expression operator: "-") @expression.unary.negation
@@ -183,30 +268,36 @@
 (augmented_assignment_expression operator: ">>>=") @expression.assignment.compound.shift_right_unsigned
 (augmented_assignment_expression operator: "&&=") @expression.assignment.compound.and
 (augmented_assignment_expression operator: "||=") @expression.assignment.compound.or
-(augmented_assignment_expression operator: "??=") @expression.assignment.compound.nullish
+(augmented_assignment_expression operator: "??=") @expression.assignment.compound.coalesce
 (assignment_expression) @expression.assignment
+(assignment_expression using: _ @disposable)
 (ternary_expression) @expression.conditional
 (member_expression) @expression.member
-(member_expression (optional_chain) @optional_chain)
-(subscript_expression (optional_chain) @optional_chain)
+(member_expression (optional_chain) @optionalChain)
+(member_expression property: (private_property_identifier) @property @privateName)
+(subscript_expression (optional_chain) @optionalChain)
 (subscript_expression) @expression.subscript
-(arrow_function (arrow_function_parameter parameter: (_) @parameters)) @expression.lambda
-(arrow_function (call_signature parameters: (_) @parameters)) @expression.lambda
+(arrow_function) @expression.lambda
+(arrow_function (arrow_function_parameter parameter: (_) @parameters))
+(arrow_function (call_signature parameters: (_) @parameters))
 (function_expression) @expression.function
-(generator_function) @expression.function.generator
+(generator_function) @expression.function
 (generator_function "*" @generator)
 (await_expression) @expression.await
 (yield_expression) @expression.yield
 (yield_expression_delegate (_) @expression) @expression.yield.delegate
 (template_substitution) @expression.interpolation
-(parenthesized_expression) @expression.parenthesized
+(parenthesized_expression (_) @expression) @expression.parenthesized
 (sequence_expression) @expression.sequence
 (object) @expression.collection.object
 (array) @expression.collection.list
-(as_expression) @expression.cast.as
+(as_expression) @expression.cast.assertion
+(as_expression type_annotation: (_) @type)
 (satisfies_expression) @expression.cast.satisfies
+(satisfies_expression type_annotation: (_) @type)
 (non_null_expression) @expression.cast.non_null
-(type_assertion) @expression.cast.assertion
+(type_assertion) @expression.cast.assertion.angle_bracket
+(type_assertion (type_arguments (_) @type))
 (instantiation_expression) @expression.instantiation
 (import) @expression.call.import
 (meta_property) @expression.meta
@@ -221,13 +312,24 @@
 (object_pattern) @pattern.object
 (object_assignment_pattern) @pattern.object.assignment
 (pair_pattern) @pattern.object.pair
-(array_pattern) @pattern.array
+(pair_pattern key: (computed_property_name) @key @computed)
+(array_pattern) @pattern.list
 (rest_pattern) @pattern.rest
+(rest_pattern (_) @pattern)
 (assignment_pattern) @pattern.assignment
 
 ; ── type ───────────────────────────────────────────────────────────────────────
 (predefined_type) @type.primitive
+((predefined_type) @type.primitive.unchecked (#eq? @type.primitive.unchecked "any"))
+((predefined_type) @type.primitive.floating.float64 (#eq? @type.primitive.floating.float64 "number"))
+((predefined_type) @type.primitive.boolean (#eq? @type.primitive.boolean "boolean"))
+((predefined_type) @type.primitive.string (#eq? @type.primitive.string "string"))
+((predefined_type) @type.primitive.symbol (#eq? @type.primitive.symbol "symbol"))
+((predefined_type) @type.primitive.symbol.unique (#match? @type.primitive.symbol.unique "^unique"))
+((predefined_type) @type.primitive.void (#eq? @type.primitive.void "void"))
+((predefined_type) @type.primitive.unknown (#eq? @type.primitive.unknown "unknown"))
 ((predefined_type) @type.primitive.never (#eq? @type.primitive.never "never"))
+((predefined_type) @type.primitive.object (#eq? @type.primitive.object "object"))
 (generic_type) @type.generic
 (union_type) @type.union
 (intersection_type) @type.intersection
@@ -250,14 +352,16 @@
 (index_type_query) @type.index_query
 (asserts) @type.predicate.asserts
 (existential_type) @type.existential
-(flow_maybe_type) @type.maybe
+(flow_maybe_type) @type.nullable
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string) @literal.string
 (escape_sequence) @literal.string.escape
-(template_string) @literal.template
+(string_fragment) @literal.string.text
+(template_string) @literal.string.interpolated
 (regex) @literal.regex
 (number) @literal.number
+(literal_type_negative_number argument: (_) @value) @literal.number.negative
 (number_decimal) @literal.number.integer
 (number_hex) @literal.number.integer.hex
 (number_binary) @literal.number.integer.binary
@@ -280,17 +384,15 @@
 (identifier) @identifier
 (type_identifier) @identifier.type
 (property_identifier) @identifier.property
-(private_property_identifier) @identifier.property.private
+(private_property_identifier) @identifier.property
 (shorthand_property_identifier) @identifier.property.shorthand
+(shorthand_property_identifier_pattern) @identifier.property.shorthand
 (nested_identifier) @identifier.nested
 (nested_type_identifier) @type.path
 (statement_identifier) @identifier.label
-(this) @identifier.self
+(this) @identifier.receiver
 (super) @identifier.super
 
-; every TypeScript modifier is a keyword: `visibility` is a member whose value is the keyword text,
-; the markers are boolean members; no modifier is a kind
-(computed_property_name) @identifier.property.computed
 
 ; ── modifier ───────────────────────────────────────────────────────────────────
 (accessibility_modifier) @modifier.visibility
@@ -302,12 +404,10 @@
 (decorator (_)? @content) @attribute.decorator
 
 ; ── comment ────────────────────────────────────────────────────────────────────
-(comment_block) @comment
-(comment_line) @comment
-(html_comment) @comment
+(comment_block) @comment.block
+(comment_line) @comment.line
+(html_comment) @comment.html
 ((comment_block) @comment.block.doc (#match? @comment.block.doc "^/\\*\\*"))
-((comment_line) @comment.line (#match? @comment.line "^//"))
-((comment_block) @comment.block (#match? @comment.block "^/\\*"))
 
 ; ── keyword / punctuation ──────────────────────────────────────────────────────
 ["function" "class" "interface" "type" "enum" "namespace" "let" "const" "var"] @keyword.declaration

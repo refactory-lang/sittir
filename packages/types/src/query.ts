@@ -21,13 +21,26 @@ export type QuerySlotEntry = readonly [accessor: string, routes: SlotRoutes, key
 /** Each kind's slots, by kind id. */
 export type QuerySlots = Readonly<Record<number, readonly QuerySlotEntry[]>>;
 
-/** A `where` condition as the native walk evaluates it, each slot compiled to its parser routes. */
-export type QueryPlan =
-	| ({ readonly op: 'eq'; readonly text: string } & SlotRoutes)
-	| ({ readonly op: 'match'; readonly pattern: string } & SlotRoutes)
+/** The node's own text as a condition's subject, in place of a slot's. */
+export interface SelfText {
+	readonly self: true;
+}
+
+/** What a comparison reads: a slot by its parser routes, or the node's own text. */
+export type QuerySubject = SlotRoutes | SelfText;
+
+/**
+ * A compiled condition, each comparison reading the subject `S`. A `where` condition compares slots only (the default) and is
+ * evaluated by the native walk; a portable read test may also compare the node's own text, or test the node types of its
+ * subject by `$type` (`QueryPlan<QuerySubject>`), which only `holds` evaluates.
+ */
+export type QueryPlan<S extends QuerySubject = SlotRoutes> =
+	| ({ readonly op: 'eq'; readonly text: string } & S)
+	| ({ readonly op: 'match'; readonly pattern: string } & S)
 	| ({ readonly op: 'present' } & SlotRoutes)
-	| { readonly op: 'not'; readonly of: QueryPlan }
-	| { readonly op: 'and' | 'or'; readonly of: readonly QueryPlan[] };
+	| ([SelfText] extends [S] ? { readonly op: 'is'; readonly types: readonly number[] } & S : never)
+	| { readonly op: 'not'; readonly of: QueryPlan<S> }
+	| { readonly op: 'and' | 'or'; readonly of: readonly QueryPlan<S>[] };
 
 declare const CONDITION: unique symbol;
 

@@ -41,8 +41,8 @@ import type * as T from './types.js';
 import type { ERROR_KIND_ID } from '@sittir/common/error-kind';
 
 export type LeafScalarMap = {
-	[TSKindId.True]: boolean;
-	[TSKindId.False]: boolean;
+	[TSKindId.True]: true;
+	[TSKindId.False]: false;
 	[TSKindId.IntegerDecimalPlain]: number | bigint;
 	[TSKindId.FloatPoint]: number;
 	[TSKindId.FloatLeadingPoint]: number;
@@ -2632,7 +2632,7 @@ export interface ExceptClause {
 	readonly $type: TSKindId.ExceptClause;
 	readonly _group: boolean;
 	readonly _exception?: ExceptClauseException;
-	readonly _suite: Suite;
+	readonly _body: Suite;
 	readonly __inputHints__?: {
 		readonly group?: BaseBooleanKeyword<'*'>;
 	};
@@ -2642,11 +2642,11 @@ export interface ExceptClause {
 	readonly __slotHints__?: {
 		readonly group: SlotHint<NonNullable<T.ExceptClause.Config>['group'], true>;
 		readonly exception: SlotHint<T.ExceptClauseException, true>;
-		readonly suite: SlotHint<T.Suite>;
+		readonly body: SlotHint<T.Suite>;
 	};
 	group(): boolean;
 	exception(): ExceptClauseException | undefined;
-	suite(): Suite;
+	body(): Suite;
 }
 
 export interface FinallyClause {

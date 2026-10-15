@@ -2,6 +2,7 @@ import type { Command } from 'commander';
 import type { CommandModule } from '../../framework/command-module.ts';
 import { registerNamespace } from '../../framework/command-module.ts';
 
+import { astDiff } from './ast-diff.ts';
 import { assembleShapeCensus } from './assemble-shape-census.ts';
 import { bench } from './bench.ts';
 import { bootstrapGrammar } from './bootstrap-grammar.ts';
@@ -44,11 +45,13 @@ import { gapCensus } from './gap-census.ts';
 import { triviaTiming } from './trivia-timing.ts';
 import { uncoveredContent } from './uncovered-content.ts';
 import { variantDerivationProbe } from './variant-derivation-probe.ts';
+import { vocabularyFeatures } from './vocabulary-features.ts';
 import { walk } from './walk.ts';
 
 /** All developer-diagnostic tool CommandModules, registered under `sittir tool`. */
 export const toolModules: readonly CommandModule[] = [
 	assembleShapeCensus,
+	astDiff,
 	bench,
 	benchCodemod,
 	bootstrapGrammar,
@@ -90,6 +93,7 @@ export const toolModules: readonly CommandModule[] = [
 	triviaTiming,
 	uncoveredContent,
 	variantDerivationProbe,
+	vocabularyFeatures,
 	walk,
 ];
 

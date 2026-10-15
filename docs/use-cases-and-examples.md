@@ -122,6 +122,12 @@ fn.$trivia.leading('// entry point').$render(); // "// entry point\nfn main() {}
 
 ## Types and engine selection
 
-Use per-kind exported types for language-specific code, or `Engine<LanguageAPI>` and the engine type map for generic utilities. Select `api: 'strict'` when the engine's ordinary `build` calls should expose strict construction directly. Portable vocabulary APIs are planned work, not a substitute for the current language-specific surface.
+Use per-kind exported types for language-specific code, or `Engine<LanguageAPI>` and the engine type map for generic utilities. Use a builder's `.strict` entry for strict construction; engine-wide `api: 'strict'` selection is reserved and currently throws.
+
+## Portable preview
+
+Languages with authored bindings expose a portable vocabulary preview through `api: 'portable'`. Its `kinds` groups grammar kind IDs under shared vocabulary paths, with each path's admitted IDs in `$ids`; `is` supplies the corresponding language-scoped guards. These classify grammar-specific nodes, and some classifications require parent/slot context.
+
+Use the grammar-specific engine for construction, parsing, queries, and rendering. Portable node projections, readers, and builders remain planned. The [runtime example](../packages/common/README.md#portable-preview) demonstrates the current typed preview entry point.
 
 See [shared types](../packages/types/README.md), the generated declarations, and [architecture](architecture.md) for the type families and runtime boundaries.

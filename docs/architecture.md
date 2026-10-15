@@ -22,7 +22,7 @@ Detailed phase contracts and function references live in the [compiler glossary]
 
 ## Generated language package
 
-A grammar package's public entry exports its descriptor and types. `createEngine(descriptor)` loads its implementation and binds the generated surface to an engine.
+A grammar package's public entry exports its descriptor and types. Calling the descriptor's `createEngine()` loads its implementation and binds the generated surface to an engine.
 
 | Artifact | Purpose |
 | --- | --- |
@@ -31,12 +31,19 @@ A grammar package's public entry exports its descriptor and types. `createEngine
 | `src/wrap.ts`, `src/is.ts` | Typed readers/accessors and kind guards |
 | `src/engine.ts`, `src/api.ts`, `src/index.ts` | Language implementation and descriptor boundary |
 | `src/node-model.json5` | Inspectable compiler model |
+| `src/portable.ts` | Vocabulary kind IDs and guards for languages with authored bindings |
 | `.sittir/src/`, `.sittir/parser.wasm` | Parser artifacts and metadata used by generation and tooling |
 | `.sittir/render-bodies.json` | Render-body catalog used by diagnostics |
 | `rust/crates/sittir-<grammar>/src/render/` | Generated native transports, options, and render functions |
 | `native/` | N-API loader, declarations, and platform binary |
 
 There is no template engine in the active render path. Render bodies are generated from rules and compiled into Rust.
+
+## Portable vocabulary preview
+
+`packages/<grammar>/grammar.bindings.ts` authors vocabulary claims and member routes against the grammar model. The binding compiler resolves them once and emits the portable classification surface alongside the grammar-specific API.
+
+Selecting `api: 'portable'` currently returns language identity, vocabulary `kinds`, and language-scoped `is` guards. It classifies grammar-specific nodes; construction, parsing, queries, and rendering remain on the grammar-specific engine. Portable node projections, readers, and builders are planned. See the [usage guide](use-cases-and-examples.md#portable-preview) for the executable preview example.
 
 ## Runtime and node families
 

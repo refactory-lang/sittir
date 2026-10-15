@@ -9,7 +9,7 @@ const P = (value: string) => ({ type: 'PATTERN', value });
 beforeAll(() => installFakeDsl());
 afterAll(() => restoreFakeDsl());
 
-const sym = (name: string) => ({ type: 'SYMBOL', name });
+const sym = (name: string) => ({ type: 'SYMBOL' as const, name });
 
 describe('alias() on an existing alias', () => {
 	it('over an inline terminal mints the terminal as a leaf rule, so the named node has a rule of its own', () => {
@@ -44,5 +44,13 @@ describe('a mint whose body lexes as one token is a subtype, not a hoisted group
 	it('still stamps hoisted on a compound body', () => {
 		const { deposits } = applyTransformForTest('p', { type: 'CHOICE', members: [{ type: 'SEQ', members: [S('a'), S('b')] }] }, { 0: alias('ab') });
 		expect((deposits.get('_ab') as { annotations?: object }).annotations).toEqual({ hoisted: true });
+	});
+});
+
+describe('an alias() of the patched symbol', () => {
+	it('relabels the member in place, so the site keeps its annotations', () => {
+		const member = { ...sym('impl_item_body'), annotations: { variant: 'body', variantOf: 'impl_item' } };
+		const { result } = applyTransformForTest('impl_item', { type: 'SEQ', members: [member, S(';')] }, { '-2': alias(sym('impl_item_body'), sym('extension_declaration')) });
+		expect((result as { members: unknown[] }).members[0]).toEqual({ type: 'ALIAS', named: true, value: 'extension_declaration', content: member });
 	});
 });

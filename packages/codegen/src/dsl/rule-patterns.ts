@@ -1163,6 +1163,11 @@ export function separatedListBodyInfo<P extends PhaseName>(body: Rule<P>, symbol
 	};
 }
 
+export function fieldedHeadListOf<P extends PhaseName>(rule: Rule<P>, symbols: SymbolSource): (SeparatedListBodyInfo<P> & { readonly elementName: string }) | null {
+	const info = separatedListBodyInfo(unwrapPrec(rule) as Rule<P>, symbols);
+	return info?.form === 'head' && isFieldType(info.element.type) && info.elementName !== null ? { ...info, elementName: info.elementName } : null;
+}
+
 export function flattenedListBody<R>(body: R, symbols: SymbolSource): R {
 	if (!isSeqType((body as { type?: string }).type)) return body;
 	const info = separatedListBodyInfo(body as unknown as Rule<'normalize'>, symbols);

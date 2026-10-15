@@ -139,7 +139,7 @@ The name of a grammar's type map, `<Prefix>TypeMap` (`RustTypeMap`), from the sa
 
 ### `packages/codegen/src/emitters/engine.ts::emitApi`
 
-The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`, and `empty`, the grammar's type-map member naming each kind's empty form) and exports `hooks`, which wire the package's render module hash, the builder table, guards, kind ids and trivia facts (joined by the grammar's comment coercer, `commentCoercer`, when it has a default trivia form, so a loose trivia string builds a comment), a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree, and `membership`, the guards' membership test (`isMember`, `membersOf`) for a query's `ofType`. The `hydrate` hook points to the existing `hydrateChild`, so factories resolve bound list stubs through the grammar's single child-hydration implementation.
+The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`, and `empty`, the grammar's type-map member naming each kind's empty form) and exports `hooks`, which wire the package's render module hash, the builder table, guards, kind ids and trivia facts (joined by the grammar's comment coercer, `commentCoercer`, when it has a default trivia form, so a loose trivia string builds a comment), a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree, and `membership`, the guards' membership test (`isMember`, `membersOf`) for a query's `ofType`. The `hydrate` hook points to the existing `hydrateChild`, so factories resolve bound list stubs through the grammar's single child-hydration implementation. A grammar with bindings (`portable`) also declares its `portable` surface and hands over `portable.ts`'s `portable`; the others carry none.
 
 
 ```text
@@ -216,7 +216,7 @@ The grammar's `api.ts`: the implementation a language descriptor loads. It decla
 
 ### `packages/codegen/src/emitters/factories.ts::buildLeafReConsts`
 
-The whole-text guard of every text-leaf factory. For each pattern-model kind that has a factory and a `textPattern`, it emits one module-scope constant `_leafRe_<factory>` holding the anchored literal `/^(?:<pattern>)$/`, and returns the kind → constant map the leaf guards read. The literal comes from `anchoredLeafRegexLiteral`, so the compile test and the emitted constant cannot drift. A kind with no derivable pattern (an external scanner token with no interior, an indent or dedent mark) gets no constant and keeps only its non-empty guard. Hidden fixed-text leaves have no factory and no constant.
+The whole-text guard of every text-leaf factory. For each pattern-model kind that has a factory and a `textPattern`, it emits one module-scope constant `_leafRe_<factory>` holding the anchored literal `/^(?:<pattern>)$/`, and returns the kind → constant map the leaf guards read. The literal comes from `anchoredLeafRegexLiteral`, so the compile test and the emitted constant cannot drift. Each distinct literal is written once per module: a later constant whose literal is already declared (a shared sub-rule such as a digit run, or two kinds with one pattern) is declared as the first constant (`export const _leafRe_b = _leafRe_a;`). The constants are exported, and the coercer's leaf registry reads them, so the factories hold one literal per leaf pattern; a test ratchets that at no copies. A kind with no derivable pattern (an external scanner token with no interior, an indent or dedent mark) gets no constant and keeps only its non-empty guard. Hidden fixed-text leaves have no factory and no constant.
 
 The guards themselves (`buildLeafGuards`) always run: a non-empty check on every text leaf whose pattern does not accept the empty string (an empty doc comment is valid text for a `.*` leaf, so the pattern alone decides there) and, where a constant exists, `!_leafRe_<factory>.test(text)`. Neither is conditional on a debug flag; the guard is the factory's contract.
 
@@ -2119,7 +2119,7 @@ A single branch kind at an optional slot resolves through `_resolveOneBranch(val
  */
 ```
 
-Every text kind's check is built once as a `TextKindCheck` — fixed `values` for a visible fixed-text leaf, the compiled `pattern` (`anchoredLeafRegex`, or the token interior's `su` regex) otherwise — and the registry row prints that same check, so the emitted row and `leafTextChecks` cannot drift. The checks come back ordered by `rankTextKinds`, and their kinds are emitted as `_TEXT_KINDS_BY_RANK`. Hidden and visible leaves register alike; a kind the factory emitter does not emit (`classifyFactoryEmission`) is skipped, and a pattern kind with no text pattern is skipped when no slot references it and is an error otherwise.
+Every text kind's check is built once as a `TextKindCheck` — fixed `values` for a visible fixed-text leaf, the compiled `pattern` (`anchoredLeafRegex`, or the token interior's `su` regex) otherwise — and the registry row carries that same check, so the emitted row and `leafTextChecks` cannot drift. A pattern row names the leaf builder's own guard constant (`F._leafRe_<factory>`, from `leafReDeclaration`; an alias names its pattern leaf's constant), and a lexed row compiles the interior through `interiorPattern`; the registry never prints a regex of its own. The checks come back ordered by `rankTextKinds`, and their kinds are emitted as `_TEXT_KINDS_BY_RANK`. Hidden and visible leaves register alike; a kind the factory emitter does not emit (`classifyFactoryEmission`) is skipped, and a pattern kind with no text pattern is skipped when no slot references it and is an error otherwise.
 
 ```text
 // ---------------------------------------------------------------------------
@@ -2759,6 +2759,10 @@ A row's member is named from its model kind (`modelKindOfEntry`, so a renamed ro
  * @param kind - The nodeMap kind name to check.
  */
 ```
+
+### `packages/codegen/src/emitters/kind-discriminant.ts::fixedTextKinds`
+
+Every kind with a parser id that a kind id alone renders as text (`compiler/model/node-map.ts::kindIdText`), with that text. `FixedTextKindId` is typed from it and the portable table's `fixedText` is written from it, so the two cannot disagree.
 
 ### `packages/codegen/src/emitters/kind-discriminant.ts::kindDiscriminantExpr`
 
@@ -4843,9 +4847,11 @@ grammar has no such enum, the two keyword kinds with those texts (typescript
 `true` / `false`, python `True` / `False`). `trueKind` / `falseKind` are the
 kinds whose ids `_resolveScalar` returns, which the slot admits as a stored
 kind id (through `_ENUMS_OF_MEMBER` when the slot names the enum), and the
-two ids `LeafScalarMap` widens to `boolean`: a slot stores the member ids,
-never the enum's own, so the map is keyed on the members and the types
-package's `WidenScalarKindId` lets a bare id with a scalar entry admit it.
+two ids `LeafScalarMap` maps to `true` and `false`, respectively. A slot
+stores the member ids, never the enum's own. The types package's distributive
+`WidenScalarKindId` admits the literal for each member present in the slot:
+`true`, `false`, or their union `boolean`. Numeric entries remain keyed by
+their individual leaf ids.
 
 ### `packages/codegen/src/emitters/shared.ts::testConstructsWithChildren`
 
@@ -7234,6 +7240,10 @@ enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
 built without one with, so a tool can tell a read delimiter that merely
 restates the default from one that must be spelled.
 
+`slots` is the list's item slot, serialized as a compound node's slots are,
+so a reader of the model steps into a list's items through a slot like any
+other; `elementKinds` stays the kinds the items admit.
+
 ### `packages/codegen/src/emitters/node-model.ts::polymorphVariants`
 
 ```text
@@ -8835,7 +8845,7 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 // constructor-target resolution here adds no cycle.
 ```
 
-### `packages/codegen/src/emitters/types.ts::hasKindId`
+### `packages/codegen/src/emitters/kind-discriminant.ts::hasKindId`
 
 ```text
 /** Whether the parser issues an id for this kind. `NamespaceMap` is keyed by
@@ -8878,12 +8888,10 @@ The types module of `emitTypesModules`, for callers that need only the public su
 #### body
 
 ```text
-// `LeafScalarMap` / `LeafStringMap` are keyed by each leaf's `$type`
-// discriminant (`kindDiscriminantOrLiteral`), because the widening indexes
-// them with the leaf member's inferred `$type` — a map keyed by grammar
-// name is unreachable from a numeric id and silently widens every leaf to
-// `string`. The scalar rows come from `scalarLeafKinds`, the same table
-// the runtime scalar resolver is emitted from.
+// `LeafScalarMap` / `LeafStringMap` use each leaf's `$type` discriminant
+// (`kindDiscriminantOrLiteral`). Boolean scalar rows map each member id to
+// its literal input, so distributive widening admits only the slot's values.
+// Boolean ids come from `scalarLeafKinds`, the runtime resolver's source.
 ```
 
 #### body
@@ -9293,7 +9301,7 @@ Prints the type-only `__slotHints__` member of a kind interface: one `SlotHint` 
  * seam faces (a token's `after` face and the next token's `before`
  * face), the record reports the more specific of the two
  * (`preference` > `literal-default` > `fallback`) — the same specificity
- * order `resolveBindings` already uses to pick a winning declaration.
+ * order `resolveLabels` already uses to pick a winning declaration.
  * Never re-derived from address text here or anywhere the record is
  * read; it is read off the `origin` annotation
  * `render-rules.ts::whitespaceChoice` stamps on the seam's resolved
@@ -10355,6 +10363,18 @@ The factory imports the trivia hook needs, one line per module: raw builders for
 /** Companion fact to factoryShape 'forwarded': the kind whose constructor
 	 *  this kind's factory forwards (see buildFactoryMap.forwardsTo). */
 ```
+
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.renamedFrom`
+
+The node's `renamedFrom`, written only when the kind was renamed. Tools read the base-to-bound name mapping from it rather than evaluating the grammar again.
+
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.splitFrom`
+
+The node's `splitFrom`, written only on a split clone. The validators place a split kind's render inside its owner from it.
+
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.variantOf`
+
+The node's `variantOf`, written only on an owned variant. Route derivation reaches a supertype's forms by it (`formsOf`).
 
 ### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.oneSurface`
 
@@ -12371,7 +12391,7 @@ The node resolvers (`_resolveOne`, `_resolveMany`, `_resolveOneLeaf`, `_resolveO
 
 #### _TEXT_KINDS_BY_RANK
 
-A mixed-enum slot resolves a bare string by keyword extraction first, then lexical rank, as tree-sitter does. `_keywordOf(v, [[text, kindId], …])` (table from `keywordArmTextMapExpr`) returns the kind id of the slot's keyword arm whose text equals the string, and only a string that is no keyword arm goes on to the resolver below; a slot with no keyword arm emits no `_keywordOf`. An array slot applies the same rule per element: each element is `_keywordOf(e, …) ?? <the slot's scalar resolution of e>`, so an element that is a keyword arm's text is stored as the arm's kind id before the element resolver could build a leaf or a scalar from it. Elements that resolve to `undefined` are dropped, as the whole-array storage coercion drops them, so an absent element never reaches the transport. Non-keyword fixed-text arms keep going through the rank. The emitted from-module lists every registered text kind in `lexicalRank` order. `_resolveBareText(v, kinds)` walks that list, skips kinds the slot does not admit, and builds the first kind whose row accepts the text; the runtime never ranks anything itself. When a slot admits text kinds and none accepts, `_resolveOne` throws `"<text>" matches none of [<kinds>]`. `_resolveOneLeaf` builds a single-leaf slot through `_buildGuardedText`, which throws `"<text>" is not a <kind>` on a mismatch. The keyword-text table (`_KEYWORD_BRANCH_BY_TEXT`) keeps exact identity and is asserted unique at codegen: one keyword text building two branches is an error.
+A mixed-enum slot resolves a bare string by keyword extraction first, then lexical rank, as tree-sitter does. `_keywordOf(v, [[text, kindId], …])` (table from `keywordArmTextMapExpr`) returns the kind id of the slot's keyword arm whose text equals the string, and only a string that is no keyword arm goes on to the resolver below; a slot with no keyword arm emits no `_keywordOf`. An array slot applies the same rule per element: each element is `_keywordOf(e, …) ?? <the slot's scalar resolution of e>`, so an element that is a keyword arm's text is stored as the arm's kind id before the element resolver could build a leaf or a scalar from it. Elements that resolve to `undefined` are dropped, as the whole-array storage coercion drops them, so an absent element never reaches the transport. Non-keyword fixed-text arms keep going through the rank. The emitted from-module lists every registered text kind in `lexicalRank` order. `_resolveBareText(v, kinds)` walks that list, skips kinds the slot does not admit, and builds the first kind whose row accepts the text; the runtime never ranks anything itself. When a slot admits text kinds and none accepts, `_resolveOne` throws `"<text>" matches none of [<kinds>]`. `_resolveOneLeaf` builds a single-leaf slot through `_buildGuardedText`, which throws `"<text>" is not the text of <kind>` when a fixed-text kind's `values` do not hold the text; a pattern or lexed kind's text is refused by the builder it calls (the leaf guard, or the interior projection), so the text is checked once. The keyword-text table (`_KEYWORD_BRANCH_BY_TEXT`) keeps exact identity and is asserted unique at codegen: one keyword text building two branches is an error.
 
 ### `packages/codegen/src/emitters/from.ts::FromEmitter`
 
@@ -13999,6 +14019,10 @@ mark meeting it at the same gap. `seamStrength` maps the site's origin —
 declared (`preference`, `literal-default`, `word-default`) is 2, `cascade` is 1, the fallback
 is 0; separator sites are declared.
 
+`display` is the owning kind's visible name, the spelling of the emitted
+rows; `source` is the kind itself and `kindId` its stamped id. `kindEdge` and
+`edgeArm` carry the render rules' stamps through unchanged.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::armIdOf`
 
 The kind id one preference arm stands for: `BLANK_KIND_ID` for the blank arm,
@@ -14029,10 +14053,10 @@ origins spell the same value core's `spacing::SEAM_DECLARED` holds.
 ### `packages/codegen/src/emitters/render-options-rs.ts::edgeSitesOf`
 
 The per-kind edge rows: for each spacing site that is its kind's own edge
-(`isKindEdge`), the kind's id (`edgeKindId`) and the site index of its before
+(`isKindEdge`), the kind's stamped id and the site index of its before
 and after edge, plus, for a kind whose edge is a choice of tokens, the arm sites
 of each side: one `{ arm, site }` per arm site (`edgeArm`), keyed by the arm
-token's kind id. An arm token with no kind id is an error. Kinds whose name
+token's stamped kind id. An arm token with no kind id is an error. Kinds whose name
 resolves to more than one id are dropped, and rows come out in id order.
 `renderOptionsRs` writes them as `EDGE_SITES` (`before_arms`/`after_arms`) and
 indexes them by kind id in the dense `EDGE_ROWS` table (`denseTable`), so the
@@ -14043,17 +14067,9 @@ a kind with edge sites against this table (`edgeIdOf`).
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::isKindEdge`
 
-Whether a spacing site is its kind's own edge: its address parses as a seam
-whose token is the kind itself (`<kind>_before`/`<kind>_after`). One
-predicate for the edge table, the transport emitter's edge writes and its
+Whether a spacing site is its kind's own edge: the `kindEdge` stamp the
+render rules put on it. One predicate for the edge table, the transport emitter's edge writes and its
 field filter, so they cannot disagree on which sites live in the base.
-
-### `packages/codegen/src/emitters/render-options-rs.ts::edgeKindId`
-
-The id a kind's edges are keyed by: the kind's catalog entry by public name.
-`EDGE_SITES` rows, a transport's `Edged::kind_id` and every `w.edge` call
-take it from here, so a kind's edges are found under the id they were
-written with.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::carriesPerNodeValue`
 
@@ -14115,6 +14131,10 @@ grouping whether a slot has seats.
 `newlineArms` is the grammar's line-ending arms (`newlineArms`), written as `OptionTables.newline_arms`: the runtime refuses a `layout.newline` outside them, naming them, and treats `layout.newline` as an unknown key when there are none. `newline` is the preferred arm (`PREFERRED_NEWLINE`), written into the generated `defaults()` as `newline: "<arm>".to_string()`, so the default ending comes from the model's preference; core's own `Default` holds the writer's internal spelling only, for tables built outside a generated grammar.
 
 `indent` is the grammar's declared indent unit (`indentUnitOf`), empty for a grammar whose whitespace admits no indent characters. `renderOptionsRs` writes it into the generated `defaults()` as `indent: "<unit>".to_string()`, so the unit is the grammar's and core has no default of its own; an empty unit emits no line and `defaults()` keeps core's empty unit.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::stampOf`
+
+The kind id a planned row carries for a kind, read from the node the model stamped, or nothing for a kind with no id. A spacing site stamps its source kind with it and a seated site stamps its seat, so neither re-resolves an id by name.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::SeatWrapper`
 
@@ -14784,7 +14804,7 @@ The storage coercion of one slot value (boolean keyword, bitflag, kind enum, mix
 
 ### `packages/codegen/src/emitters/factories.ts::leafReDeclaration`
 
-The anchored pattern constant a text leaf's factory declares: its `_leafRe_<factory>` name and its regex literal, or nothing for a fixed-text hidden leaf or a kind with no derivable pattern. The guard constants and the hidden-leaf admission table read it, so both name the same constant.
+The anchored pattern constant a text leaf's factory declares: its `_leafRe_<factory>` name and its regex literal, or nothing for a fixed-text hidden leaf or a kind with no derivable pattern. The guard constants, the hidden-leaf admission table and the coercer's leaf registry read it, so all three name the same constant.
 
 ### `packages/codegen/src/emitters/factories.ts::constructionChildElementType`
 
@@ -14873,7 +14893,7 @@ Turns the members of a lexed kind's render rule into interior nodes: an entry fo
 
 ### `packages/codegen/src/emitters/interior.ts::groupMembers`
 
-The members of a nested sequence member, which is an optional group of interior members. The render rule carries no optional marker here: `flattenMembers` in the token-interior pass splices every nested sequence that is not a group arm, so a nested sequence that survives to the render rule is, by construction, the arm of an optional group and the regex wraps it as one.
+The members of a nested sequence member, which is an optional group of interior members. The render rule carries no optional marker here: the token-interior pass splices every nested sequence that names a part or holds no pattern and composes the rest into slots (`compiler/token-interior.ts::flattenSeqs`), so a nested sequence that survives to the render rule is, by construction, the arm of an optional group and the regex wraps it as one.
 
 ### `packages/codegen/src/emitters/interior.ts::interiorNodePattern`
 
@@ -15415,6 +15435,13 @@ Writes the grammar's `reparseHosts` block as the generated `reparse-hosts.ts`: t
 ### `packages/codegen/src/emitters/__tests__/self-containing-list-types.test.ts::selfContainingList`
 
 Builds an isolated assembled list whose repeated element choice includes the list itself. The emitted modules are compiled with TypeScript 6 and 7 to pin own-kind built and parsed inputs, recursive loose configurations, setters, and namespace argument-row resolution without changing a language grammar.
+
+### `packages/codegen/src/emitters/node-model.ts::printNodeModel`
+
+The text of `node-model.json5`. `generate` builds the record once (`buildNodeModel`), prints it, and hands the same record to the bindings' routes input.
+### `packages/codegen/src/emitters/node-model.ts::enumMembersOf`
+
+An enum's members as the model records them, each its kind and text. Every value the enum admits must be some member's text; a value no member resolves is an error, so the serialized model carries members only.
 
 ### `packages/codegen/src/emitters/render-module.ts::recordsTs`
 

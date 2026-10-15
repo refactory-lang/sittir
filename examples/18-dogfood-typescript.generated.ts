@@ -186,7 +186,7 @@ export function rebuildFormatGenerated() {
 					value: ts.build.identifier("s"),
 				})],
 			}), ts.build.forInStatement.strict({
-				forHeader: ts.build.forHeaderLetConstKind.strict({
+				header: ts.build.forHeaderLetConstKind.strict({
 					kind: ts.kinds.ConstKeyword,
 					left: ts.build.identifier("item"),
 					operator: ts.kinds.OfKeyword,
@@ -450,7 +450,7 @@ export function rebuildFormatGenerated() {
 					value: ts.build.object.strict(),
 				})],
 			}), ts.build.forInStatement.strict({
-				forHeader: ts.build.forHeaderLetConstKind.strict({
+				header: ts.build.forHeaderLetConstKind.strict({
 					kind: ts.kinds.ConstKeyword,
 					left: ts.build.arrayPattern.strict(ts.build.lhsExpression.strict(ts.build.identifier("key")), ts.build.lhsExpression.strict(ts.build.identifier("sub"))),
 					operator: ts.kinds.OfKeyword,

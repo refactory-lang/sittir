@@ -2,7 +2,6 @@ import type { GrammarContext } from './context.ts';
 import type { SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
 export interface Comment<G extends GrammarContext<G>> {
-	// claimed by t
 	readonly $kind: 'comment';
 	readonly content?: G['slots']['comment']['content'];
 	// prt only
@@ -28,12 +27,11 @@ export namespace Comment {
 				readonly $kind: 'comment.block.doc.inner';
 				readonly content?: G['slots']['comment.block.doc.inner']['content'];
 			}
-			export type Any<G extends GrammarContext<G>> = V.Comment.Block.Doc<G> | V.Comment.Block.Doc.Inner<G>;
 		}
-		export type Any<G extends GrammarContext<G>> =
-			| V.Comment.Block<G>
-			| V.Comment.Block.Doc<G>
-			| V.Comment.Block.Doc.Inner<G>;
+	}
+	export interface Html<G extends GrammarContext<G>> extends SubKindOf<V.Comment<G>> {
+		// claimed by t
+		readonly $kind: 'comment.html';
 	}
 	export interface Line<G extends GrammarContext<G>> extends SubKindOf<V.Comment<G>> {
 		// claimed by prt
@@ -53,16 +51,10 @@ export namespace Comment {
 				readonly $kind: 'comment.line.doc.inner';
 				readonly content: G['slots']['comment.line.doc.inner']['content'];
 			}
-			export type Any<G extends GrammarContext<G>> = V.Comment.Line.Doc<G> | V.Comment.Line.Doc.Inner<G>;
 		}
-		export type Any<G extends GrammarContext<G>> = V.Comment.Line<G> | V.Comment.Line.Doc<G> | V.Comment.Line.Doc.Inner<G>;
 	}
-	export type Any<G extends GrammarContext<G>> =
-		| V.Comment<G>
-		| V.Comment.Block<G>
-		| V.Comment.Block.Doc<G>
-		| V.Comment.Block.Doc.Inner<G>
-		| V.Comment.Line<G>
-		| V.Comment.Line.Doc<G>
-		| V.Comment.Line.Doc.Inner<G>;
+	export interface Text<G extends GrammarContext<G>> extends SubKindOf<V.Comment<G>> {
+		// claimed by r
+		readonly $kind: 'comment.text';
+	}
 }

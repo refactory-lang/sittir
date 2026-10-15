@@ -27,8 +27,12 @@ The README and usage guide describe the API on `master`. Design documents descri
 
 Generated references should be refreshed through their generator. They are not alternate places to author API behavior.
 
+## Portable preview
+
+The [portable preview](use-cases-and-examples.md#portable-preview) is available behind `api: 'portable'` for languages with bindings. It currently exposes vocabulary kinds and guards over grammar-specific nodes.
+
 ## Planned work
 
-The active [specifications](superpowers/specs/) and [implementation plans](superpowers/plans/) are engineering inputs, not usage documentation. In particular, portable vocabulary read/build APIs and construction-template APIs must not be inferred from a proposed example or an internal type declaration. Verify availability against the current engine and its executable examples.
+Portable node projections, readers, builders, and construction-template APIs remain planned; an internal type declaration alone does not establish runtime availability. The executable examples pin the implemented surface.
 
 For open defects and their disposition, use [GitHub issues](https://github.com/refactory-lang/sittir/issues). For measured coverage and exclusions, use the committed native baseline and the validator reports described in [Development](../DEVELOPMENT.md#validation).

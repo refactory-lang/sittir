@@ -132,7 +132,7 @@ A file's text before and after a change, by path. `before` is `undefined` for a 
 
 ### `packages/types/src/engine-api.ts::ApiSurface`
 
-Which builder surface an engine's `build` exposes: the coercing default, the strict flavour, or the portable surface, which is reserved and not implemented.
+The API selector: the default exposes grammar-specific construction, while `api: 'portable'` selects the vocabulary kinds-and-guards preview. Engine-wide `api: 'strict'` remains reserved; strict construction uses each builder's `.strict` entry.
 
 ### `packages/types/src/engine-api.ts::StrictMembers`
 
@@ -148,7 +148,7 @@ The type of an engine's `build` for a surface: the builder table, its strict sur
 
 ### `packages/types/src/engine-api.ts::Engine`
 
-A language engine: the only value surface of a language. It carries its `EngineIdentity` (descriptor, render module hash, options, trivia facts), and builds, guards (the node guards narrow to this engine's language, by the language a node's engine carries), parses, reads, renders, and creates, edits and writes files. The engine's `types` member is type-only, mapping each kind to its node type for generic code.
+A language engine: the only value surface of a language. It carries its `EngineIdentity` (descriptor, render module hash, options, trivia facts), and builds, guards (the node guards narrow to this engine's language, by the language a node's engine carries), parses and renders. Its `read`, `create` and `write` file verbs remain unimplemented. The engine's `types` member is type-only, mapping each kind to its node type for generic code.
 
 ### `packages/types/src/engine-api.ts::RenderInput`
 
@@ -186,7 +186,7 @@ Middleware around an engine's operations. Each hook receives the call and a `nex
 
 ### `packages/types/src/engine-api.ts::Project`
 
-A group of engines over one file set. Their file changes are staged, inspected with `staged`, `diff` and `files`, and written all or none by `commit`. Disposal discards what was not committed and disposes the engines.
+A group of engines over one file set. Their file changes are staged, inspected with `staged`, `diff` and `files`, and written all or none by `save`. Disposal discards what was not saved and disposes the engines. Draft `commit` updates a parsed tree; project `save` writes committed files to disk.
 
 ### `packages/types/src/engine-api.ts::KindTypes`
 
@@ -337,6 +337,14 @@ A strict builder with no coercer beside it, as one pair (a refine form); `bundle
 ### `packages/types/src/index.ts::UndefinedIfOptional`
 
 `undefined` for a key the node declares optional, `never` for a required one. `ConfigOf` appends it to the three keyword-presence arms (boolean keyword, bitflag, kind enum), so an explicit `undefined` is accepted exactly where the key itself may be omitted. The optional key keeps it spelled out because the types are published, and a consumer compiling with `exactOptionalPropertyTypes` must still be able to pass `{ key: undefined }` for an optional slot.
+
+### `packages/types/src/vocabulary/utils.ts::Flag`
+
+The marker a vocabulary interface declares a yes/no fact with: `readonly static?: Flag`. A flag is a bit in the node's one bitflag, tested by `is` and set by a builder step or a structure's `$flags`, never a member, so no value satisfies the marker and a structure can only leave it out. A `boolean` member is data, as a python complex pattern's `sign` is. The inventory reads the marker to write the flag's bit in `Flags`, and the generator to emit its guard and step.
+
+### `packages/types/src/vocabulary/flags.ts::Flags`
+
+The flags' bits, one per flag name the vocabulary declares, in name order: `Flags.Static | Flags.Async` combines two flags and `&` tests one, as a native bitflag does. The bindings inventory writes the module from the `Flag` declarations (`bindings-inventory --write`) and `--check` holds it to them, so it is never edited. It is the vocabulary's one run-time value; an `enum` is not erasable syntax, which the vocabulary may use because nothing the grammar executes imports it.
 
 ### `packages/types/src/keyword-presence.ts::BooleanKeyword`
 

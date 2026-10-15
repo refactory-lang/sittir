@@ -3,10 +3,12 @@ import type {
 	Engine,
 	ErrorNode,
 	ErrorRegion,
+	Interceptor,
 	Language,
 	LanguageAPI,
 	LanguageHooks,
 	ParsedRoot,
+	Project,
 	StrictSurface,
 	TriviaSetter,
 	Types
@@ -76,6 +78,20 @@ declare const engine: Engine<API>;
 export const rendered: string = engine.render((b) => b.leaf('a')).toString();
 // @ts-expect-error render options are the language's options
 engine.render(leaf, { indnet: '\t' });
+
+// @ts-expect-error the whole-file edit callback is retired
+export const fileEdit = engine.edit;
+
+declare const project: Project;
+export const saved: Promise<void> = project.save();
+// @ts-expect-error a project saves files; commit belongs to tree drafts
+export const projectCommit = project.commit;
+
+type FileVerb = Parameters<NonNullable<Interceptor<API>['file']>>[0]['verb'];
+export const createFile: FileVerb = 'create';
+export const writeFile: FileVerb = 'write';
+// @ts-expect-error edit is no longer a file operation
+export const editFile: FileVerb = 'edit';
 
 interface OtherNode {
 	readonly $type: 2;

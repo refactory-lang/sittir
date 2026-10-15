@@ -123,7 +123,7 @@ export function canonicalGrammar(evaluated: EvaluatedGrammar, fileTypes: readonl
 	const canonical = { rules: canonicalRuleBodies(evaluated.rules), inline: rest.inline, conflicts: rest.conflicts };
 	const roots = [...grammarRootNames(evaluated), ...evaluated.supertypes, ...(protectedRuleNames ?? [])];
 	const { rules, inline, conflicts } = protectedRuleNames === undefined ? canonical : pruneOrphanedRules(canonical, new Set(roots));
-	const identified = buildRuleCatalog(rules, { roots });
+	const identified = buildRuleCatalog(rules, { roots, sourceKindOf: new Map(Object.entries(evaluated.renamedFrom ?? {})) });
 	return {
 		...rest,
 		inline,

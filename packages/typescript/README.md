@@ -2,6 +2,8 @@
 
 Typed factories, guards, kind ids, a reader and a native renderer for TypeScript, generated from the tree-sitter-typescript grammar by `@sittir/codegen`. The package exports the language descriptor and its types; everything you call is reached through an engine.
 
+A [portable vocabulary preview](../../docs/use-cases-and-examples.md#portable-preview), selected with `api: 'portable'`, exposes shared vocabulary kinds and guards over this language's nodes. Construction, parsing, queries, and rendering use the grammar-specific engine shown below.
+
 ## Installation
 
 Install the language package with your preferred package manager; for example:

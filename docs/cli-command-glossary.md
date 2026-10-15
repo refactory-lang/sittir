@@ -39,6 +39,18 @@ pnpm exec tsx packages/cli/src/cli.ts gen [options]
 
 ---
 
+## `bootstrap`
+
+Build the pinned sittir the generator reads with (the commit in bootstrap.json), once per commit
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts bootstrap [options]
+```
+
+---
+
 ## `validate`
 
 Validation utilities for sittir grammar packages
@@ -131,6 +143,25 @@ Census the rule shapes that reach each Assembled* constructor, grouped by modelT
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool assemble-shape-census [options]
+```
+
+### `tool ast-diff`
+
+Compare the tree-sitter parse trees of two files with the validator's AST comparison
+
+**Arguments**
+
+- `a` (required) — First file
+- `b` (required) — Second file
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool ast-diff <a> <b> [options]
 ```
 
 ### `tool bench`
@@ -351,8 +382,9 @@ Compile the bindings, derive the vocabulary they imply, and check it against the
 
 **Options**
 
-- `--check` — Compile every bindings.scm against its parser, report totality diagnostics, and report where the bindings and the vocabulary disagree
+- `--check` — Compile every bindings.scm against its parser, report totality diagnostics, report where the bindings and the vocabulary disagree, and check the vocabulary flags module against its Flag declarations
 - `--members` — Print member names and kinds per shared kind
+- `--write` — Write the vocabulary flags module from its Flag declarations, then each grammar.bindings.ts: the grammar bindings and the hash of the sources it was derived from
 
 **Example**
 
@@ -817,6 +849,21 @@ Assert the live structural variantChildKinds derivation equals committed node-mo
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool variant-derivation-probe [options]
+```
+
+### `tool vocabulary-features`
+
+Check the vocabulary's feature folders and generate what they imply: the augmentation that adds each feature's kinds and gated members, every level's union, and the registry of markers
+
+**Options**
+
+- `--write` — Write augment.ts and features/index.ts under packages/types/src/vocabulary
+- `--check` — Fail when the planner finds an issue in the feature folders, or the committed augment.ts or features/index.ts differ from what they generate
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool vocabulary-features [options]
 ```
 
 ### `tool walk`

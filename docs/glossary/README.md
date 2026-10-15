@@ -16,6 +16,7 @@ One file per source directory, named by the directory path with `/` → `-`:
 | `packages/codegen/src/compiler/` | `compiler.md` |
 | `packages/codegen/src/compiler/model/` | `compiler-model.md` |
 | `packages/codegen/src/dsl/` | `dsl.md` |
+| `packages/codegen/src/bindings/` | `bindings.md` |
 | `packages/codegen/src/emitters/` | `emitters.md` |
 | … | `<dir-with-dashes>.md` |
 

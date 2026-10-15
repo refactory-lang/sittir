@@ -714,6 +714,15 @@ export interface RenderReparseContext {
 	readonly root: Awaited<ReturnType<typeof loadNodeModel>>['root'];
 	readonly variantChildKinds: ReadonlyMap<string, ReadonlySet<string>>;
 	readonly visibleKinds: ReadonlySet<string>;
+	readonly placements: ReadonlyMap<string, Placement>;
+}
+
+/** Where a split kind sits: the nearest ancestor that is no split rule, and the source around the kind inside it. */
+export interface Placement {
+	readonly kind: string;
+	readonly display: string;
+	readonly prefix: string;
+	readonly suffix: string;
 }
 
 /**
@@ -732,6 +741,27 @@ export type RenderReparseOutcome =
 			readonly reparsed: TSNode;
 			readonly astDiff: string | null;
 	  };
+
+/** `rendered` inside its kind's reparse host, or, for a split kind with no host of its own, inside its placement's owner. */
+export function wrapRendered(
+	rendered: string,
+	renderedKind: string,
+	targetKind: string,
+	ctx: Pick<RenderReparseContext, 'grammar' | 'kindToSupertypes' | 'adoptedVariantKinds' | 'root' | 'placements' | 'parser'>
+): ReturnType<typeof wrapForReparse> {
+	const wrap = (text: string, kind: string, target: string) =>
+		wrapForReparse(text, kind, ctx.grammar, ctx.kindToSupertypes, {
+			adoptedVariantKinds: ctx.adoptedVariantKinds,
+			targetKind: target,
+			root: ctx.root,
+			parse: (source) => ctx.parser.parse(source) as TSTree
+		});
+	const direct = wrap(rendered, renderedKind, targetKind);
+	const placement = ctx.placements.get(renderedKind);
+	if (direct !== null || placement === undefined) return direct;
+	const placed = wrap(`${placement.prefix}${rendered}${placement.suffix}`, placement.kind, placement.display);
+	return placed === null ? null : { text: placed.text, offset: placed.offset + placement.prefix.length };
+}
 
 /**
  * The candidate as its own source span has it: its leading and trailing sides
@@ -770,12 +800,7 @@ export function renderReparse(
 		writeSync(2, `[dump-render] ${dumpLabel} data=${JSON.stringify(data)}\n`);
 		writeSync(2, `[dump-render] ${dumpLabel} rendered=${JSON.stringify(rendered)}\n`);
 	}
-	const wrapped = wrapForReparse(rendered, renderedKind, ctx.grammar, ctx.kindToSupertypes, {
-		adoptedVariantKinds: ctx.adoptedVariantKinds,
-		targetKind,
-		root: ctx.root,
-		parse: (text) => ctx.parser.parse(text) as TSTree
-	});
+	const wrapped = wrapRendered(rendered, renderedKind, targetKind, ctx);
 	if (wrapped === null) return { status: 'excluded', reason: hostlessReason(renderedKind, targetKind, ctx), rendered };
 	if (rendered.trim() === '') return { status: 'excluded', reason: 'empty-render', rendered };
 	const tree2 = ctx.parser.parse(wrapped.text) as TSTree;
@@ -809,6 +834,33 @@ export function renderReparse(
 		reparsed,
 		astDiff: source ? astStructuralDiff(source, reparsed, '', ctx.variantChildKinds, tolerance) : null
 	};
+}
+
+/** Each visible split kind's placement, from its first occurrence in the corpus. */
+function placementsOf(grammar: string, parser: RenderReparseContext['parser'], splitFrom: Readonly<Record<string, string>> | undefined): ReadonlyMap<string, Placement> {
+	const splitKinds = new Set(Object.keys(splitFrom ?? {}).filter((kind) => !kind.startsWith('_')));
+	const placements = new Map<string, Placement>();
+	if (splitKinds.size === 0) return placements;
+	for (const entry of loadCorpusEntries(grammar)) {
+		const spans = sourceSpans(entry.source);
+		const visit = (node: TSNode): void => {
+			if (splitKinds.has(node.grammarType) && !placements.has(node.grammarType)) {
+				let outer = node.parent;
+				while (outer !== null && splitKinds.has(outer.grammarType)) outer = outer.parent;
+				if (outer !== null)
+					placements.set(node.grammarType, {
+						kind: outer.grammarType,
+						display: outer.type,
+						prefix: spans.slice({ start: outer.startIndex, end: node.startIndex }),
+						suffix: spans.slice({ start: node.endIndex, end: outer.endIndex })
+					});
+			}
+			for (const child of node.namedChildren) if (child !== null) visit(child);
+		};
+		visit((parser.parse(entry.source) as TSTree).rootNode);
+		if (placements.size === splitKinds.size) break;
+	}
+	return placements;
 }
 
 export function hostlessReason(renderedKind: string, targetKind: string, ctx: Pick<RenderReparseContext, 'visibleKinds'>): 'no-reparse-wrapper' | 'hidden-kind' {
@@ -858,6 +910,7 @@ function deriveHostsFor(grammar: string, parser: RenderReparseContext['parser'])
 }
 
 /** Load what `renderReparse` needs for `grammar`, rendering through `nativeEngine`. */
+
 export async function loadRenderReparseContext(
 	grammar: string,
 	parser: RenderReparseContext['parser'],
@@ -865,6 +918,7 @@ export async function loadRenderReparseContext(
 ): Promise<RenderReparseContext> {
 	await loadReparseHosts(grammar);
 	await deriveHostsFor(grammar, parser);
+	const model = await loadNodeModel(grammar);
 	return {
 		grammar,
 		visibleKinds: new Set(loadRawEntries(grammar).filter((entry: { named: boolean }) => entry.named).map((entry: { type: string }) => entry.type)),
@@ -873,8 +927,9 @@ export async function loadRenderReparseContext(
 		triviaOf: (node) => sidesOf(node),
 		kindToSupertypes: buildKindToSupertypes(loadRawEntries(grammar)),
 		adoptedVariantKinds: await loadVariantAdoptedKinds(grammar),
-		root: (await loadNodeModel(grammar)).root,
-		variantChildKinds: await loadVariantChildKindsByOwner(grammar)
+		root: model.root,
+		variantChildKinds: await loadVariantChildKindsByOwner(grammar),
+		placements: placementsOf(grammar, parser, model.splitFrom)
 	};
 }
 

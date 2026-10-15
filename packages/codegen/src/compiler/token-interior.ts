@@ -81,10 +81,14 @@ function isOptionalEnumOfStrings(rule: LinkRule): boolean {
 function memberClass(rule: LinkRule): Member {
 	if (rule.type === STRING) return 'template';
 	if (groupArm(rule) !== undefined) return 'group';
-	if (rule.type === FIELD) return isEnumOfStrings(rule.content) || isOptionalEnumOfStrings(rule.content) ? 'enum' : 'slot';
-	if (optionalContentOf<LinkRule>(rule)?.type === STRING) return 'flag';
+	if (rule.type === FIELD) return isFlag(rule.content) ? 'flag' : isEnumOfStrings(rule.content) || isOptionalEnumOfStrings(rule.content) ? 'enum' : 'slot';
+	if (isFlag(rule)) return 'flag';
 	if (isEnumOfStrings(rule) || isOptionalEnumOfStrings(rule)) return 'enum';
 	return 'slot';
+}
+
+function isFlag(rule: LinkRule): boolean {
+	return optionalContentOf<LinkRule>(rule)?.type === STRING;
 }
 
 function flagString(rule: LinkRule): LinkRule {
@@ -105,15 +109,11 @@ function fieldOf(name: string, content: LinkRule, id: LinkRule['id']): LinkRule 
 	} as LinkRule;
 }
 
-function flattenMembers(members: readonly LinkRule[]): LinkRule[] {
+function flattenSeqs(members: readonly LinkRule[]): LinkRule[] {
 	return members.flatMap((member) =>
-		member.type === SEQ && !(member as { lexed?: boolean }).lexed ? flattenMembers(member.members) : [member]
-	);
-}
-
-function flattenLiteralSeqs(members: readonly LinkRule[]): LinkRule[] {
-	return members.flatMap((member) =>
-		member.type === SEQ && !(member as { lexed?: boolean }).lexed && !containsPattern(member) ? flattenLiteralSeqs(member.members) : [member]
+		member.type === SEQ && !(member as { lexed?: boolean }).lexed && (containsField(member) || !containsPattern(member))
+			? flattenSeqs(member.members)
+			: [member]
 	);
 }
 
@@ -151,7 +151,7 @@ function structureMembers(
 		const member = members[i]!;
 		if (cls === 'group') {
 			const arm = groupArm(member)!;
-			const inner = structureMembers(kind, flattenMembers(arm.members), lookup, state, true, diagnostics);
+			const inner = structureMembers(kind, flattenSeqs(arm.members), lookup, state, true, diagnostics);
 			if (inner === undefined) return undefined;
 			const rebuilt = { ...arm, members: inner } as LinkRule;
 			out.push(withOptionalContent(member, rebuilt));
@@ -166,7 +166,8 @@ function structureMembers(
 			continue;
 		}
 		if (cls === 'flag') {
-			out.push(fieldOf(flagText(member), { type: OPTIONAL, content: { ...flagString(member), nonterminal: true } } as LinkRule, member.id));
+			const flag = isField(member) ? (member.content as LinkRule) : member;
+			out.push(fieldOf(isField(member) ? member.name : flagText(flag), { type: OPTIONAL, content: { ...flagString(flag), nonterminal: true } } as LinkRule, member.id));
 			i += 1;
 			continue;
 		}
@@ -202,7 +203,7 @@ function structureSeq(
 	lookup: (name: string) => LinkRule | undefined,
 	diagnostics: DiagnosticSink
 ): LinkRule | undefined {
-	const members = containsField(seq) ? flattenMembers(seq.members) : flattenLiteralSeqs(seq.members);
+	const members = flattenSeqs(seq.members);
 	const classes = members.map(memberClass);
 	const patternSlot = members.some((m, i) => (classes[i] === 'slot' || classes[i] === 'group') && containsPattern(m));
 	const enumIsContent = isSoleEnumContent(classes.map((c) => (c === 'slot' || c === 'group' ? 'content' : c === 'enum' ? 'enum' : 'literal')));

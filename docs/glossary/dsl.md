@@ -1,3 +1,132 @@
+### `packages/codegen/src/dsl/bind.ts::listEntryName`
+
+The rule name a `supertypes` or `inline` entry names: the entry itself when it is a string, its `name` when it is a symbol record.
+
+### `packages/codegen/src/dsl/bind.ts::MintLists`
+
+The grammar's `supertypes` and `inline` lists, copied for an edit that mints rules, and `enlist`, which lists a minted rule beside its origin.
+
+### `packages/codegen/src/dsl/bind.ts::mintLists`
+
+Copies the grammar's `supertypes` and `inline` lists and returns them with `enlist(base, name)`: a rule minted from `base` joins each list `base` is in, spelled as the list spells its entries (a name, or a symbol record). `splitGrammar` and `leadGrammar` both mint through it.
+
+### `packages/codegen/src/dsl/bind.ts::LeadRefusal`
+
+A lead the edit cannot make. `reason` says why. Built with the lead, the message names it, `bind: lead '<list>.<field>': <reason>`. `leadGrammar` throws it, and `leadIssue` turns it into the reason the derivation reports.
+
+### `packages/codegen/src/dsl/bind.ts::LeadSide`
+
+Which side of a lead a narrowing builds: the lead (`lead: true`), which keeps only what the lead admits, or the rest, which keeps everything else. `suffix` names the side's clones: the lead's field on the lead side, the list's item field on the rest side.
+
+### `packages/codegen/src/dsl/bind.ts::LeadEdit`
+
+The state one side of a lead's narrowing works on: the grammar's rules, which the rest side edits in place, the supertypes the walk does not descend into, each rule's reference sites (`referenceSites`) and the item's positions (`itemPositions`), both the rest side's only, the rules earlier leads' items hold (`heldBy`), the lead's reach (the rules the narrowing walks), whether the parse tree shows a rule (`transparent`: a hidden name, a supertype or an inline rule), and `mint`.
+
+### `packages/codegen/src/dsl/bind.ts::rewrap`
+
+`inner` under the precedence wrappers `original` carries, so a narrowed rule keeps its precedence.
+
+### `packages/codegen/src/dsl/bind.ts::refRule`
+
+The rule a reference names, through precedence wrappers and aliases. A reference that is no symbol or alias names none.
+
+### `packages/codegen/src/dsl/bind.ts::refKind`
+
+The visible kind a reference is in the parse tree: a named alias's value, or a symbol whose rule name is not hidden. A hidden symbol is no kind: the walk descends into it.
+
+### `packages/codegen/src/dsl/bind.ts::aliasOf`
+
+A named alias of the symbol `name` to `value`.
+
+### `packages/codegen/src/dsl/bind.ts::renamedKind`
+
+A reference renamed to `value` in the parse tree: an alias takes the new value over the same content, and any other reference is aliased. Precedence wrappers stay outside.
+
+### `packages/codegen/src/dsl/bind.ts::exclusiveTo`
+
+Whether the rest side may narrow `name` in place: only when every rule above it on the path is edited in place (`exclusive`) and `name` has at most one reference site (`referenceSites`). Otherwise another site still holds the original (another kind, another position of the same kind, or a variant the lead side minted), and the rest side clones it.
+
+### `packages/codegen/src/dsl/bind.ts::isDescended`
+
+Whether the narrowing walks into a referenced rule: a hidden rule the grammar defines that is not a supertype.
+
+### `packages/codegen/src/dsl/bind.ts::narrowRef`
+
+Narrows one reference to one side of a lead, or returns `undefined` when nothing of it is left on that side.
+- A visible kind the lead does not admit stays on the rest side and leaves the lead side. A kind it admits twice is refused. A supertype or inline rule whose name reads visible is still a kind here, so one that holds an admitted kind (`admittedInside`) is refused rather than split.
+- A kind admitted with no restriction moves to the lead side whole, renamed to `as` when the match gives one (`renamedKind`), and leaves the rest side.
+- A kind admitted with a restriction must have a rule to narrow; an alias of a literal is refused.
+- A kind admitted with a restriction is narrowed by `narrowWithin` on both sides. The lead side always mints its narrowing, `_<rule>_<field>`, aliased to `as`, or else to `<kind>_<field>`, so a visible variant never takes its kind's own name. The rest side narrows a visible kind in place, losing its admitted forms wherever else the grammar uses it, but only when the item holds it at no other position (`itemPositions`): a second position would lose forms on both sides of the split, so that is refused. Every in-place narrowing goes through `narrowInPlace`. It narrows a hidden rule in place only when `exclusiveTo` allows; otherwise it mints `_<rule>_<item>` and keeps the alias to the kind.
+- A choice narrows each arm and keeps the arms left in their order; one arm left stands alone.
+- A hidden rule (`isDescended`) narrows its body. A body that narrows to one reference is that reference; any other narrowed body is narrowed in place or minted, as above.
+- Anything else stays on the rest side and leaves the lead side, unless it holds an admitted kind (`admittedInside`): a sequence, a supertype or a field the walk cannot divide would put that kind on both sides, so it is refused.
+
+### `packages/codegen/src/dsl/bind.ts::admittedInside`
+
+The first admitted kind a rule holds as a child of the node it sits in: through every rule the parse tree does not show (a hidden name, or a supertype or inline rule of any name), but not into a visible kind, which is a node of its own, nor into a token.
+
+### `packages/codegen/src/dsl/bind.ts::narrowWithin`
+
+Narrows a kind's body to a match's restriction. The restriction's position is the field it names, or for an unfielded child a choice holding an admitted kind, found in the body or in a hidden rule it descends into. The kind must hold exactly one such position, outside any repeat: a lead and a rest cannot split a position the kind holds more than once (twice in its body, under a repeat, or through a recursive hidden rule, which shows as two), so those are refused, as is a restriction with no position. The position is narrowed by `narrowRef`, and a position left empty is refused. On the lead side, an alternative that does not hold the position goes, and an optional holding it becomes required, since a claim that tests the position needs it present; the rest side keeps every alternative. A hidden rule on the way is narrowed in place or minted, by the same rule as `narrowRef`'s.
+
+### `packages/codegen/src/dsl/bind.ts::optionalSpelling`
+
+How the edit writes an optional: as the list itself spells one (`OPTIONAL`, or a choice with a blank), or as a choice with a blank when the list holds none. Both executions of the grammar read a choice with a blank, and tree-sitter's DSL writes nothing else.
+
+### `packages/codegen/src/dsl/bind.ts::replaceItems`
+
+The list rule with every item field whose content equals the item (`rulesEqual`, so either optional spelling) holding the narrowed rest instead.
+
+### `packages/codegen/src/dsl/bind.ts::listSites`
+
+The fields of `owner` whose whole content is the list. An owner that holds the list any other way (bare, or inside a field's repeat or choice) is refused, since the receiver form could not stand there.
+
+### `packages/codegen/src/dsl/bind.ts::withReceiverForm`
+
+The rule with every field that holds the list holding a choice of the list and the receiver form.
+
+### `packages/codegen/src/dsl/bind.ts::leadSymbols`
+
+The symbol source the list detector reads the grammar with (`predictedSymbolSourceOf`), over the rules as the earlier leads left them, with the grammar's lists read by name.
+
+### `packages/codegen/src/dsl/bind.ts::countSymbols`
+
+How many times each rule name occurs as a symbol in a rule, each occurrence apart.
+
+### `packages/codegen/src/dsl/bind.ts::ItemPositions`
+
+How many positions of the list's item each rule name occupies, and which rules (or the item expression itself, `the list item`) hold it.
+
+### `packages/codegen/src/dsl/bind.ts::NO_POSITIONS`
+
+The empty `ItemPositions`, for the lead side, which never narrows in place.
+
+### `packages/codegen/src/dsl/bind.ts::itemPositions`
+
+The positions each rule name occupies in the item's own structure, read on the grammar as the lead side left it, before the rest narrows anything. The walk starts at the item expression and expands the rules the narrowing walked (the lead's reach) and every rule the parse tree does not show (a hidden name, or a supertype or inline rule of any name), since those are the item's structure; a visible kind outside the reach is a node of its own, and what it holds is not counted. Each symbol occurrence is a position, a rule already on the walk's path not expanded again. So a kind the item holds at two fields, through a hidden rule it holds twice, or inside itself has more than one position; the narrowed position is one, so any other refuses. A position under a repeat or a recursion in the restriction's own path never gets here: `narrowWithin` refuses the first, and `narrowRef` the second, as a sequence it cannot divide. Rust's item also reaches `parameter` through the expressions nested in it, at a closure's parameters, which this walk leaves outside: the in-place narrowing may lose forms there.
+
+### `packages/codegen/src/dsl/bind.ts::narrowInPlace`
+
+Writes a rule the rest side narrows in place, unless an earlier lead's item holds it (`heldBy`): narrowing it would take forms from that lead's item after its split, so it is refused.
+
+### `packages/codegen/src/dsl/bind.ts::referenceSites`
+
+How many places reference each rule, counted after the lead side has minted its variants, so a variant that still holds a hidden rule keeps it from narrowing in place. Every symbol in every rule counts, each occurrence apart, except the list's own: the rest narrows every item of the list alike, so the list counts its item expression once (each occurrence in it apart) and its separator once.
+
+### `packages/codegen/src/dsl/bind.ts::leadGrammar`
+
+Applies each lead to the grammar, as a pure edit of the grammar record. For each lead:
+- The list must be a separated list whose element is the lead's item field, as the derivation reads it (`rule-patterns.ts::fieldedHeadListOf`).
+- The item narrows twice (`narrowRef`): to what the lead admits, the lead, and to everything else, the rest. Every item of the plain list holds the rest; a lead that admits no item, or leaves the list none, is refused.
+- The receiver form is minted, `_<list>_<field>`, aliased `<list>_<field>`: `seq(field(<field>, LEAD), optional(seq(SEP, optional(field(F, <list>)))))`, where `SEP` is the list's separator and `F` the field the owners hold the list in. A list that takes no trailing separator holds no lone one after the receiver either: `seq(field(<field>, LEAD), optional(seq(SEP, field(F, <list>))))`. A list that takes a leading separator, or a mandatory trailing one, is refused. The owners must hold the list only as a field's whole content (`listSites`), all under one field name.
+- Every field that held the list then holds a choice of the plain list and the receiver form (`withReceiverForm`), so the parser takes the receiver only first.
+
+Each rule a lead mints is stamped with its origin in `leadFrom`, as `splitFrom` and `renamedFrom` do, and joins the supertype and inline lists its origin is in (`mintLists`). A rule narrowed in place is not new and carries no stamp. A minted name the grammar already holds, one hidden rule narrowed two ways on one side (the convention would name both alike), and an in-place narrowing of a rule an earlier lead's item holds (`narrowInPlace`) are refused. Each refusal is a `LeadRefusal`. The derivation (`bindings/leads.ts::deriveLeads`) reports the same refusals through `leadIssue` before a lead reaches the edit, so here they are assertions. `bindGrammar` does not apply leads yet.
+
+### `packages/codegen/src/dsl/bind.ts::leadIssue`
+
+Why `leadGrammar` would refuse the last of `leads`, applied in order, or `undefined` when it would make them all: the one check the derivation and the edit share. The derivation passes the leads it has accepted before the one it checks, so a lead that conflicts with an earlier one (two narrowings minting one variant) is refused too.
+
 # `packages/codegen/src/dsl` — Function Glossary
 
 Per-function reference for `packages/codegen/src/dsl/`, mechanically relocated from source
@@ -33,7 +162,7 @@ The text-token names attached to a grammar; empty when none were attached. Evalu
 
 ### `packages/codegen/src/dsl/enrich.ts::getEnrichMints`
 
-The rules enrich adds: the names in the origin map whose origin is an `EnrichMintKind`, which leaves out `promoted-group`. The set equals the enriched grammar's rule names minus the base grammar's. An upstream rule is never a mint: not one exposed through an alias (`promoted-group`), and not one enrich rewrites in place (a `liftAliasedHiddenRuleBodies` rewrite, a field-wrap pass).
+The rules enrich adds: the names in the origin map whose origin is an `EnrichMintKind`, which leaves out `promoted-group`. The set retains the base's recorded mints and adds the newly introduced rule names, so re-enriching a wired grammar preserves their provenance. An upstream rule is never a mint: not one exposed through an alias (`promoted-group`), and not one enrich rewrites in place (a `liftAliasedHiddenRuleBodies` rewrite, a field-wrap pass).
 
 ### `packages/codegen/src/dsl/enrich.ts::enrichRuleNamesOf`
 
@@ -2743,7 +2872,7 @@ the rule in place. Called once from `enrich`, after
 labelled too. Returns the record, which `enrich` always attaches to its
 result as `ENRICH_AUTOMATIC_VARIANTS_KEY`.
 
-With `into`, the labels go onto an existing record instead of a fresh one, and `owners` limits the run to the rules named. `grammar()` uses both to label what wire created or changed with this same function, so a kind a patch authors after enrich ran carries the labels enrich would have given it. A supertype owner joins `into` only when stamping it added a label.
+With `into`, the labels go onto an existing record instead of a fresh one, and `owners` limits the run to the rules named. `stampWiredVariants` uses both to label what wire created or changed with this same function, so a kind a patch authors after enrich ran carries the labels enrich would have given it. A supertype owner joins `into` only when stamping it added a label.
 
 `enrich` passes a `seedAutomaticVariants` copy of its input's record as `into`, so a grammar that was already enriched keeps the provenance of its earlier labels: stamping an already-labelled arm adds no key, and without the seed the second pass's record would be empty while the labels stay on the rules.
 
@@ -2989,7 +3118,7 @@ unwraps `prec` and a stamp on the wrapper is lost.
  */
 ```
 
-### `packages/codegen/src/dsl/builders.ts::overlaySeq`
+### `packages/codegen/src/dsl/builders.ts::carrySeqFacts`
 
 ```text
 /**
@@ -4283,6 +4412,10 @@ none of them.
 // elem? tail is not this shape (every element is mandatorily terminated).
 ```
 
+### `packages/codegen/src/dsl/rule-patterns.ts::fieldedHeadListOf`
+
+The list a lead can split: a head-form separated list (`separatedListBodyInfo`) whose element is a field, with that field's name as `elementName`. The lead derivation and `bind.ts::leadGrammar` read a list through it alike.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::isLiteralChoiceContent`
 
 ```text
@@ -4640,13 +4773,18 @@ with the config's authored group patterns and `extras:` callback, then `wire(con
 base as the raw stage,
 then the ambient `grammar()` (tree-sitter's in the bundled `.sittir/grammar.js`,
 sittir's `grammarFn` under evaluate) over the enriched base and wired options,
+then `stampWiredVariants`, which labels the rules wire created or changed in both pipelines,
 then `blankDeadEnrichMints`, which blanks the rules enrich
 added that the wired grammar never reaches, `attachDerivationRecords`,
 which records the upstream conflicts and each reshaped rule's upstream source
 for the conflict loop, and the imported resolutions and whether the config
-authors `conflicts` for the diagnostics, and last `applyConflictResolutions`, which sets the
-grammar's conflicts to the derived resolutions the config passes as
+authors `conflicts` for the diagnostics, then `applyConflictResolutions`, which sets the
+grammar's conflicts to the base resolutions the config passes as
 `resolutions` (each grammar imports its own `.sittir/resolutions.json`).
+When a bindings layer is configured and the evaluation is bound, the wired
+grammar must then be a base enrich leaves unchanged (`assertEnrichFixpoint`), since the grammar bindings are a layer
+over it. Its grammar bindings (`bindings`) are applied after that (`bindGrammar`), and
+last `applyBoundConflictResolutions` appends the bound section's sets.
 Every `grammar.sittir.ts` and the bootstrap template call it as
 `export default sittirGrammar(base, { … })`.
 
@@ -4862,7 +5000,7 @@ a stamp made there would be lost. The stamp is the declaration link collects
 `hoistedKinds` from; enrich is one of its minting routes.
 
 
-A config may carry a `bindings` overlay (`bind.ts::Bindings`). `checkBindingPatches` checks its alias patches against the enriched grammar, `withBindingPatches` joins its patch sets to wire's patch stage (base names, enriched paths), and after `applyConflictResolutions` the result's grammar goes through `bindGrammar` with the effects wire recorded (`wire.ts::wireBindingEffects`). Resolutions therefore stay in base names, and `bindGrammar`'s renames carry them along. Under an unbound evaluation (`UNBOUND_ENV`) the overlay is skipped.
+A config may carry grammar bindings as `bindings` (`bind.ts::Bindings`). `checkBindingPatches` checks its alias patches against the enriched grammar, `withBindingPatches` joins its patch sets to wire's patch stage (base names, enriched paths), and after `applyConflictResolutions` the result's grammar goes through `bindGrammar` with the effects wire recorded (`wire.ts::wireBindingEffects`). The base resolutions therefore stay in base names, and `bindGrammar`'s renames carry them along. The bound sets, in bound names, are appended to the bound grammar after `bindGrammar`, with or without bindings, and the derivation records carry them as `boundResolutions`. Under an unbound evaluation (`UNBOUND_ENV`) the grammar bindings and the bound sets are both skipped, and the records carry no bound resolutions.
 
 ### `packages/codegen/src/dsl/enrich.ts::applyFieldWrapPasses`
 
@@ -6201,6 +6339,10 @@ Appends rule names to one of the grammar's name lists (`supertypes` or `external
 
 The non-enumerable key under which enrich leaves its whitespace sidecar (`EnrichWhitespaceSidecar`) on the enriched grammar, for `wire()` to merge into `visibleExternals` and the wire context.
 
+### `packages/codegen/src/dsl/enrich.ts::stampWiredVariants`
+
+Labels the rules of a wired grammar that wire created or changed against `base` (the layout supertype excepted, which enrich mints after its own labelling) with `stampAutomaticVariants`, into the wire context's record. It is the same stamping enrich applies to a kind it mints, run on the arms a patch or `groups:` entry authored after enrich, so a later enrich pass finds those arms already labelled. It reads the grammar's supertypes, inline names, externals, extras and word the way enrich reads its base, so it works on either pipeline's `grammar()` result. `sittirGrammar` calls it right after `grammar()`, so tree-sitter's `grammar.json` carries the labels the sittir side reads.
+
 ### `packages/codegen/src/dsl/enrich.ts::EnrichWhitespaceSidecar`
 
 The part of `EnrichedWhitespace` wire reads: the members' render `bodies` and the upstream `collisions`.
@@ -7080,7 +7222,11 @@ One entry of `resolutions.json` as the derivation writes it: the AddConflict set
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::ConflictResolutionsFile`
 
-The shape of `.sittir/resolutions.json`. `grammarHash` is the hash of the evaluated grammar the resolutions were derived for, computed without its conflicts (`transpile/evaluate-for-derivation.ts::grammarHash`). It is the verified stamp: written only once the set has generated cleanly, so a file with a matching hash always held a set that built.
+The shape of `.sittir/resolutions.json`: two `ResolutionSection`s. The top-level one holds the base sets, derived against the grammar without its bindings and named in base names. `bound` holds the sets only the bound grammar needs, derived against the bound grammar and named in bound names. One store keeps both, so a grammar imports one file and the driver writes through one writer.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::ResolutionSection`
+
+One derived resolution list and its stamp. `grammarHash` is the hash of the evaluated grammar the list was derived for, computed without its conflicts (`transpile/evaluate-for-derivation.ts::grammarHash`): the base grammar's for the base section, the bound grammar's for `bound`. It is the verified stamp: written only once the list has generated cleanly, so a section with a matching hash always held a list that built.
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::UNVERIFIED_GRAMMAR_HASH`
 
@@ -7088,7 +7234,7 @@ The hash of a resolution set no clean `generate` has confirmed: the seed, and ev
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::ConflictResolutionsInput`
 
-The resolutions a grammar passes to `sittirGrammar`: `ConflictResolutionRecord`s, so the JSON a grammar imports satisfies it as TypeScript infers it (string literals widen, so the file does not type as `ConflictResolutionsFile`).
+The resolutions a grammar passes to `sittirGrammar`, the base list and the `bound` section's list: `ConflictResolutionRecord`s, so the JSON a grammar imports satisfies it as TypeScript infers it (string literals widen, so the file does not type as `ConflictResolutionsFile`).
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::CONFLICT_RESOLUTIONS_FILE`
 
@@ -7096,11 +7242,15 @@ The file name under a package's `.sittir/` that holds the derived resolutions, a
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::EMPTY_CONFLICT_RESOLUTIONS`
 
-The resolutions of a grammar nothing has been derived for, carrying `UNVERIFIED_GRAMMAR_HASH`: the seed a new package's first bundle imports, and the starting point of every derivation.
+The resolutions of a grammar nothing has been derived for, both sections empty and carrying `UNVERIFIED_GRAMMAR_HASH`: the seed a new package's first bundle imports, and the starting point of every derivation.
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::applyConflictResolutions`
 
-Sets the grammar's final `conflicts` to the resolution sets, replacing whatever `grammar()` produced. Upstream's declared conflicts and anything an author wrote never reach the final list; every conflict the grammar keeps was derived. It runs last in `sittirGrammar`, so both runtimes see the same list.
+Sets the grammar's `conflicts` to the base resolution sets, replacing whatever `grammar()` produced. Upstream's declared conflicts and anything an author wrote never reach the final list; every conflict the grammar keeps was derived. It runs in `sittirGrammar` before `bindGrammar`, so the sets are in base names and the renames carry them; both runtimes see the same list.
+
+### `packages/codegen/src/dsl/conflict-resolutions.ts::applyBoundConflictResolutions`
+
+Appends the `bound` section's sets to the bound grammar's `conflicts`, after the renamed base sets. It runs after `bindGrammar`, so the sets name bound rules: a split clone, or a rule under its renamed name. A split clone gets its sets this way, by derivation on the bound grammar, and never by copying its origin's sets: a set that names a rule and its clone together, or a clone beside a rule its origin never met, exists only in the bound grammar's tables, so only generating the bound grammar finds it.
 
 
 ### `packages/codegen/src/dsl/enrich.ts::applyElidedListField`
@@ -7257,6 +7407,306 @@ The precedence wrapper types, which carry no slot topology.
 
 The parser's field table as `{ name, id }` rows in id order, skipping entries without an id. It is the field-side counterpart of `collectGeneratedKindEntries` and the single source `field_ids.rs` is emitted from.
 
+### `packages/codegen/src/dsl/bind.ts::isRecord`
+
+A grammar value that is a record (a rule, or a map of rules or names), not an array or a scalar. The grammar bindings walk rules with it too.
+
+### `packages/codegen/src/dsl/bind.ts::symbolNames`
+
+Every symbol name a rule references, at any depth. The grammar bindings use it to tell whether an alias's target holds the aliased kind.
+
+### `packages/codegen/src/dsl/bind.ts::Rename`
+
+A kind-level rename in a grammar's bindings: the base rule or external `from` takes the name `to`.
+
+### `packages/codegen/src/dsl/bind.ts::Bindings`
+
+The grammar bindings of a grammar, the argument of `bindings()`. `patches` holds ordinary patch sets in base names and enriched paths; `sittirGrammar` appends them after the authored sets of the same kind. `renames` and `splits` are kind-level edits that `bindGrammar` applies to the grammar `grammar()` returned. `leads` are typed and printed, but `bindGrammar` does not apply them: a lead creates rules, which need enrich's second pass, so they stay unapplied until that pass exists. `hash` is the hash of the `bindings.scm` and vocabulary sources they were derived from (`bindings/hash.ts::bindingsSourceHash`); `bindings/hash.ts::assertBindingsFresh` compares it with the sources on disk.
+
+### `packages/codegen/src/dsl/bind.ts::bindings`
+
+Declares grammar bindings and returns them unchanged; the call exists to type them. A `grammar.bindings.ts` default-exports one and `grammar.sittir.ts` passes it to `sittirGrammar` as `bindings` while the grammar bindings are on.
+
+### `packages/codegen/src/dsl/bind.ts::rename`
+
+The `Rename` primitive: `rename('function_item', 'function_declaration')`.
+
+### `packages/codegen/src/dsl/bind.ts::split`
+
+The `Split` primitive: `split(kind, as, { within, containers })` mints `as` from `kind` where it sits under the placement `within` (innermost first, the placement's owner last), with a container rule per intermediate ancestor named and fielded as `containers` gives.
+
+### `packages/codegen/src/dsl/bind.ts::BindingEffect`
+
+What one binding patch did, as wire records it while the patch applies: a `segment` effect is an option-path segment of the patched kind that the patch renamed (a field `from:` to `to:`, or a wrapped child or token to the new field), and an `alias` effect is a kind the patch aliased to a new name.
+
+### `packages/codegen/src/dsl/bind.ts::BINDING_SET`
+
+The non-enumerable mark on a patch set that came from grammar bindings. `transform` applies a marked set inside `wireWithBindingEffects`, so only binding patches record effects.
+
+### `packages/codegen/src/dsl/bind.ts::markBindingSet`
+
+A copy of a patch set carrying `BINDING_SET`; the grammar bindings' own object stays unmarked.
+
+### `packages/codegen/src/dsl/bind.ts::isBindingSet`
+
+Whether a patch set carries `BINDING_SET`.
+
+### `packages/codegen/src/dsl/bind.ts::aliasTargetIssue`
+
+Why an alias from `from` to `to` cannot stand, or `undefined`: an alias never flips hiddenness, and its target may not name a rule of the grammar. Tree-sitter folds an alias whose value names a rule into that rule's kind, so such a target would change the parse; a group that has to share a name with a rule is a merge.
+
+### `packages/codegen/src/dsl/bind.ts::checkBindingPatches`
+
+Refuses every named alias of a symbol in grammar bindings' patches that `aliasTargetIssue` rejects against the enriched grammar, before wire applies any of them.
+
+### `packages/codegen/src/dsl/bind.ts::rewriteBindingOptions`
+
+Carries the authored options block through the binding patches. The block is authored in base names, so each `segment` effect rewrites that segment in its owner's option paths (`rewriteOwnedSegments`), and each `alias` effect renames the kind wherever an option path names it (`renameOptions`), as a kind rename would.
+
+### `packages/codegen/src/dsl/bind.ts::bindGrammar`
+
+The kind-level half of grammar bindings, applied to the grammar `grammar()` returned: the options block first takes the binding patches' effects (`rewriteBindingOptions`), then `renameGrammar` renames the kinds and `splitGrammar` splits them, the splits named in base names and mapped through the renames. It leaves `leads` unapplied. Throughout bind.ts a rule is hidden, and so transparent to its owner (its fields and references sit on the referrer's behalf), by tree-sitter's name convention (`rule-patterns.ts::isParserHiddenName`): the bind functions run on the raw grammar, before any model stamps a fact, and a rename or split that flips that hiddenness is refused.
+
+### `packages/codegen/src/dsl/bind.ts::renameReparseHosts`
+
+The authored `reparseHosts` block under a rename. It is authored in base names; a host's key and every `priority` and `gated` entry name kinds, while a host's template is source text and stays as written. A block that names no `priority` takes `REPARSE_HOST_PRIORITY`, renamed too, so the emitted table and the kinds it is consulted with share one spelling.
+
+### `packages/codegen/src/dsl/bind.ts::Split`
+
+A placement split in grammar bindings: the base kind `kind`, wherever it is reached under the chain `within` (innermost first, the outermost kind last), becomes the new kind `as`. `containers` names, per intermediate kind of `within` that is visible, the clone that holds the split kind there and the field the outer kind reaches the clone under. `splitGrammar` applies it.
+
+### `packages/codegen/src/dsl/bind.ts::FieldRename`
+
+A field-level rename the grammar bindings derive from a member: the field `from` that `owner` reaches (directly or through hidden rules only it reaches) takes the member's name `to`.
+
+### `packages/codegen/src/dsl/bind.ts::FieldWrapTarget`
+
+What a field wrap fields: an unfielded reference to a kind (`symbol`, matched by name or by a named alias's value), or an anonymous token by its text (`token`).
+
+### `packages/codegen/src/dsl/bind.ts::FieldWrap`
+
+A field the grammar bindings add for a member whose child arrives under no field: every unfielded `target` the owner reaches is wrapped in `field(field, …)`.
+
+### `packages/codegen/src/dsl/bind.ts::GrammarRecord`
+
+A grammar, a rule or any grammar sub-record as untyped JSON-like data. The bind functions take the evaluated grammar this way, since they run on what `grammar()` returned, before sittir types any of it. The grammar bindings walk the base grammar as the same type.
+
+### `packages/codegen/src/dsl/bind.ts::LIST_FIELDS`
+
+The grammar's top-level fields that are plain lists of kind names (`supertypes`, `inline`, …); a rename maps each entry.
+
+### `packages/codegen/src/dsl/bind.ts::RULE_FIELDS`
+
+The grammar's top-level fields whose entries are rules or lists of rules and names (`extras`, `externals`, `precedences`, `reserved`, `conflicts`); a rename walks them like a rule body.
+
+### `packages/codegen/src/dsl/bind.ts::KEYED_FIELDS`
+
+The grammar's top-level records keyed by kind name (`rules`, `renderAs`, `visibleExternals`, `groups`); a rename maps each key and walks each value.
+
+### `packages/codegen/src/dsl/bind.ts::KIND_KEYS`
+
+The record keys outside a rule's own reference that name a kind: an arm's `variantOf`. An arm's `variant` is a label, not a kind, even when it spells one.
+
+### `packages/codegen/src/dsl/bind.ts::namesKind`
+
+Whether a record's string at a key names a kind: a `SYMBOL` or `FIELD_ALIAS` name, a named `ALIAS`'s value, or a `KIND_KEYS` key.
+
+### `packages/codegen/src/dsl/bind.ts::renameValue`
+
+A grammar value with every kind name in it renamed: a bare string or a list of them (the list fields name kinds), and, inside a record, only the strings `namesKind` picks out. A label, a metadata source or any other string that happens to spell a renamed kind is left as written.
+
+### `packages/codegen/src/dsl/bind.ts::mappedName`
+
+A name through a rename record: the mapped name where the record has one of its own, else the name unchanged. `Object.hasOwn` keeps a kind named like an object property (`constructor`) from reading a prototype member.
+
+### `packages/codegen/src/dsl/bind.ts::renameKeys`
+
+A keyed record with its keys renamed, and its values too unless `renameValues` is false (a reparse host's template is source text). Two keys renaming to one name is an error.
+
+### `packages/codegen/src/dsl/bind.ts::renameSegment`
+
+One segment of an options path under a rename: a `(kind)` segment and a `kind:` slot segment that is no field of the grammar take the new name; a field segment and a literal are left as written.
+
+### `packages/codegen/src/dsl/bind.ts::renamePath`
+
+An options path under a rename. Its head is a kind when `kindHead` (a top-level options key); otherwise it is renamed like any other segment.
+
+### `packages/codegen/src/dsl/bind.ts::renameOptionPaths`
+
+An options record with every path key renamed, recursively, leaving preference values alone. The keys under `LABELS_KEY` are addresses whose heads are kinds. Two keys renaming to one path is an error.
+
+### `packages/codegen/src/dsl/bind.ts::renameOptions`
+
+The grammar's options block under a rename, with the grammar's field names, so a slot segment that names a field is not mistaken for a kind.
+
+### `packages/codegen/src/dsl/bind.ts::carryHiddenFacts`
+
+Copies the non-enumerable facts a grammar carries (the facts wire and enrich stamp on the result) onto a rebuilt grammar, renaming the names in a set or list fact. A spread copies only enumerable keys, so without it each bind step would drop them.
+
+### `packages/codegen/src/dsl/bind.ts::renameGrammar`
+
+The grammar with each rename's base rule or external taking its new name everywhere a kind is named: keyed fields, list and rule fields, the options block, the reparse hosts, `word`, every set of names, and the hidden facts. `renamedFrom` records each new name's base name for the phases that read base names. A rename of a name the grammar lacks, one that flips hiddenness, or one onto a name the grammar already has is an error.
+
+### `packages/codegen/src/dsl/bind.ts::replaceSymbols`
+
+A rule with every `SYMBOL` name passed through `replace`.
+
+### `packages/codegen/src/dsl/bind.ts::fieldNames`
+
+Every field name a rule uses, at any depth.
+
+### `packages/codegen/src/dsl/bind.ts::supertypesOf`
+
+The grammar's supertype names, whether listed as names or as symbol rules. A supertype is where an owner's reach stops: its arms are kinds of their own.
+
+### `packages/codegen/src/dsl/bind.ts::transparentReach`
+
+The owner and every hidden rule it reaches through hidden rules alone, stopping at supertypes: the rules whose fields and references belong to the owner.
+
+### `packages/codegen/src/dsl/bind.ts::fieldHosts`
+
+The rules in the owner's transparent reach that use a field: where a rename of that field has to happen.
+
+### `packages/codegen/src/dsl/bind.ts::fieldRenameIssue`
+
+Why a field rename cannot apply, or nothing. The owner must be a rule, and the field one it reaches. A hidden host that another kind shares must be renamed the same way for every sharer in the same batch. The new name must not already be a field of the owner.
+
+### `packages/codegen/src/dsl/bind.ts::renameFields`
+
+A rule with every `FIELD` named `from` renamed `to`.
+
+### `packages/codegen/src/dsl/bind.ts::SegmentRewrite`
+
+One slot-segment rewrite of an options path, scoped to the kind `owner`: the segment `from` becomes `to`.
+
+### `packages/codegen/src/dsl/bind.ts::rewriteOwnedSegments`
+
+The options block with segment rewrites applied under their owning kind only: within a kind's options record, and in a label address whose head is that kind. A rewrite for one kind leaves another kind's identically spelled segment alone.
+
+### `packages/codegen/src/dsl/bind.ts::fieldRenameGrammar`
+
+The grammar with a batch of field renames applied: each checked first (`fieldRenameIssue`, against the whole batch), then renamed in every host, and the owning kinds' `field:` option segments rewritten to the new names.
+
+### `packages/codegen/src/dsl/bind.ts::OPAQUE_RULES`
+
+The rule types a field wrap does not descend into: a child already in a field has its name, and a token's contents are not children.
+
+### `packages/codegen/src/dsl/bind.ts::isWrapTarget`
+
+Whether a rule is a wrap's target: the token's `STRING` for a token target; for a symbol target, the `SYMBOL` itself or a named `ALIAS` with that value.
+
+### `packages/codegen/src/dsl/bind.ts::wrapTargets`
+
+A rule with every reachable occurrence of the target wrapped in the field. It stops at `OPAQUE_RULES` and at aliases, whose contents belong to the aliased kind.
+
+### `packages/codegen/src/dsl/bind.ts::hasWrapTarget`
+
+Whether a rule holds a target `wrapTargets` would wrap, by the same descent.
+
+### `packages/codegen/src/dsl/bind.ts::wrapHosts`
+
+The rules in the owner's transparent reach that hold the wrap's target.
+
+### `packages/codegen/src/dsl/bind.ts::fieldWrapIssue`
+
+Why a field wrap cannot apply, or nothing: the owner must be a rule that reaches an unfielded target. Shared hidden hosts must agree across the batch, as for a rename. The field name must not already be the owner's.
+
+### `packages/codegen/src/dsl/bind.ts::ChildFields`
+
+How an owner holds a child, as `childFields` finds it: the fields it arrives under, whether it also arrives unfielded, whether one of those fields also holds other named children (`mixed`), and whether the child is an arm of the owner's top-level choice (`arm`).
+
+### `packages/codegen/src/dsl/bind.ts::unprecedenced`
+
+A rule with its precedence wrappers peeled.
+
+### `packages/codegen/src/dsl/bind.ts::childFields`
+
+Where an owner's child sits across its transparent reach, for the grammar bindings to choose between renaming a field and wrapping a reference. With a `null` target it reports the owner's named children: references to non-hidden kinds and named aliases. The owner's top-level choice decides `arm`.
+
+### `packages/codegen/src/dsl/bind.ts::sharedHosts`
+
+The hidden hosts of a rename or wrap that other kinds share without the same edit in the batch: the hosts that make the request fail with "field sits in a hidden rule another kind shares".
+
+### `packages/codegen/src/dsl/bind.ts::sameEdit`
+
+Whether two requests make the same edit apart from their owner: the same rename, or the same wrap of the same target.
+
+### `packages/codegen/src/dsl/bind.ts::sharersAgree`
+
+Whether every visible kind that reaches a hidden host makes the same edit in the batch. A shared hidden rule is renamed once for all of them, so they must all ask for it.
+
+### `packages/codegen/src/dsl/bind.ts::fieldWrapGrammar`
+
+The grammar with a batch of field wraps applied: each checked (`fieldWrapIssue`), each target wrapped in every host, and the owning kinds' option segments that named the child (`kind:`, or a token's quoted text) rewritten to the new `field:`.
+
+### `packages/codegen/src/dsl/bind.ts::fieldReferences`
+
+A rule with every reference to `symbol` that is not already in a field wrapped in `field`.
+
+### `packages/codegen/src/dsl/bind.ts::splitGrammar`
+
+The grammar with each placement split applied. The split kind is minted under its new name from the base kind's body. Each intermediate kind of `within`, and each hidden rule on the way that reaches the target, is cloned per outer kind with the reference replaced: a hidden rule as `<base>_<outer>`, a visible container under the name its `containers` entry gives. The outer kind then references the clones. A clone of a supertype or an inline rule is listed beside its base (`mintLists`), and a visible container is fielded where its placements reference it. `splitFrom` records each minted name's base. A split that flips hiddenness, names no placement, or mints a name the grammar already has is an error.
+
+### `packages/codegen/src/dsl/bind.ts::patchAliases`
+
+Every named alias of a symbol in a patch set, as `{ from, to }`, for `checkBindingPatches`.
+
+### `packages/codegen/src/dsl/bind.ts::baseNamesOf`
+
+The base name each bound name stands for, from the bound grammar's `renamedFrom` and `splitFrom` stamps: a clone resolves to its origin, then a renamed origin to its base name. Only names whose base name differs are kept, so a clone that reuses the very name a rename freed maps to nothing. The conflict derivation chains a bound name's sources through it (`transpile/derive-conflicts.ts::sourceChainOf`).
+
+### `packages/codegen/src/dsl/bind.ts::boundNameOf`
+
+The bound name of a base name, from the grammar's `renamedFrom` record: the phases that meet base names (`link`, rule-cause and grammar diagnostics) map them through it to the names the bound grammar uses.
+
+### `packages/codegen/src/dsl/sittir-grammar.ts::UNBOUND_ENV`
+
+The environment variable that asks for a grammar's base: while it is `1`, `sittirGrammar` skips the grammar bindings. `evaluate`'s unbound import sets it around its import, and conflict derivation sets it on the `tree-sitter generate` runs that derive resolutions, so both see the base without building the bound grammar first, and broken grammar bindings cannot stop the base from evaluating.
+
+### `packages/codegen/src/dsl/sittir-grammar.ts::unboundRequested`
+
+Whether `UNBOUND_ENV` is `1`.
+
+### `packages/codegen/src/dsl/sittir-grammar.ts::patchSets`
+
+A patches entry as its list of sets: one map, an array of maps, or none.
+
+### `packages/codegen/src/dsl/sittir-grammar.ts::withBindingPatches`
+
+The authored patches with each grammar-bindings kind's sets appended after the kind's authored sets, each marked by `markBindingSet`. A binding patch therefore sees the rule the authored patches produced, and its paths address that shape.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::onlyAliasedSymbols`
 
 The symbols a set of rule bodies references under a named alias and never by name. An authored hidden rule in that set is not a pattern candidate: its owner gave it a visible name at every reference, and the parser makes that alias the rule's own name only while every reference carries it. Folding an unrelated inline body of the same shape into a plain reference would add an unaliased reference, and the kind would stop being the aliased one. Evaluate's `applyPatternReplacement` and wire's `applyWirePatternReplacement` both ask it; a candidate that folds into an alias site (a declared group) is not subject to it.
+
+### `packages/codegen/src/dsl/bind.ts::LeadWithin`
+
+A lead match's restriction: the field it restricts (`null` for an unfielded child) and the matches it admits there.
+
+### `packages/codegen/src/dsl/bind.ts::LeadMatch`
+
+One kind a lead admits: the kind, its restriction (`within`), when it narrows the kind, and the name of the variant the narrowing mints (`as`), when a claim names it.
+
+### `packages/codegen/src/dsl/bind.ts::Lead`
+
+A leading-element split of a separated list: the list rule, its item field, the field the leading element takes, and the matches the leading element admits.
+
+### `packages/codegen/src/dsl/bind.ts::lead`
+
+Builds a `Lead` from the list, the item field, the lead field and the matches it admits.
+
+### `packages/codegen/src/dsl/bind.ts::leadWithin`
+
+A `match` restriction from its authored form: an array is an unfielded child; a record restricts the one field it names, and a record of any other size is refused.
+
+### `packages/codegen/src/dsl/bind.ts::match`
+
+Builds a `LeadMatch`: a kind, an optional restriction (`leadWithin`) and an optional variant name. `(required_parameter pattern: (this))` is `match('required_parameter', { pattern: [match('this')] })`.
+
+### `packages/codegen/src/dsl/enrich.ts::withEnrichSidecarsOf`
+
+A shallow copy of a grammar carrying the three sidecars an enrich result holds (whitespace, rule origins, automatic variants), read from `enriched`. `grammar()` does not carry them, so a later enrich over a wired grammar needs them to recognise its own earlier work: without them it re-mints the layout supertype over the body wire decorated and re-aliases visible groups.
+
+### `packages/codegen/src/dsl/sittir-grammar.ts::assertEnrichFixpoint`
+
+The configured grammar bindings layer's gate: enrich over the wired grammar, carrying the sittir layer's enrich sidecars (`withEnrichSidecarsOf`), changes no rule. It throws naming every rule it would change, added or removed. Wire leaves a field, label or alias enrich would add only where an authored entry or wire stamps it first, so a change here means the wired grammar is not yet a base the bindings layer can build on: the fix is on the sittir side (author the field, stamp the label), never in the gate.

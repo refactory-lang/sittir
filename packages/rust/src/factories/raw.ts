@@ -50,35 +50,32 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 	}
 }
 
-const _leafRe_buildIdentifier = /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
-const _leafRe_buildTokenRepetitionPatternText = /^(?:(?:[^+*?]+))$/u;
-const _leafRe_buildStringOpen = /^(?:(?:[bc]?"))$/u;
-const _leafRe_buildCharLiteralEmpty = /^(?:(?:b)?'')$/u;
-const _leafRe_buildLineCommentExtraSlashes = /^(?:(?:\/\/)(?:.*))$/u;
-const _leafRe_buildLineCommentRegular = /^(?:(?:.*))$/u;
-const _leafRe_buildBlockCommentRegular = /^(?:(?:[^]*))$/u;
-const _leafRe_buildFloatLiteral =
+export const _leafRe_buildIdentifier = /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
+export const _leafRe_buildTokenRepetitionPatternText = /^(?:(?:[^+*?]+))$/u;
+export const _leafRe_buildStringOpen = /^(?:(?:[bc]?"))$/u;
+export const _leafRe_buildCharLiteralEmpty = /^(?:(?:b)?'')$/u;
+export const _leafRe_buildLineCommentExtraSlashes = /^(?:(?:\/\/)(?:.*))$/u;
+export const _leafRe_buildLineCommentRegular = /^(?:(?:.*))$/u;
+export const _leafRe_buildBlockCommentRegular = /^(?:(?:[^]*))$/u;
+export const _leafRe_buildFloatLiteral =
 	/^(?:(?:[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?))$/u;
-const _leafRe_buildStringContent = /^(?:(?:[^"\\]+))$/u;
-const _leafRe_buildRawStringLiteralContent = /^(?:(?:[\s\S]*))$/u;
-const _leafRe_buildRawStringLiteralStart = /^(?:(?:[bc]?r#*"))$/u;
-const _leafRe_buildRawStringLiteralEnd = /^(?:(?:"#*))$/u;
-const _leafRe_buildDocComment = /^(?:(?:.*\n?))$/u;
-const _leafRe_buildBlockCommentContent = /^(?:(?:[^]*))$/u;
+export const _leafRe_buildStringContent = /^(?:(?:[^"\\]+))$/u;
+export const _leafRe_buildRawStringLiteralContent = /^(?:(?:[\s\S]*))$/u;
+export const _leafRe_buildRawStringLiteralStart = /^(?:(?:[bc]?r#*"))$/u;
+export const _leafRe_buildRawStringLiteralEnd = /^(?:(?:"#*))$/u;
+export const _leafRe_buildDocComment = /^(?:(?:.*\n?))$/u;
+export const _leafRe_buildBlockCommentContent = _leafRe_buildBlockCommentRegular;
 export const _slotRe_buildShebang_content = /^(?:[\r\f\t\v ]*(?:[^[\n].*)?)$/u;
 export const _slotRe_buildMetavariable_name = /^(?:[a-zA-Z_]\w*)$/u;
 export const _slotRe_buildIntegerLiteralDecimal_content = /^(?:(?:[0-9][0-9_]*))$/u;
 export const _slotRe_buildIntegerLiteralDecimal_suffix =
 	/^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
 export const _slotRe_buildIntegerLiteralHex_content = /^(?:(?:0x[0-9a-fA-F_]+))$/u;
-export const _slotRe_buildIntegerLiteralHex_suffix =
-	/^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
+export const _slotRe_buildIntegerLiteralHex_suffix = _slotRe_buildIntegerLiteralDecimal_suffix;
 export const _slotRe_buildIntegerLiteralBinary_content = /^(?:(?:0b[01_]+))$/u;
-export const _slotRe_buildIntegerLiteralBinary_suffix =
-	/^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
+export const _slotRe_buildIntegerLiteralBinary_suffix = _slotRe_buildIntegerLiteralDecimal_suffix;
 export const _slotRe_buildIntegerLiteralOctal_content = /^(?:(?:0o[0-7_]+))$/u;
-export const _slotRe_buildIntegerLiteralOctal_suffix =
-	/^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
+export const _slotRe_buildIntegerLiteralOctal_suffix = _slotRe_buildIntegerLiteralDecimal_suffix;
 export const _slotRe_buildCharLiteralPlain_content = /^(?:(?:[^\\']))$/u;
 export const _slotRe_buildCharLiteralEscapedSimple_content = /^(?:\\(?:[^xu]))$/u;
 export const _slotRe_buildCharLiteralEscapedUnicodeFixed_content = /^(?:\\(?:u[0-9a-fA-F]{4}))$/u;
@@ -7870,7 +7867,7 @@ export function buildIntegerLiteralOctal(
 }
 
 export function buildCharLiteralPlain(config: T.CharLiteralPlain.Config): T.CharLiteralPlain.Bound {
-	const _b = coerceBooleanKeywordStorage(rejectBareText(config.b, 'CharLiteralPlain.b', 'a boolean'));
+	const _byte = coerceBooleanKeywordStorage(rejectBareText(config.byte, 'CharLiteralPlain.byte', 'a boolean'));
 	const _content = config.content;
 	if (!_slotRe_buildCharLiteralPlain_content.test(_content))
 		throw new Error(`char_literal_plain.content: text does not match pattern: ${describeValue(_content)}`);
@@ -7879,15 +7876,15 @@ export function buildCharLiteralPlain(config: T.CharLiteralPlain.Config): T.Char
 		$type: TSKindId.CharLiteralPlain as const,
 		$source: 2 as const,
 		$named: true as const,
-		_b,
+		_byte,
 		_content,
 		$with: {
-			b: (value?: Admit<NonNullable<T.CharLiteralPlain.Config>['b']>) =>
-				rebuilt(node, handle, () => buildCharLiteralPlain({ ...config, b: value })),
+			byte: (value?: Admit<NonNullable<T.CharLiteralPlain.Config>['byte']>) =>
+				rebuilt(node, handle, () => buildCharLiteralPlain({ ...config, byte: value })),
 			content: (value: Admit<string>) =>
 				rebuilt(node, handle, () => buildCharLiteralPlain({ ...config, content: value }))
 		},
-		b: () => _b,
+		byte: () => _byte,
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -7922,7 +7919,7 @@ export function buildCharLiteralEmpty(text: string): T.CharLiteralEmpty.Bound {
 export function buildCharLiteralEscapedSimple(
 	config: T.CharLiteralEscapedSimple.Config
 ): T.CharLiteralEscapedSimple.Bound {
-	const _b = coerceBooleanKeywordStorage(rejectBareText(config.b, 'CharLiteralEscapedSimple.b', 'a boolean'));
+	const _byte = coerceBooleanKeywordStorage(rejectBareText(config.byte, 'CharLiteralEscapedSimple.byte', 'a boolean'));
 	const _content = config.content;
 	if (!_slotRe_buildCharLiteralEscapedSimple_content.test(_content))
 		throw new Error(`char_literal_escaped_simple.content: text does not match pattern: ${describeValue(_content)}`);
@@ -7931,15 +7928,15 @@ export function buildCharLiteralEscapedSimple(
 		$type: TSKindId.CharLiteralEscapedSimple as const,
 		$source: 2 as const,
 		$named: true as const,
-		_b,
+		_byte,
 		_content,
 		$with: {
-			b: (value?: Admit<NonNullable<T.CharLiteralEscapedSimple.Config>['b']>) =>
-				rebuilt(node, handle, () => buildCharLiteralEscapedSimple({ ...config, b: value })),
+			byte: (value?: Admit<NonNullable<T.CharLiteralEscapedSimple.Config>['byte']>) =>
+				rebuilt(node, handle, () => buildCharLiteralEscapedSimple({ ...config, byte: value })),
 			content: (value: Admit<string>) =>
 				rebuilt(node, handle, () => buildCharLiteralEscapedSimple({ ...config, content: value }))
 		},
-		b: () => _b,
+		byte: () => _byte,
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -7954,7 +7951,9 @@ export function buildCharLiteralEscapedSimple(
 export function buildCharLiteralEscapedUnicodeFixed(
 	config: T.CharLiteralEscapedUnicodeFixed.Config
 ): T.CharLiteralEscapedUnicodeFixed.Bound {
-	const _b = coerceBooleanKeywordStorage(rejectBareText(config.b, 'CharLiteralEscapedUnicodeFixed.b', 'a boolean'));
+	const _byte = coerceBooleanKeywordStorage(
+		rejectBareText(config.byte, 'CharLiteralEscapedUnicodeFixed.byte', 'a boolean')
+	);
 	const _content = config.content;
 	if (!_slotRe_buildCharLiteralEscapedUnicodeFixed_content.test(_content))
 		throw new Error(
@@ -7965,15 +7964,15 @@ export function buildCharLiteralEscapedUnicodeFixed(
 		$type: TSKindId.CharLiteralEscapedUnicodeFixed as const,
 		$source: 2 as const,
 		$named: true as const,
-		_b,
+		_byte,
 		_content,
 		$with: {
-			b: (value?: Admit<NonNullable<T.CharLiteralEscapedUnicodeFixed.Config>['b']>) =>
-				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeFixed({ ...config, b: value })),
+			byte: (value?: Admit<NonNullable<T.CharLiteralEscapedUnicodeFixed.Config>['byte']>) =>
+				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeFixed({ ...config, byte: value })),
 			content: (value: Admit<string>) =>
 				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeFixed({ ...config, content: value }))
 		},
-		b: () => _b,
+		byte: () => _byte,
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -7988,7 +7987,9 @@ export function buildCharLiteralEscapedUnicodeFixed(
 export function buildCharLiteralEscapedUnicodeBraced(
 	config: T.CharLiteralEscapedUnicodeBraced.Config
 ): T.CharLiteralEscapedUnicodeBraced.Bound {
-	const _b = coerceBooleanKeywordStorage(rejectBareText(config.b, 'CharLiteralEscapedUnicodeBraced.b', 'a boolean'));
+	const _byte = coerceBooleanKeywordStorage(
+		rejectBareText(config.byte, 'CharLiteralEscapedUnicodeBraced.byte', 'a boolean')
+	);
 	const _content = config.content;
 	if (!_slotRe_buildCharLiteralEscapedUnicodeBraced_content.test(_content))
 		throw new Error(
@@ -7999,15 +8000,15 @@ export function buildCharLiteralEscapedUnicodeBraced(
 		$type: TSKindId.CharLiteralEscapedUnicodeBraced as const,
 		$source: 2 as const,
 		$named: true as const,
-		_b,
+		_byte,
 		_content,
 		$with: {
-			b: (value?: Admit<NonNullable<T.CharLiteralEscapedUnicodeBraced.Config>['b']>) =>
-				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeBraced({ ...config, b: value })),
+			byte: (value?: Admit<NonNullable<T.CharLiteralEscapedUnicodeBraced.Config>['byte']>) =>
+				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeBraced({ ...config, byte: value })),
 			content: (value: Admit<string>) =>
 				rebuilt(node, handle, () => buildCharLiteralEscapedUnicodeBraced({ ...config, content: value }))
 		},
-		b: () => _b,
+		byte: () => _byte,
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -8020,7 +8021,7 @@ export function buildCharLiteralEscapedUnicodeBraced(
 }
 
 export function buildCharLiteralEscapedHex(config: T.CharLiteralEscapedHex.Config): T.CharLiteralEscapedHex.Bound {
-	const _b = coerceBooleanKeywordStorage(rejectBareText(config.b, 'CharLiteralEscapedHex.b', 'a boolean'));
+	const _byte = coerceBooleanKeywordStorage(rejectBareText(config.byte, 'CharLiteralEscapedHex.byte', 'a boolean'));
 	const _content = config.content;
 	if (!_slotRe_buildCharLiteralEscapedHex_content.test(_content))
 		throw new Error(`char_literal_escaped_hex.content: text does not match pattern: ${describeValue(_content)}`);
@@ -8029,15 +8030,15 @@ export function buildCharLiteralEscapedHex(config: T.CharLiteralEscapedHex.Confi
 		$type: TSKindId.CharLiteralEscapedHex as const,
 		$source: 2 as const,
 		$named: true as const,
-		_b,
+		_byte,
 		_content,
 		$with: {
-			b: (value?: Admit<NonNullable<T.CharLiteralEscapedHex.Config>['b']>) =>
-				rebuilt(node, handle, () => buildCharLiteralEscapedHex({ ...config, b: value })),
+			byte: (value?: Admit<NonNullable<T.CharLiteralEscapedHex.Config>['byte']>) =>
+				rebuilt(node, handle, () => buildCharLiteralEscapedHex({ ...config, byte: value })),
 			content: (value: Admit<string>) =>
 				rebuilt(node, handle, () => buildCharLiteralEscapedHex({ ...config, content: value }))
 		},
-		b: () => _b,
+		byte: () => _byte,
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {

@@ -2,7 +2,7 @@
 
 import * as F from './raw.js';
 import { TOKEN_INTERIORS } from '../consts.js';
-import { lexedConfig, numberText, spelledInterior, refuseSiblingLead } from '@sittir/common/utils';
+import { lexedConfig, interiorPattern, numberText, spelledInterior, refuseSiblingLead } from '@sittir/common/utils';
 import type * as T from '../types-internal.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
 import { Delimiter } from '@sittir/common/utils';
@@ -300,44 +300,47 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	remaining_field_pattern: { values: ['..'], factory: () => F.buildRemainingFieldPattern },
 	inner_line_doc_comment_marker: { values: ['!'], factory: () => F.buildInnerLineDocCommentMarker },
 	outer_line_doc_comment_marker: { values: ['/'], factory: () => F.buildOuterLineDocCommentMarker },
-	identifier: { pattern: /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u, factory: F.buildIdentifier },
+	identifier: { pattern: F._leafRe_buildIdentifier, factory: F.buildIdentifier },
 	shebang: { factory: (content: string) => _resolveByKind('shebang', content) },
 	self: { values: ['self'], factory: () => F.buildSelf },
 	super: { values: ['super'], factory: () => F.buildSuper },
 	crate: { values: ['crate'], factory: () => F.buildCrate },
 	metavariable: { factory: (content: string) => _resolveByKind('metavariable', content) },
-	token_repetition_pattern_text: { pattern: /^(?:(?:[^+*?]+))$/u, factory: F.buildTokenRepetitionPatternText },
-	string_open: { pattern: /^(?:(?:[bc]?"))$/u, factory: F.buildStringOpen },
+	token_repetition_pattern_text: {
+		pattern: F._leafRe_buildTokenRepetitionPatternText,
+		factory: F.buildTokenRepetitionPatternText
+	},
+	string_open: { pattern: F._leafRe_buildStringOpen, factory: F.buildStringOpen },
 	integer_literal_decimal: {
-		pattern: new RegExp(TOKEN_INTERIORS['integer_literal_decimal'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['integer_literal_decimal']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_literal_decimal'], 'integer_literal_decimal');
 			return F.buildIntegerLiteralDecimal(cfg as never);
 		}
 	},
 	integer_literal_hex: {
-		pattern: new RegExp(TOKEN_INTERIORS['integer_literal_hex'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['integer_literal_hex']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_literal_hex'], 'integer_literal_hex');
 			return F.buildIntegerLiteralHex(cfg as never);
 		}
 	},
 	integer_literal_binary: {
-		pattern: new RegExp(TOKEN_INTERIORS['integer_literal_binary'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['integer_literal_binary']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_literal_binary'], 'integer_literal_binary');
 			return F.buildIntegerLiteralBinary(cfg as never);
 		}
 	},
 	integer_literal_octal: {
-		pattern: new RegExp(TOKEN_INTERIORS['integer_literal_octal'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['integer_literal_octal']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_literal_octal'], 'integer_literal_octal');
 			return F.buildIntegerLiteralOctal(cfg as never);
 		}
 	},
 	char_literal_plain: { factory: (content: string) => _resolveByKind('char_literal_plain', content) },
-	char_literal_empty: { pattern: /^(?:(?:b)?'')$/u, factory: F.buildCharLiteralEmpty },
+	char_literal_empty: { pattern: F._leafRe_buildCharLiteralEmpty, factory: F.buildCharLiteralEmpty },
 	char_literal_escaped_simple: { factory: (content: string) => _resolveByKind('char_literal_escaped_simple', content) },
 	char_literal_escaped_unicode_fixed: {
 		factory: (content: string) => _resolveByKind('char_literal_escaped_unicode_fixed', content)
@@ -354,23 +357,26 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		factory: (content: string) => _resolveByKind('escape_sequence_unicode_braced', content)
 	},
 	escape_sequence_hex: { factory: (content: string) => _resolveByKind('escape_sequence_hex', content) },
-	line_comment_extra_slashes: { pattern: /^(?:(?:\/\/)(?:.*))$/u, factory: F.buildLineCommentExtraSlashes },
-	line_comment_regular: { pattern: /^(?:(?:.*))$/u, factory: F.buildLineCommentRegular },
-	block_comment_regular: { pattern: /^(?:(?:[^]*))$/u, factory: F.buildBlockCommentRegular },
+	line_comment_extra_slashes: {
+		pattern: F._leafRe_buildLineCommentExtraSlashes,
+		factory: F.buildLineCommentExtraSlashes
+	},
+	line_comment_regular: { pattern: F._leafRe_buildLineCommentRegular, factory: F.buildLineCommentRegular },
+	block_comment_regular: { pattern: F._leafRe_buildBlockCommentRegular, factory: F.buildBlockCommentRegular },
 	range_pattern_with_left_bare: { values: ['..'], factory: () => F.buildRangePatternWithLeftBare },
 	wildcard_pattern: { values: ['_'], factory: () => F.buildWildcardPattern },
-	float_literal: {
-		pattern: /^(?:(?:[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?))$/u,
-		factory: F.buildFloatLiteral
+	float_literal: { pattern: F._leafRe_buildFloatLiteral, factory: F.buildFloatLiteral },
+	string_content: { pattern: F._leafRe_buildStringContent, factory: F.buildStringContent },
+	raw_string_literal_content: {
+		pattern: F._leafRe_buildRawStringLiteralContent,
+		factory: F.buildRawStringLiteralContent
 	},
-	string_content: { pattern: /^(?:(?:[^"\\]+))$/u, factory: F.buildStringContent },
-	raw_string_literal_content: { pattern: /^(?:(?:[\s\S]*))$/u, factory: F.buildRawStringLiteralContent },
 	outer_doc_comment_marker: { values: ['*'], factory: () => F.buildOuterDocCommentMarker },
 	inner_doc_comment_marker: { values: ['!'], factory: () => F.buildInnerDocCommentMarker },
-	raw_string_literal_start: { pattern: /^(?:(?:[bc]?r#*"))$/u, factory: F.buildRawStringLiteralStart },
-	raw_string_literal_end: { pattern: /^(?:(?:"#*))$/u, factory: F.buildRawStringLiteralEnd },
-	doc_comment: { pattern: /^(?:(?:.*\n?))$/u, factory: F.buildDocComment },
-	_block_comment_content: { pattern: /^(?:(?:[^]*))$/u, factory: F.buildBlockCommentContent },
+	raw_string_literal_start: { pattern: F._leafRe_buildRawStringLiteralStart, factory: F.buildRawStringLiteralStart },
+	raw_string_literal_end: { pattern: F._leafRe_buildRawStringLiteralEnd, factory: F.buildRawStringLiteralEnd },
+	doc_comment: { pattern: F._leafRe_buildDocComment, factory: F.buildDocComment },
+	_block_comment_content: { pattern: F._leafRe_buildBlockCommentContent, factory: F.buildBlockCommentContent },
 	_tight: { values: [''], factory: () => F.buildTight },
 	_space: { values: [' '], factory: () => F.buildSpace },
 	_tab: { values: ['\t'], factory: () => F.buildTab },
@@ -380,15 +386,15 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	_indent: { values: ['﷐\n'], factory: () => F.buildIndent },
 	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent },
 	type_identifier: {
-		pattern: /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u,
+		pattern: F._leafRe_buildIdentifier,
 		factory: (text: string) => F.buildTypeIdentifier(F.buildIdentifier(text) as never)
 	},
 	field_identifier: {
-		pattern: /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u,
+		pattern: F._leafRe_buildIdentifier,
 		factory: (text: string) => F.buildFieldIdentifier(F.buildIdentifier(text) as never)
 	},
 	shorthand_field_identifier: {
-		pattern: /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u,
+		pattern: F._leafRe_buildIdentifier,
 		factory: (text: string) => F.buildShorthandFieldIdentifier(F.buildIdentifier(text) as never)
 	}
 };
@@ -410,9 +416,6 @@ function _buildGuardedText(v: string, kind: string): AnyUntypedNode | number {
 	const entry = _leafRegistry[kind]!;
 	if (entry.values !== undefined && !entry.values.includes(v)) {
 		throw new Error(`${JSON.stringify(v)} is not the text of ${kind}: expected one of ${JSON.stringify(entry.values)}`);
-	}
-	if (entry.pattern !== undefined && !entry.pattern.test(v)) {
-		throw new Error(`${JSON.stringify(v)} is not a ${kind}: it does not match ${entry.pattern}`);
 	}
 	return entry.factory(v);
 }
@@ -8199,7 +8202,9 @@ export function coerceToIntegerLiteralOctal(
 	});
 }
 
-export function resolveCharLiteralPlain_b(value: T.CharLiteralPlain.LooseConfig['b']): Admit<T.CharLiteralPlain['_b']> {
+export function resolveCharLiteralPlain_byte(
+	value: T.CharLiteralPlain.LooseConfig['byte']
+): Admit<T.CharLiteralPlain['_byte']> {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -8214,7 +8219,7 @@ export function coerceToCharLiteralPlain(input: T.CharLiteralPlain.Loose): Retur
 		return input as unknown as ReturnType<typeof F.buildCharLiteralPlain>;
 	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.CharLiteralPlain.LooseConfig;
 	return F.buildCharLiteralPlain({
-		b: resolveCharLiteralPlain_b(_cfg.b),
+		byte: resolveCharLiteralPlain_byte(_cfg.byte),
 		content: _requireField('char_literal_plain', 'content', resolveCharLiteralPlain_content(_cfg.content))
 	});
 }
@@ -8224,9 +8229,9 @@ export function coerceToCharLiteralEmpty(input: T.CharLiteralEmpty.Loose): Retur
 	return F.buildCharLiteralEmpty(input as Parameters<typeof F.buildCharLiteralEmpty>[0]);
 }
 
-export function resolveCharLiteralEscapedSimple_b(
-	value: T.CharLiteralEscapedSimple.LooseConfig['b']
-): Admit<T.CharLiteralEscapedSimple['_b']> {
+export function resolveCharLiteralEscapedSimple_byte(
+	value: T.CharLiteralEscapedSimple.LooseConfig['byte']
+): Admit<T.CharLiteralEscapedSimple['_byte']> {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -8243,7 +8248,7 @@ export function coerceToCharLiteralEscapedSimple(
 		return input as unknown as ReturnType<typeof F.buildCharLiteralEscapedSimple>;
 	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.CharLiteralEscapedSimple.LooseConfig;
 	return F.buildCharLiteralEscapedSimple({
-		b: resolveCharLiteralEscapedSimple_b(_cfg.b),
+		byte: resolveCharLiteralEscapedSimple_byte(_cfg.byte),
 		content: _requireField(
 			'char_literal_escaped_simple',
 			'content',
@@ -8252,9 +8257,9 @@ export function coerceToCharLiteralEscapedSimple(
 	});
 }
 
-export function resolveCharLiteralEscapedUnicodeFixed_b(
-	value: T.CharLiteralEscapedUnicodeFixed.LooseConfig['b']
-): Admit<T.CharLiteralEscapedUnicodeFixed['_b']> {
+export function resolveCharLiteralEscapedUnicodeFixed_byte(
+	value: T.CharLiteralEscapedUnicodeFixed.LooseConfig['byte']
+): Admit<T.CharLiteralEscapedUnicodeFixed['_byte']> {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -8271,7 +8276,7 @@ export function coerceToCharLiteralEscapedUnicodeFixed(
 		return input as unknown as ReturnType<typeof F.buildCharLiteralEscapedUnicodeFixed>;
 	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.CharLiteralEscapedUnicodeFixed.LooseConfig;
 	return F.buildCharLiteralEscapedUnicodeFixed({
-		b: resolveCharLiteralEscapedUnicodeFixed_b(_cfg.b),
+		byte: resolveCharLiteralEscapedUnicodeFixed_byte(_cfg.byte),
 		content: _requireField(
 			'char_literal_escaped_unicode_fixed',
 			'content',
@@ -8280,9 +8285,9 @@ export function coerceToCharLiteralEscapedUnicodeFixed(
 	});
 }
 
-export function resolveCharLiteralEscapedUnicodeBraced_b(
-	value: T.CharLiteralEscapedUnicodeBraced.LooseConfig['b']
-): Admit<T.CharLiteralEscapedUnicodeBraced['_b']> {
+export function resolveCharLiteralEscapedUnicodeBraced_byte(
+	value: T.CharLiteralEscapedUnicodeBraced.LooseConfig['byte']
+): Admit<T.CharLiteralEscapedUnicodeBraced['_byte']> {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -8301,7 +8306,7 @@ export function coerceToCharLiteralEscapedUnicodeBraced(
 		typeof input === 'string' ? { content: input } : input
 	) as T.CharLiteralEscapedUnicodeBraced.LooseConfig;
 	return F.buildCharLiteralEscapedUnicodeBraced({
-		b: resolveCharLiteralEscapedUnicodeBraced_b(_cfg.b),
+		byte: resolveCharLiteralEscapedUnicodeBraced_byte(_cfg.byte),
 		content: _requireField(
 			'char_literal_escaped_unicode_braced',
 			'content',
@@ -8310,9 +8315,9 @@ export function coerceToCharLiteralEscapedUnicodeBraced(
 	});
 }
 
-export function resolveCharLiteralEscapedHex_b(
-	value: T.CharLiteralEscapedHex.LooseConfig['b']
-): Admit<T.CharLiteralEscapedHex['_b']> {
+export function resolveCharLiteralEscapedHex_byte(
+	value: T.CharLiteralEscapedHex.LooseConfig['byte']
+): Admit<T.CharLiteralEscapedHex['_byte']> {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -8329,7 +8334,7 @@ export function coerceToCharLiteralEscapedHex(
 		return input as unknown as ReturnType<typeof F.buildCharLiteralEscapedHex>;
 	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.CharLiteralEscapedHex.LooseConfig;
 	return F.buildCharLiteralEscapedHex({
-		b: resolveCharLiteralEscapedHex_b(_cfg.b),
+		byte: resolveCharLiteralEscapedHex_byte(_cfg.byte),
 		content: _requireField('char_literal_escaped_hex', 'content', resolveCharLiteralEscapedHex_content(_cfg.content))
 	});
 }

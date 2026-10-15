@@ -86,18 +86,18 @@ const _reservedWordList_buildIdentifier = [
 ] as const;
 type _ReservedWord_buildIdentifier = (typeof _reservedWordList_buildIdentifier)[number];
 const _reservedWords_buildIdentifier: ReadonlySet<string> = new Set(_reservedWordList_buildIdentifier);
-const _leafRe_buildImportPrefix = /^(?:(?:\.)+)$/u;
-const _leafRe_buildTypeConversion = /^(?:(?:![a-z]))$/u;
-const _leafRe_buildIdentifier = /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
-const _leafRe_buildFormatSpecifierText = /^(?:(?:[^{}\n]+))$/u;
-const _leafRe_buildIntegerDecimalLong = /^(?:(?:(?:[0-9]+_?))+(?:[Ll]))$/u;
-const _leafRe_buildIntegerDecimalImaginary = /^(?:(?:(?:[0-9]+_?))+(?:[jJ]))$/u;
-const _leafRe_buildIntegerDecimalPlain = /^(?:(?:(?:[0-9]+_?))+)$/u;
-const _leafRe_buildLineContinuationNewline = /^(?:\\(?:\r)?\n)$/u;
-const _leafRe_buildStringStart = /^(?:(?:[a-zA-Z]*["'`]+))$/u;
-const _leafRe_buildStringFragment = /^(?:(?:[\s\S]+))$/u;
-const _leafRe_buildEscapeInterpolation = /^(?:(?:\{\{|\}\}))$/u;
-const _leafRe_buildStringEnd = /^(?:(?:\\*["'`]+))$/u;
+export const _leafRe_buildImportPrefix = /^(?:(?:\.)+)$/u;
+export const _leafRe_buildTypeConversion = /^(?:(?:![a-z]))$/u;
+export const _leafRe_buildIdentifier = /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
+export const _leafRe_buildFormatSpecifierText = /^(?:(?:[^{}\n]+))$/u;
+export const _leafRe_buildIntegerDecimalLong = /^(?:(?:(?:[0-9]+_?))+(?:[Ll]))$/u;
+export const _leafRe_buildIntegerDecimalImaginary = /^(?:(?:(?:[0-9]+_?))+(?:[jJ]))$/u;
+export const _leafRe_buildIntegerDecimalPlain = /^(?:(?:(?:[0-9]+_?))+)$/u;
+export const _leafRe_buildLineContinuationNewline = /^(?:\\(?:\r)?\n)$/u;
+export const _leafRe_buildStringStart = /^(?:(?:[a-zA-Z]*["'`]+))$/u;
+export const _leafRe_buildStringFragment = /^(?:(?:[\s\S]+))$/u;
+export const _leafRe_buildEscapeInterpolation = /^(?:(?:\{\{|\}\}))$/u;
+export const _leafRe_buildStringEnd = /^(?:(?:\\*["'`]+))$/u;
 export const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
 export const _slotRe_buildIntegerHex_prefix = /^(?:0x|0X)$/u;
 export const _slotRe_buildIntegerHex_content = /^(?:(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$/u;
@@ -105,20 +105,20 @@ export const _slotRe_buildIntegerOctal_prefix = /^(?:0o|0O)$/u;
 export const _slotRe_buildIntegerOctal_content = /^(?:(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$/u;
 export const _slotRe_buildIntegerBinary_prefix = /^(?:0b|0B)$/u;
 export const _slotRe_buildIntegerBinary_content = /^(?:(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$/u;
-export const _slotRe_buildFloatPoint_integer = /^(?:(?:(?:[0-9]+_?))+)$/u;
-export const _slotRe_buildFloatPoint_fraction = /^(?:(?:(?:[0-9]+_?))+)$/u;
+export const _slotRe_buildFloatPoint_integer = _leafRe_buildIntegerDecimalPlain;
+export const _slotRe_buildFloatPoint_fraction = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatPoint_marker = /^(?:(?:[eE][+-]?))$/u;
-export const _slotRe_buildFloatPoint_exponent = /^(?:(?:(?:[0-9]+_?))+)$/u;
+export const _slotRe_buildFloatPoint_exponent = _leafRe_buildIntegerDecimalPlain;
 export const _slotRe_buildFloatPoint_imaginary = /^(?:(?:[jJ]))$/u;
-export const _slotRe_buildFloatLeadingPoint_integer = /^(?:(?:(?:[0-9]+_?))+)$/u;
-export const _slotRe_buildFloatLeadingPoint_fraction = /^(?:(?:(?:[0-9]+_?))+)$/u;
-export const _slotRe_buildFloatLeadingPoint_marker = /^(?:(?:[eE][+-]?))$/u;
-export const _slotRe_buildFloatLeadingPoint_exponent = /^(?:(?:(?:[0-9]+_?))+)$/u;
-export const _slotRe_buildFloatLeadingPoint_imaginary = /^(?:(?:[jJ]))$/u;
-export const _slotRe_buildFloatScientific_integer = /^(?:(?:(?:[0-9]+_?))+)$/u;
-export const _slotRe_buildFloatScientific_marker = /^(?:(?:[eE][+-]?))$/u;
-export const _slotRe_buildFloatScientific_exponent = /^(?:(?:(?:[0-9]+_?))+)$/u;
-export const _slotRe_buildFloatScientific_imaginary = /^(?:(?:[jJ]))$/u;
+export const _slotRe_buildFloatLeadingPoint_integer = _leafRe_buildIntegerDecimalPlain;
+export const _slotRe_buildFloatLeadingPoint_fraction = _leafRe_buildIntegerDecimalPlain;
+export const _slotRe_buildFloatLeadingPoint_marker = _slotRe_buildFloatPoint_marker;
+export const _slotRe_buildFloatLeadingPoint_exponent = _leafRe_buildIntegerDecimalPlain;
+export const _slotRe_buildFloatLeadingPoint_imaginary = _slotRe_buildFloatPoint_imaginary;
+export const _slotRe_buildFloatScientific_integer = _leafRe_buildIntegerDecimalPlain;
+export const _slotRe_buildFloatScientific_marker = _slotRe_buildFloatPoint_marker;
+export const _slotRe_buildFloatScientific_exponent = _leafRe_buildIntegerDecimalPlain;
+export const _slotRe_buildFloatScientific_imaginary = _slotRe_buildFloatPoint_imaginary;
 export const _slotRe_buildEscapeSequenceUnicodeFixed_content = /^(?:(?:u[a-fA-F\d]{4}))$/u;
 export const _slotRe_buildEscapeSequenceUnicodeWide_content = /^(?:(?:U[a-fA-F\d]{8}))$/u;
 export const _slotRe_buildEscapeSequenceHex_content = /^(?:(?:x[a-fA-F\d]{2}))$/u;
@@ -1055,7 +1055,7 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause.Bound {
 	const _group = coerceBooleanKeywordStorage(rejectBareText(config.group, 'ExceptClause.group', 'a boolean'));
 	const _exception = rejectBareText(config.exception, 'ExceptClause.exception', 'a built ExceptClauseException');
-	const _suite = rejectBareText(config.suite, 'ExceptClause.suite', 'a built Suite');
+	const _body = rejectBareText(config.body, 'ExceptClause.body', 'a built Suite');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExceptClause as const,
@@ -1063,17 +1063,17 @@ export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause
 		$named: true as const,
 		_group,
 		_exception,
-		_suite,
+		_body,
 		$with: {
 			group: (value?: Admit<NonNullable<T.ExceptClause.Config>['group']>) =>
 				rebuilt(node, handle, () => buildExceptClause({ ...config, group: value })),
 			exception: (value?: Admit<T.ExceptClauseException>) =>
 				rebuilt(node, handle, () => buildExceptClause({ ...config, exception: value })),
-			suite: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildExceptClause({ ...config, suite: value }))
+			body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildExceptClause({ ...config, body: value }))
 		},
 		group: () => _group,
 		exception: () => hydrateStoredSlot(node, '_exception'),
-		suite: () => hydrateStoredSlot(node, '_suite'),
+		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),

@@ -148595,7 +148595,7 @@
             "$type": 394,
             "_expression": {
               "$type": 145,
-              "_b": false,
+              "_byte": false,
               "_content": "a"
             }
           }
@@ -148606,7 +148606,7 @@
             "$type": 394,
             "_expression": {
               "$type": 147,
-              "_b": false,
+              "_byte": false,
               "_content": "\\'"
             }
           }
@@ -148617,7 +148617,7 @@
             "$type": 394,
             "_expression": {
               "$type": 147,
-              "_b": false,
+              "_byte": false,
               "_content": "\\0"
             }
           }
@@ -148628,7 +148628,7 @@
             "$type": 394,
             "_expression": {
               "$type": 145,
-              "_b": true,
+              "_byte": true,
               "_content": "x"
             }
           }
@@ -148639,7 +148639,7 @@
             "$type": 394,
             "_expression": {
               "$type": 147,
-              "_b": false,
+              "_byte": false,
               "_content": "\\t"
             }
           }
@@ -148650,7 +148650,7 @@
             "$type": 394,
             "_expression": {
               "$type": 150,
-              "_b": false,
+              "_byte": false,
               "_content": "\\xff"
             }
           }
@@ -148661,7 +148661,7 @@
             "$type": 394,
             "_expression": {
               "$type": 147,
-              "_b": false,
+              "_byte": false,
               "_content": "\\\\"
             }
           }
@@ -148697,7 +148697,7 @@
         "$type": 394,
         "_expression": {
           "$type": 145,
-          "_b": false,
+          "_byte": false,
           "_content": "a"
         }
       }
@@ -148730,7 +148730,7 @@
         "$type": 394,
         "_expression": {
           "$type": 147,
-          "_b": false,
+          "_byte": false,
           "_content": "\\'"
         }
       }
@@ -148763,7 +148763,7 @@
         "$type": 394,
         "_expression": {
           "$type": 147,
-          "_b": false,
+          "_byte": false,
           "_content": "\\0"
         }
       }
@@ -148796,7 +148796,7 @@
         "$type": 394,
         "_expression": {
           "$type": 145,
-          "_b": true,
+          "_byte": true,
           "_content": "x"
         }
       }
@@ -148829,7 +148829,7 @@
         "$type": 394,
         "_expression": {
           "$type": 147,
-          "_b": false,
+          "_byte": false,
           "_content": "\\t"
         }
       }
@@ -148862,7 +148862,7 @@
         "$type": 394,
         "_expression": {
           "$type": 150,
-          "_b": false,
+          "_byte": false,
           "_content": "\\xff"
         }
       }
@@ -148895,7 +148895,7 @@
         "$type": 394,
         "_expression": {
           "$type": 147,
-          "_b": false,
+          "_byte": false,
           "_content": "\\\\"
         }
       }
@@ -148926,7 +148926,7 @@
       "$type": 394,
       "_expression": {
         "$type": 145,
-        "_b": false,
+        "_byte": false,
         "_content": "a"
       }
     },
@@ -148956,7 +148956,7 @@
       "$type": 394,
       "_expression": {
         "$type": 147,
-        "_b": false,
+        "_byte": false,
         "_content": "\\'"
       }
     },
@@ -148986,7 +148986,7 @@
       "$type": 394,
       "_expression": {
         "$type": 147,
-        "_b": false,
+        "_byte": false,
         "_content": "\\0"
       }
     },
@@ -149016,7 +149016,7 @@
       "$type": 394,
       "_expression": {
         "$type": 145,
-        "_b": true,
+        "_byte": true,
         "_content": "x"
       }
     },
@@ -149046,7 +149046,7 @@
       "$type": 394,
       "_expression": {
         "$type": 147,
-        "_b": false,
+        "_byte": false,
         "_content": "\\t"
       }
     },
@@ -149076,7 +149076,7 @@
       "$type": 394,
       "_expression": {
         "$type": 150,
-        "_b": false,
+        "_byte": false,
         "_content": "\\xff"
       }
     },
@@ -149106,7 +149106,7 @@
       "$type": 394,
       "_expression": {
         "$type": 147,
-        "_b": false,
+        "_byte": false,
         "_content": "\\\\"
       }
     },
@@ -149134,7 +149134,7 @@
     "pattern": "char_literal_plain",
     "input": {
       "$type": 145,
-      "_b": false,
+      "_byte": false,
       "_content": "a"
     },
     "expectedOutput": "'a'",
@@ -149161,7 +149161,7 @@
     "pattern": "char_literal_plain",
     "input": {
       "$type": 145,
-      "_b": true,
+      "_byte": true,
       "_content": "x"
     },
     "expectedOutput": "b'x'",
@@ -149188,7 +149188,7 @@
     "pattern": "char_literal_escaped_simple",
     "input": {
       "$type": 147,
-      "_b": false,
+      "_byte": false,
       "_content": "\\'"
     },
     "expectedOutput": "'\\''",
@@ -149215,7 +149215,7 @@
     "pattern": "char_literal_escaped_simple",
     "input": {
       "$type": 147,
-      "_b": false,
+      "_byte": false,
       "_content": "\\0"
     },
     "expectedOutput": "'\\0'",
@@ -149242,7 +149242,7 @@
     "pattern": "char_literal_escaped_simple",
     "input": {
       "$type": 147,
-      "_b": false,
+      "_byte": false,
       "_content": "\\t"
     },
     "expectedOutput": "'\\t'",
@@ -149269,7 +149269,7 @@
     "pattern": "char_literal_escaped_simple",
     "input": {
       "$type": 147,
-      "_b": false,
+      "_byte": false,
       "_content": "\\\\"
     },
     "expectedOutput": "'\\\\'",
@@ -149296,7 +149296,7 @@
     "pattern": "char_literal_escaped_hex",
     "input": {
       "$type": 150,
-      "_b": false,
+      "_byte": false,
       "_content": "\\xff"
     },
     "expectedOutput": "'\\xff'",
@@ -150616,7 +150616,7 @@
                     "$type": 189,
                     "_content": {
                       "$type": 145,
-                      "_b": false,
+                      "_byte": false,
                       "_content": "a"
                     }
                   },
@@ -150628,7 +150628,7 @@
                     "$type": 189,
                     "_content": {
                       "$type": 145,
-                      "_b": false,
+                      "_byte": false,
                       "_content": "z"
                     }
                   }
@@ -150654,7 +150654,7 @@
                     "$type": 189,
                     "_content": {
                       "$type": 149,
-                      "_b": false,
+                      "_byte": false,
                       "_content": "\\u{0}"
                     }
                   },
@@ -150666,7 +150666,7 @@
                     "$type": 189,
                     "_content": {
                       "$type": 149,
-                      "_b": false,
+                      "_byte": false,
                       "_content": "\\u{2}"
                     }
                   }
@@ -151258,7 +151258,7 @@
                 "$type": 189,
                 "_content": {
                   "$type": 145,
-                  "_b": false,
+                  "_byte": false,
                   "_content": "a"
                 }
               },
@@ -151270,7 +151270,7 @@
                 "$type": 189,
                 "_content": {
                   "$type": 145,
-                  "_b": false,
+                  "_byte": false,
                   "_content": "z"
                 }
               }
@@ -151318,7 +151318,7 @@
                 "$type": 189,
                 "_content": {
                   "$type": 149,
-                  "_b": false,
+                  "_byte": false,
                   "_content": "\\u{0}"
                 }
               },
@@ -151330,7 +151330,7 @@
                 "$type": 189,
                 "_content": {
                   "$type": 149,
-                  "_b": false,
+                  "_byte": false,
                   "_content": "\\u{2}"
                 }
               }
@@ -152036,7 +152036,7 @@
               "$type": 189,
               "_content": {
                 "$type": 145,
-                "_b": false,
+                "_byte": false,
                 "_content": "a"
               }
             },
@@ -152048,7 +152048,7 @@
               "$type": 189,
               "_content": {
                 "$type": 145,
-                "_b": false,
+                "_byte": false,
                 "_content": "z"
               }
             }
@@ -152093,7 +152093,7 @@
               "$type": 189,
               "_content": {
                 "$type": 149,
-                "_b": false,
+                "_byte": false,
                 "_content": "\\u{0}"
               }
             },
@@ -152105,7 +152105,7 @@
               "$type": 189,
               "_content": {
                 "$type": 149,
-                "_b": false,
+                "_byte": false,
                 "_content": "\\u{2}"
               }
             }
@@ -152775,7 +152775,7 @@
             "$type": 189,
             "_content": {
               "$type": 145,
-              "_b": false,
+              "_byte": false,
               "_content": "a"
             }
           },
@@ -152787,7 +152787,7 @@
             "$type": 189,
             "_content": {
               "$type": 145,
-              "_b": false,
+              "_byte": false,
               "_content": "z"
             }
           }
@@ -152829,7 +152829,7 @@
             "$type": 189,
             "_content": {
               "$type": 149,
-              "_b": false,
+              "_byte": false,
               "_content": "\\u{0}"
             }
           },
@@ -152841,7 +152841,7 @@
             "$type": 189,
             "_content": {
               "$type": 149,
-              "_b": false,
+              "_byte": false,
               "_content": "\\u{2}"
             }
           }
@@ -153500,7 +153500,7 @@
           "$type": 189,
           "_content": {
             "$type": 145,
-            "_b": false,
+            "_byte": false,
             "_content": "a"
           }
         },
@@ -153512,7 +153512,7 @@
           "$type": 189,
           "_content": {
             "$type": 145,
-            "_b": false,
+            "_byte": false,
             "_content": "z"
           }
         }
@@ -153547,7 +153547,7 @@
           "$type": 189,
           "_content": {
             "$type": 149,
-            "_b": false,
+            "_byte": false,
             "_content": "\\u{0}"
           }
         },
@@ -153559,7 +153559,7 @@
           "$type": 189,
           "_content": {
             "$type": 149,
-            "_b": false,
+            "_byte": false,
             "_content": "\\u{2}"
           }
         }
@@ -154468,7 +154468,7 @@
       "$type": 189,
       "_content": {
         "$type": 145,
-        "_b": false,
+        "_byte": false,
         "_content": "a"
       }
     },
@@ -154524,7 +154524,7 @@
       "$type": 189,
       "_content": {
         "$type": 145,
-        "_b": false,
+        "_byte": false,
         "_content": "z"
       }
     },
@@ -154554,7 +154554,7 @@
       "$type": 189,
       "_content": {
         "$type": 149,
-        "_b": false,
+        "_byte": false,
         "_content": "\\u{0}"
       }
     },
@@ -154610,7 +154610,7 @@
       "$type": 189,
       "_content": {
         "$type": 149,
-        "_b": false,
+        "_byte": false,
         "_content": "\\u{2}"
       }
     },
@@ -155003,7 +155003,7 @@
     "pattern": "char_literal_plain",
     "input": {
       "$type": 145,
-      "_b": false,
+      "_byte": false,
       "_content": "a"
     },
     "expectedOutput": "'a'",
@@ -155030,7 +155030,7 @@
     "pattern": "char_literal_plain",
     "input": {
       "$type": 145,
-      "_b": false,
+      "_byte": false,
       "_content": "z"
     },
     "expectedOutput": "'z'",
@@ -155057,7 +155057,7 @@
     "pattern": "char_literal_escaped_unicode_braced",
     "input": {
       "$type": 149,
-      "_b": false,
+      "_byte": false,
       "_content": "\\u{0}"
     },
     "expectedOutput": "'\\u{0}'",
@@ -155084,7 +155084,7 @@
     "pattern": "char_literal_escaped_unicode_braced",
     "input": {
       "$type": 149,
-      "_b": false,
+      "_byte": false,
       "_content": "\\u{2}"
     },
     "expectedOutput": "'\\u{2}'",

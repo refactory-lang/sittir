@@ -4,6 +4,7 @@ import { toolModules, registerTools } from '../../../src/commands/tool/index.ts'
 
 const EXPECTED = [
 	'assemble-shape-census',
+	'ast-diff',
 	'bench',
 	'bench-codemod',
 	'bindings-inventory',
@@ -45,6 +46,7 @@ const EXPECTED = [
 	'trivia-timing',
 	'uncovered-content',
 	'variant-derivation-probe',
+	'vocabulary-features',
 	'walk'
 ];
 

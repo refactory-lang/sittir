@@ -6,20 +6,20 @@ export interface PathDeclaration {
 	readonly arm: string;
 }
 
-export interface AddressBinding {
+export interface AddressLabel {
 	readonly address: string;
 	readonly label: string;
 }
 
 export interface OptionsDeclarations {
 	readonly declarations: readonly PathDeclaration[];
-	readonly bindings: readonly AddressBinding[];
+	readonly labels: readonly AddressLabel[];
 	readonly indent: string | undefined;
 }
 
 export type OptionsConfig = Record<string, unknown>;
 
-export const BINDINGS_KEY = '_bindings';
+export const LABELS_KEY = '_labels';
 export const INDENT_KEY = 'indent';
 
 export function readOptionsBlock(options: OptionsConfig, kinds: ReadonlySet<string>): OptionsDeclarations {
@@ -27,7 +27,7 @@ export function readOptionsBlock(options: OptionsConfig, kinds: ReadonlySet<stri
 	const declared = new Set<string>();
 
 	for (const [kind, relatives] of Object.entries(options)) {
-		if (kind === BINDINGS_KEY || kind === INDENT_KEY) continue;
+		if (kind === LABELS_KEY || kind === INDENT_KEY) continue;
 		if (!relatives || typeof relatives !== 'object') {
 			throw new Error(`options: '${kind}' takes a map of paths relative to it`);
 		}
@@ -41,18 +41,18 @@ export function readOptionsBlock(options: OptionsConfig, kinds: ReadonlySet<stri
 		}
 	}
 
-	const bindings: AddressBinding[] = [];
+	const labels: AddressLabel[] = [];
 	const bound = new Set<string>();
-	for (const [address, label] of Object.entries((options[BINDINGS_KEY] ?? {}) as Record<string, string>)) {
+	for (const [address, label] of Object.entries((options[LABELS_KEY] ?? {}) as Record<string, string>)) {
 		parsePreferencePath(address);
-		if (bound.has(address)) throw new Error(`options: _bindings declares '${address}' twice`);
+		if (bound.has(address)) throw new Error(`options: _labels declares '${address}' twice`);
 		bound.add(address);
-		if (!declared.has(label)) throw new Error(`options: _bindings '${address}' names no label '${label}'`);
+		if (!declared.has(label)) throw new Error(`options: _labels '${address}' names no label '${label}'`);
 		const root = parsePreferencePath(label)[0];
 		if (root !== undefined && root.kind === 'name' && kinds.has(root.name)) {
 			throw new Error(`options: label '${label}' names the kind '${root.name}' — a label's kind is virtual`);
 		}
-		bindings.push({ address, label });
+		labels.push({ address, label });
 	}
 
 	const declaredIndent = options[INDENT_KEY];
@@ -60,5 +60,5 @@ export function readOptionsBlock(options: OptionsConfig, kinds: ReadonlySet<stri
 		throw new Error(`options: '${INDENT_KEY}' takes preference(unit)`);
 	}
 
-	return { declarations, bindings, indent: isPreference(declaredIndent) ? declaredIndent.default : undefined };
+	return { declarations, labels, indent: isPreference(declaredIndent) ? declaredIndent.default : undefined };
 }

@@ -63,10 +63,10 @@ interface _LeafEntry {
 }
 const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	escape_sequence: { factory: (content: string) => _resolveByKind('escape_sequence', content) },
-	identifier: { pattern: /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u, factory: F.buildIdentifier },
-	_immediate_identifier: { pattern: /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u, factory: F.buildImmediateIdentifier },
+	identifier: { pattern: F._leafRe_buildIdentifier, factory: F.buildIdentifier },
+	_immediate_identifier: { pattern: F._leafRe_buildImmediateIdentifier, factory: F.buildImmediateIdentifier },
 	comment: { factory: (content: string) => _resolveByKind('comment', content) },
-	string_content_text: { pattern: /^(?:(?:[^"\\\n]+))$/u, factory: F.buildStringContentText },
+	string_content_text: { pattern: F._leafRe_buildStringContentText, factory: F.buildStringContentText },
 	anchor: { values: ['.'], factory: () => F.buildAnchor },
 	_tight: { values: [''], factory: () => F.buildTight },
 	_space: { values: [' '], factory: () => F.buildSpace },
@@ -83,9 +83,6 @@ function _buildGuardedText(v: string, kind: string): AnyUntypedNode | number {
 	const entry = _leafRegistry[kind]!;
 	if (entry.values !== undefined && !entry.values.includes(v)) {
 		throw new Error(`${JSON.stringify(v)} is not the text of ${kind}: expected one of ${JSON.stringify(entry.values)}`);
-	}
-	if (entry.pattern !== undefined && !entry.pattern.test(v)) {
-		throw new Error(`${JSON.stringify(v)} is not a ${kind}: it does not match ${entry.pattern}`);
 	}
 	return entry.factory(v);
 }

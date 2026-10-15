@@ -46,7 +46,7 @@ import {
 } from '../types/rule.ts';
 import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import { runToFixpoint } from './fixpoint.ts';
-import { findEntryForKindName, findEntryForLiteralText, findEntryForPatternValue, isParserHiddenKind, isSurfaceHiddenKind, isAliasedHiddenStorage, isShownConcreteKind, modelKindOfEntry, type GeneratedIdTables, type GeneratedKindEntry, findOwnKindEntry, seatedOf } from '../dsl/symbol-table.ts';
+import { findEntryForKindName, findEntryForLiteralText, findEntryForPatternValue, isParserHiddenKind, isSurfaceHiddenKind, isAliasedHiddenStorage, isShownConcreteKind, modelKindOfEntry, findOwnKindEntry, seatedOf, type GeneratedIdTables, type GeneratedKindEntry } from '../dsl/symbol-table.ts';
 import type {
 	RawGrammar,
 	LinkedGrammar,
@@ -67,7 +67,8 @@ import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { rootRuleName } from '../util/reachable-rules.ts';
 import { polymorphVisibleName } from '../dsl/arm-names.ts';
-import { deriveVariantChildren, isAliasMintedRef, stampLabelProvenance } from './variant-structural.ts';
+import { mappedName } from '../dsl/bind.ts';
+import { deriveVariantChildren, isAliasMintedRef, ownedVariants, stampLabelProvenance } from './variant-structural.ts';
 import {
 	composeTokenText,
 	deriveComplexAliasTargetHidden,
@@ -318,6 +319,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		reserved: raw.reserved,
 		relaxedLiterals: raw.relaxedLiterals,
 		fileTypes: raw.fileTypes,
+		provenance: { renamedFrom: raw.renamedFrom, splitFrom: raw.splitFrom, variantOf: ownedVariants(variantChildren, references) },
 		references,
 		derivations,
 		displayUnions,
@@ -844,7 +846,12 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 	const rules: Record<string, Rule<'evaluate'>> = {};
 	for (const [name, rule] of Object.entries(raw.rules)) rules[rename(name)] = renameRule(rule);
 	const supertypes = raw.supertypes.map(rename);
-	const identified = buildRuleCatalog(rules, { roots: supertypes, sourceKindOf: targets });
+	const baseOf = (name: string): string => mappedName(raw.renamedFrom, name);
+	const sourceKindOf = new Map([
+		...Object.entries(raw.renamedFrom ?? {}).map(([to, from]): [string, string] => [rename(to), from]),
+		...[...targets].map(([to, from]): [string, string] => [to, baseOf(from)])
+	]);
+	const identified = buildRuleCatalog(rules, { roots: supertypes, sourceKindOf });
 	const renameEntry = (entry: RuleListEntry): RuleListEntry =>
 		entry.type === SYMBOL ? { ...entry, name: rename(entry.name) } : entry;
 	const references = collectReferences(identified.rules, { ruleCatalog: identified.ruleCatalog });
@@ -853,6 +860,14 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 		rules: identified.rules,
 		ruleCatalog: identified.ruleCatalog,
 		evaluateSynthesized: new Set([...raw.evaluateSynthesized].map(rename)),
+		renamedFrom:
+			raw.renamedFrom === undefined
+				? undefined
+				: Object.fromEntries(Object.entries(raw.renamedFrom).map(([to, from]) => [rename(to), from])),
+		splitFrom:
+			raw.splitFrom === undefined
+				? undefined
+				: Object.fromEntries(Object.entries(raw.splitFrom).map(([to, from]) => [rename(to), rename(from)])),
 		references,
 		extras: raw.extras.map(renameEntry),
 		externals: raw.externals.map(renameEntry),
@@ -1862,6 +1877,7 @@ function classifyHiddenChoiceRule(
 					type: SUPERTYPE,
 					name,
 					subtypes,
+					...(rule.id === undefined ? {} : { id: rule.id }),
 					...(supertypes.has(name) ? { declared: true as const } : {}),
 					...(variantArms.length > 0 ? { variantArms } : {})
 				} satisfies SupertypeRule<'link'>,

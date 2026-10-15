@@ -136,7 +136,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	213: [
 		['await', { fields: ['await'], kinds: [] }, 'await'],
-		['forHeader', { fields: [], kinds: ['for_header_lhs', 'for_header_var_kind', 'for_header_let_const_kind'] }],
+		['header', { fields: ['header'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
 	215: [
@@ -740,10 +740,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['expression', { fields: ['expression'], kinds: [] }],
 		['terminator', { fields: ['terminator'], kinds: [] }]
 	],
-	394: [
-		['operator', { fields: ['operator'], kinds: [] }],
-		['argument', { fields: ['argument'], kinds: [] }]
-	],
+	394: [['argument', { fields: ['argument'], kinds: [] }]],
 	396: [
 		['left', { fields: ['left'], kinds: [] }],
 		['right', { fields: ['right'], kinds: [] }]

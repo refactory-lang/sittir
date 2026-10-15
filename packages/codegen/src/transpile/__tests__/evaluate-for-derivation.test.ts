@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { grammarPackage, type GrammarName } from '../../grammars.ts';
 import { sourceChain } from '../../dsl/conflict-resolutions.ts';
-import { evaluateForDerivation, grammarHash, type DerivationInputs } from '../evaluate-for-derivation.ts';
+import { evaluateForDerivation, grammarHash, type GrammarDerivationInputs } from '../evaluate-for-derivation.ts';
 import { treeSitterCliVersion } from '../tree-sitter-cli.ts';
 
 interface UpstreamGrammarJson {
@@ -42,9 +42,9 @@ describe('grammarHash', () => {
 });
 
 describe('evaluateForDerivation', () => {
-	let python: DerivationInputs;
+	let python: GrammarDerivationInputs;
 	beforeAll(() => {
-		python = evaluateForDerivation(grammarPackage('python'));
+		python = evaluateForDerivation(grammarPackage('python')).base;
 	});
 
 	it('hashes with the version of the tree-sitter CLI that generates', () => {
@@ -52,7 +52,7 @@ describe('evaluateForDerivation', () => {
 	});
 
 	it('hashes the same grammar identically in two fresh processes', () => {
-		expect(evaluateForDerivation(grammarPackage('python')).grammarHash).toBe(python.grammarHash);
+		expect(evaluateForDerivation(grammarPackage('python')).base.grammarHash).toBe(python.grammarHash);
 	});
 
 	it("carries upstream's own declared conflicts", () => {
@@ -66,7 +66,7 @@ describe('evaluateForDerivation', () => {
 	});
 
 	it('follows a variant of a variant to the upstream rule', () => {
-		const typescript = evaluateForDerivation(grammarPackage('typescript'));
+		const typescript = evaluateForDerivation(grammarPackage('typescript')).base;
 		expect(sourceChain('export_statement_default_from', typescript.sourceEdges)).toEqual([
 			'export_statement_default_from',
 			'export_statement_default',

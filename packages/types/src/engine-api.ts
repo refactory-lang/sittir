@@ -2,6 +2,7 @@ import type { AnyUntypedNode, ErrorNode, ErrorRegion, GrammarTriviaEntry, Trivia
 import type { IndentOption } from './options.ts';
 import type { Admit, Snapshot } from './node-surface.ts';
 import type { KindMembership, QueryFacet, QuerySlots } from './query.ts';
+import type { PortableSurface } from './portable.ts';
 
 export interface TriviaFacts {
 	readonly kindName: (type: AnyUntypedNode['$type']) => string | undefined;
@@ -97,6 +98,7 @@ export interface LanguageAPI {
 	readonly options: object;
 	readonly indentChar: string;
 	readonly empty: GrammarTypeMap['empty'];
+	readonly portable?: PortableSurface;
 }
 
 /** What names a language and what an engine records of it: a `Language` without its engine constructor. Unlike `Language`, it is assignable across `LanguageAPI`s. */
@@ -140,6 +142,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	createNative(options?: NativeEngineOptions<API['options']>): NativeLanguageEngine<API>;
 	wrap(root: unknown, tree: unknown): API['root'];
 	hydrate(node: unknown, tree: unknown): unknown;
+	readonly portable?: API['portable'];
 }
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {
@@ -246,7 +249,6 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	readonly read: (path: string, options?: ParseOptions) => Promise<API['root']>;
 	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API> | SnapshotInput<API>>;
 	readonly create: (path: string, fn: (build: API['build']) => API['root']) => Pending;
-	readonly edit: (path: string, fn: (root: API['root']) => API['root']) => Pending;
 	readonly write: (path: string, node: API['root']) => Pending;
 	/** Releases the native engine; `using` invokes the same cleanup at scope exit. */
 	readonly dispose: () => void;
@@ -292,6 +294,29 @@ type LayoutKeysCheck<API extends LanguageAPI, R> = R extends { readonly layout?:
 
 type IsExactly<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
+/** A language whose grammar has bindings, so it has a portable surface. */
+export type PortableLanguageAPI = LanguageAPI & { readonly portable: PortableSurface };
+
+/** The options of a portable engine. */
+export interface PortableEngineOptions {
+	readonly api: 'portable';
+}
+
+/**
+ * An engine over a language's portable vocabulary: what a node of the language reads as, by vocabulary path.
+ * Parsing, rendering and building are not part of it yet; a node to classify comes from the language's default engine.
+ */
+export interface PortableEngine<API extends PortableLanguageAPI> extends EngineIdentity<API> {
+	/** Per vocabulary path, the grammar kind ids that read as it or a path under it (`$ids`), and the paths under it. */
+	readonly kinds: API['portable']['kinds'];
+	/**
+	 * Per vocabulary path, a guard that holds for a node of this language reading as it or a path under it, and the guards of
+	 * the paths under it. A path segment can shadow a function property (`call`, `name`), so the guards are called directly,
+	 * never through `call`, `apply` or `bind`.
+	 */
+	readonly is: API['portable']['is'];
+}
+
 export interface EngineOptions<API extends LanguageAPI, M extends ApiSurface = 'default'> {
 	readonly api?: M;
 	readonly render?: API['options'];
@@ -303,7 +328,7 @@ export interface Interceptor<API extends LanguageAPI> {
 	render?(call: { readonly node: RenderInput<API>; readonly options: API['options'] }, next: () => string): string;
 	parse?(call: { readonly source: string }, next: () => API['root']): API['root'];
 	file?(
-		change: FileChange & { readonly verb: 'create' | 'edit' | 'write' },
+		change: FileChange & { readonly verb: 'create' | 'write' },
 		next: () => Promise<void>
 	): Promise<void>;
 }
@@ -314,7 +339,7 @@ export interface Project extends AsyncDisposable {
 	staged(): readonly string[];
 	diff(): readonly FileChange[];
 	files(): ReadonlyMap<string, string>;
-	commit(): Promise<void>;
+	save(): Promise<void>;
 	discard(): void;
 }
 

@@ -1,5 +1,5 @@
 {
-	"grammarHash": "4ec54428d036f93535904932a86f06b45e415a4ac6832608563dd19098761d0c",
+	"grammarHash": "2438e12c0a11ed68025ffa1d108a4c06b6757992cd086c905f7dad3f8192b553",
 	"resolutions": [
 		{
 			"resolution": {
@@ -342,5 +342,9 @@
 				]
 			}
 		}
-	]
+	],
+	"bound": {
+		"grammarHash": "2438e12c0a11ed68025ffa1d108a4c06b6757992cd086c905f7dad3f8192b553",
+		"resolutions": []
+	}
 }

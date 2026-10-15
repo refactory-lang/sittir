@@ -282,6 +282,56 @@ declare module Foo {
           finalizer: (finally_clause
             body: (statement_block)))))))
 
+==================================
+Literal types with a minus sign
+==================================
+
+let x: 2
+let x: 2 | -3 | -4
+let x: "string"
+let x: false
+
+---
+
+(program
+  (lexical_declaration
+    (variable_declarator_plain
+      (identifier)
+      (type_annotation
+        (literal_type
+          (number_decimal))))
+    (automatic_semicolon))
+  (lexical_declaration
+    (variable_declarator_plain
+      (identifier)
+      (type_annotation
+        (union_type
+          (union_type
+            (literal_type
+              (number_decimal))
+            (literal_type
+              (literal_type_negative_number
+                (number_decimal))))
+          (literal_type
+            (literal_type_negative_number
+              (number_decimal))))))
+    (automatic_semicolon))
+  (lexical_declaration
+    (variable_declarator_plain
+      (identifier)
+      (type_annotation
+        (literal_type
+          (string_double
+            (string_fragment)))))
+    (automatic_semicolon))
+  (lexical_declaration
+    (variable_declarator_plain
+      (identifier)
+      (type_annotation
+        (literal_type
+          (false))))
+    (automatic_semicolon)))
+
 ========================
 Type-only star re-export
 ========================

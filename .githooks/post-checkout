@@ -3,18 +3,18 @@
 # A new worktree checks out from the null commit: install its dependencies and
 # build every grammar's native binding, so it can run the suite and commit
 # (the pre-commit gate loads the bindings) at once. Branch switches pass a real
-# commit and are left alone, as is a branch that predates the bootstrap script.
-# Bootstrapping runs the checkout's own code (install scripts, build.rs), so it
+# commit and are left alone, as is a branch that predates the setup script.
+# Setup runs the checkout's own code (install scripts, build.rs), so it
 # runs automatically only for a commit already on a local branch or an origin
 # branch; anything else, such as a fork's pull request, is left to a manual
-# `pnpm run bootstrap` after review. SITTIR_NO_BOOTSTRAP=1 skips it.
+# `pnpm run setup` after review. SITTIR_NO_SETUP=1 skips it.
 set -euo pipefail
 [[ "${1:-}" =~ ^0+$ ]] || exit 0
-[ "${SITTIR_NO_BOOTSTRAP:-}" = 1 ] && exit 0
-node -e "process.exit(require('./package.json').scripts?.bootstrap ? 0 : 1)" 2>/dev/null || exit 0
+[ "${SITTIR_NO_SETUP:-}" = 1 ] && exit 0
+node -e "process.exit(require('./package.json').scripts?.setup ? 0 : 1)" 2>/dev/null || exit 0
 if [ -z "$(git for-each-ref --count=1 --contains HEAD refs/heads refs/remotes/origin)" ]; then
-	echo "post-checkout: HEAD is on no local or origin branch; review it, then run pnpm run bootstrap" >&2
+	echo "post-checkout: HEAD is on no local or origin branch; review it, then run pnpm run setup" >&2
 	exit 0
 fi
-echo "post-checkout: bootstrapping $(pwd) (SITTIR_NO_BOOTSTRAP=1 skips)" >&2
-exec pnpm run bootstrap
+echo "post-checkout: setting up $(pwd) (SITTIR_NO_SETUP=1 skips)" >&2
+exec pnpm run setup

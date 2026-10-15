@@ -7,13 +7,13 @@ This is the command reference for a source checkout. The [README](README.md) des
 Use Node **22.18 or newer**, the pnpm version pinned in `package.json`, and the Rust toolchain pinned in `rust-toolchain.toml`. The Rust workspace declares its minimum version separately in `Cargo.toml`. Parser regeneration also needs the WebAssembly toolchain used by tree-sitter.
 
 ```sh
-pnpm run bootstrap
+pnpm run setup
 pnpm run build
 ```
 
-`bootstrap` installs dependencies, tracked Git hooks, and grammar-native bindings. `build` compiles the workspace packages as well. Native bindings are local platform binaries; installing JavaScript dependencies alone does not build them.
+`setup` installs dependencies, tracked Git hooks, and every grammar's native binding. `build` compiles the workspace packages as well. Native bindings are local platform binaries; installing JavaScript dependencies alone does not build them. Re-run `pnpm run setup` after pulling a lockfile or native crate change.
 
-Hooks are installed into Git's hooks directory by `.githooks/install`; they are not selected by setting `core.hooksPath` to this repository's `.githooks`. Existing unmanaged hooks are preserved beside the installed hook. The post-checkout hook can bootstrap a known branch checkout; `SITTIR_NO_BOOTSTRAP=1` skips that automatic setup. Run setup manually after reviewing an unfamiliar checkout.
+Hooks are installed into Git's hooks directory by `.githooks/install`; they are not selected by setting `core.hooksPath` to this repository's `.githooks`. Existing unmanaged hooks are preserved as `<name>.pre-sittir`. The post-checkout hook sets up a new worktree automatically when its commit is already on a local or origin branch. An unfamiliar checkout, such as a fork's pull request, requires manual setup after review. Set `SITTIR_NO_SETUP=1` to skip automatic setup for a throwaway checkout.
 
 Each worktree needs its own dependencies. Do not symlink another checkout's `node_modules`: workspace package resolution would then read the other checkout's sources. In an Infigraph-indexed repository, also run `infigraph worktree init <path>` after creating a worktree.
 

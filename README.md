@@ -99,6 +99,8 @@ The grammar entry executes in both tree-sitter's generation environment and Sitt
 
 The runtime is native-only. Each grammar package contains its own N-API binding; a missing or incompatible binding is an error. Generated files are derived artifacts: grammar changes belong in `grammar.sittir.ts`, and compiler changes belong in codegen.
 
+Languages with bindings also expose a portable vocabulary preview behind `api: 'portable'`: vocabulary kinds and guards over grammar-specific nodes. Construction, parsing, queries, and rendering use the grammar-specific engine. See the [portable preview](docs/use-cases-and-examples.md#portable-preview) for its current scope.
+
 [Architecture](docs/architecture.md) covers the model, generated artifacts, and runtime boundaries in more detail.
 
 ## Hypothesis and goals
