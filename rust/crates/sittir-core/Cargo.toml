@@ -8,6 +8,9 @@ repository.workspace = true
 description = "Read / render primitives for sittir — hot-path engine shared across per-grammar render crates."
 
 [features]
+# Diagnose children left over after typed slot routing.
+read-debug-checks = []
+
 # Enable napi FromNapiValue / ToNapiValue impls for core boundary types
 # (Source, Span). Activated by the per-grammar napi crates via
 # `sittir-core = { features = ["napi-bindings"] }`. NOT enabled by

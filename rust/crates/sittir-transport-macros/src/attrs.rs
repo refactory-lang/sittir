@@ -21,9 +21,7 @@ pub struct KindAttrs {
     /// it reads as when its span is empty or its tokens do not tile it.
     pub text: Option<Option<LitStr>>,
     pub interior: Option<LitStr>,
-    pub envelope: bool,
     pub content: Option<Ident>,
-    pub list: bool,
     pub item: Option<Ident>,
     /// On a variant: the arm bare text and an `ERROR` object decode as.
     pub verbatim: bool,
@@ -159,9 +157,7 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "wraps_hidden" => out.wraps_hidden = true,
                 "text" => out.text = Some(if meta.input.peek(Token![=]) { Some(meta.value()?.parse()?) } else { None }),
                 "interior" => out.interior = Some(meta.value()?.parse()?),
-                "envelope" => out.envelope = true,
                 "content" => out.content = Some(meta.value()?.parse()?),
-                "list" => out.list = true,
                 "item" => out.item = Some(meta.value()?.parse()?),
                 "verbatim" => out.verbatim = true,
                 "error" => out.error = true,

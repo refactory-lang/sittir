@@ -1,4 +1,4 @@
-use sittir_core::read::{Depth, ReadCtx, ReadError, ReadTransport, SideEntry, SideLookup};
+use sittir_core::read::{Depth, ReadCtx, ReadError, ReadTransport, SideEntry, SideLookup, DEBUG_READ_CHECKS};
 use sittir_core::types::KindId;
 
 fn parse(language: &tree_sitter::Language, source: &str) -> tree_sitter::Tree {
@@ -54,7 +54,7 @@ struct Function {
     body: SlotValue<Box<Block>>,
 }
 
-/// `Function` with no route for its body: every function is refused.
+/// `Function` with no route for its body: debug routing diagnoses the gap.
 #[derive(Debug, Clone, PartialEq, Transport)]
 #[transport(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD])]
 struct FunctionWithoutBody {
@@ -66,6 +66,23 @@ struct FunctionWithoutBody {
     #[wire(key = "_parameters")]
     #[slot(field = field::PARAMETERS)]
     parameters: SlotValue<Params>,
+}
+
+#[derive(Debug, Transport)]
+#[transport(kind = kind::PARAMETERS)]
+struct ParamsWithoutTokenList {
+    #[wire(key = "$_layout")]
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
+}
+
+#[derive(Debug, Transport)]
+#[transport(kind = kind::SOURCE_FILE)]
+struct OneFunction {
+    #[wire(key = "$_layout")]
+    layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
+    #[wire(key = "_statement")]
+    #[slot(field = field::STATEMENTS)]
+    statement: SlotValue<Function>,
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
@@ -222,15 +239,62 @@ fn a_block_doc_comment_reads_whole_with_its_named_marker_skipped_as_layout() {
 }
 
 #[test]
-fn a_child_no_route_takes_refuses_the_read_naming_kind_child_and_index() {
+fn a_child_no_route_takes_is_refused_only_with_debug_checks() {
     let source = "fn f() {}";
     let tree = parse_rust(source);
-    let refused = read_nth::<FunctionWithoutBody>(&tree, source, kind::FUNCTION_ITEM, 0, Depth::All).unwrap_err();
-    let ReadError::Unrouted { kind: parent, child, index } = refused else { panic!("{refused:?}") };
-    assert_eq!((parent, child), (kind::FUNCTION_ITEM, kind::BLOCK));
-    let mut at = tree.walk();
-    at.goto_descendant(index as usize);
-    assert_eq!(at.node().grammar_id(), kind::BLOCK.0);
+    let result = read_nth::<FunctionWithoutBody>(&tree, source, kind::FUNCTION_ITEM, 0, Depth::All);
+    let mut cursor = tree.walk();
+    assert!(cursor.goto_first_child());
+    let routes = FunctionWithoutBody::routes(&mut cursor);
+    if DEBUG_READ_CHECKS {
+        let refused = result.unwrap_err();
+        let ReadError::Unrouted { kind: parent, child, index } = refused else { panic!("{refused:?}") };
+        assert_eq!((parent, child), (kind::FUNCTION_ITEM, kind::BLOCK));
+        let mut at = tree.walk();
+        at.goto_descendant(index as usize);
+        assert_eq!(at.node().grammar_id(), kind::BLOCK.0);
+        assert!(routes.is_none());
+    } else {
+        let value = result.unwrap();
+        assert_eq!(value.name.transport().unwrap().text, "f");
+        assert!(value.parameters.transport().is_some());
+        let routes = routes.unwrap();
+        let body = routes.children.iter().position(|child| child.grammar == kind::BLOCK).unwrap();
+        assert!(matches!(routes.routes[body], sittir_core::read::Route::Layout));
+    }
+}
+
+#[test]
+fn punctuation_without_token_metadata_is_checked_only_in_debug() {
+    let source = "fn f() {}";
+    let tree = parse_rust(source);
+    let result = read_nth::<ParamsWithoutTokenList>(&tree, source, kind::PARAMETERS, 0, Depth::All);
+    if DEBUG_READ_CHECKS {
+        assert!(matches!(result, Err(ReadError::Unrouted { kind: parent, child, .. }) if parent == kind::PARAMETERS && child == kind::LPAREN));
+    } else {
+        result.unwrap();
+    }
+}
+
+#[test]
+fn a_missing_required_slot_is_refused_in_both_read_modes() {
+    let source = "";
+    let result = read_nth::<OneFunction>(&parse_rust(source), source, kind::SOURCE_FILE, 0, Depth::All);
+    assert!(matches!(result, Err(ReadError::Missing { kind: parent, slot: "statement", .. }) if parent == kind::SOURCE_FILE));
+}
+
+#[test]
+fn an_overfull_slot_is_refused_in_both_read_modes() {
+    let source = "fn f() {} fn g() {}";
+    let result = read_nth::<OneFunction>(&parse_rust(source), source, kind::SOURCE_FILE, 0, Depth::All);
+    assert!(matches!(result, Err(ReadError::Overfull { kind: parent, slot: "statement", .. }) if parent == kind::SOURCE_FILE));
+}
+
+#[test]
+fn a_required_slot_with_one_child_reads_in_both_modes() {
+    let source = "fn f() {}";
+    let value = read_nth::<OneFunction>(&parse_rust(source), source, kind::SOURCE_FILE, 0, Depth::All).unwrap();
+    assert_eq!(value.statement.transport().unwrap().name.transport().unwrap().text, "f");
 }
 
 #[test]
@@ -541,7 +605,7 @@ struct Decimal {
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
-#[transport(kind = kind::_TYPE_IDENTIFIER, display, envelope, content = content)]
+#[transport(kind = kind::_TYPE_IDENTIFIER, display, content = content)]
 struct TypeIdent {
     #[wire(key = "$_layout")]
     layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
@@ -612,7 +676,7 @@ struct Param {
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
-#[transport(kind = kind::PARAMETERS_ELEMENTS, list, item = item)]
+#[transport(kind = kind::PARAMETERS_ELEMENTS, item = item)]
 struct List {
     #[wire(key = "$_layout")]
     layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,
@@ -676,7 +740,7 @@ enum Name {
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
-#[transport(kind = kind::_TYPE_IDENTIFIER, display, envelope, content = content)]
+#[transport(kind = kind::_TYPE_IDENTIFIER, display, content = content)]
 struct TypeIdentOfChoice {
     #[wire(key = "$_layout")]
     layout: Option<Box<sittir_core::layout::TransportLayout<()>>>,

@@ -10374,7 +10374,7 @@ impl ::sittir_core::prepare::Prepare for ImportFromStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_IMPORT_LIST, list, item = name, words = 4)]
+#[transport(kind = kind::_IMPORT_LIST, item = name, words = 4)]
 pub struct ImportListTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -12693,7 +12693,7 @@ impl ::sittir_core::prepare::Prepare for BlockTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::EXPRESSION_LIST, list, item = item, words = 4)]
+#[transport(kind = kind::EXPRESSION_LIST, item = item, words = 4)]
 pub struct ExpressionListTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -13339,7 +13339,7 @@ impl ::sittir_core::prepare::Prepare for ComplexPatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_PARAMETERS_ELEMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::_PARAMETERS_ELEMENTS, item = item, words = 4)]
 pub struct ParametersElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -13399,7 +13399,7 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_PATTERNS, list, item = item, words = 4)]
+#[transport(kind = kind::_PATTERNS, item = item, words = 4)]
 pub struct PatternsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -14259,7 +14259,7 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::PATTERN_LIST, list, item = item, words = 4)]
+#[transport(kind = kind::PATTERN_LIST, item = item, words = 4)]
 pub struct PatternListTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -15565,7 +15565,7 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_COLLECTION_ELEMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::_COLLECTION_ELEMENTS, item = item, words = 4)]
 pub struct CollectionElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -16529,7 +16529,7 @@ impl ::sittir_core::render::Render for KeywordSeparatorTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::SIMPLE_STATEMENTS_ELEMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::SIMPLE_STATEMENTS_ELEMENTS, item = item, words = 4)]
 pub struct SimpleStatementsElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -16589,7 +16589,7 @@ impl ::sittir_core::prepare::Prepare for SimpleStatementsElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::SUBJECTS, list, item = subject, words = 4)]
+#[transport(kind = kind::SUBJECTS, item = subject, words = 4)]
 pub struct SubjectsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -16649,7 +16649,7 @@ impl ::sittir_core::prepare::Prepare for SubjectsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CASE_PATTERNS, list, item = item, words = 4)]
+#[transport(kind = kind::CASE_PATTERNS, item = item, words = 4)]
 pub struct CasePatternsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -16709,7 +16709,7 @@ impl ::sittir_core::prepare::Prepare for CasePatternsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::WITH_CLAUSE_WITH_ITEMS, list, item = item, words = 4)]
+#[transport(kind = kind::WITH_CLAUSE_WITH_ITEMS, item = item, words = 4)]
 pub struct WithClauseWithItemsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -16768,7 +16768,7 @@ impl ::sittir_core::prepare::Prepare for WithClauseWithItemsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TYPES, list, item = item, words = 4)]
+#[transport(kind = kind::TYPES, item = item, words = 4)]
 pub struct TypesTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -16828,7 +16828,7 @@ impl ::sittir_core::prepare::Prepare for TypesTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ARGUMENT_LIST_ELEMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::ARGUMENT_LIST_ELEMENTS, item = item, words = 4)]
 pub struct ArgumentListElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -16888,7 +16888,7 @@ impl ::sittir_core::prepare::Prepare for ArgumentListElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::LIST_PATTERN_CASE_PATTERNS, list, item = item, words = 4)]
+#[transport(kind = kind::LIST_PATTERN_CASE_PATTERNS, item = item, words = 4)]
 pub struct ListPatternCasePatternsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -16948,7 +16948,7 @@ impl ::sittir_core::prepare::Prepare for ListPatternCasePatternsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::DICT_PATTERN_ELEMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::DICT_PATTERN_ELEMENTS, item = item, words = 4)]
 pub struct DictPatternElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -17008,7 +17008,7 @@ impl ::sittir_core::prepare::Prepare for DictPatternElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::SUBSCRIPTS, list, item = subscript, words = 4)]
+#[transport(kind = kind::SUBSCRIPTS, item = subscript, words = 4)]
 pub struct SubscriptsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -17068,7 +17068,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::DICTIONARY_ELEMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::DICTIONARY_ELEMENTS, item = item, words = 4)]
 pub struct DictionaryElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -17223,7 +17223,7 @@ impl ::sittir_core::prepare::Prepare for FormatSpecifierTextTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_TUPLE_PATTERN_ELEMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::_TUPLE_PATTERN_ELEMENTS, item = item, words = 4)]
 pub struct TuplePatternElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -17283,7 +17283,7 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_TUPLE_ELEMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::_TUPLE_ELEMENTS, item = item, words = 4)]
 pub struct TupleElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -17494,7 +17494,7 @@ impl ::sittir_core::prepare::Prepare for CaseListPatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_PRINT_ARGUMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::_PRINT_ARGUMENTS, item = item, words = 4)]
 pub struct PrintArgumentsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -17554,7 +17554,7 @@ impl ::sittir_core::prepare::Prepare for PrintArgumentsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_PRINT_CHEVRON_ARGUMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::_PRINT_CHEVRON_ARGUMENTS, item = item, words = 4)]
 pub struct PrintChevronArgumentsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -19078,7 +19078,7 @@ impl ::sittir_core::prepare::Prepare for AssignmentTypedTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::EXPRESSION_STATEMENT_TUPLE, list, item = item, words = 4)]
+#[transport(kind = kind::EXPRESSION_STATEMENT_TUPLE, item = item, words = 4)]
 pub struct ExpressionStatementTupleTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -19138,7 +19138,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementTupleTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::WITH_CLAUSE_BARE, list, item = item, words = 4)]
+#[transport(kind = kind::WITH_CLAUSE_BARE, item = item, words = 4)]
 pub struct WithClauseBareTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -20008,7 +20008,7 @@ impl ::sittir_core::render::Render for DoubleBlanklineTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_NAMES, display, envelope, content = content, words = 7)]
+#[transport(kind = kind::_NAMES, display, content = content, words = 7)]
 pub struct NamesTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -20056,7 +20056,7 @@ impl ::sittir_core::prepare::Prepare for NamesTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_AS_PATTERN_TARGET, display, envelope, content = content, wraps_hidden, words = 7)]
+#[transport(kind = kind::_AS_PATTERN_TARGET, display, content = content, wraps_hidden, words = 7)]
 pub struct AsPatternTargetTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -20104,7 +20104,7 @@ impl ::sittir_core::prepare::Prepare for AsPatternTargetTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_FORMAT_EXPRESSION, display, envelope, content = content, words = 7)]
+#[transport(kind = kind::_FORMAT_EXPRESSION, display, content = content, words = 7)]
 pub struct FormatExpressionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,

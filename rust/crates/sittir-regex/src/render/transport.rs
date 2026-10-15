@@ -3984,7 +3984,7 @@ impl ::sittir_core::render::Render for DoubleBlanklineTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_LAZY, display, envelope, content = content, words = 7)]
+#[transport(kind = kind::_LAZY, display, content = content, words = 7)]
 pub struct LazyTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -4032,7 +4032,7 @@ impl ::sittir_core::prepare::Prepare for LazyTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_UNICODE_PROPERTY_NAME, display, envelope, content = content, words = 7)]
+#[transport(kind = kind::_UNICODE_PROPERTY_NAME, display, content = content, words = 7)]
 pub struct UnicodePropertyNameTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,

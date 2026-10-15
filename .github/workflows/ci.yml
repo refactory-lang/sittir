@@ -294,6 +294,8 @@ jobs:
         run: cargo check --workspace
       - name: Clippy (warnings denied)
         run: cargo clippy --workspace --all-targets --no-default-features -- -D warnings
+      - name: Typed reader debug diagnostics
+        run: cargo test -p sittir-parity-tests --no-default-features --test typed_read --features sittir-core/read-debug-checks
 
   # Generated output drift: regenerating every grammar must reproduce every
   # committed generated file (parser, TypeScript and Rust outputs, manifests,

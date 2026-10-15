@@ -22052,7 +22052,7 @@ impl ::sittir_core::render::Render for PrimitiveTypeEnum {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::MACRO_RULES, list, item = item, words = 4)]
+#[transport(kind = kind::MACRO_RULES, item = item, words = 4)]
 pub struct MacroRulesTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -22113,7 +22113,7 @@ impl ::sittir_core::prepare::Prepare for MacroRulesTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ENUM_VARIANT_LIST_ELEMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::ENUM_VARIANT_LIST_ELEMENTS, item = item, words = 4)]
 pub struct EnumVariantListElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -22174,7 +22174,7 @@ impl ::sittir_core::prepare::Prepare for EnumVariantListElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::FIELD_DECLARATION_LIST_ELEMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::FIELD_DECLARATION_LIST_ELEMENTS, item = item, words = 4)]
 pub struct FieldDeclarationListElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -22235,7 +22235,7 @@ impl ::sittir_core::prepare::Prepare for FieldDeclarationListElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ORDERED_FIELD_DECLARATION_LIST_ELEMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::ORDERED_FIELD_DECLARATION_LIST_ELEMENTS, item = item, words = 4)]
 pub struct OrderedFieldDeclarationListElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -22296,7 +22296,7 @@ impl ::sittir_core::prepare::Prepare for OrderedFieldDeclarationListElementsTran
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::WHERE_PREDICATES, list, item = item, words = 4)]
+#[transport(kind = kind::WHERE_PREDICATES, item = item, words = 4)]
 pub struct WherePredicatesTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -22357,7 +22357,7 @@ impl ::sittir_core::prepare::Prepare for WherePredicatesTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TYPE_PARAMETERS_ELEMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::TYPE_PARAMETERS_ELEMENTS, item = item, words = 4)]
 pub struct TypeParametersElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -22418,7 +22418,7 @@ impl ::sittir_core::prepare::Prepare for TypeParametersElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::USE_CLAUSES, list, item = item, words = 4)]
+#[transport(kind = kind::USE_CLAUSES, item = item, words = 4)]
 pub struct UseClausesTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -22479,7 +22479,7 @@ impl ::sittir_core::prepare::Prepare for UseClausesTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::PARAMETERS_ELEMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::PARAMETERS_ELEMENTS, item = item, words = 4)]
 pub struct ParametersElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -22540,7 +22540,7 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::LIFETIMES, list, item = item, words = 4)]
+#[transport(kind = kind::LIFETIMES, item = item, words = 4)]
 pub struct LifetimesTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -22601,7 +22601,7 @@ impl ::sittir_core::prepare::Prepare for LifetimesTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TYPES, list, item = item, words = 4)]
+#[transport(kind = kind::TYPES, item = item, words = 4)]
 pub struct TypesTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -22662,7 +22662,7 @@ impl ::sittir_core::prepare::Prepare for TypesTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::USE_BOUNDS_ELEMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::USE_BOUNDS_ELEMENTS, item = item, words = 4)]
 pub struct UseBoundsElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -22723,7 +22723,7 @@ impl ::sittir_core::prepare::Prepare for UseBoundsElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TYPE_ARGUMENTS_ELEMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::TYPE_ARGUMENTS_ELEMENTS, item = item, words = 4)]
 pub struct TypeArgumentsElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -22784,7 +22784,7 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentsElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ARGUMENTS_ELEMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::ARGUMENTS_ELEMENTS, item = item, words = 4)]
 pub struct ArgumentsElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -22845,7 +22845,7 @@ impl ::sittir_core::prepare::Prepare for ArgumentsElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::EXPRESSIONS, list, item = item, words = 4)]
+#[transport(kind = kind::EXPRESSIONS, item = item, words = 4)]
 pub struct ExpressionsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -22906,7 +22906,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::FIELD_INITIALIZER_LIST_ELEMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::FIELD_INITIALIZER_LIST_ELEMENTS, item = item, words = 4)]
 pub struct FieldInitializerListElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -22967,7 +22967,7 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerListElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TUPLE_PATTERN_ELEMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::TUPLE_PATTERN_ELEMENTS, item = item, words = 4)]
 pub struct TuplePatternElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -23028,7 +23028,7 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::PATTERNS, list, item = item, words = 4)]
+#[transport(kind = kind::PATTERNS, item = item, words = 4)]
 pub struct PatternsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -23089,7 +23089,7 @@ impl ::sittir_core::prepare::Prepare for PatternsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::STRUCT_PATTERN_ELEMENTS, list, item = item, words = 4)]
+#[transport(kind = kind::STRUCT_PATTERN_ELEMENTS, item = item, words = 4)]
 pub struct StructPatternElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -28804,7 +28804,7 @@ impl ::sittir_core::prepare::Prepare for ErrorSentinelTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_TYPE_IDENTIFIER, display, envelope, content = content, words = 7)]
+#[transport(kind = kind::_TYPE_IDENTIFIER, display, content = content, words = 7)]
 pub struct TypeIdentifierTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -28852,7 +28852,7 @@ impl ::sittir_core::prepare::Prepare for TypeIdentifierTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_FIELD_IDENTIFIER, display, envelope, content = content, words = 7)]
+#[transport(kind = kind::_FIELD_IDENTIFIER, display, content = content, words = 7)]
 pub struct FieldIdentifierTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -28900,7 +28900,7 @@ impl ::sittir_core::prepare::Prepare for FieldIdentifierTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_SHORTHAND_FIELD_IDENTIFIER, display, envelope, content = content, words = 7)]
+#[transport(kind = kind::_SHORTHAND_FIELD_IDENTIFIER, display, content = content, words = 7)]
 pub struct ShorthandFieldIdentifierTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
