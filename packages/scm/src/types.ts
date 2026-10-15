@@ -25,7 +25,10 @@ import type {
 	WithNode,
 	BoundWithNode,
 	QueryFacet,
-	Snapshot
+	Snapshot,
+	Proven,
+	KeyRefusesEmpty,
+	SetterRefusesEmpty
 } from '@sittir/types';
 import type * as T from './types.js';
 import type { ERROR_KIND_ID } from '@sittir/common/error-kind';
@@ -1850,6 +1853,9 @@ export namespace StringContent {
 				>
 		  ];
 	export type Kind = TSKindId.StringContent;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'content'>, KeyRefusesEmpty<LooseConfig, 'content'>, SetterRefusesEmpty<Bound, 'contents'>]
+	>;
 }
 export namespace Parameters {
 	export type Config = ConfigFor<TSKindId.Parameters>;
@@ -1881,6 +1887,13 @@ export namespace Parameters {
 				>
 		  ];
 	export type Kind = TSKindId.Parameters;
+	type NonEmptySlots = Proven<
+		[
+			KeyRefusesEmpty<Config, 'elements'>,
+			KeyRefusesEmpty<LooseConfig, 'elements'>,
+			SetterRefusesEmpty<Bound, 'elements'>
+		]
+	>;
 }
 export namespace Comment {
 	export type Config = ConfigFor<TSKindId.Comment>;
@@ -1917,6 +1930,13 @@ export namespace List {
 	export type BuildArgs = [config: ConfigOf<T.List>];
 	export type LooseArgs = [config: T.List.Loose];
 	export type Kind = TSKindId.List;
+	type NonEmptySlots = Proven<
+		[
+			KeyRefusesEmpty<Config, 'definitions'>,
+			KeyRefusesEmpty<LooseConfig, 'definitions'>,
+			SetterRefusesEmpty<Bound, 'definitions'>
+		]
+	>;
 }
 export namespace Grouping {
 	export type Config = ConfigFor<TSKindId.Grouping>;
@@ -1961,6 +1981,13 @@ export namespace Grouping {
 			  })
 	];
 	export type Kind = TSKindId.Grouping;
+	type NonEmptySlots = Proven<
+		[
+			KeyRefusesEmpty<Config, 'groupingGroup'>,
+			KeyRefusesEmpty<LooseConfig, 'groupingGroup'>,
+			SetterRefusesEmpty<Bound, 'groupingGroups'>
+		]
+	>;
 }
 export namespace MissingNode {
 	export type Config = ConfigFor<TSKindId.MissingNode>;
@@ -2177,6 +2204,13 @@ export namespace NamedNodeGroupChildren {
 	export type BuildArgs = [config: ConfigOf<T.NamedNodeGroupChildren>];
 	export type LooseArgs = [config: T.NamedNodeGroupChildren.Loose];
 	export type Kind = TSKindId.NamedNodeGroupChildren;
+	type NonEmptySlots = Proven<
+		[
+			KeyRefusesEmpty<Config, 'namedNodeExpressions'>,
+			KeyRefusesEmpty<LooseConfig, 'namedNodeExpressions'>,
+			SetterRefusesEmpty<Bound, 'namedNodeExpressions'>
+		]
+	>;
 }
 export namespace NamedNodeGroupAnchoredLast {
 	export type Config = ConfigFor<TSKindId.NamedNodeGroupAnchoredLast>;

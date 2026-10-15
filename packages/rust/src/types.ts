@@ -33,7 +33,10 @@ import type {
 	WithNode,
 	BoundWithNode,
 	QueryFacet,
-	Snapshot
+	Snapshot,
+	Proven,
+	KeyRefusesEmpty,
+	SetterRefusesEmpty
 } from '@sittir/types';
 import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types.js';
@@ -18812,6 +18815,13 @@ export namespace FunctionModifiers {
 				>
 		  ];
 	export type Kind = TSKindId.FunctionModifiers;
+	type NonEmptySlots = Proven<
+		[
+			KeyRefusesEmpty<Config, 'modifier'>,
+			KeyRefusesEmpty<LooseConfig, 'modifier'>,
+			SetterRefusesEmpty<Bound, 'modifiers'>
+		]
+	>;
 }
 export namespace WhereClause {
 	export type Config = ConfigFor<TSKindId.WhereClause>;
@@ -18934,6 +18944,9 @@ export namespace TraitBounds {
 				>
 		  ];
 	export type Kind = TSKindId.TraitBounds;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'bounds'>, KeyRefusesEmpty<LooseConfig, 'bounds'>, SetterRefusesEmpty<Bound, 'bounds'>]
+	>;
 }
 export namespace HigherRankedTraitBound {
 	export type Config = ConfigFor<TSKindId.HigherRankedTraitBound>;
@@ -20762,6 +20775,9 @@ export namespace MacroRules {
 				...elements: (T.MacroRules.Loose | LooseValue<T.MacroRule, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ];
 	export type Kind = TSKindId.MacroRules;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace EnumVariantListElements {
 	export type Config = ConfigFor<TSKindId.EnumVariantListElements>;
@@ -20814,6 +20830,9 @@ export namespace EnumVariantListElements {
 				)[]
 		  ];
 	export type Kind = TSKindId.EnumVariantListElements;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace FieldDeclarationListElements {
 	export type Config = ConfigFor<TSKindId.FieldDeclarationListElements>;
@@ -20892,6 +20911,9 @@ export namespace FieldDeclarationListElements {
 				)[]
 		  ];
 	export type Kind = TSKindId.FieldDeclarationListElements;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace OrderedFieldDeclarationListElements {
 	export type Config = ConfigFor<TSKindId.OrderedFieldDeclarationListElements>;
@@ -20975,6 +20997,9 @@ export namespace OrderedFieldDeclarationListElements {
 				)[]
 		  ];
 	export type Kind = TSKindId.OrderedFieldDeclarationListElements;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace WherePredicates {
 	export type Config = ConfigFor<TSKindId.WherePredicates>;
@@ -21020,6 +21045,9 @@ export namespace WherePredicates {
 				)[]
 		  ];
 	export type Kind = TSKindId.WherePredicates;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace TypeParametersElements {
 	export type Config = ConfigFor<TSKindId.TypeParametersElements>;
@@ -21102,6 +21130,9 @@ export namespace TypeParametersElements {
 				)[]
 		  ];
 	export type Kind = TSKindId.TypeParametersElements;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace UseClauses {
 	export type Config = ConfigFor<TSKindId.UseClauses>;
@@ -21250,6 +21281,9 @@ export namespace UseClauses {
 				)[]
 		  ];
 	export type Kind = TSKindId.UseClauses;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace ParametersElements {
 	export type Config = ConfigFor<TSKindId.ParametersElements>;
@@ -21388,6 +21422,9 @@ export namespace ParametersElements {
 				)[]
 		  ];
 	export type Kind = TSKindId.ParametersElements;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace Lifetimes {
 	export type Config = ConfigFor<TSKindId.Lifetimes>;
@@ -21423,6 +21460,9 @@ export namespace Lifetimes {
 				...elements: (T.Lifetimes.Loose | LooseValue<T.Lifetime, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ];
 	export type Kind = TSKindId.Lifetimes;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace Types {
 	export type Config = ConfigFor<TSKindId.Types>;
@@ -21468,6 +21508,9 @@ export namespace Types {
 				)[]
 		  ];
 	export type Kind = TSKindId.Types;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace UseBoundsElements {
 	export type Config = ConfigFor<TSKindId.UseBoundsElements>;
@@ -21536,6 +21579,9 @@ export namespace UseBoundsElements {
 				)[]
 		  ];
 	export type Kind = TSKindId.UseBoundsElements;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace TypeArgumentsElements {
 	export type Config = ConfigFor<TSKindId.TypeArgumentsElements>;
@@ -21618,6 +21664,9 @@ export namespace TypeArgumentsElements {
 				)[]
 		  ];
 	export type Kind = TSKindId.TypeArgumentsElements;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace ArgumentsElements {
 	export type Config = ConfigFor<TSKindId.ArgumentsElements>;
@@ -21670,6 +21719,9 @@ export namespace ArgumentsElements {
 				)[]
 		  ];
 	export type Kind = TSKindId.ArgumentsElements;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace Expressions {
 	export type Config = ConfigFor<TSKindId.Expressions>;
@@ -21711,6 +21763,9 @@ export namespace Expressions {
 				)[]
 		  ];
 	export type Kind = TSKindId.Expressions;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace FieldInitializerListElements {
 	export type Config = ConfigFor<TSKindId.FieldInitializerListElements>;
@@ -21779,6 +21834,9 @@ export namespace FieldInitializerListElements {
 				)[]
 		  ];
 	export type Kind = TSKindId.FieldInitializerListElements;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace TuplePatternElements {
 	export type Config = ConfigFor<TSKindId.TuplePatternElements>;
@@ -21824,6 +21882,9 @@ export namespace TuplePatternElements {
 				)[]
 		  ];
 	export type Kind = TSKindId.TuplePatternElements;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace Patterns {
 	export type Config = ConfigFor<TSKindId.Patterns>;
@@ -21859,6 +21920,9 @@ export namespace Patterns {
 				...elements: (T.Patterns.Loose | LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ];
 	export type Kind = TSKindId.Patterns;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace StructPatternElements {
 	export type Config = ConfigFor<TSKindId.StructPatternElements>;
@@ -21927,6 +21991,9 @@ export namespace StructPatternElements {
 				)[]
 		  ];
 	export type Kind = TSKindId.StructPatternElements;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace UseWildcardGroup {
 	export type Config = ConfigFor<TSKindId.UseWildcardGroup>;

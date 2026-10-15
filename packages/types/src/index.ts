@@ -86,6 +86,26 @@ export type Simplify<T> = { [K in keyof T]: T[K] } & {};
  */
 export type NonEmptyArray<T> = readonly [T, ...(readonly T[])];
 
+/** @internal — `true` when the empty list is no value of `V`. */
+type RefusesEmpty<V> = [] extends V ? false : true;
+
+/** Whether key `K` of the input type `Input` refuses the empty list; `false` when `Input` has no key `K`. */
+export type KeyRefusesEmpty<Input, K extends PropertyKey> = K extends keyof Input ? RefusesEmpty<Input[K]> : false;
+
+/** Whether the `$with` setter `K` of node type `Node` refuses the empty list: a one-value setter by its value, a rest setter by its argument list; `false` when there is no such setter. */
+export type SetterRefusesEmpty<Node, K extends PropertyKey> = Node extends { readonly $with: infer W }
+	? K extends keyof W
+		? W[K] extends (...args: infer A) => unknown
+			? A extends readonly [infer V]
+				? RefusesEmpty<V>
+				: RefusesEmpty<A>
+			: false
+		: false
+	: false;
+
+/** Compiles only when every check in `T` is `true`: a generated proof that a fact the types promise holds on each surface. */
+export type Proven<T extends readonly true[]> = T;
+
 /**
  * Bitflag<E, TStorage> — brands numeric bitflag storage.
  * `E` is the const-enum type the Config / Loose surface expose; the
@@ -137,7 +157,9 @@ type AdmitsMore<E> = E extends unknown ? ([AliasContent<E>] extends [never] ? fa
 /** @internal — {@link AdmitElementInput} through a slot's array wrapper. */
 type AdmitSlotInput<S> = S extends readonly unknown[]
 	? true extends AdmitsMore<S[number]>
-		? readonly AdmitElementInput<S[number]>[]
+		? S extends NonEmptyArray<unknown>
+			? NonEmptyArray<AdmitElementInput<S[number]>>
+			: readonly AdmitElementInput<S[number]>[]
 		: S
 	: AdmitElementInput<S>;
 
@@ -604,9 +626,11 @@ type BitflagSlotEnum<T> = T extends readonly (infer E)[] ? BitflagEnum<E> : Bitf
 type IsKindEnumSlot<T> = IsKindEnum<T> extends true ? true : T extends readonly (infer E)[] ? IsKindEnum<E> : false;
 
 /** @internal — widen a KindEnum slot back to its string-friendly input surface. */
-type KindEnumSlotInput<T> = T extends readonly (infer E)[]
-	? readonly (KindEnumText<E> | Admit<E>)[]
-	: KindEnumText<T> | Admit<T>;
+type KindEnumSlotInput<T> = T extends NonEmptyArray<infer E>
+	? NonEmptyArray<KindEnumText<E> | Admit<E>>
+	: T extends readonly (infer E)[]
+		? readonly (KindEnumText<E> | Admit<E>)[]
+		: KindEnumText<T> | Admit<T>;
 
 /** A tree node with no typed field access — returned by `.children()`. */
 export interface AnyTreeNodeOf {
@@ -929,7 +953,9 @@ type WidenBrandMembers<T> = T extends { readonly __booleanKeyword__?: unknown }
 
 /** @internal — the array members of a slot union, each widened on its own:
  *  an array admits its widened element array or one widened element. The
- *  element union is widened whole by the recursive `WidenValue`. */
+ *  element union is widened whole by the recursive `WidenValue`. One element
+ *  is never an array form: the coercer reads an array as the list itself, so a
+ *  non-empty list's input refuses `[]`. */
 type WidenArrayMembers<
 	T,
 	Scalars,
@@ -939,10 +965,10 @@ type WidenArrayMembers<
 	Visited extends (string | number)[]
 > = T extends readonly (infer E)[]
 	? [readonly []] extends [T]
-		? WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>[] | WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
+		? WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>[] | Exclude<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>, readonly unknown[]>
 		:
 				| NonEmptyArray<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>>
-				| WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
+				| Exclude<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>, readonly unknown[]>
 	: never;
 
 /** @internal — the leaf members (a node type carrying `$text`), each widened
@@ -1029,12 +1055,8 @@ type WidenChildSlot<
 	Depth extends number[] = [],
 	NsMap = {},
 	Visited extends (string | number)[] = []
-> = T extends readonly (infer E)[]
-	? [readonly []] extends [T]
-		? WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>[] | WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
-		:
-				| NonEmptyArray<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>>
-				| WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
+> = T extends readonly unknown[]
+	? WidenArrayMembers<T, Scalars, Strings, Depth, NsMap, Visited>
 	: WidenValue<T, Scalars, Strings, Depth, NsMap, Visited>;
 
 // ---------------------------------------------------------------------------

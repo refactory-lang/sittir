@@ -73,6 +73,7 @@ import {
 	warnSkippedParserSymbol,
 	soleSlotFacts,
 	emptyDefaultOf,
+	assertOmittedSlotsFilled,
 	kindEnumTextEntries,
 	type KindEnumTextEntry,
 	canonicalSeparatedListField,
@@ -1449,6 +1450,7 @@ function emitFieldCarryingFactory(
 	const exportKw = 'export ';
 	slots = slots ?? [];
 	const typeKind = node.kind;
+	assertOmittedSlotsFilled(node, nodeMap, kindEntries);
 	const surface = resolveFactorySurface(node, nodeMap, kindEntries);
 	const { spreadFacts, singleField } = surface;
 

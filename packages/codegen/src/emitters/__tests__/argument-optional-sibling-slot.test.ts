@@ -158,3 +158,22 @@ describe('a kind whose only slot is a required literal builds with no argument',
 		expect(emitted).toContain('?? TSKindId.Qmark as const');
 	});
 });
+
+describe('a builder that may omit a required slot must fill it', () => {
+	it('fails generation when a required literal has no kind to fill it with', () => {
+		const rule = flatten({ type: STRING, value: '?' });
+		const content = new AssembledNonterminal({
+			values: [{ value: '?', multiplicity: 'single' }],
+			hasTrailingDelimiter: false,
+			hasLeadingDelimiter: false,
+			sourceRuleIds: [],
+			fieldName: 'content'
+		});
+		const lazy = new AssembledBranch('lazy', rule, rule, { slots: [content] });
+		const nodeMap = makeNodeMapWith(new Map<string, AssembledNode>([['lazy', lazy]]));
+		const kindEntries = [{ kind: 'lazy', member: 'Lazy', id: 5 }];
+		expect(() => emitFactories({ grammar: 'synth', nodeMap, kindEntries })).toThrow(
+			/lazy: its builder may omit the required slot content, which has no empty default/
+		);
+	});
+});

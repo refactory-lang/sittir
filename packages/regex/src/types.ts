@@ -24,7 +24,10 @@ import type {
 	WithNode,
 	BoundWithNode,
 	QueryFacet,
-	Snapshot
+	Snapshot,
+	Proven,
+	KeyRefusesEmpty,
+	SetterRefusesEmpty
 } from '@sittir/types';
 import type * as T from './types.js';
 import type { ERROR_KIND_ID } from '@sittir/common/error-kind';
@@ -2267,6 +2270,9 @@ export namespace Alternation {
 		  ]
 		| [children: Readonly<NonEmptyArray<LooseValue<T.Term, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>>];
 	export type Kind = TSKindId.Alternation;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'terms'>, KeyRefusesEmpty<LooseConfig, 'terms'>, SetterRefusesEmpty<Bound, 'terms'>]
+	>;
 }
 export namespace Term {
 	export type Config = ConfigFor<TSKindId.Term>;
@@ -2291,6 +2297,13 @@ export namespace Term {
 		  ]
 		| [children: Readonly<NonEmptyArray<LooseValue<T.TermGroup, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>>];
 	export type Kind = TSKindId.Term;
+	type NonEmptySlots = Proven<
+		[
+			KeyRefusesEmpty<Config, 'termGroup'>,
+			KeyRefusesEmpty<LooseConfig, 'termGroup'>,
+			SetterRefusesEmpty<Bound, 'termGroups'>
+		]
+	>;
 }
 export namespace LookaroundAssertion {
 	export type Config = ConfigFor<TSKindId.LookaroundAssertion>;

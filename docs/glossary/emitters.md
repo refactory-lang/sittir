@@ -1366,6 +1366,12 @@ The expression a required single-value slot defaults to when its value is omitte
 
 `factoryNs` prefixes the factory call (`'F.'` in the coercer module); a kind id needs no prefix.
 
+It answers only for a slot `slotFilledWhenOmitted` accepts, so a default is never emitted for a target whose own no-argument build would throw. Two such slots still answer `null`: fixed text with no kind entry to name it, and a reference to a fixed-text leaf with none either. `assertOmittedSlotsFilled` turns either into a generation failure.
+
+### `packages/codegen/src/emitters/shared.ts::assertOmittedSlotsFilled`
+
+Fails generation when a kind's builder may omit a required slot that has no empty default: the model says the slot is filled when omitted (`slotFilledWhenOmitted`), but `emptyDefaultOf` has nothing to fill it with. This keeps two type-level promises true without a runtime check. A strict builder takes `Partial<Config>` only when every required slot is filled this way. The loose `from()` makes its input optional only under the same `argumentOptional`, so its `_requireField` runs only where the `LooseConfig` key is required. It runs in `emitFieldCarryingFactory`, where the kind entries that name fixed text are always present; the types emitter resolves surfaces without them.
+
 ### `packages/codegen/src/emitters/from.ts::emitBranchFrom`
 
 ```text
@@ -6826,6 +6832,10 @@ take, because a grammar may have a kind whose type is named `BooleanKeyword` (ty
 // The NamespaceMap key — the kind's id. `Kind` below stays the NAME,
 // which is the grammar's own spelling and what a reader recognises.
 ```
+
+### `packages/codegen/src/emitters/types.ts::nonEmptyProofLines`
+
+The compile-time proof, inside a kind's namespace, that each of its non-empty list slots refuses `[]` on every surface that takes it: the strict `Config` key, the `LooseConfig` key and the `$with` setter (`Proven<[KeyRefusesEmpty<…>, KeyRefusesEmpty<…>, SetterRefusesEmpty<…>]>`). The loose and `$with` types are derived at the type level from the interface, so codegen cannot check them itself; a surface that widens a `NonEmptyArray` back to a plain array, or a key under another name, fails the grammar package's type-check. It covers the slots `needsNonEmptyHoist` names, a registered option aside. A kind with none emits nothing.
 
 ### `packages/codegen/src/emitters/types.ts::aliasContentTypeExpr`
 
@@ -15163,10 +15173,6 @@ The text nodes of a template body, descending into the arms of its conditionals.
 ### `packages/codegen/src/emitters/factories.ts::patternMismatchThrow`
 
 The one place a pattern guard's refusal is worded: `<label>: text does not match pattern: <value>`, with the value written through `describeValue` so a non-text value shows what it was. The leaf-text guard and the per-slot interior guard both emit it, so the message cannot differ between them.
-
-### `packages/codegen/src/emitters/shared.ts::emptyDefaultOf`
-
-The expression that fills a required slot the caller omitted: the fixed text's discriminant, or a call of the target kind's factory. It answers only for a slot `slotFilledWhenOmitted` accepts, so a default is never emitted for a target whose own no-argument build would throw. A hidden infrastructure slot is never defaulted. The predicate also accepts a slot that holds fixed text, so two cases stay `null` after it accepts: fixed text with no kind entry to name it (no discriminant to write), and a reference to a fixed-text leaf with none either; a leaf of that kind has a factory but no no-argument call to emit.
 
 ### `packages/codegen/src/emitters/factories.ts::requiredUnfilled`
 

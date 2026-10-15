@@ -33,7 +33,10 @@ import type {
 	WithNode,
 	BoundWithNode,
 	QueryFacet,
-	Snapshot
+	Snapshot,
+	Proven,
+	KeyRefusesEmpty,
+	SetterRefusesEmpty
 } from '@sittir/types';
 import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types.js';
@@ -18660,6 +18663,13 @@ export namespace VariableDeclaration {
 				>
 		  ];
 	export type Kind = TSKindId.VariableDeclaration;
+	type NonEmptySlots = Proven<
+		[
+			KeyRefusesEmpty<Config, 'declarators'>,
+			KeyRefusesEmpty<LooseConfig, 'declarators'>,
+			SetterRefusesEmpty<Bound, 'declarators'>
+		]
+	>;
 }
 export namespace LexicalDeclaration {
 	export type Config = OmitEach<ConfigFor<TSKindId.LexicalDeclaration>, 'terminator'>;
@@ -18682,6 +18692,13 @@ export namespace LexicalDeclaration {
 	];
 	export type LooseArgs = [config: T.LexicalDeclaration.Loose, options?: T.LexicalDeclaration.Options];
 	export type Kind = TSKindId.LexicalDeclaration;
+	type NonEmptySlots = Proven<
+		[
+			KeyRefusesEmpty<Config, 'declarators'>,
+			KeyRefusesEmpty<LooseConfig, 'declarators'>,
+			SetterRefusesEmpty<Bound, 'declarators'>
+		]
+	>;
 }
 export namespace StatementBlock {
 	export type Config = OmitEach<ConfigFor<TSKindId.StatementBlock>, 'terminator'>;
@@ -20091,6 +20108,13 @@ export namespace SequenceExpression {
 		  ]
 		| [children: Readonly<NonEmptyArray<LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>>];
 	export type Kind = TSKindId.SequenceExpression;
+	type NonEmptySlots = Proven<
+		[
+			KeyRefusesEmpty<Config, 'expression'>,
+			KeyRefusesEmpty<LooseConfig, 'expression'>,
+			SetterRefusesEmpty<Bound, 'expressions'>
+		]
+	>;
 }
 export namespace EscapeSequence {
 	export type Config = ConfigFor<TSKindId.EscapeSequence>;
@@ -20684,6 +20708,9 @@ export namespace ExtendsClause {
 				>
 		  ];
 	export type Kind = TSKindId.ExtendsClause;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'types'>, KeyRefusesEmpty<LooseConfig, 'types'>, SetterRefusesEmpty<Bound, 'types'>]
+	>;
 }
 export namespace ExtendsClauseSingle {
 	export type Config = ConfigFor<TSKindId.ExtendsClauseSingle>;
@@ -20735,6 +20762,9 @@ export namespace ImplementsClause {
 				>
 		  ];
 	export type Kind = TSKindId.ImplementsClause;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'type'>, KeyRefusesEmpty<LooseConfig, 'type'>, SetterRefusesEmpty<Bound, 'types'>]
+	>;
 }
 export namespace AmbientDeclaration {
 	export type Config = ConfigFor<TSKindId.AmbientDeclaration>;
@@ -20919,6 +20949,9 @@ export namespace ExtendsTypeClause {
 				>
 		  ];
 	export type Kind = TSKindId.ExtendsTypeClause;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'type'>, KeyRefusesEmpty<LooseConfig, 'type'>, SetterRefusesEmpty<Bound, 'types'>]
+	>;
 }
 export namespace EnumDeclaration {
 	export type Config = ConfigFor<TSKindId.EnumDeclaration>;
@@ -21971,6 +22004,9 @@ export namespace ExportSpecifiers {
 				)[]
 		  ];
 	export type Kind = TSKindId.ExportSpecifiers;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace ImportSpecifiers {
 	export type Config = ConfigFor<TSKindId.ImportSpecifiers>;
@@ -22016,6 +22052,9 @@ export namespace ImportSpecifiers {
 				)[]
 		  ];
 	export type Kind = TSKindId.ImportSpecifiers;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace FormalParametersElements {
 	export type Config = ConfigFor<TSKindId.FormalParametersElements>;
@@ -22064,6 +22103,9 @@ export namespace FormalParametersElements {
 				)[]
 		  ];
 	export type Kind = TSKindId.FormalParametersElements;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace EnumBodyElementName {
 	export type Config = ConfigFor<TSKindId.EnumBodyElementName>;
@@ -22160,6 +22202,9 @@ export namespace EnumBodyElements {
 				)[]
 		  ];
 	export type Kind = TSKindId.EnumBodyElements;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace Types {
 	export type Config = ConfigFor<TSKindId.Types>;
@@ -22205,6 +22250,9 @@ export namespace Types {
 				)[]
 		  ];
 	export type Kind = TSKindId.Types;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace TypeParametersElements {
 	export type Config = ConfigFor<TSKindId.TypeParametersElements>;
@@ -22273,6 +22321,9 @@ export namespace TypeParametersElements {
 				)[]
 		  ];
 	export type Kind = TSKindId.TypeParametersElements;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace TupleTypeMembers {
 	export type Config = ConfigFor<TSKindId.TupleTypeMembers>;
@@ -22369,6 +22420,9 @@ export namespace TupleTypeMembers {
 				)[]
 		  ];
 	export type Kind = TSKindId.TupleTypeMembers;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace ImportClauseGroup {
 	export type Config = ConfigFor<TSKindId.ImportClauseGroup>;
@@ -22569,6 +22623,9 @@ export namespace ObjectTypeContent {
 				)[]
 		  ];
 	export type Kind = TSKindId.ObjectTypeContent;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'item'>, KeyRefusesEmpty<LooseConfig, 'item'>, SetterRefusesEmpty<Bound, 'items'>]
+	>;
 }
 export namespace ExportStatementNamespaceExport {
 	export type Config = OmitEach<ConfigFor<TSKindId.ExportStatementNamespaceExport>, 'terminator'>;
