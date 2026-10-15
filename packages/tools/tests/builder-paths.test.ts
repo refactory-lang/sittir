@@ -94,6 +94,7 @@ it('builds a kind through its own flat key first and keeps its owner route as an
 	expect(model.builderPaths.integer_hex).toEqual(['integerHex']);
 	expect(model.builderPathAlternates.integer_hex).toEqual([
 		['integer', 'hex'],
-		['primaryExpression', 'integer', 'hex']
+		['primaryExpression', 'integer', 'hex'],
+		['expression', 'primary', 'integer', 'hex']
 	]);
 });

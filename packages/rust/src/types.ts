@@ -195,26 +195,7 @@ export type LeafStringMap = {
 	[TSKindId.TtKeyword]: 'tt';
 	[TSKindId.TyKeyword]: 'ty';
 	[TSKindId.VisKeyword]: 'vis';
-	[TSKindId.U8Keyword]: 'u8';
-	[TSKindId.I8Keyword]: 'i8';
-	[TSKindId.U16Keyword]: 'u16';
-	[TSKindId.I16Keyword]: 'i16';
-	[TSKindId.U32Keyword]: 'u32';
-	[TSKindId.I32Keyword]: 'i32';
-	[TSKindId.U64Keyword]: 'u64';
-	[TSKindId.I64Keyword]: 'i64';
-	[TSKindId.U128Keyword]: 'u128';
-	[TSKindId.I128Keyword]: 'i128';
-	[TSKindId.IsizeKeyword]: 'isize';
-	[TSKindId.UsizeKeyword]: 'usize';
-	[TSKindId.F32Keyword]: 'f32';
-	[TSKindId.F64Keyword]: 'f64';
-	[TSKindId.BoolKeyword]: 'bool';
-	[TSKindId.StrKeyword]: 'str';
-	[TSKindId.CharKeyword]: 'char';
-	[TSKindId.DefaultKeyword]: 'default';
 	[TSKindId.UnionKeyword]: 'union';
-	[TSKindId.GenKeyword]: 'gen';
 	[TSKindId.EnumKeyword]: 'enum';
 	[TSKindId.ExternKeyword]: 'extern';
 	[TSKindId.AsKeyword]: 'as';
@@ -224,6 +205,7 @@ export type LeafStringMap = {
 	[TSKindId.TypeKeyword]: 'type';
 	[TSKindId.FnKeyword]: 'fn';
 	[TSKindId.AsyncKeyword]: 'async';
+	[TSKindId.DefaultKeyword]: 'default';
 	[TSKindId.UnsafeKeyword]: 'unsafe';
 	[TSKindId.WhereKeyword]: 'where';
 	[TSKindId.TraitKeyword]: 'trait';
@@ -244,9 +226,27 @@ export type LeafStringMap = {
 	[TSKindId.ContinueKeyword]: 'continue';
 	[TSKindId.AwaitKeyword]: 'await';
 	[TSKindId.MoveKeyword]: 'move';
+	[TSKindId.GenKeyword]: 'gen';
 	[TSKindId.TryKeyword]: 'try';
 	[TSKindId.TrueKeyword]: 'true';
 	[TSKindId.FalseKeyword]: 'false';
+	[TSKindId.U8Keyword]: 'u8';
+	[TSKindId.I8Keyword]: 'i8';
+	[TSKindId.U16Keyword]: 'u16';
+	[TSKindId.I16Keyword]: 'i16';
+	[TSKindId.U32Keyword]: 'u32';
+	[TSKindId.I32Keyword]: 'i32';
+	[TSKindId.U64Keyword]: 'u64';
+	[TSKindId.I64Keyword]: 'i64';
+	[TSKindId.U128Keyword]: 'u128';
+	[TSKindId.I128Keyword]: 'i128';
+	[TSKindId.IsizeKeyword]: 'isize';
+	[TSKindId.UsizeKeyword]: 'usize';
+	[TSKindId.F32Keyword]: 'f32';
+	[TSKindId.F64Keyword]: 'f64';
+	[TSKindId.BoolKeyword]: 'bool';
+	[TSKindId.StrKeyword]: 'str';
+	[TSKindId.CharKeyword]: 'char';
 	[TSKindId.Underscore]: '_';
 	[TSKindId.ModKeyword]: 'mod';
 	[TSKindId.PubKeyword]: 'pub';
@@ -2997,31 +2997,11 @@ export enum ImplItemKind {
 
 export enum UseClauseKind {
 	Self = 'self',
-	U8Keyword = 'u8_keyword',
-	I8Keyword = 'i8_keyword',
-	U16Keyword = 'u16_keyword',
-	I16Keyword = 'i16_keyword',
-	U32Keyword = 'u32_keyword',
-	I32Keyword = 'i32_keyword',
-	U64Keyword = 'u64_keyword',
-	I64Keyword = 'i64_keyword',
-	U128Keyword = 'u128_keyword',
-	I128Keyword = 'i128_keyword',
-	IsizeKeyword = 'isize_keyword',
-	UsizeKeyword = 'usize_keyword',
-	F32Keyword = 'f32_keyword',
-	F64Keyword = 'f64_keyword',
-	BoolKeyword = 'bool_keyword',
-	StrKeyword = 'str_keyword',
-	CharKeyword = 'char_keyword',
 	Metavariable = 'metavariable',
 	Super = 'super',
 	Crate = 'crate',
 	Identifier = 'identifier',
 	ScopedIdentifier = 'scoped_identifier',
-	DefaultKeyword = 'default_keyword',
-	UnionKeyword = 'union_keyword',
-	GenKeyword = 'gen_keyword',
 	UseAsClause = 'use_as_clause',
 	UseList = 'use_list',
 	ScopedUseList = 'scoped_use_list',
@@ -3066,26 +3046,6 @@ export enum ExpressionExceptRangeKind {
 	YieldExpression = 'yield_expression',
 	Literal = '_literal',
 	Identifier = 'identifier',
-	U8Keyword = 'u8_keyword',
-	I8Keyword = 'i8_keyword',
-	U16Keyword = 'u16_keyword',
-	I16Keyword = 'i16_keyword',
-	U32Keyword = 'u32_keyword',
-	I32Keyword = 'i32_keyword',
-	U64Keyword = 'u64_keyword',
-	I64Keyword = 'i64_keyword',
-	U128Keyword = 'u128_keyword',
-	I128Keyword = 'i128_keyword',
-	IsizeKeyword = 'isize_keyword',
-	UsizeKeyword = 'usize_keyword',
-	F32Keyword = 'f32_keyword',
-	F64Keyword = 'f64_keyword',
-	BoolKeyword = 'bool_keyword',
-	StrKeyword = 'str_keyword',
-	CharKeyword = 'char_keyword',
-	DefaultKeyword = 'default_keyword',
-	UnionKeyword = 'union_keyword',
-	GenKeyword = 'gen_keyword',
 	Self = 'self',
 	ScopedIdentifier = 'scoped_identifier',
 	GenericFunction = 'generic_function',
@@ -3128,26 +3088,6 @@ export enum ExpressionKind {
 	YieldExpression = 'yield_expression',
 	Literal = '_literal',
 	Identifier = 'identifier',
-	U8Keyword = 'u8_keyword',
-	I8Keyword = 'i8_keyword',
-	U16Keyword = 'u16_keyword',
-	I16Keyword = 'i16_keyword',
-	U32Keyword = 'u32_keyword',
-	I32Keyword = 'i32_keyword',
-	U64Keyword = 'u64_keyword',
-	I64Keyword = 'i64_keyword',
-	U128Keyword = 'u128_keyword',
-	I128Keyword = 'i128_keyword',
-	IsizeKeyword = 'isize_keyword',
-	UsizeKeyword = 'usize_keyword',
-	F32Keyword = 'f32_keyword',
-	F64Keyword = 'f64_keyword',
-	BoolKeyword = 'bool_keyword',
-	StrKeyword = 'str_keyword',
-	CharKeyword = 'char_keyword',
-	DefaultKeyword = 'default_keyword',
-	UnionKeyword = 'union_keyword',
-	GenKeyword = 'gen_keyword',
 	Self = 'self',
 	ScopedIdentifier = 'scoped_identifier',
 	GenericFunction = 'generic_function',
@@ -3246,32 +3186,12 @@ export enum ClosureExpressionKind {
 
 export enum PatternKind {
 	LiteralPattern = '_literal_pattern',
-	U8Keyword = 'u8_keyword',
-	I8Keyword = 'i8_keyword',
-	U16Keyword = 'u16_keyword',
-	I16Keyword = 'i16_keyword',
-	U32Keyword = 'u32_keyword',
-	I32Keyword = 'i32_keyword',
-	U64Keyword = 'u64_keyword',
-	I64Keyword = 'i64_keyword',
-	U128Keyword = 'u128_keyword',
-	I128Keyword = 'i128_keyword',
-	IsizeKeyword = 'isize_keyword',
-	UsizeKeyword = 'usize_keyword',
-	F32Keyword = 'f32_keyword',
-	F64Keyword = 'f64_keyword',
-	BoolKeyword = 'bool_keyword',
-	StrKeyword = 'str_keyword',
-	CharKeyword = 'char_keyword',
 	Identifier = 'identifier',
 	ScopedIdentifier = 'scoped_identifier',
 	GenericPattern = 'generic_pattern',
 	TuplePattern = 'tuple_pattern',
 	TupleStructPattern = 'tuple_struct_pattern',
 	StructPattern = 'struct_pattern',
-	DefaultKeyword = 'default_keyword',
-	UnionKeyword = 'union_keyword',
-	GenKeyword = 'gen_keyword',
 	RefPattern = 'ref_pattern',
 	SlicePattern = 'slice_pattern',
 	CapturedPattern = 'captured_pattern',
@@ -3346,31 +3266,11 @@ export enum CommentKind {
 
 export enum PathKind {
 	Self = 'self',
-	U8Keyword = 'u8_keyword',
-	I8Keyword = 'i8_keyword',
-	U16Keyword = 'u16_keyword',
-	I16Keyword = 'i16_keyword',
-	U32Keyword = 'u32_keyword',
-	I32Keyword = 'i32_keyword',
-	U64Keyword = 'u64_keyword',
-	I64Keyword = 'i64_keyword',
-	U128Keyword = 'u128_keyword',
-	I128Keyword = 'i128_keyword',
-	IsizeKeyword = 'isize_keyword',
-	UsizeKeyword = 'usize_keyword',
-	F32Keyword = 'f32_keyword',
-	F64Keyword = 'f64_keyword',
-	BoolKeyword = 'bool_keyword',
-	StrKeyword = 'str_keyword',
-	CharKeyword = 'char_keyword',
 	Metavariable = 'metavariable',
 	Super = 'super',
 	Crate = 'crate',
 	Identifier = 'identifier',
-	ScopedIdentifier = 'scoped_identifier',
-	DefaultKeyword = 'default_keyword',
-	UnionKeyword = 'union_keyword',
-	GenKeyword = 'gen_keyword'
+	ScopedIdentifier = 'scoped_identifier'
 }
 
 export enum LayoutKind {
@@ -4082,84 +3982,11 @@ export interface InnerAttributeItem {
 
 export interface Attribute {
 	readonly $type: TSKindId.Attribute;
-	readonly _path:
-		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| Identifier
-		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword;
+	readonly _path: TSKindId.Self | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
 	readonly _input?: AttributeInput;
 	readonly __inputHints__?: {
 		readonly path:
-			| KindEnum<
-					| 'self'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| 'super'
-					| 'crate'
-					| 'default'
-					| 'union'
-					| 'gen',
-					| TSKindId.Self
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.DefaultKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.GenKeyword
-			  >
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
 			| Metavariable
 			| Identifier
 			| ScopedIdentifier;
@@ -4168,33 +3995,7 @@ export interface Attribute {
 		readonly path: SlotHint<NonNullable<T.Attribute.Config>['path']>;
 		readonly input: SlotHint<T.AttributeInput, true>;
 	};
-	path():
-		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| Identifier
-		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword;
+	path(): TSKindId.Self | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
 	input(): AttributeInput | undefined;
 }
 
@@ -5539,85 +5340,18 @@ export interface UseDeclaration {
 	readonly _visibility_modifier?: VisibilityModifier;
 	readonly _argument:
 		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
 		| Identifier
 		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
 		| UseAsClause
 		| UseList
 		| ScopedUseList
 		| UseWildcard;
 	readonly __inputHints__?: {
 		readonly argument:
-			| KindEnum<
-					| 'self'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| 'super'
-					| 'crate'
-					| 'default'
-					| 'union'
-					| 'gen',
-					| TSKindId.Self
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.DefaultKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.GenKeyword
-			  >
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
 			| Metavariable
 			| Identifier
 			| ScopedIdentifier
@@ -5636,31 +5370,11 @@ export interface UseDeclaration {
 	visibilityModifier(): VisibilityModifier | undefined;
 	argument():
 		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
 		| Identifier
 		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
 		| UseAsClause
 		| UseList
 		| ScopedUseList
@@ -5669,84 +5383,11 @@ export interface UseDeclaration {
 
 export interface ScopedUseList {
 	readonly $type: TSKindId.ScopedUseList;
-	readonly _path?:
-		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| Identifier
-		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword;
+	readonly _path?: TSKindId.Self | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
 	readonly _list: UseList;
 	readonly __inputHints__?: {
 		readonly path?:
-			| KindEnum<
-					| 'self'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| 'super'
-					| 'crate'
-					| 'default'
-					| 'union'
-					| 'gen',
-					| TSKindId.Self
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.DefaultKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.GenKeyword
-			  >
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
 			| Metavariable
 			| Identifier
 			| ScopedIdentifier;
@@ -5754,31 +5395,11 @@ export interface ScopedUseList {
 	readonly __looseHints__?: {
 		readonly list: readonly (
 			| 'self'
-			| 'u8'
-			| 'i8'
-			| 'u16'
-			| 'i16'
-			| 'u32'
-			| 'i32'
-			| 'u64'
-			| 'i64'
-			| 'u128'
-			| 'i128'
-			| 'isize'
-			| 'usize'
-			| 'f32'
-			| 'f64'
-			| 'bool'
-			| 'str'
-			| 'char'
 			| Metavariable
 			| 'super'
 			| 'crate'
 			| Identifier
 			| ScopedIdentifier
-			| 'default'
-			| 'union'
-			| 'gen'
 			| UseAsClause
 			| UseList
 			| ScopedUseList
@@ -5791,31 +5412,11 @@ export interface ScopedUseList {
 		readonly $listSlots: {
 			readonly list: ListSlotHint<
 				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
 				| T.Identifier
 				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
 				| T.UseAsClause
 				| T.UseList
 				| T.ScopedUseList
@@ -5824,34 +5425,7 @@ export interface ScopedUseList {
 			>;
 		};
 	};
-	path():
-		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| Identifier
-		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
-		| undefined;
+	path(): TSKindId.Self | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier | undefined;
 	list(): UseList;
 }
 
@@ -5861,31 +5435,11 @@ export interface UseList {
 	readonly __looseHints__?: {
 		readonly use_clauses?: readonly (
 			| 'self'
-			| 'u8'
-			| 'i8'
-			| 'u16'
-			| 'i16'
-			| 'u32'
-			| 'i32'
-			| 'u64'
-			| 'i64'
-			| 'u128'
-			| 'i128'
-			| 'isize'
-			| 'usize'
-			| 'f32'
-			| 'f64'
-			| 'bool'
-			| 'str'
-			| 'char'
 			| Metavariable
 			| 'super'
 			| 'crate'
 			| Identifier
 			| ScopedIdentifier
-			| 'default'
-			| 'union'
-			| 'gen'
 			| UseAsClause
 			| UseList
 			| ScopedUseList
@@ -5896,31 +5450,11 @@ export interface UseList {
 		readonly useClauses: SlotHint<T.UseClauses, true>;
 		readonly $listView: ListViewHint<
 			| TSKindId.Self
-			| TSKindId.U8Keyword
-			| TSKindId.I8Keyword
-			| TSKindId.U16Keyword
-			| TSKindId.I16Keyword
-			| TSKindId.U32Keyword
-			| TSKindId.I32Keyword
-			| TSKindId.U64Keyword
-			| TSKindId.I64Keyword
-			| TSKindId.U128Keyword
-			| TSKindId.I128Keyword
-			| TSKindId.IsizeKeyword
-			| TSKindId.UsizeKeyword
-			| TSKindId.F32Keyword
-			| TSKindId.F64Keyword
-			| TSKindId.BoolKeyword
-			| TSKindId.StrKeyword
-			| TSKindId.CharKeyword
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
 			| T.Identifier
 			| T.ScopedIdentifier
-			| TSKindId.DefaultKeyword
-			| TSKindId.UnionKeyword
-			| TSKindId.GenKeyword
 			| T.UseAsClause
 			| T.UseList
 			| T.ScopedUseList
@@ -5930,31 +5464,11 @@ export interface UseList {
 		readonly $listSlots: {
 			readonly useClauses: ListSlotHint<
 				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
 				| T.Identifier
 				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
 				| T.UseAsClause
 				| T.UseList
 				| T.ScopedUseList
@@ -5968,84 +5482,11 @@ export interface UseList {
 
 export interface UseAsClause {
 	readonly $type: TSKindId.UseAsClause;
-	readonly _path:
-		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| Identifier
-		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword;
+	readonly _path: TSKindId.Self | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
 	readonly _alias: Identifier;
 	readonly __inputHints__?: {
 		readonly path:
-			| KindEnum<
-					| 'self'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| 'super'
-					| 'crate'
-					| 'default'
-					| 'union'
-					| 'gen',
-					| TSKindId.Self
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.DefaultKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.GenKeyword
-			  >
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
 			| Metavariable
 			| Identifier
 			| ScopedIdentifier;
@@ -6054,33 +5495,7 @@ export interface UseAsClause {
 		readonly path: SlotHint<NonNullable<T.UseAsClause.Config>['path']>;
 		readonly alias: SlotHint<T.Identifier>;
 	};
-	path():
-		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| Identifier
-		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword;
+	path(): TSKindId.Self | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
 	alias(): Identifier;
 }
 
@@ -6093,34 +5508,7 @@ export interface UseWildcard {
 			| 'self'
 			| 'super'
 			| 'crate'
-			| readonly (
-					| 'self'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| Metavariable
-					| 'super'
-					| 'crate'
-					| Identifier
-					| ScopedIdentifier
-					| 'default'
-					| 'union'
-					| 'gen'
-			  )[];
+			| readonly ('self' | Metavariable | 'super' | 'crate' | Identifier | ScopedIdentifier)[];
 	};
 	readonly __slotHints__?: {
 		readonly useWildcardGroup: SlotHint<T.UseWildcardGroup, true>;
@@ -6656,24 +6044,13 @@ export interface GenericFunction {
 
 export interface GenericType {
 	readonly $type: TSKindId.GenericType;
-	readonly _type:
-		| TypeIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
-		| ScopedTypeIdentifier;
+	readonly _type: TypeIdentifier | Identifier | ScopedTypeIdentifier;
 	readonly _type_arguments: TypeArguments;
-	readonly __inputHints__?: {
-		readonly type:
-			| KindEnum<'default' | 'union' | 'gen', TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword>
-			| TypeIdentifier
-			| ScopedTypeIdentifier;
-	};
 	readonly __looseHints__?: {
 		readonly type_arguments: readonly TypeArgument[];
 	};
 	readonly __slotHints__?: {
-		readonly type: SlotHint<NonNullable<T.GenericType.Config>['type']>;
+		readonly type: SlotHint<T.TypeIdentifier | T.Identifier | T.ScopedTypeIdentifier | T.TypeIdentifier.Types>;
 		readonly typeArguments: SlotHint<T.TypeArguments>;
 		readonly $listSlots: {
 			readonly typeArguments: ListSlotHint<
@@ -6683,7 +6060,7 @@ export interface GenericType {
 			>;
 		};
 	};
-	type(): TypeIdentifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword | ScopedTypeIdentifier;
+	type(): TypeIdentifier | Identifier | ScopedTypeIdentifier;
 	typeArguments(): TypeArguments;
 }
 
@@ -7053,24 +6430,13 @@ export interface DynamicType {
 
 export interface MacroInvocation {
 	readonly $type: TSKindId.MacroInvocation;
-	readonly _macro:
-		| ScopedIdentifier
-		| Identifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword;
+	readonly _macro: ScopedIdentifier | Identifier;
 	readonly _arguments: DelimTokenTree;
-	readonly __inputHints__?: {
-		readonly macro:
-			| KindEnum<'default' | 'union' | 'gen', TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword>
-			| ScopedIdentifier
-			| Identifier;
-	};
 	readonly __slotHints__?: {
-		readonly macro: SlotHint<NonNullable<T.MacroInvocation.Config>['macro']>;
+		readonly macro: SlotHint<T.ScopedIdentifier | T.Identifier>;
 		readonly arguments: SlotHint<T.DelimTokenTree>;
 	};
-	macro(): ScopedIdentifier | Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
+	macro(): ScopedIdentifier | Identifier;
 	arguments(): DelimTokenTree;
 }
 
@@ -7078,84 +6444,17 @@ export interface ScopedIdentifier {
 	readonly $type: TSKindId.ScopedIdentifier;
 	readonly _path?:
 		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
 		| Identifier
 		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
 		| BracketedType
 		| GenericTypeWithTurbofish;
 	readonly _name: Identifier | TSKindId.Super;
 	readonly __inputHints__?: {
 		readonly path?:
-			| KindEnum<
-					| 'self'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| 'super'
-					| 'crate'
-					| 'default'
-					| 'union'
-					| 'gen',
-					| TSKindId.Self
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.DefaultKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.GenKeyword
-			  >
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
 			| Metavariable
 			| Identifier
 			| ScopedIdentifier
@@ -7169,31 +6468,11 @@ export interface ScopedIdentifier {
 	};
 	path():
 		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
 		| Identifier
 		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
 		| BracketedType
 		| GenericTypeWithTurbofish
 		| undefined;
@@ -7204,83 +6483,16 @@ export interface ScopedTypeIdentifierInExpressionPosition {
 	readonly $type: TSKindId.ScopedTypeIdentifierInExpressionPosition;
 	readonly _path?:
 		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
 		| Identifier
 		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
 		| GenericTypeWithTurbofish;
 	readonly _name: TypeIdentifier;
 	readonly __inputHints__?: {
 		readonly path?:
-			| KindEnum<
-					| 'self'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| 'super'
-					| 'crate'
-					| 'default'
-					| 'union'
-					| 'gen',
-					| TSKindId.Self
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.DefaultKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.GenKeyword
-			  >
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
 			| Metavariable
 			| Identifier
 			| ScopedIdentifier
@@ -7295,31 +6507,11 @@ export interface ScopedTypeIdentifierInExpressionPosition {
 	};
 	path():
 		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
 		| Identifier
 		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
 		| GenericTypeWithTurbofish
 		| undefined;
 	name(): TypeIdentifier;
@@ -7329,85 +6521,18 @@ export interface ScopedTypeIdentifier {
 	readonly $type: TSKindId.ScopedTypeIdentifier;
 	readonly _path?:
 		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
 		| Identifier
 		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
 		| GenericTypeWithTurbofish
 		| BracketedType
 		| GenericType;
 	readonly _name: TypeIdentifier;
 	readonly __inputHints__?: {
 		readonly path?:
-			| KindEnum<
-					| 'self'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| 'super'
-					| 'crate'
-					| 'default'
-					| 'union'
-					| 'gen',
-					| TSKindId.Self
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.DefaultKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.GenKeyword
-			  >
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
 			| Metavariable
 			| Identifier
 			| ScopedIdentifier
@@ -7424,31 +6549,11 @@ export interface ScopedTypeIdentifier {
 	};
 	path():
 		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
 		| Identifier
 		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
 		| GenericTypeWithTurbofish
 		| BracketedType
 		| GenericType
@@ -7688,26 +6793,6 @@ export interface CallExpression {
 		| YieldExpression
 		| Literal
 		| Identifier
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
 		| TSKindId.Self
 		| ScopedIdentifier
 		| GenericFunction
@@ -7739,54 +6824,8 @@ export interface CallExpression {
 	readonly __inputHints__?: {
 		readonly function:
 			| KindEnum<
-					| 'true'
-					| 'false'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| 'default'
-					| 'union'
-					| 'gen'
-					| 'self'
-					| '()',
-					| TSKindId.TrueKeyword
-					| TSKindId.FalseKeyword
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.DefaultKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.GenKeyword
-					| TSKindId.Self
-					| TSKindId.UnitExpression
+					'true' | 'false' | 'self' | '()',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.UnitExpression
 			  >
 			| UnaryExpression
 			| ReferenceExpression
@@ -7853,26 +6892,6 @@ export interface CallExpression {
 		| YieldExpression
 		| Literal
 		| Identifier
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
 		| TSKindId.Self
 		| ScopedIdentifier
 		| GenericFunction
@@ -8840,31 +7859,11 @@ export interface UseClauses {
 	readonly $type: TSKindId.UseClauses;
 	readonly _item: NonEmptyArray<
 		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
 		| Identifier
 		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
 		| UseAsClause
 		| UseList
 		| ScopedUseList
@@ -8874,31 +7873,11 @@ export interface UseClauses {
 		readonly items: SlotHint<
 			NonEmptyArray<
 				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
 				| T.Identifier
 				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
 				| T.UseAsClause
 				| T.UseList
 				| T.ScopedUseList
@@ -8910,31 +7889,11 @@ export interface UseClauses {
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<
 			| TSKindId.Self
-			| TSKindId.U8Keyword
-			| TSKindId.I8Keyword
-			| TSKindId.U16Keyword
-			| TSKindId.I16Keyword
-			| TSKindId.U32Keyword
-			| TSKindId.I32Keyword
-			| TSKindId.U64Keyword
-			| TSKindId.I64Keyword
-			| TSKindId.U128Keyword
-			| TSKindId.I128Keyword
-			| TSKindId.IsizeKeyword
-			| TSKindId.UsizeKeyword
-			| TSKindId.F32Keyword
-			| TSKindId.F64Keyword
-			| TSKindId.BoolKeyword
-			| TSKindId.StrKeyword
-			| TSKindId.CharKeyword
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
 			| T.Identifier
 			| T.ScopedIdentifier
-			| TSKindId.DefaultKeyword
-			| TSKindId.UnionKeyword
-			| TSKindId.GenKeyword
 			| T.UseAsClause
 			| T.UseList
 			| T.ScopedUseList
@@ -8944,31 +7903,11 @@ export interface UseClauses {
 	};
 	items(): NonEmptyArray<
 		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
 		| Identifier
 		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
 		| UseAsClause
 		| UseList
 		| ScopedUseList
@@ -9177,148 +8116,21 @@ export interface StructPatternElements {
 
 export interface UseWildcardGroup {
 	readonly $type: TSKindId.UseWildcardGroup;
-	readonly _path?:
-		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| Identifier
-		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword;
+	readonly _path?: TSKindId.Self | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
 	readonly __inputHints__?: {
 		readonly path?:
-			| KindEnum<
-					| 'self'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| 'super'
-					| 'crate'
-					| 'default'
-					| 'union'
-					| 'gen',
-					| TSKindId.Self
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.DefaultKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.GenKeyword
-			  >
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
 			| Metavariable
 			| Identifier
 			| ScopedIdentifier;
 	};
 	readonly __slotHints__?: {
 		readonly path: SlotHint<
-			NonNullable<
-				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
-				| T.Metavariable
-				| TSKindId.Super
-				| TSKindId.Crate
-				| T.Identifier
-				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
-			>,
+			NonNullable<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>,
 			true
 		>;
 	};
-	path():
-		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| Identifier
-		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
-		| undefined;
+	path(): TSKindId.Self | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier | undefined;
 }
 
 export interface IntegerLiteralDecimal {
@@ -10011,146 +8823,20 @@ export interface ImplItemSemi {
 
 export interface VisibilityModifierPubScopeInPath {
 	readonly $type: TSKindId.VisibilityModifierPubScopeInPath;
-	readonly _path:
-		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| Identifier
-		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword;
+	readonly _path: TSKindId.Self | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
 	readonly __inputHints__?: {
 		readonly path:
-			| KindEnum<
-					| 'self'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| 'super'
-					| 'crate'
-					| 'default'
-					| 'union'
-					| 'gen',
-					| TSKindId.Self
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.DefaultKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.GenKeyword
-			  >
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
 			| Metavariable
 			| Identifier
 			| ScopedIdentifier;
 	};
 	readonly __slotHints__?: {
 		readonly path: SlotHint<
-			NonNullable<
-				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
-				| T.Metavariable
-				| TSKindId.Super
-				| TSKindId.Crate
-				| T.Identifier
-				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
-			>
+			NonNullable<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>
 		>;
 	};
-	path():
-		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| Identifier
-		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword;
+	path(): TSKindId.Self | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
 }
 
 export interface VisibilityModifierPubScope {
@@ -10814,70 +9500,55 @@ export interface FieldPatternNamed {
 
 export interface MacroDefinitionParen {
 	readonly $type: TSKindId.MacroDefinitionParen;
-	readonly _name: Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
+	readonly _name: Identifier;
 	readonly _macro_rules?: MacroRules;
-	readonly __inputHints__?: {
-		readonly name:
-			| KindEnum<'default' | 'union' | 'gen', TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword>
-			| Identifier;
-	};
 	readonly __looseHints__?: {
 		readonly macro_rules?: readonly MacroRule[];
 	};
 	readonly __slotHints__?: {
-		readonly name: SlotHint<NonNullable<T.MacroDefinitionParen.Config>['name']>;
+		readonly name: SlotHint<T.Identifier>;
 		readonly macroRules: SlotHint<T.MacroRules, true>;
 		readonly $listSlots: {
 			readonly macroRules: ListSlotHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	name(): Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
+	name(): Identifier;
 	macroRules(): MacroRules | undefined;
 }
 
 export interface MacroDefinitionBracket {
 	readonly $type: TSKindId.MacroDefinitionBracket;
-	readonly _name: Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
+	readonly _name: Identifier;
 	readonly _macro_rules?: MacroRules;
-	readonly __inputHints__?: {
-		readonly name:
-			| KindEnum<'default' | 'union' | 'gen', TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword>
-			| Identifier;
-	};
 	readonly __looseHints__?: {
 		readonly macro_rules?: readonly MacroRule[];
 	};
 	readonly __slotHints__?: {
-		readonly name: SlotHint<NonNullable<T.MacroDefinitionBracket.Config>['name']>;
+		readonly name: SlotHint<T.Identifier>;
 		readonly macroRules: SlotHint<T.MacroRules, true>;
 		readonly $listSlots: {
 			readonly macroRules: ListSlotHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	name(): Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
+	name(): Identifier;
 	macroRules(): MacroRules | undefined;
 }
 
 export interface MacroDefinitionBrace {
 	readonly $type: TSKindId.MacroDefinitionBrace;
-	readonly _name: Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
+	readonly _name: Identifier;
 	readonly _macro_rules?: MacroRules;
-	readonly __inputHints__?: {
-		readonly name:
-			| KindEnum<'default' | 'union' | 'gen', TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword>
-			| Identifier;
-	};
 	readonly __looseHints__?: {
 		readonly macro_rules?: readonly MacroRule[];
 	};
 	readonly __slotHints__?: {
-		readonly name: SlotHint<NonNullable<T.MacroDefinitionBrace.Config>['name']>;
+		readonly name: SlotHint<T.Identifier>;
 		readonly macroRules: SlotHint<T.MacroRules, true>;
 		readonly $listSlots: {
 			readonly macroRules: ListSlotHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	name(): Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
+	name(): Identifier;
 	macroRules(): MacroRules | undefined;
 }
 
@@ -10887,85 +9558,17 @@ export interface RangePatternPrefix {
 	readonly _right:
 		| LiteralPattern
 		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
 		| Identifier
-		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword;
+		| ScopedIdentifier;
 	readonly __inputHints__?: {
 		readonly content: KindEnum<'..=' | '..', TSKindId.DotDotEq | TSKindId.DotDot>;
 		readonly right:
 			| KindEnum<
-					| 'true'
-					| 'false'
-					| 'self'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| 'super'
-					| 'crate'
-					| 'default'
-					| 'union'
-					| 'gen',
-					| TSKindId.TrueKeyword
-					| TSKindId.FalseKeyword
-					| TSKindId.Self
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.DefaultKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.GenKeyword
+					'true' | 'false' | 'self' | 'super' | 'crate',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.Super | TSKindId.Crate
 			  >
 			| LiteralPattern
 			| Metavariable
@@ -10980,31 +9583,11 @@ export interface RangePatternPrefix {
 	right():
 		| LiteralPattern
 		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
 		| Identifier
-		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword;
+		| ScopedIdentifier;
 }
 
 export interface RangePatternWithLeftWithRight {
@@ -11013,85 +9596,17 @@ export interface RangePatternWithLeftWithRight {
 	readonly _right:
 		| LiteralPattern
 		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
 		| Identifier
-		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword;
+		| ScopedIdentifier;
 	readonly __inputHints__?: {
 		readonly content: KindEnum<'...' | '..=' | '..', TSKindId.DotDotDot | TSKindId.DotDotEq | TSKindId.DotDot>;
 		readonly right:
 			| KindEnum<
-					| 'true'
-					| 'false'
-					| 'self'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| 'super'
-					| 'crate'
-					| 'default'
-					| 'union'
-					| 'gen',
-					| TSKindId.TrueKeyword
-					| TSKindId.FalseKeyword
-					| TSKindId.Self
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.DefaultKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.GenKeyword
+					'true' | 'false' | 'self' | 'super' | 'crate',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.Super | TSKindId.Crate
 			  >
 			| LiteralPattern
 			| Metavariable
@@ -11106,31 +9621,11 @@ export interface RangePatternWithLeftWithRight {
 	right():
 		| LiteralPattern
 		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
 		| Identifier
-		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword;
+		| ScopedIdentifier;
 }
 
 export interface RangePatternWithLeft {
@@ -11138,85 +9633,17 @@ export interface RangePatternWithLeft {
 	readonly _left:
 		| LiteralPattern
 		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
 		| Identifier
-		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword;
+		| ScopedIdentifier;
 	readonly _content: RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare;
 	readonly __inputHints__?: {
 		readonly left:
 			| KindEnum<
-					| 'true'
-					| 'false'
-					| 'self'
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-					| 'bool'
-					| 'str'
-					| 'char'
-					| 'super'
-					| 'crate'
-					| 'default'
-					| 'union'
-					| 'gen',
-					| TSKindId.TrueKeyword
-					| TSKindId.FalseKeyword
-					| TSKindId.Self
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.Super
-					| TSKindId.Crate
-					| TSKindId.DefaultKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.GenKeyword
+					'true' | 'false' | 'self' | 'super' | 'crate',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.Super | TSKindId.Crate
 			  >
 			| LiteralPattern
 			| Metavariable
@@ -11233,31 +9660,11 @@ export interface RangePatternWithLeft {
 	left():
 		| LiteralPattern
 		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
 		| Identifier
-		| ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword;
+		| ScopedIdentifier;
 	content(): RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare;
 }
 
@@ -11446,34 +9853,7 @@ export interface AttributedParameter {
 			| Type;
 	};
 	readonly __looseHints__?: {
-		readonly attribute_item?: readonly (
-			| 'self'
-			| 'u8'
-			| 'i8'
-			| 'u16'
-			| 'i16'
-			| 'u32'
-			| 'i32'
-			| 'u64'
-			| 'i64'
-			| 'u128'
-			| 'i128'
-			| 'isize'
-			| 'usize'
-			| 'f32'
-			| 'f64'
-			| 'bool'
-			| 'str'
-			| 'char'
-			| Metavariable
-			| 'super'
-			| 'crate'
-			| Identifier
-			| ScopedIdentifier
-			| 'default'
-			| 'union'
-			| 'gen'
-		)[];
+		readonly attribute_item?: readonly ('self' | Metavariable | 'super' | 'crate' | Identifier | ScopedIdentifier)[];
 	};
 	readonly __slotHints__?: {
 		readonly attributeItem: SlotHint<T.AttributeItem, true>;
@@ -11829,26 +10209,6 @@ export type DoubleBlankline = TSKindId.DoubleBlankline;
 export type Indent = TSKindId.Indent;
 export type Dedent = TSKindId.Dedent;
 export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
-export type U8Keyword = TSKindId.U8Keyword;
-export type I8Keyword = TSKindId.I8Keyword;
-export type U16Keyword = TSKindId.U16Keyword;
-export type I16Keyword = TSKindId.I16Keyword;
-export type U32Keyword = TSKindId.U32Keyword;
-export type I32Keyword = TSKindId.I32Keyword;
-export type U64Keyword = TSKindId.U64Keyword;
-export type I64Keyword = TSKindId.I64Keyword;
-export type U128Keyword = TSKindId.U128Keyword;
-export type I128Keyword = TSKindId.I128Keyword;
-export type IsizeKeyword = TSKindId.IsizeKeyword;
-export type UsizeKeyword = TSKindId.UsizeKeyword;
-export type F32Keyword = TSKindId.F32Keyword;
-export type F64Keyword = TSKindId.F64Keyword;
-export type BoolKeyword = TSKindId.BoolKeyword;
-export type StrKeyword = TSKindId.StrKeyword;
-export type CharKeyword = TSKindId.CharKeyword;
-export type DefaultKeyword = TSKindId.DefaultKeyword;
-export type UnionKeyword = TSKindId.UnionKeyword;
-export type GenKeyword = TSKindId.GenKeyword;
 
 // Supertype unions
 export type Statement =
@@ -11947,26 +10307,6 @@ export type Expression =
 	| YieldExpression
 	| Literal
 	| Identifier
-	| U8Keyword
-	| I8Keyword
-	| U16Keyword
-	| I16Keyword
-	| U32Keyword
-	| I32Keyword
-	| U64Keyword
-	| I64Keyword
-	| U128Keyword
-	| I128Keyword
-	| IsizeKeyword
-	| UsizeKeyword
-	| F32Keyword
-	| F64Keyword
-	| BoolKeyword
-	| StrKeyword
-	| CharKeyword
-	| DefaultKeyword
-	| UnionKeyword
-	| GenKeyword
 	| Self
 	| ScopedIdentifier
 	| GenericFunction
@@ -12018,32 +10358,12 @@ export type ClosureExpression = ClosureExpressionBlock | ClosureExpressionExpr;
 
 export type Pattern =
 	| LiteralPattern
-	| U8Keyword
-	| I8Keyword
-	| U16Keyword
-	| I16Keyword
-	| U32Keyword
-	| I32Keyword
-	| U64Keyword
-	| I64Keyword
-	| U128Keyword
-	| I128Keyword
-	| IsizeKeyword
-	| UsizeKeyword
-	| F32Keyword
-	| F64Keyword
-	| BoolKeyword
-	| StrKeyword
-	| CharKeyword
 	| Identifier
 	| ScopedIdentifier
 	| GenericPattern
 	| TuplePattern
 	| TupleStructPattern
 	| StructPattern
-	| DefaultKeyword
-	| UnionKeyword
-	| GenKeyword
 	| RefPattern
 	| SlicePattern
 	| CapturedPattern
@@ -18614,26 +16934,6 @@ export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', TSKin
 export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '\n\n\n', TSKindId.DoubleBlankline> {}
 export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', TSKindId.Indent> {}
 export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', TSKindId.Dedent> {}
-export interface U8KeywordNs extends KeywordNs<TSKindId.U8Keyword, 'u8', TSKindId.U8Keyword> {}
-export interface I8KeywordNs extends KeywordNs<TSKindId.I8Keyword, 'i8', TSKindId.I8Keyword> {}
-export interface U16KeywordNs extends KeywordNs<TSKindId.U16Keyword, 'u16', TSKindId.U16Keyword> {}
-export interface I16KeywordNs extends KeywordNs<TSKindId.I16Keyword, 'i16', TSKindId.I16Keyword> {}
-export interface U32KeywordNs extends KeywordNs<TSKindId.U32Keyword, 'u32', TSKindId.U32Keyword> {}
-export interface I32KeywordNs extends KeywordNs<TSKindId.I32Keyword, 'i32', TSKindId.I32Keyword> {}
-export interface U64KeywordNs extends KeywordNs<TSKindId.U64Keyword, 'u64', TSKindId.U64Keyword> {}
-export interface I64KeywordNs extends KeywordNs<TSKindId.I64Keyword, 'i64', TSKindId.I64Keyword> {}
-export interface U128KeywordNs extends KeywordNs<TSKindId.U128Keyword, 'u128', TSKindId.U128Keyword> {}
-export interface I128KeywordNs extends KeywordNs<TSKindId.I128Keyword, 'i128', TSKindId.I128Keyword> {}
-export interface IsizeKeywordNs extends KeywordNs<TSKindId.IsizeKeyword, 'isize', TSKindId.IsizeKeyword> {}
-export interface UsizeKeywordNs extends KeywordNs<TSKindId.UsizeKeyword, 'usize', TSKindId.UsizeKeyword> {}
-export interface F32KeywordNs extends KeywordNs<TSKindId.F32Keyword, 'f32', TSKindId.F32Keyword> {}
-export interface F64KeywordNs extends KeywordNs<TSKindId.F64Keyword, 'f64', TSKindId.F64Keyword> {}
-export interface BoolKeywordNs extends KeywordNs<TSKindId.BoolKeyword, 'bool', TSKindId.BoolKeyword> {}
-export interface StrKeywordNs extends KeywordNs<TSKindId.StrKeyword, 'str', TSKindId.StrKeyword> {}
-export interface CharKeywordNs extends KeywordNs<TSKindId.CharKeyword, 'char', TSKindId.CharKeyword> {}
-export interface DefaultKeywordNs extends KeywordNs<TSKindId.DefaultKeyword, 'default', TSKindId.DefaultKeyword> {}
-export interface UnionKeywordNs extends KeywordNs<TSKindId.UnionKeyword, 'union', TSKindId.UnionKeyword> {}
-export interface GenKeywordNs extends KeywordNs<TSKindId.GenKeyword, 'gen', TSKindId.GenKeyword> {}
 export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Bound, TSKindId.Identifier> {}
 export interface TokenRepetitionPatternTextNs extends LeafNs<
 	TokenRepetitionPatternText,
@@ -18951,26 +17251,6 @@ export interface NamespaceMap {
 	[TSKindId.DoubleBlankline]: DoubleBlanklineNs;
 	[TSKindId.Indent]: IndentNs;
 	[TSKindId.Dedent]: DedentNs;
-	[TSKindId.U8Keyword]: U8KeywordNs;
-	[TSKindId.I8Keyword]: I8KeywordNs;
-	[TSKindId.U16Keyword]: U16KeywordNs;
-	[TSKindId.I16Keyword]: I16KeywordNs;
-	[TSKindId.U32Keyword]: U32KeywordNs;
-	[TSKindId.I32Keyword]: I32KeywordNs;
-	[TSKindId.U64Keyword]: U64KeywordNs;
-	[TSKindId.I64Keyword]: I64KeywordNs;
-	[TSKindId.U128Keyword]: U128KeywordNs;
-	[TSKindId.I128Keyword]: I128KeywordNs;
-	[TSKindId.IsizeKeyword]: IsizeKeywordNs;
-	[TSKindId.UsizeKeyword]: UsizeKeywordNs;
-	[TSKindId.F32Keyword]: F32KeywordNs;
-	[TSKindId.F64Keyword]: F64KeywordNs;
-	[TSKindId.BoolKeyword]: BoolKeywordNs;
-	[TSKindId.StrKeyword]: StrKeywordNs;
-	[TSKindId.CharKeyword]: CharKeywordNs;
-	[TSKindId.DefaultKeyword]: DefaultKeywordNs;
-	[TSKindId.UnionKeyword]: UnionKeywordNs;
-	[TSKindId.GenKeyword]: GenKeywordNs;
 	[TSKindId.Identifier]: IdentifierNs;
 	[TSKindId.TokenRepetitionPatternText]: TokenRepetitionPatternTextNs;
 	[TSKindId.StringOpen]: StringOpenNs;
@@ -19527,28 +17807,9 @@ export type FixedTextKindId =
 	| TSKindId.Lbrack
 	| TSKindId.Rbrack
 	| TSKindId.Bang
-	| TSKindId.U8Keyword
-	| TSKindId.I8Keyword
-	| TSKindId.U16Keyword
-	| TSKindId.I16Keyword
-	| TSKindId.U32Keyword
-	| TSKindId.I32Keyword
-	| TSKindId.U64Keyword
-	| TSKindId.I64Keyword
-	| TSKindId.U128Keyword
-	| TSKindId.I128Keyword
-	| TSKindId.IsizeKeyword
-	| TSKindId.UsizeKeyword
-	| TSKindId.F32Keyword
-	| TSKindId.F64Keyword
-	| TSKindId.BoolKeyword
-	| TSKindId.StrKeyword
-	| TSKindId.CharKeyword
-	| TSKindId.DefaultKeyword
-	| TSKindId.UnionKeyword
-	| TSKindId.GenKeyword
 	| TSKindId.Lbrace
 	| TSKindId.Rbrace
+	| TSKindId.UnionKeyword
 	| TSKindId.EnumKeyword
 	| TSKindId.Eq
 	| TSKindId.ExternKeyword
@@ -19560,6 +17821,7 @@ export type FixedTextKindId =
 	| TSKindId.FnKeyword
 	| TSKindId.DashGt
 	| TSKindId.AsyncKeyword
+	| TSKindId.DefaultKeyword
 	| TSKindId.UnsafeKeyword
 	| TSKindId.WhereKeyword
 	| TSKindId.TraitKeyword
@@ -19612,6 +17874,7 @@ export type FixedTextKindId =
 	| TSKindId.Dot
 	| TSKindId.AwaitKeyword
 	| TSKindId.MoveKeyword
+	| TSKindId.GenKeyword
 	| TSKindId.TryKeyword
 	| TSKindId.At
 	| TSKindId.Dquote
@@ -19620,6 +17883,23 @@ export type FixedTextKindId =
 	| TSKindId.SlashSlash
 	| TSKindId.SlashStar
 	| TSKindId.StarSlash
+	| TSKindId.U8Keyword
+	| TSKindId.I8Keyword
+	| TSKindId.U16Keyword
+	| TSKindId.I16Keyword
+	| TSKindId.U32Keyword
+	| TSKindId.I32Keyword
+	| TSKindId.U64Keyword
+	| TSKindId.I64Keyword
+	| TSKindId.U128Keyword
+	| TSKindId.I128Keyword
+	| TSKindId.IsizeKeyword
+	| TSKindId.UsizeKeyword
+	| TSKindId.F32Keyword
+	| TSKindId.F64Keyword
+	| TSKindId.BoolKeyword
+	| TSKindId.StrKeyword
+	| TSKindId.CharKeyword
 	| TSKindId.Underscore
 	| TSKindId.DotDotEq
 	| TSKindId.ModKeyword
@@ -19879,26 +18159,6 @@ export interface TypeKeyOf {
 	[TSKindId.DoubleBlankline]: 'doubleBlankline';
 	[TSKindId.Indent]: 'indent';
 	[TSKindId.Dedent]: 'dedent';
-	[TSKindId.U8Keyword]: 'u8Keyword';
-	[TSKindId.I8Keyword]: 'i8Keyword';
-	[TSKindId.U16Keyword]: 'u16Keyword';
-	[TSKindId.I16Keyword]: 'i16Keyword';
-	[TSKindId.U32Keyword]: 'u32Keyword';
-	[TSKindId.I32Keyword]: 'i32Keyword';
-	[TSKindId.U64Keyword]: 'u64Keyword';
-	[TSKindId.I64Keyword]: 'i64Keyword';
-	[TSKindId.U128Keyword]: 'u128Keyword';
-	[TSKindId.I128Keyword]: 'i128Keyword';
-	[TSKindId.IsizeKeyword]: 'isizeKeyword';
-	[TSKindId.UsizeKeyword]: 'usizeKeyword';
-	[TSKindId.F32Keyword]: 'f32Keyword';
-	[TSKindId.F64Keyword]: 'f64Keyword';
-	[TSKindId.BoolKeyword]: 'boolKeyword';
-	[TSKindId.StrKeyword]: 'strKeyword';
-	[TSKindId.CharKeyword]: 'charKeyword';
-	[TSKindId.DefaultKeyword]: 'defaultKeyword';
-	[TSKindId.UnionKeyword]: 'unionKeyword';
-	[TSKindId.GenKeyword]: 'genKeyword';
 	[TSKindId.Identifier]: 'identifier';
 	[TSKindId.TokenRepetitionPatternText]: 'tokenRepetitionPatternText';
 	[TSKindId.StringOpen]: 'stringOpen';
@@ -22863,31 +21123,11 @@ export namespace UseClauses {
 		| [
 				element: Admit<
 					| TSKindId.Self
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
 					| T.Metavariable
 					| TSKindId.Super
 					| TSKindId.Crate
 					| T.Identifier
 					| T.ScopedIdentifier
-					| TSKindId.DefaultKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.GenKeyword
 					| T.UseAsClause
 					| T.UseList
 					| T.ScopedUseList
@@ -22895,31 +21135,11 @@ export namespace UseClauses {
 				>,
 				...elements: Admit<
 					| TSKindId.Self
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
 					| T.Metavariable
 					| TSKindId.Super
 					| TSKindId.Crate
 					| T.Identifier
 					| T.ScopedIdentifier
-					| TSKindId.DefaultKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.GenKeyword
 					| T.UseAsClause
 					| T.UseList
 					| T.ScopedUseList
@@ -22930,31 +21150,11 @@ export namespace UseClauses {
 				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<
 					| TSKindId.Self
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
 					| T.Metavariable
 					| TSKindId.Super
 					| TSKindId.Crate
 					| T.Identifier
 					| T.ScopedIdentifier
-					| TSKindId.DefaultKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.GenKeyword
 					| T.UseAsClause
 					| T.UseList
 					| T.ScopedUseList
@@ -22962,31 +21162,11 @@ export namespace UseClauses {
 				>,
 				...elements: Admit<
 					| TSKindId.Self
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
 					| T.Metavariable
 					| TSKindId.Super
 					| TSKindId.Crate
 					| T.Identifier
 					| T.ScopedIdentifier
-					| TSKindId.DefaultKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.GenKeyword
 					| T.UseAsClause
 					| T.UseList
 					| T.ScopedUseList
@@ -22999,31 +21179,11 @@ export namespace UseClauses {
 					| T.UseClauses.Loose
 					| LooseValue<
 							| TSKindId.Self
-							| TSKindId.U8Keyword
-							| TSKindId.I8Keyword
-							| TSKindId.U16Keyword
-							| TSKindId.I16Keyword
-							| TSKindId.U32Keyword
-							| TSKindId.I32Keyword
-							| TSKindId.U64Keyword
-							| TSKindId.I64Keyword
-							| TSKindId.U128Keyword
-							| TSKindId.I128Keyword
-							| TSKindId.IsizeKeyword
-							| TSKindId.UsizeKeyword
-							| TSKindId.F32Keyword
-							| TSKindId.F64Keyword
-							| TSKindId.BoolKeyword
-							| TSKindId.StrKeyword
-							| TSKindId.CharKeyword
 							| T.Metavariable
 							| TSKindId.Super
 							| TSKindId.Crate
 							| T.Identifier
 							| T.ScopedIdentifier
-							| TSKindId.DefaultKeyword
-							| TSKindId.UnionKeyword
-							| TSKindId.GenKeyword
 							| T.UseAsClause
 							| T.UseList
 							| T.ScopedUseList
@@ -23036,31 +21196,11 @@ export namespace UseClauses {
 					| T.UseClauses.Loose
 					| LooseValue<
 							| TSKindId.Self
-							| TSKindId.U8Keyword
-							| TSKindId.I8Keyword
-							| TSKindId.U16Keyword
-							| TSKindId.I16Keyword
-							| TSKindId.U32Keyword
-							| TSKindId.I32Keyword
-							| TSKindId.U64Keyword
-							| TSKindId.I64Keyword
-							| TSKindId.U128Keyword
-							| TSKindId.I128Keyword
-							| TSKindId.IsizeKeyword
-							| TSKindId.UsizeKeyword
-							| TSKindId.F32Keyword
-							| TSKindId.F64Keyword
-							| TSKindId.BoolKeyword
-							| TSKindId.StrKeyword
-							| TSKindId.CharKeyword
 							| T.Metavariable
 							| TSKindId.Super
 							| TSKindId.Crate
 							| T.Identifier
 							| T.ScopedIdentifier
-							| TSKindId.DefaultKeyword
-							| TSKindId.UnionKeyword
-							| TSKindId.GenKeyword
 							| T.UseAsClause
 							| T.UseList
 							| T.ScopedUseList
@@ -23077,31 +21217,11 @@ export namespace UseClauses {
 					| T.UseClauses.Loose
 					| LooseValue<
 							| TSKindId.Self
-							| TSKindId.U8Keyword
-							| TSKindId.I8Keyword
-							| TSKindId.U16Keyword
-							| TSKindId.I16Keyword
-							| TSKindId.U32Keyword
-							| TSKindId.I32Keyword
-							| TSKindId.U64Keyword
-							| TSKindId.I64Keyword
-							| TSKindId.U128Keyword
-							| TSKindId.I128Keyword
-							| TSKindId.IsizeKeyword
-							| TSKindId.UsizeKeyword
-							| TSKindId.F32Keyword
-							| TSKindId.F64Keyword
-							| TSKindId.BoolKeyword
-							| TSKindId.StrKeyword
-							| TSKindId.CharKeyword
 							| T.Metavariable
 							| TSKindId.Super
 							| TSKindId.Crate
 							| T.Identifier
 							| T.ScopedIdentifier
-							| TSKindId.DefaultKeyword
-							| TSKindId.UnionKeyword
-							| TSKindId.GenKeyword
 							| T.UseAsClause
 							| T.UseList
 							| T.ScopedUseList
@@ -23114,31 +21234,11 @@ export namespace UseClauses {
 					| T.UseClauses.Loose
 					| LooseValue<
 							| TSKindId.Self
-							| TSKindId.U8Keyword
-							| TSKindId.I8Keyword
-							| TSKindId.U16Keyword
-							| TSKindId.I16Keyword
-							| TSKindId.U32Keyword
-							| TSKindId.I32Keyword
-							| TSKindId.U64Keyword
-							| TSKindId.I64Keyword
-							| TSKindId.U128Keyword
-							| TSKindId.I128Keyword
-							| TSKindId.IsizeKeyword
-							| TSKindId.UsizeKeyword
-							| TSKindId.F32Keyword
-							| TSKindId.F64Keyword
-							| TSKindId.BoolKeyword
-							| TSKindId.StrKeyword
-							| TSKindId.CharKeyword
 							| T.Metavariable
 							| TSKindId.Super
 							| TSKindId.Crate
 							| T.Identifier
 							| T.ScopedIdentifier
-							| TSKindId.DefaultKeyword
-							| TSKindId.UnionKeyword
-							| TSKindId.GenKeyword
 							| T.UseAsClause
 							| T.UseList
 							| T.ScopedUseList
@@ -23843,34 +21943,7 @@ export namespace UseWildcardGroup {
 	export type Loose = LooseFor<TSKindId.UseWildcardGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UseWildcardGroup>;
 	export type BuildArgs = [
-		value?: Admit<
-			| TSKindId.Self
-			| TSKindId.U8Keyword
-			| TSKindId.I8Keyword
-			| TSKindId.U16Keyword
-			| TSKindId.I16Keyword
-			| TSKindId.U32Keyword
-			| TSKindId.I32Keyword
-			| TSKindId.U64Keyword
-			| TSKindId.I64Keyword
-			| TSKindId.U128Keyword
-			| TSKindId.I128Keyword
-			| TSKindId.IsizeKeyword
-			| TSKindId.UsizeKeyword
-			| TSKindId.F32Keyword
-			| TSKindId.F64Keyword
-			| TSKindId.BoolKeyword
-			| TSKindId.StrKeyword
-			| TSKindId.CharKeyword
-			| T.Metavariable
-			| TSKindId.Super
-			| TSKindId.Crate
-			| T.Identifier
-			| T.ScopedIdentifier
-			| TSKindId.DefaultKeyword
-			| TSKindId.UnionKeyword
-			| TSKindId.GenKeyword
-		>
+		value?: Admit<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>
 	];
 	export type LooseArgs = [value?: T.UseWildcardGroup.Loose];
 	export type Kind = TSKindId.UseWildcardGroup;
@@ -24390,34 +22463,7 @@ export namespace VisibilityModifierPubScopeInPath {
 	export type Loose = LooseFor<TSKindId.VisibilityModifierPubScopeInPath>;
 	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierPubScopeInPath>;
 	export type BuildArgs = [
-		value: Admit<
-			| TSKindId.Self
-			| TSKindId.U8Keyword
-			| TSKindId.I8Keyword
-			| TSKindId.U16Keyword
-			| TSKindId.I16Keyword
-			| TSKindId.U32Keyword
-			| TSKindId.I32Keyword
-			| TSKindId.U64Keyword
-			| TSKindId.I64Keyword
-			| TSKindId.U128Keyword
-			| TSKindId.I128Keyword
-			| TSKindId.IsizeKeyword
-			| TSKindId.UsizeKeyword
-			| TSKindId.F32Keyword
-			| TSKindId.F64Keyword
-			| TSKindId.BoolKeyword
-			| TSKindId.StrKeyword
-			| TSKindId.CharKeyword
-			| T.Metavariable
-			| TSKindId.Super
-			| TSKindId.Crate
-			| T.Identifier
-			| T.ScopedIdentifier
-			| TSKindId.DefaultKeyword
-			| TSKindId.UnionKeyword
-			| TSKindId.GenKeyword
-		>
+		value: Admit<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>
 	];
 	export type LooseArgs = [value: T.VisibilityModifierPubScopeInPath.Loose];
 	export type Kind = TSKindId.VisibilityModifierPubScopeInPath;
@@ -25931,206 +23977,6 @@ export namespace Dedent {
 	export type LooseArgs = DedentNs['LooseArgs'];
 	export type Kind = TSKindId.Dedent;
 }
-export namespace U8Keyword {
-	export type Config = U8KeywordNs['Config'];
-	export type Bound = U8KeywordNs['Bound'];
-	export type Parsed = U8KeywordNs['Bound'];
-	export type Loose = U8KeywordNs['Loose'];
-	export type LooseConfig = U8KeywordNs['LooseConfig'];
-	export type BuildArgs = U8KeywordNs['BuildArgs'];
-	export type LooseArgs = U8KeywordNs['LooseArgs'];
-	export type Kind = TSKindId.U8Keyword;
-}
-export namespace I8Keyword {
-	export type Config = I8KeywordNs['Config'];
-	export type Bound = I8KeywordNs['Bound'];
-	export type Parsed = I8KeywordNs['Bound'];
-	export type Loose = I8KeywordNs['Loose'];
-	export type LooseConfig = I8KeywordNs['LooseConfig'];
-	export type BuildArgs = I8KeywordNs['BuildArgs'];
-	export type LooseArgs = I8KeywordNs['LooseArgs'];
-	export type Kind = TSKindId.I8Keyword;
-}
-export namespace U16Keyword {
-	export type Config = U16KeywordNs['Config'];
-	export type Bound = U16KeywordNs['Bound'];
-	export type Parsed = U16KeywordNs['Bound'];
-	export type Loose = U16KeywordNs['Loose'];
-	export type LooseConfig = U16KeywordNs['LooseConfig'];
-	export type BuildArgs = U16KeywordNs['BuildArgs'];
-	export type LooseArgs = U16KeywordNs['LooseArgs'];
-	export type Kind = TSKindId.U16Keyword;
-}
-export namespace I16Keyword {
-	export type Config = I16KeywordNs['Config'];
-	export type Bound = I16KeywordNs['Bound'];
-	export type Parsed = I16KeywordNs['Bound'];
-	export type Loose = I16KeywordNs['Loose'];
-	export type LooseConfig = I16KeywordNs['LooseConfig'];
-	export type BuildArgs = I16KeywordNs['BuildArgs'];
-	export type LooseArgs = I16KeywordNs['LooseArgs'];
-	export type Kind = TSKindId.I16Keyword;
-}
-export namespace U32Keyword {
-	export type Config = U32KeywordNs['Config'];
-	export type Bound = U32KeywordNs['Bound'];
-	export type Parsed = U32KeywordNs['Bound'];
-	export type Loose = U32KeywordNs['Loose'];
-	export type LooseConfig = U32KeywordNs['LooseConfig'];
-	export type BuildArgs = U32KeywordNs['BuildArgs'];
-	export type LooseArgs = U32KeywordNs['LooseArgs'];
-	export type Kind = TSKindId.U32Keyword;
-}
-export namespace I32Keyword {
-	export type Config = I32KeywordNs['Config'];
-	export type Bound = I32KeywordNs['Bound'];
-	export type Parsed = I32KeywordNs['Bound'];
-	export type Loose = I32KeywordNs['Loose'];
-	export type LooseConfig = I32KeywordNs['LooseConfig'];
-	export type BuildArgs = I32KeywordNs['BuildArgs'];
-	export type LooseArgs = I32KeywordNs['LooseArgs'];
-	export type Kind = TSKindId.I32Keyword;
-}
-export namespace U64Keyword {
-	export type Config = U64KeywordNs['Config'];
-	export type Bound = U64KeywordNs['Bound'];
-	export type Parsed = U64KeywordNs['Bound'];
-	export type Loose = U64KeywordNs['Loose'];
-	export type LooseConfig = U64KeywordNs['LooseConfig'];
-	export type BuildArgs = U64KeywordNs['BuildArgs'];
-	export type LooseArgs = U64KeywordNs['LooseArgs'];
-	export type Kind = TSKindId.U64Keyword;
-}
-export namespace I64Keyword {
-	export type Config = I64KeywordNs['Config'];
-	export type Bound = I64KeywordNs['Bound'];
-	export type Parsed = I64KeywordNs['Bound'];
-	export type Loose = I64KeywordNs['Loose'];
-	export type LooseConfig = I64KeywordNs['LooseConfig'];
-	export type BuildArgs = I64KeywordNs['BuildArgs'];
-	export type LooseArgs = I64KeywordNs['LooseArgs'];
-	export type Kind = TSKindId.I64Keyword;
-}
-export namespace U128Keyword {
-	export type Config = U128KeywordNs['Config'];
-	export type Bound = U128KeywordNs['Bound'];
-	export type Parsed = U128KeywordNs['Bound'];
-	export type Loose = U128KeywordNs['Loose'];
-	export type LooseConfig = U128KeywordNs['LooseConfig'];
-	export type BuildArgs = U128KeywordNs['BuildArgs'];
-	export type LooseArgs = U128KeywordNs['LooseArgs'];
-	export type Kind = TSKindId.U128Keyword;
-}
-export namespace I128Keyword {
-	export type Config = I128KeywordNs['Config'];
-	export type Bound = I128KeywordNs['Bound'];
-	export type Parsed = I128KeywordNs['Bound'];
-	export type Loose = I128KeywordNs['Loose'];
-	export type LooseConfig = I128KeywordNs['LooseConfig'];
-	export type BuildArgs = I128KeywordNs['BuildArgs'];
-	export type LooseArgs = I128KeywordNs['LooseArgs'];
-	export type Kind = TSKindId.I128Keyword;
-}
-export namespace IsizeKeyword {
-	export type Config = IsizeKeywordNs['Config'];
-	export type Bound = IsizeKeywordNs['Bound'];
-	export type Parsed = IsizeKeywordNs['Bound'];
-	export type Loose = IsizeKeywordNs['Loose'];
-	export type LooseConfig = IsizeKeywordNs['LooseConfig'];
-	export type BuildArgs = IsizeKeywordNs['BuildArgs'];
-	export type LooseArgs = IsizeKeywordNs['LooseArgs'];
-	export type Kind = TSKindId.IsizeKeyword;
-}
-export namespace UsizeKeyword {
-	export type Config = UsizeKeywordNs['Config'];
-	export type Bound = UsizeKeywordNs['Bound'];
-	export type Parsed = UsizeKeywordNs['Bound'];
-	export type Loose = UsizeKeywordNs['Loose'];
-	export type LooseConfig = UsizeKeywordNs['LooseConfig'];
-	export type BuildArgs = UsizeKeywordNs['BuildArgs'];
-	export type LooseArgs = UsizeKeywordNs['LooseArgs'];
-	export type Kind = TSKindId.UsizeKeyword;
-}
-export namespace F32Keyword {
-	export type Config = F32KeywordNs['Config'];
-	export type Bound = F32KeywordNs['Bound'];
-	export type Parsed = F32KeywordNs['Bound'];
-	export type Loose = F32KeywordNs['Loose'];
-	export type LooseConfig = F32KeywordNs['LooseConfig'];
-	export type BuildArgs = F32KeywordNs['BuildArgs'];
-	export type LooseArgs = F32KeywordNs['LooseArgs'];
-	export type Kind = TSKindId.F32Keyword;
-}
-export namespace F64Keyword {
-	export type Config = F64KeywordNs['Config'];
-	export type Bound = F64KeywordNs['Bound'];
-	export type Parsed = F64KeywordNs['Bound'];
-	export type Loose = F64KeywordNs['Loose'];
-	export type LooseConfig = F64KeywordNs['LooseConfig'];
-	export type BuildArgs = F64KeywordNs['BuildArgs'];
-	export type LooseArgs = F64KeywordNs['LooseArgs'];
-	export type Kind = TSKindId.F64Keyword;
-}
-export namespace BoolKeyword {
-	export type Config = BoolKeywordNs['Config'];
-	export type Bound = BoolKeywordNs['Bound'];
-	export type Parsed = BoolKeywordNs['Bound'];
-	export type Loose = BoolKeywordNs['Loose'];
-	export type LooseConfig = BoolKeywordNs['LooseConfig'];
-	export type BuildArgs = BoolKeywordNs['BuildArgs'];
-	export type LooseArgs = BoolKeywordNs['LooseArgs'];
-	export type Kind = TSKindId.BoolKeyword;
-}
-export namespace StrKeyword {
-	export type Config = StrKeywordNs['Config'];
-	export type Bound = StrKeywordNs['Bound'];
-	export type Parsed = StrKeywordNs['Bound'];
-	export type Loose = StrKeywordNs['Loose'];
-	export type LooseConfig = StrKeywordNs['LooseConfig'];
-	export type BuildArgs = StrKeywordNs['BuildArgs'];
-	export type LooseArgs = StrKeywordNs['LooseArgs'];
-	export type Kind = TSKindId.StrKeyword;
-}
-export namespace CharKeyword {
-	export type Config = CharKeywordNs['Config'];
-	export type Bound = CharKeywordNs['Bound'];
-	export type Parsed = CharKeywordNs['Bound'];
-	export type Loose = CharKeywordNs['Loose'];
-	export type LooseConfig = CharKeywordNs['LooseConfig'];
-	export type BuildArgs = CharKeywordNs['BuildArgs'];
-	export type LooseArgs = CharKeywordNs['LooseArgs'];
-	export type Kind = TSKindId.CharKeyword;
-}
-export namespace DefaultKeyword {
-	export type Config = DefaultKeywordNs['Config'];
-	export type Bound = DefaultKeywordNs['Bound'];
-	export type Parsed = DefaultKeywordNs['Bound'];
-	export type Loose = DefaultKeywordNs['Loose'];
-	export type LooseConfig = DefaultKeywordNs['LooseConfig'];
-	export type BuildArgs = DefaultKeywordNs['BuildArgs'];
-	export type LooseArgs = DefaultKeywordNs['LooseArgs'];
-	export type Kind = TSKindId.DefaultKeyword;
-}
-export namespace UnionKeyword {
-	export type Config = UnionKeywordNs['Config'];
-	export type Bound = UnionKeywordNs['Bound'];
-	export type Parsed = UnionKeywordNs['Bound'];
-	export type Loose = UnionKeywordNs['Loose'];
-	export type LooseConfig = UnionKeywordNs['LooseConfig'];
-	export type BuildArgs = UnionKeywordNs['BuildArgs'];
-	export type LooseArgs = UnionKeywordNs['LooseArgs'];
-	export type Kind = TSKindId.UnionKeyword;
-}
-export namespace GenKeyword {
-	export type Config = GenKeywordNs['Config'];
-	export type Bound = GenKeywordNs['Bound'];
-	export type Parsed = GenKeywordNs['Bound'];
-	export type Loose = GenKeywordNs['Loose'];
-	export type LooseConfig = GenKeywordNs['LooseConfig'];
-	export type BuildArgs = GenKeywordNs['BuildArgs'];
-	export type LooseArgs = GenKeywordNs['LooseArgs'];
-	export type Kind = TSKindId.GenKeyword;
-}
 export namespace Identifier {
 	export type Config = IdentifierNs['Config'];
 	export interface Bound extends NodeMethodsOf {
@@ -26510,17 +24356,7 @@ export interface RustTypeMap extends GrammarTypeMap {
 		| { readonly node: DelimTokenTreeBrace; readonly empty: EmptyDelimTokenTreeBrace }
 		| { readonly node: DelimTokenTreeBrace.Bound; readonly empty: EmptyDelimTokenTreeBrace }
 		| { readonly node: DelimTokenTreeBrace.Parsed; readonly empty: EmptyDelimTokenTreeBrace.Parsed };
-	readonly trivia:
-		| Blankline
-		| BlockComment
-		| Comment
-		| Dedent
-		| DoubleBlankline
-		| Indent
-		| LineComment
-		| Newline
-		| Space
-		| Tab;
+	readonly trivia: Comment | Layout;
 }
 
 export type NodeMethodsOf = NodeMethods<RustTypeMap['trivia']>;

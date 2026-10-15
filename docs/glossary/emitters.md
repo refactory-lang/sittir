@@ -216,7 +216,7 @@ The grammar's `api.ts`: the implementation a language descriptor loads. It decla
 
 ### `packages/codegen/src/emitters/factories.ts::buildLeafReConsts`
 
-The whole-text guard of every text-leaf factory. For each pattern-model kind that has a factory and a `textPattern`, it emits one module-scope constant `_leafRe_<factory>` holding the anchored literal `/^(?:<pattern>)$/`, and returns the kind → constant map the leaf guards read. The literal comes from `anchoredLeafRegexLiteral`, so the compile test and the emitted constant cannot drift. A kind with no derivable pattern (an external scanner token with no interior, an indent or dedent mark) gets no constant and keeps only its non-empty guard. Hidden fixed-text leaves have no factory and no constant.
+The whole-text guard of every text-leaf factory. For each pattern-model kind that has a factory and a `textPattern`, it emits one module-scope constant `_leafRe_<factory>` holding the anchored literal `/^(?:<pattern>)$/`, and returns the kind → constant map the leaf guards read. The literal comes from `anchoredLeafRegexLiteral`, so the compile test and the emitted constant cannot drift. Each distinct literal is written once per module: a later constant whose literal is already declared (a shared sub-rule such as a digit run, or two kinds with one pattern) is declared as the first constant (`export const _leafRe_b = _leafRe_a;`). The constants are exported, and the coercer's leaf registry reads them, so the factories hold one literal per leaf pattern; a test ratchets that at no copies. A kind with no derivable pattern (an external scanner token with no interior, an indent or dedent mark) gets no constant and keeps only its non-empty guard. Hidden fixed-text leaves have no factory and no constant.
 
 The guards themselves (`buildLeafGuards`) always run: a non-empty check on every text leaf whose pattern does not accept the empty string (an empty doc comment is valid text for a `.*` leaf, so the pattern alone decides there) and, where a constant exists, `!_leafRe_<factory>.test(text)`. Neither is conditional on a debug flag; the guard is the factory's contract.
 
@@ -286,9 +286,9 @@ an element is seated only when a present element follows it. The seating happens
 the element's, because only the parent knows an element's position.
 
 The seat fills an `after` edge only when nothing set it first. The slot's
-`listGapClassification` runs before it, so a gap whose two items are still
-adjacent in the source already holds its source class and keeps it; every
-other gap takes the seat of the kind before it.
+stored layout fills first (`slotGapFills`), so a separator gap whose list
+slot stores a class for its side keeps that class; every other gap takes the
+seat of the kind before it.
 
 ### `packages/codegen/src/emitters/render-module.ts::seatedListFields`
 
@@ -307,6 +307,15 @@ The one slot a polymorph wrapper holds its content in, or `undefined` for a
 node that is not a polymorph wrapper (supertypes are excluded: they reach a
 seat through their subtypes, not a slot).
 
+### `packages/codegen/src/emitters/render-module.ts::seatWrappersOf`
+
+Each polymorph wrapper's seat passage, the rows of `SEAT_WRAPPERS`: its kind
+id and the field id of its content slot (`wrapperSlotOf`), 0 for an
+unfielded content slot. A coordinate of a wrapper kind seats through the node
+it holds there, as a wrapper transport seats through its content
+(`sittir_core::prepare::coord_seat`). A fielded content slot with no field id
+fails at codegen.
+
 ### `packages/codegen/src/emitters/render-module.ts::slotElementsReach`
 
 Whether any element kind a slot admits reaches a seat, classified the way
@@ -324,10 +333,13 @@ kinds whose own base `after` edge a seat table fills.
 `seatReachOf`'s memo, keyed weakly by the render plan so a plan's reach set
 is computed once and dropped with the plan.
 
-### `packages/codegen/src/emitters/render-module.ts::SEAT_TARGET_SIG`
+### `packages/codegen/src/emitters/render-module.ts::seatTargetSig`
 
 The emitted `seat_target` signature line, shared by the struct and enum
-impls so the two cannot drift from the core trait.
+impls so the two cannot drift from the core trait. It names the render
+context `ctx` where the impl reads it (a delegating arm, a wrapper's
+descent) and `_ctx` where it does not (an impl of fixed-literal arms only, a
+seated kind that wraps nothing).
 
 ### `packages/codegen/src/emitters/render-module.ts::seatReachOf`
 
@@ -355,7 +367,12 @@ The seat arm of one reaching variant: a payload delegates to its own
 `impl SeatTarget` for one transport struct that reaches a seat. A seated
 kind looks itself up in the table by its kind id (`seat_site`) and answers
 its own base `edges` with the site; a polymorph wrapper that is not itself
-seated descends into its content slot. A wrapper keeps its own edges: the
+seated descends into its content slot: into a transport through its own
+`seat_target`, and into a coordinate through `sittir_core::prepare::coord_seat`,
+which answers the wrapper's own `edges` with the site the coordinate's node
+seats at, its kind's or that of the node it holds through the wrappers it is
+(`SEAT_WRAPPERS`). So a wrapper read with its content past the depth seats as
+it does read whole. A wrapper keeps its own edges: the
 descent is a separate trait, not an `Edged` delegation, so filling a seat
 never overwrites the wrapper's own kind edges. A seated kind with no kind id
 fails at codegen. A seated fixed-literal kind answers through its own type's
@@ -1088,15 +1105,6 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
 #### body
 
 ```text
-// `_separator` is never absent on a built node: the caller's kind id, else
-// the grammar's declared default (`declaredSeparatorDefault`). The typed
-// read stamps the same default on a parsed list that carries no separator
-// token, so a read reference and a rebuilt node agree field for field.
-```
-
-#### body
-
-```text
 // Rest param type must match `elementsType` exactly (`NonEmptyArray<T>`
 // when nonEmpty) — a plain `T[]` rest capture isn't assignable to the
 // tuple-shaped `NonEmptyArray<T>` the factory's own `elements` parameter
@@ -1114,9 +1122,13 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
 // off `rule.type`, never off the derived value count.
 ```
 
-`_separator` is `options.separator ?? <declared default>`
-(`declaredSeparatorDefault`), so a built node always carries its token,
-as it always carries its delimiter.
+`_separator` is the caller's `options.separator` and nothing else, as
+`_delimiter` is the caller's `options.delimiter`: a built node stores only
+what the caller chose, and the read stores neither (a source's separator
+is its list slot's stored layout). The node's `separator` getter answers
+the declared default where nothing is stored (`declaredSeparatorDefault`,
+through `listOptionDefaults`), and the render fills it from the options,
+whose own default is the same declaration.
 
 ### `packages/codegen/src/emitters/factories.ts::withLeadingOptions`
 
@@ -2107,7 +2119,7 @@ A single branch kind at an optional slot resolves through `_resolveOneBranch(val
  */
 ```
 
-Every text kind's check is built once as a `TextKindCheck` — fixed `values` for a visible fixed-text leaf, the compiled `pattern` (`anchoredLeafRegex`, or the token interior's `su` regex) otherwise — and the registry row prints that same check, so the emitted row and `leafTextChecks` cannot drift. The checks come back ordered by `rankTextKinds`, and their kinds are emitted as `_TEXT_KINDS_BY_RANK`. Hidden and visible leaves register alike; a kind the factory emitter does not emit (`classifyFactoryEmission`) is skipped, and a pattern kind with no text pattern is skipped when no slot references it and is an error otherwise.
+Every text kind's check is built once as a `TextKindCheck` — fixed `values` for a visible fixed-text leaf, the compiled `pattern` (`anchoredLeafRegex`, or the token interior's `su` regex) otherwise — and the registry row carries that same check, so the emitted row and `leafTextChecks` cannot drift. A pattern row names the leaf builder's own guard constant (`F._leafRe_<factory>`, from `leafReDeclaration`; an alias names its pattern leaf's constant), and a lexed row compiles the interior through `interiorPattern`; the registry never prints a regex of its own. The checks come back ordered by `rankTextKinds`, and their kinds are emitted as `_TEXT_KINDS_BY_RANK`. Hidden and visible leaves register alike; a kind the factory emitter does not emit (`classifyFactoryEmission`) is skipped, and a pattern kind with no text pattern is skipped when no slot references it and is an error otherwise.
 
 ```text
 // ---------------------------------------------------------------------------
@@ -2844,6 +2856,12 @@ A row's member is named from its model kind (`modelKindOfEntry`, so a renamed ro
 
 `SURFACE_KINDS` also carries the depth pair's kind ids (`indent`, `dedent`, 0 for none, from `depthMembersOf`) and `depth: super::options::DEPTH_REGIONS`, the structural indentation `options.rs` writes, so the trivia table reads every surface fact from the one constant.
 
+Also emits `RELAXED_KEYWORDS`, the token ids of the keywords the grammar relaxes into its word rule (`relaxedKeywordIds`, from the node map's `relaxedLiterals`), and `relaxes(grammar, display)`, true for a node displayed as the word rule whose grammar id is one of them. The generated engine grammar returns it from `EngineGrammar::relaxes`, and `ReadCtx::stamped_kind` stamps such a node as the word rule.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::relaxedKeywordIds`
+
+The catalog ids of the tokens of a node map's `relaxedLiterals`: the keywords the grammar aliases to its word rule. Resolves each literal through `findKindEntryForLiteral`, preserving the canonical anonymous-token, literal-rule, then terminal precedence independently of catalog row order. Shared by the reader's relaxed-keyword table and identifier transport folding.
+
 ### `packages/codegen/src/emitters/kind-id-rust.ts::KindConstant`
 
 One `kind_ids.rs` constant: its name and the kind id it holds.
@@ -3004,7 +3022,9 @@ same single `SpacingWriter` wrap; a second entry point would be a second
 place the root seam policy could drift. It takes the render context and
 builds the writer from it: `.with_table(&options::WHITESPACE)` so
 `w.site(...)` resolves against this grammar's whitespace vocabulary,
-`.with_indent(&ctx.options.indent)`, and `.with_sources(ctx.sources)` so a
+`.with_indent(&ctx.options.indent)`, `.with_recording(ctx.recording)` so a
+recording render (a parsed tree's layout baseline) records the line breaks it
+writes, and `.with_sources(ctx.sources)` so a
 `Coord` slot slices its bytes from the tree the engine still holds. It wraps
 the output `String` once, never per level, and calls
 `transport.render(&mut w)`.
@@ -3147,35 +3167,21 @@ whose statements `buildTypedTemplateBody` produces. The node-wide fallback
 separator comes from `MetaData.separators` for list slots whose values
 carry no per-slot separator stamp.
 
-### `packages/codegen/src/emitters/render-module.ts::buildSeparatorKindMatchLines`
+### `packages/codegen/src/emitters/render-module.ts::separatorTextFn`
 
-```text
-/**
- * Emit `match node.separator_kind { Some(<id>) => "<lit>", ..., _ => <fallback> }`
- * lines resolving a `'list'` node's per-instance nonterminal-separator
- * KindId back to its compile-time-known literal text (design doc's "Render"
- * section: the render side never stores separator text, only resynthesizes it).
- *
- * Candidates are the list's `separatorCandidateKindNames` — the SAME stamped
- * arms wrap.ts's `_separator_kind` wire capture reads, so the
- * match arms enumerate exactly the kinds a real `_separator_kind` value can
- * hold. For a `STRING` arm, `rule.value` doubles as both the catalog lookup
- * key (an anon token's literal text IS its `symbolName`, per
- * `buildKindIdByKind`) and the literal text to emit — a nonterminal
- * separator's arms are themselves just literals (no real grammar kind has one
- * today; see `emitSeparatedListWrap`'s doc comment, wrap.ts).
- *
- * Returns `undefined` (caller falls back to the plain literal `fallbackSeparator`)
- * when none of the candidates resolve to a known id — codegen must still emit a
- * syntactically valid expression in that case.
- */
-```
+The closure a list whose separator is chosen per instance renders its
+separator kinds by: `|kind| match kind { <id> => "<text>", ..., _ => <fallback> }`,
+one arm per candidate kind (`separatorCandidateKindNames`, the arms the
+wire capture reads), so the render never stores separator text and only
+spells a kind. The list's view binds it once (`<slot>_separator`) and both
+its default token (`node.separator_kind`) and each item's own separator
+(`ListView::separators`, `layout::slot_tokens`) read it. `undefined` when no
+candidate has a kind id, and the plain literal is the token.
 
 When the plan holds a separator site for the list, the `_ =>` fallback is
 the declared default's token text (`SpacingSite.defaultText`) rather than
-the template's own separator literal: `fill_options` has already set
-`separator_kind` from the table, so the fallback only covers a transport
-that skipped the fill.
+the template's own separator literal: the prepare walk has already set
+`separator_kind`, so the fallback only covers a transport that skipped it.
 
 ### `packages/codegen/src/emitters/render-module.ts::buildTypedTemplateBody`
 
@@ -3238,7 +3244,8 @@ render.
 
 Emits the render module for a grammar: `transport.rs` (the transport
 types, their `Display` impls and the per-kind render functions), the
-options module, the hash files and `mod.rs`. Takes the emitted bodies —
+options module, the hash files, `mod.rs`, and `records.ts` (`recordsTs`),
+the record layouts the transport structs stamp. Takes the emitted bodies —
 the per-kind bodies are what the render functions and the validators'
 sidecar are both read from — the assembled node map, and the parser's
 kind-id tables. The tables are required: every transport decodes by kind id,
@@ -3511,6 +3518,21 @@ fill — share the first one's declaration and name, in node order. A choice
 whose arms write its owner's seam sites differs from another owner's and
 stays its own.
 
+Choices with the same variants that stay their own differ in one of three
+facts:
+
+- **The owner's seam sites** a literal arm writes. The fifteen typescript
+  statement `terminator` choices are one such set: each `;` arm writes its
+  own owner's sites.
+- **The kind ids a variant claims.** Rust `if_expression`'s `condition`
+  claims `_LET_CHAIN` and `LET_CHAIN` for its `LetChain` arm, and
+  `let_chain`'s `left` claims `_LET_CHAIN` only.
+- **The order of the arms**, which is the grammar's: typescript
+  `assignment_expression`'s `left` and `for_header`'s `left` list
+  `_lhs_expression` and the parenthesized expressions in opposite orders.
+  The claims are disjoint, so the order decides nothing, but the generated
+  choice follows the grammar rather than a canonical order.
+
 ### `packages/codegen/src/emitters/render-module.ts::choiceNameOf`
 
 The choice a union-shaped slot's field is typed by. A slot with no collected
@@ -3701,12 +3723,14 @@ between the seams the template and the joins write.
 
 `TriviaTransport` implements `TriviaSeam` for the whitespace trivia kinds (`whitespaceTriviaKinds`): such an entry is merged into the gap it sits in and replaces that gap's spacing, instead of rendering as a line of its own. Its seam text is the kind's fixed text: JS names a whitespace entry by its exact spelling, so the kind determines the text.
 
+A line continuation kind with a text of its own (`continuationTriviaKinds`) holds a `sittir_core::trivia::TriviaText` rather than its kind's struct, so it carries the adjacency an `ERROR` carries (`$before`/`$after`, the source's in-line runs beside it, `TriviaText::verbatim`). Without an adjacency (a built continuation) it is a seam member: its text replaces its gap's spacing. With one (a read continuation, `ParsedTree::assigned_side`) it is no seam member and renders verbatim with the runs, as an `ERROR` does, so the continuation line's alignment survives as text.
+
 `TransportLayout` is an alias for `sittir_core::layout::TransportLayout<TriviaTransport>`, the layout every struct transport carries; its trivia is a `sittir_core::trivia::TransportTrivia<TriviaTransport>`.
 The carrier's shape (leading, trailing and inner entries, each with its
 same-line facts) and where each entry renders are the core module's, the
 same for every grammar.
 
-It also emits a `Text` variant (`sittir_core::trivia::TriviaText`): a detached read entry that carries its stamped kind and captured text. `TriviaTransport` implements `FromTriviaText` as that variant, so a snapshot read builds each extra it places as its text and span. Its `from_layout` builds a whitespace kind's unit variant from the kind's id, one line per whitespace trivia kind, the same kinds `TriviaSeam` names: a parsed tree's trivia table reads each stored run of line layout as the member it classifies into. It writes that kind's edges around the text, like a rendered node of the kind. It is decoded from an object with `$text` whose kind is a compound trivia kind; a leaf trivia kind stores `$text` itself and keeps its own transport. A trivia entry needs no line-end handling of its own: each variant's render tells the sink its kind (`TransportLayout::render` for a typed variant, the kind's render function for a unit, `TriviaText`'s own render for `Text`), and the sink holds the line end from the grammar's `KIND_FLAGS` table (`renderOptionsRs`), as it does for any node.
+It also emits a `Text` variant (`sittir_core::trivia::TriviaText`): a detached read entry that carries its stamped kind and captured text. `TriviaTransport` implements `FromTriviaText` as that variant, so a snapshot read builds each extra it places as its text and span. Its `from_layout` takes the member's read text (`TriviaText`) and builds the variant its kind names, one line per whitespace or continuation trivia kind, the same kinds `TriviaSeam` names: a whitespace kind's unit variant, whatever the text, and a continuation kind's variant holding the text with its adjacency. A parsed tree's trivia table reads each stored run of line layout as the member it classifies into. It writes that kind's edges around the text, like a rendered node of the kind. It is decoded from an object with `$text` whose kind is a compound trivia kind; a leaf trivia kind stores `$text` itself and keeps its own transport. A trivia entry needs no line-end handling of its own: each variant's render tells the sink its kind (`TransportLayout::render` for a typed variant, the kind's render function for a unit, `TriviaText`'s own render for `Text`), and the sink holds the line end from the grammar's `KIND_FLAGS` table (`renderOptionsRs`), as it does for any node.
 
 The grammar's depth pair (`depthMembersOf`) takes its own unit variants, `Indent` and `Dedent`, kept out of the per-kind variants: each renders as a change to the writer's excess indentation (`RenderSink::layout_depth`) rather than as the template's depth mark, decodes from its kind id, is built by `from_layout`, and answers `TriviaSeam::depth`; `TriviaSeam::depth_member` builds the variant a change's sign names.
 
@@ -3839,10 +3863,10 @@ besides its slots, keyed `#[wire(key = "$_layout")]` (`wireKeyAttr`). A
 compound declares no text field — its content is its slots, and a node that
 arrives with storage renders from that storage.
 
-### `packages/codegen/src/emitters/render-module.ts::renderLeafTransportPlainFields`
+### `packages/codegen/src/emitters/render-module.ts::renderLeafTextField`
 
-A text leaf's transport fields: the layout field (`renderLayoutField`), then
-`text: String` keyed `$text`, the leaf's own content. The struct's
+A text leaf's `text: String` field, keyed `$text`: the leaf's own content,
+after its layout field (`renderLayoutField`). The struct's
 `#[transport(…, text …)]` (`transportArgs`) has the derive expand the text
 leaf codec: a bare string is its text, a number its fixed text, and an object
 its `$text` and its layout.
@@ -6357,6 +6381,11 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
  * kinds alias `Terminal<kind, string>`, the one shared leaf-node shape
  * from `@sittir/types`.
  *
+ * A line continuation kind (`continuationTriviaKinds`) aliases
+ * `Terminal<kind, string> & TriviaFlanks`: read as a trivia item, it carries
+ * the in-line runs beside it as `$before`/`$after`, exactly as an
+ * `ErrorNode` does.
+ *
  * A terminal is skipped when ALL of the following are true:
  * - It has no factory binding (`rawFactoryName` is absent) — downstream
  *   `factories.ts` would not import the type.
@@ -6833,11 +6862,21 @@ What a rebuild constructs around an existing node, as sorted, distinct kind ids:
 
 ### `packages/codegen/src/emitters/wrap.ts::listKindIds`
 
-The grammar's list kinds as sorted kind ids: every `AssembledList` the model holds with a kind id. A list node's items reach the parent's delimiters, so its source flanks are the whitespace between those delimiters and its edge items. A construct that holds an array between delimiters of its own, such as a string around its fragments, is a different model class and is not in the set. Emitted once per grammar as `TriviaFacts.listKinds` (`emitTriviaFacts`), asked by `listItemsOf` through `KindView.isList`, and as the native `SURFACE_KINDS.lists` (`emitKindIdRust`), where the trivia table gives a comment at a list node's edge to the item ending or starting there, since the surface exposes the items in the list's place.
+The grammar's list kinds as sorted kind ids: every `AssembledList` the model holds with a kind id. A list node's items reach the parent's delimiters, so its own sides are the whitespace between those delimiters and its edge items. A construct that holds an array between delimiters of its own, such as a string around its fragments, is a different model class and is not in the set. Emitted once per grammar as `TriviaFacts.listKinds` (`emitTriviaFacts`), which a rebuild asks so that a rebuilt list keeps the source identity of the list it replaces (`carryRebuiltSlots`), and as the native `SURFACE_KINDS.lists` (`emitKindIdRust`), where the trivia table gives a comment at a list node's edge to the item ending or starting there, since the surface exposes the items in the list's place.
 
 ### `packages/codegen/src/emitters/wrap.ts::layoutMemberKindIds`
 
 The grammar's extras that are layout members (`continuationTriviaKinds`, python's line continuation) as sorted kind ids. Emitted as the native `SURFACE_KINDS.layout`: the trivia table places such an extra as layout, like a run of whitespace, and a side holds it as its whitespace member with its text.
+
+### `packages/codegen/src/emitters/wrap.ts::layoutTriviaKindIds`
+
+The grammar's layout trivia members (`layoutTriviaKinds`) as sorted kind ids,
+emitted as `TriviaFacts.layout` (`emitTriviaFacts`).
+
+### `packages/codegen/src/emitters/wrap.ts::kindIdsOf`
+
+The kind ids of `kinds` that have one, sorted; a kind with none (a phantom)
+is left out.
 
 ### `packages/codegen/src/emitters/wrap.ts::rootKindIds`
 
@@ -7252,6 +7291,8 @@ restates the default from one that must be spelled.
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::RustRenderModuleEmit`
+
+`recordsTs` is `packages/<lang>/src/records.ts` (`recordsTs`).
 
 ```text
 /**
@@ -10147,6 +10188,10 @@ that kind was left alone.
 // present slot).
 ```
 
+### `packages/codegen/src/emitters/client-utils.ts::resolveTriviaTypeNames`
+
+The type names a side's entries may be: each trivia kind's own node type (`triviaKinds`), sorted and deduplicated, a kind that a trivia supertype covers spelled through that supertype (rust's `Comment | Layout`; scm's concrete `Comment`). A supertype is the union of its members, so naming it admits nothing they don't; the admitted set is the concrete members, among them `tight` and the depth members, and the grouping keeps the names a reader knows.
+
 ### `packages/codegen/src/emitters/client-utils.ts::buildTriviaNodeType`
 
 The union of the grammar's trivia kind types, `AnyUntypedNode` when it has none: what a stored trivia entry is, and so what the `$trivia` getters return. It is the `trivia` member of the grammar's type map (`emitGrammarTypeMap`).
@@ -10163,7 +10208,8 @@ Emits `triviaFacts`, the grammar's `TriviaFacts`, which the language hooks carry
 - `innerKinds` (`INNER_SITES`), the kinds with an inner side;
 - `whitespace` (`whitespaceTrivia`), when the grammar has lexical extras: loose text the extras run accepts becomes the kind id of the whitespace kind spelled exactly so, and any other such text is refused;
 - `rebuildWrappers` (`rebuildWrapperKindIds`), engine plumbing: the kind ids of what a rebuild constructs around an existing node;
-- `listKinds` (`listKindIds`), engine plumbing: the kind ids of the grammar's list kinds, the only nodes that have list flanks.
+- `listKinds` (`listKindIds`), engine plumbing: the kind ids of the grammar's list kinds, whose rebuilt nodes keep the source identity of the list they replace;
+- `layout` (`layoutTriviaKindIds`): the kind ids of the trivia members that spell layout rather than content, which a consumer that prints content without format leaves out (`seatTableSides`).
 
 The render engine passes both sets to `createNativeEngine` (`emitRenderEngine`), so the engine's trivia view and a tool's view built from the engine's facts answer from one emitted set.
 
@@ -10177,7 +10223,7 @@ How the parser delivers a slot's children: a named slot by its field alone, and 
 
 ### `packages/codegen/src/emitters/client-utils.ts::querySlotRows`
 
-Each kind's slots, by stamped kind id: the accessor a node reads the slot through (`propertyName`) and the slot's parser routes (`queryRoutesOf`). A query condition compiles on the client to these routes, so the native evaluator knows no slot names. A kind with no slots has no row. Two nodes stamped with one kind id must agree on the row, and the emitter throws when they do not.
+Each kind's slots, by stamped kind id: the accessor a node reads the slot through (`propertyName`), the slot's parser routes (`queryRoutesOf`), and, for a slot that holds a keyword's presence, that keyword (`keywordPresenceValue`). The keyword is the one fact that tells a boolean slot from a text slot: the recorder gives such a slot a member with only `eq(boolean)`, and a portable read reads its `true` as the keyword's text, the source text the native walk reads. A query condition compiles on the client to these routes, so the native evaluator knows no slot names. A kind with no slots has no row. Two nodes stamped with one kind id must agree on the row, and the emitter throws when they do not.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitQuerySlots`
 
@@ -10692,11 +10738,11 @@ default.
 
 ### `packages/codegen/src/emitters/factories.ts::declaredSeparatorDefault`
 
-The kind-id expression a separated-list factory stamps as `_separator`
-when the caller gives none (the typed read stamps the same default when a
-parsed list carries no separator token): the grammar's declared `preference('separator',
-<kind>)` for that list's `<slot>_separator` site, resolved through the kind
-catalog, or `undefined` when the list declares none. With no default the
+The kind-id expression a separated-list node's `separator` getter answers
+when the caller stored none (`listOptionDefaults`): the grammar's declared
+`preference('separator', <kind>)` for that list's `<slot>_separator` site,
+resolved through the kind catalog, or `undefined` when the list declares
+none. The factory never stores it. With no default the
 separator is a required construction input: the list factory's
 `separator` option loses its `?`, the overload without options is not
 emitted, and the factory throws when a caller omits it.
@@ -12325,7 +12371,7 @@ The node resolvers (`_resolveOne`, `_resolveMany`, `_resolveOneLeaf`, `_resolveO
 
 #### _TEXT_KINDS_BY_RANK
 
-A mixed-enum slot resolves a bare string by keyword extraction first, then lexical rank, as tree-sitter does. `_keywordOf(v, [[text, kindId], …])` (table from `keywordArmTextMapExpr`) returns the kind id of the slot's keyword arm whose text equals the string, and only a string that is no keyword arm goes on to the resolver below; a slot with no keyword arm emits no `_keywordOf`. An array slot applies the same rule per element: each element is `_keywordOf(e, …) ?? <the slot's scalar resolution of e>`, so an element that is a keyword arm's text is stored as the arm's kind id before the element resolver could build a leaf or a scalar from it. Elements that resolve to `undefined` are dropped, as the whole-array storage coercion drops them, so an absent element never reaches the transport. Non-keyword fixed-text arms keep going through the rank. The emitted from-module lists every registered text kind in `lexicalRank` order. `_resolveBareText(v, kinds)` walks that list, skips kinds the slot does not admit, and builds the first kind whose row accepts the text; the runtime never ranks anything itself. When a slot admits text kinds and none accepts, `_resolveOne` throws `"<text>" matches none of [<kinds>]`. `_resolveOneLeaf` builds a single-leaf slot through `_buildGuardedText`, which throws `"<text>" is not a <kind>` on a mismatch. The keyword-text table (`_KEYWORD_BRANCH_BY_TEXT`) keeps exact identity and is asserted unique at codegen: one keyword text building two branches is an error.
+A mixed-enum slot resolves a bare string by keyword extraction first, then lexical rank, as tree-sitter does. `_keywordOf(v, [[text, kindId], …])` (table from `keywordArmTextMapExpr`) returns the kind id of the slot's keyword arm whose text equals the string, and only a string that is no keyword arm goes on to the resolver below; a slot with no keyword arm emits no `_keywordOf`. An array slot applies the same rule per element: each element is `_keywordOf(e, …) ?? <the slot's scalar resolution of e>`, so an element that is a keyword arm's text is stored as the arm's kind id before the element resolver could build a leaf or a scalar from it. Elements that resolve to `undefined` are dropped, as the whole-array storage coercion drops them, so an absent element never reaches the transport. Non-keyword fixed-text arms keep going through the rank. The emitted from-module lists every registered text kind in `lexicalRank` order. `_resolveBareText(v, kinds)` walks that list, skips kinds the slot does not admit, and builds the first kind whose row accepts the text; the runtime never ranks anything itself. When a slot admits text kinds and none accepts, `_resolveOne` throws `"<text>" matches none of [<kinds>]`. `_resolveOneLeaf` builds a single-leaf slot through `_buildGuardedText`, which throws `"<text>" is not the text of <kind>` when a fixed-text kind's `values` do not hold the text; a pattern or lexed kind's text is refused by the builder it calls (the leaf guard, or the interior projection), so the text is checked once. The keyword-text table (`_KEYWORD_BRANCH_BY_TEXT`) keeps exact identity and is asserted unique at codegen: one keyword text building two branches is an error.
 
 ### `packages/codegen/src/emitters/from.ts::FromEmitter`
 
@@ -13146,6 +13192,15 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTransportDataStruct`
 
+Emits a kind's transport struct. The struct's record layout
+(`recordLayoutOf`) is computed once from its slots, kept on
+`ReadPrint.records` for `records.ts`, and stamped as `words = …` on
+`#[transport(…)]` and each slot's place on its `#[slot(…)]` (`slotAttr`). A
+leaf's record is its header alone: its text lives in the cell that holds the
+leaf. The fields that are not slots (a list's `delimiter` and
+`separator_kind`, a spacing site's per-node value) are layout and take no
+cell.
+
 #### body
 
 ```text
@@ -13649,6 +13704,18 @@ mirrors the child's at every depth; otherwise the key is the child's own
 arm name. A nested arm whose child no parent arm reaches stays flat, and a
 clash on the short key falls back to the flattened name.
 
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::armTargetAt`
+
+The node a sub-factory's path ends on: each step is a sub-factory name of the node reached so far (its own arm's target, followed through that arm's path) or, failing that, a variant route of it (`variantChildAt`).
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::isNestedNamespaceArm`
+
+Whether a sub-factory with a path ends on a supertype that is itself a variant parent with no default variant. Such an arm is a namespace like a top-level one: it has no builder of its own, its leaves are the nested arms spelled under it, and it takes no route.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::isConstantLeafArm`
+
+Whether a sub-factory with a path ends on a kind that is stored as a kind id (`true`, `none`, `...`). Its factory is a constant, not a function, so the polymorph has no sub-factory to wire for it.
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emittedArmPath`
 
 How an arm is spelled on its emitted entry: its own name at the top, or its
@@ -14049,6 +14116,11 @@ grouping whether a slot has seats.
 
 `indent` is the grammar's declared indent unit (`indentUnitOf`), empty for a grammar whose whitespace admits no indent characters. `renderOptionsRs` writes it into the generated `defaults()` as `indent: "<unit>".to_string()`, so the unit is the grammar's and core has no default of its own; an empty unit emits no line and `defaults()` keeps core's empty unit.
 
+### `packages/codegen/src/emitters/render-options-rs.ts::SeatWrapper`
+
+One `SEAT_WRAPPERS` row: a wrapper's kind id and its content field, 0 for
+unfielded content (`seatWrappersOf`).
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::DepthSites`
 
 A kind and the indices of its sites that admit `indent` or `dedent`, in
@@ -14100,6 +14172,8 @@ A site's blank arm is the blank id (`armIdOf`) in its allowed ids and as its def
 
 `depthRegions` are the kinds' structural indentation regions (`depthRegionsOf`), resolved to kind ids and sorted by them; a region on a kind with no id is a build error.
 
+`seatWrappers` are the wrappers' seat passages (`seatWrappersOf`), sorted by kind id.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::renderOptionsRs`
 
 Source text of a render crate's `options.rs`: the site constants,
@@ -14108,7 +14182,7 @@ kind-indexed `EDGE_ROWS`, one dense `SEATS_*` table per seated slot
 (`seatTablesOf`), `DEPTH_SITES`, `spacing_text`, `defaults()`, the address
 trie `ADDRESSES` (`emitAddressTrie`), a `Sites` marker implementing
 `sittir_core::options::OptionSites` over those tables, and
-`pub type Options = sittir_core::options::Options<Sites>`. `KIND_FLAGS` (`kindFlagsOf`, through `denseFlags`) sits beside `EDGE_ROWS`, and `defaults()` hands it to the resolved options as `kind_flags`. No per-grammar
+`pub type Options = sittir_core::options::Options<Sites>`. `KIND_FLAGS` (`kindFlagsOf`, through `denseFlags`) sits beside `EDGE_ROWS`, and `defaults()` hands it to the resolved options as `kind_flags`. `SEAT_WRAPPERS` (per kind id, the field a wrapper's seat passes through, `NO_SITE` for any other kind) follows the seat tables, and `defaults()` hands it over as `seat_wrappers`. No per-grammar
 struct, deserializer or resolver is emitted: reading a JS object through the
 trie and resolving it over a base table live once in core, and this file only
 supplies the tables. `defaults()` builds `spacing` through
@@ -14341,10 +14415,10 @@ The structural indentation regions come from the same render rules (`depthRegion
 A `Prepare` impl for a generated enum: payload variants delegate to the
 payload's `prepare(ctx)`, unit variants (literals) are `Ok(())`. The match
 is the tail expression, so the impl's result is whichever arm ran. An enum
-with payloads or edged units (`PrepareArm.edged`) also delegates `source_gap`,
-`gap_edges` and `snapshot_edge`, an edged unit answering `gap_edges` with
-the edges it holds and nothing else,
-so a list's gap fill reaches the gap, the edges and the geometry of
+with payloads or edged units (`PrepareArm.edged`) also delegates
+`gap_edges`, `snapshot_edge` and `source_separator`, an edged unit
+answering `gap_edges` with the edges it holds and nothing else,
+so a list's gap fill reaches the edges and the geometry of
 whichever kind the item is. An enum the reader reads into also reads a
 coordinate (`READ_COORDINATE`), `AnyTransport` among them: a render root is
 a coordinate of it, read when a write lies in its range. `TriviaTransport`,
@@ -14385,38 +14459,43 @@ enums, `VerbatimTransport`): `Ok(())`. It reads a coordinate (`READ_COORDINATE`)
 
 ### `packages/codegen/src/emitters/render-module.ts::rootEdgeStamp`
 
-The grammar root's prepare lines that give an edited root its source flanks, ahead of `prepare_edges`: the first and last present item across its child fields (`EdgeItems`, fields in declaration order), whose coordinates `root_flanks` reads the tree bytes around, each framed by its sides (`SourceTable::framed_span`: a comment an end item holds is its own, not the root's flank), classified into the root's before and after sites exactly as a list gap is (for a snapshot root, the gaps from the root's own span, `Layout::snapshot_edge`, to where its first item's render begins and its last item's ends, trivia included; `outermost` puts the root's inner trivia, `Layout::inner_item`, in place of an end item it lies beyond or of a missing one, as the source bytes its entries span or their geometry); `fill_edges` sets only the sides the wire left unset. A field order that put a non-edge item first only costs evidence: the bytes before it are not whitespace and classify to nothing. Empty for every other kind.
+The grammar root's prepare lines that give an edited root its source flanks, ahead of `prepare_edges`: the first and last present item across its child fields (`EdgeItems`, fields in declaration order), whose coordinates `root_flanks` reads the tree bytes around, each framed by its sides (`SourceTable::framed_span`: a comment an end item holds is its own, not the root's flank), classified into the root's before and after sites by the whitespace classes they admit (for a snapshot root, the gaps from the root's own span, `Layout::snapshot_edge`, to where its first item's render begins and its last item's ends, trivia included; `outermost` puts the root's inner trivia, `Layout::inner_item`, in place of an end item it lies beyond or of a missing one, as the source bytes its entries span or their geometry); `fill_edges` sets only the sides the wire left unset. A field order that put a non-edge item first only costs evidence: the bytes before it are not whitespace and classify to nothing. Empty for every other kind.
 
 ### `packages/codegen/src/emitters/render-module.ts::prepareStructImpl`
 
-A transport struct's `Prepare` impl. Every struct answers `source_gap` from
-its layout's gap (`$_layout.gap`), `gap_edges` with its own base edges,
-made when the layout holds none, and `snapshot_edge` from its layout's
-span and trivia, so a snapshot list's gaps and root's edges read geometry. A compound kind first fills its own
-base edges (for the grammar root, from its source flanks, `rootEdgeStamp`;
-then, for a kind that owns kind-edge sites, from the source flanks the
-wire carries for a list node, `fill_source_flanks`, and from its edge row,
-`prepare_edges`), then gives each repeated slot's source-adjacent gaps their source class
-(`listGapClassification`), then fills this kind's
-own facts: each spacing field that carries a per-node value
+A transport struct's `Prepare` impl. Every struct answers `gap_edges` with
+its own base edges, made when the layout holds none, `source_separator`
+from its layout (`layout::source_separator`: the one it carries, else its
+source's while its neighbour before is unchanged), and `snapshot_edge`
+from its layout's span and trivia, so a snapshot root's edges read
+geometry. A compound kind first fills its own base edges (for the grammar
+root, from its source flanks, `rootEdgeStamp`; then, for a kind that owns
+kind-edge sites, from its edge row, `prepare_edges`). A list node's own
+flanks need nothing more: they are its sides' layout runs, which its
+layout renders. Then each repeated slot's separator gaps take the classes
+the slot's stored layout holds (`slotGapFills`), and this kind's own facts
+fill: each spacing field that carries a per-node value
 (`carriesPerNodeValue`) takes the resolved arm when unset; the seat calls
 (`seatLoops`) write each seated element's gap into that element's own base
-`after` edge; and a separated list takes its `delimiter` and its
-`separator_kind` from their sites when unset; and a required registered
-choice option the caller left unset is built from its option site's resolved
-arm (`optionDefaultFills`). Only then does it walk the children (every slot
-field's `prepare(ctx)?`). The order matters: a seat is
-a `get_or_insert` on the child's base edge, and the child's own
-`prepare_edges` fills that same edge from its kind's row, so the parent must
-seat before the child sees it. A wire-carried value always wins; a
-coordinate that names no tree or a span outside its source is the walk's
-error, not the render's.
+`after` edge; a separated list takes its `delimiter` from its site when
+unset, its `separator_kind` from its slot's stored separator
+(`listItemWireKey`, read through the derive's `separator_kind_of`) before
+its site, and each item's own separator where its source spells another
+than the slot's (`fill_slot_separators` over `listItemsExpr`, by each
+item's `Prepare::source_separator`); and a required registered choice option the caller left unset is
+built from its option site's resolved arm (`optionDefaultFills`). Only then
+does it walk the children (every slot field's `prepare(ctx)?`). The order
+matters: a seat is a `get_or_insert` on the child's base edge, and the
+child's own `prepare_edges` fills that same edge from its kind's row, so
+the parent must seat before the child sees it. A wire-carried value always
+wins; a coordinate that names no tree or a span outside its source is the
+walk's error, not the render's.
 
 A list's delimiter is filled from the table like any site, zero included:
 the table's value is the grammar's declared default or a render option, and
 the transport's own value still wins. One exception: a list whose trailing
 separator is optional takes its trailing flag from the source while its
-source flank after is kept (`sourceTrailingSeparator`).
+last item is still its source's last (`sourceTrailingSeparator`).
 
 Every struct transport prepares its layout's trivia first, leaves included. A trivia entry that is a source coordinate takes its kind's edges there, as a coordinate in a slot does. It reads a coordinate (`READ_COORDINATE`).
 
@@ -14429,16 +14508,15 @@ nothing when the list's trailing separator is not optional. A separator with
 no kind id is a compile error.
 
 When a list has them, an unset `delimiter` is filled by
-`source_trailing_delimiter` instead of the plain table value. A rebuilt list
-whose last item is still the source's last keeps its source flank after
-(`sourceFlankOf`, the same evidence the trailing flank uses). For such a list
-the trailing flag follows the source tree: set if the source list's last
-child that is not an extra is one of these separators, clear otherwise. The
-child is read from the tree, never from the span's text, so a comment the span
-includes is not mistaken for a separator. The leading flag and every list
-without that flank take the table value. The source wins both ways, so a
-source with no trailing separator renders none even where the table's default
-is trailing.
+`source_trailing_delimiter` instead of the plain table value. A list read
+or rebuilt from a source list (its layout's `sides`) whose trailing edge is
+unchanged, so that its last item is still the source's last, takes its
+trailing flag from that source list: set if the source list's last child
+that is not an extra is one of these separators, clear otherwise. The child
+is read from the tree, never from the span's text, so a comment the span
+includes is not mistaken for a separator. The leading flag and every other
+list take the table value. The source wins both ways, so a source with no
+trailing separator renders none even where the table's default is trailing.
 
 ### `packages/codegen/src/emitters/render-module.ts::optionDefaultFills`
 
@@ -14451,63 +14529,43 @@ plan for this kind and slot, with no side and no seat. A slot with no such
 site fails codegen: the option would have nothing to resolve from. A value
 the caller set is never replaced.
 
-### `packages/codegen/src/emitters/render-module.ts::listGapSitesOf`
+### `packages/codegen/src/emitters/render-module.ts::slotGapFills`
 
-The un-seated spacing sites of one repeated slot on a kind, by side: `gap`
-for an unseparated repeat (the whole gap is one site), `before`/`after` for
-a separated one (the bytes on each side of the token). Seated sites belong
-to the item kinds and are filled by `seatLoops`; the flank and seam sites
-of the list are not gaps between items.
+The call a generated `prepare` makes for every repeated slot, before the
+seats and the option fills: `fill_slot_gaps` over the slot's items, with the
+layout the node's source stores for that slot (`Layout::slot`, by the slot's
+wire key). A list slot's layout holds the class most of its separator gaps
+have on each side of the separator, stored only where it differs from what
+the read-time options write. The fill gives every gap between two present
+items those classes at slot strength (`SEAM_SLOT`): the side before the
+separator on the earlier item's `after` edge, the side after it on the later
+item's `before` edge. So an item inserted or moved into the list takes the
+slot's class, a gap's own deviation (trivia, which is stronger) keeps its
+class, and an option fills only what the slot stores nothing for. A node
+built afresh has no layout, and its gaps are the options'.
 
-### `packages/codegen/src/emitters/render-module.ts::listGapTokenOf`
+### `packages/codegen/src/emitters/render-module.ts::slotItems`
 
-The one literal that separates a slot's items, or `undefined` when the slot
-has none or has several — a choice separator is per instance, so the bytes
-around it are not one site's spelling. Derived from
-`shared.ts::slotSeparatorTexts`, the same source the reader table and the
-wrap drop expression use.
+A repeated slot's items as the generated `prepare` iterates them: each as
+`Option<&SlotValue>` (or `&mut`), a slot of optional elements yielding its
+absent ones as `None`, so every caller walks items by their place in the
+slot.
 
-### `packages/codegen/src/emitters/render-module.ts::listGapClassification`
+### `packages/codegen/src/emitters/render-module.ts::listItemField`
 
-The call a generated `prepare` makes for every repeated slot with a gap
-site, before the seats and the option fills: `fill_list_gaps` over the
-slot's items, with the slot's separator token and the arms its sites admit.
-Every gap in a rebuilt list follows one of two rules:
+A list kind's item slot, its one multiple slot. A list with no multiple
+slot is a compile error.
 
-1. A gap between two items that were adjacent in the source keeps its source
-   spelling. The transport decides adjacency with the neighbour rule's own
-   test and sends the gap's source range on the later item (`$_layout.gap`), for an
-   edited item as much as an untouched one. `fill_list_gaps` classifies that
-   range, split at the one separator, onto the earlier item's `after` edge
-   and, past the token, the later item's `before` edge, at trivia strength.
-2. Every other gap is canonical: the seat of the kind before it
-   (`seatLoops`, which fills only an edge nothing set), or the list site,
-   which comes from the option table or the caller and never from the source.
+### `packages/codegen/src/emitters/render-module.ts::listItemsExpr`
 
-One source per gap. Where the later item's derived line-gap run spells the
-gap (the leading run its read gave it, already split around its comments),
-that run is the gap and the transport sends no gap; the native
-classification fills only gaps that have no derived run. A same-line gap
-renders as the whitespace member its run classifies to, so a run no member
-spells exactly (two spaces where the grammar declares only a single space)
-renders as the nearest member below it. That is the first limit of rule 1,
-not an inference. The second: a gap that holds a comment, or anything else
-but whitespace and the one separator, is not a spelling the whitespace
-classes can carry, so `fill_list_gaps` leaves it unset and the gap falls to
-rule 2, the seat or the list site. The comment itself still renders as the
-trivia its owner carries. The third: a list's flanks keep their source class
-with its depth (the indent arm after the opener, the dedent arm before the
-closer, where the source lines show the depth change), but the depth unit is
-the render's, from its options (`layout.indent`, the tree's inferred unit
-over the engine's), never the source's columns. A list indented two spaces in a source rendered with four-space
-indentation renders with four.
+A list kind's items as its `prepare` reads them (`slotItems` over
+`listItemField`), for `fill_slot_separators`.
 
-A list's flanks follow rule 1 like its item gaps: the gap between the opener
-and the first item is kept while that item is still the source's first, and
-the gap between the last item and the closer while that item is still the
-source's last (`sourceFlankOf`). A list's gaps and flanks are kept only while
-the list itself carries source identity, so a list built afresh is canonical
-throughout. A rebuilt list's trailing delimiter stays canonical.
+### `packages/codegen/src/emitters/render-module.ts::listItemWireKey`
+
+The wire key of a list kind's item slot (its one multiple slot), under which
+its source's slot layout is stored: the key the list's `prepare` reads the
+slot's stored separator by. A list with no multiple slot is a compile error.
 
 ### `packages/codegen/src/emitters/render-module.ts::synthesizedSpacingSites`
 
@@ -14726,7 +14784,7 @@ The storage coercion of one slot value (boolean keyword, bitflag, kind enum, mix
 
 ### `packages/codegen/src/emitters/factories.ts::leafReDeclaration`
 
-The anchored pattern constant a text leaf's factory declares: its `_leafRe_<factory>` name and its regex literal, or nothing for a fixed-text hidden leaf or a kind with no derivable pattern. The guard constants and the hidden-leaf admission table read it, so both name the same constant.
+The anchored pattern constant a text leaf's factory declares: its `_leafRe_<factory>` name and its regex literal, or nothing for a fixed-text hidden leaf or a kind with no derivable pattern. The guard constants, the hidden-leaf admission table and the coercer's leaf registry read it, so all three name the same constant.
 
 ### `packages/codegen/src/emitters/factories.ts::constructionChildElementType`
 
@@ -14988,7 +15046,7 @@ The rest parameter of a spreading kind is typed from the slot's own cardinality,
 
 ### `packages/codegen/src/emitters/native-crate.ts::nativeCrateFiles`
 
-The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json` (private: the crate is never published; its `build` scripts run `scripts/build-native.mts`, which writes the loader, typings and binary into the grammar package's `native/` directory), and `src/lib.rs` (the `LanguageFn`, the `EngineGrammar` impl over the generated render module, whose `shows` is the generated `AnyTransport`'s set of display ids it claims a node by, so every coordinate stamps the display id at an alias envelope and the grammar id elsewhere, whose `Trivia` is the generated `TriviaTransport`, whose `whitespace` is the render options' whitespace table and layout kinds, whose `surface_kinds` is `kind_ids.rs`'s `SURFACE_KINDS`, whose `option_tables` is the render options' site tables (the addresses a parse's inferred options are written at), and whose `read_units` reads a node one level down as the generated `AnyTransport` and takes the sides of its unit children from its layout, and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
+The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json` (private: the crate is never published; its `build` scripts run `scripts/build-native.mts`, which writes the loader, typings and binary into the grammar package's `native/` directory), and `src/lib.rs` (the `LanguageFn`, the `EngineGrammar` impl over the generated render module, whose `shows` is the generated `AnyTransport`'s set of display ids it claims a node by, so every coordinate stamps the display id at an alias envelope and the grammar id elsewhere, whose `Trivia` is the generated `TriviaTransport`, whose `whitespace` is the render options' whitespace table and layout kinds, whose `surface_kinds` is `kind_ids.rs`'s `SURFACE_KINDS`, whose `option_tables` is the render options' site tables (the addresses a parse's inferred options are written at), whose `read_units` reads a node one level down as the generated `AnyTransport` and takes the sides of its unit children from its layout, and whose `render_read` reads a node `depth` levels down as `AnyTransport` and renders it through `render_transport_parts`, answering the text (the records a parsed tree's layout baseline is read from), and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
 
 ### `packages/codegen/src/emitters/native-crate.ts::NativeCrateFile`
 
@@ -15210,7 +15268,7 @@ The item slot of a separated list that has a delimiter flank or a separator, or 
 
 ### `packages/codegen/src/emitters/transport-projection.ts::transportArgs`
 
-The `#[transport(…)]` arguments of a struct: an alias envelope reads by its display id, a text leaf as its text (with the fixed text it reads when its span is empty), a token interior by its pattern, and every other kind by its own id with its minimum depth, layout tokens and list marker. The reader seats no trivia, so no inner gap is named here: a node's sides are the trivia table's. Each fact comes from the derivation the wrap already uses.
+The `#[transport(…)]` arguments of a struct: an alias envelope reads by its display id and selects envelope reading through `content = content`, a text leaf as its text (with the fixed text it reads when its span is empty), a token interior by its pattern, and every other kind by its own id with its minimum depth, layout tokens and `item = <slot>` when it selects list reading. The content and item field arguments select their reader modes without separate marker flags. The reader seats no trivia, so no inner gap is named here: a node's sides are the trivia table's. Each fact comes from the derivation the wrap already uses.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::takesUntagged`
 
@@ -15218,7 +15276,7 @@ Whether a slot takes children that carry no field: when it has no field route or
 
 ### `packages/codegen/src/emitters/transport-projection.ts::slotArgs`
 
-The `#[slot(…)]` arguments of one slot: its field routes, `untagged` when it also takes untagged kinds, the keyword a presence slot reads (`display(KIND)` for an aliased one, `presenceKeyword`), its separators, read from the stamps (`slotDropKindIds`; a list's item slot also takes the list's separator candidates), and `scalar` for a text slot stored as a unit. An unaliased keyword and each separator are printed with the raw symbols folded into them (`tokenGroup`). Empty means a bare `#[slot]`.
+The `#[slot(…)]` arguments of one slot: its field routes, `untagged` when it also takes untagged kinds, the keyword a presence slot reads (`display(KIND)` for an aliased one, `presenceKeyword`), its separators, read from the stamps (`slotDropKindIds`; a list's item slot also takes the list's separator candidates), and `scalar` for a text slot stored as a unit. An unaliased keyword and each separator are printed with the raw symbols folded into them (`tokenGroup`). The `scalar` fact controls unit trivia-side capture for routed text slots; token interior captures use `captureArgs` instead. Empty means a bare `#[slot]`.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::captureArgs`
 
@@ -15230,7 +15288,7 @@ The flanks a list leaves optional, each with the number of mandatory flank token
 
 ### `packages/codegen/src/emitters/transport-projection.ts::separatorKindArgs`
 
-The kinds a list's separator can be and the one its declaration falls back to: the arguments `_separatorKindOf` reads. `undefined` for a list with no separator. The candidate ids come from one derivation shared with the item slot's `separator =`, each printed with the raw symbols folded into it (`tokenGroup`), so the reader matches a separator by its grammar id and stores the candidate's kind.
+The kinds a list's separator can be: the `candidates` the transport derive turns into the list's `separator_kind_of`, which maps a separator's grammar id to the candidate's kind. A list's `prepare` maps its slot's stored separator through it. `undefined` for a list with no separator. The candidate ids come from one derivation shared with the item slot's `separator =`, each printed with the raw symbols folded into it (`tokenGroup`), so a separator matches by its grammar id. The read does not set the separator: a source's separator is its slot layout's (`slotGapFills`).
 
 ### `packages/codegen/src/emitters/transport-projection.ts::enumKindArgs`
 
@@ -15258,11 +15316,17 @@ Whether a presence slot's value is a keyword the site wraps in an alias, read fr
 
 ### `packages/codegen/src/emitters/render-module.ts::ReadPrint`
 
-What the transport printers share while they state the read facts: the facts' context, the template bodies by kind, the kind ids each printed type admits, the choices that carry a blank arm, the payload types the choices hold (`choicePayloads`), which the ceiling assertions check, and the transports printed (`transports`), which `grammarTriviaStatement` lists. One value is threaded through every printer so a type's ids and name are recorded where it is printed and checked after all of them are.
+What the transport printers share while they state the read facts: the facts' context, the template bodies by kind, the kind ids each printed type admits, the choices that carry a blank arm, the payload types the choices hold (`choicePayloads`), which the ceiling assertions check, and the transports printed (`transports`), which `grammarTriviaStatement` lists. One value is threaded through every printer so a type's ids and name are recorded where it is printed and checked after all of them are. The record layout of each struct it prints is kept on `records`, by struct name, for `records.ts`.
 
 ### `packages/codegen/src/emitters/render-module.ts::readPrintOf`
 
 Builds the `ReadPrint` of one emit: the names are the kind and field constants, and the list owners are the kinds whose read reaches their items.
+
+The fold table it reads is the parser's own plus `foldsWithRelaxed`: the relaxed keyword tokens fold into the word rule's transport, so a slot that holds the word rule admits a relaxed keyword node by its grammar id and reads it as the word.
+
+### `packages/codegen/src/emitters/render-module.ts::foldsWithRelaxed`
+
+The parser's fold table with the relaxed keyword tokens added under the word rule's kind id, which `foldedTokens` then lists on the word's transport.
 
 ### `packages/codegen/src/emitters/render-module.ts::admit`
 
@@ -15312,9 +15376,9 @@ The ids a fixed-literal transport takes: its accepted ids, or its own id. The de
 
 The slots a struct has fields for, in order: the slot model's named and unnamed slots in the node's own slot order, then the named slots of each hidden helper node an unnamed slot hoists, all optional. The field order is the order the read writes the transport's keys, so a read transport's keys follow the model's slots. The printer and the check that follows it walk the same list.
 
-### `packages/codegen/src/emitters/render-module.ts::slotReadAttr`
+### `packages/codegen/src/emitters/render-module.ts::slotAttr`
 
-The `#[slot]` attribute of one field: a capture for each slot of a token interior, else the routes, presence keyword, separators and scalar mark `slotArgs` computes. An alias envelope's content has none: it is not a parser field, and the derive's envelope mode names it by `content = …`.
+The `#[slot]` attribute of one slot, its one attribute: its read facts, then its record place (`recordArgs`). The read facts are a capture for each slot of a token interior, else the routes, presence keyword, separators and scalar mark `slotArgs` computes. An alias envelope's content has no read facts, only its place: it is not a parser field but the aliased node itself, which the derive's envelope mode reads as the slot `content = …` names.
 
 ### `packages/codegen/src/emitters/render-module.ts::readsItsSlots`
 
@@ -15351,3 +15415,80 @@ Writes the grammar's `reparseHosts` block as the generated `reparse-hosts.ts`: t
 ### `packages/codegen/src/emitters/__tests__/self-containing-list-types.test.ts::selfContainingList`
 
 Builds an isolated assembled list whose repeated element choice includes the list itself. The emitted modules are compiled with TypeScript 6 and 7 to pin own-kind built and parsed inputs, recursive loose configurations, setters, and namespace argument-row resolution without changing a language grammar.
+
+### `packages/codegen/src/emitters/render-module.ts::recordsTs`
+
+`records.ts` for a grammar: `RECORD_HEADER_WORDS` and `records`, each struct's
+words and its fields' places by Rust field name, the same numbers
+`transport.rs` stamps. JavaScript reads a record through these literal offsets
+and never computes one.
+
+### `packages/codegen/src/emitters/record-layout.ts::RECORD_HEADER_WORDS`
+
+The words every record opens with: word 0 the kind's grammar id, word 1 its
+side record's address (0 for none). The presence words follow, then the cells.
+
+### `packages/codegen/src/emitters/record-layout.ts::PRESENCE_BITS_PER_WORD`
+
+A presence word holds 32 presence bits, one word of the `u32` arena.
+
+### `packages/codegen/src/emitters/record-layout.ts::CELL_WORDS`
+
+The cell widths, one per form a slot holds:
+
+- `node`, 5: anything carried in a `SlotValue`, whose arms may all be units,
+  since `SlotValue::Coord` holds an untouched parsed child (tag, kind, index,
+  byte start and end);
+- `text`, 4: a leaf's text (tag, kind, and a byte span, or a string-table
+  offset and length);
+- `list`, 2: a run's offset and length, its items in cells of their own width.
+
+The derive checks each against the slot's type (`sittir_core::record`).
+
+### `packages/codegen/src/emitters/record-layout.ts::RecordForm`
+
+What a slot needs in its record: a presence `bit`, or a `cell` of `width`
+words, with a `run` of words per item for a list.
+
+### `packages/codegen/src/emitters/record-layout.ts::RecordField`
+
+A slot that holds part of its struct's record, by Rust field name, with its
+form.
+
+### `packages/codegen/src/emitters/record-layout.ts::RecordPlace`
+
+Where a slot sits in its record: a `bit` of presence word `word`, or a cell of
+`width` words at `word` (with its `run`).
+
+### `packages/codegen/src/emitters/record-layout.ts::RecordLayout`
+
+A struct's record: its `words` and each placed slot.
+
+### `packages/codegen/src/emitters/record-layout.ts::slotRecordForm`
+
+A slot's record form, from its stamped `TransportSlotShape` and whether it is
+a list: a presence is a bit, text a text cell, anything else a node cell; a
+list holds a list cell with runs of that width.
+
+### `packages/codegen/src/emitters/record-layout.ts::recordLayoutOf`
+
+The one derivation of a struct's record layout. The presence bits fill words
+from `RECORD_HEADER_WORDS`, 32 to a word, and each cell follows in slot
+order. Codegen is the single source of every word, width and bit: Rust reads
+them from each slot's `#[slot(…)]` and the struct's `#[transport(words = …)]`,
+JavaScript from `records.ts`, and neither computes one. A slot's one
+attribute holds its read facts and its layout together.
+
+A record holds structure, and its side record holds layout. Every record
+cell is a slot: a node, a list, text, a presence bit, and an alias
+envelope's `content`, the envelope's one slot. A field that states how to
+print goes in the side record beside `edges`, `gap` and `flank` and takes no
+cell here: a spacing site's per-node value, and a preference the tree
+records, such as the separator or delimiter a list's occurrence used
+(`delimiter`, `separator_kind`). A leaf holds no cell of its own: its text is
+in the cell that holds it. A field added later lands by the same split.
+
+### `packages/codegen/src/emitters/record-layout.ts::recordArgs`
+
+A slot's place, spelled as the derive reads it inside the slot's `#[slot(…)]`:
+`word` and `width` (and `run`) for a cell, `word` and `bit` for a presence.

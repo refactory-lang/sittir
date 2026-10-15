@@ -129,29 +129,38 @@ export interface NodeLayout {
 export type ErrorKindId = 65535;
 
 /**
+ * The in-line whitespace a trivia item the source fixes in place carries on
+ * either side of it, as a read finds it: an ERROR node's, and a line
+ * continuation's. An item with either renders verbatim with them, and no
+ * other spacing is written there; one with neither (a built line
+ * continuation) takes the spacing the options give its gap.
+ */
+export interface TriviaFlanks {
+	/**
+	 * The source's whitespace on the item's line between the token before it
+	 * and the item, rendered verbatim before `$text`. Absent when the item
+	 * touches that token, or when a line break lies between them.
+	 */
+	readonly $before?: string;
+	/**
+	 * The source's whitespace on the item's line between the item and the
+	 * token after it, rendered verbatim after `$text`. Absent when the item
+	 * touches that token, or when a line break lies between them.
+	 */
+	readonly $after?: string;
+}
+
+/**
  * A parsed ERROR node: the source error recovery wrapped, as text. Only a
  * read produces one; there is no factory for it. It surfaces in a slot or as
- * a trivia item. Where it sits in the source is reported by the parsed root's
- * `$errors`.
+ * a trivia item, with its flanks (`TriviaFlanks`). Where it sits in the
+ * source is reported by the parsed root's `$errors`.
  */
-export interface ErrorNode extends AnyUntypedNode {
+export interface ErrorNode extends AnyUntypedNode, TriviaFlanks {
 	readonly $type: ErrorKindId;
 	readonly $source: 0 | 1;
 	/** The region's own source text. */
 	readonly $text: string;
-	/**
-	 * As a trivia item: the source's whitespace on the region's line between the
-	 * token before it and the region. It renders verbatim before `$text`, and no
-	 * other spacing is written there. Absent when the region touches that token,
-	 * or when a line break lies between them.
-	 */
-	readonly $before?: string;
-	/**
-	 * As a trivia item: the source's whitespace on the region's line between the
-	 * region and the token after it, rendered verbatim after `$text`. Absent when
-	 * the region touches that token, or when a line break lies between them.
-	 */
-	readonly $after?: string;
 }
 
 /** An item a trivia position holds: one of the grammar's trivia nodes, or an ERROR node read there. */

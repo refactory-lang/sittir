@@ -30,15 +30,17 @@ function innerGapsOf(nodeMap: NodeMap, kind: string): unknown {
 }
 
 describe('trivia model facts', () => {
-	it('reads the trivia kinds from the grammar extras, through supertypes both ways', async () => {
+	it('reads the trivia kinds from the grammar extras and the always-admitted tight member, through supertypes both ways', async () => {
 		expect([...triviaKinds(await nodeMapOf('rust'))].sort()).toEqual([
 			'_blankline',
 			'_dedent',
 			'_double_blankline',
 			'_indent',
+			'_layout',
 			'_newline',
 			'_space',
 			'_tab',
+			'_tight',
 			'block_comment',
 			'comment',
 			'line_comment'
@@ -48,9 +50,11 @@ describe('trivia model facts', () => {
 			'_dedent',
 			'_double_blankline',
 			'_indent',
+			'_layout',
 			'_newline',
 			'_space',
 			'_tab',
+			'_tight',
 			'comment',
 			'line_continuation',
 			'line_continuation_newline',
@@ -61,9 +65,11 @@ describe('trivia model facts', () => {
 			'_dedent',
 			'_double_blankline',
 			'_indent',
+			'_layout',
 			'_newline',
 			'_space',
 			'_tab',
+			'_tight',
 			'comment',
 			'comment_block',
 			'comment_line',
@@ -79,19 +85,21 @@ describe('trivia model facts', () => {
 		]);
 	});
 
-	it('makes a whitespace kind trivia exactly when its literal is one or more lexical extras', async () => {
-		expect(whitespaceTriviaKinds(await nodeMapOf('rust')).sort()).toEqual(['_blankline', '_double_blankline', '_newline', '_space', '_tab']);
+	it('makes a whitespace kind trivia when its literal is one or more lexical extras, or it is always admitted (tight)', async () => {
+		expect(whitespaceTriviaKinds(await nodeMapOf('rust')).sort()).toEqual(['_blankline', '_double_blankline', '_newline', '_space', '_tab', '_tight']);
 		expect(whitespaceTriviaKinds(await nodeMapOf('python')).sort()).toEqual([
 			'_blankline',
 			'_double_blankline',
 			'_newline',
 			'_space',
-			'_tab'
+			'_tab',
+			'_tight'
 		]);
 		const typescript = await nodeMapOf('typescript');
-		expect(whitespaceTriviaKinds(typescript)).not.toContain('_tight');
+		expect(whitespaceTriviaKinds(typescript)).toContain('_tight');
 		expect(whitespaceTriviaKinds(typescript)).not.toContain('_indent');
 		expect(Object.fromEntries(whitespaceTrivia(typescript)?.kindIdByText ?? [])).toEqual({
+			'': typescript.nodes.get('_tight')?.kindId,
 			' ': typescript.nodes.get('_space')?.kindId,
 			'\t': typescript.nodes.get('_tab')?.kindId,
 			'\n': typescript.nodes.get('_newline')?.kindId,

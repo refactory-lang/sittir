@@ -7,7 +7,7 @@
 **Rulings this plan carries out (the maintainer, 2026-10-12):**
 - Layout entries store a gap's deviation from the options, not every gap's source breaks.
 - The baseline is the options in effect at read time: the tree's inferred layer, over the engine's options, over the grammar's defaults. This is the "differs from the options" rule the inferred layer already uses.
-- A gap whose source layout equals what the options render stores nothing. A gap that differs stores its source class: no break where the options break (`fn f() { x; }`), one break where they give a blank line (`// c⏎fn g() {}`), a break where they keep the line.
+- A gap whose source layout equals what the options render stores nothing. A gap that differs stores its source class: no break where the options break (`fn f() { x; }`), one break where they give a blank line (`// c⏎fn g() {}`), a break where they keep the line, and an in-line class (space, tab or tight) where the options write another in-line class (`{ dot }` where they write `{dot}`).
 - Ruling 11, restated: a gap with no entry renders as the options say.
 - A stored deviation beats per-call options. Only `reformat` drops it.
 - List gaps migrate to deviation entries, and their stamps retire.
@@ -68,7 +68,7 @@ The trivia table addresses a run by its bytes (`Assigned::Layout { start, end }`
 
 ### The deviation test
 
-A run deviates when its source line breaks differ from the baseline's breaks at its key. Indentation is measured as today: only an excess over the template's depth is stored, as depth members, in the inferred indentation unit (`DEPTH_REGIONS`). A deviating run is stored as `Assigned::Layout` of its source class (`classify_whitespace`), now including an in-line class (space, tab or tight) where the baseline breaks. A run that matches stores nothing. A list slot's separator gaps are measured per slot instead (below).
+A run deviates when its source class differs from the class the baseline writes at its key: its line breaks, or, on a line, space, tab or tight. Indentation is measured as today: only an excess over the template's depth is stored, as depth members, in the inferred indentation unit (`DEPTH_REGIONS`). A deviating run is stored as `Assigned::Layout` of its source class (`classify_whitespace`), in-line classes included, wherever the baseline's class differs. A run that matches stores nothing. A list slot's separator gaps are measured per slot instead (below).
 
 **Where.** `TriviaTable::assign` places every run except the file's edges, the in-line and empty ones included, as an `Assigned::Layout` naming its place among the table's runs (`TriviaTable::runs`); a run at a file edge keeps only its depth members. The filter runs where a side is read for a render (`ParsedTree::assigned_side`): each of the side's runs is compared with its region's record, computing the region on first need, and becomes its source class's member only when it deviates. A region's record reads the table's extras and `ERROR`s only (`WithoutLayout`), so the two never loop.
 
@@ -134,12 +134,12 @@ A run deviates when its source line breaks differ from the baseline's breaks at 
 
 ## Expected fixture movement
 
-A gap whose source equals the read-time options renders as before, so no fixture that reproduces its source today can move. A moved fixture is one with a deviating gap that a side takes: it moves to its source.
-- **Expected movers:** the 67 rust and 29 typescript fixtures that the stored-gap attempt brought to their source.
-- **No regressions.** The enum, tuple, interface and argument-list flanks that the attempt broke equal the options, store nothing, and stay as master renders them.
+A gap whose source class equals the class the read-time options write there renders as the options do. A gap whose class differs, a line break or an in-line class (space, tab or tight), stores its source class and renders it. A moved fixture is one with such a gap that a side takes: it moves to its source.
+- **To their source:** fixtures whose in-line spacing differs from the options' (`use three::{ dot::{one, four} };`, `< T1, T2 >`, `( p1, p2 )`, a rust token tree kept tight), which master kept only where flank geometry reached them, and python's fixtures whose source breaks inside brackets (`b(\n1,\n2\n    )`), which master rendered joined.
+- **A fragment at its own depth:** a list fragment rendered alone renders at its own depth, as the live tree renders that node, not with the absolute indentation of its source (`texts,\n    values,` renders `texts,\nvalues,`). Whole-node renders are unaffected.
 - **Not affected:** a fixture whose deviation sits at a gap no side takes (between an owner's own tokens) does not move, because no entry is stored there.
 
-The gate lists every moved fixture with its before and after, checks that each now equals its source, and checks that `leftOutByKind` does not grow.
+The gate lists every moved fixture with its before and after, classes each one into the movements above, and checks that `leftOutByKind` does not grow.
 
 ## Review Focus
 

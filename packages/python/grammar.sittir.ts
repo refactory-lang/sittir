@@ -155,11 +155,11 @@ export default sittirGrammar(base, {
 		unary_operator: { 'operator:/after': preference('tight') },
 		interpolation: { before: preference('tight'), after: preference('tight') },
 		comprehension_clauses: { 'content:/separator': preference('space') },
+		comparison_operator: { 'comparators:/separator': preference('space') },
+		concatenated_string: { 'string:/separator': preference('space') },
 
 		_bindings: {
 			'block/statements:/separator': 'gap/separator',
-			'comparison_operator/comparators:/separator': 'gap/separator',
-			'concatenated_string/string:/separator': 'gap/separator',
 			'decorated_definition/decorator:/separator': 'gap/separator',
 			'if_statement/alternative:/separator': 'gap/separator',
 			'match_block_block/alternative:/separator': 'gap/separator',

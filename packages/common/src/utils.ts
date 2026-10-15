@@ -66,8 +66,11 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	if (!isNode(result)) return result;
 	carryRead(node, result);
 	carrySource(node, result);
-	const wrappers = handle?.current.trivia.rebuildWrappers;
-	if (wrappers !== undefined) carryRebuiltSlots(node as unknown as Record<string, unknown>, result as unknown as Record<string, unknown>, wrappers);
+	const facts = handle?.current.trivia;
+	if (facts !== undefined) {
+		const stands = (kindId: number): boolean => facts.rebuildWrappers.has(kindId) || facts.listKinds.has(kindId);
+		carryRebuiltSlots(node as unknown as Record<string, unknown>, result as unknown as Record<string, unknown>, stands);
+	}
 	const inner = isEmptyNode(result) ? [] : sideOf(node, 'inner');
 	if (inner.some((entry) => typeof entry !== 'number')) {
 		const kind = handle?.current.trivia.kindName(node.$type) ?? String(node.$type);
@@ -153,7 +156,7 @@ export function hydrateTriviaEntry(entry: unknown): TriviaEntry {
  * Hand an edited node's rebuilt wrapper slots what they keep of the wrappers they replace: that the
  * read produced them, and where they sit in the source.
  */
-function carryRebuiltSlots(read: Record<string, unknown>, result: Record<string, unknown>, wrappers: ReadonlySet<number>): void {
+function carryRebuiltSlots(read: Record<string, unknown>, result: Record<string, unknown>, stands: (kindId: number) => boolean): void {
 	for (const key of Object.keys(result)) {
 		if (!isStorageKey(key)) continue;
 		const fresh = result[key];
@@ -161,7 +164,7 @@ function carryRebuiltSlots(read: Record<string, unknown>, result: Record<string,
 		if (fresh === null || typeof fresh !== 'object' || Array.isArray(fresh) || held === null || typeof held !== 'object' || Array.isArray(held) || fresh === held) continue;
 		const freshNode = fresh as Record<string, unknown>;
 		const heldNode = held as Record<string, unknown>;
-		if (typeof freshNode.$type !== 'number' || freshNode.$type !== heldNode.$type || !wrappers.has(freshNode.$type)) continue;
+		if (typeof freshNode.$type !== 'number' || freshNode.$type !== heldNode.$type || !stands(freshNode.$type)) continue;
 		if (sourceOf(freshNode) !== undefined || sourceOf(heldNode) === undefined) continue;
 		carryRead(heldNode, freshNode);
 		carrySource(heldNode, freshNode);
@@ -660,10 +663,11 @@ export { currentHandle, inEngine, hydrateStored, type EngineHandle } from './eng
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toTransportData, toDetachedTransportData, PLAIN_KINDS, sideOf, sidesOf, carrySource, type SourceGapEvidence, type SourceFlankEvidence, type TransportLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './transport-data.ts';
+export { toTransportData, toDetachedTransportData, PLAIN_KINDS, sideOf, sidesOf, carrySource, type TransportLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, sourceOf } from './transport-data.ts';
 export { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 export { snapshotOf } from './snapshot.ts';
 export {
+	interiorPattern,
 	projectInterior,
 	lexedConfig,
 	spelledForm,

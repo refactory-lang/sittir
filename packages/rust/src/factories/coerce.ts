@@ -2,7 +2,7 @@
 
 import * as F from './raw.js';
 import { TOKEN_INTERIORS } from '../consts.js';
-import { lexedConfig, numberText, spelledInterior, refuseSiblingLead } from '@sittir/common/utils';
+import { lexedConfig, interiorPattern, numberText, spelledInterior, refuseSiblingLead } from '@sittir/common/utils';
 import type * as T from '../types-internal.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
 import { Delimiter } from '@sittir/common/utils';
@@ -300,44 +300,47 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	remaining_field_pattern: { values: ['..'], factory: () => F.buildRemainingFieldPattern },
 	inner_line_doc_comment_marker: { values: ['!'], factory: () => F.buildInnerLineDocCommentMarker },
 	outer_line_doc_comment_marker: { values: ['/'], factory: () => F.buildOuterLineDocCommentMarker },
-	identifier: { pattern: /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u, factory: F.buildIdentifier },
+	identifier: { pattern: F._leafRe_buildIdentifier, factory: F.buildIdentifier },
 	shebang: { factory: (content: string) => _resolveByKind('shebang', content) },
 	self: { values: ['self'], factory: () => F.buildSelf },
 	super: { values: ['super'], factory: () => F.buildSuper },
 	crate: { values: ['crate'], factory: () => F.buildCrate },
 	metavariable: { factory: (content: string) => _resolveByKind('metavariable', content) },
-	token_repetition_pattern_text: { pattern: /^(?:(?:[^+*?]+))$/u, factory: F.buildTokenRepetitionPatternText },
-	string_open: { pattern: /^(?:(?:[bc]?"))$/u, factory: F.buildStringOpen },
+	token_repetition_pattern_text: {
+		pattern: F._leafRe_buildTokenRepetitionPatternText,
+		factory: F.buildTokenRepetitionPatternText
+	},
+	string_open: { pattern: F._leafRe_buildStringOpen, factory: F.buildStringOpen },
 	integer_literal_decimal: {
-		pattern: new RegExp(TOKEN_INTERIORS['integer_literal_decimal'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['integer_literal_decimal']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_literal_decimal'], 'integer_literal_decimal');
 			return F.buildIntegerLiteralDecimal(cfg as never);
 		}
 	},
 	integer_literal_hex: {
-		pattern: new RegExp(TOKEN_INTERIORS['integer_literal_hex'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['integer_literal_hex']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_literal_hex'], 'integer_literal_hex');
 			return F.buildIntegerLiteralHex(cfg as never);
 		}
 	},
 	integer_literal_binary: {
-		pattern: new RegExp(TOKEN_INTERIORS['integer_literal_binary'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['integer_literal_binary']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_literal_binary'], 'integer_literal_binary');
 			return F.buildIntegerLiteralBinary(cfg as never);
 		}
 	},
 	integer_literal_octal: {
-		pattern: new RegExp(TOKEN_INTERIORS['integer_literal_octal'].regex, 'su'),
+		pattern: interiorPattern(TOKEN_INTERIORS['integer_literal_octal']),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_literal_octal'], 'integer_literal_octal');
 			return F.buildIntegerLiteralOctal(cfg as never);
 		}
 	},
 	char_literal_plain: { factory: (content: string) => _resolveByKind('char_literal_plain', content) },
-	char_literal_empty: { pattern: /^(?:(?:b)?'')$/u, factory: F.buildCharLiteralEmpty },
+	char_literal_empty: { pattern: F._leafRe_buildCharLiteralEmpty, factory: F.buildCharLiteralEmpty },
 	char_literal_escaped_simple: { factory: (content: string) => _resolveByKind('char_literal_escaped_simple', content) },
 	char_literal_escaped_unicode_fixed: {
 		factory: (content: string) => _resolveByKind('char_literal_escaped_unicode_fixed', content)
@@ -354,23 +357,26 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		factory: (content: string) => _resolveByKind('escape_sequence_unicode_braced', content)
 	},
 	escape_sequence_hex: { factory: (content: string) => _resolveByKind('escape_sequence_hex', content) },
-	line_comment_extra_slashes: { pattern: /^(?:(?:\/\/)(?:.*))$/u, factory: F.buildLineCommentExtraSlashes },
-	line_comment_regular: { pattern: /^(?:(?:.*))$/u, factory: F.buildLineCommentRegular },
-	block_comment_regular: { pattern: /^(?:(?:[^]*))$/u, factory: F.buildBlockCommentRegular },
+	line_comment_extra_slashes: {
+		pattern: F._leafRe_buildLineCommentExtraSlashes,
+		factory: F.buildLineCommentExtraSlashes
+	},
+	line_comment_regular: { pattern: F._leafRe_buildLineCommentRegular, factory: F.buildLineCommentRegular },
+	block_comment_regular: { pattern: F._leafRe_buildBlockCommentRegular, factory: F.buildBlockCommentRegular },
 	range_pattern_with_left_bare: { values: ['..'], factory: () => F.buildRangePatternWithLeftBare },
 	wildcard_pattern: { values: ['_'], factory: () => F.buildWildcardPattern },
-	float_literal: {
-		pattern: /^(?:(?:[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?))$/u,
-		factory: F.buildFloatLiteral
+	float_literal: { pattern: F._leafRe_buildFloatLiteral, factory: F.buildFloatLiteral },
+	string_content: { pattern: F._leafRe_buildStringContent, factory: F.buildStringContent },
+	raw_string_literal_content: {
+		pattern: F._leafRe_buildRawStringLiteralContent,
+		factory: F.buildRawStringLiteralContent
 	},
-	string_content: { pattern: /^(?:(?:[^"\\]+))$/u, factory: F.buildStringContent },
-	raw_string_literal_content: { pattern: /^(?:(?:[\s\S]*))$/u, factory: F.buildRawStringLiteralContent },
 	outer_doc_comment_marker: { values: ['*'], factory: () => F.buildOuterDocCommentMarker },
 	inner_doc_comment_marker: { values: ['!'], factory: () => F.buildInnerDocCommentMarker },
-	raw_string_literal_start: { pattern: /^(?:(?:[bc]?r#*"))$/u, factory: F.buildRawStringLiteralStart },
-	raw_string_literal_end: { pattern: /^(?:(?:"#*))$/u, factory: F.buildRawStringLiteralEnd },
-	doc_comment: { pattern: /^(?:(?:.*\n?))$/u, factory: F.buildDocComment },
-	_block_comment_content: { pattern: /^(?:(?:[^]*))$/u, factory: F.buildBlockCommentContent },
+	raw_string_literal_start: { pattern: F._leafRe_buildRawStringLiteralStart, factory: F.buildRawStringLiteralStart },
+	raw_string_literal_end: { pattern: F._leafRe_buildRawStringLiteralEnd, factory: F.buildRawStringLiteralEnd },
+	doc_comment: { pattern: F._leafRe_buildDocComment, factory: F.buildDocComment },
+	_block_comment_content: { pattern: F._leafRe_buildBlockCommentContent, factory: F.buildBlockCommentContent },
 	_tight: { values: [''], factory: () => F.buildTight },
 	_space: { values: [' '], factory: () => F.buildSpace },
 	_tab: { values: ['\t'], factory: () => F.buildTab },
@@ -380,15 +386,15 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	_indent: { values: ['﷐\n'], factory: () => F.buildIndent },
 	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent },
 	type_identifier: {
-		pattern: /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u,
+		pattern: F._leafRe_buildIdentifier,
 		factory: (text: string) => F.buildTypeIdentifier(F.buildIdentifier(text) as never)
 	},
 	field_identifier: {
-		pattern: /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u,
+		pattern: F._leafRe_buildIdentifier,
 		factory: (text: string) => F.buildFieldIdentifier(F.buildIdentifier(text) as never)
 	},
 	shorthand_field_identifier: {
-		pattern: /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u,
+		pattern: F._leafRe_buildIdentifier,
 		factory: (text: string) => F.buildShorthandFieldIdentifier(F.buildIdentifier(text) as never)
 	}
 };
@@ -410,9 +416,6 @@ function _buildGuardedText(v: string, kind: string): AnyUntypedNode | number {
 	const entry = _leafRegistry[kind]!;
 	if (entry.values !== undefined && !entry.values.includes(v)) {
 		throw new Error(`${JSON.stringify(v)} is not the text of ${kind}: expected one of ${JSON.stringify(entry.values)}`);
-	}
-	if (entry.pattern !== undefined && !entry.pattern.test(v)) {
-		throw new Error(`${JSON.stringify(v)} is not a ${kind}: it does not match ${entry.pattern}`);
 	}
 	return entry.factory(v);
 }
@@ -594,10 +597,9 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	expression_statement: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
-		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332, 333, 336, 363,
-		366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 394
+		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 394
 	]),
 	non_special_token: new Set([
 		1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 54,
@@ -649,46 +651,39 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 468
 	]),
 	try_expression: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
-		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332, 333, 336, 363,
-		366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
 	return_expression: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
-		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332, 333, 336, 363,
-		366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
 	yield_expression: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
-		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332, 333, 336, 363,
-		366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
 	arguments: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
-		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332, 333, 336, 354,
-		363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 431
+		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 354, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 431
 	]),
 	parenthesized_expression: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
-		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332, 333, 336, 363,
-		366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
 	field_initializer_list: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
-		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 284, 285, 286, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332,
-		333, 336, 356, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 284, 285, 286, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307,
+		308, 309, 310, 311, 312, 313, 332, 333, 336, 356, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
 	base_field_initializer: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
-		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332, 333, 336, 363,
-		366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
 	else_clause: new Set([287, 313]),
 	match_block: new Set([434]),
@@ -696,32 +691,27 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	label: new Set([1]),
 	continue_expression: new Set([1, 303]),
 	await_expression: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
-		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332, 333, 336, 363,
-		366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
 	unsafe_block: new Set([313]),
 	try_block: new Set([313]),
 	tuple_pattern: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 141, 142, 143, 144,
-		145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319, 321, 322, 324, 325, 326, 330, 332,
-		333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
+		1, 117, 118, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
+		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
 	]),
 	slice_pattern: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 141, 142, 143, 144,
-		145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319, 321, 322, 324, 325, 326, 330, 332,
-		333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
+		1, 117, 118, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
+		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
 	]),
 	mut_pattern: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 141, 142, 143, 144,
-		145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319, 321, 322, 324, 325, 326, 330, 332,
-		333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
+		1, 117, 118, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
+		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
 	]),
 	ref_pattern: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 141, 142, 143, 144,
-		145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319, 321, 322, 324, 325, 326, 330, 332,
-		333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
+		1, 117, 118, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
+		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
 	]),
 	negative_literal: new Set([141, 142, 143, 144, 162]),
 	line_comment: new Set([156, 166, 399, 400, 401]),
@@ -752,58 +742,49 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		333, 336, 341, 351, 388, 389, 433, 468
 	]),
 	arguments_elements: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
-		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332, 333, 336, 363,
-		366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 431
+		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 431
 	]),
 	expressions: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
-		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332, 333, 336, 363,
-		366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
 	field_initializer_list_elements: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
-		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 284, 285, 286, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332,
-		333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 284, 285, 286, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307,
+		308, 309, 310, 311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
 	tuple_pattern_elements: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 141, 142, 143, 144,
-		145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319, 321, 322, 324, 325, 326, 330, 332,
-		333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
+		1, 117, 118, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
+		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
 	]),
 	patterns: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 141, 142, 143, 144,
-		145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319, 321, 322, 324, 325, 326, 330, 332,
-		333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
+		1, 117, 118, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
+		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
 	]),
 	struct_pattern_elements: new Set([321, 414, 415]),
 	use_wildcard_group: new Set([1, 125, 126, 127, 128, 263]),
 	reference_expression_raw_const: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
-		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332, 333, 336, 363,
-		366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
 	reference_expression_raw_mut: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
-		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332, 333, 336, 363,
-		366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
 	reference_expression_mut: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
-		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332, 333, 336, 363,
-		366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
 	reference_expression_bare: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
-		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332, 333, 336, 363,
-		366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
 	impl_item_positive_clause: new Set([1, 246, 265, 468]),
 	impl_item_negative_clause: new Set([1, 246, 265, 468]),
@@ -813,9 +794,8 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	function_type_trait_form: new Set([1, 265, 468]),
 	function_type_fn_form: new Set([210]),
 	or_pattern_prefix: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 141, 142, 143, 144,
-		145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319, 321, 322, 324, 325, 326, 330, 332,
-		333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
+		1, 117, 118, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
+		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
 	]),
 	pointer_type_const: new Set([
 		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 240, 242, 243, 244, 246, 248,
@@ -826,23 +806,20 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 468
 	]),
 	range_expression_postfix: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
-		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332, 333, 336, 363,
-		366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
 	range_expression_prefix: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
-		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332, 333, 336, 363,
-		366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
 	range_expression_bare: new Set([363]),
 	expression_statement_with_semi: new Set([
-		1, 32, 51, 52, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 125, 128, 141, 142,
-		143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271, 272, 273, 274, 275, 276, 279, 280,
-		281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 332, 333, 336, 363,
-		366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
+		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
+		311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
 	line_comment_doc_outer: new Set([166]),
 	line_comment_doc_inner: new Set([166]),
@@ -1907,26 +1884,6 @@ const _K13: readonly string[] = [
 	'integer_literal_hex',
 	'integer_literal_binary',
 	'integer_literal_octal',
-	'u8_keyword',
-	'i8_keyword',
-	'u16_keyword',
-	'i16_keyword',
-	'u32_keyword',
-	'i32_keyword',
-	'u64_keyword',
-	'i64_keyword',
-	'u128_keyword',
-	'i128_keyword',
-	'isize_keyword',
-	'usize_keyword',
-	'f32_keyword',
-	'f64_keyword',
-	'bool_keyword',
-	'str_keyword',
-	'char_keyword',
-	'default_keyword',
-	'union_keyword',
-	'gen_keyword',
 	'scoped_identifier',
 	'generic_function',
 	'await_expression',
@@ -2048,31 +2005,11 @@ const _K24: readonly string[] = [
 	'integer_literal_binary',
 	'integer_literal_octal',
 	'negative_literal',
-	'u8_keyword',
-	'i8_keyword',
-	'u16_keyword',
-	'i16_keyword',
-	'u32_keyword',
-	'i32_keyword',
-	'u64_keyword',
-	'i64_keyword',
-	'u128_keyword',
-	'i128_keyword',
-	'isize_keyword',
-	'usize_keyword',
-	'f32_keyword',
-	'f64_keyword',
-	'bool_keyword',
-	'str_keyword',
-	'char_keyword',
 	'scoped_identifier',
 	'generic_pattern',
 	'tuple_pattern',
 	'tuple_struct_pattern',
 	'struct_pattern',
-	'default_keyword',
-	'union_keyword',
-	'gen_keyword',
 	'ref_pattern',
 	'slice_pattern',
 	'captured_pattern',
@@ -2263,26 +2200,6 @@ const _K45: readonly string[] = [
 	'integer_literal_hex',
 	'integer_literal_binary',
 	'integer_literal_octal',
-	'u8_keyword',
-	'i8_keyword',
-	'u16_keyword',
-	'i16_keyword',
-	'u32_keyword',
-	'i32_keyword',
-	'u64_keyword',
-	'i64_keyword',
-	'u128_keyword',
-	'i128_keyword',
-	'isize_keyword',
-	'usize_keyword',
-	'f32_keyword',
-	'f64_keyword',
-	'bool_keyword',
-	'str_keyword',
-	'char_keyword',
-	'default_keyword',
-	'union_keyword',
-	'gen_keyword',
 	'scoped_identifier',
 	'generic_function',
 	'await_expression',
@@ -2344,26 +2261,6 @@ const _K46: readonly string[] = [
 	'integer_literal_hex',
 	'integer_literal_binary',
 	'integer_literal_octal',
-	'u8_keyword',
-	'i8_keyword',
-	'u16_keyword',
-	'i16_keyword',
-	'u32_keyword',
-	'i32_keyword',
-	'u64_keyword',
-	'i64_keyword',
-	'u128_keyword',
-	'i128_keyword',
-	'isize_keyword',
-	'usize_keyword',
-	'f32_keyword',
-	'f64_keyword',
-	'bool_keyword',
-	'str_keyword',
-	'char_keyword',
-	'default_keyword',
-	'union_keyword',
-	'gen_keyword',
 	'scoped_identifier',
 	'generic_function',
 	'await_expression',
@@ -2422,26 +2319,6 @@ const _K47: readonly string[] = [
 	'integer_literal_hex',
 	'integer_literal_binary',
 	'integer_literal_octal',
-	'u8_keyword',
-	'i8_keyword',
-	'u16_keyword',
-	'i16_keyword',
-	'u32_keyword',
-	'i32_keyword',
-	'u64_keyword',
-	'i64_keyword',
-	'u128_keyword',
-	'i128_keyword',
-	'isize_keyword',
-	'usize_keyword',
-	'f32_keyword',
-	'f64_keyword',
-	'bool_keyword',
-	'str_keyword',
-	'char_keyword',
-	'default_keyword',
-	'union_keyword',
-	'gen_keyword',
 	'scoped_identifier',
 	'generic_function',
 	'await_expression',
@@ -2489,31 +2366,11 @@ const _K50: readonly string[] = [
 	'integer_literal_binary',
 	'integer_literal_octal',
 	'negative_literal',
-	'u8_keyword',
-	'i8_keyword',
-	'u16_keyword',
-	'i16_keyword',
-	'u32_keyword',
-	'i32_keyword',
-	'u64_keyword',
-	'i64_keyword',
-	'u128_keyword',
-	'i128_keyword',
-	'isize_keyword',
-	'usize_keyword',
-	'f32_keyword',
-	'f64_keyword',
-	'bool_keyword',
-	'str_keyword',
-	'char_keyword',
 	'scoped_identifier',
 	'generic_pattern',
 	'tuple_pattern',
 	'tuple_struct_pattern',
 	'struct_pattern',
-	'default_keyword',
-	'union_keyword',
-	'gen_keyword',
 	'ref_pattern',
 	'slice_pattern',
 	'captured_pattern',
@@ -2589,31 +2446,11 @@ const _K63: readonly string[] = [
 	'integer_literal_binary',
 	'integer_literal_octal',
 	'negative_literal',
-	'u8_keyword',
-	'i8_keyword',
-	'u16_keyword',
-	'i16_keyword',
-	'u32_keyword',
-	'i32_keyword',
-	'u64_keyword',
-	'i64_keyword',
-	'u128_keyword',
-	'i128_keyword',
-	'isize_keyword',
-	'usize_keyword',
-	'f32_keyword',
-	'f64_keyword',
-	'bool_keyword',
-	'str_keyword',
-	'char_keyword',
 	'scoped_identifier',
 	'generic_pattern',
 	'tuple_pattern',
 	'tuple_struct_pattern',
 	'struct_pattern',
-	'default_keyword',
-	'union_keyword',
-	'gen_keyword',
 	'ref_pattern',
 	'slice_pattern',
 	'captured_pattern',
@@ -3487,88 +3324,13 @@ export function coerceToInnerAttributeItem(
 export function resolveAttribute_path(value: T.Attribute.LooseConfig['path']): Admit<T.Attribute['_path']> {
 	return _keywordOr(
 		value,
-		[
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		],
+		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, () =>
-					_resolveOne<
-						| 'self'
-						| 'u8'
-						| 'i8'
-						| 'u16'
-						| 'i16'
-						| 'u32'
-						| 'i32'
-						| 'u64'
-						| 'i64'
-						| 'u128'
-						| 'i128'
-						| 'isize'
-						| 'usize'
-						| 'f32'
-						| 'f64'
-						| 'bool'
-						| 'str'
-						| 'char'
-						| T.Metavariable
-						| 'super'
-						| 'crate'
-						| T.Identifier
-						| T.ScopedIdentifier
-						| 'default'
-						| 'union'
-						| 'gen'
-					>(value, _K8, _K9)
+					_resolveOne<'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier>(value, _K8, _K9)
 				),
-				[
-					['self', TSKindId.Self] as const,
-					['u8', TSKindId.U8Keyword] as const,
-					['i8', TSKindId.I8Keyword] as const,
-					['u16', TSKindId.U16Keyword] as const,
-					['i16', TSKindId.I16Keyword] as const,
-					['u32', TSKindId.U32Keyword] as const,
-					['i32', TSKindId.I32Keyword] as const,
-					['u64', TSKindId.U64Keyword] as const,
-					['i64', TSKindId.I64Keyword] as const,
-					['u128', TSKindId.U128Keyword] as const,
-					['i128', TSKindId.I128Keyword] as const,
-					['isize', TSKindId.IsizeKeyword] as const,
-					['usize', TSKindId.UsizeKeyword] as const,
-					['f32', TSKindId.F32Keyword] as const,
-					['f64', TSKindId.F64Keyword] as const,
-					['bool', TSKindId.BoolKeyword] as const,
-					['str', TSKindId.StrKeyword] as const,
-					['char', TSKindId.CharKeyword] as const,
-					['super', TSKindId.Super] as const,
-					['crate', TSKindId.Crate] as const,
-					['default', TSKindId.DefaultKeyword] as const,
-					['union', TSKindId.UnionKeyword] as const,
-					['gen', TSKindId.GenKeyword] as const
-				]
+				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -4686,92 +4448,24 @@ export function resolveUseDeclaration_argument(
 ): Admit<T.UseDeclaration['_argument']> {
 	return _keywordOr(
 		value,
-		[
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		],
+		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, () =>
 					_resolveOne<
 						| 'self'
-						| 'u8'
-						| 'i8'
-						| 'u16'
-						| 'i16'
-						| 'u32'
-						| 'i32'
-						| 'u64'
-						| 'i64'
-						| 'u128'
-						| 'i128'
-						| 'isize'
-						| 'usize'
-						| 'f32'
-						| 'f64'
-						| 'bool'
-						| 'str'
-						| 'char'
 						| T.Metavariable
 						| 'super'
 						| 'crate'
 						| T.Identifier
 						| T.ScopedIdentifier
-						| 'default'
-						| 'union'
-						| 'gen'
 						| T.UseAsClause
 						| T.UseList
 						| T.ScopedUseList
 						| T.UseWildcard
 					>(value, _K8, _K25)
 				),
-				[
-					['self', TSKindId.Self] as const,
-					['u8', TSKindId.U8Keyword] as const,
-					['i8', TSKindId.I8Keyword] as const,
-					['u16', TSKindId.U16Keyword] as const,
-					['i16', TSKindId.I16Keyword] as const,
-					['u32', TSKindId.U32Keyword] as const,
-					['i32', TSKindId.I32Keyword] as const,
-					['u64', TSKindId.U64Keyword] as const,
-					['i64', TSKindId.I64Keyword] as const,
-					['u128', TSKindId.U128Keyword] as const,
-					['i128', TSKindId.I128Keyword] as const,
-					['isize', TSKindId.IsizeKeyword] as const,
-					['usize', TSKindId.UsizeKeyword] as const,
-					['f32', TSKindId.F32Keyword] as const,
-					['f64', TSKindId.F64Keyword] as const,
-					['bool', TSKindId.BoolKeyword] as const,
-					['str', TSKindId.StrKeyword] as const,
-					['char', TSKindId.CharKeyword] as const,
-					['super', TSKindId.Super] as const,
-					['crate', TSKindId.Crate] as const,
-					['default', TSKindId.DefaultKeyword] as const,
-					['union', TSKindId.UnionKeyword] as const,
-					['gen', TSKindId.GenKeyword] as const
-				]
+				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -4788,88 +4482,13 @@ export function coerceToUseDeclaration(input: T.UseDeclaration.Loose): ReturnTyp
 export function resolveScopedUseList_path(value: T.ScopedUseList.LooseConfig['path']): Admit<T.ScopedUseList['_path']> {
 	return _keywordOr(
 		value,
-		[
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		],
+		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, () =>
-					_resolveOne<
-						| 'self'
-						| 'u8'
-						| 'i8'
-						| 'u16'
-						| 'i16'
-						| 'u32'
-						| 'i32'
-						| 'u64'
-						| 'i64'
-						| 'u128'
-						| 'i128'
-						| 'isize'
-						| 'usize'
-						| 'f32'
-						| 'f64'
-						| 'bool'
-						| 'str'
-						| 'char'
-						| T.Metavariable
-						| 'super'
-						| 'crate'
-						| T.Identifier
-						| T.ScopedIdentifier
-						| 'default'
-						| 'union'
-						| 'gen'
-					>(value, _K8, _K9)
+					_resolveOne<'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier>(value, _K8, _K9)
 				),
-				[
-					['self', TSKindId.Self] as const,
-					['u8', TSKindId.U8Keyword] as const,
-					['i8', TSKindId.I8Keyword] as const,
-					['u16', TSKindId.U16Keyword] as const,
-					['i16', TSKindId.I16Keyword] as const,
-					['u32', TSKindId.U32Keyword] as const,
-					['i32', TSKindId.I32Keyword] as const,
-					['u64', TSKindId.U64Keyword] as const,
-					['i64', TSKindId.I64Keyword] as const,
-					['u128', TSKindId.U128Keyword] as const,
-					['i128', TSKindId.I128Keyword] as const,
-					['isize', TSKindId.IsizeKeyword] as const,
-					['usize', TSKindId.UsizeKeyword] as const,
-					['f32', TSKindId.F32Keyword] as const,
-					['f64', TSKindId.F64Keyword] as const,
-					['bool', TSKindId.BoolKeyword] as const,
-					['str', TSKindId.StrKeyword] as const,
-					['char', TSKindId.CharKeyword] as const,
-					['super', TSKindId.Super] as const,
-					['crate', TSKindId.Crate] as const,
-					['default', TSKindId.DefaultKeyword] as const,
-					['union', TSKindId.UnionKeyword] as const,
-					['gen', TSKindId.GenKeyword] as const
-				]
+				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -4914,88 +4533,13 @@ export function coerceToUseList(...args: unknown[]): ReturnType<typeof F.buildUs
 export function resolveUseAsClause_path(value: T.UseAsClause.LooseConfig['path']): Admit<T.UseAsClause['_path']> {
 	return _keywordOr(
 		value,
-		[
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		],
+		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, () =>
-					_resolveOne<
-						| 'self'
-						| 'u8'
-						| 'i8'
-						| 'u16'
-						| 'i16'
-						| 'u32'
-						| 'i32'
-						| 'u64'
-						| 'i64'
-						| 'u128'
-						| 'i128'
-						| 'isize'
-						| 'usize'
-						| 'f32'
-						| 'f64'
-						| 'bool'
-						| 'str'
-						| 'char'
-						| T.Metavariable
-						| 'super'
-						| 'crate'
-						| T.Identifier
-						| T.ScopedIdentifier
-						| 'default'
-						| 'union'
-						| 'gen'
-					>(value, _K8, _K9)
+					_resolveOne<'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier>(value, _K8, _K9)
 				),
-				[
-					['self', TSKindId.Self] as const,
-					['u8', TSKindId.U8Keyword] as const,
-					['i8', TSKindId.I8Keyword] as const,
-					['u16', TSKindId.U16Keyword] as const,
-					['i16', TSKindId.I16Keyword] as const,
-					['u32', TSKindId.U32Keyword] as const,
-					['i32', TSKindId.I32Keyword] as const,
-					['u64', TSKindId.U64Keyword] as const,
-					['i64', TSKindId.I64Keyword] as const,
-					['u128', TSKindId.U128Keyword] as const,
-					['i128', TSKindId.I128Keyword] as const,
-					['isize', TSKindId.IsizeKeyword] as const,
-					['usize', TSKindId.UsizeKeyword] as const,
-					['f32', TSKindId.F32Keyword] as const,
-					['f64', TSKindId.F64Keyword] as const,
-					['bool', TSKindId.BoolKeyword] as const,
-					['str', TSKindId.StrKeyword] as const,
-					['char', TSKindId.CharKeyword] as const,
-					['super', TSKindId.Super] as const,
-					['crate', TSKindId.Crate] as const,
-					['default', TSKindId.DefaultKeyword] as const,
-					['union', TSKindId.UnionKeyword] as const,
-					['gen', TSKindId.GenKeyword] as const
-				]
+				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -5405,25 +4949,7 @@ export function coerceToGenericFunction(input: T.GenericFunction.Loose): ReturnT
 }
 
 export function resolveGenericType_type(value: T.GenericType.LooseConfig['type']): Admit<T.GenericType['_type']> {
-	return _keywordOr(
-		value,
-		[
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () =>
-					_resolveOne<T.TypeIdentifier | 'default' | 'union' | 'gen' | T.ScopedTypeIdentifier>(value, _K2, _K32)
-				),
-				[
-					['default', TSKindId.DefaultKeyword] as const,
-					['union', TSKindId.UnionKeyword] as const,
-					['gen', TSKindId.GenKeyword] as const
-				]
-			)
-	);
+	return _resolveOne<T.TypeIdentifier | T.Identifier | T.ScopedTypeIdentifier>(value, _K16, _K32);
 }
 
 export function resolveGenericType_typeArguments(
@@ -5665,25 +5191,7 @@ export function coerceToMutableSpecifier(_input?: T.MutableSpecifier.Loose): typ
 export function resolveMacroInvocation_macro(
 	value: T.MacroInvocation.LooseConfig['macro']
 ): Admit<T.MacroInvocation['_macro']> {
-	return _keywordOr(
-		value,
-		[
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () =>
-					_resolveOne<T.ScopedIdentifier | T.Identifier | 'default' | 'union' | 'gen'>(value, _K16, _K37)
-				),
-				[
-					['default', TSKindId.DefaultKeyword] as const,
-					['union', TSKindId.UnionKeyword] as const,
-					['gen', TSKindId.GenKeyword] as const
-				]
-			)
-	);
+	return _resolveOne<T.ScopedIdentifier | T.Identifier>(value, _K16, _K37);
 }
 
 export function resolveMacroInvocation_arguments(
@@ -5706,90 +5214,22 @@ export function resolveScopedIdentifier_path(
 ): Admit<T.ScopedIdentifier['_path']> {
 	return _keywordOr(
 		value,
-		[
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		],
+		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, () =>
 					_resolveOne<
 						| 'self'
-						| 'u8'
-						| 'i8'
-						| 'u16'
-						| 'i16'
-						| 'u32'
-						| 'i32'
-						| 'u64'
-						| 'i64'
-						| 'u128'
-						| 'i128'
-						| 'isize'
-						| 'usize'
-						| 'f32'
-						| 'f64'
-						| 'bool'
-						| 'str'
-						| 'char'
 						| T.Metavariable
 						| 'super'
 						| 'crate'
 						| T.Identifier
 						| T.ScopedIdentifier
-						| 'default'
-						| 'union'
-						| 'gen'
 						| T.BracketedType
 						| T.GenericTypeWithTurbofish
 					>(value, _K8, _K38)
 				),
-				[
-					['self', TSKindId.Self] as const,
-					['u8', TSKindId.U8Keyword] as const,
-					['i8', TSKindId.I8Keyword] as const,
-					['u16', TSKindId.U16Keyword] as const,
-					['i16', TSKindId.I16Keyword] as const,
-					['u32', TSKindId.U32Keyword] as const,
-					['i32', TSKindId.I32Keyword] as const,
-					['u64', TSKindId.U64Keyword] as const,
-					['i64', TSKindId.I64Keyword] as const,
-					['u128', TSKindId.U128Keyword] as const,
-					['i128', TSKindId.I128Keyword] as const,
-					['isize', TSKindId.IsizeKeyword] as const,
-					['usize', TSKindId.UsizeKeyword] as const,
-					['f32', TSKindId.F32Keyword] as const,
-					['f64', TSKindId.F64Keyword] as const,
-					['bool', TSKindId.BoolKeyword] as const,
-					['str', TSKindId.StrKeyword] as const,
-					['char', TSKindId.CharKeyword] as const,
-					['super', TSKindId.Super] as const,
-					['crate', TSKindId.Crate] as const,
-					['default', TSKindId.DefaultKeyword] as const,
-					['union', TSKindId.UnionKeyword] as const,
-					['gen', TSKindId.GenKeyword] as const
-				]
+				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -5819,89 +5259,15 @@ export function resolveScopedTypeIdentifierInExpressionPosition_path(
 ): Admit<T.ScopedTypeIdentifierInExpressionPosition['_path']> {
 	return _keywordOr(
 		value,
-		[
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		],
+		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, () =>
 					_resolveOne<
-						| 'self'
-						| 'u8'
-						| 'i8'
-						| 'u16'
-						| 'i16'
-						| 'u32'
-						| 'i32'
-						| 'u64'
-						| 'i64'
-						| 'u128'
-						| 'i128'
-						| 'isize'
-						| 'usize'
-						| 'f32'
-						| 'f64'
-						| 'bool'
-						| 'str'
-						| 'char'
-						| T.Metavariable
-						| 'super'
-						| 'crate'
-						| T.Identifier
-						| T.ScopedIdentifier
-						| 'default'
-						| 'union'
-						| 'gen'
-						| T.GenericTypeWithTurbofish
+						'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish
 					>(value, _K8, _K40)
 				),
-				[
-					['self', TSKindId.Self] as const,
-					['u8', TSKindId.U8Keyword] as const,
-					['i8', TSKindId.I8Keyword] as const,
-					['u16', TSKindId.U16Keyword] as const,
-					['i16', TSKindId.I16Keyword] as const,
-					['u32', TSKindId.U32Keyword] as const,
-					['i32', TSKindId.I32Keyword] as const,
-					['u64', TSKindId.U64Keyword] as const,
-					['i64', TSKindId.I64Keyword] as const,
-					['u128', TSKindId.U128Keyword] as const,
-					['i128', TSKindId.I128Keyword] as const,
-					['isize', TSKindId.IsizeKeyword] as const,
-					['usize', TSKindId.UsizeKeyword] as const,
-					['f32', TSKindId.F32Keyword] as const,
-					['f64', TSKindId.F64Keyword] as const,
-					['bool', TSKindId.BoolKeyword] as const,
-					['str', TSKindId.StrKeyword] as const,
-					['char', TSKindId.CharKeyword] as const,
-					['super', TSKindId.Super] as const,
-					['crate', TSKindId.Crate] as const,
-					['default', TSKindId.DefaultKeyword] as const,
-					['union', TSKindId.UnionKeyword] as const,
-					['gen', TSKindId.GenKeyword] as const
-				]
+				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -5932,91 +5298,23 @@ export function resolveScopedTypeIdentifier_path(
 ): Admit<T.ScopedTypeIdentifier['_path']> {
 	return _keywordOr(
 		value,
-		[
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		],
+		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, () =>
 					_resolveOne<
 						| 'self'
-						| 'u8'
-						| 'i8'
-						| 'u16'
-						| 'i16'
-						| 'u32'
-						| 'i32'
-						| 'u64'
-						| 'i64'
-						| 'u128'
-						| 'i128'
-						| 'isize'
-						| 'usize'
-						| 'f32'
-						| 'f64'
-						| 'bool'
-						| 'str'
-						| 'char'
 						| T.Metavariable
 						| 'super'
 						| 'crate'
 						| T.Identifier
 						| T.ScopedIdentifier
-						| 'default'
-						| 'union'
-						| 'gen'
 						| T.GenericTypeWithTurbofish
 						| T.BracketedType
 						| T.GenericType
 					>(value, _K8, _K41)
 				),
-				[
-					['self', TSKindId.Self] as const,
-					['u8', TSKindId.U8Keyword] as const,
-					['i8', TSKindId.I8Keyword] as const,
-					['u16', TSKindId.U16Keyword] as const,
-					['i16', TSKindId.I16Keyword] as const,
-					['u32', TSKindId.U32Keyword] as const,
-					['i32', TSKindId.I32Keyword] as const,
-					['u64', TSKindId.U64Keyword] as const,
-					['i64', TSKindId.I64Keyword] as const,
-					['u128', TSKindId.U128Keyword] as const,
-					['i128', TSKindId.I128Keyword] as const,
-					['isize', TSKindId.IsizeKeyword] as const,
-					['usize', TSKindId.UsizeKeyword] as const,
-					['f32', TSKindId.F32Keyword] as const,
-					['f64', TSKindId.F64Keyword] as const,
-					['bool', TSKindId.BoolKeyword] as const,
-					['str', TSKindId.StrKeyword] as const,
-					['char', TSKindId.CharKeyword] as const,
-					['super', TSKindId.Super] as const,
-					['crate', TSKindId.Crate] as const,
-					['default', TSKindId.DefaultKeyword] as const,
-					['union', TSKindId.UnionKeyword] as const,
-					['gen', TSKindId.GenKeyword] as const
-				]
+				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -6341,121 +5639,53 @@ export function coerceToYieldExpression(input?: T.YieldExpression.Loose): Return
 export function resolveCallExpression_function(
 	value: T.CallExpression.LooseConfig['function']
 ): Admit<T.CallExpression['_function']> {
-	return _keywordOr(
-		value,
-		[
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const,
-			['self', TSKindId.Self] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () =>
-					_resolveOne<
-						| T.UnaryExpression
-						| T.ReferenceExpression
-						| T.TryExpression
-						| T.BinaryExpression
-						| T.AssignmentExpression
-						| T.CompoundAssignmentExpr
-						| T.TypeCastExpression
-						| T.CallExpression
-						| T.ReturnExpression
-						| T.YieldExpression
-						| T.Literal
-						| T.Identifier
-						| 'u8'
-						| 'i8'
-						| 'u16'
-						| 'i16'
-						| 'u32'
-						| 'i32'
-						| 'u64'
-						| 'i64'
-						| 'u128'
-						| 'i128'
-						| 'isize'
-						| 'usize'
-						| 'f32'
-						| 'f64'
-						| 'bool'
-						| 'str'
-						| 'char'
-						| 'default'
-						| 'union'
-						| 'gen'
-						| 'self'
-						| T.ScopedIdentifier
-						| T.GenericFunction
-						| T.AwaitExpression
-						| T.FieldExpression
-						| T.ArrayExpression
-						| T.TupleExpression
-						| T.MacroInvocation
-						| '()'
-						| T.BreakExpression
-						| T.ContinueExpression
-						| T.IndexExpression
-						| T.Metavariable
-						| T.ClosureExpression
-						| T.ParenthesizedExpression
-						| T.StructExpression
-						| T.UnsafeBlock
-						| T.AsyncBlock
-						| T.GenBlock
-						| T.TryBlock
-						| T.Block
-						| T.IfExpression
-						| T.MatchExpression
-						| T.WhileExpression
-						| T.LoopExpression
-						| T.ForExpression
-						| T.ConstBlock
-					>(value, _K12, _K42)
-				),
-				[
-					['u8', TSKindId.U8Keyword] as const,
-					['i8', TSKindId.I8Keyword] as const,
-					['u16', TSKindId.U16Keyword] as const,
-					['i16', TSKindId.I16Keyword] as const,
-					['u32', TSKindId.U32Keyword] as const,
-					['i32', TSKindId.I32Keyword] as const,
-					['u64', TSKindId.U64Keyword] as const,
-					['i64', TSKindId.I64Keyword] as const,
-					['u128', TSKindId.U128Keyword] as const,
-					['i128', TSKindId.I128Keyword] as const,
-					['isize', TSKindId.IsizeKeyword] as const,
-					['usize', TSKindId.UsizeKeyword] as const,
-					['f32', TSKindId.F32Keyword] as const,
-					['f64', TSKindId.F64Keyword] as const,
-					['bool', TSKindId.BoolKeyword] as const,
-					['str', TSKindId.StrKeyword] as const,
-					['char', TSKindId.CharKeyword] as const,
-					['default', TSKindId.DefaultKeyword] as const,
-					['union', TSKindId.UnionKeyword] as const,
-					['gen', TSKindId.GenKeyword] as const,
-					['self', TSKindId.Self] as const,
-					['()', TSKindId.UnitExpression] as const
-				]
-			)
+	return _keywordOr(value, [['self', TSKindId.Self] as const], () =>
+		coerceMixedEnumStorage(
+			_resolveKindEnum(value, () =>
+				_resolveOne<
+					| T.UnaryExpression
+					| T.ReferenceExpression
+					| T.TryExpression
+					| T.BinaryExpression
+					| T.AssignmentExpression
+					| T.CompoundAssignmentExpr
+					| T.TypeCastExpression
+					| T.CallExpression
+					| T.ReturnExpression
+					| T.YieldExpression
+					| T.Literal
+					| T.Identifier
+					| 'self'
+					| T.ScopedIdentifier
+					| T.GenericFunction
+					| T.AwaitExpression
+					| T.FieldExpression
+					| T.ArrayExpression
+					| T.TupleExpression
+					| T.MacroInvocation
+					| '()'
+					| T.BreakExpression
+					| T.ContinueExpression
+					| T.IndexExpression
+					| T.Metavariable
+					| T.ClosureExpression
+					| T.ParenthesizedExpression
+					| T.StructExpression
+					| T.UnsafeBlock
+					| T.AsyncBlock
+					| T.GenBlock
+					| T.TryBlock
+					| T.Block
+					| T.IfExpression
+					| T.MatchExpression
+					| T.WhileExpression
+					| T.LoopExpression
+					| T.ForExpression
+					| T.ConstBlock
+				>(value, _K12, _K42)
+			),
+			[['self', TSKindId.Self] as const, ['()', TSKindId.UnitExpression] as const]
+		)
 	);
 }
 
@@ -7966,31 +7196,11 @@ export function coerceToUseClauses(...input: T.UseClauses.LooseArgs): ReturnType
 			...(children as unknown as NonEmptyArray<
 				Admit<
 					| TSKindId.Self
-					| TSKindId.U8Keyword
-					| TSKindId.I8Keyword
-					| TSKindId.U16Keyword
-					| TSKindId.I16Keyword
-					| TSKindId.U32Keyword
-					| TSKindId.I32Keyword
-					| TSKindId.U64Keyword
-					| TSKindId.I64Keyword
-					| TSKindId.U128Keyword
-					| TSKindId.I128Keyword
-					| TSKindId.IsizeKeyword
-					| TSKindId.UsizeKeyword
-					| TSKindId.F32Keyword
-					| TSKindId.F64Keyword
-					| TSKindId.BoolKeyword
-					| TSKindId.StrKeyword
-					| TSKindId.CharKeyword
 					| T.Metavariable
 					| TSKindId.Super
 					| TSKindId.Crate
 					| T.Identifier
 					| T.ScopedIdentifier
-					| TSKindId.DefaultKeyword
-					| TSKindId.UnionKeyword
-					| TSKindId.GenKeyword
 					| T.UseAsClause
 					| T.UseList
 					| T.ScopedUseList
@@ -8000,45 +7210,62 @@ export function coerceToUseClauses(...input: T.UseClauses.LooseArgs): ReturnType
 		);
 	}
 	return F.buildUseClauses(
-		...(_listElements(input, ['delimiter'], undefined, (els) => els, [
-			'self',
-			'super',
-			'crate',
-			'identifier',
-			'metavariable',
-			'scoped_identifier',
-			'use_as_clause',
-			'use_list',
-			'scoped_use_list',
-			'use_wildcard'
-		]) as unknown as NonEmptyArray<
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) =>
+				(els == null ? [] : Array.isArray(els) ? els : [els])
+					.map(
+						(_e: _LooseFieldInput) =>
+							_keywordOf(_e, [
+								['self', TSKindId.Self] as const,
+								['super', TSKindId.Super] as const,
+								['crate', TSKindId.Crate] as const
+							]) ??
+							coerceMixedEnumStorage(
+								_resolveKindEnum(_e, () =>
+									_resolveOne<
+										| TSKindId.Self
+										| T.Metavariable
+										| TSKindId.Super
+										| TSKindId.Crate
+										| T.Identifier
+										| T.ScopedIdentifier
+										| T.UseAsClause
+										| T.UseList
+										| T.ScopedUseList
+										| T.UseWildcard
+									>(_e, _K8, _K25)
+								),
+								[
+									['self', TSKindId.Self] as const,
+									['super', TSKindId.Super] as const,
+									['crate', TSKindId.Crate] as const
+								]
+							)
+					)
+					.filter((_e) => _e !== undefined),
+			[
+				'self',
+				'super',
+				'crate',
+				'identifier',
+				'metavariable',
+				'scoped_identifier',
+				'use_as_clause',
+				'use_list',
+				'scoped_use_list',
+				'use_wildcard'
+			]
+		) as unknown as NonEmptyArray<
 			Admit<
 				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
 				| T.Identifier
 				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
 				| T.UseAsClause
 				| T.UseList
 				| T.ScopedUseList
@@ -8407,26 +7634,6 @@ export function coerceToArgumentsElements(
 				'integer_literal_hex',
 				'integer_literal_binary',
 				'integer_literal_octal',
-				'u8_keyword',
-				'i8_keyword',
-				'u16_keyword',
-				'i16_keyword',
-				'u32_keyword',
-				'i32_keyword',
-				'u64_keyword',
-				'i64_keyword',
-				'u128_keyword',
-				'i128_keyword',
-				'isize_keyword',
-				'usize_keyword',
-				'f32_keyword',
-				'f64_keyword',
-				'bool_keyword',
-				'str_keyword',
-				'char_keyword',
-				'default_keyword',
-				'union_keyword',
-				'gen_keyword',
 				'scoped_identifier',
 				'generic_function',
 				'await_expression',
@@ -8485,26 +7692,6 @@ export function coerceToArgumentsElements(
 				'integer_literal_hex',
 				'integer_literal_binary',
 				'integer_literal_octal',
-				'u8_keyword',
-				'i8_keyword',
-				'u16_keyword',
-				'i16_keyword',
-				'u32_keyword',
-				'i32_keyword',
-				'u64_keyword',
-				'i64_keyword',
-				'u128_keyword',
-				'i128_keyword',
-				'isize_keyword',
-				'usize_keyword',
-				'f32_keyword',
-				'f64_keyword',
-				'bool_keyword',
-				'str_keyword',
-				'char_keyword',
-				'default_keyword',
-				'union_keyword',
-				'gen_keyword',
 				'scoped_identifier',
 				'generic_function',
 				'await_expression',
@@ -8597,26 +7784,6 @@ export function coerceToExpressions(...input: T.Expressions.LooseArgs): ReturnTy
 				'integer_literal_hex',
 				'integer_literal_binary',
 				'integer_literal_octal',
-				'u8_keyword',
-				'i8_keyword',
-				'u16_keyword',
-				'i16_keyword',
-				'u32_keyword',
-				'i32_keyword',
-				'u64_keyword',
-				'i64_keyword',
-				'u128_keyword',
-				'i128_keyword',
-				'isize_keyword',
-				'usize_keyword',
-				'f32_keyword',
-				'f64_keyword',
-				'bool_keyword',
-				'str_keyword',
-				'char_keyword',
-				'default_keyword',
-				'union_keyword',
-				'gen_keyword',
 				'scoped_identifier',
 				'generic_function',
 				'await_expression',
@@ -8729,31 +7896,11 @@ export function coerceToTuplePatternElements(
 				'integer_literal_binary',
 				'integer_literal_octal',
 				'negative_literal',
-				'u8_keyword',
-				'i8_keyword',
-				'u16_keyword',
-				'i16_keyword',
-				'u32_keyword',
-				'i32_keyword',
-				'u64_keyword',
-				'i64_keyword',
-				'u128_keyword',
-				'i128_keyword',
-				'isize_keyword',
-				'usize_keyword',
-				'f32_keyword',
-				'f64_keyword',
-				'bool_keyword',
-				'str_keyword',
-				'char_keyword',
 				'scoped_identifier',
 				'generic_pattern',
 				'tuple_pattern',
 				'tuple_struct_pattern',
 				'struct_pattern',
-				'default_keyword',
-				'union_keyword',
-				'gen_keyword',
 				'ref_pattern',
 				'slice_pattern',
 				'captured_pattern',
@@ -8816,31 +7963,11 @@ export function coerceToPatterns(...input: T.Patterns.LooseArgs): ReturnType<typ
 				'integer_literal_binary',
 				'integer_literal_octal',
 				'negative_literal',
-				'u8_keyword',
-				'i8_keyword',
-				'u16_keyword',
-				'i16_keyword',
-				'u32_keyword',
-				'i32_keyword',
-				'u64_keyword',
-				'i64_keyword',
-				'u128_keyword',
-				'i128_keyword',
-				'isize_keyword',
-				'usize_keyword',
-				'f32_keyword',
-				'f64_keyword',
-				'bool_keyword',
-				'str_keyword',
-				'char_keyword',
 				'scoped_identifier',
 				'generic_pattern',
 				'tuple_pattern',
 				'tuple_struct_pattern',
 				'struct_pattern',
-				'default_keyword',
-				'union_keyword',
-				'gen_keyword',
 				'ref_pattern',
 				'slice_pattern',
 				'captured_pattern',
@@ -8896,88 +8023,13 @@ export function resolveUseWildcardGroup_path(
 ): Admit<T.UseWildcardGroup['_path']> {
 	return _keywordOr(
 		value,
-		[
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		],
+		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, () =>
-					_resolveOne<
-						| 'self'
-						| 'u8'
-						| 'i8'
-						| 'u16'
-						| 'i16'
-						| 'u32'
-						| 'i32'
-						| 'u64'
-						| 'i64'
-						| 'u128'
-						| 'i128'
-						| 'isize'
-						| 'usize'
-						| 'f32'
-						| 'f64'
-						| 'bool'
-						| 'str'
-						| 'char'
-						| T.Metavariable
-						| 'super'
-						| 'crate'
-						| T.Identifier
-						| T.ScopedIdentifier
-						| 'default'
-						| 'union'
-						| 'gen'
-					>(value, _K8, _K9)
+					_resolveOne<'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier>(value, _K8, _K9)
 				),
-				[
-					['self', TSKindId.Self] as const,
-					['u8', TSKindId.U8Keyword] as const,
-					['i8', TSKindId.I8Keyword] as const,
-					['u16', TSKindId.U16Keyword] as const,
-					['i16', TSKindId.I16Keyword] as const,
-					['u32', TSKindId.U32Keyword] as const,
-					['i32', TSKindId.I32Keyword] as const,
-					['u64', TSKindId.U64Keyword] as const,
-					['i64', TSKindId.I64Keyword] as const,
-					['u128', TSKindId.U128Keyword] as const,
-					['i128', TSKindId.I128Keyword] as const,
-					['isize', TSKindId.IsizeKeyword] as const,
-					['usize', TSKindId.UsizeKeyword] as const,
-					['f32', TSKindId.F32Keyword] as const,
-					['f64', TSKindId.F64Keyword] as const,
-					['bool', TSKindId.BoolKeyword] as const,
-					['str', TSKindId.StrKeyword] as const,
-					['char', TSKindId.CharKeyword] as const,
-					['super', TSKindId.Super] as const,
-					['crate', TSKindId.Crate] as const,
-					['default', TSKindId.DefaultKeyword] as const,
-					['union', TSKindId.UnionKeyword] as const,
-					['gen', TSKindId.GenKeyword] as const
-				]
+				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -8988,94 +8040,19 @@ export function coerceToUseWildcardGroup(input?: T.UseWildcardGroup.Loose): Retu
 	return F.buildUseWildcardGroup(
 		_keywordOr(
 			configFieldOr(input, 'path', () => input),
-			[
-				['self', TSKindId.Self] as const,
-				['u8', TSKindId.U8Keyword] as const,
-				['i8', TSKindId.I8Keyword] as const,
-				['u16', TSKindId.U16Keyword] as const,
-				['i16', TSKindId.I16Keyword] as const,
-				['u32', TSKindId.U32Keyword] as const,
-				['i32', TSKindId.I32Keyword] as const,
-				['u64', TSKindId.U64Keyword] as const,
-				['i64', TSKindId.I64Keyword] as const,
-				['u128', TSKindId.U128Keyword] as const,
-				['i128', TSKindId.I128Keyword] as const,
-				['isize', TSKindId.IsizeKeyword] as const,
-				['usize', TSKindId.UsizeKeyword] as const,
-				['f32', TSKindId.F32Keyword] as const,
-				['f64', TSKindId.F64Keyword] as const,
-				['bool', TSKindId.BoolKeyword] as const,
-				['str', TSKindId.StrKeyword] as const,
-				['char', TSKindId.CharKeyword] as const,
-				['super', TSKindId.Super] as const,
-				['crate', TSKindId.Crate] as const,
-				['default', TSKindId.DefaultKeyword] as const,
-				['union', TSKindId.UnionKeyword] as const,
-				['gen', TSKindId.GenKeyword] as const
-			],
+			[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 			() =>
 				coerceMixedEnumStorage(
 					_resolveKindEnum(
 						configFieldOr(input, 'path', () => input),
 						() =>
-							_resolveOne<
-								| 'self'
-								| 'u8'
-								| 'i8'
-								| 'u16'
-								| 'i16'
-								| 'u32'
-								| 'i32'
-								| 'u64'
-								| 'i64'
-								| 'u128'
-								| 'i128'
-								| 'isize'
-								| 'usize'
-								| 'f32'
-								| 'f64'
-								| 'bool'
-								| 'str'
-								| 'char'
-								| T.Metavariable
-								| 'super'
-								| 'crate'
-								| T.Identifier
-								| T.ScopedIdentifier
-								| 'default'
-								| 'union'
-								| 'gen'
-							>(
+							_resolveOne<'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier>(
 								configFieldOr(input, 'path', () => input),
 								_K8,
 								_K9
 							)
 					),
-					[
-						['self', TSKindId.Self] as const,
-						['u8', TSKindId.U8Keyword] as const,
-						['i8', TSKindId.I8Keyword] as const,
-						['u16', TSKindId.U16Keyword] as const,
-						['i16', TSKindId.I16Keyword] as const,
-						['u32', TSKindId.U32Keyword] as const,
-						['i32', TSKindId.I32Keyword] as const,
-						['u64', TSKindId.U64Keyword] as const,
-						['i64', TSKindId.I64Keyword] as const,
-						['u128', TSKindId.U128Keyword] as const,
-						['i128', TSKindId.I128Keyword] as const,
-						['isize', TSKindId.IsizeKeyword] as const,
-						['usize', TSKindId.UsizeKeyword] as const,
-						['f32', TSKindId.F32Keyword] as const,
-						['f64', TSKindId.F64Keyword] as const,
-						['bool', TSKindId.BoolKeyword] as const,
-						['str', TSKindId.StrKeyword] as const,
-						['char', TSKindId.CharKeyword] as const,
-						['super', TSKindId.Super] as const,
-						['crate', TSKindId.Crate] as const,
-						['default', TSKindId.DefaultKeyword] as const,
-						['union', TSKindId.UnionKeyword] as const,
-						['gen', TSKindId.GenKeyword] as const
-					]
+					[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 				)
 		)
 	);
@@ -9938,88 +8915,13 @@ export function resolveVisibilityModifierPubScopeInPath_path(
 ): Admit<T.VisibilityModifierPubScopeInPath['_path']> {
 	return _keywordOr(
 		value,
-		[
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		],
+		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, () =>
-					_resolveOne<
-						| 'self'
-						| 'u8'
-						| 'i8'
-						| 'u16'
-						| 'i16'
-						| 'u32'
-						| 'i32'
-						| 'u64'
-						| 'i64'
-						| 'u128'
-						| 'i128'
-						| 'isize'
-						| 'usize'
-						| 'f32'
-						| 'f64'
-						| 'bool'
-						| 'str'
-						| 'char'
-						| T.Metavariable
-						| 'super'
-						| 'crate'
-						| T.Identifier
-						| T.ScopedIdentifier
-						| 'default'
-						| 'union'
-						| 'gen'
-					>(value, _K8, _K9)
+					_resolveOne<'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier>(value, _K8, _K9)
 				),
-				[
-					['self', TSKindId.Self] as const,
-					['u8', TSKindId.U8Keyword] as const,
-					['i8', TSKindId.I8Keyword] as const,
-					['u16', TSKindId.U16Keyword] as const,
-					['i16', TSKindId.I16Keyword] as const,
-					['u32', TSKindId.U32Keyword] as const,
-					['i32', TSKindId.I32Keyword] as const,
-					['u64', TSKindId.U64Keyword] as const,
-					['i64', TSKindId.I64Keyword] as const,
-					['u128', TSKindId.U128Keyword] as const,
-					['i128', TSKindId.I128Keyword] as const,
-					['isize', TSKindId.IsizeKeyword] as const,
-					['usize', TSKindId.UsizeKeyword] as const,
-					['f32', TSKindId.F32Keyword] as const,
-					['f64', TSKindId.F64Keyword] as const,
-					['bool', TSKindId.BoolKeyword] as const,
-					['str', TSKindId.StrKeyword] as const,
-					['char', TSKindId.CharKeyword] as const,
-					['super', TSKindId.Super] as const,
-					['crate', TSKindId.Crate] as const,
-					['default', TSKindId.DefaultKeyword] as const,
-					['union', TSKindId.UnionKeyword] as const,
-					['gen', TSKindId.GenKeyword] as const
-				]
+				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -10035,94 +8937,19 @@ export function coerceToVisibilityModifierPubScopeInPath(
 			'path',
 			_keywordOr(
 				configFieldOr(input, 'path', () => input),
-				[
-					['self', TSKindId.Self] as const,
-					['u8', TSKindId.U8Keyword] as const,
-					['i8', TSKindId.I8Keyword] as const,
-					['u16', TSKindId.U16Keyword] as const,
-					['i16', TSKindId.I16Keyword] as const,
-					['u32', TSKindId.U32Keyword] as const,
-					['i32', TSKindId.I32Keyword] as const,
-					['u64', TSKindId.U64Keyword] as const,
-					['i64', TSKindId.I64Keyword] as const,
-					['u128', TSKindId.U128Keyword] as const,
-					['i128', TSKindId.I128Keyword] as const,
-					['isize', TSKindId.IsizeKeyword] as const,
-					['usize', TSKindId.UsizeKeyword] as const,
-					['f32', TSKindId.F32Keyword] as const,
-					['f64', TSKindId.F64Keyword] as const,
-					['bool', TSKindId.BoolKeyword] as const,
-					['str', TSKindId.StrKeyword] as const,
-					['char', TSKindId.CharKeyword] as const,
-					['super', TSKindId.Super] as const,
-					['crate', TSKindId.Crate] as const,
-					['default', TSKindId.DefaultKeyword] as const,
-					['union', TSKindId.UnionKeyword] as const,
-					['gen', TSKindId.GenKeyword] as const
-				],
+				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 				() =>
 					coerceMixedEnumStorage(
 						_resolveKindEnum(
 							configFieldOr(input, 'path', () => input),
 							() =>
-								_resolveOne<
-									| 'self'
-									| 'u8'
-									| 'i8'
-									| 'u16'
-									| 'i16'
-									| 'u32'
-									| 'i32'
-									| 'u64'
-									| 'i64'
-									| 'u128'
-									| 'i128'
-									| 'isize'
-									| 'usize'
-									| 'f32'
-									| 'f64'
-									| 'bool'
-									| 'str'
-									| 'char'
-									| T.Metavariable
-									| 'super'
-									| 'crate'
-									| T.Identifier
-									| T.ScopedIdentifier
-									| 'default'
-									| 'union'
-									| 'gen'
-								>(
+								_resolveOne<'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier>(
 									configFieldOr(input, 'path', () => input),
 									_K8,
 									_K9
 								)
 						),
-						[
-							['self', TSKindId.Self] as const,
-							['u8', TSKindId.U8Keyword] as const,
-							['i8', TSKindId.I8Keyword] as const,
-							['u16', TSKindId.U16Keyword] as const,
-							['i16', TSKindId.I16Keyword] as const,
-							['u32', TSKindId.U32Keyword] as const,
-							['i32', TSKindId.I32Keyword] as const,
-							['u64', TSKindId.U64Keyword] as const,
-							['i64', TSKindId.I64Keyword] as const,
-							['u128', TSKindId.U128Keyword] as const,
-							['i128', TSKindId.I128Keyword] as const,
-							['isize', TSKindId.IsizeKeyword] as const,
-							['usize', TSKindId.UsizeKeyword] as const,
-							['f32', TSKindId.F32Keyword] as const,
-							['f64', TSKindId.F64Keyword] as const,
-							['bool', TSKindId.BoolKeyword] as const,
-							['str', TSKindId.StrKeyword] as const,
-							['char', TSKindId.CharKeyword] as const,
-							['super', TSKindId.Super] as const,
-							['crate', TSKindId.Crate] as const,
-							['default', TSKindId.DefaultKeyword] as const,
-							['union', TSKindId.UnionKeyword] as const,
-							['gen', TSKindId.GenKeyword] as const
-						]
+						[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 					)
 			)
 		)
@@ -11088,23 +9915,7 @@ export function coerceToFieldPatternNamed(
 export function resolveMacroDefinitionParen_name(
 	value: T.MacroDefinitionParen.LooseConfig['name']
 ): Admit<T.MacroDefinitionParen['_name']> {
-	return _keywordOr(
-		value,
-		[
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | 'default' | 'union' | 'gen'>(value, 'identifier')),
-				[
-					['default', TSKindId.DefaultKeyword] as const,
-					['union', TSKindId.UnionKeyword] as const,
-					['gen', TSKindId.GenKeyword] as const
-				]
-			)
-	);
+	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
 export function resolveMacroDefinitionParen_macroRules(
@@ -11127,23 +9938,7 @@ export function coerceToMacroDefinitionParen(
 export function resolveMacroDefinitionBracket_name(
 	value: T.MacroDefinitionBracket.LooseConfig['name']
 ): Admit<T.MacroDefinitionBracket['_name']> {
-	return _keywordOr(
-		value,
-		[
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | 'default' | 'union' | 'gen'>(value, 'identifier')),
-				[
-					['default', TSKindId.DefaultKeyword] as const,
-					['union', TSKindId.UnionKeyword] as const,
-					['gen', TSKindId.GenKeyword] as const
-				]
-			)
-	);
+	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
 export function resolveMacroDefinitionBracket_macroRules(
@@ -11166,23 +9961,7 @@ export function coerceToMacroDefinitionBracket(
 export function resolveMacroDefinitionBrace_name(
 	value: T.MacroDefinitionBrace.LooseConfig['name']
 ): Admit<T.MacroDefinitionBrace['_name']> {
-	return _keywordOr(
-		value,
-		[
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | 'default' | 'union' | 'gen'>(value, 'identifier')),
-				[
-					['default', TSKindId.DefaultKeyword] as const,
-					['union', TSKindId.UnionKeyword] as const,
-					['gen', TSKindId.GenKeyword] as const
-				]
-			)
-	);
+	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
 export function resolveMacroDefinitionBrace_macroRules(
@@ -11216,89 +9995,15 @@ export function resolveRangePatternPrefix_right(
 ): Admit<T.RangePatternPrefix['_right']> {
 	return _keywordOr(
 		value,
-		[
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		],
+		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, () =>
 					_resolveOne<
-						| T.LiteralPattern
-						| 'self'
-						| 'u8'
-						| 'i8'
-						| 'u16'
-						| 'i16'
-						| 'u32'
-						| 'i32'
-						| 'u64'
-						| 'i64'
-						| 'u128'
-						| 'i128'
-						| 'isize'
-						| 'usize'
-						| 'f32'
-						| 'f64'
-						| 'bool'
-						| 'str'
-						| 'char'
-						| T.Metavariable
-						| 'super'
-						| 'crate'
-						| T.Identifier
-						| T.ScopedIdentifier
-						| 'default'
-						| 'union'
-						| 'gen'
+						T.LiteralPattern | 'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier
 					>(value, _K70, _K71)
 				),
-				[
-					['self', TSKindId.Self] as const,
-					['u8', TSKindId.U8Keyword] as const,
-					['i8', TSKindId.I8Keyword] as const,
-					['u16', TSKindId.U16Keyword] as const,
-					['i16', TSKindId.I16Keyword] as const,
-					['u32', TSKindId.U32Keyword] as const,
-					['i32', TSKindId.I32Keyword] as const,
-					['u64', TSKindId.U64Keyword] as const,
-					['i64', TSKindId.I64Keyword] as const,
-					['u128', TSKindId.U128Keyword] as const,
-					['i128', TSKindId.I128Keyword] as const,
-					['isize', TSKindId.IsizeKeyword] as const,
-					['usize', TSKindId.UsizeKeyword] as const,
-					['f32', TSKindId.F32Keyword] as const,
-					['f64', TSKindId.F64Keyword] as const,
-					['bool', TSKindId.BoolKeyword] as const,
-					['str', TSKindId.StrKeyword] as const,
-					['char', TSKindId.CharKeyword] as const,
-					['super', TSKindId.Super] as const,
-					['crate', TSKindId.Crate] as const,
-					['default', TSKindId.DefaultKeyword] as const,
-					['union', TSKindId.UnionKeyword] as const,
-					['gen', TSKindId.GenKeyword] as const
-				]
+				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -11328,89 +10033,15 @@ export function resolveRangePatternWithLeftWithRight_right(
 ): Admit<T.RangePatternWithLeftWithRight['_right']> {
 	return _keywordOr(
 		value,
-		[
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		],
+		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, () =>
 					_resolveOne<
-						| T.LiteralPattern
-						| 'self'
-						| 'u8'
-						| 'i8'
-						| 'u16'
-						| 'i16'
-						| 'u32'
-						| 'i32'
-						| 'u64'
-						| 'i64'
-						| 'u128'
-						| 'i128'
-						| 'isize'
-						| 'usize'
-						| 'f32'
-						| 'f64'
-						| 'bool'
-						| 'str'
-						| 'char'
-						| T.Metavariable
-						| 'super'
-						| 'crate'
-						| T.Identifier
-						| T.ScopedIdentifier
-						| 'default'
-						| 'union'
-						| 'gen'
+						T.LiteralPattern | 'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier
 					>(value, _K70, _K71)
 				),
-				[
-					['self', TSKindId.Self] as const,
-					['u8', TSKindId.U8Keyword] as const,
-					['i8', TSKindId.I8Keyword] as const,
-					['u16', TSKindId.U16Keyword] as const,
-					['i16', TSKindId.I16Keyword] as const,
-					['u32', TSKindId.U32Keyword] as const,
-					['i32', TSKindId.I32Keyword] as const,
-					['u64', TSKindId.U64Keyword] as const,
-					['i64', TSKindId.I64Keyword] as const,
-					['u128', TSKindId.U128Keyword] as const,
-					['i128', TSKindId.I128Keyword] as const,
-					['isize', TSKindId.IsizeKeyword] as const,
-					['usize', TSKindId.UsizeKeyword] as const,
-					['f32', TSKindId.F32Keyword] as const,
-					['f64', TSKindId.F64Keyword] as const,
-					['bool', TSKindId.BoolKeyword] as const,
-					['str', TSKindId.StrKeyword] as const,
-					['char', TSKindId.CharKeyword] as const,
-					['super', TSKindId.Super] as const,
-					['crate', TSKindId.Crate] as const,
-					['default', TSKindId.DefaultKeyword] as const,
-					['union', TSKindId.UnionKeyword] as const,
-					['gen', TSKindId.GenKeyword] as const
-				]
+				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -11445,89 +10076,15 @@ export function resolveRangePatternWithLeft_left(
 ): Admit<T.RangePatternWithLeft['_left']> {
 	return _keywordOr(
 		value,
-		[
-			['self', TSKindId.Self] as const,
-			['u8', TSKindId.U8Keyword] as const,
-			['i8', TSKindId.I8Keyword] as const,
-			['u16', TSKindId.U16Keyword] as const,
-			['i16', TSKindId.I16Keyword] as const,
-			['u32', TSKindId.U32Keyword] as const,
-			['i32', TSKindId.I32Keyword] as const,
-			['u64', TSKindId.U64Keyword] as const,
-			['i64', TSKindId.I64Keyword] as const,
-			['u128', TSKindId.U128Keyword] as const,
-			['i128', TSKindId.I128Keyword] as const,
-			['isize', TSKindId.IsizeKeyword] as const,
-			['usize', TSKindId.UsizeKeyword] as const,
-			['f32', TSKindId.F32Keyword] as const,
-			['f64', TSKindId.F64Keyword] as const,
-			['bool', TSKindId.BoolKeyword] as const,
-			['str', TSKindId.StrKeyword] as const,
-			['char', TSKindId.CharKeyword] as const,
-			['super', TSKindId.Super] as const,
-			['crate', TSKindId.Crate] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['union', TSKindId.UnionKeyword] as const,
-			['gen', TSKindId.GenKeyword] as const
-		],
+		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
 				_resolveKindEnum(value, () =>
 					_resolveOne<
-						| T.LiteralPattern
-						| 'self'
-						| 'u8'
-						| 'i8'
-						| 'u16'
-						| 'i16'
-						| 'u32'
-						| 'i32'
-						| 'u64'
-						| 'i64'
-						| 'u128'
-						| 'i128'
-						| 'isize'
-						| 'usize'
-						| 'f32'
-						| 'f64'
-						| 'bool'
-						| 'str'
-						| 'char'
-						| T.Metavariable
-						| 'super'
-						| 'crate'
-						| T.Identifier
-						| T.ScopedIdentifier
-						| 'default'
-						| 'union'
-						| 'gen'
+						T.LiteralPattern | 'self' | T.Metavariable | 'super' | 'crate' | T.Identifier | T.ScopedIdentifier
 					>(value, _K70, _K71)
 				),
-				[
-					['self', TSKindId.Self] as const,
-					['u8', TSKindId.U8Keyword] as const,
-					['i8', TSKindId.I8Keyword] as const,
-					['u16', TSKindId.U16Keyword] as const,
-					['i16', TSKindId.I16Keyword] as const,
-					['u32', TSKindId.U32Keyword] as const,
-					['i32', TSKindId.I32Keyword] as const,
-					['u64', TSKindId.U64Keyword] as const,
-					['i64', TSKindId.I64Keyword] as const,
-					['u128', TSKindId.U128Keyword] as const,
-					['i128', TSKindId.I128Keyword] as const,
-					['isize', TSKindId.IsizeKeyword] as const,
-					['usize', TSKindId.UsizeKeyword] as const,
-					['f32', TSKindId.F32Keyword] as const,
-					['f64', TSKindId.F64Keyword] as const,
-					['bool', TSKindId.BoolKeyword] as const,
-					['str', TSKindId.StrKeyword] as const,
-					['char', TSKindId.CharKeyword] as const,
-					['super', TSKindId.Super] as const,
-					['crate', TSKindId.Crate] as const,
-					['default', TSKindId.DefaultKeyword] as const,
-					['union', TSKindId.UnionKeyword] as const,
-					['gen', TSKindId.GenKeyword] as const
-				]
+				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }

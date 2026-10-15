@@ -109,6 +109,16 @@ read-render-parse and its shallow run, factory-storage, ir-storage,
 built-render-parse; `pnpm run validate:history` prints them), compared
 against a recorded baseline — not eyeballed.
 
+Runs are recorded only on the recording branches (`master` and
+`feat/bindings`, `RECORDING_BRANCHES` in `packages/tools/src/history-recording.ts`):
+there a validation run appends its rows to
+`packages/tools/validation-history.jsonl`, and a recorded test run its row to
+`test-history.jsonl`, and commits them. On any other branch a run writes
+nothing, so a pull request's tree stays clean for merges from the
+integration branch; the pull request reports its rows in its body instead.
+`SITTIR_HISTORY_COMMIT=1` records and commits on any branch;
+`SITTIR_HISTORY_NO_COMMIT=1` appends without committing on a recording branch.
+
 Two committed ratchets back the run (both only ever tighten):
 
 - `packages/tools/baselines/native.json` — exact per-grammar validator
@@ -154,6 +164,22 @@ by running cargo and copying the dylib: only the `napi build` step regenerates
 `packages/<lang>/native/index.d.ts`, so a hand-copied binary leaves it stale.
 The workspace `[profile.release] strip = "none"` keeps the binding loadable on
 macOS (see the comment in `Cargo.toml`).
+
+### Reader debug diagnostics
+
+The reader routes slots through their field types and generated parser facts.
+Required slots and cardinality are always checked. By default, children left
+after routing are skipped as fixed syntax. To diagnose parser/model drift,
+enable the core's default-off `read-debug-checks` feature: the reader then
+checks leftover children against the generated `layout` token list and
+reports `ReadError::Unrouted` for an unlisted child.
+
+```bash
+cargo test -p sittir-parity-tests --no-default-features --test typed_read --features sittir-core/read-debug-checks
+```
+
+This feature is independent of Rust's debug/release profile. Generated
+language crates share the core switch; they need no matching feature flag.
 
 ### Published shape
 

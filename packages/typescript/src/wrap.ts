@@ -2099,29 +2099,6 @@ export function wrapLhsExpression(data: T.LhsExpression, tree: TreeHandle): T.Lh
 				| T.SubscriptExpression
 				| TSKindId.Undefined
 				| T.Identifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.AwaitKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
 				| T.ObjectPattern
 				| T.ArrayPattern
 				| T.NonNullExpression
@@ -2190,34 +2167,7 @@ export function wrapAugmentedAssignmentExpression(
 		$type: TSKindId.AugmentedAssignmentExpression as const,
 		left() {
 			return hydrateSlot<
-				| T.MemberExpression
-				| T.SubscriptExpression
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.AwaitKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-				| T.Identifier
-				| T.ParenthesizedExpression
-				| T.NonNullExpression
+				T.MemberExpression | T.SubscriptExpression | T.Identifier | T.ParenthesizedExpression | T.NonNullExpression
 			>(this, '_left', tree);
 		},
 		operator() {
@@ -2767,29 +2717,6 @@ export function wrapRestPattern(data: T.RestPattern, tree: TreeHandle): T.RestPa
 				| T.SubscriptExpression
 				| TSKindId.Undefined
 				| T.Identifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.AwaitKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
 				| T.ObjectPattern
 				| T.ArrayPattern
 				| T.NonNullExpression
@@ -6040,7 +5967,7 @@ export function wrapForHeaderArm3(data: T.ForHeaderArm3, tree: TreeHandle): T.Fo
 			return this._kind;
 		},
 		left() {
-			return hydrateSlot<T.Identifier | TSKindId.OfKeyword | T.ObjectPattern | T.ArrayPattern>(this, '_left', tree);
+			return hydrateSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, '_left', tree);
 		},
 		automaticSemicolon() {
 			return this._automatic_semicolon;
@@ -7061,32 +6988,7 @@ export function wrapIndexSignatureColon(data: T.IndexSignatureColon, tree: TreeH
 			return this._readonly;
 		},
 		name() {
-			return hydrateSlot<
-				| T.Identifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.AwaitKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-			>(this, '_name', tree);
+			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		indexType() {
 			return hydrateSlot<T.Type>(this, '_index_type', tree);
@@ -7238,7 +7140,7 @@ export function wrapImportSpecifierName(data: T.ImportSpecifierName, tree: TreeH
 			return this._import_kind;
 		},
 		name() {
-			return hydrateSlot<T.Identifier | TSKindId.TypeKeyword>(this, '_name', tree);
+			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		$with: {
 			importKind: (v: NonNullable<T.ImportSpecifierName['_import_kind']>) =>
@@ -7267,10 +7169,10 @@ export function wrapImportSpecifierAs(data: T.ImportSpecifierAs, tree: TreeHandl
 			return this._import_kind;
 		},
 		name() {
-			return hydrateSlot<T.Identifier | T.String | TSKindId.DefaultKeyword | TSKindId.TypeKeyword>(this, '_name', tree);
+			return hydrateSlot<T.Identifier | T.String | TSKindId.DefaultKeyword>(this, '_name', tree);
 		},
 		alias() {
-			return hydrateSlot<T.Identifier | TSKindId.TypeKeyword>(this, '_alias', tree);
+			return hydrateSlot<T.Identifier>(this, '_alias', tree);
 		},
 		$with: {
 			importKind: (v: NonNullable<T.ImportSpecifierAs['_import_kind']>) =>
@@ -7591,32 +7493,7 @@ export function wrapArrowFunctionParameter(
 		...data,
 		$type: TSKindId.ArrowFunctionParameter as const,
 		parameter() {
-			return hydrateSlot<
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.AwaitKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-				| T.Identifier
-			>(this, '_parameter', tree);
+			return hydrateSlot<T.Identifier>(this, '_parameter', tree);
 		},
 		$with: {
 			parameter: (v: NonNullable<T.ArrowFunctionParameter['_parameter']>) =>
@@ -7675,7 +7552,7 @@ export function wrapImportClauseDefaultImport(
 		...data,
 		$type: TSKindId.ImportClauseDefaultImport as const,
 		identifier() {
-			return hydrateSlot<T.Identifier | TSKindId.TypeKeyword>(this, '_identifier', tree);
+			return hydrateSlot<T.Identifier>(this, '_identifier', tree);
 		},
 		importClauseGroup() {
 			return hydrateSlot<T.ImportClauseGroup | undefined>(this, '_import_clause_group', tree);
@@ -8047,7 +7924,7 @@ export function wrapForHeaderVarKind(data: T.ForHeaderVarKind, tree: TreeHandle)
 		...data,
 		$type: TSKindId.ForHeaderVarKind as const,
 		left() {
-			return hydrateSlot<T.Identifier | TSKindId.OfKeyword | T.ObjectPattern | T.ArrayPattern>(this, '_left', tree);
+			return hydrateSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, '_left', tree);
 		},
 		value() {
 			return hydrateSlot<T.Expression | undefined>(this, '_value', tree);
@@ -8092,7 +7969,7 @@ export function wrapForHeaderLetConstKind(
 			return this._kind;
 		},
 		left() {
-			return hydrateSlot<T.Identifier | TSKindId.OfKeyword | T.ObjectPattern | T.ArrayPattern>(this, '_left', tree);
+			return hydrateSlot<T.Identifier | T.ObjectPattern | T.ArrayPattern>(this, '_left', tree);
 		},
 		terminator() {
 			return this._terminator;

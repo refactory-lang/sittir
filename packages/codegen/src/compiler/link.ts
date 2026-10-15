@@ -29,6 +29,7 @@ import type {
 	SymbolRule,
 	StringRule
 } from '../types/rule.ts';
+import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import { aliasTargetOf, storageNameOf } from '../types/rule.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import {
@@ -316,6 +317,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		wordMatcher: wordMatcherRegex,
 		reserved: raw.reserved,
 		reservedContexts: raw.reservedContexts,
+		relaxedLiterals: raw.relaxedLiterals,
 		fileTypes: raw.fileTypes,
 		references,
 		derivations,
@@ -914,7 +916,32 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 		inlineNames: new Set(raw.inline),
 		selfReferencing: new Map()
 	};
+	const wordMatcher = compileWordMatcher(raw.word, raw.rules);
+	const relaxedLiterals = new Set<string>();
+	const relaxedWord = (rule: Rule<'evaluate'>): SymbolRule<'evaluate'> | undefined => {
+		if (rule.type !== ALIAS || !rule.named || raw.word === undefined || rule.value !== raw.word || rule.content.type !== STRING) return undefined;
+		const literal = rule.content.value;
+		if (!matchesWordShape(literal, wordMatcher) || findEntryForLiteralText(ctx.kindEntries, literal) === undefined) return undefined;
+		relaxedLiterals.add(literal);
+		return { type: SYMBOL, name: raw.word, inline: false } as SymbolRule<'evaluate'>;
+	};
+	const dedupeWordArms = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
+		if (rule.type !== CHOICE) return rule;
+		const isWordArm = (member: Rule<'evaluate'>): boolean => member.type === SYMBOL && member.name === raw.word && member.literal === undefined;
+		const arms = rule.members.filter(isWordArm);
+		if (arms.length < 2) return rule;
+		const kept = arms.find((arm) => arm.annotations?.variant === raw.word) ?? arms.find((arm) => arm.annotations !== undefined) ?? arms[0]!;
+		const members = rule.members.filter((member) => !isWordArm(member) || member === kept);
+		return members.length === 1 ? members[0]! : { ...rule, members };
+	};
 	const stampRef = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
+		const relaxed = relaxedWord(rule);
+		if (relaxed !== undefined) return relaxed;
+		if (isPrecWrapper(rule) && 'content' in rule) {
+			const inner = rule.content;
+			if (inner.type === SYMBOL && inner.name === raw.word) return inner;
+		}
+		if (rule.type === CHOICE) return dedupeWordArms(rule);
 		if (rule.type === ALIAS) {
 			return rule.content.type === SYMBOL && rule.content.inline !== false
 				? { ...rule, content: { ...rule.content, inline: false } }
@@ -931,7 +958,24 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 			hidden: isSurfaceHiddenKind(name, ctx.kindEntries)
 		};
 	}
-	return { ...raw, rules };
+	if (relaxedLiterals.size === 0 || raw.word === null) return { ...raw, rules };
+	const isWordOnly = (name: string): boolean => {
+		const body = rules[name];
+		return name !== raw.word && (body?.hidden === true || raw.inline.includes(name)) && body?.type === SYMBOL && body.name === raw.word;
+	};
+	const dissolved = new Set(Object.keys(rules).filter(isWordOnly));
+	const toWord = (rule: Rule<'evaluate'>): Rule<'evaluate'> =>
+		rule.type === SYMBOL && dissolved.has(rule.name) ? { ...rule, name: raw.word!, inline: false } : rule;
+	const kept: Record<string, Rule<'evaluate'>> = {};
+	for (const [name, rule] of Object.entries(rules)) {
+		if (!dissolved.has(name)) kept[name] = dedupeWordArms(visibilityWalker.map(visibilityWalker.map(rule, toWord), dedupeWordArms));
+	}
+	return {
+		...raw,
+		rules: kept,
+		inline: raw.inline.filter((name) => !dissolved.has(name)),
+		relaxedLiterals: [...relaxedLiterals]
+	};
 }
 
 const aliasedRefWalker = new RuleWalker<Rule<'link'>>();

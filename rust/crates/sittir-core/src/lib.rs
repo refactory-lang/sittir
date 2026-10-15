@@ -9,6 +9,7 @@
 //! - [`view`]     — the render-time views (`View`, `ListView`) the generated
 //!   kind templates interpolate.
 
+pub mod baseline;
 pub mod boundary;
 pub mod classify;
 pub mod engine;
@@ -16,6 +17,7 @@ pub mod error_read;
 pub mod layout;
 pub mod layout_kinds;
 pub mod line_endings;
+pub mod list_slots;
 #[cfg(feature = "napi-bindings")]
 pub mod napi_engine;
 pub mod options;
@@ -26,6 +28,7 @@ pub mod query;
 pub mod non_empty;
 pub use non_empty::NonEmptyVec;
 pub mod read;
+pub mod record;
 pub mod render;
 pub mod slot;
 pub mod spacing;

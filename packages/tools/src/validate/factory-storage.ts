@@ -51,7 +51,7 @@ import {
 	loadScopedFactoryMap,
 	loadNativeEngine
 } from './common.ts';
-import { hostlessReason, loadRenderReparseContext, renderReparse } from './read-render-parse.ts';
+import { hostlessReason, loadRenderReparseContext, renderReparse, type AstTolerance } from './read-render-parse.ts';
 import { emptyBuiltRender, type BuiltRenderFailure, type BuiltRenderResult } from './built-render.ts';
 import { sourceSpans } from '@sittir/common';
 
@@ -539,6 +539,7 @@ export async function validateFactoryStorage(
 	const readNode = await readNodeOf(grammar);
 	const surface = options.surface === 'ir' ? await loadIrSurface(grammar) : undefined;
 	const renderReparseContext = await loadRenderReparseContext(grammar, parser, await loadNativeEngine(grammar));
+	const { listSeparators } = await loadNodeModel(grammar);
 	const render = emptyBuiltRender();
 
 	const entries = loadCorpusEntries(grammar);
@@ -765,13 +766,15 @@ export async function validateFactoryStorage(
 					render.errors.push(renderFailure('built node carries source identity'));
 				} else {
 					try {
+						const tolerance: AstTolerance = { listSeparators, tolerated: [] };
 						const outcome = renderReparse(
 							builtTree,
 							kind,
 							node1?.type ?? kind,
 							node1,
 							node1 !== null && node1.type === tree1.rootNode.type,
-							renderReparseContext
+							renderReparseContext,
+							tolerance
 						);
 						if (outcome.status === 'excluded') {
 							render.total--;
@@ -780,8 +783,10 @@ export async function validateFactoryStorage(
 							render.errors.push(renderFailure(outcome.message, outcome.rendered));
 						} else {
 							render.pass++;
-							if (outcome.astDiff === null) render.astMatchPass++;
-							else render.astMismatches.push(renderFailure(outcome.astDiff, outcome.rendered));
+							if (outcome.astDiff === null) {
+								render.astMatchPass++;
+								if (tolerance.tolerated.length > 0) render.separatorTolerated++;
+							} else render.astMismatches.push(renderFailure(outcome.astDiff, outcome.rendered));
 						}
 					} catch (e) {
 						render.errors.push(renderFailure(`render: ${(e as Error)?.message ?? String(e)}`));

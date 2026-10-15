@@ -12,19 +12,22 @@ export interface BuiltRenderFailure {
 /**
  * Render-and-reparse of the nodes a storage run builds: `total` counts the
  * built nodes rendered, `pass` those whose reparse found their kind, and
- * `astMatchPass` those whose reparsed AST also matched the source's.
+ * `astMatchPass` those whose reparsed AST also matched the source's, of
+ * which `separatorTolerated` matched only by taking another of a list's
+ * separators (`AstTolerance`).
  */
 export interface BuiltRenderResult {
 	total: number;
 	pass: number;
 	astMatchPass: number;
+	separatorTolerated: number;
 	errors: BuiltRenderFailure[];
 	astMismatches: BuiltRenderFailure[];
 	excluded: ValidatorSkip[];
 }
 
 /** A render result with nothing counted. */
-export const emptyBuiltRender = (): BuiltRenderResult => ({ total: 0, pass: 0, astMatchPass: 0, errors: [], astMismatches: [], excluded: [] });
+export const emptyBuiltRender = (): BuiltRenderResult => ({ total: 0, pass: 0, astMatchPass: 0, separatorTolerated: 0, errors: [], astMismatches: [], excluded: [] });
 
 /** One render result over several surfaces' runs, each failure's kind labeled `<surface>: <kind>`. */
 export function combineBuiltRender(runs: Readonly<Record<string, BuiltRenderResult>>): BuiltRenderResult {
@@ -34,6 +37,7 @@ export function combineBuiltRender(runs: Readonly<Record<string, BuiltRenderResu
 		combined.total += run.total;
 		combined.pass += run.pass;
 		combined.astMatchPass += run.astMatchPass;
+		combined.separatorTolerated += run.separatorTolerated;
 		combined.errors.push(...run.errors.map(label));
 		combined.astMismatches.push(...run.astMismatches.map(label));
 		combined.excluded.push(...run.excluded.map(label));

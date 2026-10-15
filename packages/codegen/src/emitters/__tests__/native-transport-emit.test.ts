@@ -456,7 +456,7 @@ describe('native transport emission', () => {
 		).transportRs.contents;
 
 		expect(rust).toContain(
-			'#[wire(key = "_identifier")]\n    #[slot]\n    pub identifier: Option<::sittir_core::SlotValue<IdentifierTransport>>,'
+			'#[wire(key = "_identifier")]\n    #[slot(word = 2, width = 5)]\n    pub identifier: Option<::sittir_core::SlotValue<IdentifierTransport>>,'
 		);
 		expect(rust).not.toContain('pub identifier: Option<Vec<');
 		expect(rust).not.toContain('pub identifier: OneOrMany<');
@@ -475,7 +475,7 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[wire(key = "_identifier")]\n    #[slot]\n    pub identifier: ::sittir_core::SlotValue<IdentifierTransport>,'
+			'#[wire(key = "_identifier")]\n    #[slot(word = 2, width = 5)]\n    pub identifier: ::sittir_core::SlotValue<IdentifierTransport>,'
 		);
 		expect(structBody).not.toContain('pub identifier: Option<');
 		expect(structBody).not.toContain('pub identifier: Vec<');
@@ -506,7 +506,7 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[wire(key = "_content")]\n    #[slot]\n    pub content: ::sittir_core::SlotValue<SupertypeAliasParentContentTransportSlot>,'
+			'#[wire(key = "_content")]\n    #[slot(word = 2, width = 5)]\n    pub content: ::sittir_core::SlotValue<SupertypeAliasParentContentTransportSlot>,'
 		);
 		expect(emitted.transportRs.contents).toContain('pub enum SupertypeAliasParentContentTransportSlot {');
 		expect(emitted.transportRs.contents).toContain('Identifier(IdentifierTransport),');
@@ -526,7 +526,7 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[wire(key = "_identifier")]\n    #[slot]\n    pub identifier: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierTransport>>,'
+			'#[wire(key = "_identifier")]\n    #[slot(word = 2, width = 2, run = 5)]\n    pub identifier: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierTransport>>,'
 		);
 		expect(structBody).not.toContain('OneOrMany<');
 	});
@@ -548,7 +548,7 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[wire(key = "_identifier")]\n    #[slot]\n    pub identifier: Vec<::sittir_core::SlotValue<IdentifierTransport>>,'
+			'#[wire(key = "_identifier")]\n    #[slot(word = 2, width = 2, run = 5)]\n    pub identifier: Vec<::sittir_core::SlotValue<IdentifierTransport>>,'
 		);
 	});
 
@@ -677,7 +677,7 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[wire(key = "_items")]\n    #[slot(field = field::ITEMS)]\n    pub items: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierTransport>>,'
+			'#[wire(key = "_items")]\n    #[slot(field = field::ITEMS, word = 2, width = 2, run = 5)]\n    pub items: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierTransport>>,'
 		);
 		expect(structBody).not.toContain('OneOrMany<');
 	});
@@ -695,7 +695,7 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[wire(key = "_items")]\n    #[slot(field = field::ITEMS)]\n    pub items: Vec<::sittir_core::SlotValue<IdentifierTransport>>,'
+			'#[wire(key = "_items")]\n    #[slot(field = field::ITEMS, word = 2, width = 2, run = 5)]\n    pub items: Vec<::sittir_core::SlotValue<IdentifierTransport>>,'
 		);
 		expect(structBody).not.toContain('OneOrMany<');
 	});

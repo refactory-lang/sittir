@@ -853,35 +853,12 @@ export interface IsGuards {
 		| TSKindId.InstantiationExpression
 		| TSKindId.InternalModule
 		| TSKindId.TypeAssertion
-		| TSKindId.Identifier
 		| TSKindId.SubscriptExpression
 		| TSKindId.MemberExpression
 		| TSKindId.ParenthesizedExpressionTyped
 		| TSKindId.ParenthesizedExpressionSequence
 		| TSKindId.Undefined
-		| TSKindId.DeclareKeyword
-		| TSKindId.NamespaceKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.PublicKeyword
-		| TSKindId.PrivateKeyword
-		| TSKindId.ProtectedKeyword
-		| TSKindId.OverrideKeyword
-		| TSKindId.ReadonlyKeyword
-		| TSKindId.ModuleKeyword
-		| TSKindId.AnyKeyword
-		| TSKindId.NumberKeyword
-		| TSKindId.BooleanKeyword
-		| TSKindId.StringKeyword
-		| TSKindId.SymbolKeyword
-		| TSKindId.ExportKeyword
-		| TSKindId.ObjectKeyword
-		| TSKindId.NewKeyword
-		| TSKindId.GetKeyword
-		| TSKindId.SetKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.AwaitKeyword
-		| TSKindId.StaticKeyword
-		| TSKindId.LetKeyword
+		| TSKindId.Identifier
 		| TSKindId.This
 		| TSKindId.Super
 		| TSKindId.NumberHex
@@ -929,35 +906,12 @@ export interface IsGuards {
 		v: T
 	): v is NarrowTo<
 		T,
-		| TSKindId.Identifier
 		| TSKindId.SubscriptExpression
 		| TSKindId.MemberExpression
 		| TSKindId.ParenthesizedExpressionTyped
 		| TSKindId.ParenthesizedExpressionSequence
 		| TSKindId.Undefined
-		| TSKindId.DeclareKeyword
-		| TSKindId.NamespaceKeyword
-		| TSKindId.TypeKeyword
-		| TSKindId.PublicKeyword
-		| TSKindId.PrivateKeyword
-		| TSKindId.ProtectedKeyword
-		| TSKindId.OverrideKeyword
-		| TSKindId.ReadonlyKeyword
-		| TSKindId.ModuleKeyword
-		| TSKindId.AnyKeyword
-		| TSKindId.NumberKeyword
-		| TSKindId.BooleanKeyword
-		| TSKindId.StringKeyword
-		| TSKindId.SymbolKeyword
-		| TSKindId.ExportKeyword
-		| TSKindId.ObjectKeyword
-		| TSKindId.NewKeyword
-		| TSKindId.GetKeyword
-		| TSKindId.SetKeyword
-		| TSKindId.AsyncKeyword
-		| TSKindId.AwaitKeyword
-		| TSKindId.StaticKeyword
-		| TSKindId.LetKeyword
+		| TSKindId.Identifier
 		| TSKindId.This
 		| TSKindId.Super
 		| TSKindId.NumberHex
@@ -1280,14 +1234,13 @@ const _supertype_statement_ids = new Set<number>([
 const _supertype_variableDeclarator_ids = new Set<number>([430, 431]);
 const _supertype_parenthesizedExpression_ids = new Set<number>([411, 412]);
 const _supertype_expression_ids = new Set<number>([
-	299, 300, 301, 309, 298, 1, 258, 257, 411, 412, 125, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46,
-	47, 48, 49, 50, 51, 52, 53, 120, 121, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 416, 417, 272, 274, 122,
-	123, 124, 236, 240, 246, 250, 248, 243, 432, 433, 413, 414, 415, 293, 260, 262, 256, 268, 267, 266, 418, 419, 255, 235
+	299, 300, 301, 309, 298, 258, 257, 411, 412, 125, 1, 120, 121, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164,
+	416, 417, 272, 274, 122, 123, 124, 236, 240, 246, 250, 248, 243, 432, 433, 413, 414, 415, 293, 260, 262, 256, 268,
+	267, 266, 418, 419, 255, 235
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	1, 258, 257, 411, 412, 125, 32, 33, 7, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53,
-	120, 121, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 416, 417, 272, 274, 122, 123, 124, 236, 240, 246,
-	250, 248, 243, 432, 433, 413, 414, 415, 293
+	258, 257, 411, 412, 125, 1, 120, 121, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 416, 417, 272, 274, 122,
+	123, 124, 236, 240, 246, 250, 248, 243, 432, 433, 413, 414, 415, 293
 ]);
 const _supertype_callExpression_ids = new Set<number>([413, 414, 415]);
 const _supertype_updateExpression_ids = new Set<number>([418, 419]);

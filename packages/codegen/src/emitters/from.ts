@@ -79,7 +79,8 @@ import {
 	spellingTypeOf,
 	listOptionKeys,
 	listSpreadTarget,
-	leadingOptionsSplit
+	leadingOptionsSplit,
+	leafReDeclaration
 } from './factories.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import {
@@ -1144,29 +1145,31 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 			const arg = shape === 'direct' ? `cfg[${JSON.stringify(configSlot!.configKey)}] as never` : 'cfg as never';
 			textChecks.push({ kind, pattern: new RegExp(interior.regex, 'su') });
 			registryEntries.push(
-				`  ${JSON.stringify(kind)}: { pattern: new RegExp(TOKEN_INTERIORS[${JSON.stringify(kind)}].regex, 'su'), factory: (text: string) => { const cfg = ${config}; return ${factory}(${arg}${spelling}); } },`
+				`  ${JSON.stringify(kind)}: { pattern: interiorPattern(TOKEN_INTERIORS[${JSON.stringify(kind)}]), factory: (text: string) => { const cfg = ${config}; return ${factory}(${arg}${spelling}); } },`
 			);
 		} else if (node instanceof AssembledPattern) {
 			const pattern = anchoredLeafRegex(kind, node.textPattern);
-			if (pattern === undefined) {
+			const guard = leafReDeclaration(kind, node);
+			if (pattern === undefined || guard === undefined) {
 				if (!referenced.has(kind)) continue;
 				throw new Error(
 					`leaf registry: '${kind}' has a factory but no text pattern; an external scanner token authors its shape in renderAs`
 				);
 			}
 			textChecks.push({ kind, pattern });
-			registryEntries.push(`  ${JSON.stringify(kind)}: { pattern: /${pattern.source}/${pattern.flags}, factory: ${factory} },`);
+			registryEntries.push(`  ${JSON.stringify(kind)}: { pattern: F.${guard.constName}, factory: ${factory} },`);
 		} else if (node instanceof AssembledAlias) {
 			const leaf = aliasPatternLeaf(node, nodeMap);
 			if (leaf === undefined) continue;
 			const pattern = anchoredLeafRegex(leaf.kind, leaf.textPattern);
-			if (pattern === undefined) continue;
+			const guard = leafReDeclaration(leaf.kind, leaf);
+			if (pattern === undefined || guard === undefined) continue;
 			textChecks.push({ kind, pattern });
 			const placedFactory = placedTextFactoryName(node, nodeMap);
 			registryEntries.push(
 				placedFactory === undefined
-					? `  ${JSON.stringify(kind)}: { pattern: /${pattern.source}/${pattern.flags}, factory: (text: string) => ${factory}(F.${leaf.rawFactoryName}(text) as never) },`
-					: `  ${JSON.stringify(kind)}: { pattern: /${pattern.source}/${pattern.flags}, factory: F.${placedFactory} },`
+					? `  ${JSON.stringify(kind)}: { pattern: F.${guard.constName}, factory: (text: string) => ${factory}(F.${leaf.rawFactoryName}(text) as never) },`
+					: `  ${JSON.stringify(kind)}: { pattern: F.${guard.constName}, factory: F.${placedFactory} },`
 			);
 		}
 	}
@@ -1626,9 +1629,6 @@ function emitResolverHelpers(
 	lines.push('  if (entry.values !== undefined && !entry.values.includes(v)) {');
 	lines.push('    throw new Error(`${JSON.stringify(v)} is not the text of ${kind}: expected one of ${JSON.stringify(entry.values)}`);');
 	lines.push('  }');
-	lines.push('  if (entry.pattern !== undefined && !entry.pattern.test(v)) {');
-	lines.push('    throw new Error(`${JSON.stringify(v)} is not a ${kind}: it does not match ${entry.pattern}`);');
-	lines.push('  }');
 	lines.push('  return entry.factory(v);');
 	lines.push('}');
 	lines.push('');
@@ -1964,13 +1964,16 @@ export class FromEmitter implements CodegenEmitter<string> {
 			if (!usesArgs && l === ARGS_HELPER) return [];
 			if (l === `import * as F from './raw.js';`) {
 				const usesInterior = /\bTOKEN_INTERIORS\b/.test(body);
+				const usesInteriorPattern = /\binteriorPattern\(/.test(body);
+				const usesLexedConfig = /\blexedConfig\(/.test(body);
 				const usesNumberText = /\bnumberText\(/.test(body);
 				const usesSpelled = /\bspelledInterior\(/.test(body);
 				const usesSpelledForm = /\bspelledForm\(/.test(body);
 				const usesSiblingLead = /\brefuseSiblingLead\(/.test(body);
 				if (usesInterior || usesNumberText || usesSpelled || usesSpelledForm) {
 					const common = [
-						...(usesInterior ? ['lexedConfig'] : []),
+						...(usesLexedConfig ? ['lexedConfig'] : []),
+						...(usesInteriorPattern ? ['interiorPattern'] : []),
 						...(usesNumberText ? ['numberText'] : []),
 						...(usesSpelledForm ? ['spelledForm'] : []),
 						...(usesSpelled ? ['spelledInterior'] : []),

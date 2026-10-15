@@ -123,6 +123,22 @@ pub trait SourceTable {
         None
     }
 
+    /// The stored layout of each list slot of the node a coordinate names
+    /// (`layout::SlotLayout`), as its tree measures it; none for a table of
+    /// bare sources.
+    fn slot_layouts(&self, coord: &crate::slot::NodeCoordinate) -> Vec<crate::layout::SlotLayout> {
+        let _ = coord;
+        Vec::new()
+    }
+
+    /// The separator before the node a coordinate names as an item of its
+    /// parent's list slot, where it is not the one the slot renders
+    /// (`ParsedTree::separator_before`); none for a table of bare sources.
+    fn separator_before(&self, coord: &crate::slot::NodeCoordinate) -> Option<u16> {
+        let _ = coord;
+        None
+    }
+
     /// The bytes the node a coordinate names renders over with its sides: its
     /// span, widened to the outermost extra or `ERROR` of its leading and
     /// trailing sides. A layout run is the gap beside them, and a written
@@ -137,6 +153,15 @@ pub trait SourceTable {
     fn edited_within(&self, coord: &crate::slot::NodeCoordinate) -> bool {
         let _ = coord;
         false
+    }
+
+    /// The seat of the node a coordinate names, through the wrappers it is
+    /// (`ResolvedOptions::seat_wrappers`): for each node held by the one
+    /// before it, from the coordinate's own, the first that `seat` gives a
+    /// site. A table of bare sources knows no nodes and answers none.
+    fn seat_through(&self, coord: &crate::slot::NodeCoordinate, wrappers: &[u16], seat: &dyn Fn(KindId) -> Option<usize>) -> Option<usize> {
+        let _ = (coord, wrappers, seat);
+        None
     }
 
     /// The live tree `tree` and the context its reads share. A table of bare
