@@ -8,6 +8,7 @@ import { flatten } from '../../compiler/flatten.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { scalarLeafKinds } from '../shared.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
+import { emitTypes } from '../types.ts';
 
 /**
  * A JavaScript boolean resolves to the grammar's own true/false kind id,
@@ -80,6 +81,11 @@ describe('a boolean resolves to the enum member of the two texts', () => {
 		expect(emitted).toContain('if (typeof v === "boolean") return v ? TSKindId.TrueKeyword : TSKindId.FalseKeyword;');
 		expect(emitted).not.toContain('_leafRegistry["boolean_literal"]');
 	});
+
+	it('keeps the two scalar ids paired in the type map', () => {
+		const emitted = emitTypes({ grammar: 'synth', nodeMap });
+		expect(emitted).toContain('boolean: ["true_keyword", "false_keyword"];');
+	});
 });
 
 describe('a boolean resolves to the keyword kinds of the two texts, whatever their case', () => {
@@ -119,6 +125,11 @@ describe('a boolean resolves to the keyword kinds of the two texts, whatever the
 		const emitted = emitFrom({ grammar: 'synth', nodeMap, kindEntries: entries });
 		expect(emitted).toContain('if (typeof v === "boolean") return v ? TSKindId.True : TSKindId.False;');
 	});
+
+	it('keeps the two keyword ids paired in the type map', () => {
+		const emitted = emitTypes({ grammar: 'synth', nodeMap });
+		expect(emitted).toContain('boolean: ["true", "false"];');
+	});
 });
 
 describe('a grammar with no scalar kinds emits no scalar resolver', () => {
@@ -143,7 +154,9 @@ describe('a grammar with no scalar kinds emits no scalar resolver', () => {
 	);
 	nodes.set(
 		'_expression',
-		new AssembledSupertype('_expression', { type: CHOICE, members: [{ type: SYMBOL, name: 'mode' }] }, [{ name: 'mode' }])
+		new AssembledSupertype('_expression', { type: CHOICE, members: [{ type: SYMBOL, name: 'mode' }] }, [
+			{ name: 'mode' }
+		])
 	);
 	nodes.set('let_declaration', new AssembledBranch('let_declaration', flatten(slotRule), flatten(slotRule)));
 	const nodeMap = makeNodeMapWith(nodes);
