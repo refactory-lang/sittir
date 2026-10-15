@@ -147,10 +147,10 @@ pub enum FunctionModifiersModifierTransportSlot {
   kinds on its variants: a unit variant is a fixed literal, stored as its kind id; a variant with a
   transport is a node, read into that transport. A supertype, an enum kind and a slot's own choice
   are all choices; a choice is declared once for its content, whichever slots hold it. A slot that
-  holds one kind has that kind's type, and a keyword's presence is a boolean, `Option<bool>`,
+  holds one kind has that kind's type, and a keyword's presence is a plain `bool`, false when absent,
   rendered by the keyword kind's own render function.
-- **Arity is the field's type:** `T`, `Option<T>`, `Vec<T>`; a list that must not be empty says so
-  (`min = 1`). An empty list has one form, `[]`. A `repeat` and an `optional(repeat1)` read, build
+- **Arity is the field's type:** `T`, `Option<T>`, `Vec<T>` or `NonEmptyVec<T>`; no arity attribute
+  repeats it. An empty list has one form, `[]`. A `repeat` and an `optional(repeat1)` read, build
   and store the same empty list, never an absent slot. No list slot is optional: its stored key and
   its accessor have no `?` and no `| undefined` on the list itself. A factory's input may omit a
   list, and the factory stores `[]`. The item type may still admit `undefined`, for a hole in an
@@ -159,6 +159,14 @@ pub enum FunctionModifiersModifierTransportSlot {
   presence slot holds (`presence = kind::…`), the record's word offsets, a list's separator, a
   flank, a group seat, a kind's minimum depth, its layout tokens and its inner gaps, and the blank
   arm of a blank option's choice (`#[transport(blank)]`). The macro computes none of them.
+- **A valued mode attribute selects the mode.** `content = field` selects an alias envelope and
+  names its content; `item = field` selects a list and names its item slot. Separate `envelope`
+  and `list` flags would repeat those facts and are not emitted. Neither mode is guessed from a
+  field's spelling or from a struct happening to contain one field or a vector.
+- **Record stamps describe the shared wire layout.** `words`, `word`, `width`, `run` and `bit`
+  come from one codegen layout pass, also consumed by JavaScript's `records.ts`. Rust field
+  types independently supply minimum cell requirements, which the derive checks against these
+  stamps. These checks do not derive another layout or repeat slot arity/admission metadata.
 - **Only a blank option has a blank arm.** An optional slot registered as a preference (the model's
   `hasBlankArm`; today the nine typescript `terminator` slots) chooses between a value and none.
   Its choice carries the none as a unit variant marked `#[transport(blank)]`: an absent child reads
@@ -188,8 +196,12 @@ pub enum FunctionModifiersModifierTransportSlot {
   items arrive with it. Codegen derives it from the model, once per kind. A leaf the reader spells
   or projects (`text`, `interior`) is read inline at any depth and needs none.
 - **A kind's layout tokens** are listed on its `#[transport]` (`layout = […]`): the anonymous tokens
-  its rule writes and no slot stores. The reader skips them; a render from data writes them from
-  the template, and an untouched node slices them from the source.
+  its rule writes and no slot stores. Normal routed reads skip children left after slot routing
+  without consulting this list. The default-off core feature `read-debug-checks` checks the list
+  to diagnose a leftover child the model omitted. This is independent of the debug/release build
+  profile. Text-slot routing may still exclude layout tokens where a raw string type supplies no
+  kind admission. A render from data writes fixed syntax from the template, and an untouched node
+  slices it from the source.
 - The edge, gap and flank fields the render side stamps today stay as they are. Trivia is not a
   field of a transport: a parsed node's is in its tree's trivia table, and a built node's in its
   record (§ Trivia).
@@ -205,8 +217,10 @@ From one declaration, three things:
   transport, and the keyword a presence slot names as `true`. Extras, and `ERROR` nodes as today,
   are trivia: the reader skips them, as it skips layout tokens, and the tree's trivia table holds
   them by node and side (§ Trivia). A `MISSING` node routes as its kind.
-- **Refusal of a child no route takes** (ruling 7). A model gap is a diagnostic, not data: the read
-  fails with the node's kind, the child's kind and its row, and nothing is stored for the node.
+- **Optional diagnosis of a child no route takes** (ruling 7). With `read-debug-checks`, a model
+  gap fails the read with the node's kind, the child's kind and its row. Normal reads trust
+  parser/model agreement and skip unclaimed syntax. Required-slot, cardinality and kind-admission
+  checks remain active in both modes.
   Parse errors are not model gaps: the parse reports `ERROR` and `MISSING` regions in `$errors`
   as today.
 - **The kind dispatch:** `read_any(cursor, depth)`, a match on the kind id over the grammar's
@@ -254,19 +268,19 @@ Each is derived once, in codegen; a fact a type states is not repeated in an att
 | fact | decided today | carried by |
 |---|---|---|
 | **Routing** a child to its slot | the native reader keys a child by its field, else its kind name (`child_slot`); the wrap re-keys with `modelSlots` and the `_ROUTES_<Kind>` tables `slotRoutesOf` derives from `wireRoutesOf` (`emitters/shared.ts`) | `field`; with no field, the slot whose type admits the child's kind. The types' kinds and the query routes are `wireRoutesOf`'s one derivation |
-| **Arity and requiredness** | the wrap's `normalizeSingularWrapSlot` and `normalizeRepeatedWrapSlot` | the field's type; `min` |
-| **Keyword presence** | the wrap's `coerceBooleanKeywordStorage` | the type, `Option<bool>`, and `presence = kind::…` naming the keyword |
+| **Arity and requiredness** | the wrap's `normalizeSingularWrapSlot` and `normalizeRepeatedWrapSlot` | the field's type: `T`, `Option<T>`, `Vec<T>` or `NonEmptyVec<T>` |
+| **Keyword presence** | the wrap's `coerceBooleanKeywordStorage` | the type, `bool`, and `presence = kind::…` naming the keyword |
 | **Flag sets** | the wrap's `coerceBitflagStorage` | the type: a `Vec` of the flags' choice. No grammar has a flag set today |
 | **Kind-enum storage** | the wrap's `projectKindEnumStorage` and `projectMixedEnumStorage`, with text-to-id and alternate-id tables and the kinds read by their spelled text | the type: a choice whose unit variants are the kinds stored as ids, beside the node variants where the slot also holds nodes. An enum kind whose own node reads as the member its spelling tokens display says so once, on its own choice (`#[transport(kind = …, spelled)]`): every token must display the one member id, so a node is never read as the member its first token is. An alternate id is stated once, on the variant it folds into |
-| **Scalar storage for trivia** | `ReadModel::stores_scalar`, emitted per grammar in `kind_ids.rs` (`emitters/kind-id-rust.ts`) | none of its own: a child is scalar exactly when its slot stores it as a unit variant or a presence flag. The table and the trait method go |
-| **`$other`** | the reader puts anonymous unfielded children there; the wrap reclaims terminals with `readTerminalFromOther` and spellings with `_spellingTokens` | routed to the slot whose type admits the token; a layout token is skipped; any other child is refused (ruling 7) |
+| **Scalar storage for trivia** | `ReadModel::stores_scalar`, emitted per grammar in `kind_ids.rs` (`emitters/kind-id-rust.ts`) | typed node slots derive it from unit variants or presence flags; a routed raw-string slot retains `#[slot(scalar)]` where its type cannot express unit-side capture. Interior captures bypass routed-slot reading |
+| **`$other`** | the reader puts anonymous unfielded children there; the wrap reclaims terminals with `readTerminalFromOther` and spellings with `_spellingTokens` | routed to the slot whose type admits the token; leftovers are skipped, with an opt-in layout-list diagnostic (ruling 7) |
 | **Text leaves** | the reader's `read_leaf` captures `$text`; the wrap's `_isReadTextLeaf` and the `_spelled…` helpers tile anonymous tokens into a leaf's text | `#[transport(text)]`, which also covers a leaf spelled by its tokens: the text the leaf spans when its tokens tile it, else its fixed text (`text = "…"`) |
 | **Token interiors** | the wrap's `_projectLexed` with `projectInterior` and `TOKEN_INTERIORS` (`emitters/consts.ts`) | `#[transport(interior = …)]` |
-| **Alias envelopes** | the reader stamps `$displayType`; the wrap's `_aliasEnvelope` with `_ALIAS_ENVELOPES` and `_HIDDEN_KINDS` re-wraps | `#[transport(envelope, content = …)]` on the envelope kind, whose kind is its display id (`display`) |
+| **Alias envelopes** | the reader stamps `$displayType`; the wrap's `_aliasEnvelope` with `_ALIAS_ENVELOPES` and `_HIDDEN_KINDS` re-wraps | `#[transport(content = …)]` on the envelope kind, whose kind is its display id (`display`) |
 | **Transparent supertypes** | the wrap's `SUPERTYPE_MEMBERS`, `_filterWrapChildrenByKind`, `_firstKindKeyedWrapChild` | the slot's type: the supertype's choice, whose variants list its members once |
 | **Blank options** | the wrap's `blankFromRead` stores the blank id (0) for an absent slot the model marks `hasBlankArm`; the slot's per-slot decoder admits id 0 | `#[transport(blank)]` on the blank variant of the choice a blank option holds; any other optional slot reads absent as `None` |
 | **Delimiters and layout** | the wrap's `dropWireDelimiters`, `_hasSeparatorFlank` and `listOption` | `layout` on the kind; `separator` and `flank` on the slot |
-| **List owners** | `_LIST_OWNER_KINDS`, `listItems`, `ownerView`, `storedElements` | `#[transport(list, item = …)]` |
+| **List owners** | `_LIST_OWNER_KINDS`, `listItems`, `ownerView`, `storedElements` | `#[transport(item = …)]` |
 | **Read depth per kind** | the wrap's `hydrateSelf` reads a `_LIST_OWNER_KINDS` member two levels deep | `min_depth` on the kind |
 | **Group seats** | `seatWith`, `groupField` | `group` on the slot |
 | **Trivia ownership** | the reader's `node_trivia` with the placement rule; `ReadModel::inner_gap_key` (`kind_ids.rs`); the wrap's `_wrapTrivia` and `mapTriviaEntries` | no attribute: the tree's trivia table, keyed by node and side and assigned at read from tree-sitter's convention for extras (§ Trivia). No side is named on a kind: `$trivia.inner` is a childless node's. The second trait method goes |
@@ -480,8 +494,8 @@ members in the builder's literal — changed all three, and the maintainer ruled
 - **Spacing writer and render options.** Unchanged: a source slice writes through the same writer,
   and style whitespace is a site's resolved arm.
 - **Engine API.** One option changes: `ParseOptions.depth: number` replaces `deep` (ruling 2).
-  `parse` returns the root's wrapped node. A child the model has no route for fails the read that
-  meets it, at parse or at hydration, naming the kind, the child and its row (ruling 7).
+  `parse` returns the root's wrapped node. The core's opt-in `read-debug-checks` feature diagnoses
+  an unrouted child at parse or hydration, naming the kind, the child and its row (ruling 7).
 
 ## Verification
 
@@ -499,8 +513,10 @@ members in the builder's literal — changed all three, and the maintainer ruled
    today's 7 118 KB.
 6. **Identity.** Two reads of one node give the same row; a coordinate naming a tree the engine does
    not hold is refused with the tree named.
-7. **Unrouted children.** No corpus read in the five grammars refuses a child; a read against a
-   model with one route removed is refused, naming the kind, the child and its row. A model in
+7. **Unrouted children.** No corpus read in the five grammars refuses a child in either mode;
+   with `read-debug-checks`, a read against a model with one route removed is refused, naming
+   the kind, the child and its row. Without the feature, the same read skips that child and keeps
+   its routed slots. Missing and overfull slots are refused in both modes. A model in
    which two unfielded slots of one kind admit the same kind fails codegen with the diagnostic,
    and no grammar's model does.
 8. **Trivia ownership.** Every corpus extra's gap is owned by the node tree-sitter makes the
@@ -597,7 +613,7 @@ raised (11).
    step.** Where the relative-coordinates work falls was left to this draft; placed here and
    accepted in review:
    1. **The typed reader**, emitting today's napi objects: the cursor reader, tree-and-row
-      coordinates, `depth`, refusal of unrouted children, and the wrap reduced to members. Handles
+      coordinates, `depth`, opt-in `read-debug-checks` refusal of unrouted children, and the wrap reduced to members. Handles
       go, which settles a source-backed node's coordinate.
    2. **Relative coordinates**, re-based on rows and narrowed to what rows leave (§ Relationship to
       other designs). This settles a detached node's coordinate.
@@ -614,8 +630,11 @@ raised (11).
    Relative coordinates come after the typed reader so that they are designed against rows, not
    the handles the reader removes, and before the record wire so that the record layout, which
    holds a coordinate and a span, is fixed once.
-7. **A child no route takes is refused at read time,** with the kind and the child named: a model
-   gap is a diagnostic, not silent data (§ What the macro expands).
+7. **A child no route takes has an opt-in debug diagnostic** (the maintainer, 2026-10-14).
+   The core feature `read-debug-checks` refuses it with the kind, child and row named. Normal reads
+   trust parser/model agreement and skip leftovers; required-slot, cardinality and kind-admission
+   checks stay active. This supersedes the unconditional leftover-child refusal; it does not
+   weaken malformed-wire bounds checks (§ What the macro expands).
 8. **Query plans are unchanged:** `where` still compiles to parser terms in JavaScript
    (§ Projection facts as attributes).
 9. **The render functions stay emitted by codegen** (§ What the macro expands).
@@ -685,7 +704,7 @@ pub enum PrimitiveTypeEnum {
   other type is a node. Today that is `projectMixedEnumStorage` with an 18-entry text table and
   `[341]` as the kinds read by their spelled text, plus `stores_scalar`'s arm `(208, "return_type")`.
 - **Layout:** `fn` and `->` are the template's own tokens (`render-bodies.json`). The reader skips
-  them and refuses any other anonymous child.
+  them; `read-debug-checks` diagnoses any other unrouted child, while normal reads skip it.
 - **Depth and trivia:** no minimum depth, and no `inner`. The doc comments before the node are its
   `leading`, assigned at read (§ Trivia); `layout` holds no trivia.
 - `FunctionItemNameTransportSlot` (identifier or metavariable) and `TypeTransport` (the `_type`
@@ -703,7 +722,7 @@ pub struct ParametersTransport {
     pub elements: Option<SlotValue<ParametersElementsTransport>>,
 }
 
-#[transport(kind = kind::PARAMETERS_ELEMENTS, list, item = item, words = 3)]
+#[transport(kind = kind::PARAMETERS_ELEMENTS, item = item, words = 3)]
 pub struct ParametersElementsTransport {
     pub layout: Option<TransportLayout>,
     #[slot(field = field::ITEM, separator = kind::COMMA, word = 1)]
@@ -718,7 +737,7 @@ pub struct ParametersElementsTransport {
 - **No gap attribute:** a comment inside `()` of a `parameters` with no children is
   `$trivia.inner`'s. With children, it goes to a side of the child beside it (§ Trivia). Today `inner_gap_key`'s arm `(230, 1)` names it natively, and
   `INNER_GAPS.parameters` in JavaScript.
-- **`list, item = item`:** `parameters_elements` is the list kind enrich mints (kind 349, so the
+- **`item = item`:** `parameters_elements` is the list kind enrich mints (kind 349, so the
   parser issues it). Its items route by the field `item` (the `querySlots` row for kind 349), and
   `separator` names the `,` between them, which the reader skips and the render writes.
 - **Layout:** `(` and `)`.
@@ -766,11 +785,11 @@ pub enum BooleanLiteralEnum {
 | type or attribute | kind and slot | today |
 | --- | --- | --- |
 | a slot with no field, routed to the one slot whose type admits the child's kind | `where_clause.where_predicates` | the `querySlots` row for kind 211: kind `where_predicates`, no field |
-| `Option<bool>`, with `presence = kind::…` | `let_declaration.mutable`, the `mut` token (`kind::MUTABLE_SPECIFIER`) | `coerceBooleanKeywordStorage` (22 sites in rust) |
+| `bool`, with `presence = kind::…` | `let_declaration.mutable`, the `mut` token (`kind::MUTABLE_SPECIFIER`) | `coerceBooleanKeywordStorage` (22 sites in rust) |
 | a `Vec` of the flags' choice | none: no grammar has a bitflag field today | `coerceBitflagStorage`, no call sites |
 | `interior = …` | `integer_literal_decimal`: `content` and `suffix` | `TOKEN_INTERIORS` (40 kinds), read by `_projectLexed` (15 sites) |
 | `text` | `identifier` | `read_leaf`'s `$text`, and `_isReadTextLeaf` |
-| `envelope, content = …`, with `display`; `wraps_hidden` when the content is a supertype | `field_identifier`, `shorthand_field_identifier` and `type_identifier` over `identifier`; python `as_pattern_target` over a hidden supertype | `_ALIAS_ENVELOPES` = {465, 467, 468}, and `_aliasEnvelope` |
+| `content = …`, with `display`; `wraps_hidden` when the content is a supertype | `field_identifier`, `shorthand_field_identifier` and `type_identifier` over `identifier`; python `as_pattern_target` over a hidden supertype | `_ALIAS_ENVELOPES` = {465, 467, 468}, and `_aliasEnvelope` |
 | `separator`, `flank` | `closure_parameters` | `dropWireDelimiters` (3 sites in rust) |
 | `group` | `match_arm_with_comma.pattern`, a pattern and its guard | `seatWith`, called from `$with`, which stays a member; the read needs only the slot's `group` |
 
@@ -789,7 +808,7 @@ counts.
 | `kind_ids.rs` kind constants | 468 | 467 | 336 | 69 | 91 | **still needed**: the attributes name them (ruling 10) |
 | `kind_ids.rs` `kind_name_from_id`, arms | 469 | 685 | 338 | 69 | 100 | **still needed**: refusals and diagnostics name kinds (ruling 7) |
 | `kind_ids.rs` `inner_gap_key`, arms | 25 | 14 | 12 | 2 | 1 | **retired**: no gap is named on a kind (§ Trivia) |
-| `kind_ids.rs` `stores_scalar`, arms | 143 | 203 | 94 | 5 | 8 | **retired**: a slot's type says it, a unit variant or a presence flag being scalar |
+| `kind_ids.rs` `stores_scalar`, arms | 143 | 203 | 94 | 5 | 8 | **retired**: typed slots derive scalar storage from their types; a raw-string routed slot carries the remaining unit-side fact as `#[slot(scalar)]` |
 | `lib.rs` `ReadModel` impl, lines | 14 | 14 | 14 | 14 | 14 | **retired** |
 | `wrap.ts` projection, lines before each wrap's members | 10 936 | 11 018 | 5 824 | 928 | 812 | **folded**: the reader projects |
 | `wrap.ts` member literals, lines | 6 703 | 6 358 | 3 875 | 497 | 1 785 | **JS by nature**: the wrap keeps them |

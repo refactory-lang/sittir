@@ -15241,7 +15241,7 @@ The item slot of a separated list that has a delimiter flank or a separator, or 
 
 ### `packages/codegen/src/emitters/transport-projection.ts::transportArgs`
 
-The `#[transport(…)]` arguments of a struct: an alias envelope reads by its display id, a text leaf as its text (with the fixed text it reads when its span is empty), a token interior by its pattern, and every other kind by its own id with its minimum depth, layout tokens and list marker. The reader seats no trivia, so no inner gap is named here: a node's sides are the trivia table's. Each fact comes from the derivation the wrap already uses.
+The `#[transport(…)]` arguments of a struct: an alias envelope reads by its display id and selects envelope reading through `content = content`, a text leaf as its text (with the fixed text it reads when its span is empty), a token interior by its pattern, and every other kind by its own id with its minimum depth, layout tokens and `item = <slot>` when it selects list reading. The content and item field arguments select their reader modes without separate marker flags. The reader seats no trivia, so no inner gap is named here: a node's sides are the trivia table's. Each fact comes from the derivation the wrap already uses.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::takesUntagged`
 
@@ -15249,7 +15249,7 @@ Whether a slot takes children that carry no field: when it has no field route or
 
 ### `packages/codegen/src/emitters/transport-projection.ts::slotArgs`
 
-The `#[slot(…)]` arguments of one slot: its field routes, `untagged` when it also takes untagged kinds, the keyword a presence slot reads (`display(KIND)` for an aliased one, `presenceKeyword`), its separators, read from the stamps (`slotDropKindIds`; a list's item slot also takes the list's separator candidates), and `scalar` for a text slot stored as a unit. An unaliased keyword and each separator are printed with the raw symbols folded into them (`tokenGroup`). Empty means a bare `#[slot]`.
+The `#[slot(…)]` arguments of one slot: its field routes, `untagged` when it also takes untagged kinds, the keyword a presence slot reads (`display(KIND)` for an aliased one, `presenceKeyword`), its separators, read from the stamps (`slotDropKindIds`; a list's item slot also takes the list's separator candidates), and `scalar` for a text slot stored as a unit. An unaliased keyword and each separator are printed with the raw symbols folded into them (`tokenGroup`). The `scalar` fact controls unit trivia-side capture for routed text slots; token interior captures use `captureArgs` instead. Empty means a bare `#[slot]`.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::captureArgs`
 

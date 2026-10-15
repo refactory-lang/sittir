@@ -165,6 +165,22 @@ by running cargo and copying the dylib: only the `napi build` step regenerates
 The workspace `[profile.release] strip = "none"` keeps the binding loadable on
 macOS (see the comment in `Cargo.toml`).
 
+### Reader debug diagnostics
+
+The reader routes slots through their field types and generated parser facts.
+Required slots and cardinality are always checked. By default, children left
+after routing are skipped as fixed syntax. To diagnose parser/model drift,
+enable the core's default-off `read-debug-checks` feature: the reader then
+checks leftover children against the generated `layout` token list and
+reports `ReadError::Unrouted` for an unlisted child.
+
+```bash
+cargo test -p sittir-parity-tests --no-default-features --test typed_read --features sittir-core/read-debug-checks
+```
+
+This feature is independent of Rust's debug/release profile. Generated
+language crates share the core switch; they need no matching feature flag.
+
 ### Published shape
 
 A grammar package ships its native binaries inside itself (`files` lists
