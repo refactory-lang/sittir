@@ -149,26 +149,52 @@ From `results/upstream.tsv`. Observed: what the run saw at our pin. Route is the
 
 Excluded from the trackers: build, packaging, bindings, highlighting and query issues; questions; spam; and issues closed before each pin. Every issue closed after a pin is listed in `upstream/` with its close reason. The syntax fixes released since the pins are the ones the routes name: javascript 0.25.0 (`using`, `of` as a name), and rust's git tags v0.24.1 and v0.24.2.
 
+## The line: grammar productions against early errors
+
+The user's rule: author what the language's own grammar productions exclude, and leave out what a later check rejects. The later checks are ECMAScript's static-semantics early errors, CPython's symtable and compiler, and rustc's AST validation and later passes. They form the stated bound of "valid by construction". Nothing is cloned per context.
+
+Each over-accepted witness in `witnesses.json` carries its line and a citation, and `results/<grammar>.tsv` prints both. `census.mts` refuses an over-accepted witness without a line.
+
+| grammar | over-accepted | production (authored) | early error (the bound) |
+| --- | --- | --- | --- |
+| typescript | 66 | 33 | 33 |
+| python | 18 | 11 | 7 |
+| rust | 10 | 3 | 7 |
+
+Each grammar's judge:
+
+- **TypeScript-inherited JavaScript syntax:** ECMAScript's productions and its "Static Semantics: Early Errors" sections. Two nuances:
+  - `await`, `yield` and `return` outside their functions are excluded by ECMAScript's parameterized productions (`[Await]`, `[Yield]`, `[Return]`). They count as early errors here, because authoring them would mean cloning, which the user ruled out.
+  - A setter parameter's initializer is valid ECMAScript, and only TypeScript excludes it.
+- **TypeScript-only syntax:**
+  - TypeScript has no normative grammar after its 1.8 spec. tsc's parser is permissive: TypeScript 6's `parseDiagnostics` reject only 8 of the 97 witnesses. tsc's own grammar rules live in the checker's `checkGrammar*` functions.
+  - So the line is drawn this way. Syntax the 1.8 spec covers is judged by its productions: accessors (§4.5), parameter lists (§3.9.2), type members (§3.9) and ambient functions (§12.1.2).
+  - A checker rule on syntax newer than the 1.8 spec counts as an early error, since its only definition is a check. That covers tuple element order (TS1257, TS1265, TS1266), `this` not first, `readonly` and `abstract` placement, type-only import shape, and `readonly`/computed members in types and enums.
+  - Tuple order is the one call worth a second look: it is positional, and an authored rule could state it. By this line it is in the bound.
+- **Python:** the PEG grammar, observed directly. `ast.parse` runs only the parser, and it rejects exactly the 11 production rows. The other 7 parse and then fail in the symtable or the compiler: duplicate parameters, the five context rows, and the bare starred expression.
+- **Rust:** the Rust Reference grammar.
+  - The productions are `self` only first, and the qualifier order `const? async? ItemSafety? extern?`.
+  - The Reference admits the rest syntactically and rejects it later: `self` on a free function, `const async`, visibility on enum variants and trait items (E0449), `...` outside an extern block, and `break` outside a loop (E0268).
+
+The tracker over-acceptance rows: `export default let` (js#209), a reserved word as a binding name (js#204) and python's newline continuation (py#178) are productions. `await` and `yield` anywhere (js#303) is in the bound. Every under-acceptance and mis-parse row is a production by definition, since the input is valid.
+
+The authoring work is [the acceptance authoring plan](../../plans/2026-10-15-grammar-acceptance-authoring.md).
+
 ## Findings
 
 1. **The cheapest fixes are pins.**
    - JavaScript 0.25.0 under the TypeScript grammar fixes two mis-parses. Open PR ts#357 makes that bump upstream; until it lands, we can override the dependency.
    - Rust's v0.24.2 tag fixes `&raw[..]` and two string-literal reads, but only as a git dependency, since npm has 0.24.0 (rust#318).
 2. **Rust's open PRs cover most of its confirmed under-acceptance:** seven of its nine rows have an open PR, all stable syntax that fails to parse today. They port as authored structure if upstream does not release.
-3. **Most over-acceptance can be authored, but the cost differs.** Arity, order and placement are plain rules. Context (async, generator, function body, loop, trait body) needs cloned rules, as the contextual aliases already clone for rust's methods. Name equality, labels, strict mode and line terminators are out of reach.
+3. **About half of the over-acceptance is a grammar production, and that half is plain authoring.** Arity, order, placement and module items are stated as rules. The other half is early errors, the bound. Authoring those would need cloned rules (async, generator, function body, loop, trait body), name equality, labels or strict-mode state.
 4. **A clean parse is not evidence of a right tree.** Of the rows that parse clean at our pin, six TypeScript, one rust and four python rows are known mis-parses. The witnesses check only for ERROR, so every mis-parse here comes from a tracker; none was found by the probe.
-5. **"Valid by construction" holds only within these bounds.** What sittir builds parses back as the parser reads it. It is not checked against the language's own grammar beyond what the parser accepts, and this census measures that gap.
+5. **"Valid by construction" is bounded by the language's grammar productions.** A node sittir builds or parses conforms to the language's grammar productions. That holds once the authoring plan lands; the production rows above are the gap until then. Rules the language enforces after parsing are outside it: early errors, symbol tables, AST validation. That covers context (`break` outside a loop, `await` outside an async function), labels in scope, strict-mode restrictions, duplicate names, and TypeScript checker rules on syntax newer than its 1.8 spec. The context rules are taken up by builder-side context checks, specified separately. The others stay outside the bound.
 
-## Questions
+## Rulings
 
-Rulings come back through brainstorm.
+From the user, via brainstorm:
 
-1. **The accessor rules are ruled; which other authoring classes go next?** Parameter order, tuples and clause order are plain rules in TypeScript, as are parameter and argument order in python.
-   - (a) All of them, as one authoring stage.
-   - (b) TypeScript only.
-   - (c) None now.
-2. **Do we take the pins?**
-   - (a) Override `tree-sitter-javascript` to 0.25.0 under the TypeScript grammar, and take rust from the v0.24.2 git tag. Recommended: both are released upstream code.
-   - (b) Wait for npm releases.
-3. **Rust's under-acceptance: port the open PRs as authored structure, or pin a fork with them merged?**
-4. **Context classes:** are cloned contexts (async, generator, loop, function, trait body) worth their parser size? The contextual-alias probe measured +0.6–0.7% STATE per split; ECMAScript's `[Await]` and `[Yield]` would clone most of the expression grammar.
+1. Author every production class, one stage per grammar.
+2. Take the pins: override `tree-sitter-javascript` to 0.25.0 under the TypeScript grammar, and take rust from the v0.24.2 git tag.
+3. Port rust's open upstream PRs as authored structure.
+4. The line is the spec's own line: author grammar productions; early errors are the stated bound; no context cloning.

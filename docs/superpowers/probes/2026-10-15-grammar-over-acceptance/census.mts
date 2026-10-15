@@ -10,7 +10,9 @@ import { fileURLToPath } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '../../../..');
-type Witness = [cls: string, name: string, source: string];
+// An over-accepted witness carries its line: `production` when the language's grammar productions
+// exclude it, `early-error` when a later check does (early errors, symtable, AST validation).
+type Witness = [cls: string, name: string, source: string, line?: string, cite?: string];
 const witnesses = JSON.parse(readFileSync(join(HERE, 'witnesses.json'), 'utf8')) as Record<string, Witness[]>;
 
 const toolsRequire = createRequire(join(ROOT, 'packages/tools/package.json'));
@@ -76,24 +78,27 @@ for (const [grammar, list] of Object.entries(witnesses)) {
 	const sittir = await parserFor(join(ROOT, `packages/${grammar}/.sittir/parser.wasm`));
 	const base = await parserFor(upstream(grammar));
 	const verdicts = judges[grammar]!(list.map(([, , s]) => s));
-	const rows = list.map(([cls, name, source], i) => ({ cls, name, source, sittir: sittir(source), upstream: base(source), compiler: verdicts[i]! }));
-	const tsv = ['class\twitness\tsittir\tupstream\tcompiler\tsource', ...rows.map((r) => [r.cls, r.name, r.sittir, r.upstream, r.compiler, JSON.stringify(r.source)].join('\t'))].join('\n');
+	const rows = list.map(([cls, name, source, line = '', cite = ''], i) => ({ cls, name, source, line, cite, sittir: sittir(source), upstream: base(source), compiler: verdicts[i]! }));
+	const tsv = ['class\twitness\tsittir\tupstream\tcompiler\tline\tcite\tsource', ...rows.map((r) => [r.cls, r.name, r.sittir, r.upstream, r.compiler, r.line, r.cite, JSON.stringify(r.source)].join('\t'))].join('\n');
 	writeFileSync(join(HERE, 'results', `${grammar}.tsv`), `${tsv}\n`);
 	const over = rows.filter((r) => r.cls !== 'control' && r.sittir === 'clean' && r.compiler !== 'accepted');
 	const control = rows.filter((r) => r.cls === 'control');
-	console.log(`${grammar}: ${rows.length - control.length} witnesses, ${over.length} over-accepted by sittir's parser; control ${control.map((r) => `${r.sittir}/${r.compiler}`).join(', ')}`);
+	const unsorted = over.filter((r) => !r.line);
+	if (unsorted.length > 0) throw new Error(`${grammar}: over-accepted without a line: ${unsorted.map((r) => r.name).join('; ')}`);
+	const byLine = Object.groupBy(over, (r) => r.line);
+	console.log(`${grammar}: ${rows.length - control.length} witnesses, ${over.length} over-accepted by sittir's parser (${Object.entries(byLine).map(([l, rs]) => `${l} ${rs!.length}`).join(', ')}); control ${control.map((r) => `${r.sittir}/${r.compiler}`).join(', ')}`);
 }
 // The upstream rows: issues and open PRs from the four trackers, each with a witness where one can
 // be written. Only the compiler's syntax errors count here, so a witness's unresolved names do not
 // read as a rejection.
-type UpstreamRow = { grammar: string; refs: string[]; class: string; title: string; witness: string | null; route: number; note?: string };
+type UpstreamRow = { grammar: string; refs: string[]; class: string; title: string; witness: string | null; route: number; line?: string; note?: string };
 const syntaxOnly: Record<string, (verdict: string) => boolean> = {
 	typescript: (v) => v.split(' | ').some((e) => /^TS(1\d{3}|17\d{3}|18\d{3}|618[89]) /.test(e)),
 	python: (v) => v.startsWith('SyntaxError'),
 	rust: (v) => v.split(' | ').some((e) => e.startsWith('error:'))
 };
 const upstreamRows = JSON.parse(readFileSync(join(HERE, 'upstream-rows.json'), 'utf8')) as UpstreamRow[];
-const upstreamOut = ['grammar\tclass\trefs\ttitle\troute\tsittir\tupstream\tcompiler\tobserved\tnote'];
+const upstreamOut = ['grammar\tclass\trefs\ttitle\troute\tline\tsittir\tupstream\tcompiler\tobserved\tnote'];
 for (const grammar of ['typescript', 'rust', 'python']) {
 	const rows = upstreamRows.filter((r) => r.grammar === grammar);
 	const sittir = await parserFor(join(ROOT, `packages/${grammar}/.sittir/parser.wasm`));
@@ -111,7 +116,7 @@ for (const grammar of ['typescript', 'rust', 'python']) {
 			: parse !== 'clean' && !rejects ? 'under-accepted'
 			: parse === 'clean' ? 'parses clean'
 			: 'both reject';
-		upstreamOut.push([grammar, r.class, r.refs.join(', '), r.title, r.route, parse, r.witness === null ? '-' : base(r.witness), rejects === undefined ? '-' : rejects ? `rejects: ${verdict}` : 'accepts', observed, r.note ?? ''].join('\t'));
+		upstreamOut.push([grammar, r.class, r.refs.join(', '), r.title, r.route, r.line ?? 'production', parse, r.witness === null ? '-' : base(r.witness), rejects === undefined ? '-' : rejects ? `rejects: ${verdict}` : 'accepts', observed, r.note ?? ''].join('\t'));
 	}
 }
 writeFileSync(join(HERE, 'results', 'upstream.tsv'), `${upstreamOut.join('\n')}\n`);
