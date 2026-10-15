@@ -18,10 +18,12 @@ import type {
 	Pending,
 	Rendered,
 	RenderArgument,
-	CreateEngineOptions
+	CreateEngineOptions,
+	StructureTable
 } from '@sittir/types';
 import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
+import { verifyStructure } from './verify-structure.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { createRenderHandle } from './engine.ts';
@@ -109,7 +111,7 @@ function scopedBuild<B, Node>(
 				inEngine(handle, () => {
 					if (typeof value !== 'function') throw new TypeError('builder is not callable');
 					const run = (): Node => Reflect.apply(value, self, args);
-					return intercept === undefined ? run() : intercept({ path, args }, run);
+					return handle.settle(intercept === undefined ? run() : intercept({ path, args }, run));
 				}),
 			set: refuseWrite,
 			defineProperty: refuseWrite,
@@ -173,6 +175,15 @@ function languageGuard(guard: Guard, inLanguage: (value: unknown) => boolean, wr
 	);
 }
 
+function settlerOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable): EngineHandle['settle'] {
+	if (mode !== 'runtime') return (node) => node;
+	const seen = new WeakSet<object>();
+	return (node) => {
+		verifyStructure(node, table, seen);
+		return node;
+	};
+}
+
 function assembleEngine<API extends LanguageAPI>(
 	language: Language<API>,
 	hooks: LanguageHooks<API>,
@@ -187,7 +198,8 @@ function assembleEngine<API extends LanguageAPI>(
 	});
 	const handle: TreeEngineHandle = {
 		current: identity,
-		hydrate: hooks.hydrate
+		hydrate: hooks.hydrate,
+		settle: settlerOf(options?.verifyStructure, hooks.structure)
 	};
 	const interceptors = options?.intercept ?? [];
 	const buildChain = interceptorChain(interceptors.map((hook) => hook.build?.bind(hook)));

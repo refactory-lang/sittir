@@ -51,11 +51,14 @@ describe('verifyStructure', () => {
 		);
 	});
 
-	it('skips a node it did not build: a coordinate, or a read node', () => {
+	it('skips what it holds but did not build: a coordinate, or a read node', () => {
 		const coordinate = { $treeHandle: 7, $span: { start: 0, end: 1 } };
-		const read = { $type: BLOCK, $source: 0 as const, _statements: [] };
+		const read = { $type: BLOCK, _statements: [] };
 		expect(() => verify(built(BLOCK, { _statements: [coordinate, read] }))).not.toThrow();
-		expect(() => verify(read)).not.toThrow();
+	});
+
+	it('checks the node it is given whatever wrote it, since a rebuild of a read node writes its slots', () => {
+		expect(() => verify({ $type: BLOCK, _statements: [] })).toThrow('block.statements: requires at least one element');
 	});
 
 	it('walks a node once per seen set', () => {

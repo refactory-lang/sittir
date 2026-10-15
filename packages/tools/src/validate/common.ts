@@ -844,7 +844,7 @@ const factoryScopes = new Map<string, Promise<EngineHandle>>();
 export function factoryScope(grammar: string): Promise<EngineHandle> {
 	let scope = factoryScopes.get(grammar);
 	if (scope === undefined) {
-		scope = loadNativeEngine(grammar).then((engine) => ({ current: engine }));
+		scope = loadNativeEngine(grammar).then((engine): EngineHandle => ({ current: engine, settle: (node) => node }));
 		factoryScopes.set(grammar, scope);
 	}
 	return scope;

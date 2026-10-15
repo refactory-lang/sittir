@@ -334,6 +334,13 @@ export interface EngineOptions<API extends LanguageAPI, M extends ApiSurface = '
 	readonly api?: M;
 	readonly render?: API['options'];
 	readonly intercept?: readonly Interceptor<API>[];
+	/**
+	 * Whether a built node's structure is checked at run time. `'compileTimeOnly'` (the default) trusts the generated types for
+	 * required slots, non-empty lists and slots that take a built node. `'runtime'` also checks them when a node is built or
+	 * rebuilt, and throws naming the kind and the slot. Text checks (leaf patterns, reserved and keyword words), coordinate
+	 * checks and read checks run in both modes.
+	 */
+	readonly verifyStructure?: 'compileTimeOnly' | 'runtime';
 }
 
 export interface Interceptor<API extends LanguageAPI> {

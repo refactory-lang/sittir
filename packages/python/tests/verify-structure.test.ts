@@ -1,0 +1,29 @@
+import { describe, expect, it } from 'vitest';
+import { createEngine } from '@sittir/common';
+import python from '../src/index.ts';
+
+const trusting = await createEngine(python);
+const verifying = await createEngine(python, { verifyStructure: 'runtime' });
+
+type Rebuildable = { $render(): string; $with: { decorators(...items: never[]): { $render(): string } } };
+const decorated = (engine: typeof trusting): Rebuildable =>
+	[...engine.parse('@x\ndef f(): pass\n').$query().$descendants.ofType(engine.kinds.DecoratedDefinition)][0] as unknown as Rebuildable;
+
+describe('verifyStructure', () => {
+	it("refuses a strict build that leaves a required slot empty, in 'runtime' mode at the call", () => {
+		expect(() => (verifying.build.expressionStatement.strict as unknown as () => unknown)()).toThrow("Missing required slot 'content' on expression_statement");
+	});
+
+	it("refuses a $with that empties a non-empty list, in 'runtime' mode at the call", () => {
+		expect(() => decorated(verifying).$with.decorators()).toThrow('decorated_definition.decorators: requires at least one element');
+	});
+
+	it('trusts the types by default: the build and the rebuild stand, and the render refuses them natively', () => {
+		expect(() => (trusting.build.expressionStatement.strict as unknown as () => { $render(): string })().$render()).toThrow('Missing field `_content`');
+		expect(() => decorated(trusting).$with.decorators().$render()).toThrow(/a repeat1 list holds no item on DecoratedDefinitionTransport\._decorator/);
+	});
+
+	it('renders an untouched parse the same in either mode', () => {
+		expect(decorated(verifying).$render()).toBe(decorated(trusting).$render());
+	});
+});

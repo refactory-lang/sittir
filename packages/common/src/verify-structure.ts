@@ -3,19 +3,26 @@ import { rejectBareText } from './runtime.ts';
 import { Source } from './source.ts';
 
 export function verifyStructure(value: unknown, table: StructureTable, seen: WeakSet<object>): void {
+	if (typeof value === 'object' && value !== null && !seen.has(value)) verifyNode(value as Record<string, unknown>, table, seen);
+}
+
+function verifyNode(node: Record<string, unknown>, table: StructureTable, seen: WeakSet<object>): void {
+	const row = typeof node.$type === 'number' ? table[node.$type] : undefined;
+	if (row !== undefined) checkRow(node, row);
+	for (const [key, child] of Object.entries(node)) {
+		if (!key.startsWith('$')) verifyBuilt(child, table, seen);
+	}
+	seen.add(node);
+}
+
+function verifyBuilt(value: unknown, table: StructureTable, seen: WeakSet<object>): void {
 	if (Array.isArray(value)) {
-		for (const item of value) verifyStructure(item, table, seen);
+		for (const item of value) verifyBuilt(item, table, seen);
 		return;
 	}
 	if (typeof value !== 'object' || value === null || seen.has(value)) return;
 	const node = value as Record<string, unknown>;
-	if (node.$source !== Source.Factory) return;
-	const row = typeof node.$type === 'number' ? table[node.$type] : undefined;
-	if (row !== undefined) checkRow(node, row);
-	for (const [key, child] of Object.entries(node)) {
-		if (!key.startsWith('$') && typeof child === 'object') verifyStructure(child, table, seen);
-	}
-	seen.add(node);
+	if (node.$source === Source.Factory) verifyNode(node, table, seen);
 }
 
 function checkRow(node: Record<string, unknown>, row: StructureRow): void {

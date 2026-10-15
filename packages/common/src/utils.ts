@@ -79,7 +79,7 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	const trivia = triviaOf(node);
 	if (inner.length > 0) setTriviaData(result, { ...trivia, inner: [] });
 	else if (trivia !== undefined) setTriviaData(result, trivia);
-	return result;
+	return handle === undefined ? result : handle.settle(result);
 }
 
 /**
