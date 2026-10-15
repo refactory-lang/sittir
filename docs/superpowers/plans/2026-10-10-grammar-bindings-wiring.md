@@ -73,6 +73,19 @@ Ruled to be parser aliases at a context-unique site, with the ancestor clones ke
 
 The aliases retire the interim placed claim that reads any decorated function in a python class body as `declaration.method`.
 
+**`static` reads from the method's own node.** Today both `static` facts come from context: rust's from a placed claim in an impl body with a per-parameter `#not-kind-eq?`, and python's from the parent `decorated_definition`'s decorator. With the aliases, each is read from the method's own node, or, for python, from the envelope the portable method is read through. The aliases' claims replace the placed ones:
+- **rust** (also needs 2b's receiver form): a method or method signature whose parameter list is not the receiver form is static. The per-parameter test misses a typed `self` (`self: Box<Self>`), which 2b moves into the receiver form.
+  ```
+  ((method_declaration (parameters (_)? @_list)) @declaration.method.static (#not-kind-eq? @_list "parameters_elements_receiver"))
+  ((signature_method_declaration (parameters (_)? @_list)) @declaration.method.signature.static (#not-kind-eq? @_list "parameters_elements_receiver"))
+  ```
+- **python**: the flag is captured on the class-body clone, the envelope of the decorated method:
+  ```
+  ((decorated_definition_class_declaration (decorator (identifier) @static) definition: (method_declaration) @element) (#eq? @static "staticmethod"))
+  ```
+  A container's captures go to every kind its element slot names, and the clone's `definition` admits `class_declaration` too, which has no `static`. So derivation must give a capture only to the kind the claim's element pattern names. That is the one new mechanism, and it lands with this stage.
+- **Gate:** every read the placed claims gave classifies the same, except that a typed-`self` method is no longer static. The `is` tests cover both grammars' static and non-static methods, and rust's static trait signature.
+
 Each alias kind gets its own low-level builder beside the aliased kind's (`build.methodDeclaration` beside `build.functionItem`). Today `fieldAliasMap` emits none, so the node-model and factory emit change: an alias of a visible kind at a context-unique site is a kind with a builder, a wrap and a transport (`MethodDeclarationTransport`), not a field-alias row.
 - **Census:** each alias site, its clones, and the per-grammar STATE and `parser.c` deltas, compared with the probe.
 - **Gate:** every row passes; the deltas within the probe's numbers.
