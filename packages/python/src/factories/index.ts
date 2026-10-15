@@ -238,6 +238,7 @@ export const compoundStatement: Hoisted<typeof O.compoundStatement> = hoistAs<ty
 export const withClause: Hoisted<typeof O.withClause> = hoistAs<typeof O.withClause>(O.withClause);
 export const suite: Hoisted<typeof O.suite> = hoistAs<typeof O.suite>(O.suite);
 export const parameter: Hoisted<typeof O.parameter> = hoistAs<typeof O.parameter>(O.parameter);
+export const pattern: Hoisted<typeof O.pattern> = hoistAs<typeof O.pattern>(O.pattern);
 export const assignment: Hoisted<typeof O.assignment> = hoistAs<typeof O.assignment>(O.assignment);
 export const escapeSequence: Hoisted<typeof O.escapeSequence> = hoistAs<typeof O.escapeSequence>(O.escapeSequence);
 export const float: Hoisted<typeof O.float> = hoistAs<typeof O.float>(O.float);
@@ -246,3 +247,7 @@ export const lineContinuation: Hoisted<typeof O.lineContinuation> = hoistAs<type
 );
 export const integerDecimal: Hoisted<typeof O.integerDecimal> = hoistAs<typeof O.integerDecimal>(O.integerDecimal);
 export const integer: Hoisted<typeof O.integer> = hoistAs<typeof O.integer>(O.integer);
+export const primaryExpression: Hoisted<typeof O.primaryExpression> = hoistAs<typeof O.primaryExpression>(
+	O.primaryExpression
+);
+export const expression: Hoisted<typeof O.expression> = hoistAs<typeof O.expression>(O.expression);

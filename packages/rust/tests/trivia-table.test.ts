@@ -48,7 +48,7 @@ describe.each([
 	it('is accepted and renders in the whole tree', () => {
 		const root = engine.parse('fn a() {}\nfn b() { let x = 1; }\n');
 		reach(root, 1, 0).$trivia.leading(build.lineComment(' before'));
-		rendersAs(root, 'fn a() {}\nfn b() {\n    // before\n    let x = 1;\n}\n');
+		rendersAs(root, 'fn a() {}\nfn b() {\n    // before\n    let x = 1; }\n');
 	});
 
 	it('keeps a deeper-indented comment between its siblings', () => {

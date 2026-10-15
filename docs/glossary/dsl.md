@@ -2743,6 +2743,10 @@ the rule in place. Called once from `enrich`, after
 labelled too. Returns the record, which `enrich` always attaches to its
 result as `ENRICH_AUTOMATIC_VARIANTS_KEY`.
 
+With `into`, the labels go onto an existing record instead of a fresh one, and `owners` limits the run to the rules named. `grammar()` uses both to label what wire created or changed with this same function, so a kind a patch authors after enrich ran carries the labels enrich would have given it. A supertype owner joins `into` only when stamping it added a label.
+
+`enrich` passes a `seedAutomaticVariants` copy of its input's record as `into`, so a grammar that was already enriched keeps the provenance of its earlier labels: stamping an already-labelled arm adds no key, and without the seed the second pass's record would be empty while the labels stay on the rules.
+
 ### `packages/codegen/src/dsl/automatic-variants.ts::getEnrichAutomaticVariants`
 
 The record on an enriched grammar, or `undefined` when the grammar carries
@@ -2752,9 +2756,9 @@ an error, never read as empty.
 
 ### `packages/codegen/src/dsl/automatic-variants.ts::seedAutomaticVariants`
 
-The record a wire context starts from, built once when the context is: a
-copy of the base's record (its own `keys` set, so wire's edits never reach
-enrich's), or a new empty record when the base never went through `enrich`,
+The record a wire context or an `enrich` pass starts from, built once when it is: a
+copy of the base's record (its own `keys` and `supertypeOwners` sets, so later edits never reach
+the input's), or a new empty record when the base never went through `enrich`,
 since then no label is automatic.
 
 ### `packages/codegen/src/dsl/automatic-variants.ts::withoutAutomaticVariants`
@@ -4046,6 +4050,10 @@ Terminal-ness is the `SymbolSource`'s `isTerminal`, a predicted kind catalog's `
  *  of alternatives, so a repeated name declines. */
 ```
 
+### `packages/codegen/src/dsl/rule-patterns.ts::flattenedListBody`
+
+A separated-list body in the form enrich's list-body stage gives it: the nested head element and its repeat spliced into one seq (`info.flatMembers`), or the body itself when it is not a head-form list that carries its flanks. Enrich runs it over every rule, and wire runs it over an arm `variant()` or an alias carves into a rule of its own, so a carved kind is already flat when a later enrich pass meets it.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::separatedListElementName`
 
 ```text
@@ -4059,6 +4067,8 @@ Terminal-ness is the `SymbolSource`'s `isTerminal`, a predicted kind catalog's `
  * falls back to the `elements` basis).
  */
 ```
+
+A field enrich itself added (`fieldSource: 'enriched'`) is transparent: the element is named by the field's content, as it was before enrich wrapped it, so the name a hidden list is promoted under does not depend on whether the item field exists yet.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::SeparatedListBodyInfo.elementName`
 
@@ -4576,6 +4586,33 @@ grammar is then already self-consistent, with no minted rule for a later
 stage to take back.
 
 Before the token-form hoist, every rule passes through `factorSharedOptional`, so a choice whose every member is optional reaches the hoist as one optional choice and the blank case becomes its own arm. After clause hoisting, every clause group is stamped `hoisted` except the token-form parents, which are supertypes.
+
+Enrich is a fixpoint of its own output, with no record of what it has already done: a pass over an enriched grammar changes nothing. The grammar it receives carries its origins and whitespace sidecars when it is an earlier enrich result, and those are the only memory. Each stage that a later pass would otherwise re-fire recognises the earlier pass's work from a stamp or origin the pass already writes:
+
+- a reference to a text mint reads as the pattern it replaced (`EnrichCtx.isTextToken`);
+- a keyword, clause-group or element-supertype mint is not an authored hidden rule to promote (`EnrichCtx.isPriorMint`), and the origins the input carries seed the run's own, so an element supertype keeps its authored slot;
+- a group-lift reference, a hoisted body and a visible-group alias are not field-wrap or distribution sites;
+- a token-form arm inherits its parent's authored field sites (`tokenFormFieldSites`);
+- an enriched field does not name the list element it wraps (`separatedListElementName`);
+- the whitespace externals enrich added are not upstream externals, and a `_layout` rule a later stage decorated is set aside while the stages run and put back.
+
+An override field is a patch's own content and is opaque to the clause hoist and the field-enum synthesis (`isOverrideField`). Enrich never meets one on the first pass, which reads the upstream grammar; only a pass over wired output does.
+
+### `packages/codegen/src/dsl/enrich.ts::isOverrideField`
+
+Whether a field node came from an authored patch (`fieldSource: 'override'`). The clause hoist and the field-enum synthesis leave its content untouched.
+
+### `packages/codegen/src/dsl/enrich.ts::armFieldSites`
+
+The authored field sites under arm `arm` of a distributed token form, with the arm index stripped. The first pass hands each nested token-form hoist this slice of its parent's sites, and a later pass derives the same slice for an arm rule it meets as a root (`tokenFormFieldSites`), so both decide the nested distribution from the same paths.
+
+### `packages/codegen/src/dsl/enrich.ts::tokenFormFieldSites`
+
+The authored field sites of every rule, plus those a token-form arm inherits from its parent: an arm rule (annotated `tokenForm`, referenced from its parent's choice by a symbol whose `variantOf` names the parent) takes `armFieldSites` of the parent's sites at its index, transitively.
+
+### `packages/codegen/src/dsl/enrich.ts::TextTokenTest`
+
+A predicate over rule names: whether the name is a text token an earlier enrich pass minted. The field-wrap stages read such a symbol as the pattern it replaced.
 
 ### `packages/codegen/src/dsl/enrich.ts::EnrichAuthoredConfig`
 
@@ -6338,6 +6375,14 @@ A mint is a rule enrich adds, so a name the base grammar already has is never on
 
 Why enrich records a rule name: either a mint (`kind` is an `EnrichMintKind`), or `promoted-group`, an upstream hidden rule enrich exposes through an alias; the rule itself is unchanged. A `promoted-group` entry carries `visibleName`, the name the parent's arm aliases the rule to, so no reader re-derives the pairing from the underscore convention. It is the only origin that is not a mint. A `text` entry is a text token `mintInlineTextTokens` minted, and it carries `owners`, the rules that reference it. An `element-supertype` entry is the hidden supertype minted for the element choice of a list (`registerElementSupertype`); it carries `slot`, the name of the slot its elements fill, and `authoredSlot`, whether an authored `field()` patch gave that name.
 
+### `packages/codegen/src/dsl/enrich-ctx.ts::isMintOrigin`
+
+Whether an origin records a rule enrich minted, as opposed to an authored hidden rule it promoted to a visible group. `getEnrichMints` and `EnrichCtx.isPriorMint` share it.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::isSupertypeLike`
+
+Whether a hidden rule's body is a choice of kinds: symbols, strings and named aliases, through precedence. A member that is itself a choice counts when every one of its arms is a named alias, so the body reads the same before and after the alias-distribution stage splits `alias(choice(...), name)` into a choice of aliases. A nested choice of anything else is not supertype-like.
+
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx`
 
 The one shared context of an `enrich()` call. It carries the values every enrich pass reads or fills: the base grammar's rules (`rulesBag` — mutated in place when the clause hoist annotates an existing hidden rule it promotes), the grammar's supertypes, externals, inline names and word matcher, the authored group bodies enrich declines to mint (`authoredGroupBodies`, empty unless the call came through `sittirGrammar`), and the per-call mint registries (`kwRules`, `clauseGroupRules`, the clause and visible-group dedupe maps, `ruleOrigins`). `ruleOrigins` is stamped at each site that adds a rule, with the rule's `EnrichMintKind`, and where an upstream hidden rule is exposed through an alias (`promoted-group`); `enrich()` attaches it to its result as the one rule-origin sidecar. Helpers take the ctx instead of threading these as positional parameters; a helper that runs on a *different* rule set (the merged or enriched rules) takes that set as its own parameter, so the two are never confused.
@@ -6345,6 +6390,8 @@ The one shared context of an `enrich()` call. It carries the values every enrich
 `sourceSymbols` is the predicted `SymbolSource` over the base rules (`enrichSymbolSource`) — the grammar-source facts separator detection reads. It is distinct from the one `enrich()` builds over the enriched rules for `unaliasOverloadedDisplays` at the end (`enrichedSymbols`): the two describe the grammar at different points and are never merged.
 
 `hoist` is present only on the view `enrich()` hands to the clause-hoist loop (`withHoist`). Helpers that are also reached before that loop — `visibleGroupSynthName` from the token-form hoist — read it to tell the two apart: without it they fall back to ordinal naming and skip hidden-list promotion.
+
+`priorOrigins` is the origins sidecar of the grammar enrich was given (empty for a grammar no pass has enriched) and also the starting content of `ruleOrigins`. `isTextToken` and `isPriorMint` answer from it: the first names a text mint, the second any mint other than a promoted authored group (`isMintOrigin`, the predicate `getEnrichMints` reads).
 
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx.create`
 

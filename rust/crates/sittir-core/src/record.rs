@@ -4,16 +4,49 @@
 //! asserts, per slot, that the slot's type fits the cell stamped for it, and
 //! computes nothing else.
 //!
-//! A field one word short of its type does not build:
+//! A derived interior transport accepts a four-word text cell:
+//!
+//! ```
+//! # const KIND: sittir_core::types::KindId = sittir_core::types::KindId(1);
+//! #[derive(sittir_core::Transport)]
+//! #[transport(kind = KIND, interior = "(?<value>.*)", words = 6)]
+//! struct Example {
+//!     #[wire(key = "_value")]
+//!     #[slot(capture = "value", word = 2, width = 4)]
+//!     value: String,
+//! }
+//! ```
+//!
+//! The same derive refuses the field one word short of its type:
 //!
 //! ```compile_fail
-//! const _: () = assert!(
-//!     sittir_core::record::fits_cell::<sittir_core::SlotValue<()>>(4, 0),
-//!     "Example.field: its type needs more than its stamped record cell"
-//! );
+//! # const KIND: sittir_core::types::KindId = sittir_core::types::KindId(1);
+//! #[derive(sittir_core::Transport)]
+//! #[transport(kind = KIND, interior = "(?<value>.*)", words = 6)]
+//! struct Example {
+//!     #[wire(key = "_value")]
+//!     #[slot(capture = "value", word = 2, width = 3)]
+//!     value: String,
+//! }
+//! ```
+//!
+//! A slot cannot occupy either word of the record's header:
+//!
+//! ```compile_fail
+//! # const KIND: sittir_core::types::KindId = sittir_core::types::KindId(1);
+//! #[derive(sittir_core::Transport)]
+//! #[transport(kind = KIND, interior = "(?<value>.*)", words = 6)]
+//! struct Example {
+//!     #[wire(key = "_value")]
+//!     #[slot(capture = "value", word = 1, width = 4)]
+//!     value: String,
+//! }
 //! ```
 
 use crate::{NonEmptyVec, SlotValue};
+
+/// The kind id and side-record address preceding every record's slots.
+pub const HEADER_WORDS: u32 = 2;
 
 /// The cell a field type needs in a record.
 pub trait RecordCell {

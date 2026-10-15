@@ -5,7 +5,7 @@ import { decodeIndex, isCoordinate, readNode, type TreeHandle } from '../../comm
 import rust from '../src/index.ts';
 
 const rs = await createEngine(rust);
-const { Blankline: blankline, Newline: newline } = rs.kinds;
+const { Blankline: blankline, Newline: newline, Space: space } = rs.kinds;
 
 const statementsOf = (source: string, deep = false) => {
 	const item = rs.parse(source, { depth: deep ? Infinity : 1 }).statements()[0];
@@ -13,22 +13,22 @@ const statementsOf = (source: string, deep = false) => {
 	return [...item.body().statements()].filter((statement) => rs.is.expressionStatement(statement));
 };
 
-describe('a read node carries the line breaks before it as whitespace trivia', () => {
-	it('holds the blank line between two statements', () => {
+describe('a read node carries the whitespace before it that differs from the read-time options as whitespace trivia', () => {
+	it('holds the blank line between two statements, where the options write one break, and nothing for the break they write', () => {
 		const [a, b] = statementsOf('fn f() {\n    a;\n\n    b;\n}\n');
-		expect(a!.$trivia.leading()).toEqual([newline]);
+		expect(a!.$trivia.leading()).toEqual([]);
 		expect(b!.$trivia.leading()).toEqual([blankline]);
 	});
 
-	it('gives the last statement the line break before the closing brace', () => {
+	it('gives the last statement nothing for the line break the options write before the closing brace', () => {
 		const [, b] = statementsOf('fn f() {\n    a;\n\n    b;\n}\n');
-		expect(b!.$trivia.trailing()).toEqual([newline]);
+		expect(b!.$trivia.trailing()).toEqual([]);
 	});
 
-	it('puts the line breaks around a comment it owns in source order', () => {
+	it('puts the blank line before a comment it owns in source order, and nothing for the break the line comment ends with', () => {
 		const [, b] = statementsOf('fn f() {\n    a;\n\n    // note\n    b;\n}\n');
 		const leading = b!.$trivia.leading();
-		expect(leading.map((entry: unknown) => (typeof entry === 'number' ? entry : 'comment'))).toEqual([blankline, 'comment', newline]);
+		expect(leading.map((entry: unknown) => (typeof entry === 'number' ? entry : 'comment'))).toEqual([blankline, 'comment']);
 	});
 
 	it('gives a node that starts where its parent starts nothing', () => {
@@ -37,16 +37,16 @@ describe('a read node carries the line breaks before it as whitespace trivia', (
 		expect(typeof expression === 'object' ? expression.$trivia.leading() : []).toEqual([]);
 	});
 
-	it('yields nothing for a gap of spaces on one line', () => {
+	it('yields the space of a gap on one line where the options break the line', () => {
 		const [, b] = statementsOf('fn f() { a; b; }\n');
-		expect(b!.$trivia.leading()).toEqual([]);
+		expect(b!.$trivia.leading()).toEqual([space]);
 	});
 
 	it('reads the same from a tree read whole as from one read a level at a time', () => {
 		const [a, b] = statementsOf('fn f() {\n    a;\n\n    b;\n}\n', true);
-		expect(a!.$trivia.leading()).toEqual([newline]);
+		expect(a!.$trivia.leading()).toEqual([]);
 		expect(b!.$trivia.leading()).toEqual([blankline]);
-		expect(b!.$trivia.trailing()).toEqual([newline]);
+		expect(b!.$trivia.trailing()).toEqual([]);
 	});
 
 	it('renders an untouched statement with its source gap when its parent is rebuilt', () => {
@@ -61,7 +61,7 @@ describe('a read node carries the line breaks before it as whitespace trivia', (
 		const [, b] = statementsOf('fn f() {\n    a;\n\n    b;\n}\n');
 		b!.$trivia.leading(newline);
 		expect(b!.$trivia.leading()).toEqual([newline]);
-		expect(b!.$trivia.trailing()).toEqual([newline]);
+		expect(b!.$trivia.trailing()).toEqual([]);
 	});
 
 	it('reads the trivia of an aliased node of a deep read', () => {

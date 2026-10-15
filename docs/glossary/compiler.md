@@ -7876,6 +7876,8 @@ The global `grammar()` during evaluation, under the DSL's contract: `grammar(opt
 `grammar(base, options)` to extend a `grammar()` result. The base is told apart from options by its `grammar`
 property, and a call that mixes the two shapes throws.
 
+When the base was wired, the rules wire created or changed (the layout supertype excepted, which enrich mints after its own labelling) are labelled with `stampAutomaticVariants` into the wire context's record. That is the same stamping enrich applies to a kind it mints, run on the arms a patch or `groups:` entry authored after enrich, so a later enrich pass finds those arms already labelled.
+
 #### body
 
 ```text
@@ -10106,6 +10108,8 @@ A rule whose body becomes all text (`isAllTextShape`) once each spliceable refer
 ### `packages/codegen/src/compiler/link.ts::stampParserVisibility`
 
 Stamps each rule's `hidden` (`isSurfaceHiddenKind`) and each reference's `inline` (`dsl/rule-patterns.ts::inlinesAtReference`) from the parser catalog, asked through `catalogSymbolSource`. A named ALIAS keeps its wrapped SYMBOL un-inlined, since the alias confers a node that must materialize.
+
+A named alias whose display is the grammar's word rule and whose content is a literal the link-pinned `wordMatcher` accepts and the catalog has a keyword row for is a relaxation site (`alias('print', $.identifier)`). Its reference becomes the word symbol itself, and the literal joins the grammar's `relaxedLiterals`, which link, normalize and the node map carry through unchanged. A choice that held such sites keeps one word arm, the one carrying the word's own variant label, and a rule left as nothing but the word (python's `keyword_identifier`) is dissolved into it, so no slot lists a keyword kind the grammar relaxes. The enriched grammar, `grammar.json` and the parser are untouched: the aliases stay in place upstream, and only link's model drops the keyword arms.
 
 ### `packages/codegen/src/compiler/collect-slots.ts::SlotDeriveCtx`
 

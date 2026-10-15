@@ -1,6 +1,6 @@
 import type { NodeMap } from '../../compiler/types.ts';
 import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
-import { AbstractAssembledCompound, AssembledList, AssembledSupertype, isKindIdStored, isRequired, separatorRequired, type AssembledNode } from '../../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, AssembledEnum, AssembledList, AssembledSupertype, isKindIdStored, isRequired, separatorRequired, type AssembledNode } from '../../compiler/model/node-map.ts';
 import {
 	classifyFactoryShape,
 	classifyFromEmission,
@@ -95,6 +95,31 @@ function coerceSideOf(node: AssembledNode | undefined, wires: PolymorphWires | u
 		at = next;
 	}
 	return at !== undefined && hasOneSurface(at) ? 'strict' : 'coerce';
+}
+
+function armTargetAt(start: AssembledNode, path: readonly string[], wires: PolymorphWires): AssembledNode | undefined {
+	let at: AssembledNode | undefined = start;
+	for (const step of path) {
+		const sub: SubFactory | undefined = wires.byKind.get(at.kind)?.subs.find((candidate) => candidate.name === step);
+		at =
+			sub !== undefined && sub.arm.via === 'node'
+				? armTargetAt(sub.arm.child, sub.arm.path, wires)
+				: variantChildAt(at.kind, [step], wires);
+		if (at === undefined) return undefined;
+	}
+	return at;
+}
+
+function isConstantLeafArm(sub: SubFactory, wires: PolymorphWires): boolean {
+	if (sub.arm.via !== 'node' || sub.arm.path.length === 0) return false;
+	const target = armTargetAt(sub.arm.child, sub.arm.path, wires);
+	return target !== undefined && isKindIdStored(target) && !(target instanceof AssembledEnum);
+}
+
+function isNestedNamespaceArm(sub: SubFactory, wires: PolymorphWires): boolean {
+	if (sub.arm.via !== 'node' || sub.arm.path.length === 0) return false;
+	const target = armTargetAt(sub.arm.child, sub.arm.path, wires);
+	return target instanceof AssembledSupertype && target.defaultVariantSubtype === undefined && wires.flattened.has(target.kind);
 }
 
 function variantChildAt(kind: string, path: readonly string[], wires: PolymorphWires): AssembledNode | undefined {
@@ -1054,6 +1079,11 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 				armEntries.set(sub.name, entry);
 				continue;
 			}
+			if (isNestedNamespaceArm(sub, wires)) {
+				built.push({ sub, entry: { sub, type: '', children: new Map() } });
+				continue;
+			}
+			if (isConstantLeafArm(sub, wires)) continue;
 			const emission = emitSub(wireSet.node, wireSet.parentKey, sub, wires, nodeMap, seated?.refs);
 			if (emission === undefined) continue;
 			methods.push(...emission.method);

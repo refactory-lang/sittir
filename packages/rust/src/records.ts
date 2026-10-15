@@ -548,7 +548,7 @@ export const records = {
 		type_: { word: 9, width: 5 }
 	},
 	TypeArgumentTransport: { words: 12, content: { word: 2, width: 5 }, trait_bounds: { word: 7, width: 5 } },
-	MatchBlockArmsTransport: { words: 9, match_arm: { word: 2, width: 2, run: 5 }, last_arm: { word: 4, width: 5 } },
+	MatchBlockArmsTransport: { words: 9, arms: { word: 2, width: 2, run: 5 }, last_arm: { word: 4, width: 5 } },
 	FloatLiteralTransport: { words: 2 },
 	StringContentTransport: { words: 2 },
 	RawStringLiteralContentTransport: { words: 2 },

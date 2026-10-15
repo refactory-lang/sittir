@@ -31,9 +31,13 @@ impl Place {
 pub fn checks(owner: &Ident, words: Option<u32>, slots: &[(&Ident, &Type, &CellStamp)]) -> syn::Result<TokenStream> {
     let mut placed: Vec<(&Ident, Place)> = Vec::new();
     let mut asserts = Vec::new();
+    if let Some(words) = words {
+        let message = format!("{owner}: its record must hold its header");
+        asserts.push(quote!(const _: () = assert!(#words >= ::sittir_core::record::HEADER_WORDS, #message);));
+    }
     for &(ident, ty, stamp) in slots {
         let Some(word) = stamp.word else {
-            if stamp.width.is_some() || stamp.run.is_some() || stamp.bit.is_some() {
+            if words.is_some() || stamp.width.is_some() || stamp.run.is_some() || stamp.bit.is_some() {
                 return Err(syn::Error::new_spanned(ident, format!("`{ident}`'s record cell states its `word`")));
             }
             continue;
@@ -41,6 +45,8 @@ pub fn checks(owner: &Ident, words: Option<u32>, slots: &[(&Ident, &Type, &CellS
         let Some(words) = words else {
             return Err(syn::Error::new_spanned(ident, format!("`{ident}` has a record cell, so `{owner}` states its words: `#[transport(words = …)]`")));
         };
+        let message = format!("{owner}.{ident}: its record cell overlaps the header");
+        asserts.push(quote!(const _: () = assert!(#word >= ::sittir_core::record::HEADER_WORDS, #message);));
         let place = match (stamp.bit, stamp.width) {
             (Some(bit), None) if bit < 32 => {
                 let message = format!("{owner}.{ident}: a stamped bit holds only a presence");
@@ -51,13 +57,13 @@ pub fn checks(owner: &Ident, words: Option<u32>, slots: &[(&Ident, &Type, &CellS
                 let run = stamp.run.unwrap_or(0);
                 let message = format!("{owner}.{ident}: its type needs more than its stamped record cell");
                 asserts.push(quote!(const _: () = assert!(::sittir_core::record::fits_cell::<#ty>(#width, #run), #message);));
-                Place::Cell { start: word, end: word + width }
+                Place::Cell { start: word, end: end_word(ident, word, width)? }
             }
             _ => return Err(syn::Error::new_spanned(ident, format!("`{ident}` is stamped a `width` or a `bit` below 32, not both"))),
         };
         let last = match place {
             Place::Cell { end, .. } => end,
-            Place::Bit { word, .. } => word + 1,
+            Place::Bit { word, .. } => end_word(ident, word, 1)?,
         };
         if last > words {
             return Err(syn::Error::new_spanned(ident, format!("`{ident}` ends at word {last}, past `{owner}`'s {words} words")));
@@ -68,6 +74,10 @@ pub fn checks(owner: &Ident, words: Option<u32>, slots: &[(&Ident, &Type, &CellS
         placed.push((ident, place));
     }
     Ok(quote!(#(#asserts)*))
+}
+
+fn end_word(ident: &Ident, word: u32, width: u32) -> syn::Result<u32> {
+    word.checked_add(width).ok_or_else(|| syn::Error::new_spanned(ident, format!("`{ident}`'s record cell end overflows its word index")))
 }
 
 #[cfg(test)]
@@ -185,5 +195,53 @@ mod tests {
             }
         });
         assert!(message.contains("words"), "{message}");
+    }
+
+    #[test]
+    fn cell_end_overflow_is_refused_naming_the_field() {
+        let message = refusal(parse_quote! {
+            #[transport(words = 10)]
+            pub struct S {
+                #[slot(word = 4294967295, width = 5)]
+                pub a: SlotValue<A>,
+            }
+        });
+        assert!(message.contains("`a`") && message.contains("overflow"), "{message}");
+    }
+
+    #[test]
+    fn presence_end_overflow_is_refused_naming_the_field() {
+        let message = refusal(parse_quote! {
+            #[transport(words = 10)]
+            pub struct S {
+                #[slot(word = 4294967295, bit = 0)]
+                pub a: bool,
+            }
+        });
+        assert!(message.contains("`a`") && message.contains("overflow"), "{message}");
+    }
+
+    #[test]
+    fn a_record_slot_cannot_omit_its_stamp() {
+        let message = refusal(parse_quote! {
+            #[transport(words = 7)]
+            pub struct S {
+                #[slot]
+                pub a: SlotValue<A>,
+            }
+        });
+        assert!(message.contains("`a`") && message.contains("word"), "{message}");
+    }
+
+    #[test]
+    fn legacy_slots_without_record_attributes_remain_valid() {
+        let out = checks(parse_quote! {
+            pub struct S {
+                #[slot]
+                pub a: SlotValue<A>,
+            }
+        })
+        .expect("legacy slot");
+        assert!(out.is_empty());
     }
 }

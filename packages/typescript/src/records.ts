@@ -309,7 +309,7 @@ export const records = {
 		type_arguments: { word: 7, width: 5 }
 	},
 	ImportRequireClauseTransport: { words: 12, name: { word: 2, width: 5 }, source: { word: 7, width: 5 } },
-	ExtendsClauseTransport: { words: 4, extends_clause_single: { word: 2, width: 2, run: 5 } },
+	ExtendsClauseTransport: { words: 4, types: { word: 2, width: 2, run: 5 } },
 	ExtendsClauseSingleTransport: { words: 12, value: { word: 2, width: 5 }, type_arguments: { word: 7, width: 5 } },
 	ImplementsClauseTransport: { words: 4, type_: { word: 2, width: 2, run: 5 } },
 	AmbientDeclarationTransport: { words: 7, content: { word: 2, width: 5 } },

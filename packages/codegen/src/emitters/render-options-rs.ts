@@ -96,11 +96,17 @@ export interface RenderOptionsPlan {
 	readonly whitespaceText: readonly { readonly id: number; readonly text: string }[];
 	readonly kindFlags: readonly { readonly id: number; readonly flags: number }[];
 	readonly leafEdges: readonly { readonly id: number; readonly flags: number }[];
+	readonly seatWrappers: readonly SeatWrapper[];
 	readonly gaps: readonly { readonly bit: number; readonly id: number }[];
 	readonly indentChars: readonly string[];
 	readonly indent: string;
 	readonly newlineArms: readonly string[];
 	readonly newline: string;
+}
+
+export interface SeatWrapper {
+	readonly id: number;
+	readonly field: number;
 }
 
 const KIND_ANON = 1;
@@ -168,7 +174,8 @@ export function planRenderOptions(
 	whitespaceText: ReadonlyMap<string, string>,
 	declaredIndent: string | undefined,
 	grammar: string,
-	depthRegions: readonly DepthRegion[] = []
+	depthRegions: readonly DepthRegion[] = [],
+	seatWrappers: readonly SeatWrapper[] = []
 ): RenderOptionsPlan {
 	const spacing: SpacingSite[] = [];
 	const delimiters: DelimiterSite[] = [];
@@ -259,6 +266,7 @@ export function planRenderOptions(
 			.sort((a, b) => a.id - b.id),
 		kindFlags: kindFlagsOf(kindEntries, nodeMap),
 		leafEdges: leafEdgesTable(kindEntries, nodeMap),
+		seatWrappers: [...seatWrappers].sort((a, b) => a.id - b.id),
 		gaps: [...whitespaceText.keys()]
 			.flatMap((kind) => {
 				const bit = LAYOUT_KIND_BITS[`_${kind}`];
@@ -645,6 +653,8 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 		L.push("/// Per kind id, the site a seated element's after gap reads.");
 		L.push(...denseTable(table.name, new Map(table.rows.map((row) => [row.kindId, row.site]))));
 	}
+	L.push('/// Per kind id of a wrapper, the field its seat passes through: 0 for its unfielded content.');
+	L.push(...denseTable('SEAT_WRAPPERS', new Map(plan.seatWrappers.map((row) => [row.id, row.field]))));
 	L.push('pub fn defaults() -> ResolvedOptions {');
 	L.push('    ResolvedOptions {');
 	L.push('        spacing: ResolvedOptions::default_spacing(SITE_SPECS),');
@@ -652,6 +662,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('        edges: EDGE_SITES,');
 	L.push('        edge_rows: EDGE_ROWS,');
 	L.push('        kind_flags: KIND_FLAGS,');
+	L.push('        seat_wrappers: SEAT_WRAPPERS,');
 	L.push('        sites: SITE_SPECS,');
 	L.push(`        newline: ${rustStringLiteral(plan.newline)}.to_string(),`);
 	if (plan.indent !== '') L.push(`        indent: ${rustStringLiteral(plan.indent)}.to_string(),`);

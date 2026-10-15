@@ -182,11 +182,13 @@ node.$query().$descendants
 
 The callback receives a recorder, not a node. The recorder's members are the kind's slots (`c.name`, `c.returnType`), each with `eq(text)` and `match(regExp)`. A comparison returns a condition, and conditions combine with `and`, `or` and `not`. A comparison holds when some value in the slot has the text or matches.
 
+A boolean slot holds a keyword's presence, as `static` and `async` do, and its member compares that value: it has only `eq(boolean)`. `c.static.eq(true)` holds when the keyword is present and `c.static.eq(false)` when it is absent, and `c.static.match(…)` is a type error.
+
 The recorder is a mapped type over the node type's slot accessors. After `ofType` it has exactly that kind's slots. Over a union it has only the slots every member has, so `$descendants.where((c) => c.name…)` without `ofType` is a type error in python, where no slot is shared by every kind. Verbs added later (a kind test on a slot, a count) extend the recorder without changing v1.
 
 ### 7.2 Compile target: parser terms
 
-`where` compiles on the client into a plan of parser terms. Each leaf is `{ op, fields, kinds, text | pattern }`, from `wireRoutesOf`: a slot with a parser field routes by that field, and otherwise by the kinds it holds. The native evaluator matches a child when its field is in `fields`, or when it has no field and its kind is in `kinds`. A leaf of the `is` op tests the matched child's kind in place of its text (one-query-evaluator spec §1). Native code has no slot knowledge: `child_slot` and `wire_slot` are not part of the evaluator, and the reader's own routing is unchanged. There is one native evaluator, and the JavaScript evaluator is kept only as the test oracle.
+`where` compiles on the client into a plan of parser terms. Each leaf is `{ op, fields, kinds, text | pattern }`, from `wireRoutesOf`: a slot with a parser field routes by that field, and otherwise by the kinds it holds. The native evaluator matches a child when its field is in `fields`, or when it has no field and its kind is in `kinds`. A leaf of the `is` op tests the matched child's kind in place of its text (one-query-evaluator spec §1). A boolean slot's `eq` compiles to a presence leaf, which holds when a child sits in the slot's field (`true`) or none does (`false`). The portable surface's read tests use the same leaf when a binding names the keyword a boolean slot holds, so one evaluator serves both. Native code has no slot knowledge: `child_slot` and `wire_slot` are not part of the evaluator, and the reader's own routing is unchanged. There is one native evaluator, and the JavaScript evaluator is kept only as the test oracle.
 
 This replaces a plan that named model slots (`{ op: 'eq', slot: 'return_type', text: 'int' }`) and found a slot's values through the reader's `child_slot`. A tree-sitter query string is not used: sittir has no native query runner (`find_and_read` is a stub).
 
@@ -302,6 +304,10 @@ Ruled during the implementation's review:
 14. **No declarative step moves past an opaque one (§5.3).** `ofType` and `where` stay behind `filter`, `map` and `flatMap`, whose callbacks receive an index. Declarative steps run natively only while no opaque step precedes them.
 15. **`slice` and `at` count bounds as `Array` does (§4):** ToIntegerOrInfinity.
 
+Ruled by the maintainer on 2026-10-13:
+
+16. **A boolean slot compares its value (§7.1).** `c.static.eq(true)` holds when the keyword is present and `c.static.eq(false)` when it is absent, and the member has no `match`. Its plan leaf tests the field's presence, the leaf the portable read tests use (§7.2). There is no object form of a condition.
+
 ## 13. Laws
 
 - **Read:** `x.slot()` and `[...x.$query().slot]` have the same items.
@@ -339,6 +345,7 @@ Ruled during the implementation's review:
 17. The facet refuses an unknown string key, reads `then` and symbol keys as `undefined`, and over a union offers only the shared slots.
 18. A parsed leaf has no `$query`, in its type and at run time, and `engine.query(leaf)` returns an empty facet.
 19. `view.filter((_, i) => i === 1).ofType(K)` tests the second element of the view as written, and `slice` and `at` match `Array` on fractional, `NaN` and negative bounds.
+20. On a boolean slot, `where((c) => c.static.eq(true))` selects the nodes whose keyword is present and `eq(false)` the others, natively and in the oracle, and `match` on the slot fails to type.
 
 ## 15. Implementation direction
 

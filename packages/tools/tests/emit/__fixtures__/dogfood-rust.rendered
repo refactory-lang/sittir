@@ -22,9 +22,7 @@
 //! surface a typed error to JS. UTF-8 boundary correctness is also
 //! checked on the splice (via `String::replace_range`) — non-char-
 //! boundary ranges produce a `Result::Err` instead of panicking.
-
 use crate::types::Edit;
-
 /// Error returned from [`apply_edits`] when an edit is invalid.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SpliceError {
@@ -51,12 +49,8 @@ impl std::fmt::Display for SpliceError {
             SpliceError::InvalidRange { start, end } => {
                 write!(f, "invalid edit range: start={start}, end={end}")
             }
-            SpliceError::OutOfBounds { end, source_len } => write!(
-                f, "edit out of bounds: end={end} > source length={source_len}"
-            ),
-            SpliceError::NonCharBoundary { start, end } => write!(
-                f, "edit range not at UTF-8 char boundary: start={start}, end={end}"
-            ),
+            SpliceError::OutOfBounds { end, source_len } => write!(f, "edit out of bounds: end={end} > source length={source_len}"),
+            SpliceError::NonCharBoundary { start, end } => write!(f, "edit range not at UTF-8 char boundary: start={start}, end={end}"),
         }
     }
 }
@@ -85,23 +79,18 @@ pub fn apply_edits(source: &str, mut edits: Vec<Edit>) -> Result<String, SpliceE
         if (e.end_pos as usize) > source_len {
             return Err(SpliceError::OutOfBounds { end: e.end_pos, source_len, });
         }
-        if !source.is_char_boundary(e.start_pos as usize)
-            || !source.is_char_boundary(e.end_pos as usize) {
+        if !source.is_char_boundary(e.start_pos as usize) || !source.is_char_boundary(e.end_pos as usize) {
             return Err(SpliceError::NonCharBoundary { start: e.start_pos, end: e.end_pos, });
         }
     }
-
     // Sort descending by start_pos. Ties broken by end_pos descending —
     // with identical start positions, the longer replacement applies
     // first so the shorter doesn't overwrite its tail. (Tie-breaking is
     // documented consumer-visible behavior; overlap detection is still
     // theirs.)
     edits.sort_by(|a, b| {
-        b.start_pos
-            .cmp(&a.start_pos)
-            .then_with(|| b.end_pos.cmp(&a.end_pos))
+        b.start_pos.cmp(&a.start_pos).then_with(|| b.end_pos.cmp(&a.end_pos))
     });
-
     let mut buf = String::from(source);
     for e in edits {
         let start = e.start_pos as usize;

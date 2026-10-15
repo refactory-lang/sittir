@@ -156,7 +156,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly name: G['identifier'] | V.Literal.String<G>;
 		};
 		readonly 'clause.extends': {
-			readonly extendsClauseSingles: unknown;
+			readonly types: unknown;
 		};
 		readonly 'clause.extends.type': {
 			readonly types: V.Identifier.Type<G> | G['type'];

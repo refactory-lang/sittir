@@ -34,12 +34,12 @@ describe('emitFactorySourceText (real rust grammar)', () => {
 
 	it('prints an empty owner of inner trivia through its no-argument form', async () => {
 		const source = await emitFactorySourceText('rust', 'fn f() { // TODO\n}\n', 'rebuild');
-		expect(source).toContain('rs.build.block.strict().$trivia.inner(rs.build.lineComment.strict(rs.build.lineCommentRegular(" TODO")), rs.kinds.Newline)');
+		expect(source).toContain('rs.build.block.strict().$trivia.inner(rs.build.lineComment.strict(rs.build.lineCommentRegular(" TODO")))');
 	});
 
 	it('prints a leading comment through its kind builder', async () => {
 		const source = await emitFactorySourceText('rust', '// hello\nfn main() {}\n', 'rebuildMain');
-		expect(source).toContain('$trivia.leading(rs.build.lineComment.strict(rs.build.lineCommentRegular(" hello")), rs.kinds.Newline)');
+		expect(source).toContain('$trivia.leading(rs.build.lineComment.strict(rs.build.lineCommentRegular(" hello")))');
 		expect(source).not.toMatch(/\$trivia\.leading\("/);
 	});
 	it('prints a token tree through its form with kind-id punctuation', async () => {

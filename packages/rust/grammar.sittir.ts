@@ -52,7 +52,7 @@ export default sittirGrammar(base, {
 		type_argument: ($) =>
 			seq(choice($._type, $.type_binding, $.lifetime, $._literal, $.block), optional($.trait_bounds)),
 
-		match_block_arms: ($) => seq(repeat($.match_arm), field('last_arm', $.last_match_arm))
+		match_block_arms: ($) => seq(field('arms', repeat($.match_arm)), field('last_arm', $.last_match_arm))
 	},
 	options: {
 		indent: preference('    '),
@@ -197,7 +197,7 @@ export default sittirGrammar(base, {
 			'field_initializer/attribute_item:/separator': 'gap/separator',
 			'last_match_arm/attributes:/separator': 'gap/separator',
 			'match_arm/attributes:/separator': 'gap/separator',
-			'match_block_arms/match_arm:/separator': 'gap/separator',
+			'match_block_arms/arms:/separator': 'gap/separator',
 			'shorthand_field_initializer/attributes:/separator': 'gap/separator',
 			'token_repetition/tokens:/separator': 'gap/separator',
 			'token_repetition_pattern/token_patterns:/separator': 'gap/separator',
@@ -286,6 +286,7 @@ export default sittirGrammar(base, {
 		},
 
 		match_block: {
+			'1/0/0': field('arms'),
 			'1/0/1': field('last_arm')
 		},
 

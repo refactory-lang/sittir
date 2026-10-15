@@ -155,11 +155,11 @@ export default sittirGrammar(base, {
 		unary_operator: { 'operator:/after': preference('tight') },
 		interpolation: { before: preference('tight'), after: preference('tight') },
 		comprehension_clauses: { 'content:/separator': preference('space') },
+		comparison_operator: { 'comparators:/separator': preference('space') },
+		concatenated_string: { 'string:/separator': preference('space') },
 
 		_bindings: {
 			'block/statements:/separator': 'gap/separator',
-			'comparison_operator/comparators:/separator': 'gap/separator',
-			'concatenated_string/string:/separator': 'gap/separator',
 			'decorated_definition/decorator:/separator': 'gap/separator',
 			'if_statement/alternative:/separator': 'gap/separator',
 			'match_block_block/alternative:/separator': 'gap/separator',
@@ -176,10 +176,10 @@ export default sittirGrammar(base, {
 		// See docs/python-grammar-sittir-glossary.md::case_pattern
 		case_pattern: { 0: alias('case_as_pattern') },
 		// See docs/python-grammar-sittir-glossary.md::comprehension_clauses
-		list_comprehension: { 2: comprehensionClauses },
-		dictionary_comprehension: { 2: comprehensionClauses },
-		set_comprehension: { 2: comprehensionClauses },
-		generator_expression: { 2: comprehensionClauses },
+		list_comprehension: [{ 2: comprehensionClauses }, { 2: field('clauses') }],
+		dictionary_comprehension: [{ 2: comprehensionClauses }, { 2: field('clauses') }],
+		set_comprehension: [{ 2: comprehensionClauses }, { 2: field('clauses') }],
+		generator_expression: [{ 2: comprehensionClauses }, { 2: field('clauses') }],
 		integer: {
 			0: variant('hex'),
 			1: variant('octal'),
@@ -415,12 +415,15 @@ export default sittirGrammar(base, {
 		// See docs/python-grammar-sittir-glossary.md::string_content
 		string_content: reauthored('alias-shape', ($) =>
 			prec.right(
-				repeat1(
-					choice(
-						$.escape_interpolation,
-						$.escape_sequence,
-						alias($._not_escape_sequence, $.not_escape_sequence),
-						alias($._string_content, $.string_fragment)
+				field(
+					'elements',
+					repeat1(
+						choice(
+							$.escape_interpolation,
+							$.escape_sequence,
+							alias($._not_escape_sequence, $.not_escape_sequence),
+							alias($._string_content, $.string_fragment)
+						)
 					)
 				)
 			)
@@ -428,8 +431,8 @@ export default sittirGrammar(base, {
 
 		// See docs/python-grammar-sittir-glossary.md::format_specifier
 		// See docs/python-grammar-sittir-glossary.md::case_tuple_pattern
-		case_tuple_pattern: vocabulary(($) => seq('(', optional($.list_pattern_case_patterns), ')')),
-		case_list_pattern: vocabulary(($) => seq('[', optional($.list_pattern_case_patterns), ']')),
+		case_tuple_pattern: vocabulary(($) => seq('(', optional(field('elements', $.list_pattern_case_patterns)), ')')),
+		case_list_pattern: vocabulary(($) => seq('[', optional(field('elements', $.list_pattern_case_patterns)), ']')),
 
 		_print_arguments: vocabulary(($) =>
 			seq(field('item', $.expression), repeat(seq(',', field('item', $.expression))), optional(','))
@@ -438,7 +441,7 @@ export default sittirGrammar(base, {
 			seq(repeat1(seq(',', field('item', $.expression))), optional(','))
 		),
 		print_statement_chevron: vocabulary(($) =>
-			seq('print', $.chevron, optional(choice(alias($._print_chevron_arguments, $.print_chevron_arguments), ',')))
+			seq('print', field('chevron', $.chevron), optional(choice(alias($._print_chevron_arguments, $.print_chevron_arguments), ',')))
 		),
 		print_statement_plain: vocabulary(($) => seq('print', alias($._print_arguments, $.print_arguments))),
 		print_statement: reauthored('alias-shape', ($) =>

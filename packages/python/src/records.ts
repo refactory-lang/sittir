@@ -20,6 +20,7 @@ export const records = {
 	AssertStatementTransport: { words: 4, expression: { word: 2, width: 2, run: 5 } },
 	ExpressionStatementTransport: { words: 7, content: { word: 2, width: 5 } },
 	NamedExpressionTransport: { words: 12, name: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
+	NamedExpressionLhsTransport: { words: 7, identifier: { word: 2, width: 5 } },
 	ReturnStatementTransport: { words: 7, expressions: { word: 2, width: 5 } },
 	DeleteStatementTransport: { words: 7, expressions: { word: 2, width: 5 } },
 	RaiseStatementTransport: { words: 12, expressions: { word: 2, width: 5 }, cause: { word: 7, width: 5 } },
@@ -187,18 +188,10 @@ export const records = {
 	TupleTransport: { words: 7, elements: { word: 2, width: 5 } },
 	DictionaryTransport: { words: 7, elements: { word: 2, width: 5 } },
 	PairTransport: { words: 12, key: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
-	ListComprehensionTransport: { words: 12, body: { word: 2, width: 5 }, comprehension_clauses: { word: 7, width: 5 } },
-	DictionaryComprehensionTransport: {
-		words: 12,
-		body: { word: 2, width: 5 },
-		comprehension_clauses: { word: 7, width: 5 }
-	},
-	SetComprehensionTransport: { words: 12, body: { word: 2, width: 5 }, comprehension_clauses: { word: 7, width: 5 } },
-	GeneratorExpressionTransport: {
-		words: 12,
-		body: { word: 2, width: 5 },
-		comprehension_clauses: { word: 7, width: 5 }
-	},
+	ListComprehensionTransport: { words: 12, body: { word: 2, width: 5 }, clauses: { word: 7, width: 5 } },
+	DictionaryComprehensionTransport: { words: 12, body: { word: 2, width: 5 }, clauses: { word: 7, width: 5 } },
+	SetComprehensionTransport: { words: 12, body: { word: 2, width: 5 }, clauses: { word: 7, width: 5 } },
+	GeneratorExpressionTransport: { words: 12, body: { word: 2, width: 5 }, clauses: { word: 7, width: 5 } },
 	ParenthesizedExpressionTransport: { words: 7, expression: { word: 2, width: 5 } },
 	CollectionElementsTransport: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	ForInClauseTransport: {
@@ -222,7 +215,7 @@ export const records = {
 		content: { word: 7, width: 2, run: 5 },
 		string_end: { word: 9, width: 5 }
 	},
-	StringContentTransport: { words: 4, content: { word: 2, width: 2, run: 5 } },
+	StringContentTransport: { words: 4, elements: { word: 2, width: 2, run: 5 } },
 	InterpolationTransport: {
 		words: 18,
 		expression: { word: 3, width: 5 },
@@ -250,8 +243,8 @@ export const records = {
 	TuplePatternElementsTransport: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	TupleElementsTransport: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	ExceptClauseExceptionAsTransport: { words: 12, value: { word: 2, width: 5 }, alias: { word: 7, width: 5 } },
-	CaseTuplePatternTransport: { words: 7, list_pattern_case_patterns: { word: 2, width: 5 } },
-	CaseListPatternTransport: { words: 7, list_pattern_case_patterns: { word: 2, width: 5 } },
+	CaseTuplePatternTransport: { words: 7, elements: { word: 2, width: 5 } },
+	CaseListPatternTransport: { words: 7, elements: { word: 2, width: 5 } },
 	PrintArgumentsTransport: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	PrintChevronArgumentsTransport: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	PrintStatementChevronTransport: {
