@@ -34,6 +34,10 @@ The engine object and its `EngineIdentity` are frozen, so no member can be reass
 
 `is` on the engine is the language's table through `languageGuards`, so `engine.is.<kind>` and `engine.is.<supertype>` check the language as `isNode` does; the package-level `is` has no engine and stays a check on the kind id alone.
 
+### `packages/common/src/create-engine.ts::scopeBuilders`
+
+A builder table run through an engine's own build scope: the same `scopedBuild` proxy, handle, `settle` and build middleware the engine's `build` has. Tooling that holds builder tables `build` does not expose (a grammar's raw factory map, the `ir` module's entries) scopes them here, so there is one scope and a `'runtime'` engine checks what they build. It throws for an object `createEngine` did not make.
+
 ### `packages/common/src/create-engine.ts::settlerOf`
 
 The handle's `settle`, chosen once when the engine is assembled: the identity in the default `'compileTimeOnly'` mode, or, in `'runtime'` mode, `verifyStructure` over the language's structure table with one `seen` set for the engine. So no build or rebuild tests the mode; two engines in one process keep their own. A refusal is raised when the outermost call returns, and its message names the kind and the slot.

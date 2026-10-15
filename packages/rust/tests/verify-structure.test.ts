@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { scopeBuilders } from '@sittir/common/engine';
+import { _factoryMap } from '../src/factories/raw.ts';
 import rust from '../src/index.ts';
 
 const trusting = await createEngine(rust);
@@ -23,5 +25,16 @@ describe('verifyStructure', () => {
 		};
 		expect(renamed(verifying)).toBe('fn h() { g(); }');
 		expect(renamed(trusting)).toBe('fn h() { g(); }');
+	});
+
+	it("scopes a table of builders to an engine, so they settle as that engine's own builders do", () => {
+		const emptyStatement = (engine: typeof trusting) =>
+			(scopeBuilders(engine, _factoryMap).expression_statement as unknown as () => unknown)();
+		expect(() => emptyStatement(verifying)).toThrow("Missing required slot 'content' on expression_statement");
+		expect(() => emptyStatement(trusting)).not.toThrow();
+	});
+
+	it('refuses to scope builders to an object createEngine did not make', () => {
+		expect(() => scopeBuilders({}, _factoryMap)).toThrow('scopeBuilders: the engine was not made by createEngine');
 	});
 });

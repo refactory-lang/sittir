@@ -175,6 +175,14 @@ function languageGuard(guard: Guard, inLanguage: (value: unknown) => boolean, wr
 	);
 }
 
+const builderScopes = new WeakMap<object, <T extends object>(table: T) => T>();
+
+export function scopeBuilders<T extends object>(engine: object, table: T): T {
+	const scope = builderScopes.get(engine);
+	if (scope === undefined) throw new Error('scopeBuilders: the engine was not made by createEngine');
+	return scope(table);
+}
+
 function settlerOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable): EngineHandle['settle'] {
 	if (mode !== 'runtime') return (node) => node;
 	const seen = new WeakSet<object>();
@@ -299,7 +307,9 @@ function assembleEngine<API extends LanguageAPI>(
 		}
 	};
 	handle.current = engine;
-	return Object.freeze(engine);
+	const frozen = Object.freeze(engine);
+	builderScopes.set(frozen, (table) => scopedBuild(table, handle, buildChain));
+	return frozen;
 }
 
 function assemblePortableEngine<API extends PortableLanguageAPI>(language: Language<API>, hooks: LanguageHooks<API>): PortableEngine<API> {
