@@ -725,10 +725,6 @@ The pinned build's scm engine, created once by `ready` and shared by every read.
 
 The pinned build's span helper, which converts UTF-8 byte spans to string indices for slicing a pattern's text and counting its line.
 
-### `packages/codegen/src/bindings/pinned-reader.ts::isErrorNode`
-
-The pinned build's test for an ERROR region carried as trivia; `unparsed` uses it.
-
 ### `packages/codegen/src/bindings/pinned-reader.ts::spanOf`
 
 The pinned build's span of a parsed node or trivia item.
@@ -1465,7 +1461,7 @@ Every required member of a path that a kind reached by a wildcard claim of that 
 
 What reading a pattern as a `match` tree gives: the tree (`dsl/bind.ts::LeadMatch`, with no `as`, which only the derivation adds), or the reason the pattern says something `match` cannot.
 
-### `packages/codegen/src/bindings/facts.ts::LeadMatchFact`
+### `packages/codegen/src/bindings/facts.ts::LeadLeadMatch`
 
 A `MatchRead` with the line of the `bindings.scm` pattern it was read from, which a `lead-refused` record names.
 

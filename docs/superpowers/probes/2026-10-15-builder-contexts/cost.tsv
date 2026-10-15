@@ -1,0 +1,10 @@
+encoding	functions	depth	builder_calls	variant	check_s_median5	types	instantiations	memory_K
+conditional	0	4	0	plain	1.417	88213	2803405	131355
+conditional	0	4	0	contexts	1.386	88571	2804509	131757
+conditional	1200	4	~73000	plain	1.620	103764	2808584	179149
+conditional	1200	4	~73000	contexts	3.044	119282	2975264	187128
+conditional	1200	8	~151000	plain	2.983	113364	2808584	217215
+conditional	1200	8	~151000	contexts	5.720	138482	3080864	228664
+kinds-only	0	4	0	contexts	-	88623	2804611	131874
+kinds-only	1200	4	~73000	contexts	-	119326	2970553	186399
+kinds-only	1200	8	~151000	contexts	-	138526	3076153	227938

@@ -467,6 +467,14 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         .as_ref()
         .ok_or_else(|| syn::Error::new_spanned(ident, "`#[transport(kind = …)]` names the struct's kind"))?;
     let fields = fields_of(ident, data)?;
+    let stamped: Vec<_> = fields
+        .iter()
+        .filter_map(|field| match &field.role {
+            Role::Slot(slot) => Some((field.ident, field.ty, &slot.cell)),
+            _ => None,
+        })
+        .collect();
+    let record = crate::record::checks(ident, attrs.words, &stamped)?;
     let folded = &attrs.folded;
     let admits = if attrs.display { quote!(display == #kind) } else { quote!(grammar == #kind #(|| grammar == #folded)*) };
     let layout: Vec<&Path> = attrs.layout.iter().flatten().collect();
@@ -474,7 +482,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         text_body(ident, &fields, fixed.as_ref())?
     } else if let Some(pattern) = &attrs.interior {
         interior_body(ident, &fields, pattern)?
-    } else if attrs.envelope {
+        } else if attrs.content.is_some() {
         envelope_body(ident, attrs, &fields)?
     } else {
         routed_body(attrs, &fields)?
@@ -551,6 +559,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
             #separator_kind_of
             #codec
         };
+        #record
     })
 }
 
@@ -798,7 +807,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                 }
             });
         }
-        if !own_separators.is_empty() && !field_paths.is_empty() && !attrs.list {
+        if !own_separators.is_empty() && !field_paths.is_empty() && attrs.item.is_none() {
             tagged_separators.push(quote! {
                 ::core::option::Option::Some(__field) if (#(__field == #field_paths)||*) && [#(#own_separators),*].contains(&child.grammar) => {
                     return ::core::result::Result::Ok(__rt::Route::Separator { slot: #i, tagged: true });
@@ -863,10 +872,10 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                     _ => {}
                 }
                 #(#separators)*
-                if __LAYOUT.contains(&child.grammar) {
-                    return ::core::result::Result::Ok(__rt::Route::Layout);
+                if __rt::DEBUG_READ_CHECKS && !__LAYOUT.contains(&child.grammar) {
+                    return ::core::result::Result::Err(__rt::ReadError::Unrouted { kind: __KIND, child: child.grammar, index: child.index });
                 }
-                ::core::result::Result::Err(__rt::ReadError::Unrouted { kind: __KIND, child: child.grammar, index: child.index })
+                ::core::result::Result::Ok(__rt::Route::Layout)
             }
         },
         read: {
@@ -943,8 +952,7 @@ fn list_inits(attrs: &KindAttrs, fields: &[Field<'_>], slots: &[(u16, &Field<'_>
                 let item = attrs
                     .item
                     .as_ref()
-                    .filter(|_| attrs.list)
-                    .ok_or_else(|| syn::Error::new_spanned(name, "a list's flank needs `#[transport(list, item = …)]`"))?;
+                    .ok_or_else(|| syn::Error::new_spanned(name, "a list's flank needs `#[transport(item = …)]`"))?;
                 let slot = slots
                     .iter()
                     .find(|(_, f, _)| f.ident == item)

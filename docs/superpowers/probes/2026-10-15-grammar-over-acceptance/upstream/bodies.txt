@@ -1,0 +1,122 @@
+typescript#373 ASI not inserted before a line starting with an identifier like `in_point` / `in
+    interface A {⏎  a: string⏎  in_point: number⏎}
+typescript#370 Type-parameter variance annotations (in / out / in out, TS 4.7) are not in the g
+    interface I<in T> { f(x: T): void }        // hasError⏎interface I<out T> { v: T }                // hasError⏎interface I<in out T> { v: T }             // hasError⏎type F<out T> = () => T;                   // hasError⏎
+typescript#369 Class member named `accessor` is rejected, and `accessor` cannot follow static/a
+    class C { accessor() { return 1; } }   // ERROR⏎class C { accessor; }                  // ERROR⏎class C { accessor = 1; }              // ERROR⏎class C { accessor: number = 1; }      // ERROR
+typescript#367 `typeof import('m')` fails as the first type argument of a call expression
+    const a = f<typeof import('m')>();
+typescript#366 Bare `&` in JSX text fails to parse
+    while (lexer->lookahead != 0 && lexer->lookahead != '<' && lexer->lookahead != '>' && lexer->lookahead != '{' &&⏎       lexer->lookahead != '}' && lexer->lookahead != '&') {
+typescript#352 bug: parse error on `keyof import('a').A`;
+    (program [0, 0] - [1, 0]⏎  (lexical_declaration [0, 0] - [0, 29]⏎    (variable_declarator [0, 4] - [0, 7]⏎      name: (identifier [0, 4] - [0, 7]))⏎    (ERROR [0, 7] - [0, 28]⏎      (member_expression [0, 15] - [0, 28]⏎ 
+typescript#348 bug: `export type * as Name from './module'` produces ERROR node for valid synta
+    
+typescript#341 bug: tagged template call can't parse type arguments
+    (program [0, 0] - [1, 0]⏎  (lexical_declaration [0, 0] - [0, 40]⏎    (variable_declarator [0, 6] - [0, 40]⏎      name: (identifier [0, 6] - [0, 12])⏎      value: (binary_expression [0, 15] - [0, 40]⏎        left: (binary
+typescript#335 bug: anonymous generic call signatures fail to parse when separated only by line
+    interface TestInterface {⏎    <T>(value: T): T⏎    <T>(value: T, other: any): T⏎}
+typescript#334 bug: newline literal in SQL in Typescript template string breaks parsing
+    const query = sql`⏎    SELECT⏎        string_agg(DISTINCT foo.eventname, E'\n') AS performance_names,⏎        foo.fullname AS customer_name⏎      FROM⏎        foo⏎      ORDER BY⏎          ctd.order_id⏎`
+typescript#331 bug: decorator of class_declaration changes its relation when class is exported
+    export_statement⏎  - decorator⏎  - class declaration⏎⏎class_declaration⏎  - decorator
+typescript#329 bug: Parse error when using typed template function
+    export class TRPCError extends Error {⏎  constructor(opts: { message?: string; code: string }) {⏎    super(opts.code);⏎  }⏎}⏎let sql: <T = unknown>(⏎  sqlFragments: TemplateStringsArray,⏎  ...parameters: unknown[]⏎) => T
+typescript#322 bug: Parse error on const x: import('foo').Bar<Baz>
+    ### Expected Behavior/Parse Tree⏎⏎I expect a parse tree without error nodes.⏎⏎I'm not familiar enough to say exactly what that valid tree should look like, because I'm not using tree-sitter directly — I'm using it via 
+typescript#320 bug: fails to parse JSX string property that contains URL 
+    ### Steps To Reproduce/Bad Parse Tree
+typescript#314 bug: Question mark for object member not captured in its own tree node
+    
+typescript#313 bug: export specifier isn't recognized
+    ### Repro⏎⏎`type` is a variable exported by the Button
+typescript#309 bug: method_definition decorators should be inside the method_definition node
+    ### Expected Behavior/Parse Tree⏎⏎I'd expect the parse tree to look like this
+typescript#306 bug: JSX captures whitespaces in nested, multiline tags
+    ### Repro
+typescript#299 bug: Non-null assertion operator `!` parsed with wrong precedence
+    
+typescript#282 bug: wrong `await_expression` node when `call_expression` has a `type_arguments`
+    ### Expected Behavior/Parse Tree
+javascript#377 Bug: Reserved words not recognized as property identifiers after optional chaini
+    a?.delete(b);
+javascript#366 Bug: Ampersand breaks jsx_text
+    export const a = <div>me & you</div>
+javascript#364 Grammars which extend Javascript fail to parse template literals, despite the Ja
+    // test.js⏎function fact(n) {⏎    let res = 1;⏎    for (let i = 1; i <= n; i++) {⏎        res *= i;⏎    }⏎    return res;⏎}⏎⏎let test_value = "hello";⏎let test_templated_string = `${test_value} world!`;
+javascript#362 Doesn't support String.raw
+    String.raw`C:\Users`
+javascript#337 Bug: escape sequences are too restricted for tagged templates
+    
+javascript#323 Default export of anonymous function declaration is misclassified as function ex
+    
+javascript#318 incorrect parse for destructuring dssignment
+    
+javascript#315 Parse the condition of a for loop into a dedicated node
+    
+javascript#303 Handling of `await` and `yield` not context-dependent
+    
+javascript#259 Incorrectly parsed labeled statement
+    
+javascript#209 export default let a = 42, not marked as error
+    
+javascript#204 Invalid variable names are not marked as errors
+    
+rust#315 bug: multi-line comments containing certain multibyte characters fail to parse
+    fn main () {⏎  /*是个*/⏎}
+rust#293 bug: suffixes in literals are wrongly parsed
+    fn main() {⏎    assert_eq!(100d + 11h + 8m + 7s, DURATION);⏎}
+rust#291 bug: `*` operator in `..*a` incorrectly parsed as binary operator when it should
+    
+rust#284 bug: Incorrect parsing of typecast next to greater than sign
+    if data.len() as wgpu::BufferAddress <= self.buffer.size() {⏎    // ...⏎}
+rust#277 bug: ssue Title: Parser incorrectly fails on &ident[..] syntax when identifier i
+    
+rust#276 bug: cannot parse more than one attribute item for function's parameter
+    parameters: $ => seq(⏎      '(',⏎      sepBy(',', seq(⏎        optional($.attribute_item),⏎        choice(⏎          $.parameter,⏎          $.self_parameter,⏎          $.variadic_parameter,⏎          '_',⏎          $._ty
+rust#253 feature: frontmatter syntax support
+    
+rust#251 bug: string_content inside raw_string_literal doesn't match leading whitespaces
+    fn main() {⏎    let query = r#"⏎        SELECT * FROM users⏎    "#;⏎}
+rust#250 bug: Missing parsing of safe/unsafe externs
+    unsafe extern "C" {⏎	safe static some_constant_external_value: [u32; 128];⏎	safe fn some_external_function_i_promise_is_safe();⏎}
+rust#246 bug: Incorrect parsing of doc comments
+    ### Repro
+rust#244 bug: Incorrect parsing of attributes
+    
+rust#138 Function definitions do not parse if their body contains an unclosed block
+    
+rust#45 Parse new macro declarative expression
+    
+python#352 bug: Python 3.15 PEP 798 unpacking comprehensions produce parse errors
+    [*("prefix", x) for x in xs]⏎{*("prefix", x) for x in xs}⏎(*("prefix", x) for x in xs)⏎{**x for x in xs}
+python#346 feature: Support PEP 696 type parameter defaults
+    
+python#343 bug: Private constants are not recognized
+    FOO_BAR = 1⏎_BAZ_QUX = 2
+python#335 feature: Support new `lazy` soft keyword
+    
+python#334 bug: Multiple union types are not well supported
+    def f( arg: IO[bytes] | int | float ): pass
+python#333 bug: Management of type (binary_operator VS union_type)
+    
+python#321 bug: Assignment incorrectly parsed as `type_alias_statement`
+    type(_).foo = bar
+python#314 bug: list_splat wrongly set in call function
+    class SequenceProcessor:⏎    def __init__(self, indices):⏎        self.indices = indices⏎        self._segslices = [*map(slice, indices[:-1], indices[1:])]⏎⏎    def process_sequence(self, sequence):⏎        return [seque
+python#311 bug: alias syntax definition in except_clause and except_group_clause is redunda
+    (module [0, 0] - [9, 0]⏎  (try_statement [0, 0] - [3, 6]⏎    body: (block [1, 2] - [1, 6]⏎      (pass_statement [1, 2] - [1, 6]))⏎    (except_clause [2, 0] - [3, 6]⏎      value: (as_pattern [2, 7] - [2, 21]⏎        (iden
+python#309 bug: Inconsistency when parsing comment inside if statement
+    if a == 2:⏎    # this is a comment
+python#303 feature: Please support new 3.12 Generic syntax
+    from collections.abc import Mapping⏎⏎class MyDict[T](Mapping[str, T]):⏎    ...
+python#293 bug: Inconsistency when parsing `|` union operator
+    
+python#256 bug: Special case not managed by the parser, when an expression is split without
+    
+python#252 bug: Fail to parse type expression
+    ### Steps To Reproduce/Bad Parse Tree⏎⏎tree-sitter parse test.py⏎⏎### Expected Behavior/Parse Tree⏎⏎[module](https://tree-sitter.github.io/tree-sitter/playground#) [0, 0] - [2, 0]⏎  [function_definition](https://tree-si
+python#199 Difference in fields between parameters
+    
+python#178 tree-sitter-python is overly permissive with newlines
+    

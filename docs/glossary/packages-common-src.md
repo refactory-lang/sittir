@@ -782,3 +782,7 @@ A coordinate as it crosses: its plain fields (`plainCoordinate`) and, when an ed
 ### `packages/common/src/transport-data.ts::PLAIN_KINDS`
 
 The `KindView` of data with no wrapper or list kinds: no for every kind.
+
+### `packages/common/src/interior.ts::interiorPattern`
+
+The compiled whole-token regex of a token interior, built once per interior object (flags `su`) and cached. `projectInterior` splits text with it, and the coercer's leaf registry row for a lexed kind holds it as its pattern, so the interior's `regex` string is compiled in one place on the client.

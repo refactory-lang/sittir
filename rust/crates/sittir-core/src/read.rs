@@ -20,6 +20,9 @@ use tree_sitter::{Node, TreeCursor};
 
 pub use regex::Captures;
 
+/// Opt-in parser/model drift diagnostics after typed slot routing.
+pub const DEBUG_READ_CHECKS: bool = cfg!(feature = "read-debug-checks");
+
 /// The kind the parser shows `node` as: the alias target at an alias site,
 /// else the grammar id. Every flag, edge and seat table is keyed on the
 /// grammar id (`grammar_id()`), never on this one; the display id is for the

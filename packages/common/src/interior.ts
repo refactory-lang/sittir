@@ -13,13 +13,17 @@ export type ProjectedInterior = Readonly<Record<string, string | boolean | undef
 
 const compiled = new WeakMap<TokenInterior, RegExp>();
 
-export function projectInterior(text: string, interior: TokenInterior, kind: string): ProjectedInterior {
+export function interiorPattern(interior: TokenInterior): RegExp {
 	let re = compiled.get(interior);
 	if (re === undefined) {
 		re = new RegExp(interior.regex, 'su');
 		compiled.set(interior, re);
 	}
-	const groups = re.exec(text)?.groups;
+	return re;
+}
+
+export function projectInterior(text: string, interior: TokenInterior, kind: string): ProjectedInterior {
+	const groups = interiorPattern(interior).exec(text)?.groups;
 	if (groups === undefined) {
 		throw new Error(`projectInterior: '${kind}' text ${JSON.stringify(text)} does not match its token interior ${interior.regex}`);
 	}

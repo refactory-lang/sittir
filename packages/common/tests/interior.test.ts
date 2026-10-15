@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { lexedConfig, projectInterior, type TokenInterior } from '../src/interior.ts';
+import { interiorPattern, lexedConfig, projectInterior, type TokenInterior } from '../src/interior.ts';
 
 const CHAR: TokenInterior = {
 	regex: "^(?<b>b)?'(?<content>[^\\\\']|\\\\.)'$",
@@ -16,6 +16,23 @@ const INTEGER: TokenInterior = {
 		{ name: 'suffix', configKey: 'suffix' }
 	]
 };
+
+describe('interiorPattern', () => {
+	it('reuses the compiled RegExp for the same token interior', () => {
+		const pattern = interiorPattern(CHAR);
+		expect(interiorPattern(CHAR)).toBe(pattern);
+		projectInterior("'a'", CHAR, 'char_literal');
+		expect(interiorPattern(CHAR)).toBe(pattern);
+	});
+
+	it('keeps repeated tests independent when the pattern is shared', () => {
+		const pattern = interiorPattern(INTEGER);
+		expect(pattern.test('12')).toBe(true);
+		expect(pattern.test('12')).toBe(true);
+		expect(pattern.test('12z')).toBe(false);
+		expect(pattern.test('12isize')).toBe(true);
+	});
+});
 
 describe('projectInterior', () => {
 	it('strips the affixes and stores the content', () => {
