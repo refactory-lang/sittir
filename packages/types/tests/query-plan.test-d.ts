@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest';
 import type { QueryPlan, QuerySubject, View } from '../src/index.ts';
 
-const NAME = { fields: ['name'], kinds: [] } as const;
+const NAME = { slots: { 7: 0 } } as const;
 declare const view: View<{ readonly $type: 1 }>;
 
 describe('a query plan', () => {
@@ -21,7 +21,7 @@ describe('a query plan', () => {
 		expectTypeOf({ op: 'is', types: ['identifier'], ...NAME } as const).not.toExtend<QueryPlan<QuerySubject>>();
 	});
 
-	it('steps to a child over a slot\'s routes, with an anchor from the step vocabulary', () => {
+	it('steps to a child over a slot\'s numbers, with an anchor from the step vocabulary', () => {
 		expectTypeOf({ op: 'child', ...NAME, of: { op: 'present', ...NAME } } as const).toExtend<QueryPlan>();
 		expectTypeOf({ op: 'child', ...NAME, anchor: 'only', of: { op: 'and', of: [] } } as const).toExtend<QueryPlan>();
 		expectTypeOf({ op: 'child', ...NAME, anchor: 'middle', of: { op: 'and', of: [] } } as const).not.toExtend<QueryPlan>();

@@ -160,18 +160,21 @@ describe('traversal', () => {
 type NameRecorder = { readonly name: { eq(text: string): never; match(pattern: RegExp): never } };
 type Combinable = { and(other: unknown): never; not(): never };
 
+const slotOf = (kind: number, accessor: string) => ({ slots: { [kind]: hooks.querySlots[kind]!.find(([name]) => name === accessor)![1] } });
+
 describe('where', () => {
+	const NAME = slotOf(K.FunctionDefinition, 'name');
 	const cases: readonly (readonly [string, (c: NameRecorder) => never, QueryPlan])[] = [
-		['name eq a', (c) => c.name.eq('a'), { op: 'eq', fields: ['name'], kinds: [], text: 'a' }],
-		['name match ^_', (c) => c.name.match(/^_/), { op: 'match', fields: ['name'], kinds: [], pattern: '^_' }],
+		['name eq a', (c) => c.name.eq('a'), { op: 'eq', ...NAME, text: 'a' }],
+		['name match ^_', (c) => c.name.match(/^_/), { op: 'match', ...NAME, pattern: '^_' }],
 		[
 			'name match ^_ and not ^__',
 			(c) => (c.name.match(/^_/) as Combinable).and((c.name.match(/^__/) as Combinable).not()),
 			{
 				op: 'and',
 				of: [
-					{ op: 'match', fields: ['name'], kinds: [], pattern: '^_' },
-					{ op: 'not', of: { op: 'match', fields: ['name'], kinds: [], pattern: '^__' } }
+					{ op: 'match', ...NAME, pattern: '^_' },
+					{ op: 'not', of: { op: 'match', ...NAME, pattern: '^__' } }
 				]
 			}
 		]
@@ -366,7 +369,7 @@ describe('where on a boolean slot', () => {
 	const tree = py.parse(ASYNC);
 	const defs = () => tree.$query().$descendants.ofType(K.FunctionDefinition);
 	const names = (view: Iterable<{ name(): unknown }>) => [...view].map((fn) => textOf(ASYNC, fn.name()));
-	const present: QueryPlan = { op: 'present', fields: ['async'], kinds: [] };
+	const present: QueryPlan = { op: 'present', ...slotOf(K.FunctionDefinition, 'async') };
 
 	it('eq(true) selects the nodes whose keyword is present and eq(false) the others', () => {
 		expect(names(defs().where((c) => c.async.eq(true)))).toEqual(['a']);

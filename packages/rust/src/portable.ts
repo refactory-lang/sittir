@@ -3653,33 +3653,17 @@ const table: PortableTable = {
 				path: 'declaration.field.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: [], kinds: ['visibility_modifier'] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '432': 1 } } },
+					{ up: 0, via: [{ slots: { '432': 1 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: [], kinds: ['visibility_modifier'] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '432': 1 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: [], kinds: ['visibility_modifier'] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: [], kinds: ['visibility_modifier'] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '432': 1 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -3687,33 +3671,17 @@ const table: PortableTable = {
 				path: 'declaration.field.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: [], kinds: ['visibility_modifier'] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '432': 1 } } },
+					{ up: 0, via: [{ slots: { '432': 1 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: [], kinds: ['visibility_modifier'] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '432': 1 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: [], kinds: ['visibility_modifier'] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: [], kinds: ['visibility_modifier'] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '432': 1 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -3721,25 +3689,12 @@ const table: PortableTable = {
 				path: 'declaration.field.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: [], kinds: ['visibility_modifier'] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '432': 1 } } },
+					{ up: 0, via: [{ slots: { '432': 1 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: [], kinds: ['visibility_modifier'] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: [], kinds: ['visibility_modifier'] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '432': 1 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -3747,24 +3702,16 @@ const table: PortableTable = {
 				path: 'declaration.field.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: [], kinds: ['visibility_modifier'] } },
-					{
-						up: 0,
-						via: [{ fields: [], kinds: ['visibility_modifier'] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '432': 1 } } },
+					{ up: 0, via: [{ slots: { '432': 1 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.field.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: [], kinds: ['visibility_modifier'] } },
-					{
-						up: 0,
-						via: [{ fields: [], kinds: ['visibility_modifier'] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '432': 1 } } },
+					{ up: 0, via: [{ slots: { '432': 1 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.field', within: [], test: [] }
@@ -3775,92 +3722,92 @@ const table: PortableTable = {
 			{
 				path: 'expression.binary.arithmetic.add',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '270': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.subtract',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '270': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.multiply',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*', slots: { '270': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.divide',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/', slots: { '270': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.modulo',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%', slots: { '270': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '==', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '==', slots: { '270': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.not_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!=', slots: { '270': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.less',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<', slots: { '270': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.greater',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>', slots: { '270': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.less_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<=', slots: { '270': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.greater_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>=', slots: { '270': 1 } } }]
 			},
 			{
 				path: 'expression.binary.bitwise.and',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&', slots: { '270': 1 } } }]
 			},
 			{
 				path: 'expression.binary.bitwise.or',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|', slots: { '270': 1 } } }]
 			},
 			{
 				path: 'expression.binary.bitwise.xor',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^', slots: { '270': 1 } } }]
 			},
 			{
 				path: 'expression.binary.shift.left',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<', slots: { '270': 1 } } }]
 			},
 			{
 				path: 'expression.binary.shift.right',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>', slots: { '270': 1 } } }]
 			},
 			{
 				path: 'expression.binary.logical.and',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&&', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&&', slots: { '270': 1 } } }]
 			},
 			{
 				path: 'expression.binary.logical.or',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '||', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '||', slots: { '270': 1 } } }]
 			},
 			{ path: 'expression.binary', within: [], test: [] }
 		],
@@ -3869,34 +3816,12 @@ const table: PortableTable = {
 			{
 				path: 'comment.block.doc',
 				within: [],
-				test: [
-					{
-						up: 0,
-						via: [],
-						plan: {
-							op: 'is',
-							types: [402],
-							fields: [],
-							kinds: ['block_comment_doc_outer', 'block_comment_doc_inner', 'block_comment_regular']
-						}
-					}
-				]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [402], slots: { '340': 0 } } }]
 			},
 			{
 				path: 'comment.block.doc.inner',
 				within: [],
-				test: [
-					{
-						up: 0,
-						via: [],
-						plan: {
-							op: 'is',
-							types: [403],
-							fields: [],
-							kinds: ['block_comment_doc_outer', 'block_comment_doc_inner', 'block_comment_regular']
-						}
-					}
-				]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [403], slots: { '340': 0 } } }]
 			},
 			{ path: 'comment.block', within: [], test: [] }
 		],
@@ -3910,12 +3835,12 @@ const table: PortableTable = {
 			{
 				path: 'expression.call.member',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [308], fields: ['function'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [308], slots: { '276': 0 } } }]
 			},
 			{
 				path: 'expression.call.qualified',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [263], fields: ['function'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [263], slots: { '276': 0 } } }]
 			},
 			{ path: 'expression.call', within: [], test: [] }
 		],
@@ -3957,52 +3882,52 @@ const table: PortableTable = {
 			{
 				path: 'expression.assignment.compound.add',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+=', slots: { '272': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.subtract',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-=', slots: { '272': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.multiply',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*=', slots: { '272': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.divide',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/=', slots: { '272': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.modulo',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%=', slots: { '272': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.bitwise_and',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&=', slots: { '272': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.bitwise_or',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|=', slots: { '272': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.bitwise_xor',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^=', slots: { '272': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.shift_left',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<=', slots: { '272': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.shift_right',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>=', slots: { '272': 1 } } }]
 			},
 			{ path: 'expression.assignment.compound', within: [], test: [] }
 		],
@@ -4015,33 +3940,17 @@ const table: PortableTable = {
 				path: 'declaration.constant.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '205': 0 } } },
+					{ up: 0, via: [{ slots: { '205': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '205': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '205': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4049,33 +3958,17 @@ const table: PortableTable = {
 				path: 'declaration.constant.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '205': 0 } } },
+					{ up: 0, via: [{ slots: { '205': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '205': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '205': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4083,25 +3976,12 @@ const table: PortableTable = {
 				path: 'declaration.constant.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '205': 0 } } },
+					{ up: 0, via: [{ slots: { '205': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '205': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4109,24 +3989,16 @@ const table: PortableTable = {
 				path: 'declaration.constant.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '205': 0 } } },
+					{ up: 0, via: [{ slots: { '205': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.constant.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '205': 0 } } },
+					{ up: 0, via: [{ slots: { '205': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.constant', within: [], test: [] }
@@ -4150,33 +4022,17 @@ const table: PortableTable = {
 				path: 'declaration.enum.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '198': 0 } } },
+					{ up: 0, via: [{ slots: { '198': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '198': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '198': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4184,33 +4040,17 @@ const table: PortableTable = {
 				path: 'declaration.enum.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '198': 0 } } },
+					{ up: 0, via: [{ slots: { '198': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '198': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '198': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4218,25 +4058,12 @@ const table: PortableTable = {
 				path: 'declaration.enum.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '198': 0 } } },
+					{ up: 0, via: [{ slots: { '198': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '198': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4244,24 +4071,16 @@ const table: PortableTable = {
 				path: 'declaration.enum.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '198': 0 } } },
+					{ up: 0, via: [{ slots: { '198': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.enum.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '198': 0 } } },
+					{ up: 0, via: [{ slots: { '198': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.enum', within: [], test: [] }
@@ -4271,227 +4090,121 @@ const table: PortableTable = {
 				path: 'declaration.enum_member.tuple.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
-					},
-					{ up: 0, via: [], plan: { op: 'is', types: [203], fields: ['body'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [203], slots: { '200': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.enum_member.tuple.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
-					},
-					{ up: 0, via: [], plan: { op: 'is', types: [203], fields: ['body'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [203], slots: { '200': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.enum_member.tuple.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
-					},
-					{ up: 0, via: [], plan: { op: 'is', types: [203], fields: ['body'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [203], slots: { '200': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.enum_member.struct.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
-					},
-					{ up: 0, via: [], plan: { op: 'is', types: [201], fields: ['body'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [201], slots: { '200': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.enum_member.struct.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
-					},
-					{ up: 0, via: [], plan: { op: 'is', types: [201], fields: ['body'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [201], slots: { '200': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.enum_member.struct.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
-					},
-					{ up: 0, via: [], plan: { op: 'is', types: [201], fields: ['body'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [201], slots: { '200': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.enum_member.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4499,33 +4212,17 @@ const table: PortableTable = {
 				path: 'declaration.enum_member.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4533,25 +4230,12 @@ const table: PortableTable = {
 				path: 'declaration.enum_member.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4559,87 +4243,63 @@ const table: PortableTable = {
 				path: 'declaration.enum_member.tuple.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{ up: 0, via: [], plan: { op: 'is', types: [203], fields: ['body'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [203], slots: { '200': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.enum_member.tuple.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{ up: 0, via: [], plan: { op: 'is', types: [203], fields: ['body'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [203], slots: { '200': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.enum_member.struct.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{ up: 0, via: [], plan: { op: 'is', types: [201], fields: ['body'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [201], slots: { '200': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.enum_member.struct.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{ up: 0, via: [], plan: { op: 'is', types: [201], fields: ['body'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [201], slots: { '200': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.enum_member.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.enum_member.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.enum_member.tuple',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [203], fields: ['body'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [203], slots: { '200': 2 } } }]
 			},
 			{
 				path: 'declaration.enum_member.struct',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [201], fields: ['body'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [201], slots: { '200': 2 } } }]
 			},
 			{ path: 'declaration.enum_member', within: [], test: [] }
 		],
@@ -4656,33 +4316,17 @@ const table: PortableTable = {
 				path: 'statement.import.package.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '204': 0 } } },
+					{ up: 0, via: [{ slots: { '204': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '204': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '204': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4690,33 +4334,17 @@ const table: PortableTable = {
 				path: 'statement.import.package.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '204': 0 } } },
+					{ up: 0, via: [{ slots: { '204': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '204': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '204': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4724,25 +4352,12 @@ const table: PortableTable = {
 				path: 'statement.import.package.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '204': 0 } } },
+					{ up: 0, via: [{ slots: { '204': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '204': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4750,24 +4365,16 @@ const table: PortableTable = {
 				path: 'statement.import.package.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '204': 0 } } },
+					{ up: 0, via: [{ slots: { '204': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'statement.import.package.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '204': 0 } } },
+					{ up: 0, via: [{ slots: { '204': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'statement.import.package', within: [], test: [] }
@@ -4789,33 +4396,17 @@ const table: PortableTable = {
 				path: 'declaration.field.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '202': 0 } } },
+					{ up: 0, via: [{ slots: { '202': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '202': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '202': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4823,33 +4414,17 @@ const table: PortableTable = {
 				path: 'declaration.field.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '202': 0 } } },
+					{ up: 0, via: [{ slots: { '202': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '202': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '202': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4857,25 +4432,12 @@ const table: PortableTable = {
 				path: 'declaration.field.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '202': 0 } } },
+					{ up: 0, via: [{ slots: { '202': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '202': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4883,24 +4445,16 @@ const table: PortableTable = {
 				path: 'declaration.field.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '202': 0 } } },
+					{ up: 0, via: [{ slots: { '202': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.field.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '202': 0 } } },
+					{ up: 0, via: [{ slots: { '202': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.field', within: [], test: [] }
@@ -4923,33 +4477,17 @@ const table: PortableTable = {
 				path: 'declaration.module.foreign.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '396': 0 } } },
+					{ up: 0, via: [{ slots: { '396': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '396': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '396': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4957,33 +4495,17 @@ const table: PortableTable = {
 				path: 'declaration.module.foreign.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '396': 0 } } },
+					{ up: 0, via: [{ slots: { '396': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '396': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '396': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4991,25 +4513,12 @@ const table: PortableTable = {
 				path: 'declaration.module.foreign.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '396': 0 } } },
+					{ up: 0, via: [{ slots: { '396': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '396': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5017,24 +4526,16 @@ const table: PortableTable = {
 				path: 'declaration.module.foreign.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '396': 0 } } },
+					{ up: 0, via: [{ slots: { '396': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.module.foreign.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '396': 0 } } },
+					{ up: 0, via: [{ slots: { '396': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.module.foreign', within: [], test: [] }
@@ -5044,33 +4545,17 @@ const table: PortableTable = {
 				path: 'declaration.module.foreign.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '395': 0 } } },
+					{ up: 0, via: [{ slots: { '395': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '395': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '395': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5078,33 +4563,17 @@ const table: PortableTable = {
 				path: 'declaration.module.foreign.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '395': 0 } } },
+					{ up: 0, via: [{ slots: { '395': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '395': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '395': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5112,25 +4581,12 @@ const table: PortableTable = {
 				path: 'declaration.module.foreign.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '395': 0 } } },
+					{ up: 0, via: [{ slots: { '395': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '395': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5138,24 +4594,16 @@ const table: PortableTable = {
 				path: 'declaration.module.foreign.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '395': 0 } } },
+					{ up: 0, via: [{ slots: { '395': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.module.foreign.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '395': 0 } } },
+					{ up: 0, via: [{ slots: { '395': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.module.foreign', within: [], test: [] }
@@ -5167,46 +4615,10 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [
-							{ fields: ['parameters'], kinds: [] },
-							{ fields: ['elements'], kinds: [] },
-							{ fields: ['item'], kinds: [], anchor: 'first' }
-						],
-						plan: {
-							op: 'is',
-							types: [231],
-							fields: [],
-							kinds: [
-								'parameter',
-								'self_parameter',
-								'variadic_parameter',
-								'underscore',
-								'type_identifier',
-								'abstract_type',
-								'reference_type',
-								'metavariable',
-								'pointer_type_const',
-								'pointer_type_mut',
-								'generic_type',
-								'scoped_type_identifier',
-								'tuple_type',
-								'unit_type',
-								'array_type',
-								'function_type',
-								'macro_invocation',
-								'never_type',
-								'dynamic_type',
-								'bounded_type',
-								'removed_trait_bound',
-								'primitive_type'
-							]
-						}
+						via: [{ slots: { '208': 4 } }, { slots: { '230': 0 } }, { slots: { '349': 0 }, anchor: 'first' }],
+						plan: { op: 'is', types: [231], slots: { '429': 1 } }
 					},
-					{
-						up: 0,
-						via: [{ fields: ['parameters'], kinds: [] }],
-						plan: { op: 'is', types: [349], fields: ['elements'], kinds: [] }
-					}
+					{ up: 0, via: [{ slots: { '208': 4 } }], plan: { op: 'is', types: [349], slots: { '230': 0 } } }
 				]
 			},
 			{
@@ -5215,43 +4627,8 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [
-							{ fields: ['parameters'], kinds: [] },
-							{ fields: ['elements'], kinds: [] },
-							{ fields: ['item'], kinds: [] }
-						],
-						plan: {
-							op: 'not',
-							of: {
-								op: 'is',
-								types: [231],
-								fields: [],
-								kinds: [
-									'parameter',
-									'self_parameter',
-									'variadic_parameter',
-									'underscore',
-									'type_identifier',
-									'abstract_type',
-									'reference_type',
-									'metavariable',
-									'pointer_type_const',
-									'pointer_type_mut',
-									'generic_type',
-									'scoped_type_identifier',
-									'tuple_type',
-									'unit_type',
-									'array_type',
-									'function_type',
-									'macro_invocation',
-									'never_type',
-									'dynamic_type',
-									'bounded_type',
-									'removed_trait_bound',
-									'primitive_type'
-								]
-							}
-						}
+						via: [{ slots: { '208': 4 } }, { slots: { '230': 0 } }, { slots: { '349': 0 } }],
+						plan: { op: 'not', of: { op: 'is', types: [231], slots: { '429': 1 } } }
 					}
 				]
 			},
@@ -5259,33 +4636,17 @@ const table: PortableTable = {
 				path: 'declaration.method.private',
 				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5293,33 +4654,17 @@ const table: PortableTable = {
 				path: 'declaration.method.public.internal',
 				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5327,25 +4672,12 @@ const table: PortableTable = {
 				path: 'declaration.method.public.restricted',
 				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5353,33 +4685,17 @@ const table: PortableTable = {
 				path: 'declaration.method.private',
 				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5387,33 +4703,17 @@ const table: PortableTable = {
 				path: 'declaration.method.public.internal',
 				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5421,25 +4721,12 @@ const table: PortableTable = {
 				path: 'declaration.method.public.restricted',
 				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5447,48 +4734,32 @@ const table: PortableTable = {
 				path: 'declaration.method.public',
 				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.public.internal',
 				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.public',
 				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.public.internal',
 				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.method', within: [TSKindId.DeclarationList, TSKindId.TraitItem], test: [] },
@@ -5496,33 +4767,17 @@ const table: PortableTable = {
 				path: 'declaration.function.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5530,33 +4785,17 @@ const table: PortableTable = {
 				path: 'declaration.function.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5564,25 +4803,12 @@ const table: PortableTable = {
 				path: 'declaration.function.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5590,24 +4816,16 @@ const table: PortableTable = {
 				path: 'declaration.function.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.function.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.function', within: [], test: [] }
@@ -5617,33 +4835,17 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.private',
 				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
+					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5651,33 +4853,17 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.public.internal',
 				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
+					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5685,25 +4871,12 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.public.restricted',
 				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
+					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5711,24 +4884,16 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.public',
 				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
+					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.public.internal',
 				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
+					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.method.signature', within: [TSKindId.DeclarationList, TSKindId.TraitItem], test: [] },
@@ -5736,33 +4901,17 @@ const table: PortableTable = {
 				path: 'declaration.function.signature.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
+					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5770,33 +4919,17 @@ const table: PortableTable = {
 				path: 'declaration.function.signature.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
+					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5804,25 +4937,12 @@ const table: PortableTable = {
 				path: 'declaration.function.signature.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
+					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5830,24 +4950,16 @@ const table: PortableTable = {
 				path: 'declaration.function.signature.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
+					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.function.signature.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
+					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.function.signature', within: [], test: [] }
@@ -5877,7 +4989,7 @@ const table: PortableTable = {
 			{
 				path: 'declaration.extension.conformance',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [376, 375], fields: ['trait_clause'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [376, 375], slots: { '377': 2 } } }]
 			},
 			{ path: 'declaration.extension', within: [], test: [] }
 		],
@@ -5913,44 +5025,12 @@ const table: PortableTable = {
 			{
 				path: 'comment.line.doc',
 				within: [],
-				test: [
-					{
-						up: 0,
-						via: [],
-						plan: {
-							op: 'is',
-							types: [400],
-							fields: [],
-							kinds: [
-								'line_comment_extra_slashes',
-								'line_comment_doc_outer',
-								'line_comment_doc_inner',
-								'line_comment_regular'
-							]
-						}
-					}
-				]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [400], slots: { '337': 0 } } }]
 			},
 			{
 				path: 'comment.line.doc.inner',
 				within: [],
-				test: [
-					{
-						up: 0,
-						via: [],
-						plan: {
-							op: 'is',
-							types: [401],
-							fields: [],
-							kinds: [
-								'line_comment_extra_slashes',
-								'line_comment_doc_outer',
-								'line_comment_doc_inner',
-								'line_comment_regular'
-							]
-						}
-					}
-				]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [401], slots: { '337': 0 } } }]
 			},
 			{ path: 'comment.line', within: [], test: [] }
 		],
@@ -5980,33 +5060,17 @@ const table: PortableTable = {
 				path: 'declaration.module.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '384': 0 } } },
+					{ up: 0, via: [{ slots: { '384': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '384': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '384': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6014,33 +5078,17 @@ const table: PortableTable = {
 				path: 'declaration.module.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '384': 0 } } },
+					{ up: 0, via: [{ slots: { '384': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '384': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '384': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6048,25 +5096,12 @@ const table: PortableTable = {
 				path: 'declaration.module.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '384': 0 } } },
+					{ up: 0, via: [{ slots: { '384': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '384': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6074,24 +5109,16 @@ const table: PortableTable = {
 				path: 'declaration.module.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '384': 0 } } },
+					{ up: 0, via: [{ slots: { '384': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.module.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '384': 0 } } },
+					{ up: 0, via: [{ slots: { '384': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.module', within: [], test: [] }
@@ -6101,33 +5128,17 @@ const table: PortableTable = {
 				path: 'declaration.module.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '385': 0 } } },
+					{ up: 0, via: [{ slots: { '385': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '385': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '385': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6135,33 +5146,17 @@ const table: PortableTable = {
 				path: 'declaration.module.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '385': 0 } } },
+					{ up: 0, via: [{ slots: { '385': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '385': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '385': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6169,25 +5164,12 @@ const table: PortableTable = {
 				path: 'declaration.module.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '385': 0 } } },
+					{ up: 0, via: [{ slots: { '385': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '385': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6195,24 +5177,16 @@ const table: PortableTable = {
 				path: 'declaration.module.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '385': 0 } } },
+					{ up: 0, via: [{ slots: { '385': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.module.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '385': 0 } } },
+					{ up: 0, via: [{ slots: { '385': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.module', within: [], test: [] }
@@ -6253,17 +5227,17 @@ const table: PortableTable = {
 			{
 				path: 'expression.range.inclusive',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '..=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '..=', slots: { '390': 1 } } }]
 			},
 			{
 				path: 'expression.range.inclusive',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '...', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '...', slots: { '390': 1 } } }]
 			},
 			{
 				path: 'expression.range.exclusive',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '..', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '..', slots: { '390': 1 } } }]
 			},
 			{ path: 'expression.range', within: [], test: [] }
 		],
@@ -6281,12 +5255,12 @@ const table: PortableTable = {
 			{
 				path: 'pattern.range.inclusive',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '..=', fields: [], kinds: ['dot_dot_eq', 'dot_dot'] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '..=', slots: { '419': 0 } } }]
 			},
 			{
 				path: 'pattern.range.exclusive',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '..', fields: [], kinds: ['dot_dot_eq', 'dot_dot'] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '..', slots: { '419': 0 } } }]
 			},
 			{ path: 'pattern.range', within: [], test: [] }
 		],
@@ -6296,80 +5270,30 @@ const table: PortableTable = {
 				path: 'pattern.range.inclusive',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: {
-							op: 'is',
-							types: [420],
-							fields: [],
-							kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare']
-						}
-					},
-					{
-						up: 0,
-						via: [{ fields: [], kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare'] }],
-						plan: { op: 'eq', text: '..=', fields: [], kinds: ['dot_dot_dot', 'dot_dot_eq', 'dot_dot'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [420], slots: { '422': 1 } } },
+					{ up: 0, via: [{ slots: { '422': 1 } }], plan: { op: 'eq', text: '..=', slots: { '420': 0 } } }
 				]
 			},
 			{
 				path: 'pattern.range.inclusive',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: {
-							op: 'is',
-							types: [420],
-							fields: [],
-							kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare']
-						}
-					},
-					{
-						up: 0,
-						via: [{ fields: [], kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare'] }],
-						plan: { op: 'eq', text: '...', fields: [], kinds: ['dot_dot_dot', 'dot_dot_eq', 'dot_dot'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [420], slots: { '422': 1 } } },
+					{ up: 0, via: [{ slots: { '422': 1 } }], plan: { op: 'eq', text: '...', slots: { '420': 0 } } }
 				]
 			},
 			{
 				path: 'pattern.range.exclusive',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: {
-							op: 'is',
-							types: [420],
-							fields: [],
-							kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare']
-						}
-					},
-					{
-						up: 0,
-						via: [{ fields: [], kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare'] }],
-						plan: { op: 'eq', text: '..', fields: [], kinds: ['dot_dot_dot', 'dot_dot_eq', 'dot_dot'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [420], slots: { '422': 1 } } },
+					{ up: 0, via: [{ slots: { '422': 1 } }], plan: { op: 'eq', text: '..', slots: { '420': 0 } } }
 				]
 			},
 			{
 				path: 'pattern.range.exclusive',
 				within: [],
-				test: [
-					{
-						up: 0,
-						via: [],
-						plan: {
-							op: 'is',
-							types: [421],
-							fields: [],
-							kinds: ['range_pattern_with_left_with_right', 'range_pattern_with_left_bare']
-						}
-					}
-				]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [421], slots: { '422': 1 } } }]
 			},
 			{ path: 'pattern.range', within: [], test: [] }
 		],
@@ -6419,33 +5343,17 @@ const table: PortableTable = {
 				path: 'declaration.variable.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '206': 0 } } },
+					{ up: 0, via: [{ slots: { '206': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '206': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '206': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6453,33 +5361,17 @@ const table: PortableTable = {
 				path: 'declaration.variable.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '206': 0 } } },
+					{ up: 0, via: [{ slots: { '206': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '206': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '206': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6487,25 +5379,12 @@ const table: PortableTable = {
 				path: 'declaration.variable.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '206': 0 } } },
+					{ up: 0, via: [{ slots: { '206': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '206': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6513,24 +5392,16 @@ const table: PortableTable = {
 				path: 'declaration.variable.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '206': 0 } } },
+					{ up: 0, via: [{ slots: { '206': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.variable.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '206': 0 } } },
+					{ up: 0, via: [{ slots: { '206': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
@@ -6554,33 +5425,17 @@ const table: PortableTable = {
 				path: 'declaration.struct.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '423': 0 } } },
+					{ up: 0, via: [{ slots: { '423': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '423': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '423': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6588,33 +5443,17 @@ const table: PortableTable = {
 				path: 'declaration.struct.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '423': 0 } } },
+					{ up: 0, via: [{ slots: { '423': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '423': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '423': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6622,25 +5461,12 @@ const table: PortableTable = {
 				path: 'declaration.struct.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '423': 0 } } },
+					{ up: 0, via: [{ slots: { '423': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '423': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6648,24 +5474,16 @@ const table: PortableTable = {
 				path: 'declaration.struct.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '423': 0 } } },
+					{ up: 0, via: [{ slots: { '423': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.struct.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '423': 0 } } },
+					{ up: 0, via: [{ slots: { '423': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.struct', within: [], test: [] }
@@ -6675,33 +5493,17 @@ const table: PortableTable = {
 				path: 'declaration.struct.tuple.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '424': 0 } } },
+					{ up: 0, via: [{ slots: { '424': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '424': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '424': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6709,33 +5511,17 @@ const table: PortableTable = {
 				path: 'declaration.struct.tuple.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '424': 0 } } },
+					{ up: 0, via: [{ slots: { '424': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '424': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '424': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6743,25 +5529,12 @@ const table: PortableTable = {
 				path: 'declaration.struct.tuple.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '424': 0 } } },
+					{ up: 0, via: [{ slots: { '424': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '424': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6769,24 +5542,16 @@ const table: PortableTable = {
 				path: 'declaration.struct.tuple.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '424': 0 } } },
+					{ up: 0, via: [{ slots: { '424': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.struct.tuple.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '424': 0 } } },
+					{ up: 0, via: [{ slots: { '424': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.struct.tuple', within: [], test: [] },
@@ -6797,33 +5562,17 @@ const table: PortableTable = {
 				path: 'declaration.struct.unit.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '425': 0 } } },
+					{ up: 0, via: [{ slots: { '425': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '425': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '425': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6831,33 +5580,17 @@ const table: PortableTable = {
 				path: 'declaration.struct.unit.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '425': 0 } } },
+					{ up: 0, via: [{ slots: { '425': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '425': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '425': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6865,25 +5598,12 @@ const table: PortableTable = {
 				path: 'declaration.struct.unit.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '425': 0 } } },
+					{ up: 0, via: [{ slots: { '425': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '425': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6891,24 +5611,16 @@ const table: PortableTable = {
 				path: 'declaration.struct.unit.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '425': 0 } } },
+					{ up: 0, via: [{ slots: { '425': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.struct.unit.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '425': 0 } } },
+					{ up: 0, via: [{ slots: { '425': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.struct.unit', within: [], test: [] },
@@ -6936,33 +5648,17 @@ const table: PortableTable = {
 				path: 'declaration.interface.trait.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '214': 0 } } },
+					{ up: 0, via: [{ slots: { '214': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '214': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '214': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6970,33 +5666,17 @@ const table: PortableTable = {
 				path: 'declaration.interface.trait.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '214': 0 } } },
+					{ up: 0, via: [{ slots: { '214': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '214': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '214': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -7004,25 +5684,12 @@ const table: PortableTable = {
 				path: 'declaration.interface.trait.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '214': 0 } } },
+					{ up: 0, via: [{ slots: { '214': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '214': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -7030,24 +5697,16 @@ const table: PortableTable = {
 				path: 'declaration.interface.trait.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '214': 0 } } },
+					{ up: 0, via: [{ slots: { '214': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.interface.trait.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '214': 0 } } },
+					{ up: 0, via: [{ slots: { '214': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.interface.trait', within: [], test: [] }
@@ -7085,7 +5744,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ fields: ['content'], kinds: [] }],
+						via: [{ slots: { '468': 0 } }],
 						plan: { op: 'match', pattern: '^(Option|Result|String|Vec|Box)$', self: true }
 					}
 				]
@@ -7097,33 +5756,17 @@ const table: PortableTable = {
 				path: 'declaration.type_alias.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '207': 0 } } },
+					{ up: 0, via: [{ slots: { '207': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '207': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '207': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -7131,33 +5774,17 @@ const table: PortableTable = {
 				path: 'declaration.type_alias.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '207': 0 } } },
+					{ up: 0, via: [{ slots: { '207': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '207': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '207': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -7165,25 +5792,12 @@ const table: PortableTable = {
 				path: 'declaration.type_alias.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '207': 0 } } },
+					{ up: 0, via: [{ slots: { '207': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '207': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -7191,24 +5805,16 @@ const table: PortableTable = {
 				path: 'declaration.type_alias.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '207': 0 } } },
+					{ up: 0, via: [{ slots: { '207': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.type_alias.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '207': 0 } } },
+					{ up: 0, via: [{ slots: { '207': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.type_alias', within: [], test: [] }
@@ -7223,17 +5829,17 @@ const table: PortableTable = {
 			{
 				path: 'expression.unary.negation',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '267': 0 } } }]
 			},
 			{
 				path: 'expression.unary.not',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!', slots: { '267': 0 } } }]
 			},
 			{
 				path: 'expression.unary.deref',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*', slots: { '267': 0 } } }]
 			},
 			{ path: 'expression.unary', within: [], test: [] }
 		],
@@ -7242,33 +5848,17 @@ const table: PortableTable = {
 				path: 'declaration.union.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '197': 0 } } },
+					{ up: 0, via: [{ slots: { '197': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '197': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '197': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -7276,33 +5866,17 @@ const table: PortableTable = {
 				path: 'declaration.union.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '197': 0 } } },
+					{ up: 0, via: [{ slots: { '197': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '197': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '197': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -7310,25 +5884,12 @@ const table: PortableTable = {
 				path: 'declaration.union.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '197': 0 } } },
+					{ up: 0, via: [{ slots: { '197': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '197': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -7336,24 +5897,16 @@ const table: PortableTable = {
 				path: 'declaration.union.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '197': 0 } } },
+					{ up: 0, via: [{ slots: { '197': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.union.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '197': 0 } } },
+					{ up: 0, via: [{ slots: { '197': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.union', within: [], test: [] }
@@ -7368,33 +5921,17 @@ const table: PortableTable = {
 				path: 'statement.import.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '224': 0 } } },
+					{ up: 0, via: [{ slots: { '224': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '224': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '224': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -7402,33 +5939,17 @@ const table: PortableTable = {
 				path: 'statement.import.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '224': 0 } } },
+					{ up: 0, via: [{ slots: { '224': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
+						via: [{ slots: { '224': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-						],
-						plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '224': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -7436,25 +5957,12 @@ const table: PortableTable = {
 				path: 'statement.import.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '224': 0 } } },
+					{ up: 0, via: [{ slots: { '224': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					},
-					{
-						up: 0,
-						via: [
-							{ fields: ['visibility_modifier'], kinds: [] },
-							{ fields: [], kinds: ['crate', 'visibility_modifier_pub'] },
-							{ fields: [], kinds: ['visibility_modifier_pub_scope'] }
-						],
-						plan: {
-							op: 'is',
-							types: [126, 379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
+						via: [{ slots: { '224': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -7462,24 +5970,16 @@ const table: PortableTable = {
 				path: 'statement.import.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [381], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '224': 0 } } },
+					{ up: 0, via: [{ slots: { '224': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'statement.import.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], fields: ['visibility_modifier'], kinds: [] } },
-					{
-						up: 0,
-						via: [{ fields: ['visibility_modifier'], kinds: [] }],
-						plan: { op: 'is', types: [127], fields: [], kinds: ['crate', 'visibility_modifier_pub'] }
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '224': 0 } } },
+					{ up: 0, via: [{ slots: { '224': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'statement.import', within: [], test: [] }
@@ -7494,68 +5994,32 @@ const table: PortableTable = {
 				path: 'modifier.visibility.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] } },
-					{
-						up: 0,
-						via: [{ fields: [], kinds: ['visibility_modifier_pub_scope'] }],
-						plan: {
-							op: 'is',
-							types: [125],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [380], slots: { '381': 0 } } },
+					{ up: 0, via: [{ slots: { '381': 0 } }], plan: { op: 'is', types: [125], slots: { '380': 0 } } }
 				]
 			},
 			{
 				path: 'modifier.visibility.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] } },
-					{
-						up: 0,
-						via: [{ fields: [], kinds: ['visibility_modifier_pub_scope'] }],
-						plan: {
-							op: 'is',
-							types: [127],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [380], slots: { '381': 0 } } },
+					{ up: 0, via: [{ slots: { '381': 0 } }], plan: { op: 'is', types: [127], slots: { '380': 0 } } }
 				]
 			},
 			{
 				path: 'modifier.visibility.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] } },
-					{
-						up: 0,
-						via: [{ fields: [], kinds: ['visibility_modifier_pub_scope'] }],
-						plan: {
-							op: 'is',
-							types: [126],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [380], slots: { '381': 0 } } },
+					{ up: 0, via: [{ slots: { '381': 0 } }], plan: { op: 'is', types: [126], slots: { '380': 0 } } }
 				]
 			},
 			{
 				path: 'modifier.visibility.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [380], fields: [], kinds: ['visibility_modifier_pub_scope'] } },
-					{
-						up: 0,
-						via: [{ fields: [], kinds: ['visibility_modifier_pub_scope'] }],
-						plan: {
-							op: 'is',
-							types: [379],
-							fields: [],
-							kinds: ['self', 'super', 'crate', 'visibility_modifier_pub_scope_in_path']
-						}
-					}
+					{ up: 0, via: [], plan: { op: 'is', types: [380], slots: { '381': 0 } } },
+					{ up: 0, via: [{ slots: { '381': 0 } }], plan: { op: 'is', types: [379], slots: { '380': 0 } } }
 				]
 			},
 			{ path: 'modifier.visibility.public', within: [], test: [] }
@@ -7726,86 +6190,60 @@ const table: PortableTable = {
 export const portable = portableSurface<PortableKinds, PortableIs>(table, querySlots);
 
 export const queryFlags: QueryFlags = Object.freeze({
-	[TSKindId.AsyncBlock]: { move: { op: 'present', fields: ['move'], kinds: [] } },
-	[TSKindId.CharLiteralEscapedHex]: { byte: { op: 'present', fields: ['byte'], kinds: [] } },
-	[TSKindId.CharLiteralEscapedSimple]: { byte: { op: 'present', fields: ['byte'], kinds: [] } },
-	[TSKindId.CharLiteralEscapedUnicodeBraced]: { byte: { op: 'present', fields: ['byte'], kinds: [] } },
-	[TSKindId.CharLiteralEscapedUnicodeFixed]: { byte: { op: 'present', fields: ['byte'], kinds: [] } },
-	[TSKindId.CharLiteralPlain]: { byte: { op: 'present', fields: ['byte'], kinds: [] } },
+	[TSKindId.AsyncBlock]: { move: { op: 'present', slots: { '310': 0 } } },
+	[TSKindId.CharLiteralEscapedHex]: { byte: { op: 'present', slots: { '150': 0 } } },
+	[TSKindId.CharLiteralEscapedSimple]: { byte: { op: 'present', slots: { '147': 0 } } },
+	[TSKindId.CharLiteralEscapedUnicodeBraced]: { byte: { op: 'present', slots: { '149': 0 } } },
+	[TSKindId.CharLiteralEscapedUnicodeFixed]: { byte: { op: 'present', slots: { '148': 0 } } },
+	[TSKindId.CharLiteralPlain]: { byte: { op: 'present', slots: { '145': 0 } } },
 	[TSKindId.ClosureExpressionBlock]: {
-		static: { op: 'present', fields: ['static'], kinds: [] },
-		async: { op: 'present', fields: ['async'], kinds: [] },
-		move: { op: 'present', fields: ['move'], kinds: [] }
+		static: { op: 'present', slots: { '369': 0 } },
+		async: { op: 'present', slots: { '369': 1 } },
+		move: { op: 'present', slots: { '369': 2 } }
 	},
 	[TSKindId.ClosureExpressionExpr]: {
-		static: { op: 'present', fields: ['static'], kinds: [] },
-		async: { op: 'present', fields: ['async'], kinds: [] },
-		move: { op: 'present', fields: ['move'], kinds: [] }
+		static: { op: 'present', slots: { '370': 0 } },
+		async: { op: 'present', slots: { '370': 1 } },
+		move: { op: 'present', slots: { '370': 2 } }
 	},
 	[TSKindId.FieldPatternNamed]: {
-		mutable: { op: 'present', fields: ['mutable'], kinds: [] },
-		byReference: { op: 'present', fields: ['ref'], kinds: [] }
+		mutable: { op: 'present', slots: { '415': 1 } },
+		byReference: { op: 'present', slots: { '415': 0 } }
 	},
 	[TSKindId.FieldPatternShorthand]: {
-		mutable: { op: 'present', fields: ['mutable'], kinds: [] },
-		byReference: { op: 'present', fields: ['ref'], kinds: [] }
+		mutable: { op: 'present', slots: { '414': 1 } },
+		byReference: { op: 'present', slots: { '414': 0 } }
 	},
 	[TSKindId.FunctionItem]: {
-		async: {
-			op: 'child',
-			fields: ['function_modifiers'],
-			kinds: [],
-			of: { op: 'eq', text: 'async', fields: ['modifier'], kinds: [] }
-		},
-		const: {
-			op: 'child',
-			fields: ['function_modifiers'],
-			kinds: [],
-			of: { op: 'eq', text: 'const', fields: ['modifier'], kinds: [] }
-		},
-		unsafe: {
-			op: 'child',
-			fields: ['function_modifiers'],
-			kinds: [],
-			of: { op: 'eq', text: 'unsafe', fields: ['modifier'], kinds: [] }
-		},
-		default: {
-			op: 'child',
-			fields: ['function_modifiers'],
-			kinds: [],
-			of: { op: 'eq', text: 'default', fields: ['modifier'], kinds: [] }
-		},
+		async: { op: 'child', slots: { '208': 1 }, of: { op: 'eq', text: 'async', slots: { '210': 0 } } },
+		const: { op: 'child', slots: { '208': 1 }, of: { op: 'eq', text: 'const', slots: { '210': 0 } } },
+		unsafe: { op: 'child', slots: { '208': 1 }, of: { op: 'eq', text: 'unsafe', slots: { '210': 0 } } },
+		default: { op: 'child', slots: { '208': 1 }, of: { op: 'eq', text: 'default', slots: { '210': 0 } } },
 		static: null
 	},
 	[TSKindId.FunctionType]: {
 		unsafe: {
 			op: 'child',
-			fields: [],
-			kinds: ['function_type_trait_form', 'function_type_fn_form'],
-			of: {
-				op: 'child',
-				fields: [],
-				kinds: ['function_modifiers'],
-				of: { op: 'eq', text: 'unsafe', fields: ['modifier'], kinds: [] }
-			}
+			slots: { '242': 1 },
+			of: { op: 'child', slots: { '383': 0 }, of: { op: 'eq', text: 'unsafe', slots: { '210': 0 } } }
 		}
 	},
-	[TSKindId.GenBlock]: { move: { op: 'present', fields: ['move'], kinds: [] } },
-	[TSKindId.ImplItemBody]: { unsafe: { op: 'present', fields: ['unsafe'], kinds: [] } },
-	[TSKindId.ImplItemSemi]: { unsafe: { op: 'present', fields: ['unsafe'], kinds: [] } },
-	[TSKindId.LetDeclaration]: { mutable: { op: 'present', fields: ['mutable'], kinds: [] } },
-	[TSKindId.Parameter]: { mutable: { op: 'is', types: [57], fields: ['mutable'], kinds: [] } },
+	[TSKindId.GenBlock]: { move: { op: 'present', slots: { '311': 0 } } },
+	[TSKindId.ImplItemBody]: { unsafe: { op: 'present', slots: { '377': 0 } } },
+	[TSKindId.ImplItemSemi]: { unsafe: { op: 'present', slots: { '378': 0 } } },
+	[TSKindId.LetDeclaration]: { mutable: { op: 'present', slots: { '223': 0 } } },
+	[TSKindId.Parameter]: { mutable: { op: 'is', types: [57], slots: { '233': 0 } } },
 	[TSKindId.PointerTypeMut]: { writable: { op: 'and', of: [] } },
 	[TSKindId.ReferenceExpressionMut]: { exclusive: { op: 'and', of: [] } },
 	[TSKindId.ReferenceExpressionRawConst]: { raw: { op: 'and', of: [] } },
 	[TSKindId.ReferenceExpressionRawMut]: { writable: { op: 'and', of: [] }, raw: { op: 'and', of: [] } },
-	[TSKindId.ReferencePattern]: { exclusive: { op: 'is', types: [57], fields: ['mutable'], kinds: [] } },
-	[TSKindId.ReferenceType]: { exclusive: { op: 'is', types: [57], fields: ['mutable'], kinds: [] } },
-	[TSKindId.SelfParameter]: { mutable: { op: 'is', types: [57], fields: ['mutable'], kinds: [] } },
+	[TSKindId.ReferencePattern]: { exclusive: { op: 'is', types: [57], slots: { '326': 0 } } },
+	[TSKindId.ReferenceType]: { exclusive: { op: 'is', types: [57], slots: { '252': 1 } } },
+	[TSKindId.SelfParameter]: { mutable: { op: 'is', types: [57], slots: { '231': 2 } } },
 	[TSKindId.StaticItem]: {
-		mutable: { op: 'present', fields: ['mutable'], kinds: [] },
-		byReference: { op: 'present', fields: ['ref'], kinds: [] }
+		mutable: { op: 'present', slots: { '206': 2 } },
+		byReference: { op: 'present', slots: { '206': 1 } }
 	},
-	[TSKindId.TraitItem]: { unsafe: { op: 'present', fields: ['unsafe'], kinds: [] } },
-	[TSKindId.VariadicParameter]: { mutable: { op: 'present', fields: ['mutable'], kinds: [] } }
+	[TSKindId.TraitItem]: { unsafe: { op: 'present', slots: { '214': 1 } } },
+	[TSKindId.VariadicParameter]: { mutable: { op: 'present', slots: { '232': 0 } } }
 } satisfies QueryFlags);

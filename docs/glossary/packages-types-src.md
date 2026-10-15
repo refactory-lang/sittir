@@ -352,7 +352,7 @@ The brand on a keyword-presence slot's boolean storage, carrying the keyword's t
 
 ### `packages/types/src/query.ts::QueryPlan`
 
-The plan language one condition compiles to, which the native walk and `holds` both evaluate. Leaves read the children a slot's routes admit: `eq` and `match` their text, `present` that one exists, and `is` their stamped kind ids. The ids are expanded by membership when the plan is compiled, as `ofType` expands them, so the evaluators compare ids and never names. `child` moves the condition to an admitted child, narrowed by an anchor, so a flag spelled inside a wrapper (rust `function_item (function_modifiers "async")`) is still one plan. `not`, `and` and `or` combine. A constant is `and` or `or` over no plans, never an op of its own: a plan that always holds (a flag the kind's own form spells) is `{ op: 'and', of: [] }`, and one that never holds is `{ op: 'or', of: [] }`.
+The plan language one condition compiles to, which the native walk and `holds` both evaluate. Leaves read the values a slot holds, the slot named by its number in each kind (`SlotSubject`): `eq` and `match` their text, `present` that one exists, and `is` their stamped kind ids. The ids are expanded by membership when the plan is compiled, as `ofType` expands them, so the evaluators compare ids and never names. `child` moves the condition to a node the slot holds, narrowed by an anchor, so a flag spelled inside a wrapper (rust `function_item (function_modifiers "async")`) is still one plan. `not`, `and` and `or` combine. A constant is `and` or `or` over no plans, never an op of its own: a plan that always holds (a flag the kind's own form spells) is `{ op: 'and', of: [] }`, and one that never holds is `{ op: 'or', of: [] }`.
 
 ### `packages/types/src/query.ts::QueryFlags`
 
@@ -360,7 +360,11 @@ Each kind's vocabulary flags by stamped kind id, each the plan that tests the fl
 
 ### `packages/types/src/query.ts::StepAnchor`
 
-The one anchor vocabulary shared by a portable read test's `via` step and a plan's `child` step: `first`, `last`, or `only`, which reaches the node only when exactly one is admitted.
+The one anchor vocabulary shared by a portable read test's `via` step and a plan's `child` step: `first`, `last`, or `only`, which reaches the node only when the slot holds exactly one.
+
+### `packages/types/src/query.ts::SlotSubject`
+
+A slot by its number in each kind that has it, keyed by stamped kind id. The number is the slot's position among the kind's transport slots, the numbering the native read routes children by, so a plan names a slot exactly as the read does: the evaluator asks the node's kind how it finds its slots (`ReadTransport::router`: its children one at a time, a group of its token's text, or the node itself for an envelope) and keeps what lands in that number. Numbers are per kind, so a plan over several kinds, or a step that lands on several, carries one per kind, expanded when it is compiled as `is` membership is. A node of a kind the map lacks holds nothing there.
 
 ### `packages/types/src/query.ts::SlotRefOf`
 

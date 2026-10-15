@@ -122,23 +122,23 @@ A member route as the routes model writes it: its name, its route kind and that 
 
 ### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::readTestOf`
 
-A read entry's test, as the `PortableCondition`s that must all hold. A condition's holder is the tested node when `up` is 0, else its `up`-th enclosing context node, the one at the same place as the entry's `within` kind; each `via` step is a slot's parser routes, anchored to its first or last node where the pattern anchors it, and the plan holds over all the nodes the steps reach together, its own subject the last slot or the reached node itself (`SelfText`). Each pin is an `eq` on its slot of the claimed node, except on a slot that holds one keyword's presence (`PresenceKeywordOf`), where the slot's value is a boolean: a pin of that keyword is a presence leaf (`present`), and a pin of any other text, which no node could hold, refuses the entry. Each predicate's `CaptureSite` is resolved kind by kind, and a text comparison (`comparesText`) of a capture of an alias kind (model `modelType: 'alias'`) steps on through its one content slot, repeatedly, so its own text is compared where it lives (a kind test compares the alias node's own type, so it does not step in), as the parser sees an alias's text (`aliasContent`): the holder's slot for each selector (`bindings/routes.ts::slotFor`), and the next holder the selector's kind. Every slot becomes its parser routes through `SlotRoutesOf`, so the routes have one derivation (`emitters/client-utils.ts::queryRoutesOf`) shared with the query facet's slot table. Each child test (`bindings/routes.ts::ChildTest`) compiles as a predicate at its site (`childPredicate`). Conditions that compile alike are kept once. Only the comparisons `comparisonOf` knows compile. Any other predicate, a capture under a wildcard, or a slot with no routes refuses the whole entry, naming the kind, the vocabulary path and every reason. A partial test would classify nodes the entry does not claim.
+A read entry's test, as the `PortableCondition`s that must all hold. A condition's holder is the tested node when `up` is 0, else its `up`-th enclosing context node, the one at the same place as the entry's `within` kind; each `via` step is a slot by its numbers (`SlotSubject`), anchored to its first or last node where the pattern anchors it, and the plan holds over all the nodes the steps reach together, its own subject the last slot or the reached node itself (`SelfText`). Each pin is an `eq` on its slot of the claimed node, except on a slot that holds one keyword's presence (`PresenceKeywordOf`), where the slot's value is a boolean: a pin of that keyword is a presence leaf (`present`), and a pin of any other text, which no node could hold, refuses the entry. Each predicate's `CaptureSite` is resolved kind by kind, and a text comparison (`comparesText`) of a capture of an alias kind (model `modelType: 'alias'`) steps on through its one content slot, repeatedly, so its own text is compared where it lives (a kind test compares the alias node's own type, so it does not step in), as the parser sees an alias's text (`aliasContent`): the holder's slot for each selector (`bindings/routes.ts::slotFor`), and the next holder the selector's kind. Every slot becomes its number through `SlotSubjectOf`, the transport's own slot numbering (`render-module.ts::transportSlotNumbers`), so a test reads a slot the way the native read routes it. Each child test (`bindings/routes.ts::ChildTest`) compiles as a predicate at its site (`childPredicate`). Conditions that compile alike are kept once. Only the comparisons `comparisonOf` knows compile. Any other predicate, a capture under a wildcard, or a slot with no number refuses the whole entry, naming the kind, the vocabulary path and every reason. A partial test would classify nodes the entry does not claim.
 
 ### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::childPredicate`
 
 A child test as the predicate that compiles it: a text test is `eq`, an excluding test `not-kind-eq` over the excluded kinds, a kinds test `kind-eq` over its kinds, each at the test's site. A kinds test with no kinds reaches a slot that holds no node kind, and is refused with that reason.
 
-### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::slotRoutesOf`
+### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::slotSubjectOf`
 
-`SlotRoutesOf` over an assembled node map: a kind's slot, found by its model name, as `queryRoutesOf` spells it.
+`SlotSubjectOf` over an assembled node map: a kind's slot, found by its model name, by its number among the kind's transport slots (`render-module.ts::transportSlotNumbers`), keyed by the kind's stamped id, the numbering the query slot table carries too (`client-utils.ts::querySlotRows`).
 
-### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::SlotRoutesOf`
+### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::SlotSubjectOf`
 
-How a slot of a kind is reached in a parse tree: its parser fields and unfielded kinds, or nothing for a slot the parser does not carry.
+A slot of a kind by its number (`SlotSubject`), or nothing for a slot the kind's transport has no field for.
 
 ### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::Steps`
 
-The slot routes from a read entry's holder down to a predicate's capture, and the kind found there.
+The slots, by their numbers, from a read entry's holder down to a predicate's capture, and the kind found there.
 
 ### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::stepsOf`
 
@@ -218,7 +218,7 @@ The test that a slot holds a keyword: a presence leaf when the slot is a boolean
 
 ### `packages/codegen/src/emitters/overlays/portable/flags.ts::flagPlansOf`
 
-One kind's flags, each as the plan that tests it on a node of the kind. A member flag lowers its route: each step before the last becomes a `child` step over that step's routes, keeping its anchor, and the last slot gives the leaf, presence for a flag slot, `keywordTestOf` for a keyword, and an `is` over the slot for a captured kind. A flag the kind's own form spells (`MemberRoute.spelled`) always holds, `{ op: 'and', of: [] }`; any other route with no path is refused. A claim flag lowers its read test when the test is node-local (no placement, no context condition, no comparison of the node's own text); otherwise it depends on the node's context and is `null`, which a query refuses by name. A flag declared by several routes lists each distinct plan once and `or`s them. A flag both declared on the node and by a contextual claim is refused, as is a route that reaches no slot.
+One kind's flags, each as the plan that tests it on a node of the kind. A member flag lowers its route: each step before the last becomes a `child` step over that step's slot by its number, keeping its anchor, and the last slot gives the leaf, presence for a flag slot, `keywordTestOf` for a keyword, and an `is` over the slot for a captured kind. A flag the kind's own form spells (`MemberRoute.spelled`) always holds, `{ op: 'and', of: [] }`; any other route with no path is refused. A claim flag lowers its read test when the test is node-local (no placement, no context condition, no comparison of the node's own text); otherwise it depends on the node's context and is `null`, which a query refuses by name. A flag declared by several routes lists each distinct plan once and `or`s them. A flag both declared on the node and by a contextual claim is refused, as is a route that reaches no slot.
 
 ### `packages/codegen/src/emitters/overlays/portable/flags.ts::ClaimFlag`
 

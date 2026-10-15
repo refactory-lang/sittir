@@ -1,0 +1,14 @@
+python: routed 147 kinds with query slots; envelope 3; interior 14
+  envelope: _as_pattern_target(content), _format_expression(content), _names(content)
+  interior: comment(content), escape_sequence_hex(content), escape_sequence_line_break(content), escape_sequence_named(content), escape_sequence_octal(content), escape_sequence_simple(content), escape_sequence_unicode_fixed(content), escape_sequence_unicode_wide(content), float_leading_point(integer, fraction, marker, exponent, imaginary), float_point(integer, fraction, marker, exponent, imaginary), float_scientific(integer, marker, exponent, imaginary), integer_binary(prefix, content), integer_hex(prefix, content), integer_octal(prefix, content)
+regex: routed 28 kinds with query slots; envelope 2; interior 1
+  envelope: _lazy(content), _unicode_property_name(content)
+  interior: identity_escape(content)
+rust: routed 208 kinds with query slots; envelope 3; interior 15
+  envelope: _field_identifier(content), _shorthand_field_identifier(content), _type_identifier(content)
+  interior: char_literal_escaped_hex(byte, content), char_literal_escaped_simple(byte, content), char_literal_escaped_unicode_braced(byte, content), char_literal_escaped_unicode_fixed(byte, content), char_literal_plain(byte, content), escape_sequence_hex(content), escape_sequence_simple(content), escape_sequence_unicode_braced(content), escape_sequence_unicode_fixed(content), integer_literal_binary(content, suffix), integer_literal_decimal(content, suffix), integer_literal_hex(content, suffix), integer_literal_octal(content, suffix), metavariable(name), shebang(content)
+scm: routed 21 kinds with query slots; interior 2
+  interior: comment(content), escape_sequence(content)
+typescript: routed 200 kinds with query slots; envelope 6; interior 15
+  envelope: _interface_body(content), _property_identifier(content), _shorthand_property_identifier(content), _shorthand_property_identifier_pattern(content), _statement_identifier(content), _type_identifier(content)
+  interior: comment_block(content), comment_line(content), escape_sequence(content), hash_bang_line(content), number_bigint_binary(content), number_bigint_decimal(content), number_bigint_hex(content), number_bigint_octal(content), number_binary(prefix, content), number_float_leading_point(fraction, marker, sign, exponent), number_float_point(integer, fraction, marker, sign, exponent), number_float_scientific(integer, marker, sign, exponent), number_hex(prefix, content), number_octal(prefix, content), private_property_identifier(content)

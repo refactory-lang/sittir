@@ -72,6 +72,13 @@ pub trait EngineGrammar: Copy {
         let _ = (tree, index);
         None
     }
+    /// How a node with these ids finds its slots, as its read does
+    /// (`ReadTransport::router`); none for a node read without slots, or a
+    /// grammar with no transports.
+    fn router(self, grammar: KindId, display: KindId) -> Option<crate::read::Router> {
+        let _ = (grammar, display);
+        None
+    }
 }
 
 /// The node at descendant `index` of `tree`, or `None` past its last node.
@@ -605,11 +612,14 @@ impl<G: EngineGrammar> ParsedTree<G> {
     pub fn plan_holds(&self, addresses: &[Address], plan: &Plan) -> Result<Vec<bool>, String> {
         let ctx = self.read_ctx();
         let stamp = |node: &tree_sitter::Node<'_>| ctx.node_kind(node).0;
+        let router = |node: &tree_sitter::Node<'_>| self.grammar.router(KindId(node.grammar_id()), crate::read::display_id(node));
+        let query = crate::query::QueryCtx { source: &self.source, stamp: &stamp, router: &router };
+        let mut cursor = self.tree.walk();
         addresses
             .iter()
             .map(|&address| {
-                let node = self.node_at(address)?.ok_or_else(|| format!("{address:?} names no node of tree {}", self.tree_id))?;
-                Ok(plan.holds(&node, &self.source, &stamp))
+                cursor.goto_descendant(self.index_of(address)? as usize);
+                Ok(plan.holds(&mut cursor, &query))
             })
             .collect()
     }
@@ -659,6 +669,9 @@ impl<G: EngineGrammar> ParsedTree<G> {
         let mut coordinates = Vec::new();
         let ctx = self.read_ctx();
         let stamp = |node: &tree_sitter::Node<'_>| ctx.node_kind(node).0;
+        let router = |node: &tree_sitter::Node<'_>| self.grammar.router(KindId(node.grammar_id()), crate::read::display_id(node));
+        let query = crate::query::QueryCtx { source: &self.source, stamp: &stamp, router: &router };
+        let mut at = self.tree.walk();
         let surface = self.grammar.surface_kinds();
         let depth_member = |node: &tree_sitter::Node<'_>| node.grammar_id() != 0 && [surface.indent, surface.dedent].contains(&node.grammar_id());
         if let Some(resume) = resume {
@@ -681,7 +694,10 @@ impl<G: EngineGrammar> ParsedTree<G> {
                 && !node.is_extra()
                 && !depth_member(&node)
                 && (kinds.is_empty() || kinds.contains(&stamp(&node)))
-                && plan.is_none_or(|plan| plan.holds(&node, &self.source, &stamp))
+                && plan.is_none_or(|plan| {
+                    at.goto_descendant(indexes[indexes.len() - 1] as usize);
+                    plan.holds(&mut at, &query)
+                })
             {
                 coordinates.push(QueryCoordinate::from(ctx.coordinate(&node, indexes[indexes.len() - 1])));
                 if coordinates.len() as u32 >= limit {
@@ -1676,6 +1692,34 @@ mod tests {
         assert_eq!(ids, (0..2048).collect::<Vec<_>>());
     }
 
+    /// A test `function_item`'s slots: `name` 0, `return_type` 1.
+    fn function_item_route(child: &crate::read::Child) -> Result<crate::read::Route, crate::read::ReadError> {
+        let language: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
+        let field = child.field.and_then(|field| language.field_name_for_id(field.0));
+        Ok(match field {
+            _ if child.trivia => crate::read::Route::Trivia,
+            Some("name") => crate::read::Route::Slot { slot: 0, scalar: false },
+            Some("return_type") => crate::read::Route::Slot { slot: 1, scalar: false },
+            _ => crate::read::Route::Layout,
+        })
+    }
+
+    /// A test block's or declaration list's one slot: each `function_item`.
+    fn item_route(child: &crate::read::Child) -> Result<crate::read::Route, crate::read::ReadError> {
+        let language: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
+        Ok(match language.node_kind_for_id(child.grammar.0) {
+            _ if child.trivia => crate::read::Route::Trivia,
+            Some("function_item") => crate::read::Route::Slot { slot: 0, scalar: false },
+            _ => crate::read::Route::Layout,
+        })
+    }
+
+    /// `slots` JSON for slot `n` of each kind.
+    fn slots(of: &[(&str, u16)]) -> String {
+        let pairs: Vec<String> = of.iter().map(|(kind, n)| format!(r#""{}":{n}"#, kind_id(kind))).collect();
+        format!(r#""slots":{{{}}}"#, pairs.join(","))
+    }
+
     #[derive(Clone, Copy)]
     struct TestGrammar;
 
@@ -1696,6 +1740,15 @@ mod tests {
 
         fn kind_name(self, _kind: KindId) -> &'static str {
             "test"
+        }
+
+        fn router(self, grammar: KindId, _display: KindId) -> Option<crate::read::Router> {
+            let language: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
+            match language.node_kind_for_id(grammar.0)? {
+                "function_item" => Some(crate::read::Router::Children(function_item_route)),
+                "declaration_list" | "block" => Some(crate::read::Router::Children(item_route)),
+                _ => None,
+            }
         }
 
         fn shows(self) -> fn(KindId) -> bool {
@@ -1932,26 +1985,29 @@ mod tests {
     fn a_where_plan_selects_by_a_slot_text() {
         let (tree, root) = parsed(FNS);
         let fns = [kind_id("function_item")];
-        let eq = plan(r#"{ "op": "eq", "fields": ["name"], "kinds": [], "text": "b" }"#);
+        let name = slots(&[("function_item", 0)]);
+        let eq = plan(&format!(r#"{{ "op": "eq", {name}, "text": "b" }}"#));
         let eq_stubs = walk(&tree, root, &fns, Some(&eq), 1);
         assert_eq!(texts(&tree, &eq_stubs), ["fn b() -> u8 { 0 }"]);
-        let private = plan(r#"{ "op": "and", "of": [{ "op": "match", "fields": ["name"], "kinds": [], "pattern": "^_" }, { "op": "not", "of": { "op": "eq", "fields": ["name"], "kinds": [], "text": "_c" } }] }"#);
+        let private = plan(&format!(r#"{{ "op": "and", "of": [{{ "op": "match", {name}, "pattern": "^_" }}, {{ "op": "not", "of": {{ "op": "eq", {name}, "text": "_c" }} }}] }}"#));
         let private_stubs = walk(&tree, root, &fns, Some(&private), 1);
         assert_eq!(texts(&tree, &private_stubs), ["fn _d() { fn e() {} }"]);
-        let typed = plan(r#"{ "op": "or", "of": [{ "op": "eq", "fields": ["return_type"], "kinds": [], "text": "u8" }, { "op": "eq", "fields": ["name"], "kinds": [], "text": "e" }] }"#);
+        let returns = slots(&[("function_item", 1)]);
+        let typed = plan(&format!(r#"{{ "op": "or", "of": [{{ "op": "eq", {returns}, "text": "u8" }}, {{ "op": "eq", {name}, "text": "e" }}] }}"#));
         let typed_stubs = walk(&tree, root, &fns, Some(&typed), 4);
         assert_eq!(texts(&tree, &typed_stubs), ["fn b() -> u8 { 0 }", "fn e() {}"]);
     }
 
     #[test]
-    fn a_route_by_kind_admits_only_children_under_no_field() {
+    fn a_slot_is_read_by_each_kind_through_its_own_number() {
         let (tree, root) = parsed(FNS);
         let lists = [kind_id("declaration_list"), kind_id("block")];
-        let by_kind = plan(r#"{ "op": "match", "fields": [], "kinds": ["function_item"], "pattern": "^fn e" }"#);
-        let blocks = walk(&tree, root, &lists, Some(&by_kind), 4);
+        let items = slots(&[("declaration_list", 0), ("block", 0)]);
+        let by_item = plan(&format!(r#"{{ "op": "match", {items}, "pattern": "^fn e" }}"#));
+        let blocks = walk(&tree, root, &lists, Some(&by_item), 4);
         assert_eq!(texts(&tree, &blocks), ["{ fn e() {} }"]);
-        let named_not_kind = plan(r#"{ "op": "eq", "fields": [], "kinds": ["identifier"], "text": "b" }"#);
-        assert!(walk(&tree, root, &[kind_id("function_item")], Some(&named_not_kind), 4).is_empty());
+        let unnumbered = plan(&format!(r#"{{ "op": "eq", {}, "text": "b" }}"#, slots(&[("block", 0)])));
+        assert!(walk(&tree, root, &[kind_id("function_item")], Some(&unnumbered), 4).is_empty());
     }
 
     fn walk_from(tree: &ParsedTree<TestGrammar>, from: crate::query::Address, kinds: &[u16]) -> Vec<String> {
@@ -1972,7 +2028,7 @@ mod tests {
         let (tree, root) = parsed(FNS);
         let found = walk(&tree, root, &[kind_id("function_item")], None, u32::MAX);
         let addresses: Vec<crate::query::Address> = found.iter().map(|coord| crate::query::Address::Own { handle: coord.handle }).collect();
-        let private = plan(r#"{ "op": "match", "fields": ["name"], "kinds": [], "pattern": "^_" }"#);
+        let private = plan(&format!(r#"{{ "op": "match", {}, "pattern": "^_" }}"#, slots(&[("function_item", 0)])));
         assert_eq!(tree.plan_holds(&addresses, &private).expect("holds"), [false, false, true, true, false]);
         let elsewhere = crate::query::Address::Own { handle: encode_handle(9, 0) };
         assert!(tree.plan_holds(&[elsewhere], &private).is_err());
@@ -2008,7 +2064,7 @@ mod tests {
 
     #[test]
     fn a_pattern_the_native_matcher_cannot_compile_is_refused() {
-        let spec = serde_json::from_str(r#"{ "op": "match", "fields": ["name"], "kinds": [], "pattern": "(a)\\1" }"#).expect("plan json");
+        let spec = serde_json::from_str(r#"{ "op": "match", "slots": { "1": 0 }, "pattern": "(a)\\1" }"#).expect("plan json");
         assert!(Plan::compile(spec).is_err());
     }
 

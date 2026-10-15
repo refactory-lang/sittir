@@ -88,6 +88,10 @@ impl EngineGrammar for PythonGrammar {
     fn slot_routes(self, tree: &tree_sitter::Tree, index: u32) -> Option<sittir_core::read::Routed> {
         sittir_core::read::routes_at::<AnyTransport>(&mut tree.walk(), index)
     }
+
+    fn router(self, grammar: sittir_core::types::KindId, display: sittir_core::types::KindId) -> Option<sittir_core::read::Router> {
+        <AnyTransport as sittir_core::read::ReadTransport>::router(grammar, display)
+    }
 }
 
 // The engine class itself — parse, read, render, edits, and the live-tree

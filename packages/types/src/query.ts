@@ -1,10 +1,12 @@
 import type { IsBooleanKeyword } from './keyword-presence.ts';
 import type { SlotHint, SlotHintsOf } from './node-surface.ts';
 
-/** A slot as the parser spells it: the fields its children arrive under, and the kinds of its children that arrive under no field. */
-export interface SlotRoutes {
-	readonly fields: readonly string[];
-	readonly kinds: readonly string[];
+/**
+ * A slot by its number in each kind that has it, keyed by stamped kind id: the slot's position among the kind's transport
+ * slots, the numbering the native read routes children by. A node of a kind the map lacks holds nothing there.
+ */
+export interface SlotSubject {
+	readonly slots: Readonly<Record<number, number>>;
 }
 
 /** A language's kind membership: which node types count as a given kind. */
@@ -15,8 +17,8 @@ export interface KindMembership {
 	membersOf(kind: number): readonly number[];
 }
 
-/** One slot of a kind: the accessor a node reads it through, its parser routes, and the keyword when the slot holds that keyword's presence. */
-export type QuerySlotEntry = readonly [accessor: string, routes: SlotRoutes, keyword?: string];
+/** One slot of a kind: the accessor a node reads it through, its number (`SlotSubject`), and the keyword when the slot holds that keyword's presence. */
+export type QuerySlotEntry = readonly [accessor: string, slot: number, keyword?: string];
 
 /** Each kind's slots, by kind id. */
 export type QuerySlots = Readonly<Record<number, readonly QuerySlotEntry[]>>;
@@ -26,23 +28,23 @@ export interface SelfText {
 	readonly self: true;
 }
 
-/** What a comparison reads: a slot by its parser routes, or the node's own text. */
-export type QuerySubject = SlotRoutes | SelfText;
+/** What a comparison reads: a slot by its numbers, or the node's own text. */
+export type QuerySubject = SlotSubject | SelfText;
 
-/** Which of the nodes a step's routes admit it reaches: the first, the last, or the one node when exactly one is admitted. */
+/** Which of the nodes a step's slot holds it reaches: the first, the last, or the one node when the slot holds exactly one. */
 export type StepAnchor = 'first' | 'last' | 'only';
 
 /**
  * A compiled condition, each comparison reading the subject `S`. A `where` condition reads slots only (the default) and is
  * evaluated by the native walk; a portable read test may also read the node's own text (`QueryPlan<QuerySubject>`), which only
  * `holds` evaluates. An `is` leaf tests the stamped kinds (`$type`) of its subject, and a `child` step evaluates its condition on
- * the children its routes admit, narrowed by its anchor.
+ * the nodes its slot holds, narrowed by its anchor.
  */
-export type QueryPlan<S extends QuerySubject = SlotRoutes> =
+export type QueryPlan<S extends QuerySubject = SlotSubject> =
 	| ({ readonly op: 'eq'; readonly text: string } & S)
 	| ({ readonly op: 'match'; readonly pattern: string } & S)
-	| ({ readonly op: 'present' } & SlotRoutes)
-	| ({ readonly op: 'child'; readonly anchor?: StepAnchor; readonly of: QueryPlan<S> } & SlotRoutes)
+	| ({ readonly op: 'present' } & SlotSubject)
+	| ({ readonly op: 'child'; readonly anchor?: StepAnchor; readonly of: QueryPlan<S> } & SlotSubject)
 	| ({ readonly op: 'is'; readonly types: readonly number[] } & S)
 	| { readonly op: 'not'; readonly of: QueryPlan<S> }
 	| { readonly op: 'and' | 'or'; readonly of: readonly QueryPlan<S>[] };

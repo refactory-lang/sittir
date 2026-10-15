@@ -3060,125 +3060,89 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.abstract.getter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '294': 2 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '294': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '294': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.abstract.getter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '294': 2 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '294': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '294': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.abstract.getter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '294': 2 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '294': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '294': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.abstract.setter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '294': 2 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '294': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '294': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.abstract.setter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '294': 2 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '294': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '294': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.abstract.setter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '294': 2 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '294': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '294': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.abstract.private',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '294': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '294': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.abstract.protected',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '294': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '294': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.abstract.public',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '294': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '294': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.abstract.getter',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '294': 2 } } }]
 			},
 			{
 				path: 'declaration.method.signature.abstract.setter',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '294': 2 } } }]
 			},
 			{ path: 'declaration.method.signature.abstract', within: [], test: [] }
 		],
@@ -3197,77 +3161,77 @@ const table: PortableTable = {
 			{
 				path: 'expression.assignment.compound.add',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+=', slots: { '261': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.subtract',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-=', slots: { '261': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.multiply',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*=', slots: { '261': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.divide',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/=', slots: { '261': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.modulo',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%=', slots: { '261': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.exponent',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '**=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '**=', slots: { '261': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.bitwise_and',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&=', slots: { '261': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.bitwise_or',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|=', slots: { '261': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.bitwise_xor',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^=', slots: { '261': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.shift_left',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<=', slots: { '261': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.shift_right',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>=', slots: { '261': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.shift_right_unsigned',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>>=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>>=', slots: { '261': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.and',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&&=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&&=', slots: { '261': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.or',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '||=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '||=', slots: { '261': 1 } } }]
 			},
 			{
 				path: 'expression.assignment.compound.coalesce',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '??=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '??=', slots: { '261': 1 } } }]
 			},
 			{ path: 'expression.assignment.compound', within: [], test: [] }
 		],
@@ -3276,127 +3240,127 @@ const table: PortableTable = {
 			{
 				path: 'expression.binary.membership.in',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [396], fields: [], kinds: ['binary_expression_in'] } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [396], slots: { '266': 3 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.add',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.subtract',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.multiply',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '*', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.divide',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '/', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.modulo',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '%', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.arithmetic.exponent',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '**', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '**', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.loose_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '==', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '==', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.loose_not_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!=', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '===', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '===', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.not_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!==', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!==', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.less',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.greater',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.less_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<=', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.comparison.greater_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>=', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>=', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.bitwise.and',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.bitwise.or',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '|', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.bitwise.xor',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '^', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.shift.left',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<<', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.shift.right',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.shift.right_unsigned',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>>', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>>>', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.logical.and',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&&', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '&&', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.logical.or',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '||', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '||', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.coalesce',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '??', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '??', slots: { '266': 1 } } }]
 			},
 			{
 				path: 'expression.binary.membership.instanceof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'instanceof', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'instanceof', slots: { '266': 1 } } }]
 			},
 			{ path: 'expression.binary', within: [], test: [] }
 		],
@@ -3406,7 +3370,7 @@ const table: PortableTable = {
 			{
 				path: 'expression.call.member',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [256], fields: ['function'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [256], slots: { '410': 0 } } }]
 			},
 			{ path: 'expression.call', within: [], test: [] }
 		],
@@ -3450,7 +3414,7 @@ const table: PortableTable = {
 			{
 				path: 'clause.export.specifier.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', fields: ['export_kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '192': 0 } } }]
 			},
 			{ path: 'clause.export.specifier', within: [], test: [] }
 		],
@@ -3460,34 +3424,7 @@ const table: PortableTable = {
 			{
 				path: 'statement.export.default',
 				within: [],
-				test: [
-					{
-						up: 0,
-						via: [],
-						plan: {
-							op: 'is',
-							types: [425],
-							fields: [],
-							kinds: [
-								'function_declaration',
-								'generator_function_declaration',
-								'class_declaration',
-								'lexical_declaration',
-								'variable_declaration',
-								'function_signature',
-								'abstract_class_declaration',
-								'module',
-								'internal_module',
-								'type_alias_declaration',
-								'enum_declaration',
-								'interface_declaration',
-								'import_alias',
-								'ambient_declaration',
-								'export_statement_default_declaration_default_kw'
-							]
-						}
-					}
-				]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [425], slots: { '421': 1 } } }]
 			},
 			{ path: 'statement.export', within: [], test: [] }
 		],
@@ -3495,22 +3432,7 @@ const table: PortableTable = {
 			{
 				path: 'statement.export.all',
 				within: [],
-				test: [
-					{
-						up: 0,
-						via: [],
-						plan: {
-							op: 'is',
-							types: [422],
-							fields: [],
-							kinds: [
-								'export_statement_default_from_star_from',
-								'export_statement_default_from_ns_from',
-								'export_statement_default_from_clause_from'
-							]
-						}
-					}
-				]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [422], slots: { '420': 1 } } }]
 			},
 			{ path: 'statement.export', within: [], test: [] }
 		],
@@ -3545,7 +3467,7 @@ const table: PortableTable = {
 			{
 				path: 'clause.import.specifier.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', fields: ['import_kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '407': 0 } } }]
 			},
 			{ path: 'clause.import.specifier', within: [], test: [] }
 		],
@@ -3553,7 +3475,7 @@ const table: PortableTable = {
 			{
 				path: 'clause.import.specifier.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', fields: ['import_kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '406': 0 } } }]
 			},
 			{ path: 'clause.import.specifier', within: [], test: [] }
 		],
@@ -3561,7 +3483,7 @@ const table: PortableTable = {
 			{
 				path: 'statement.import.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', fields: ['import_clause'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '196': 0 } } }]
 			},
 			{ path: 'statement.import', within: [], test: [] }
 		],
@@ -3582,12 +3504,12 @@ const table: PortableTable = {
 			{
 				path: 'declaration.variable.constant',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'const', fields: ['kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'const', slots: { '206': 0 } } }]
 			},
 			{
 				path: 'declaration.variable.reassignable',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'let', fields: ['kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'let', slots: { '206': 0 } } }]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
 		],
@@ -3606,19 +3528,12 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [
-							{ fields: ['name'], kinds: [] },
-							{ fields: ['content'], kinds: [] }
-						],
+						via: [{ slots: { '285': 6 } }, { slots: { '461': 0 } }],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [461], fields: ['name'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '285': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [461], slots: { '285': 6 } } }
 				]
 			},
 			{
@@ -3627,19 +3542,12 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [
-							{ fields: ['name'], kinds: [] },
-							{ fields: ['content'], kinds: [] }
-						],
+						via: [{ slots: { '285': 6 } }, { slots: { '461': 0 } }],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [461], fields: ['name'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '285': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [461], slots: { '285': 6 } } }
 				]
 			},
 			{
@@ -3648,19 +3556,12 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [
-							{ fields: ['name'], kinds: [] },
-							{ fields: ['content'], kinds: [] }
-						],
+						via: [{ slots: { '285': 6 } }, { slots: { '461': 0 } }],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [461], fields: ['name'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '285': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [461], slots: { '285': 6 } } }
 				]
 			},
 			{
@@ -3669,138 +3570,99 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [
-							{ fields: ['name'], kinds: [] },
-							{ fields: ['content'], kinds: [] }
-						],
+						via: [{ slots: { '285': 6 } }, { slots: { '461': 0 } }],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [461], fields: ['name'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [461], slots: { '285': 6 } } }
 				]
 			},
 			{
 				path: 'declaration.method.getter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '285': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '285': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.getter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '285': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '285': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.getter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '285': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '285': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.setter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '285': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '285': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.setter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '285': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '285': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.setter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '285': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '285': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.private',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '285': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.protected',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '285': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.public',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '285': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '285': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.getter',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '285': 5 } } }]
 			},
 			{
 				path: 'declaration.method.setter',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '285': 5 } } }]
 			},
 			{ path: 'declaration.method', within: [], test: [] }
 		],
@@ -3809,125 +3671,89 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.getter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '293': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '293': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '293': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.getter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '293': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '293': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '293': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.getter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '293': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '293': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '293': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.setter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '293': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '293': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '293': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.setter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '293': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '293': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '293': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.setter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '293': 5 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '293': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '293': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.private',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '293': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '293': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.protected',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '293': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '293': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.public',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '293': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '293': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.getter',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '293': 5 } } }]
 			},
 			{
 				path: 'declaration.method.signature.setter',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '293': 5 } } }]
 			},
 			{ path: 'declaration.method.signature', within: [], test: [] }
 		],
@@ -4004,36 +3830,24 @@ const table: PortableTable = {
 				path: 'declaration.parameter.private',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: [], kinds: ['accessibility_modifier'] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '321': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '321': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.protected',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: [], kinds: ['accessibility_modifier'] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '321': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '321': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.public',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: [], kinds: ['accessibility_modifier'] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '321': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '321': 1 } } }
 				]
 			},
 			{ path: 'declaration.parameter', within: [], test: [] }
@@ -4058,36 +3872,24 @@ const table: PortableTable = {
 				path: 'declaration.field.signature.private',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '363': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '363': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.field.signature.protected',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '363': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '363': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.field.signature.public',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '363': 0 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '363': 0 } } }
 				]
 			},
 			{ path: 'declaration.field.signature', within: [], test: [] }
@@ -4101,36 +3903,24 @@ const table: PortableTable = {
 				path: 'declaration.field.private',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '290': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '290': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.field.protected',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '290': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '290': 2 } } }
 				]
 			},
 			{
 				path: 'declaration.field.public',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '290': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '290': 2 } } }
 				]
 			},
 			{ path: 'declaration.field', within: [], test: [] }
@@ -4148,36 +3938,24 @@ const table: PortableTable = {
 				path: 'declaration.parameter.private',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: [], kinds: ['accessibility_modifier'] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '320': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '320': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.protected',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: [], kinds: ['accessibility_modifier'] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '320': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '320': 1 } } }
 				]
 			},
 			{
 				path: 'declaration.parameter.public',
 				within: [],
 				test: [
-					{
-						up: 0,
-						via: [],
-						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
-					},
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: [], kinds: ['accessibility_modifier'] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '320': 1 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '320': 1 } } }
 				]
 			},
 			{ path: 'declaration.parameter', within: [], test: [] }
@@ -4224,37 +4002,37 @@ const table: PortableTable = {
 			{
 				path: 'expression.unary.negation',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '267': 0 } } }]
 			},
 			{
 				path: 'expression.unary.plus',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '267': 0 } } }]
 			},
 			{
 				path: 'expression.unary.not',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!', slots: { '267': 0 } } }]
 			},
 			{
 				path: 'expression.unary.bitwise_not',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '~', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '~', slots: { '267': 0 } } }]
 			},
 			{
 				path: 'expression.unary.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', slots: { '267': 0 } } }]
 			},
 			{
 				path: 'expression.unary.void',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'void', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'void', slots: { '267': 0 } } }]
 			},
 			{
 				path: 'expression.unary.delete',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'delete', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'delete', slots: { '267': 0 } } }]
 			},
 			{ path: 'expression.unary', within: [], test: [] }
 		],
@@ -4267,12 +4045,12 @@ const table: PortableTable = {
 			{
 				path: 'expression.update.increment',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', slots: { '415': 1 } } }]
 			},
 			{
 				path: 'expression.update.decrement',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', slots: { '415': 1 } } }]
 			},
 			{ path: 'expression.update', within: [], test: [] }
 		],
@@ -4280,12 +4058,12 @@ const table: PortableTable = {
 			{
 				path: 'expression.update.increment',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '++', slots: { '416': 0 } } }]
 			},
 			{
 				path: 'expression.update.decrement',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', fields: ['operator'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '--', slots: { '416': 0 } } }]
 			},
 			{ path: 'expression.update', within: [], test: [] }
 		],
@@ -4297,7 +4075,7 @@ const table: PortableTable = {
 			{
 				path: 'declaration.variable.pattern',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'is', types: [240, 236], fields: ['name'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [240, 236], slots: { '427': 0 } } }]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
 		],
@@ -4479,93 +4257,90 @@ export const portable = portableSurface<PortableKinds, PortableIs>(table, queryS
 export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.AbstractClassDeclaration]: { abstract: { op: 'and', of: [] } },
 	[TSKindId.AbstractMethodSignature]: {
-		override: { op: 'present', fields: ['override'], kinds: [] },
-		optional: { op: 'present', fields: ['optional'], kinds: [] },
-		generator: { op: 'eq', text: '*', fields: ['accessor_kind'], kinds: [] },
-		privateName: { op: 'is', types: [118], fields: ['name'], kinds: [] },
-		computed: { op: 'is', types: [289], fields: ['name'], kinds: [] }
+		override: { op: 'present', slots: { '294': 1 } },
+		optional: { op: 'present', slots: { '294': 4 } },
+		generator: { op: 'eq', text: '*', slots: { '294': 2 } },
+		privateName: { op: 'is', types: [118], slots: { '294': 3 } },
+		computed: { op: 'is', types: [289], slots: { '294': 3 } }
 	},
-	[TSKindId.ArrowFunction]: { async: { op: 'present', fields: ['async'], kinds: [] } },
-	[TSKindId.AssignmentExpression]: { disposable: { op: 'present', fields: ['using'], kinds: [] } },
+	[TSKindId.ArrowFunction]: { async: { op: 'present', slots: { '249': 0 } } },
+	[TSKindId.AssignmentExpression]: { disposable: { op: 'present', slots: { '259': 0 } } },
 	[TSKindId.CallExpressionMember]: { optionalChain: { op: 'and', of: [] } },
-	[TSKindId.ConstructSignature]: { abstract: { op: 'present', fields: ['abstract'], kinds: [] } },
-	[TSKindId.ConstructorType]: { abstract: { op: 'present', fields: ['abstract'], kinds: [] } },
-	[TSKindId.EnumDeclaration]: { const: { op: 'present', fields: ['const'], kinds: [] } },
-	[TSKindId.ExportSpecifier]: { typeOnly: { op: 'eq', text: 'type', fields: ['export_kind'], kinds: [] } },
-	[TSKindId.ExportStatementDefaultFrom]: { typeOnly: { op: 'present', fields: ['type'], kinds: [] } },
-	[TSKindId.ForInStatement]: { async: { op: 'present', fields: ['await'], kinds: [] } },
-	[TSKindId.FunctionDeclaration]: { async: { op: 'present', fields: ['async'], kinds: [] } },
-	[TSKindId.FunctionExpression]: { async: { op: 'present', fields: ['async'], kinds: [] } },
-	[TSKindId.FunctionSignature]: { async: { op: 'present', fields: ['async'], kinds: [] } },
-	[TSKindId.GeneratorFunction]: {
-		async: { op: 'present', fields: ['async'], kinds: [] },
-		generator: { op: 'and', of: [] }
-	},
+	[TSKindId.ConstructSignature]: { abstract: { op: 'present', slots: { '368': 0 } } },
+	[TSKindId.ConstructorType]: { abstract: { op: 'present', slots: { '337': 0 } } },
+	[TSKindId.EnumDeclaration]: { const: { op: 'present', slots: { '314': 0 } } },
+	[TSKindId.ExportSpecifier]: { typeOnly: { op: 'eq', text: 'type', slots: { '192': 0 } } },
+	[TSKindId.ExportStatementDefaultFrom]: { typeOnly: { op: 'present', slots: { '420': 0 } } },
+	[TSKindId.ForInStatement]: { async: { op: 'present', slots: { '213': 0 } } },
+	[TSKindId.FunctionDeclaration]: { async: { op: 'present', slots: { '246': 0 } } },
+	[TSKindId.FunctionExpression]: { async: { op: 'present', slots: { '245': 0 } } },
+	[TSKindId.FunctionSignature]: { async: { op: 'present', slots: { '295': 0 } } },
+	[TSKindId.GeneratorFunction]: { async: { op: 'present', slots: { '247': 0 } }, generator: { op: 'and', of: [] } },
 	[TSKindId.GeneratorFunctionDeclaration]: {
-		async: { op: 'present', fields: ['async'], kinds: [] },
+		async: { op: 'present', slots: { '248': 0 } },
 		generator: { op: 'and', of: [] }
 	},
-	[TSKindId.ImportSpecifierAs]: { typeOnly: { op: 'eq', text: 'type', fields: ['import_kind'], kinds: [] } },
-	[TSKindId.ImportSpecifierName]: { typeOnly: { op: 'eq', text: 'type', fields: ['import_kind'], kinds: [] } },
-	[TSKindId.ImportStatement]: { typeOnly: { op: 'eq', text: 'type', fields: ['import_clause'], kinds: [] } },
-	[TSKindId.IndexSignatureColon]: { readonly: { op: 'present', fields: ['readonly'], kinds: [] } },
-	[TSKindId.IndexSignatureMappedTypeClause]: { readonly: { op: 'present', fields: ['readonly'], kinds: [] } },
+	[TSKindId.ImportSpecifierAs]: { typeOnly: { op: 'eq', text: 'type', slots: { '407': 0 } } },
+	[TSKindId.ImportSpecifierName]: { typeOnly: { op: 'eq', text: 'type', slots: { '406': 0 } } },
+	[TSKindId.ImportStatement]: { typeOnly: { op: 'eq', text: 'type', slots: { '196': 0 } } },
+	[TSKindId.IndexSignatureColon]: { readonly: { op: 'present', slots: { '401': 1 } } },
+	[TSKindId.IndexSignatureMappedTypeClause]: { readonly: { op: 'present', slots: { '402': 1 } } },
 	[TSKindId.MemberExpression]: {
-		optionalChain: { op: 'is', types: [252], fields: ['separator'], kinds: [] },
-		privateName: { op: 'is', types: [118], fields: ['property'], kinds: [] }
+		optionalChain: { op: 'is', types: [252], slots: { '256': 1 } },
+		privateName: { op: 'is', types: [118], slots: { '256': 2 } }
 	},
 	[TSKindId.MethodDefinition]: {
-		static: { op: 'present', fields: ['static'], kinds: [] },
-		override: { op: 'present', fields: ['override'], kinds: [] },
-		readonly: { op: 'present', fields: ['readonly'], kinds: [] },
-		async: { op: 'present', fields: ['async'], kinds: [] },
-		optional: { op: 'present', fields: ['optional'], kinds: [] },
-		generator: { op: 'eq', text: '*', fields: ['accessor_kind'], kinds: [] },
-		privateName: { op: 'is', types: [118], fields: ['name'], kinds: [] },
-		computed: { op: 'is', types: [289], fields: ['name'], kinds: [] }
+		static: { op: 'present', slots: { '285': 1 } },
+		override: { op: 'present', slots: { '285': 2 } },
+		readonly: { op: 'present', slots: { '285': 3 } },
+		async: { op: 'present', slots: { '285': 4 } },
+		optional: { op: 'present', slots: { '285': 7 } },
+		generator: { op: 'eq', text: '*', slots: { '285': 5 } },
+		privateName: { op: 'is', types: [118], slots: { '285': 6 } },
+		computed: { op: 'is', types: [289], slots: { '285': 6 } }
 	},
 	[TSKindId.MethodSignature]: {
-		static: { op: 'present', fields: ['static'], kinds: [] },
-		override: { op: 'present', fields: ['override'], kinds: [] },
-		readonly: { op: 'present', fields: ['readonly'], kinds: [] },
-		async: { op: 'present', fields: ['async'], kinds: [] },
-		optional: { op: 'present', fields: ['optional'], kinds: [] },
-		generator: { op: 'eq', text: '*', fields: ['accessor_kind'], kinds: [] },
-		privateName: { op: 'is', types: [118], fields: ['name'], kinds: [] },
-		computed: { op: 'is', types: [289], fields: ['name'], kinds: [] }
+		static: { op: 'present', slots: { '293': 1 } },
+		override: { op: 'present', slots: { '293': 2 } },
+		readonly: { op: 'present', slots: { '293': 3 } },
+		async: { op: 'present', slots: { '293': 4 } },
+		optional: { op: 'present', slots: { '293': 7 } },
+		generator: { op: 'eq', text: '*', slots: { '293': 5 } },
+		privateName: { op: 'is', types: [118], slots: { '293': 6 } },
+		computed: { op: 'is', types: [289], slots: { '293': 6 } }
 	},
 	[TSKindId.OptionalParameter]: {
-		override: { op: 'present', fields: ['override'], kinds: [] },
-		readonly: { op: 'present', fields: ['readonly'], kinds: [] },
+		override: { op: 'present', slots: { '321': 2 } },
+		readonly: { op: 'present', slots: { '321': 3 } },
 		optional: { op: 'and', of: [] }
 	},
-	[TSKindId.Pair]: { computed: { op: 'is', types: [289], fields: ['key'], kinds: [] } },
-	[TSKindId.PairPattern]: { computed: { op: 'is', types: [289], fields: ['key'], kinds: [] } },
+	[TSKindId.Pair]: { computed: { op: 'is', types: [289], slots: { '286': 0 } } },
+	[TSKindId.PairPattern]: { computed: { op: 'is', types: [289], slots: { '287': 0 } } },
 	[TSKindId.PropertySignature]: {
-		static: { op: 'present', fields: ['static'], kinds: [] },
-		override: { op: 'present', fields: ['override'], kinds: [] },
-		readonly: { op: 'present', fields: ['readonly'], kinds: [] },
-		optional: { op: 'present', fields: ['optional'], kinds: [] },
-		privateName: { op: 'is', types: [118], fields: ['name'], kinds: [] },
-		computed: { op: 'is', types: [289], fields: ['name'], kinds: [] }
+		static: { op: 'present', slots: { '363': 1 } },
+		override: { op: 'present', slots: { '363': 2 } },
+		readonly: { op: 'present', slots: { '363': 3 } },
+		optional: { op: 'present', slots: { '363': 5 } },
+		privateName: { op: 'is', types: [118], slots: { '363': 4 } },
+		computed: { op: 'is', types: [289], slots: { '363': 4 } }
 	},
 	[TSKindId.PublicFieldDefinition]: {
-		declare: { op: 'present', fields: ['declare'], kinds: [] },
-		static: { op: 'present', fields: ['static'], kinds: [] },
-		override: { op: 'present', fields: ['override'], kinds: [] },
-		readonly: { op: 'present', fields: ['readonly'], kinds: [] },
-		abstract: { op: 'present', fields: ['abstract'], kinds: [] },
-		accessor: { op: 'present', fields: ['accessor'], kinds: [] },
-		optional: { op: 'eq', text: '?', fields: ['optionality'], kinds: [] },
-		definite: { op: 'eq', text: '!', fields: ['optionality'], kinds: [] },
-		privateName: { op: 'is', types: [118], fields: ['name'], kinds: [] },
-		computed: { op: 'is', types: [289], fields: ['name'], kinds: [] }
+		declare: { op: 'present', slots: { '290': 1 } },
+		static: { op: 'present', slots: { '290': 3 } },
+		override: { op: 'present', slots: { '290': 4 } },
+		readonly: { op: 'present', slots: { '290': 5 } },
+		abstract: { op: 'present', slots: { '290': 6 } },
+		accessor: { op: 'present', slots: { '290': 7 } },
+		optional: { op: 'eq', text: '?', slots: { '290': 9 } },
+		definite: { op: 'eq', text: '!', slots: { '290': 9 } },
+		privateName: { op: 'is', types: [118], slots: { '290': 8 } },
+		computed: { op: 'is', types: [289], slots: { '290': 8 } }
 	},
 	[TSKindId.RequiredParameter]: {
-		override: { op: 'present', fields: ['override'], kinds: [] },
-		readonly: { op: 'present', fields: ['readonly'], kinds: [] }
+		override: { op: 'present', slots: { '320': 2 } },
+		readonly: { op: 'present', slots: { '320': 3 } }
 	},
-	[TSKindId.SubscriptExpression]: { optionalChain: { op: 'is', types: [252], fields: ['optional_chain'], kinds: [] } },
-	[TSKindId.TypeParameter]: { const: { op: 'present', fields: ['const'], kinds: [] } },
+	[TSKindId.SubscriptExpression]: { optionalChain: { op: 'is', types: [252], slots: { '257': 1 } } },
+	[TSKindId.TypeParameter]: { const: { op: 'present', slots: { '365': 0 } } },
 	[TSKindId.VariableDeclaratorDefinite]: { definite: { op: 'and', of: [] } }
 } satisfies QueryFlags);

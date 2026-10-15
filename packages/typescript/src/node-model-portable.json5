@@ -187,10 +187,9 @@
               "plan": {
                 "op": "eq",
                 "text": "get",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 2
+                }
               }
             },
             {
@@ -204,10 +203,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 0
+                }
               }
             },
             {
@@ -216,10 +214,9 @@
               "plan": {
                 "op": "eq",
                 "text": "private",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 0
+                }
               }
             }
           ]
@@ -242,10 +239,9 @@
               "plan": {
                 "op": "eq",
                 "text": "get",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 2
+                }
               }
             },
             {
@@ -259,10 +255,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 0
+                }
               }
             },
             {
@@ -271,10 +266,9 @@
               "plan": {
                 "op": "eq",
                 "text": "protected",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 0
+                }
               }
             }
           ]
@@ -297,10 +291,9 @@
               "plan": {
                 "op": "eq",
                 "text": "get",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 2
+                }
               }
             },
             {
@@ -314,10 +307,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 0
+                }
               }
             },
             {
@@ -326,10 +318,9 @@
               "plan": {
                 "op": "eq",
                 "text": "public",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 0
+                }
               }
             }
           ]
@@ -352,10 +343,9 @@
               "plan": {
                 "op": "eq",
                 "text": "set",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 2
+                }
               }
             },
             {
@@ -369,10 +359,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 0
+                }
               }
             },
             {
@@ -381,10 +370,9 @@
               "plan": {
                 "op": "eq",
                 "text": "private",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 0
+                }
               }
             }
           ]
@@ -407,10 +395,9 @@
               "plan": {
                 "op": "eq",
                 "text": "set",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 2
+                }
               }
             },
             {
@@ -424,10 +411,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 0
+                }
               }
             },
             {
@@ -436,10 +422,9 @@
               "plan": {
                 "op": "eq",
                 "text": "protected",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 0
+                }
               }
             }
           ]
@@ -462,10 +447,9 @@
               "plan": {
                 "op": "eq",
                 "text": "set",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 2
+                }
               }
             },
             {
@@ -479,10 +463,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 0
+                }
               }
             },
             {
@@ -491,10 +474,9 @@
               "plan": {
                 "op": "eq",
                 "text": "public",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 0
+                }
               }
             }
           ]
@@ -516,10 +498,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 0
+                }
               }
             },
             {
@@ -528,10 +509,9 @@
               "plan": {
                 "op": "eq",
                 "text": "private",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 0
+                }
               }
             }
           ]
@@ -553,10 +533,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 0
+                }
               }
             },
             {
@@ -565,10 +544,9 @@
               "plan": {
                 "op": "eq",
                 "text": "protected",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 0
+                }
               }
             }
           ]
@@ -590,10 +568,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 0
+                }
               }
             },
             {
@@ -602,10 +579,9 @@
               "plan": {
                 "op": "eq",
                 "text": "public",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 0
+                }
               }
             }
           ]
@@ -628,10 +604,9 @@
               "plan": {
                 "op": "eq",
                 "text": "get",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 2
+                }
               }
             }
           ]
@@ -654,10 +629,9 @@
               "plan": {
                 "op": "eq",
                 "text": "set",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "294": 2
+                }
               }
             }
           ]
@@ -1259,10 +1233,9 @@
               "plan": {
                 "op": "eq",
                 "text": "+=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "261": 1
+                }
               }
             }
           ]
@@ -1285,10 +1258,9 @@
               "plan": {
                 "op": "eq",
                 "text": "-=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "261": 1
+                }
               }
             }
           ]
@@ -1311,10 +1283,9 @@
               "plan": {
                 "op": "eq",
                 "text": "*=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "261": 1
+                }
               }
             }
           ]
@@ -1337,10 +1308,9 @@
               "plan": {
                 "op": "eq",
                 "text": "/=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "261": 1
+                }
               }
             }
           ]
@@ -1363,10 +1333,9 @@
               "plan": {
                 "op": "eq",
                 "text": "%=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "261": 1
+                }
               }
             }
           ]
@@ -1389,10 +1358,9 @@
               "plan": {
                 "op": "eq",
                 "text": "**=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "261": 1
+                }
               }
             }
           ]
@@ -1415,10 +1383,9 @@
               "plan": {
                 "op": "eq",
                 "text": "&=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "261": 1
+                }
               }
             }
           ]
@@ -1441,10 +1408,9 @@
               "plan": {
                 "op": "eq",
                 "text": "|=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "261": 1
+                }
               }
             }
           ]
@@ -1467,10 +1433,9 @@
               "plan": {
                 "op": "eq",
                 "text": "^=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "261": 1
+                }
               }
             }
           ]
@@ -1493,10 +1458,9 @@
               "plan": {
                 "op": "eq",
                 "text": "<<=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "261": 1
+                }
               }
             }
           ]
@@ -1519,10 +1483,9 @@
               "plan": {
                 "op": "eq",
                 "text": ">>=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "261": 1
+                }
               }
             }
           ]
@@ -1545,10 +1508,9 @@
               "plan": {
                 "op": "eq",
                 "text": ">>>=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "261": 1
+                }
               }
             }
           ]
@@ -1571,10 +1533,9 @@
               "plan": {
                 "op": "eq",
                 "text": "&&=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "261": 1
+                }
               }
             }
           ]
@@ -1597,10 +1558,9 @@
               "plan": {
                 "op": "eq",
                 "text": "||=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "261": 1
+                }
               }
             }
           ]
@@ -1623,10 +1583,9 @@
               "plan": {
                 "op": "eq",
                 "text": "??=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "261": 1
+                }
               }
             }
           ]
@@ -1713,10 +1672,9 @@
                 "types": [
                   396
                 ],
-                "fields": [],
-                "kinds": [
-                  "binary_expression_in"
-                ]
+                "slots": {
+                  "266": 3
+                }
               }
             }
           ]
@@ -1739,10 +1697,9 @@
               "plan": {
                 "op": "eq",
                 "text": "+",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -1765,10 +1722,9 @@
               "plan": {
                 "op": "eq",
                 "text": "-",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -1791,10 +1747,9 @@
               "plan": {
                 "op": "eq",
                 "text": "*",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -1817,10 +1772,9 @@
               "plan": {
                 "op": "eq",
                 "text": "/",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -1843,10 +1797,9 @@
               "plan": {
                 "op": "eq",
                 "text": "%",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -1869,10 +1822,9 @@
               "plan": {
                 "op": "eq",
                 "text": "**",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -1895,10 +1847,9 @@
               "plan": {
                 "op": "eq",
                 "text": "==",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -1921,10 +1872,9 @@
               "plan": {
                 "op": "eq",
                 "text": "!=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -1947,10 +1897,9 @@
               "plan": {
                 "op": "eq",
                 "text": "===",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -1973,10 +1922,9 @@
               "plan": {
                 "op": "eq",
                 "text": "!==",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -1999,10 +1947,9 @@
               "plan": {
                 "op": "eq",
                 "text": "<",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -2025,10 +1972,9 @@
               "plan": {
                 "op": "eq",
                 "text": ">",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -2051,10 +1997,9 @@
               "plan": {
                 "op": "eq",
                 "text": "<=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -2077,10 +2022,9 @@
               "plan": {
                 "op": "eq",
                 "text": ">=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -2103,10 +2047,9 @@
               "plan": {
                 "op": "eq",
                 "text": "&",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -2129,10 +2072,9 @@
               "plan": {
                 "op": "eq",
                 "text": "|",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -2155,10 +2097,9 @@
               "plan": {
                 "op": "eq",
                 "text": "^",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -2181,10 +2122,9 @@
               "plan": {
                 "op": "eq",
                 "text": "<<",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -2207,10 +2147,9 @@
               "plan": {
                 "op": "eq",
                 "text": ">>",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -2233,10 +2172,9 @@
               "plan": {
                 "op": "eq",
                 "text": ">>>",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -2259,10 +2197,9 @@
               "plan": {
                 "op": "eq",
                 "text": "&&",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -2285,10 +2222,9 @@
               "plan": {
                 "op": "eq",
                 "text": "||",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -2311,10 +2247,9 @@
               "plan": {
                 "op": "eq",
                 "text": "??",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -2337,10 +2272,9 @@
               "plan": {
                 "op": "eq",
                 "text": "instanceof",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "266": 1
+                }
               }
             }
           ]
@@ -2483,10 +2417,9 @@
                 "types": [
                   256
                 ],
-                "fields": [
-                  "function"
-                ],
-                "kinds": []
+                "slots": {
+                  "410": 0
+                }
               }
             }
           ]
@@ -3858,10 +3791,9 @@
               "plan": {
                 "op": "eq",
                 "text": "typeof",
-                "fields": [
-                  "export_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "192": 0
+                }
               }
             }
           ]
@@ -3964,24 +3896,9 @@
                 "types": [
                   425
                 ],
-                "fields": [],
-                "kinds": [
-                  "function_declaration",
-                  "generator_function_declaration",
-                  "class_declaration",
-                  "lexical_declaration",
-                  "variable_declaration",
-                  "function_signature",
-                  "abstract_class_declaration",
-                  "module",
-                  "internal_module",
-                  "type_alias_declaration",
-                  "enum_declaration",
-                  "interface_declaration",
-                  "import_alias",
-                  "ambient_declaration",
-                  "export_statement_default_declaration_default_kw"
-                ]
+                "slots": {
+                  "421": 1
+                }
               }
             }
           ]
@@ -4109,12 +4026,9 @@
                 "types": [
                   422
                 ],
-                "fields": [],
-                "kinds": [
-                  "export_statement_default_from_star_from",
-                  "export_statement_default_from_ns_from",
-                  "export_statement_default_from_clause_from"
-                ]
+                "slots": {
+                  "420": 1
+                }
               }
             }
           ]
@@ -5483,10 +5397,9 @@
               "plan": {
                 "op": "eq",
                 "text": "typeof",
-                "fields": [
-                  "import_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "407": 0
+                }
               }
             }
           ]
@@ -5558,10 +5471,9 @@
               "plan": {
                 "op": "eq",
                 "text": "typeof",
-                "fields": [
-                  "import_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "406": 0
+                }
               }
             }
           ]
@@ -5631,10 +5543,9 @@
               "plan": {
                 "op": "eq",
                 "text": "typeof",
-                "fields": [
-                  "import_clause"
-                ],
-                "kinds": []
+                "slots": {
+                  "196": 0
+                }
               }
             }
           ]
@@ -6201,10 +6112,9 @@
               "plan": {
                 "op": "eq",
                 "text": "const",
-                "fields": [
-                  "kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "206": 0
+                }
               }
             }
           ]
@@ -6227,10 +6137,9 @@
               "plan": {
                 "op": "eq",
                 "text": "let",
-                "fields": [
-                  "kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "206": 0
+                }
               }
             }
           ]
@@ -6522,16 +6431,14 @@
               "up": 0,
               "via": [
                 {
-                  "fields": [
-                    "name"
-                  ],
-                  "kinds": []
+                  "slots": {
+                    "285": 6
+                  }
                 },
                 {
-                  "fields": [
-                    "content"
-                  ],
-                  "kinds": []
+                  "slots": {
+                    "461": 0
+                  }
                 }
               ],
               "plan": {
@@ -6551,10 +6458,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             },
             {
@@ -6563,10 +6469,9 @@
               "plan": {
                 "op": "eq",
                 "text": "private",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             },
             {
@@ -6577,10 +6482,9 @@
                 "types": [
                   461
                 ],
-                "fields": [
-                  "name"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 6
+                }
               }
             }
           ]
@@ -6595,16 +6499,14 @@
               "up": 0,
               "via": [
                 {
-                  "fields": [
-                    "name"
-                  ],
-                  "kinds": []
+                  "slots": {
+                    "285": 6
+                  }
                 },
                 {
-                  "fields": [
-                    "content"
-                  ],
-                  "kinds": []
+                  "slots": {
+                    "461": 0
+                  }
                 }
               ],
               "plan": {
@@ -6624,10 +6526,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             },
             {
@@ -6636,10 +6537,9 @@
               "plan": {
                 "op": "eq",
                 "text": "protected",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             },
             {
@@ -6650,10 +6550,9 @@
                 "types": [
                   461
                 ],
-                "fields": [
-                  "name"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 6
+                }
               }
             }
           ]
@@ -6668,16 +6567,14 @@
               "up": 0,
               "via": [
                 {
-                  "fields": [
-                    "name"
-                  ],
-                  "kinds": []
+                  "slots": {
+                    "285": 6
+                  }
                 },
                 {
-                  "fields": [
-                    "content"
-                  ],
-                  "kinds": []
+                  "slots": {
+                    "461": 0
+                  }
                 }
               ],
               "plan": {
@@ -6697,10 +6594,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             },
             {
@@ -6709,10 +6605,9 @@
               "plan": {
                 "op": "eq",
                 "text": "public",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             },
             {
@@ -6723,10 +6618,9 @@
                 "types": [
                   461
                 ],
-                "fields": [
-                  "name"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 6
+                }
               }
             }
           ]
@@ -6741,16 +6635,14 @@
               "up": 0,
               "via": [
                 {
-                  "fields": [
-                    "name"
-                  ],
-                  "kinds": []
+                  "slots": {
+                    "285": 6
+                  }
                 },
                 {
-                  "fields": [
-                    "content"
-                  ],
-                  "kinds": []
+                  "slots": {
+                    "461": 0
+                  }
                 }
               ],
               "plan": {
@@ -6767,10 +6659,9 @@
                 "types": [
                   461
                 ],
-                "fields": [
-                  "name"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 6
+                }
               }
             }
           ]
@@ -6793,10 +6684,9 @@
               "plan": {
                 "op": "eq",
                 "text": "get",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 5
+                }
               }
             },
             {
@@ -6810,10 +6700,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             },
             {
@@ -6822,10 +6711,9 @@
               "plan": {
                 "op": "eq",
                 "text": "private",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             }
           ]
@@ -6848,10 +6736,9 @@
               "plan": {
                 "op": "eq",
                 "text": "get",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 5
+                }
               }
             },
             {
@@ -6865,10 +6752,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             },
             {
@@ -6877,10 +6763,9 @@
               "plan": {
                 "op": "eq",
                 "text": "protected",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             }
           ]
@@ -6903,10 +6788,9 @@
               "plan": {
                 "op": "eq",
                 "text": "get",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 5
+                }
               }
             },
             {
@@ -6920,10 +6804,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             },
             {
@@ -6932,10 +6815,9 @@
               "plan": {
                 "op": "eq",
                 "text": "public",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             }
           ]
@@ -6958,10 +6840,9 @@
               "plan": {
                 "op": "eq",
                 "text": "set",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 5
+                }
               }
             },
             {
@@ -6975,10 +6856,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             },
             {
@@ -6987,10 +6867,9 @@
               "plan": {
                 "op": "eq",
                 "text": "private",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             }
           ]
@@ -7013,10 +6892,9 @@
               "plan": {
                 "op": "eq",
                 "text": "set",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 5
+                }
               }
             },
             {
@@ -7030,10 +6908,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             },
             {
@@ -7042,10 +6919,9 @@
               "plan": {
                 "op": "eq",
                 "text": "protected",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             }
           ]
@@ -7068,10 +6944,9 @@
               "plan": {
                 "op": "eq",
                 "text": "set",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 5
+                }
               }
             },
             {
@@ -7085,10 +6960,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             },
             {
@@ -7097,10 +6971,9 @@
               "plan": {
                 "op": "eq",
                 "text": "public",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             }
           ]
@@ -7122,10 +6995,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             },
             {
@@ -7134,10 +7006,9 @@
               "plan": {
                 "op": "eq",
                 "text": "private",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             }
           ]
@@ -7159,10 +7030,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             },
             {
@@ -7171,10 +7041,9 @@
               "plan": {
                 "op": "eq",
                 "text": "protected",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             }
           ]
@@ -7196,10 +7065,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             },
             {
@@ -7208,10 +7076,9 @@
               "plan": {
                 "op": "eq",
                 "text": "public",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 0
+                }
               }
             }
           ]
@@ -7234,10 +7101,9 @@
               "plan": {
                 "op": "eq",
                 "text": "get",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 5
+                }
               }
             }
           ]
@@ -7260,10 +7126,9 @@
               "plan": {
                 "op": "eq",
                 "text": "set",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "285": 5
+                }
               }
             }
           ]
@@ -7465,10 +7330,9 @@
               "plan": {
                 "op": "eq",
                 "text": "get",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 5
+                }
               }
             },
             {
@@ -7482,10 +7346,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 0
+                }
               }
             },
             {
@@ -7494,10 +7357,9 @@
               "plan": {
                 "op": "eq",
                 "text": "private",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 0
+                }
               }
             }
           ]
@@ -7520,10 +7382,9 @@
               "plan": {
                 "op": "eq",
                 "text": "get",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 5
+                }
               }
             },
             {
@@ -7537,10 +7398,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 0
+                }
               }
             },
             {
@@ -7549,10 +7409,9 @@
               "plan": {
                 "op": "eq",
                 "text": "protected",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 0
+                }
               }
             }
           ]
@@ -7575,10 +7434,9 @@
               "plan": {
                 "op": "eq",
                 "text": "get",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 5
+                }
               }
             },
             {
@@ -7592,10 +7450,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 0
+                }
               }
             },
             {
@@ -7604,10 +7461,9 @@
               "plan": {
                 "op": "eq",
                 "text": "public",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 0
+                }
               }
             }
           ]
@@ -7630,10 +7486,9 @@
               "plan": {
                 "op": "eq",
                 "text": "set",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 5
+                }
               }
             },
             {
@@ -7647,10 +7502,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 0
+                }
               }
             },
             {
@@ -7659,10 +7513,9 @@
               "plan": {
                 "op": "eq",
                 "text": "private",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 0
+                }
               }
             }
           ]
@@ -7685,10 +7538,9 @@
               "plan": {
                 "op": "eq",
                 "text": "set",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 5
+                }
               }
             },
             {
@@ -7702,10 +7554,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 0
+                }
               }
             },
             {
@@ -7714,10 +7565,9 @@
               "plan": {
                 "op": "eq",
                 "text": "protected",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 0
+                }
               }
             }
           ]
@@ -7740,10 +7590,9 @@
               "plan": {
                 "op": "eq",
                 "text": "set",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 5
+                }
               }
             },
             {
@@ -7757,10 +7606,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 0
+                }
               }
             },
             {
@@ -7769,10 +7617,9 @@
               "plan": {
                 "op": "eq",
                 "text": "public",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 0
+                }
               }
             }
           ]
@@ -7794,10 +7641,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 0
+                }
               }
             },
             {
@@ -7806,10 +7652,9 @@
               "plan": {
                 "op": "eq",
                 "text": "private",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 0
+                }
               }
             }
           ]
@@ -7831,10 +7676,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 0
+                }
               }
             },
             {
@@ -7843,10 +7687,9 @@
               "plan": {
                 "op": "eq",
                 "text": "protected",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 0
+                }
               }
             }
           ]
@@ -7868,10 +7711,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 0
+                }
               }
             },
             {
@@ -7880,10 +7722,9 @@
               "plan": {
                 "op": "eq",
                 "text": "public",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 0
+                }
               }
             }
           ]
@@ -7906,10 +7747,9 @@
               "plan": {
                 "op": "eq",
                 "text": "get",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 5
+                }
               }
             }
           ]
@@ -7932,10 +7772,9 @@
               "plan": {
                 "op": "eq",
                 "text": "set",
-                "fields": [
-                  "accessor_kind"
-                ],
-                "kinds": []
+                "slots": {
+                  "293": 5
+                }
               }
             }
           ]
@@ -9182,10 +9021,9 @@
                   33,
                   34
                 ],
-                "fields": [],
-                "kinds": [
-                  "accessibility_modifier"
-                ]
+                "slots": {
+                  "321": 1
+                }
               }
             },
             {
@@ -9194,10 +9032,9 @@
               "plan": {
                 "op": "eq",
                 "text": "private",
-                "fields": [],
-                "kinds": [
-                  "accessibility_modifier"
-                ]
+                "slots": {
+                  "321": 1
+                }
               }
             }
           ]
@@ -9219,10 +9056,9 @@
                   33,
                   34
                 ],
-                "fields": [],
-                "kinds": [
-                  "accessibility_modifier"
-                ]
+                "slots": {
+                  "321": 1
+                }
               }
             },
             {
@@ -9231,10 +9067,9 @@
               "plan": {
                 "op": "eq",
                 "text": "protected",
-                "fields": [],
-                "kinds": [
-                  "accessibility_modifier"
-                ]
+                "slots": {
+                  "321": 1
+                }
               }
             }
           ]
@@ -9256,10 +9091,9 @@
                   33,
                   34
                 ],
-                "fields": [],
-                "kinds": [
-                  "accessibility_modifier"
-                ]
+                "slots": {
+                  "321": 1
+                }
               }
             },
             {
@@ -9268,10 +9102,9 @@
               "plan": {
                 "op": "eq",
                 "text": "public",
-                "fields": [],
-                "kinds": [
-                  "accessibility_modifier"
-                ]
+                "slots": {
+                  "321": 1
+                }
               }
             }
           ]
@@ -9762,10 +9595,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "363": 0
+                }
               }
             },
             {
@@ -9774,10 +9606,9 @@
               "plan": {
                 "op": "eq",
                 "text": "private",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "363": 0
+                }
               }
             }
           ]
@@ -9799,10 +9630,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "363": 0
+                }
               }
             },
             {
@@ -9811,10 +9641,9 @@
               "plan": {
                 "op": "eq",
                 "text": "protected",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "363": 0
+                }
               }
             }
           ]
@@ -9836,10 +9665,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "363": 0
+                }
               }
             },
             {
@@ -9848,10 +9676,9 @@
               "plan": {
                 "op": "eq",
                 "text": "public",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "363": 0
+                }
               }
             }
           ]
@@ -10001,10 +9828,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "290": 2
+                }
               }
             },
             {
@@ -10013,10 +9839,9 @@
               "plan": {
                 "op": "eq",
                 "text": "private",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "290": 2
+                }
               }
             }
           ]
@@ -10038,10 +9863,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "290": 2
+                }
               }
             },
             {
@@ -10050,10 +9874,9 @@
               "plan": {
                 "op": "eq",
                 "text": "protected",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "290": 2
+                }
               }
             }
           ]
@@ -10075,10 +9898,9 @@
                   33,
                   34
                 ],
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "290": 2
+                }
               }
             },
             {
@@ -10087,10 +9909,9 @@
               "plan": {
                 "op": "eq",
                 "text": "public",
-                "fields": [
-                  "accessibility_modifier"
-                ],
-                "kinds": []
+                "slots": {
+                  "290": 2
+                }
               }
             }
           ]
@@ -10417,10 +10238,9 @@
                   33,
                   34
                 ],
-                "fields": [],
-                "kinds": [
-                  "accessibility_modifier"
-                ]
+                "slots": {
+                  "320": 1
+                }
               }
             },
             {
@@ -10429,10 +10249,9 @@
               "plan": {
                 "op": "eq",
                 "text": "private",
-                "fields": [],
-                "kinds": [
-                  "accessibility_modifier"
-                ]
+                "slots": {
+                  "320": 1
+                }
               }
             }
           ]
@@ -10454,10 +10273,9 @@
                   33,
                   34
                 ],
-                "fields": [],
-                "kinds": [
-                  "accessibility_modifier"
-                ]
+                "slots": {
+                  "320": 1
+                }
               }
             },
             {
@@ -10466,10 +10284,9 @@
               "plan": {
                 "op": "eq",
                 "text": "protected",
-                "fields": [],
-                "kinds": [
-                  "accessibility_modifier"
-                ]
+                "slots": {
+                  "320": 1
+                }
               }
             }
           ]
@@ -10491,10 +10308,9 @@
                   33,
                   34
                 ],
-                "fields": [],
-                "kinds": [
-                  "accessibility_modifier"
-                ]
+                "slots": {
+                  "320": 1
+                }
               }
             },
             {
@@ -10503,10 +10319,9 @@
               "plan": {
                 "op": "eq",
                 "text": "public",
-                "fields": [],
-                "kinds": [
-                  "accessibility_modifier"
-                ]
+                "slots": {
+                  "320": 1
+                }
               }
             }
           ]
@@ -11901,10 +11716,9 @@
               "plan": {
                 "op": "eq",
                 "text": "-",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "267": 0
+                }
               }
             }
           ]
@@ -11927,10 +11741,9 @@
               "plan": {
                 "op": "eq",
                 "text": "+",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "267": 0
+                }
               }
             }
           ]
@@ -11953,10 +11766,9 @@
               "plan": {
                 "op": "eq",
                 "text": "!",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "267": 0
+                }
               }
             }
           ]
@@ -11979,10 +11791,9 @@
               "plan": {
                 "op": "eq",
                 "text": "~",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "267": 0
+                }
               }
             }
           ]
@@ -12005,10 +11816,9 @@
               "plan": {
                 "op": "eq",
                 "text": "typeof",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "267": 0
+                }
               }
             }
           ]
@@ -12031,10 +11841,9 @@
               "plan": {
                 "op": "eq",
                 "text": "void",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "267": 0
+                }
               }
             }
           ]
@@ -12057,10 +11866,9 @@
               "plan": {
                 "op": "eq",
                 "text": "delete",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "267": 0
+                }
               }
             }
           ]
@@ -12209,10 +12017,9 @@
               "plan": {
                 "op": "eq",
                 "text": "++",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "415": 1
+                }
               }
             }
           ]
@@ -12235,10 +12042,9 @@
               "plan": {
                 "op": "eq",
                 "text": "--",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "415": 1
+                }
               }
             }
           ]
@@ -12286,10 +12092,9 @@
               "plan": {
                 "op": "eq",
                 "text": "++",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "416": 0
+                }
               }
             }
           ]
@@ -12312,10 +12117,9 @@
               "plan": {
                 "op": "eq",
                 "text": "--",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "416": 0
+                }
               }
             }
           ]
@@ -12430,10 +12234,9 @@
                   240,
                   236
                 ],
-                "fields": [
-                  "name"
-                ],
-                "kinds": []
+                "slots": {
+                  "427": 0
+                }
               }
             }
           ]

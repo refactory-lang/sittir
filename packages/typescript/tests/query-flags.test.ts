@@ -34,6 +34,7 @@ describe('a flag a boolean slot holds', () => {
 		expect(Object.keys(queryFlags[TSKindId.MethodDefinition]!)).toEqual(
 			expect.arrayContaining(['static', 'override', 'readonly', 'async'])
 		);
-		expect(queryFlags[TSKindId.ArrowFunction]!['async']).toEqual({ op: 'present', fields: ['async'], kinds: [] });
+		const asyncSlot = hooks.querySlots[TSKindId.ArrowFunction]!.find(([name]) => name === 'async')![1];
+		expect(queryFlags[TSKindId.ArrowFunction]!['async']).toEqual({ op: 'present', slots: { [TSKindId.ArrowFunction]: asyncSlot } });
 	});
 });

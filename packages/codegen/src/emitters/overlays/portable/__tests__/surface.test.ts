@@ -28,7 +28,7 @@ const emit = async (scm: string) =>
 		readTest: (entry) =>
 			entry.pins.length === 0
 				? []
-				: [{ up: 0, via: [], plan: { op: 'eq', text: '+', fields: ['operator'], kinds: [] } }],
+				: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { 1: 0 } } }],
 		kindIdOf: (kind) => `TSKindId.${kind[0]!.toUpperCase()}${kind.slice(1)}`,
 		fixedText: [['TSKindId.Plus', '+']],
 		flags: []
@@ -119,7 +119,7 @@ describe('emitPortableSurface', () => {
 		expect(text).toContain('\t\t"expression.call.nested": { ids: [TSKindId.Call], exact: false },');
 		expect(text).not.toContain('aliases');
 		expect(text).toContain(
-			'\t\t[TSKindId.Binary]: [{ path: "expression.binary.add", within: [], test: [{"up":0,"via":[],"plan":{"op":"eq","text":"+","fields":["operator"],"kinds":[]}}] }, { path: "expression.binary", within: [], test: [] }],'
+			'\t\t[TSKindId.Binary]: [{ path: "expression.binary.add", within: [], test: [{"up":0,"via":[],"plan":{"op":"eq","text":"+","slots":{"1":0}}}] }, { path: "expression.binary", within: [], test: [] }],'
 		);
 		expect(text).toContain(
 			'\t\t[TSKindId.Call]: [{ path: "expression.call.nested", within: [TSKindId.Block], test: [] }, { path: "expression.call", within: [], test: [] }],'

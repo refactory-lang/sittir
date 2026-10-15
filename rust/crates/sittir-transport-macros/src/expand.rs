@@ -29,6 +29,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
     let mut read_table: Vec<TokenStream> = vec![quote!(__unadmitted); data.variants.len()];
     let mut boxed_table: Vec<TokenStream> = vec![quote!(__unadmitted); data.variants.len()];
     let mut routes_table: Vec<TokenStream> = vec![quote!(__no_routes); data.variants.len()];
+    let mut routers_table: Vec<TokenStream> = vec![quote!(__no_router); data.variants.len()];
     let mut variant_fns = Vec::new();
     let mut blank = None;
     let mut payloads: Vec<(&Ident, &Type)> = Vec::new();
@@ -172,6 +173,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 read_table[at] = quote!(#read_fn);
                 boxed_table[at] = quote!(#boxed_fn);
                 routes_table[at] = quote!(<#ty as __rt::ReadTransport>::routes);
+                routers_table[at] = quote!(<#ty as __rt::ReadTransport>::router);
             }
             _ => return Err(syn::Error::new_spanned(variant, "a choice's variant is a unit or holds one transport")),
         }
@@ -244,9 +246,13 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             fn __no_routes(_cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed> {
                 ::core::option::Option::None
             }
+            fn __no_router(_grammar: __Kind, _display: __Kind) -> ::core::option::Option<__rt::Router> {
+                ::core::option::Option::None
+            }
             #(#variant_fns)*
             const __READS: &[__Read<#ident>] = &[#(#read_table),*];
             const __ROUTES: &[fn(&mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed>] = &[#(#routes_table),*];
+            const __ROUTERS: &[fn(__Kind, __Kind) -> ::core::option::Option<__rt::Router>] = &[#(#routers_table),*];
             const __READS_BOXED: &[__Read<::std::boxed::Box<#ident>>] = &[#(#boxed_table),*];
             fn __variant(grammar: __Kind, display: __Kind) -> ::core::option::Option<u16> {
                 #(#by_display)*
@@ -300,6 +306,9 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 fn routes(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed> {
                     let node = cursor.node();
                     __variant(__Kind(node.grammar_id()), __rt::display_id(&node)).and_then(|i| __ROUTES[i as usize](cursor))
+                }
+                fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
+                    __variant(grammar, display).and_then(|i| __ROUTERS[i as usize](grammar, display))
                 }
             }
             #has_layout
@@ -619,6 +628,7 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr) -> syn::
         .map_err(|e| syn::Error::new_spanned(pattern, format!("`{ident}`'s token interior does not compile as a Rust regex: {e}")))?;
     let flagged = LitStr::new(&flagged, pattern.span());
     let mut inits = common_inits(fields, "", false);
+    let mut captures = Vec::new();
     for field in fields {
         if let Role::Slot(slot) = &field.role {
             let capture = slot
@@ -627,12 +637,17 @@ fn interior_body(ident: &Ident, fields: &[Field<'_>], pattern: &LitStr) -> syn::
                 .ok_or_else(|| syn::Error::new_spanned(field.ident, "a token interior's slot names its capture"))?;
             let (name, ty) = (field.ident, field.ty);
             inits.push(quote!(#name: __rt::capture::<#ty>(&captures, #capture, __rt::SlotSite { kind: __KIND, slot: #capture, index })?,));
+            captures.push(capture);
         }
     }
     let pass = pass(0);
     let router = spelling_router();
     Ok(Body {
-        routes: quote!(),
+        routes: quote! {
+            fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
+                <Self as __rt::ReadTransport>::admits(grammar, display).then_some(__rt::Router::Interior(&__INTERIOR, &[#(#captures),*]))
+            }
+        },
         items: quote! {
             static __INTERIOR: __rt::Interior = __rt::Interior::new(#flagged);
             #router
@@ -685,8 +700,13 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
     } else {
         (quote!(), quote!())
     };
+    let wraps_hidden = attrs.wraps_hidden;
     Ok(Body {
-        routes: quote!(),
+        routes: quote! {
+            fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
+                <Self as __rt::ReadTransport>::admits(grammar, display).then_some(__rt::Router::Envelope { wraps_hidden: #wraps_hidden })
+            }
+        },
         items: quote!(),
         read: quote! {
             let __at = ctx.at_of(cursor);
@@ -826,6 +846,9 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                 let children = __rt::survey(cursor);
                 let routes = children.iter().map(__route).collect::<::core::result::Result<::std::vec::Vec<__rt::Route>, __rt::ReadError>>().ok()?;
                 ::core::option::Option::Some(__rt::Routed { children, routes, keys: &[#(#keys),*] })
+            }
+            fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
+                <Self as __rt::ReadTransport>::admits(grammar, display).then_some(__rt::Router::Children(__route))
             }
         },
         items: quote! {

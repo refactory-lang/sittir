@@ -1,6 +1,6 @@
-import type { PortableCondition, QueryPlan, QuerySubject, SlotRoutes } from '@sittir/types';
+import type { PortableCondition, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
 import type { MemberRoute, SlotStep } from '../../../bindings/routes.ts';
-import { keywordTestOf, type PresenceKeywordOf, type SlotRoutesOf } from './read-tests.ts';
+import { keywordTestOf, type PresenceKeywordOf, type SlotSubjectOf } from './read-tests.ts';
 
 export interface ClaimFlag {
 	readonly flag: string;
@@ -12,7 +12,7 @@ export interface FlagPlansInput {
 	readonly kind: string;
 	readonly members: readonly MemberRoute[];
 	readonly claimFlags: readonly ClaimFlag[];
-	readonly routesOf: SlotRoutesOf;
+	readonly subjectOf: SlotSubjectOf;
 	readonly presenceOf: PresenceKeywordOf;
 	readonly typesOf: (kind: string) => readonly number[];
 }
@@ -37,24 +37,24 @@ const isNative = (plan: QueryPlan<QuerySubject>): plan is QueryPlan => {
 };
 
 export function flagPlansOf(input: FlagPlansInput): Map<string, QueryPlan | null> {
-	const { kind, routesOf, presenceOf, typesOf } = input;
+	const { kind, subjectOf, presenceOf, typesOf } = input;
 	const refuse = (flag: string, why: string): never => {
 		throw new Error(`portable: cannot test ${kind}'s flag ${flag}: ${why}`);
 	};
-	const routesAt = (flag: string, step: SlotStep): SlotRoutes => routesOf(step.owner, step.slot) ?? refuse(flag, `no routes for ${step.owner}'s slot ${step.slot}`);
+	const subjectAt = (flag: string, step: SlotStep): SlotSubject => subjectOf(step.owner, step.slot) ?? refuse(flag, `no number for ${step.owner}'s slot ${step.slot}`);
 	const leafOf = (route: MemberRoute, last: SlotStep): QueryPlan => {
 		switch (route.route) {
 			case 'slot':
-				return { op: 'present', ...routesAt(route.name, last) };
+				return { op: 'present', ...subjectAt(route.name, last) };
 			case 'presence': {
-				const plan = keywordTestOf(last.owner, last.slot, route.token, routesOf, presenceOf);
+				const plan = keywordTestOf(last.owner, last.slot, route.token, subjectOf, presenceOf);
 				return typeof plan === 'string' ? refuse(route.name, plan) : plan;
 			}
 			case 'kind':
-				return { op: 'is', types: typesOf(route.kind), ...routesAt(route.name, last) };
+				return { op: 'is', types: typesOf(route.kind), ...subjectAt(route.name, last) };
 			case 'nested': {
 				const captured = route.selector.kind;
-				return captured === null || captured === '_' ? { op: 'present', ...routesAt(route.name, last) } : { op: 'is', types: typesOf(captured), ...routesAt(route.name, last) };
+				return captured === null || captured === '_' ? { op: 'present', ...subjectAt(route.name, last) } : { op: 'is', types: typesOf(captured), ...subjectAt(route.name, last) };
 			}
 		}
 	};
@@ -62,10 +62,10 @@ export function flagPlansOf(input: FlagPlansInput): Map<string, QueryPlan | null
 		if (route.spelled === true) return ALWAYS;
 		if (route.path === undefined) return refuse(route.name, 'its route reaches no slot');
 		const last = route.path.at(-1) ?? refuse(route.name, 'its route has no step');
-		return route.path.slice(0, -1).reduceRight<QueryPlan>((of, step) => ({ op: 'child', ...routesAt(route.name, step), ...(step.anchor === undefined ? {} : { anchor: step.anchor }), of }), leafOf(route, last));
+		return route.path.slice(0, -1).reduceRight<QueryPlan>((of, step) => ({ op: 'child', ...subjectAt(route.name, step), ...(step.anchor === undefined ? {} : { anchor: step.anchor }), of }), leafOf(route, last));
 	};
 	const conditionPlan = (condition: PortableCondition): QueryPlan<QuerySubject> =>
-		condition.via.reduceRight<QueryPlan<QuerySubject>>((of, step) => ({ op: 'child', fields: step.fields, kinds: step.kinds, ...(step.anchor === undefined ? {} : { anchor: step.anchor }), of }), condition.plan);
+		condition.via.reduceRight<QueryPlan<QuerySubject>>((of, step) => ({ op: 'child', slots: step.slots, ...(step.anchor === undefined ? {} : { anchor: step.anchor }), of }), condition.plan);
 	const alternatives = new Map<string, QueryPlan[]>();
 	const add = (flag: string, plan: QueryPlan): void => {
 		const known = alternatives.get(flag) ?? alternatives.set(flag, []).get(flag)!;

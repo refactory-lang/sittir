@@ -1,6 +1,11 @@
 //! The native half of a node query: the `where` plan a query compiles to, and
 //! the batch a descendant walk returns.
 
+use std::collections::HashMap;
+
+use tree_sitter::{Node, TreeCursor};
+
+use crate::read::{index_of, Child, Route, Router};
 use crate::slot::NodeCoordinate;
 use crate::types::Span;
 
@@ -54,51 +59,51 @@ impl Address {
     }
 }
 
-/// A slot as the parser spells it: the fields its children arrive under, and
-/// the kinds of its children that arrive under no field. The client compiles a
-/// `where` condition's slots to these, so the evaluator knows no slot names.
-#[derive(serde::Deserialize)]
-pub struct Routes {
-    pub fields: Vec<String>,
-    pub kinds: Vec<String>,
+/// A slot by its number in each kind that has it, keyed by the kind a
+/// coordinate of the node carries (`ReadCtx::node_kind`). The number is the
+/// slot field's position among the kind's transport slots, the numbering
+/// `Route::Slot` uses. A node of a kind the map lacks holds nothing there.
+#[derive(serde::Deserialize, Debug, Clone, Default)]
+pub struct Slots {
+    #[serde(deserialize_with = "numbered_by_kind")]
+    pub slots: HashMap<u16, u16>,
 }
 
-impl Routes {
-    fn admits(&self, field: Option<&str>, child: &tree_sitter::Node<'_>) -> bool {
-        match field {
-            Some(field) => self.fields.iter().any(|f| f == field),
-            None => self.kinds.iter().any(|k| k == child.kind()),
-        }
-    }
+/// A JSON object of slot numbers by kind id: its keys are the ids as text.
+fn numbered_by_kind<'de, D: serde::Deserializer<'de>>(deserializer: D) -> Result<HashMap<u16, u16>, D::Error> {
+    let by_text: HashMap<String, u16> = serde::Deserialize::deserialize(deserializer)?;
+    by_text
+        .into_iter()
+        .map(|(kind, slot)| kind.parse().map(|kind| (kind, slot)).map_err(|_| serde::de::Error::custom(format!("kind id {kind:?} is not a number"))))
+        .collect()
 }
 
-/// A `where` condition over a node's slots, each slot given by its parser
-/// routes.
+/// A `where` condition over a node's slots, each slot given by its numbers.
 #[derive(serde::Deserialize)]
 #[serde(tag = "op", rename_all = "lowercase")]
 pub enum PlanSpec {
     Eq {
         #[serde(flatten)]
-        routes: Routes,
+        slots: Slots,
         text: String,
     },
     Match {
         #[serde(flatten)]
-        routes: Routes,
+        slots: Slots,
         pattern: String,
     },
     Present {
         #[serde(flatten)]
-        routes: Routes,
+        slots: Slots,
     },
     Is {
         #[serde(flatten)]
-        routes: Routes,
+        slots: Slots,
         types: Vec<u16>,
     },
     Child {
         #[serde(flatten)]
-        routes: Routes,
+        slots: Slots,
         #[serde(default)]
         anchor: Option<Anchor>,
         of: Box<PlanSpec>,
@@ -108,8 +113,8 @@ pub enum PlanSpec {
     Or { of: Vec<PlanSpec> },
 }
 
-/// Which of the children a child step's routes admit it tests: the first, the
-/// last, or the one child when exactly one is admitted.
+/// Which of the nodes a child step's slot holds it tests: the first, the
+/// last, or the one node when the slot holds exactly one.
 #[derive(serde::Deserialize, Clone, Copy, Debug, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum Anchor {
@@ -120,14 +125,30 @@ pub enum Anchor {
 
 /// A [`PlanSpec`] with its patterns compiled.
 pub enum Plan {
-    Eq { routes: Routes, text: String },
-    Match { routes: Routes, pattern: regex::Regex },
-    Present { routes: Routes },
-    Is { routes: Routes, types: Vec<u16> },
-    Child { routes: Routes, anchor: Option<Anchor>, of: Box<Plan> },
+    Eq { slots: Slots, text: String },
+    Match { slots: Slots, pattern: regex::Regex },
+    Present { slots: Slots },
+    Is { slots: Slots, types: Vec<u16> },
+    Child { slots: Slots, anchor: Option<Anchor>, of: Box<Plan> },
     Not(Box<Plan>),
     And(Vec<Plan>),
     Or(Vec<Plan>),
+}
+
+/// What a plan reads a node with: the source, the kind a coordinate of a
+/// node carries (`ReadCtx::node_kind`), and how a node's kind finds its
+/// slots (`ReadTransport::router`).
+pub struct QueryCtx<'a> {
+    pub source: &'a str,
+    pub stamp: &'a dyn Fn(&Node<'_>) -> u16,
+    pub router: &'a dyn Fn(&Node<'_>) -> Option<Router>,
+}
+
+/// One value a slot holds: its text, and the node that spells it, by its
+/// descendant index and kind, unless it is a group of a token's text.
+struct Hit<'s> {
+    node: Option<(u32, u16)>,
+    text: &'s str,
 }
 
 impl Plan {
@@ -135,147 +156,309 @@ impl Plan {
     /// back-reference, a look-around) is refused, never matched differently.
     pub fn compile(spec: PlanSpec) -> Result<Plan, String> {
         Ok(match spec {
-            PlanSpec::Eq { routes, text } => Plan::Eq { routes, text },
-            PlanSpec::Match { routes, pattern } => Plan::Match {
-                routes,
+            PlanSpec::Eq { slots, text } => Plan::Eq { slots, text },
+            PlanSpec::Match { slots, pattern } => Plan::Match {
+                slots,
                 pattern: regex::Regex::new(&pattern).map_err(|e| e.to_string())?,
             },
-            PlanSpec::Present { routes } => Plan::Present { routes },
-            PlanSpec::Is { routes, types } => Plan::Is { routes, types },
-            PlanSpec::Child { routes, anchor, of } => Plan::Child { routes, anchor, of: Box::new(Plan::compile(*of)?) },
+            PlanSpec::Present { slots } => Plan::Present { slots },
+            PlanSpec::Is { slots, types } => Plan::Is { slots, types },
+            PlanSpec::Child { slots, anchor, of } => Plan::Child { slots, anchor, of: Box::new(Plan::compile(*of)?) },
             PlanSpec::Not { of } => Plan::Not(Box::new(Plan::compile(*of)?)),
             PlanSpec::And { of } => Plan::And(of.into_iter().map(Plan::compile).collect::<Result<_, _>>()?),
             PlanSpec::Or { of } => Plan::Or(of.into_iter().map(Plan::compile).collect::<Result<_, _>>()?),
         })
     }
 
-    /// Whether `node` satisfies the condition: a comparison holds when some
-    /// child the slot's routes admit has the text or matches, a presence leaf
-    /// when some child the slot's routes admit exists, an `is` leaf when such
-    /// a child's kind, as `stamp` reads it, is one of the types, and a child
-    /// step when its condition holds on one of the admitted children its
-    /// anchor keeps. `stamp` is the kind a coordinate of the node carries.
-    pub fn holds(&self, node: &tree_sitter::Node<'_>, source: &str, stamp: &dyn Fn(&tree_sitter::Node<'_>) -> u16) -> bool {
+    /// Whether the node the cursor is on satisfies the condition: a
+    /// comparison holds when some value its slot holds has the text or
+    /// matches, a presence leaf when the slot holds a value, an `is` leaf
+    /// when a node the slot holds has one of the types, and a child step
+    /// when its condition holds on one of the slot's nodes its anchor keeps.
+    /// The cursor was created at the tree's root and ends where it started.
+    pub fn holds(&self, cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'_>) -> bool {
         match self {
-            Plan::Eq { routes, text } => any_value(node, source, routes, |value| value == text),
-            Plan::Match { routes, pattern } => any_value(node, source, routes, |value| pattern.is_match(value)),
-            Plan::Present { routes } => any_value(node, source, routes, |_| true),
-            Plan::Is { routes, types } => admitted_children(node, routes).any(|child| types.contains(&stamp(&child))),
-            Plan::Child { routes, anchor, of } => {
-                let admitted: Vec<_> = admitted_children(node, routes).collect();
+            Plan::Eq { slots, text } => any_hit(cursor, ctx, slots, |hit| hit.text == text),
+            Plan::Match { slots, pattern } => any_hit(cursor, ctx, slots, |hit| pattern.is_match(hit.text)),
+            Plan::Present { slots } => any_hit(cursor, ctx, slots, |_| true),
+            Plan::Is { slots, types } => any_hit(cursor, ctx, slots, |hit| hit.node.is_some_and(|(_, kind)| types.contains(&kind))),
+            Plan::Child { slots, anchor, of } => {
+                let mut held = Vec::new();
+                if !slot_hits(cursor, ctx, slots, &mut |hit| held.extend(hit.node.map(|(index, _)| index))) {
+                    return false;
+                }
                 let tested = match anchor {
-                    None => &admitted[..],
-                    Some(Anchor::First) => &admitted[..admitted.len().min(1)],
-                    Some(Anchor::Last) => &admitted[admitted.len().saturating_sub(1)..],
-                    Some(Anchor::Only) if admitted.len() == 1 => &admitted[..],
+                    None => &held[..],
+                    Some(Anchor::First) => &held[..held.len().min(1)],
+                    Some(Anchor::Last) => &held[held.len().saturating_sub(1)..],
+                    Some(Anchor::Only) if held.len() == 1 => &held[..],
                     Some(Anchor::Only) => &[],
                 };
-                tested.iter().any(|child| of.holds(child, source, stamp))
+                let own = index_of(cursor);
+                let found = tested.iter().any(|&index| {
+                    cursor.goto_descendant(index as usize);
+                    of.holds(cursor, ctx)
+                });
+                cursor.goto_descendant(own as usize);
+                found
             }
-            Plan::Not(of) => !of.holds(node, source, stamp),
-            Plan::And(of) => of.iter().all(|p| p.holds(node, source, stamp)),
-            Plan::Or(of) => of.iter().any(|p| p.holds(node, source, stamp)),
+            Plan::Not(of) => !of.holds(cursor, ctx),
+            Plan::And(of) => of.iter().all(|p| p.holds(cursor, ctx)),
+            Plan::Or(of) => of.iter().any(|p| p.holds(cursor, ctx)),
         }
     }
 }
 
-/// Whether some non-extra child of `node` that `routes` admit has source text
-/// passing `test`.
-fn admitted_children<'a, 'tree>(node: &'a tree_sitter::Node<'tree>, routes: &'a Routes) -> impl Iterator<Item = tree_sitter::Node<'tree>> + 'a {
-    (0..node.child_count() as u32)
-        .filter_map(move |i| node.child(i).filter(|child| !child.is_extra() && routes.admits(node.field_name_for_child(i), child)))
+/// Whether some value the slot holds on the node the cursor is on passes
+/// `test`, and the node's slot was read at all (`slot_hits`).
+fn any_hit(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'_>, slots: &Slots, mut test: impl FnMut(&Hit<'_>) -> bool) -> bool {
+    let mut found = false;
+    slot_hits(cursor, ctx, slots, &mut |hit| found |= test(&hit)) && found
 }
 
-fn any_value(node: &tree_sitter::Node<'_>, source: &str, routes: &Routes, test: impl Fn(&str) -> bool) -> bool {
-    admitted_children(node, routes).any(|child| source.get(child.byte_range()).is_some_and(&test))
+/// Visit each value the slot holds on the node the cursor is on, as the
+/// node's read finds it (`Router`), with no allocation. `false` when the node
+/// holds nothing there: its kind has no number for the slot, no router, or
+/// a child the read cannot route, so the query and the read agree. The
+/// cursor was created at the tree's root and ends where it started.
+fn slot_hits<'s>(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'s>, slots: &Slots, visit: &mut dyn FnMut(Hit<'s>)) -> bool {
+    let node = cursor.node();
+    let (Some(&slot), Some(router)) = (slots.slots.get(&(ctx.stamp)(&node)), (ctx.router)(&node)) else {
+        return false;
+    };
+    let text = |node: &Node<'_>| ctx.source.get(node.byte_range()).unwrap_or("");
+    match router {
+        Router::Children(route) => {
+            let mut routed = true;
+            if cursor.goto_first_child() {
+                loop {
+                    let child = Child::at(cursor);
+                    match route(&child) {
+                        Ok(Route::Slot { slot: at, .. }) if at == slot => {
+                            let node = cursor.node();
+                            visit(Hit { node: Some((child.index, (ctx.stamp)(&node))), text: text(&node) });
+                        }
+                        Ok(_) => {}
+                        Err(_) => routed = false,
+                    }
+                    if !cursor.goto_next_sibling() {
+                        break;
+                    }
+                }
+                cursor.goto_parent();
+            }
+            routed
+        }
+        Router::Interior(interior, captures) => {
+            let Some(groups) = interior.captures(text(&node)) else { return false };
+            if let Some(group) = captures.get(slot as usize).and_then(|name| groups.name(name)) {
+                visit(Hit { node: None, text: group.as_str() });
+            }
+            true
+        }
+        Router::Envelope { wraps_hidden } => {
+            if slot != 0 {
+                return false;
+            }
+            if !wraps_hidden {
+                visit(Hit { node: Some((index_of(cursor), node.grammar_id())), text: text(&node) });
+                return true;
+            }
+            let mut wrapped = None;
+            if cursor.goto_first_child() {
+                loop {
+                    let child = Child::at(cursor);
+                    if !child.trivia {
+                        let node = cursor.node();
+                        wrapped = Some(Hit { node: Some((child.index, (ctx.stamp)(&node))), text: text(&node) });
+                        break;
+                    }
+                    if !cursor.goto_next_sibling() {
+                        break;
+                    }
+                }
+                cursor.goto_parent();
+            }
+            let Some(hit) = wrapped else { return false };
+            visit(hit);
+            true
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::read::{Interior, ReadError};
+    use crate::types::KindId;
+    use std::sync::OnceLock;
 
-    const KIND: fn(&tree_sitter::Node<'_>) -> u16 = |node| node.grammar_id();
-
-    #[test]
-    fn a_presence_leaf_holds_when_a_child_the_routes_admit_exists() {
-        let language: tree_sitter::Language = tree_sitter_python::LANGUAGE.into();
-        let mut parser = tree_sitter::Parser::new();
-        parser.set_language(&language).unwrap();
-        let source = "async def a():\n    pass\ndef b():\n    pass\n";
-        let tree = parser.parse(source, None).unwrap();
-        let defs: Vec<_> = (0..2).map(|i| tree.root_node().named_child(i).unwrap()).collect();
-        let present: PlanSpec = serde_json::from_str(r#"{"op":"present","fields":[],"kinds":["async"]}"#).unwrap();
-        let present = Plan::compile(present).unwrap();
-        assert!(present.holds(&defs[0], source, &KIND));
-        assert!(!present.holds(&defs[1], source, &KIND));
-        let absent = Plan::Not(Box::new(present));
-        assert!(absent.holds(&defs[1], source, &KIND));
+    fn language() -> &'static tree_sitter::Language {
+        static LANGUAGE: OnceLock<tree_sitter::Language> = OnceLock::new();
+        LANGUAGE.get_or_init(|| tree_sitter_rust::LANGUAGE.into())
     }
 
-    fn rust_items(source: &str) -> tree_sitter::Tree {
-        let language: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
-        let mut parser = tree_sitter::Parser::new();
-        parser.set_language(&language).unwrap();
-        parser.parse(source, None).unwrap()
+    enum Sel {
+        Field(&'static str),
+        Kind(&'static str),
+    }
+
+    /// Each test kind's slots in number order, and whether a named child
+    /// none of them takes is a child the read cannot route.
+    const TABLES: &[(&str, &[Sel], bool)] = &[
+        ("function_item", &[Sel::Field("name"), Sel::Field("parameters"), Sel::Kind("function_modifiers")], false),
+        ("parameters", &[Sel::Kind("parameter"), Sel::Kind("self_parameter")], false),
+        ("parameter", &[Sel::Field("pattern"), Sel::Field("type")], false),
+        ("function_modifiers", &[Sel::Kind("async"), Sel::Kind("const")], false),
+        ("source_file", &[Sel::Kind("function_item")], true),
+    ];
+
+    fn route<const T: usize>(child: &Child) -> Result<Route, ReadError> {
+        if child.trivia {
+            return Ok(Route::Trivia);
+        }
+        let (_, slots, strict) = TABLES[T];
+        let kind = language().node_kind_for_id(child.grammar.0).unwrap_or("");
+        let field = child.field.and_then(|field| language().field_name_for_id(field.0));
+        let slot = slots.iter().position(|sel| match sel {
+            Sel::Field(name) => field == Some(*name),
+            Sel::Kind(name) => field.is_none() && kind == *name,
+        });
+        match slot {
+            Some(slot) => Ok(Route::Slot { slot: slot as u16, scalar: false }),
+            None if strict && child.named => Err(ReadError::Unrouted { kind: KindId(0), child: child.grammar, index: child.index }),
+            None => Ok(Route::Layout),
+        }
+    }
+
+    const ROUTES: [crate::read::ChildRoute; 5] = [route::<0>, route::<1>, route::<2>, route::<3>, route::<4>];
+
+    static INTEGER: Interior = Interior::new("^(?<digits>[0-9]+)(?<suffix>u8|i32)?$");
+
+    fn router(node: &Node<'_>) -> Option<Router> {
+        match node.kind() {
+            "integer_literal" => Some(Router::Interior(&INTEGER, &["digits", "suffix"])),
+            "type_identifier" => Some(Router::Envelope { wraps_hidden: false }),
+            kind => TABLES.iter().position(|(name, ..)| *name == kind).map(|t| Router::Children(ROUTES[t])),
+        }
+    }
+
+    fn id(kind: &str) -> u16 {
+        language().id_for_node_kind(kind, true)
+    }
+
+    /// `slots` JSON for slot `n` of each kind.
+    fn slots(of: &[(&str, u16)]) -> String {
+        let pairs: Vec<String> = of.iter().map(|(kind, n)| format!(r#""{}":{n}"#, id(kind))).collect();
+        format!(r#""slots":{{{}}}"#, pairs.join(","))
     }
 
     fn plan(json: &str) -> Plan {
         Plan::compile(serde_json::from_str(json).unwrap()).unwrap()
     }
 
+    /// Whether `plan` holds on each node of `kind`, in pre-order, checking
+    /// the cursor ends where it started.
+    fn eval(plan: &Plan, source: &str, kind: &str) -> Vec<bool> {
+        let mut parser = tree_sitter::Parser::new();
+        parser.set_language(language()).unwrap();
+        let tree = parser.parse(source, None).unwrap();
+        let stamp = |node: &Node<'_>| crate::read::display_id(node).0;
+        let ctx = QueryCtx { source, stamp: &stamp, router: &router };
+        let mut cursor = tree.walk();
+        let mut out = Vec::new();
+        for index in 0..tree.root_node().descendant_count() {
+            cursor.goto_descendant(index);
+            if cursor.node().kind() == kind {
+                out.push(plan.holds(&mut cursor, &ctx));
+                assert_eq!(cursor.descendant_index(), index, "the cursor ends where it started");
+            }
+        }
+        out
+    }
+
     #[test]
-    fn a_child_step_holds_when_its_condition_holds_on_an_admitted_child() {
+    fn a_presence_leaf_holds_when_the_slot_holds_a_value() {
         let source = "async fn a() {}\nfn b() {}\nconst fn c() {}\n";
-        let tree = rust_items(source);
-        let items: Vec<_> = (0..3).map(|i| tree.root_node().named_child(i).unwrap()).collect();
-        let is_async = plan(r#"{"op":"child","fields":[],"kinds":["function_modifiers"],"of":{"op":"present","fields":[],"kinds":["async"]}}"#);
-        assert_eq!(items.iter().map(|item| is_async.holds(item, source, &KIND)).collect::<Vec<_>>(), [true, false, false]);
+        let modifiers = format!(r#"{{"op":"child",{},"of":{{"op":"present",{}}}}}"#, slots(&[("function_item", 2)]), slots(&[("function_modifiers", 0)]));
+        assert_eq!(eval(&plan(&modifiers), source, "function_item"), [true, false, false]);
+        let absent = Plan::Not(Box::new(plan(&modifiers)));
+        assert_eq!(eval(&absent, source, "function_item"), [false, true, true]);
     }
 
     #[test]
-    fn a_child_step_nests_and_skips_extras() {
+    fn a_child_step_nests_and_skips_trivia() {
         let source = "fn a(x: u8) {}\nfn b(/* c */ y: i32) {}\n";
-        let tree = rust_items(source);
-        let items: Vec<_> = (0..2).map(|i| tree.root_node().named_child(i).unwrap()).collect();
-        let u8_param = plan(
-            r#"{"op":"child","fields":["parameters"],"kinds":[],"of":{"op":"child","fields":[],"kinds":["parameter"],"of":{"op":"eq","fields":["type"],"kinds":[],"text":"u8"}}}"#,
+        let u8_param = format!(
+            r#"{{"op":"child",{},"of":{{"op":"child",{},"of":{{"op":"eq",{},"text":"u8"}}}}}}"#,
+            slots(&[("function_item", 1)]),
+            slots(&[("parameters", 0)]),
+            slots(&[("parameter", 1)])
         );
-        assert_eq!(items.iter().map(|item| u8_param.holds(item, source, &KIND)).collect::<Vec<_>>(), [true, false]);
-        let any_param = plan(r#"{"op":"child","fields":["parameters"],"kinds":[],"of":{"op":"child","fields":[],"kinds":["parameter"],"anchor":"only","of":{"op":"and","of":[]}}}"#);
-        assert!(any_param.holds(&items[1], source, &KIND), "the comment before the parameter is not counted");
+        assert_eq!(eval(&plan(&u8_param), source, "function_item"), [true, false]);
+        let one_param = format!(r#"{{"op":"child",{},"anchor":"only","of":{{"op":"and","of":[]}}}}"#, slots(&[("parameters", 0)]));
+        assert_eq!(eval(&plan(&one_param), source, "parameters"), [true, true], "the comment before the parameter is not counted");
     }
 
     #[test]
-    fn an_is_leaf_tests_the_stamped_kind_of_an_admitted_child() {
+    fn an_is_leaf_tests_the_stamped_kind_of_a_node_the_slot_holds() {
         let source = "fn a() {}\nfn b(&self) {}\n";
-        let tree = rust_items(source);
-        let language = tree.language();
-        let id = |kind: &str| language.id_for_node_kind(kind, true);
-        let items: Vec<_> = (0..2).map(|i| tree.root_node().named_child(i).unwrap()).collect();
-        let receiver = plan(&format!(
-            r#"{{"op":"child","fields":["parameters"],"kinds":[],"of":{{"op":"is","types":[{}],"fields":[],"kinds":["self_parameter","parameter"]}}}}"#,
-            id("self_parameter")
-        ));
-        assert_eq!(items.iter().map(|item| receiver.holds(item, source, &KIND)).collect::<Vec<_>>(), [false, true]);
-        let named = plan(&format!(r#"{{"op":"is","types":[{}],"fields":["name"],"kinds":[]}}"#, id("identifier")));
-        assert!(named.holds(&items[0], source, &KIND));
-        let elsewhere = plan(&format!(r#"{{"op":"is","types":[{}],"fields":["name"],"kinds":[]}}"#, id("self_parameter")));
-        assert!(!elsewhere.holds(&items[0], source, &KIND));
+        let receiver = format!(
+            r#"{{"op":"child",{},"of":{{"op":"is","types":[{}],{}}}}}"#,
+            slots(&[("function_item", 1)]),
+            id("self_parameter"),
+            slots(&[("parameters", 1)])
+        );
+        assert_eq!(eval(&plan(&receiver), source, "function_item"), [false, true]);
+        let named = format!(r#"{{"op":"is","types":[{}],{}}}"#, id("identifier"), slots(&[("function_item", 0)]));
+        assert_eq!(eval(&plan(&named), source, "function_item"), [true, true]);
     }
 
     #[test]
-    fn an_anchor_narrows_the_admitted_children_first() {
+    fn an_anchor_narrows_the_nodes_the_slot_holds_first() {
         let source = "fn one(a: u8) {}\nfn two(a: u8, b: i32) {}\n";
-        let tree = rust_items(source);
-        let params: Vec<_> = (0..2).map(|i| tree.root_node().named_child(i).unwrap().child_by_field_name("parameters").unwrap()).collect();
         let typed = |anchor: &str, text: &str| {
-            plan(&format!(r#"{{"op":"child","fields":[],"kinds":["parameter"],"anchor":"{anchor}","of":{{"op":"eq","fields":["type"],"kinds":[],"text":"{text}"}}}}"#))
+            plan(&format!(
+                r#"{{"op":"child",{},"anchor":"{anchor}","of":{{"op":"eq",{},"text":"{text}"}}}}"#,
+                slots(&[("parameters", 0)]),
+                slots(&[("parameter", 1)])
+            ))
         };
-        assert!(typed("only", "u8").holds(&params[0], source, &KIND));
-        assert!(!typed("only", "u8").holds(&params[1], source, &KIND), "only fails on two children");
-        assert!(typed("first", "u8").holds(&params[1], source, &KIND));
-        assert!(!typed("first", "i32").holds(&params[1], source, &KIND));
-        assert!(typed("last", "i32").holds(&params[1], source, &KIND));
-        assert!(!typed("last", "u8").holds(&params[1], source, &KIND));
+        assert_eq!(eval(&typed("only", "u8"), source, "parameters"), [true, false], "only fails on two nodes");
+        assert_eq!(eval(&typed("first", "u8"), source, "parameters"), [true, true]);
+        assert_eq!(eval(&typed("first", "i32"), source, "parameters"), [false, false]);
+        assert_eq!(eval(&typed("last", "i32"), source, "parameters"), [false, true]);
+    }
+
+    #[test]
+    fn a_node_holds_nothing_where_its_kind_has_no_number_or_a_child_does_not_route() {
+        let source = "fn a() {}\nstruct S;\n";
+        let unnumbered = format!(r#"{{"op":"present",{}}}"#, slots(&[("parameters", 0)]));
+        assert_eq!(eval(&plan(&unnumbered), source, "function_item"), [false]);
+        let items = format!(r#"{{"op":"present",{}}}"#, slots(&[("source_file", 0)]));
+        assert_eq!(eval(&plan(&items), source, "source_file"), [false], "the struct is a child the read cannot route");
+        assert_eq!(eval(&plan(&items), "fn a() {}\n", "source_file"), [true]);
+    }
+
+    #[test]
+    fn an_interior_slot_is_the_group_its_read_captures() {
+        let source = "const A: u8 = 1u8;\nconst B: i32 = 2;\n";
+        let suffix = |text: &str| plan(&format!(r#"{{"op":"eq",{},"text":"{text}"}}"#, slots(&[("integer_literal", 1)])));
+        assert_eq!(eval(&suffix("u8"), source, "integer_literal"), [true, false]);
+        let unsuffixed = Plan::Not(Box::new(plan(&format!(r#"{{"op":"present",{}}}"#, slots(&[("integer_literal", 1)])))));
+        assert_eq!(eval(&unsuffixed, source, "integer_literal"), [false, true]);
+        let digits = plan(&format!(r#"{{"op":"match",{},"pattern":"^2$"}}"#, slots(&[("integer_literal", 0)])));
+        assert_eq!(eval(&digits, source, "integer_literal"), [false, true]);
+    }
+
+    #[test]
+    fn an_envelope_slot_is_the_node_itself() {
+        let source = "struct Foo;\nstruct Bar;\n";
+        let named = |text: &str| plan(&format!(r#"{{"op":"eq",{},"text":"{text}"}}"#, slots(&[("type_identifier", 0)])));
+        assert_eq!(eval(&named("Bar"), source, "type_identifier"), [false, true]);
+        let content = plan(&format!(r#"{{"op":"is","types":[{}],{}}}"#, id("identifier"), slots(&[("type_identifier", 0)])));
+        assert_eq!(eval(&content, source, "type_identifier"), [true, true], "the content is read as its own kind");
+        let beyond = plan(&format!(r#"{{"op":"present",{}}}"#, slots(&[("type_identifier", 1)])));
+        assert_eq!(eval(&beyond, source, "type_identifier"), [false, false]);
     }
 }

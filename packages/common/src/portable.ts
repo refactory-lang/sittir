@@ -1,4 +1,4 @@
-import type { PortableCondition, PortableReadEntry, PortableTable, QuerySlots, QuerySubject, SlotRoutes } from '@sittir/types';
+import type { PortableCondition, PortableReadEntry, PortableTable, QuerySlots, QuerySubject, SlotSubject } from '@sittir/types';
 import { anchored, holds, slotItems } from './query.ts';
 import { spanSlicer, type ByteSpan } from './span.ts';
 import { treeOf } from './tree-token.ts';
@@ -17,12 +17,6 @@ const asItem = (value: unknown): Item | undefined => (typeof value === 'number' 
 
 const kindOf = (item: Item): number => (typeof item === 'number' ? item : item.$type);
 
-const sameRoutes = (a: SlotRoutes, b: SlotRoutes): boolean =>
-	a.fields.length === b.fields.length &&
-	a.kinds.length === b.kinds.length &&
-	a.fields.every((field, i) => field === b.fields[i]) &&
-	a.kinds.every((kind, i) => kind === b.kinds[i]);
-
 function placed(entry: PortableReadEntry, context: Context): boolean {
 	if (entry.within.length === 0) return true;
 	if (context === undefined || context.length < entry.within.length) return false;
@@ -30,8 +24,9 @@ function placed(entry: PortableReadEntry, context: Context): boolean {
 }
 
 export function portableSurface<Kinds, Is>(table: PortableTable, querySlots: QuerySlots): { readonly kinds: Kinds; readonly is: Is } {
-	const itemsIn = (node: Node, routes: SlotRoutes): readonly unknown[] => {
-		const slot = querySlots[node.$type]?.find(([, r]) => sameRoutes(r, routes));
+	const itemsIn = (node: Node, subject: SlotSubject): readonly unknown[] => {
+		const number = subject.slots[node.$type];
+		const slot = number === undefined ? undefined : querySlots[node.$type]?.find(([, n]) => n === number);
 		if (slot === undefined) return [];
 		const [accessor, , keyword] = slot;
 		const items = slotItems(node, accessor);

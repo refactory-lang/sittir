@@ -9,7 +9,7 @@ import type {
 	QuerySubject,
 	Recorder,
 	SlotRef,
-	SlotRoutes,
+	SlotSubject,
 	StepAnchor,
 	TransportCoordinate
 } from '@sittir/types';
@@ -114,13 +114,13 @@ function kindLabel(context: Context, kind: number): string {
 }
 
 interface QuerySlot {
-	readonly routes: SlotRoutes;
+	readonly subject: SlotSubject;
 	readonly keyword: string | undefined;
 }
 
 const slotTables = new WeakMap<QuerySlots, Map<number, ReadonlyMap<string, QuerySlot>>>();
 const NO_SLOTS: ReadonlyMap<string, QuerySlot> = new Map();
-const NO_ROUTES: SlotRoutes = Object.freeze({ fields: [], kinds: [] });
+const NO_SLOT: SlotSubject = Object.freeze({ slots: Object.freeze({}) });
 
 function slotsOf(table: QuerySlots, kind: number): ReadonlyMap<string, QuerySlot> {
 	let byKind = slotTables.get(table);
@@ -132,7 +132,12 @@ function slotsOf(table: QuerySlots, kind: number): ReadonlyMap<string, QuerySlot
 			(slots =
 				table[kind] === undefined
 					? NO_SLOTS
-					: new Map(table[kind].map(([accessor, routes, keyword]) => [accessor, { routes, keyword }])))
+					: new Map(
+							table[kind].map(([accessor, slot, keyword]) => [
+								accessor,
+								{ subject: Object.freeze({ slots: Object.freeze({ [kind]: slot }) }), keyword }
+							])
+						))
 		);
 	return slots;
 }
@@ -551,9 +556,27 @@ function compileFor(context: Context, condition: Where, kind: number): QueryPlan
 }
 
 function sharedPlan(context: Context, condition: Where, kinds: readonly number[]): QueryPlan | undefined {
-	const plans = kinds.map((kind) => compileFor(context, condition, kind));
-	const first = JSON.stringify(plans[0]);
-	return plans.every((plan) => JSON.stringify(plan) === first) ? plans[0] : undefined;
+	const merged = mergedAt(kinds.map((kind) => compileFor(context, condition, kind)), undefined);
+	return merged === CONFLICT ? undefined : (merged as QueryPlan | undefined);
+}
+
+const CONFLICT = Symbol('sittir.conflict');
+
+function mergedAt(values: readonly unknown[], key: string | undefined): unknown {
+	const [first] = values;
+	if (key === 'slots') return Object.assign({}, ...values);
+	if (typeof first !== 'object' || first === null) return values.every((value) => value === first) ? first : CONFLICT;
+	if (Array.isArray(first)) {
+		if (!values.every((value) => Array.isArray(value) && value.length === first.length)) return CONFLICT;
+		const items = first.map((_, i) => mergedAt(values.map((value) => (value as unknown[])[i]), undefined));
+		return items.includes(CONFLICT) ? CONFLICT : items;
+	}
+	const keys = Object.keys(first);
+	const same = (value: unknown): boolean =>
+		typeof value === 'object' && value !== null && !Array.isArray(value) && Object.keys(value).length === keys.length && keys.every((k) => k in value);
+	if (!values.every(same)) return CONFLICT;
+	const entries = keys.map((k) => [k, mergedAt(values.map((value) => (value as Record<string, unknown>)[k]), k)] as const);
+	return entries.some(([, value]) => value === CONFLICT) ? CONFLICT : Object.fromEntries(entries);
 }
 
 const PLAN = Symbol('sittir.where');
@@ -579,28 +602,28 @@ function cond(plan: QueryPlan): Cond {
 	}) as unknown as Cond;
 }
 
-function slotRef(slot: string, routes: SlotRoutes): SlotRef {
+function slotRef(slot: string, subject: SlotSubject): SlotRef {
 	return Object.freeze({
 		eq(text: string) {
 			if (typeof text !== 'string') refuse(`query: ${slot}.eq takes the text to compare`);
-			return cond({ op: 'eq', fields: routes.fields, kinds: routes.kinds, text });
+			return cond({ op: 'eq', slots: subject.slots, text });
 		},
 		match(pattern: RegExp) {
 			if (!(pattern instanceof RegExp)) refuse(`query: ${slot}.match takes a RegExp`);
 			if (pattern.flags.replace(/u/g, '') !== '')
 				refuse(`query: ${slot}.match: flags ${pattern.flags} have no native equivalent`);
-			return cond({ op: 'match', fields: routes.fields, kinds: routes.kinds, pattern: pattern.source });
+			return cond({ op: 'match', slots: subject.slots, pattern: pattern.source });
 		}
 	});
 }
 
-function presenceRef(slot: string, routes: SlotRoutes, keyword: string): PresenceRef {
+function presenceRef(slot: string, subject: SlotSubject, keyword: string): PresenceRef {
 	const refuseText = (): never =>
 		refuse(`query: ${slot} holds the presence of ${JSON.stringify(keyword)}; compare it with eq(true) or eq(false)`);
 	return Object.freeze({
 		eq(present: boolean) {
 			if (typeof present !== 'boolean') refuseText();
-			const leaf: QueryPlan = { op: 'present', fields: routes.fields, kinds: routes.kinds };
+			const leaf: QueryPlan = { op: 'present', slots: subject.slots };
 			return cond(present ? leaf : { op: 'not', of: leaf });
 		},
 		match: refuseText
@@ -608,11 +631,11 @@ function presenceRef(slot: string, routes: SlotRoutes, keyword: string): Presenc
 }
 
 const refOf = (key: string, slot: QuerySlot): SlotRef | PresenceRef =>
-	slot.keyword === undefined ? slotRef(key, slot.routes) : presenceRef(key, slot.routes, slot.keyword);
+	slot.keyword === undefined ? slotRef(key, slot.subject) : presenceRef(key, slot.subject, slot.keyword);
 
 function shapeRef(slot: string): SlotRef {
-	const text = slotRef(slot, NO_ROUTES);
-	const presence = presenceRef(slot, NO_ROUTES, slot);
+	const text = slotRef(slot, NO_SLOT);
+	const presence = presenceRef(slot, NO_SLOT, slot);
 	return Object.freeze({
 		eq: (value: string) => (typeof value === 'boolean' ? presence.eq(value) : text.eq(value)),
 		match: text.match
@@ -657,7 +680,7 @@ export function anchored<T>(items: readonly T[], anchor: StepAnchor | undefined)
 export interface PlanSubjects {
 	readonly texts: (subject: QuerySubject) => readonly string[];
 	readonly types?: (subject: QuerySubject) => readonly number[];
-	readonly children?: (routes: SlotRoutes) => readonly PlanSubjects[];
+	readonly children?: (subject: SlotSubject) => readonly PlanSubjects[];
 }
 
 export function holds(plan: QueryPlan<QuerySubject>, subjects: PlanSubjects): boolean {

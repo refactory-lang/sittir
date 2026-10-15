@@ -1,14 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { queryFlags } from '../src/portable.ts';
 import { TSKindId } from '../src/types.ts';
+import { hooks } from '../src/api.ts';
+
+const slotOf = (kind: number, accessor: string) => ({ slots: { [kind]: hooks.querySlots[kind]!.find(([name]) => name === accessor)![1] } });
 
 describe('the query flag table', () => {
 	it('steps into function_modifiers for a keyword flag spelled there', () => {
 		expect(queryFlags[TSKindId.FunctionItem]!['async']).toEqual({
 			op: 'child',
-			fields: ['function_modifiers'],
-			kinds: [],
-			of: { op: 'eq', text: 'async', fields: ['modifier'], kinds: [] }
+			...slotOf(TSKindId.FunctionItem, 'functionModifiers'),
+			of: { op: 'eq', text: 'async', ...slotOf(TSKindId.FunctionModifiers, 'modifiers') }
 		});
 	});
 
@@ -23,6 +25,6 @@ describe('the query flag table', () => {
 	});
 
 	it('tests a captured node by its stamped kind', () => {
-		expect(queryFlags[TSKindId.Parameter]!['mutable']).toEqual({ op: 'is', types: [TSKindId.MutableSpecifier], fields: ['mutable'], kinds: [] });
+		expect(queryFlags[TSKindId.Parameter]!['mutable']).toEqual({ op: 'is', types: [TSKindId.MutableSpecifier], ...slotOf(TSKindId.Parameter, 'mutable') });
 	});
 });

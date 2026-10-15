@@ -156,10 +156,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[A-Z][A-Z_0-9]*$",
-                "fields": [
-                  "left"
-                ],
-                "kinds": []
+                "slots": {
+                  "286": 0
+                }
               }
             },
             {
@@ -170,10 +169,9 @@
                 "types": [
                   1
                 ],
-                "fields": [
-                  "left"
-                ],
-                "kinds": []
+                "slots": {
+                  "286": 0
+                }
               }
             }
           ]
@@ -226,10 +224,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[A-Z][A-Z_0-9]*$",
-                "fields": [
-                  "left"
-                ],
-                "kinds": []
+                "slots": {
+                  "287": 0
+                }
               }
             },
             {
@@ -240,10 +237,9 @@
                 "types": [
                   1
                 ],
-                "fields": [
-                  "left"
-                ],
-                "kinds": []
+                "slots": {
+                  "287": 0
+                }
               }
             }
           ]
@@ -296,10 +292,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[A-Z][A-Z_0-9]*$",
-                "fields": [
-                  "left"
-                ],
-                "kinds": []
+                "slots": {
+                  "288": 0
+                }
               }
             },
             {
@@ -310,10 +305,9 @@
                 "types": [
                   1
                 ],
-                "fields": [
-                  "left"
-                ],
-                "kinds": []
+                "slots": {
+                  "288": 0
+                }
               }
             }
           ]
@@ -419,10 +413,9 @@
               "plan": {
                 "op": "eq",
                 "text": "+=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "216": 1
+                }
               }
             }
           ]
@@ -445,10 +438,9 @@
               "plan": {
                 "op": "eq",
                 "text": "-=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "216": 1
+                }
               }
             }
           ]
@@ -471,10 +463,9 @@
               "plan": {
                 "op": "eq",
                 "text": "*=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "216": 1
+                }
               }
             }
           ]
@@ -497,10 +488,9 @@
               "plan": {
                 "op": "eq",
                 "text": "/=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "216": 1
+                }
               }
             }
           ]
@@ -523,10 +513,9 @@
               "plan": {
                 "op": "eq",
                 "text": "//=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "216": 1
+                }
               }
             }
           ]
@@ -549,10 +538,9 @@
               "plan": {
                 "op": "eq",
                 "text": "%=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "216": 1
+                }
               }
             }
           ]
@@ -575,10 +563,9 @@
               "plan": {
                 "op": "eq",
                 "text": "**=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "216": 1
+                }
               }
             }
           ]
@@ -601,10 +588,9 @@
               "plan": {
                 "op": "eq",
                 "text": "@=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "216": 1
+                }
               }
             }
           ]
@@ -627,10 +613,9 @@
               "plan": {
                 "op": "eq",
                 "text": "&=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "216": 1
+                }
               }
             }
           ]
@@ -653,10 +638,9 @@
               "plan": {
                 "op": "eq",
                 "text": "|=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "216": 1
+                }
               }
             }
           ]
@@ -679,10 +663,9 @@
               "plan": {
                 "op": "eq",
                 "text": "^=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "216": 1
+                }
               }
             }
           ]
@@ -705,10 +688,9 @@
               "plan": {
                 "op": "eq",
                 "text": "<<=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "216": 1
+                }
               }
             }
           ]
@@ -731,10 +713,9 @@
               "plan": {
                 "op": "eq",
                 "text": ">>=",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "216": 1
+                }
               }
             }
           ]
@@ -825,10 +806,9 @@
               "plan": {
                 "op": "eq",
                 "text": "+",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "208": 1
+                }
               }
             }
           ]
@@ -851,10 +831,9 @@
               "plan": {
                 "op": "eq",
                 "text": "-",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "208": 1
+                }
               }
             }
           ]
@@ -877,10 +856,9 @@
               "plan": {
                 "op": "eq",
                 "text": "*",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "208": 1
+                }
               }
             }
           ]
@@ -903,10 +881,9 @@
               "plan": {
                 "op": "eq",
                 "text": "/",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "208": 1
+                }
               }
             }
           ]
@@ -929,10 +906,9 @@
               "plan": {
                 "op": "eq",
                 "text": "%",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "208": 1
+                }
               }
             }
           ]
@@ -955,10 +931,9 @@
               "plan": {
                 "op": "eq",
                 "text": "//",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "208": 1
+                }
               }
             }
           ]
@@ -981,10 +956,9 @@
               "plan": {
                 "op": "eq",
                 "text": "**",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "208": 1
+                }
               }
             }
           ]
@@ -1007,10 +981,9 @@
               "plan": {
                 "op": "eq",
                 "text": "@",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "208": 1
+                }
               }
             }
           ]
@@ -1033,10 +1006,9 @@
               "plan": {
                 "op": "eq",
                 "text": "&",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "208": 1
+                }
               }
             }
           ]
@@ -1059,10 +1031,9 @@
               "plan": {
                 "op": "eq",
                 "text": "|",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "208": 1
+                }
               }
             }
           ]
@@ -1085,10 +1056,9 @@
               "plan": {
                 "op": "eq",
                 "text": "^",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "208": 1
+                }
               }
             }
           ]
@@ -1111,10 +1081,9 @@
               "plan": {
                 "op": "eq",
                 "text": "<<",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "208": 1
+                }
               }
             }
           ]
@@ -1137,10 +1106,9 @@
               "plan": {
                 "op": "eq",
                 "text": ">>",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "208": 1
+                }
               }
             }
           ]
@@ -1231,10 +1199,9 @@
               "plan": {
                 "op": "eq",
                 "text": "and",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "207": 1
+                }
               }
             }
           ]
@@ -1257,10 +1224,9 @@
               "plan": {
                 "op": "eq",
                 "text": "or",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "207": 1
+                }
               }
             }
           ]
@@ -1328,10 +1294,9 @@
                 "types": [
                   220
                 ],
-                "fields": [
-                  "function"
-                ],
-                "kinds": []
+                "slots": {
+                  "223": 0
+                }
               }
             }
           ]
@@ -1775,20 +1740,18 @@
               "up": 0,
               "via": [
                 {
-                  "fields": [
-                    "comparators"
-                  ],
-                  "kinds": [],
+                  "slots": {
+                    "212": 1
+                  },
                   "anchor": "only"
                 }
               ],
               "plan": {
                 "op": "eq",
                 "text": "==",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -1803,20 +1766,18 @@
               "up": 0,
               "via": [
                 {
-                  "fields": [
-                    "comparators"
-                  ],
-                  "kinds": [],
+                  "slots": {
+                    "212": 1
+                  },
                   "anchor": "only"
                 }
               ],
               "plan": {
                 "op": "eq",
                 "text": "!=",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -1831,20 +1792,18 @@
               "up": 0,
               "via": [
                 {
-                  "fields": [
-                    "comparators"
-                  ],
-                  "kinds": [],
+                  "slots": {
+                    "212": 1
+                  },
                   "anchor": "only"
                 }
               ],
               "plan": {
                 "op": "eq",
                 "text": "<>",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -1859,20 +1818,18 @@
               "up": 0,
               "via": [
                 {
-                  "fields": [
-                    "comparators"
-                  ],
-                  "kinds": [],
+                  "slots": {
+                    "212": 1
+                  },
                   "anchor": "only"
                 }
               ],
               "plan": {
                 "op": "eq",
                 "text": "<",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -1887,20 +1844,18 @@
               "up": 0,
               "via": [
                 {
-                  "fields": [
-                    "comparators"
-                  ],
-                  "kinds": [],
+                  "slots": {
+                    "212": 1
+                  },
                   "anchor": "only"
                 }
               ],
               "plan": {
                 "op": "eq",
                 "text": ">",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -1915,20 +1870,18 @@
               "up": 0,
               "via": [
                 {
-                  "fields": [
-                    "comparators"
-                  ],
-                  "kinds": [],
+                  "slots": {
+                    "212": 1
+                  },
                   "anchor": "only"
                 }
               ],
               "plan": {
                 "op": "eq",
                 "text": "<=",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -1943,20 +1896,18 @@
               "up": 0,
               "via": [
                 {
-                  "fields": [
-                    "comparators"
-                  ],
-                  "kinds": [],
+                  "slots": {
+                    "212": 1
+                  },
                   "anchor": "only"
                 }
               ],
               "plan": {
                 "op": "eq",
                 "text": ">=",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -1971,20 +1922,18 @@
               "up": 0,
               "via": [
                 {
-                  "fields": [
-                    "comparators"
-                  ],
-                  "kinds": [],
+                  "slots": {
+                    "212": 1
+                  },
                   "anchor": "only"
                 }
               ],
               "plan": {
                 "op": "eq",
                 "text": "in",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -1999,20 +1948,18 @@
               "up": 0,
               "via": [
                 {
-                  "fields": [
-                    "comparators"
-                  ],
-                  "kinds": [],
+                  "slots": {
+                    "212": 1
+                  },
                   "anchor": "only"
                 }
               ],
               "plan": {
                 "op": "eq",
                 "text": "not in",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -2027,20 +1974,18 @@
               "up": 0,
               "via": [
                 {
-                  "fields": [
-                    "comparators"
-                  ],
-                  "kinds": [],
+                  "slots": {
+                    "212": 1
+                  },
                   "anchor": "only"
                 }
               ],
               "plan": {
                 "op": "eq",
                 "text": "is",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -2055,20 +2000,18 @@
               "up": 0,
               "via": [
                 {
-                  "fields": [
-                    "comparators"
-                  ],
-                  "kinds": [],
+                  "slots": {
+                    "212": 1
+                  },
                   "anchor": "only"
                 }
               ],
               "plan": {
                 "op": "eq",
                 "text": "is not",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -2083,10 +2026,9 @@
               "up": 0,
               "via": [
                 {
-                  "fields": [
-                    "comparators"
-                  ],
-                  "kinds": [],
+                  "slots": {
+                    "212": 1
+                  },
                   "anchor": "only"
                 }
               ],
@@ -2191,10 +2133,9 @@
               "plan": {
                 "op": "eq",
                 "text": "==",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -2217,10 +2158,9 @@
               "plan": {
                 "op": "eq",
                 "text": "!=",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -2243,10 +2183,9 @@
               "plan": {
                 "op": "eq",
                 "text": "<>",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -2269,10 +2208,9 @@
               "plan": {
                 "op": "eq",
                 "text": "<",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -2295,10 +2233,9 @@
               "plan": {
                 "op": "eq",
                 "text": ">",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -2321,10 +2258,9 @@
               "plan": {
                 "op": "eq",
                 "text": "<=",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -2347,10 +2283,9 @@
               "plan": {
                 "op": "eq",
                 "text": ">=",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -2373,10 +2308,9 @@
               "plan": {
                 "op": "eq",
                 "text": "in",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -2399,10 +2333,9 @@
               "plan": {
                 "op": "eq",
                 "text": "not in",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -2425,10 +2358,9 @@
               "plan": {
                 "op": "eq",
                 "text": "is",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -2451,10 +2383,9 @@
               "plan": {
                 "op": "eq",
                 "text": "is not",
-                "fields": [
-                  "operators"
-                ],
-                "kinds": []
+                "slots": {
+                  "297": 0
+                }
               }
             }
           ]
@@ -3981,19 +3912,17 @@
               "up": 1,
               "via": [
                 {
-                  "fields": [],
-                  "kinds": [
-                    "decorator"
-                  ]
+                  "slots": {
+                    "177": 0
+                  }
                 }
               ],
               "plan": {
                 "op": "eq",
                 "text": "staticmethod",
-                "fields": [
-                  "expression"
-                ],
-                "kinds": []
+                "slots": {
+                  "178": 0
+                }
               }
             }
           ]
@@ -4010,10 +3939,9 @@
               "plan": {
                 "op": "eq",
                 "text": "__init__",
-                "fields": [
-                  "name"
-                ],
-                "kinds": []
+                "slots": {
+                  "164": 1
+                }
               }
             }
           ]
@@ -4030,10 +3958,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "^__(?<stem>.*)__$",
-                "fields": [
-                  "name"
-                ],
-                "kinds": []
+                "slots": {
+                  "164": 1
+                }
               }
             }
           ],
@@ -5897,10 +5824,9 @@
               "plan": {
                 "op": "eq",
                 "text": "**",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "226": 0
+                }
               }
             }
           ]
@@ -5942,10 +5868,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[a-zA-Z]*[fFtT]",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             },
             {
@@ -5954,10 +5879,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[a-zA-Z]*[rR]",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             },
             {
@@ -5966,10 +5890,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "\"\"\"|'''",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             }
           ]
@@ -5986,10 +5909,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[a-zA-Z]*[bB]",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             },
             {
@@ -5998,10 +5920,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[a-zA-Z]*[rR]",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             },
             {
@@ -6010,10 +5931,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "\"\"\"|'''",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             }
           ]
@@ -6030,10 +5950,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[a-zA-Z]*[fFtT]",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             },
             {
@@ -6042,10 +5961,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[a-zA-Z]*[rR]",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             }
           ]
@@ -6062,10 +5980,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[a-zA-Z]*[fFtT]",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             },
             {
@@ -6074,10 +5991,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "\"\"\"|'''",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             }
           ]
@@ -6094,10 +6010,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[a-zA-Z]*[bB]",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             },
             {
@@ -6106,10 +6021,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[a-zA-Z]*[rR]",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             }
           ]
@@ -6126,10 +6040,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[a-zA-Z]*[bB]",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             },
             {
@@ -6138,10 +6051,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "\"\"\"|'''",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             }
           ]
@@ -6158,10 +6070,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[a-zA-Z]*[rR]",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             },
             {
@@ -6170,10 +6081,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "\"\"\"|'''",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             }
           ]
@@ -6190,10 +6100,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[a-zA-Z]*[fFtT]",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             }
           ]
@@ -6210,10 +6119,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[a-zA-Z]*[bB]",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             }
           ]
@@ -6230,10 +6138,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "^[a-zA-Z]*[rR]",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             }
           ]
@@ -6250,10 +6157,9 @@
               "plan": {
                 "op": "match",
                 "pattern": "\"\"\"|'''",
-                "fields": [
-                  "string_start"
-                ],
-                "kinds": []
+                "slots": {
+                  "247": 0
+                }
               }
             }
           ]
@@ -6788,10 +6694,9 @@
               "plan": {
                 "op": "eq",
                 "text": "-",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "209": 0
+                }
               }
             }
           ]
@@ -6814,10 +6719,9 @@
               "plan": {
                 "op": "eq",
                 "text": "+",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "209": 0
+                }
               }
             }
           ]
@@ -6840,10 +6744,9 @@
               "plan": {
                 "op": "eq",
                 "text": "~",
-                "fields": [
-                  "operator"
-                ],
-                "kinds": []
+                "slots": {
+                  "209": 0
+                }
               }
             }
           ]
