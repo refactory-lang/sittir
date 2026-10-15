@@ -29,14 +29,14 @@
 (method_definition (accessibility_modifier "private")) @declaration.method.private
 (method_definition (accessibility_modifier "protected")) @declaration.method.protected
 (method_definition (accessibility_modifier "public")) @declaration.method.public
-(method_definition accessor_kind: "get") @declaration.method.getter
-(method_definition (accessibility_modifier "private") accessor_kind: "get") @declaration.method.getter.private
-(method_definition (accessibility_modifier "protected") accessor_kind: "get") @declaration.method.getter.protected
-(method_definition (accessibility_modifier "public") accessor_kind: "get") @declaration.method.getter.public
-(method_definition accessor_kind: "set") @declaration.method.setter
-(method_definition (accessibility_modifier "private") accessor_kind: "set") @declaration.method.setter.private
-(method_definition (accessibility_modifier "protected") accessor_kind: "set") @declaration.method.setter.protected
-(method_definition (accessibility_modifier "public") accessor_kind: "set") @declaration.method.setter.public
+(method_definition accessor_kind: "get") @declaration.property.getter
+(method_definition (accessibility_modifier "private") accessor_kind: "get") @declaration.property.getter.private
+(method_definition (accessibility_modifier "protected") accessor_kind: "get") @declaration.property.getter.protected
+(method_definition (accessibility_modifier "public") accessor_kind: "get") @declaration.property.getter.public
+(method_definition accessor_kind: "set") @declaration.property.setter
+(method_definition (accessibility_modifier "private") accessor_kind: "set") @declaration.property.setter.private
+(method_definition (accessibility_modifier "protected") accessor_kind: "set") @declaration.property.setter.protected
+(method_definition (accessibility_modifier "public") accessor_kind: "set") @declaration.property.setter.public
 ((method_definition name: (property_identifier) @name) @declaration.constructor (#eq? @name "constructor"))
 ((method_definition (accessibility_modifier "private") name: (property_identifier) @name) @declaration.constructor.private (#eq? @name "constructor"))
 ((method_definition (accessibility_modifier "protected") name: (property_identifier) @name) @declaration.constructor.protected (#eq? @name "constructor"))
@@ -48,14 +48,14 @@
 (method_signature (accessibility_modifier "private")) @declaration.method.signature.private
 (method_signature (accessibility_modifier "protected")) @declaration.method.signature.protected
 (method_signature (accessibility_modifier "public")) @declaration.method.signature.public
-(method_signature accessor_kind: "get") @declaration.method.signature.getter
-(method_signature (accessibility_modifier "private") accessor_kind: "get") @declaration.method.signature.getter.private
-(method_signature (accessibility_modifier "protected") accessor_kind: "get") @declaration.method.signature.getter.protected
-(method_signature (accessibility_modifier "public") accessor_kind: "get") @declaration.method.signature.getter.public
-(method_signature accessor_kind: "set") @declaration.method.signature.setter
-(method_signature (accessibility_modifier "private") accessor_kind: "set") @declaration.method.signature.setter.private
-(method_signature (accessibility_modifier "protected") accessor_kind: "set") @declaration.method.signature.setter.protected
-(method_signature (accessibility_modifier "public") accessor_kind: "set") @declaration.method.signature.setter.public
+(method_signature accessor_kind: "get") @declaration.property.signature.getter
+(method_signature (accessibility_modifier "private") accessor_kind: "get") @declaration.property.signature.getter.private
+(method_signature (accessibility_modifier "protected") accessor_kind: "get") @declaration.property.signature.getter.protected
+(method_signature (accessibility_modifier "public") accessor_kind: "get") @declaration.property.signature.getter.public
+(method_signature accessor_kind: "set") @declaration.property.signature.setter
+(method_signature (accessibility_modifier "private") accessor_kind: "set") @declaration.property.signature.setter.private
+(method_signature (accessibility_modifier "protected") accessor_kind: "set") @declaration.property.signature.setter.protected
+(method_signature (accessibility_modifier "public") accessor_kind: "set") @declaration.property.signature.setter.public
 (abstract_method_signature) @declaration.method.signature.abstract
 (abstract_method_signature accessor_kind: "*" @generator)
 (abstract_method_signature name: (private_property_identifier) @name @privateName)
@@ -63,14 +63,14 @@
 (abstract_method_signature (accessibility_modifier "private")) @declaration.method.signature.abstract.private
 (abstract_method_signature (accessibility_modifier "protected")) @declaration.method.signature.abstract.protected
 (abstract_method_signature (accessibility_modifier "public")) @declaration.method.signature.abstract.public
-(abstract_method_signature accessor_kind: "get") @declaration.method.signature.abstract.getter
-(abstract_method_signature (accessibility_modifier "private") accessor_kind: "get") @declaration.method.signature.abstract.getter.private
-(abstract_method_signature (accessibility_modifier "protected") accessor_kind: "get") @declaration.method.signature.abstract.getter.protected
-(abstract_method_signature (accessibility_modifier "public") accessor_kind: "get") @declaration.method.signature.abstract.getter.public
-(abstract_method_signature accessor_kind: "set") @declaration.method.signature.abstract.setter
-(abstract_method_signature (accessibility_modifier "private") accessor_kind: "set") @declaration.method.signature.abstract.setter.private
-(abstract_method_signature (accessibility_modifier "protected") accessor_kind: "set") @declaration.method.signature.abstract.setter.protected
-(abstract_method_signature (accessibility_modifier "public") accessor_kind: "set") @declaration.method.signature.abstract.setter.public
+(abstract_method_signature accessor_kind: "get") @declaration.property.signature.abstract.getter
+(abstract_method_signature (accessibility_modifier "private") accessor_kind: "get") @declaration.property.signature.abstract.getter.private
+(abstract_method_signature (accessibility_modifier "protected") accessor_kind: "get") @declaration.property.signature.abstract.getter.protected
+(abstract_method_signature (accessibility_modifier "public") accessor_kind: "get") @declaration.property.signature.abstract.getter.public
+(abstract_method_signature accessor_kind: "set") @declaration.property.signature.abstract.setter
+(abstract_method_signature (accessibility_modifier "private") accessor_kind: "set") @declaration.property.signature.abstract.setter.private
+(abstract_method_signature (accessibility_modifier "protected") accessor_kind: "set") @declaration.property.signature.abstract.setter.protected
+(abstract_method_signature (accessibility_modifier "public") accessor_kind: "set") @declaration.property.signature.abstract.setter.public
 (property_signature) @declaration.field.signature
 (property_signature name: (private_property_identifier) @name @privateName)
 (property_signature name: (computed_property_name) @name @computed)
@@ -85,6 +85,10 @@
 (public_field_definition (accessibility_modifier "private")) @declaration.field.private
 (public_field_definition (accessibility_modifier "protected")) @declaration.field.protected
 (public_field_definition (accessibility_modifier "public")) @declaration.field.public
+(public_field_definition accessor: "accessor") @declaration.property
+(public_field_definition (accessibility_modifier "private") accessor: "accessor") @declaration.property.private
+(public_field_definition (accessibility_modifier "protected") accessor: "accessor") @declaration.property.protected
+(public_field_definition (accessibility_modifier "public") accessor: "accessor") @declaration.property.public
 (class_body_member_declaration (_) @element)
 (class_body_member_method (decorator)* @decorators (_) @element)
 (class_body_member_method_sig (_) @element)

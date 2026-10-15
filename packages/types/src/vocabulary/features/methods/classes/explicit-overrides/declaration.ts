@@ -29,4 +29,7 @@ export namespace Declaration {
 		readonly override?: Flag;
 		// t only
 	}
+	export interface Property<G extends GrammarContext<G>> {
+		readonly override?: Flag;
+	}
 }

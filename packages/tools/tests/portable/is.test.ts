@@ -613,6 +613,44 @@ describe('portable is: typescript', async () => {
 		expect(froms.map(([n, c]) => at('statement.export')(n, c))).toEqual([true, true, true]);
 	});
 
+	it('reads a getter, a setter and an auto-accessor as properties, and a plain method or field as neither', () => {
+		const SOURCE = 'class C { get g() { return 1; } set s(v) {} private get p() { return 2; } m() {} accessor a = 1; f = 2; }\n';
+		const [getter, gc] = find(SOURCE, 'method_definition');
+		const [setter, sc] = find(SOURCE, 'method_definition', undefined, 1);
+		const [privateGetter, pc] = find(SOURCE, 'method_definition', undefined, 2);
+		const [method, mc] = find(SOURCE, 'method_definition', undefined, 3);
+		const [auto, ac] = find(SOURCE, 'public_field_definition');
+		const [field, fc] = find(SOURCE, 'public_field_definition', undefined, 1);
+		expect(at('declaration.property.getter')(getter, gc)).toBe(true);
+		expect(at('declaration.property')(getter, gc)).toBe(true);
+		expect(at('declaration.method')(getter, gc)).toBe(false);
+		expect(at('declaration.property.setter')(setter, sc)).toBe(true);
+		expect(at('declaration.property.getter')(setter, sc)).toBe(false);
+		expect(at('declaration.property.getter.private')(privateGetter, pc)).toBe(true);
+		expect(at('declaration.method.private')(privateGetter, pc)).toBe(false);
+		expect(at('declaration.method')(method, mc)).toBe(true);
+		expect(at('declaration.property')(method, mc)).toBe(false);
+		expect(at('declaration.property')(auto, ac)).toBe(true);
+		expect(at('declaration.field')(auto, ac)).toBe(false);
+		expect(at('declaration.field')(field, fc)).toBe(true);
+		expect(at('declaration.property')(field, fc)).toBe(false);
+	});
+
+	it('reads an accessor signature as a property signature, abstract or not', () => {
+		const SOURCE = 'interface I { get x(): number; m(): void; }\nabstract class A { abstract set y(v: number); abstract n(): void; }\n';
+		const [getter, gc] = find(SOURCE, 'method_signature');
+		const [method, mc] = find(SOURCE, 'method_signature', undefined, 1);
+		const [setter, sc] = find(SOURCE, 'abstract_method_signature');
+		const [abstractMethod, ac] = find(SOURCE, 'abstract_method_signature', undefined, 1);
+		expect(at('declaration.property.signature.getter')(getter, gc)).toBe(true);
+		expect(at('declaration.method.signature')(getter, gc)).toBe(false);
+		expect(at('declaration.method.signature')(method, mc)).toBe(true);
+		expect(at('declaration.property.signature.abstract.setter')(setter, sc)).toBe(true);
+		expect(at('declaration.property.signature')(setter, sc)).toBe(true);
+		expect(at('declaration.method.signature.abstract')(setter, sc)).toBe(false);
+		expect(at('declaration.method.signature.abstract')(abstractMethod, ac)).toBe(true);
+	});
+
 	it('reads a negative literal type as a negative number', () => {
 		const [negative, context] = find('let x: -1;\n', 'literal_type_negative_number');
 		expect(at('literal.number.negative')(negative, context)).toBe(true);
@@ -690,7 +728,7 @@ describe('portable is agrees with one classification', () => {
 	const SOURCES = {
 		python: 'import os\nclass A(B):\n    @staticmethod\n    def s(x: int = 1) -> str:\n        return f"{x}" + b"y".decode()\nwhile x > 0:\n    x -= 1\n',
 		rust: 'use std::io;\npub static Z: u8 = 0;\nstruct S { a: u8 }\nfn f(x: &mut S) -> Option<u8> { let y = x.a + 1; if y > 2 { return Some(y); } let g = |a, mut b| a; None }\n',
-		typescript: 'import { a } from "b";\nenum E { A, B = 1 }\nclass C extends D implements I { constructor() { super(); } m(): void { const x = a?.b ?? 1; } }\n// c\n'
+		typescript: 'import { a } from "b";\nenum E { A, B = 1 }\nclass C extends D implements I { constructor() { super(); } m(): void { const x = a?.b ?? 1; } get g() { return 1; } accessor p = 1; }\n// c\n'
 	} as const;
 	for (const name of Object.keys(SOURCES) as (keyof typeof SOURCES)[]) {
 		it(`${name}: each guard names facts of one classification and admits the node's kind`, async () => {

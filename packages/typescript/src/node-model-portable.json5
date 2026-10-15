@@ -168,7 +168,7 @@
       "vocab": "declaration.method.signature.abstract",
       "read": [
         {
-          "vocab": "declaration.method.signature.abstract.getter.private",
+          "vocab": "declaration.property.signature.abstract.getter.private",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -223,7 +223,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.abstract.getter.protected",
+          "vocab": "declaration.property.signature.abstract.getter.protected",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -278,7 +278,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.abstract.getter.public",
+          "vocab": "declaration.property.signature.abstract.getter.public",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -333,7 +333,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.abstract.setter.private",
+          "vocab": "declaration.property.signature.abstract.setter.private",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -388,7 +388,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.abstract.setter.protected",
+          "vocab": "declaration.property.signature.abstract.setter.protected",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -443,7 +443,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.abstract.setter.public",
+          "vocab": "declaration.property.signature.abstract.setter.public",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -609,7 +609,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.abstract.getter",
+          "vocab": "declaration.property.signature.abstract.getter",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -635,7 +635,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.abstract.setter",
+          "vocab": "declaration.property.signature.abstract.setter",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -6811,7 +6811,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.getter.private",
+          "vocab": "declaration.property.getter.private",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -6866,7 +6866,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.getter.protected",
+          "vocab": "declaration.property.getter.protected",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -6921,7 +6921,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.getter.public",
+          "vocab": "declaration.property.getter.public",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -6976,7 +6976,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.setter.private",
+          "vocab": "declaration.property.setter.private",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -7031,7 +7031,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.setter.protected",
+          "vocab": "declaration.property.setter.protected",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -7086,7 +7086,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.setter.public",
+          "vocab": "declaration.property.setter.public",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -7252,7 +7252,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.getter",
+          "vocab": "declaration.property.getter",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -7278,7 +7278,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.setter",
+          "vocab": "declaration.property.setter",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -7474,7 +7474,7 @@
       "vocab": "declaration.method.signature",
       "read": [
         {
-          "vocab": "declaration.method.signature.getter.private",
+          "vocab": "declaration.property.signature.getter.private",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -7529,7 +7529,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.getter.protected",
+          "vocab": "declaration.property.signature.getter.protected",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -7584,7 +7584,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.getter.public",
+          "vocab": "declaration.property.signature.getter.public",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -7639,7 +7639,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.setter.private",
+          "vocab": "declaration.property.signature.setter.private",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -7694,7 +7694,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.setter.protected",
+          "vocab": "declaration.property.signature.setter.protected",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -7749,7 +7749,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.setter.public",
+          "vocab": "declaration.property.signature.setter.public",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -7915,7 +7915,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.getter",
+          "vocab": "declaration.property.signature.getter",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -7941,7 +7941,7 @@
           ]
         },
         {
-          "vocab": "declaration.method.signature.setter",
+          "vocab": "declaration.property.signature.setter",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -10076,6 +10076,168 @@
       "vocab": "declaration.field",
       "read": [
         {
+          "vocab": "declaration.property.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "accessor",
+              "slot": "accessor",
+              "text": "accessor"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "present",
+                "fields": [
+                  "accessor"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318,
+                  32,
+                  33,
+                  34
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.property.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "accessor",
+              "slot": "accessor",
+              "text": "accessor"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "present",
+                "fields": [
+                  "accessor"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318,
+                  32,
+                  33,
+                  34
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.property.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "accessor",
+              "slot": "accessor",
+              "text": "accessor"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "present",
+                "fields": [
+                  "accessor"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318,
+                  32,
+                  33,
+                  34
+                ],
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "fields": [
+                  "accessibility_modifier"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.field.private",
           "toplevel": true,
           "within": [],
@@ -10187,6 +10349,31 @@
           ]
         },
         {
+          "vocab": "declaration.property",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "accessor",
+              "slot": "accessor",
+              "text": "accessor"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "present",
+                "fields": [
+                  "accessor"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.field",
           "toplevel": true,
           "within": [],
@@ -10258,17 +10445,6 @@
             {
               "owner": "public_field_definition",
               "slot": "abstract"
-            }
-          ]
-        },
-        {
-          "name": "accessor",
-          "route": "slot",
-          "slot": "accessor",
-          "path": [
-            {
-              "owner": "public_field_definition",
-              "slot": "accessor"
             }
           ]
         },
@@ -12871,27 +13047,27 @@
       },
       {
         "depth": 2,
-        "paths": 111,
+        "paths": 112,
         "kinds": 144,
         "refinements": 6
       },
       {
         "depth": 3,
-        "paths": 104,
+        "paths": 108,
         "kinds": 90,
-        "refinements": 78
+        "refinements": 82
       },
       {
         "depth": 4,
-        "paths": 67,
+        "paths": 68,
         "kinds": 20,
-        "refinements": 42
+        "refinements": 40
       },
       {
         "depth": 5,
         "paths": 14,
         "kinds": 5,
-        "refinements": 14
+        "refinements": 12
       },
       {
         "depth": 6,

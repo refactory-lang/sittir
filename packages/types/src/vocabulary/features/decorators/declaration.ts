@@ -20,4 +20,7 @@ export namespace Declaration {
 		readonly decorators?: V.Attribute.Decorator<G>[];
 		// t only
 	}
+	export interface Property<G extends GrammarContext<G>> {
+		readonly decorators?: V.Attribute.Decorator<G>[];
+	}
 }
