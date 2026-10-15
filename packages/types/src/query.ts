@@ -29,16 +29,21 @@ export interface SelfText {
 /** What a comparison reads: a slot by its parser routes, or the node's own text. */
 export type QuerySubject = SlotRoutes | SelfText;
 
+/** Which of the nodes a step's routes admit it reaches: the first, the last, or the one node when exactly one is admitted. */
+export type StepAnchor = 'first' | 'last' | 'only';
+
 /**
- * A compiled condition, each comparison reading the subject `S`. A `where` condition compares slots only (the default) and is
- * evaluated by the native walk; a portable read test may also compare the node's own text, or test the node types of its
- * subject by `$type` (`QueryPlan<QuerySubject>`), which only `holds` evaluates.
+ * A compiled condition, each comparison reading the subject `S`. A `where` condition reads slots only (the default) and is
+ * evaluated by the native walk; a portable read test may also read the node's own text (`QueryPlan<QuerySubject>`), which only
+ * `holds` evaluates. An `is` leaf tests the stamped kinds (`$type`) of its subject, and a `child` step evaluates its condition on
+ * the children its routes admit, narrowed by its anchor.
  */
 export type QueryPlan<S extends QuerySubject = SlotRoutes> =
 	| ({ readonly op: 'eq'; readonly text: string } & S)
 	| ({ readonly op: 'match'; readonly pattern: string } & S)
 	| ({ readonly op: 'present' } & SlotRoutes)
-	| ([SelfText] extends [S] ? { readonly op: 'is'; readonly types: readonly number[] } & S : never)
+	| ({ readonly op: 'child'; readonly anchor?: StepAnchor; readonly of: QueryPlan<S> } & SlotRoutes)
+	| ({ readonly op: 'is'; readonly types: readonly number[] } & S)
 	| { readonly op: 'not'; readonly of: QueryPlan<S> }
 	| { readonly op: 'and' | 'or'; readonly of: readonly QueryPlan<S>[] };
 

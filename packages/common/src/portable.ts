@@ -1,5 +1,5 @@
-import type { PortableCondition, PortableReadEntry, PortableStep, PortableTable, QuerySlots, QuerySubject, SlotRoutes } from '@sittir/types';
-import { holds, slotItems } from './query.ts';
+import type { PortableCondition, PortableReadEntry, PortableTable, QuerySlots, QuerySubject, SlotRoutes } from '@sittir/types';
+import { anchored, holds, slotItems } from './query.ts';
 import { spanSlicer, type ByteSpan } from './span.ts';
 import { treeOf } from './tree-token.ts';
 import { spanOf } from './utils.ts';
@@ -22,9 +22,6 @@ const sameRoutes = (a: SlotRoutes, b: SlotRoutes): boolean =>
 	a.kinds.length === b.kinds.length &&
 	a.fields.every((field, i) => field === b.fields[i]) &&
 	a.kinds.every((kind, i) => kind === b.kinds[i]);
-
-const anchored = (items: readonly unknown[], anchor: PortableStep['anchor']): readonly unknown[] =>
-	anchor === undefined ? items : anchor === 'first' ? items.slice(0, 1) : anchor === 'last' ? items.slice(-1) : items.length === 1 ? items : [];
 
 function placed(entry: PortableReadEntry, context: Context): boolean {
 	if (entry.within.length === 0) return true;
@@ -58,14 +55,14 @@ export function portableSurface<Kinds, Is>(table: PortableTable, querySlots: Que
 		for (const step of condition.via) reached = reached.filter(isNode).flatMap((n) => anchored(itemsIn(n, step), step.anchor));
 		const subjects = (subject: QuerySubject): readonly unknown[] =>
 			reached.flatMap((item) => ('self' in subject ? [item] : isNode(item) ? itemsIn(item, subject) : []));
-		return holds(
-			condition.plan,
-			(subject) => subjects(subject).flatMap((i) => textOf(i) ?? []),
-			(subject) => subjects(subject).flatMap((i) => {
-				const item = asItem(i);
-				return item === undefined ? [] : [kindOf(item)];
-			})
-		);
+		return holds(condition.plan, {
+			texts: (subject) => subjects(subject).flatMap((i) => textOf(i) ?? []),
+			types: (subject) =>
+				subjects(subject).flatMap((i) => {
+					const item = asItem(i);
+					return item === undefined ? [] : [kindOf(item)];
+				})
+		});
 	};
 	const classify = (item: Item, context: Context): string | undefined =>
 		table.entries[kindOf(item)]?.find((entry) => placed(entry, context) && entry.test.every((c) => conditionHolds(c, item, context)))?.path;

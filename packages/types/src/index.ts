@@ -19,6 +19,7 @@ export type {
 	SlotNameOf,
 	SlotRef,
 	SlotRoutes,
+	StepAnchor,
 	View
 } from './query.ts';
 export type {

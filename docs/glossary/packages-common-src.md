@@ -264,11 +264,23 @@ The member of a slot that holds a keyword's presence. `eq(true)` records a prese
 
 ### `packages/common/src/query.ts::holds`
 
-The JavaScript evaluation of a plan over the texts, and for an `is` plan the node types, its subjects read. A presence leaf (`present`) holds when its subject reads any text: a child sits in the slot. It is the oracle the native evaluator is tested against, and the only evaluator of a portable read test's plans, whose subject may be the node itself and which may test node types.
+The JavaScript evaluation of a plan over what its `PlanSubjects` read: the texts, the node types for an `is` leaf, and the child subjects for a `child` step. A presence leaf (`present`) holds when its subject reads any text: a child sits in the slot. A `child` step keeps the children its routes admit, narrows them by its anchor (`anchored`), and holds when its condition holds on one of them, evaluated with that child as the node. It is the oracle the native evaluator is tested against, and the only evaluator of a portable read test's plans, whose subject may be the node itself.
+
+### `packages/common/src/query.ts::PlanSubjects`
+
+What a caller of `holds` reads for a node: the texts a subject holds, the node types (`$type`) it holds, and the subjects of the children a set of routes admits. A caller that reads no types or no children leaves them out, and an `is` leaf or a `child` step is refused there (`NO_TYPES`, `NO_CHILDREN`).
 
 ### `packages/common/src/query.ts::NO_TYPES`
 
 The node-type reader of a caller that reads none: an `is` plan is refused there rather than read as holding nowhere.
+
+### `packages/common/src/query.ts::NO_CHILDREN`
+
+The child reader of a caller that reads none: a `child` step is refused there rather than read as holding nowhere.
+
+### `packages/common/src/query.ts::anchored`
+
+A slot's nodes as an anchored step reads them: the first, the last, the one node when it holds exactly one (none otherwise), or all of them. The portable read tests' `via` steps and `holds`'s `child` step both narrow by it, as the native child step does.
 
 ### `packages/common/src/engine-scope.ts::inTreeEngine`
 
@@ -679,10 +691,6 @@ Whether a read path names every fact in a guard path: the top-level namespace ma
 ### `packages/common/src/portable.ts::portableSurface`
 
 A bound grammar's portable `kinds` and `is`, built once from its generated `PortableTable` and slot table. Each path gets a frozen `kinds` node holding its `$ids` and a guard, and every path is linked under its parent as an own, non-writable property, so a segment named like a function property (`call`, `name`) shadows it. A path is reached only through its full path. A guard takes a node or a kind-id leaf, which the typed reader stores as a bare number and which is a node of that kind, and first requires its kind among the path's ids. On an exact path (`PortablePath.exact`) that decides it. Otherwise the node's path decides: its `$subType` where it carries one (stamped by the read dispatch and the portable build, which choose a vocabulary kind), or else, for a node no vocabulary kind was chosen for (one a low-level builder made), the first of its kind's read entries, in order, whose placement the context matches (`placed`) and whose every condition holds; the guard holds when `portablePathHasFacts` finds every fact of its path in that reading, within the same namespace and in order. A condition runs `holds`, the one evaluator of a `QueryPlan`, once over every node its `via` steps reach from the holder (the node, or the context node `up` places out), an anchored step reading only the first, the last or the only node of its slot (`anchored`); a negated plan therefore holds only when no reached node matches. A value's type is its `$type`, or a kind-id leaf's own number. Texts come from a slot's items through `query.ts::slotItems`, the slot found by its parser routes in the slot table. A slot the table stamps with a keyword holds a boolean: `true` reads as that keyword, the text the parser holds there, and `false` reads as no item, so a presence leaf holds exactly when the keyword is there. A value's text is a kind-id leaf's `fixedText` entry, a leaf's `$text`, and otherwise, for a parsed structured node, the slice of its tree's source its span covers (`span.ts::spanSlicer`, one slicer per tree); a built structured node has none.
-
-### `packages/common/src/portable.ts::anchored`
-
-A slot's nodes as an anchored step reads them: the first, the last, the one node when it holds exactly one (none otherwise), or all of them.
 
 ### `packages/common/src/portable.ts::placed`
 

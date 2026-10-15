@@ -9,6 +9,7 @@ import type {
 	Recorder,
 	SlotRef,
 	SlotRoutes,
+	StepAnchor,
 	TransportCoordinate
 } from '@sittir/types';
 import { inTreeEngine } from './engine-scope.ts';
@@ -642,11 +643,23 @@ function recorder(context: Context, kind: number | undefined): Recorder<unknown>
 
 const NO_TYPES = (): never => refuse('query: an is plan tests node types, and this caller reads none');
 
-export function holds(
-	plan: QueryPlan<QuerySubject>,
-	texts: (subject: QuerySubject) => readonly string[],
-	types: (subject: QuerySubject) => readonly number[] = NO_TYPES
-): boolean {
+const NO_CHILDREN = (): never => refuse('query: a child plan tests a node\'s children, and this caller reads none');
+
+export function anchored<T>(items: readonly T[], anchor: StepAnchor | undefined): readonly T[] {
+	if (anchor === undefined) return items;
+	if (anchor === 'first') return items.slice(0, 1);
+	if (anchor === 'last') return items.slice(-1);
+	return items.length === 1 ? items : [];
+}
+
+export interface PlanSubjects {
+	readonly texts: (subject: QuerySubject) => readonly string[];
+	readonly types?: (subject: QuerySubject) => readonly number[];
+	readonly children?: (routes: SlotRoutes) => readonly PlanSubjects[];
+}
+
+export function holds(plan: QueryPlan<QuerySubject>, subjects: PlanSubjects): boolean {
+	const { texts, types = NO_TYPES, children = NO_CHILDREN } = subjects;
 	switch (plan.op) {
 		case 'eq':
 			return texts(plan).includes(plan.text);
@@ -658,11 +671,13 @@ export function holds(
 			return texts(plan).length > 0;
 		case 'is':
 			return types(plan).some((type) => plan.types.includes(type));
+		case 'child':
+			return anchored(children(plan), plan.anchor).some((child) => holds(plan.of, child));
 		case 'not':
-			return !holds(plan.of, texts, types);
+			return !holds(plan.of, subjects);
 		case 'and':
-			return plan.of.every((p) => holds(p, texts, types));
+			return plan.of.every((p) => holds(p, subjects));
 		case 'or':
-			return plan.of.some((p) => holds(p, texts, types));
+			return plan.of.some((p) => holds(p, subjects));
 	}
 }

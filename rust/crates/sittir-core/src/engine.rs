@@ -14,7 +14,7 @@
 
 use crate::options::ResolvedOptions;
 use crate::query::{Address, DescendantBatch, Plan, QueryCoordinate};
-use crate::read::{display_id, SideEntry};
+use crate::read::SideEntry;
 use crate::types::Span;
 use crate::render::SourceTable;
 use crate::slot::{NodeCoordinate, SlotValue};
@@ -603,11 +603,13 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// Whether each node `addresses` names satisfies `plan`, in order. An
     /// address that names no node of this tree is refused.
     pub fn plan_holds(&self, addresses: &[Address], plan: &Plan) -> Result<Vec<bool>, String> {
+        let ctx = self.read_ctx();
+        let stamp = |node: &tree_sitter::Node<'_>| ctx.node_kind(node).0;
         addresses
             .iter()
             .map(|&address| {
                 let node = self.node_at(address)?.ok_or_else(|| format!("{address:?} names no node of tree {}", self.tree_id))?;
-                Ok(plan.holds(&node, &self.source))
+                Ok(plan.holds(&node, &self.source, &stamp))
             })
             .collect()
     }
@@ -655,7 +657,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
         let mut indexes: Vec<u32> = vec![index];
         let mut path: Vec<u32> = Vec::new();
         let mut coordinates = Vec::new();
-        let ctx = crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows()).with_relaxes(self.grammar.relaxes());
+        let ctx = self.read_ctx();
+        let stamp = |node: &tree_sitter::Node<'_>| ctx.node_kind(node).0;
         let surface = self.grammar.surface_kinds();
         let depth_member = |node: &tree_sitter::Node<'_>| node.grammar_id() != 0 && [surface.indent, surface.dedent].contains(&node.grammar_id());
         if let Some(resume) = resume {
@@ -677,8 +680,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
             if node.is_named()
                 && !node.is_extra()
                 && !depth_member(&node)
-                && (kinds.is_empty() || kinds.contains(&ctx.stamped_kind(KindId(node.grammar_id()), display_id(&node)).0))
-                && plan.is_none_or(|plan| plan.holds(&node, &self.source))
+                && (kinds.is_empty() || kinds.contains(&stamp(&node)))
+                && plan.is_none_or(|plan| plan.holds(&node, &self.source, &stamp))
             {
                 coordinates.push(QueryCoordinate::from(ctx.coordinate(&node, indexes[indexes.len() - 1])));
                 if coordinates.len() as u32 >= limit {

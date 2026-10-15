@@ -337,6 +337,11 @@ impl<'s> ReadCtx<'s> {
         if display != grammar && ((self.shows)(display) || (self.relaxes)(grammar, display)) { display } else { grammar }
     }
 
+    /// [`Self::stamped_kind`] of a parsed node.
+    pub fn node_kind(&self, node: &tree_sitter::Node<'_>) -> KindId {
+        self.stamped_kind(KindId(node.grammar_id()), display_id(node))
+    }
+
     /// Where the node the cursor is on came from: each transport's own
     /// (`TransportLayout::at`, or `::span` in a snapshot).
     pub fn at_of(&self, cursor: &TreeCursor<'_>) -> Origin {
@@ -374,7 +379,7 @@ impl<'s> ReadCtx<'s> {
             Span { start: range.start as u32, end: range.end as u32 }
         };
         NodeCoordinate {
-            kind: Some(self.stamped_kind(KindId(node.grammar_id()), display_id(node))),
+            kind: Some(self.node_kind(node)),
             ..NodeCoordinate::new(self.tree_id, index, index + node.descendant_count() as u32, span)
         }
     }

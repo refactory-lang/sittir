@@ -181,7 +181,7 @@ describe('where', () => {
 		it(`selects natively what the JavaScript reference selects: ${label}`, () => {
 			const defs = descendants().ofType(K.FunctionDefinition);
 			const native = [...defs.where(condition as never)].map(occurrence);
-			const reference = Array.from(defs.filter((fn) => holds(plan, () => [textOf(SOURCE, fn.name())]))).map(occurrence);
+			const reference = Array.from(defs.filter((fn) => holds(plan, { texts: () => [textOf(SOURCE, fn.name())] }))).map(occurrence);
 			expect(native).toEqual(reference);
 			expect(native.length).toBeGreaterThan(0);
 		});
@@ -379,7 +379,7 @@ describe('where on a boolean slot', () => {
 			[false, { op: 'not', of: present }]
 		] as const) {
 			const native = names(defs().where((c) => c.async.eq(value)));
-			const reference = names(defs().filter((fn) => holds(plan, () => (fn.async() ? ['async'] : []))));
+			const reference = names(defs().filter((fn) => holds(plan, { texts: () => (fn.async() ? ['async'] : []) })));
 			expect(native).toEqual(reference);
 		}
 	});
