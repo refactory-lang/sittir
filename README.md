@@ -10,7 +10,7 @@ Sittir uses tree-sitter as its base because it supplies explicit grammars, field
 It derives the missing typed construction/read/edit/render surface from that structure and a small authored overlay.
 Sittir complements ast-grep's pattern matching rather than replacing it.
 
-**Syntactically valid by construction.** Generated types enforce required slots, admitted kinds, and multiplicity (`repeat1` becomes a non-empty tuple). Leaf text is checked at runtime against the grammar's own patterns and applicable reserved words. Within the supported construction surface, a built tree is well-formed for the grammar without reparsing; this does not establish semantic validity.
+**Syntactically valid by construction.** Generated types enforce required slots, admitted kinds, and multiplicity (`repeat1` becomes a non-empty tuple); leaf text is checked at runtime against the grammar's patterns and applicable reserved words. Within the supported construction surface, a built tree conforms to the language's syntactic grammar as Sittir's generated parser encodes it (the upstream tree-sitter grammar plus Sittir's authored structure), so it parses back unchanged. Static-semantic rules are out of scope: ECMAScript's Early Errors and analogous checks after parsing, including `break`/`continue`/`return`/`await`/`yield` contexts, labels in scope, strict-mode rules, and duplicate parameters. Upstream grammars can also over-accept relative to the language; Sittir authors grammar-production rules where it finds such gaps.
 
 ## Examples
 
