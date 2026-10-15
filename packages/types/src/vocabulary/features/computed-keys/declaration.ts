@@ -9,4 +9,7 @@ export namespace Declaration {
 		readonly computed?: Flag;
 		// t only
 	}
+	export interface Property<G extends GrammarContext<G>> {
+		readonly computed?: Flag;
+	}
 }
