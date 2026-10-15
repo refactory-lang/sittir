@@ -4,17 +4,18 @@ Typed factories, guards, kind ids, a reader and a native renderer for TypeScript
 
 ## Installation
 
+Install the language package with your preferred package manager; for example:
+
 ```bash
-pnpm add @sittir/common @sittir/typescript
+npm install @sittir/typescript
 ```
 
 ## Quick start
 
 ```ts
-import { createEngine } from '@sittir/common';
 import typescript from '@sittir/typescript';
 
-using engine = await createEngine(typescript);
+using engine = await typescript.createEngine();
 
 const iface = engine.build.interfaceDeclaration({
 	name: 'User',
@@ -32,10 +33,9 @@ A node belongs to the engine that built or read it, and renders, edits and takes
 `parse` returns a lazily hydrated tree: a child is read the first time an accessor reaches it. Nothing you leave alone is re-spelled, so an untouched tree renders back to its own source, byte for byte.
 
 ```ts
-import { createEngine } from '@sittir/common';
 import typescript from '@sittir/typescript';
 
-using engine = await createEngine(typescript);
+using engine = await typescript.createEngine();
 const source = 'let x:   number = 1; // keep me\n';
 
 const program = engine.parse(source);
@@ -47,10 +47,9 @@ program.$render() === source; // true
 `$trivia` attaches comments to a node. A loose string is built into the grammar's default comment.
 
 ```ts
-import { createEngine } from '@sittir/common';
 import typescript from '@sittir/typescript';
 
-using engine = await createEngine(typescript);
+using engine = await typescript.createEngine();
 
 const iface = engine.build.interfaceDeclaration({
 	name: 'User',
@@ -65,10 +64,9 @@ iface.$trivia.leading('// the user').$render(); // "// the user\ninterface User 
 The guards narrow to this engine's language: a node of another engine of the language passes, a node of another language does not, and a value with no engine never does.
 
 ```ts
-import { createEngine } from '@sittir/common';
 import typescript from '@sittir/typescript';
 
-using engine = await createEngine(typescript);
+using engine = await typescript.createEngine();
 const built = engine.build.interfaceDeclaration({
 	name: 'User',
 	body: engine.build.objectType.curly()

@@ -1,18 +1,25 @@
 # sittir
 
-Sittir derives typed TypeScript syntax APIs from tree-sitter grammars: constructors, readers, kind guards, query facets, immutable updates, and native renderers. The same grammar model determines the construction types and the code that renders their values.
+Sittir derives typed TypeScript syntax APIs from tree-sitter grammars: constructors, readers, kind guards, queries, immutable updates, and native renderers. One grammar model determines the construction types and how their values render; parsed nodes retain the original bytes of unchanged regions.
 
-The node API follows the grammar's concrete forms. Parsed nodes retain source identity for unchanged regions; constructed and edited regions render through generated Rust code. This supports both syntax construction and source-to-source transformation without maintaining a separate handwritten AST library for each language.
+Language tooling typically offers three surfaces that do not compose into a shared contract.
+Parser/CST libraries expose untyped syntax trees without construction or rendering.
+Pattern engines such as ast-grep and Semgrep provide matching with template-string rewrites.
+Typed AST libraries such as Babel, LibCST, and syn maintain a separately authored model and implementation for each language.
+Sittir uses tree-sitter as its base because it supplies explicit grammars, fields, symbol metadata, and incremental parsing across languages.
+It derives the missing typed construction/read/edit/render surface from that structure and a small authored overlay.
+Sittir complements ast-grep's pattern matching rather than replacing it.
+
+**Syntactically valid by construction.** Generated types enforce required slots, admitted kinds, and multiplicity (`repeat1` becomes a non-empty tuple). Leaf text is checked at runtime against the grammar's own patterns and applicable reserved words. Within the supported construction surface, a built tree is well-formed for the grammar without reparsing; this does not establish semantic validity.
 
 ## Examples
 
 ### Construct syntax
 
 ```ts
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-using engine = await createEngine(rust);
+using engine = await rust.createEngine();
 const fn = engine.build.statement.function({
 	visibilityModifier: 'pub',
 	name: 'main',
@@ -28,10 +35,9 @@ The ordinary builder resolves ergonomic inputs such as strings in node slots. It
 ### Transform a parsed tree
 
 ```ts
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-using engine = await createEngine(rust);
+using engine = await rust.createEngine();
 const source = 'fn greet( ) { /* retained */ }\n';
 const root = engine.parse(source);
 const statements = root.statements().map((node) =>
@@ -46,6 +52,25 @@ updated.$render(); // "fn hello( ) { /* retained */ }\n"
 ```
 
 Accessors and guards are grammar-specific and statically typed. `$with` produces an updated value; it does not mutate the parsed tree or propagate a child replacement into its ancestors. Rebuild the containing slots, as above, to obtain an updated root.
+
+### Query a parsed tree
+
+```ts
+import rust from '@sittir/rust';
+
+using engine = await rust.createEngine();
+const root = engine.parse('fn _first() {} fn ordinary() {} fn __internal() {} fn _second() {}');
+const names = Array.from(
+	root.$query().$descendants.ofType(engine.kinds.FunctionItem)
+		.where((c) => c.name.match(/^_/).and(c.name.match(/^__/).not()))
+		.map((fn) => engine.render(fn.name()).toString())
+);
+
+names.length; // 2
+names.join(', '); // "_first, _second"
+```
+
+`where` records conditions over typed slot facets (`c.name`); `map` reads the matched nodes through their ordinary accessors. This selects functions whose names start with one underscore and excludes names starting with two.
 
 ## Architecture
 
@@ -76,17 +101,25 @@ The runtime is native-only. Each grammar package contains its own N-API binding;
 
 [Architecture](docs/architecture.md) covers the model, generated artifacts, and runtime boundaries in more detail.
 
+## Hypothesis and goals
+
+Sittir tests whether a tree-sitter grammar plus a small authored overlay determines a complete typed construction/read/edit/render API, without handwritten per-kind implementation code. The claim would fail if language constructs or syntactic constraints cannot be represented without such code, or require a second independently maintained account of the same syntax.
+
+Measure each grammar through coercion (`from`), coverage, read/render/reparse and AST agreement, factory and IR storage, and built-tree render/reparse validators. Also assess generated-output determinism and the size of the authored overlay relative to the generated surface. Known gaps bound the supported surface; completeness is a hypothesis being tested.
+
+One pipeline across languages makes those comparisons meaningful. Render fidelity takes priority over ergonomics; determinism makes output changes reproducible, and DRY makes contradictory derivations a correctness defect. Run `pnpm run validate:native` and inspect `pnpm run validate:history`; [Development](DEVELOPMENT.md) lists the validation and regeneration commands.
+
 ## Grammars and installation
 
-The workspace includes Rust, TypeScript, Python, regex, and tree-sitter query syntax (SCM). They use the same engine contract, with types and construction paths derived separately for each grammar.
+The workspace includes Rust, TypeScript, Python, regex, and tree-sitter query syntax (SCM). They use the same engine contract, with types and construction paths derived separately for each grammar. Install only the language package with your preferred package manager; for example:
 
 ```sh
-pnpm add @sittir/common @sittir/rust
+npm install @sittir/rust
 ```
 
 Substitute the grammar package you need. For a source checkout, use the [development setup](DEVELOPMENT.md) to build the native bindings.
 
-Sittir is alpha software. Grammar-derived shape checks and lexical guards constrain construction; they do not establish a program's semantic validity. Corpus validation tracks supported construction and round-trip behavior, including known exclusions.
+Sittir is alpha software. Corpus validation tracks supported construction and round-trip behavior, including known exclusions.
 
 ## Documentation
 

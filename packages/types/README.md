@@ -17,7 +17,6 @@ pnpm add @sittir/types
 | `EngineDiagnostics`, `ParsedRead` | Low-level read diagnostics for tooling |
 
 ```ts
-import { createEngine } from '@sittir/common';
 import type { Engine } from '@sittir/types';
 import rust, { type RustAPI } from '@sittir/rust';
 
@@ -25,7 +24,7 @@ function identifier(engine: Engine<RustAPI>, name: string) {
 	return engine.build.identifier(name);
 }
 
-using engine = await createEngine(rust);
+using engine = await rust.createEngine();
 identifier(engine, 'value').$render(); // "value"
 ```
 

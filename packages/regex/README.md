@@ -4,15 +4,16 @@ Typed Regex IR builders generated from the `tree-sitter-regex` grammar by `@sitt
 
 ## Quick start
 
+Install the language package with your preferred package manager; for example:
+
 ```bash
-pnpm add @sittir/common @sittir/regex
+npm install @sittir/regex
 ```
 
 ```ts
-import { createEngine } from '@sittir/common';
 import regex from '@sittir/regex';
 
-using engine = await createEngine(regex);
+using engine = await regex.createEngine();
 const source = '[a-z]+';
 engine.parse(source, { errors: 'throw' }).$render() === source; // true
 ```

@@ -4,15 +4,16 @@ Typed Scm IR builders generated from the `tree-sitter-scm` grammar by `@sittir/c
 
 ## Quick start
 
+Install the language package with your preferred package manager; for example:
+
 ```bash
-pnpm add @sittir/common @sittir/scm
+npm install @sittir/scm
 ```
 
 ```ts
-import { createEngine } from '@sittir/common';
 import scm from '@sittir/scm';
 
-using engine = await createEngine(scm);
+using engine = await scm.createEngine();
 const source = '(identifier) @name';
 engine.parse(source, { errors: 'throw' }).$render() === source; // true
 ```

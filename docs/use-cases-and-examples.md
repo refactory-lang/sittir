@@ -4,15 +4,14 @@ These examples target `master` and are type-checked and executed by the document
 
 ## Engine and language
 
-A grammar package exports a language descriptor and its generated types. Create an engine from the descriptor, then use its `build`, `is`, `kinds`, `parse`, and `render` surface. A node's rendering and query operations depend on its engine. A `using` declaration disposes the engine when its scope exits, including when an exception is thrown; keep the node operations inside that scope.
+Install the language package with your preferred package manager (for example, `npm install @sittir/rust`). It exports generated types and a descriptor with its own `createEngine()` factory. Use the resulting engine's `build`, `is`, `kinds`, `parse`, and `render` surface. A node's rendering and query operations depend on its engine. A `using` declaration disposes the engine when its scope exits, including when an exception is thrown; keep the node operations inside that scope.
 
 At module scope, `using` disposes the engine when module evaluation finishes, so exported engines or callbacks that run later need an explicitly managed, longer-lived engine.
 
 ```ts
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-using engine = await createEngine(rust);
+using engine = await rust.createEngine();
 const name = engine.build.identifier('value');
 name.$render(); // "value"
 engine.isFactoryNode(name); // true
@@ -23,10 +22,9 @@ engine.isFactoryNode(name); // true
 The ordinary builder resolves ergonomic inputs according to the slot's grammar-derived type. `.strict` takes the explicit constructor shape. A lexical builder still takes text, and fixed syntax may be represented by a kind ID rather than a node factory.
 
 ```ts
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-using engine = await createEngine(rust);
+using engine = await rust.createEngine();
 const fn = engine.build.statement.function.strict({
 	name: engine.build.identifier('main'),
 	parameters: engine.build.parameters.strict(),
@@ -42,10 +40,9 @@ Builders expose the grammar's forms, not a uniform object constructor for every 
 `parse` returns the typed root. Accessors materialize children on demand. An untouched root retains its source spelling.
 
 ```ts
-import { createEngine } from '@sittir/common';
 import typescript from '@sittir/typescript';
 
-using engine = await createEngine(typescript);
+using engine = await typescript.createEngine();
 const source = 'const answer: number = 42; // retained\n';
 const root = engine.parse(source, { errors: 'throw' });
 root.$errors.length === 0; // true
@@ -59,10 +56,9 @@ Without `errors: 'throw'`, inspect `root.$errors` before assuming a complete par
 Accessors return their declared slot values. A guard narrows a grammar kind; it is not a structural test for an arbitrary object with a matching `$type`.
 
 ```ts
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-using engine = await createEngine(rust);
+using engine = await rust.createEngine();
 const root = engine.parse('fn old_name() {}\n');
 const statements = root.statements().map((node) =>
 	engine.is.functionItem(node)
@@ -81,10 +77,9 @@ Rebuilding a child leaves its ancestors unchanged. Return or render the updated 
 A parsed node's `$query()` exposes typed slot views and structural walks. `ofType` narrows kinds; `where` predicates operate on query facets rather than eagerly materialized node accessors.
 
 ```ts
-import { createEngine } from '@sittir/common';
 import python from '@sittir/python';
 
-using engine = await createEngine(python);
+using engine = await python.createEngine();
 const root = engine.parse('load(1)\nstore(2)\n');
 const calls = Array.from(
 	root.$query().$descendants.ofType(engine.kinds.Call)
@@ -93,17 +88,16 @@ const calls = Array.from(
 calls.length === 1; // true
 ```
 
-Queries require parsed structure. A newly constructed node or draft is not a parsed tree; use the commit/reparse lifecycle before querying an updated value. [Read/query/update examples](../examples/23-read-query-with.ts) show slot views, traversal, and ancestor reconstruction together.
+Queries require parsed structure. A newly constructed node or draft is not a parsed tree; render the updated root and parse the result again before querying it. [Read/query/update examples](../examples/23-read-query-with.ts) show slot views, traversal, and ancestor reconstruction together.
 
 ## Rendering
 
 `node.$render()` returns source text. `engine.render(node)` returns a render result with `toString()`, `print()`, and `save(path)`. Render options are typed by the selected grammar.
 
 ```ts
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-using engine = await createEngine(rust);
+using engine = await rust.createEngine();
 const name = engine.build.identifier('value');
 engine.render(name).toString(); // "value"
 ```
@@ -115,10 +109,9 @@ Parsed nodes can reuse their source bytes. A fresh build is rendered from its st
 Use `$trivia` rather than editing raw layout storage. Leading and trailing trivia belong to the node. Inner trivia requires an appropriate empty node; the grammar and engine determine eligibility.
 
 ```ts
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-using engine = await createEngine(rust);
+using engine = await rust.createEngine();
 const fn = engine.build.statement.function({
 	name: 'main',
 	parameters: engine.build.parameters(),
