@@ -8,6 +8,7 @@ import { flatten } from '../../compiler/flatten.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { scalarLeafKinds } from '../shared.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
+import { emitTypes } from '../types.ts';
 
 /**
  * A JavaScript boolean resolves to the grammar's own true/false kind id,
@@ -80,6 +81,12 @@ describe('a boolean resolves to the enum member of the two texts', () => {
 		expect(emitted).toContain('if (typeof v === "boolean") return v ? TSKindId.TrueKeyword : TSKindId.FalseKeyword;');
 		expect(emitted).not.toContain('_leafRegistry["boolean_literal"]');
 	});
+	it('emits one literal-valued scalar row per boolean member', () => {
+		const emitted = emitTypes({ grammar: 'synth', nodeMap });
+		expect(emitted).toContain('["true_keyword"]: true;');
+		expect(emitted).toContain('["false_keyword"]: false;');
+		expect(emitted).not.toContain('  boolean:');
+	});
 });
 
 describe('a boolean resolves to the keyword kinds of the two texts, whatever their case', () => {
@@ -118,6 +125,12 @@ describe('a boolean resolves to the keyword kinds of the two texts, whatever the
 	it('emits the keyword ids', () => {
 		const emitted = emitFrom({ grammar: 'synth', nodeMap, kindEntries: entries });
 		expect(emitted).toContain('if (typeof v === "boolean") return v ? TSKindId.True : TSKindId.False;');
+	});
+	it('emits literal-valued scalar rows for keyword kinds', () => {
+		const emitted = emitTypes({ grammar: 'synth', nodeMap });
+		expect(emitted).toContain('["true"]: true;');
+		expect(emitted).toContain('["false"]: false;');
+		expect(emitted).not.toContain('  boolean:');
 	});
 });
 
