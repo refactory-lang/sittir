@@ -627,11 +627,14 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// The descendant index of the node `address` names.
     fn index_of(&self, address: Address) -> Result<u32, String> {
         let missing = || format!("{address:?} names no node of tree {}", self.tree_id);
+        let resolve = |handle: u64| {
+            let at = self.local_index(handle)?;
+            node_at_index(&self.tree, at).map(|node| (at, node)).ok_or_else(missing)
+        };
         match address {
-            Address::Own { handle } => self.local_index(handle),
+            Address::Own { handle } => Ok(resolve(handle)?.0),
             Address::Child { parent, index } => {
-                let parent_index = self.local_index(parent)?;
-                let parent_node = node_at_index(&self.tree, parent_index).ok_or_else(missing)?;
+                let (parent_index, parent_node) = resolve(parent)?;
                 parent_node.child(index).ok_or_else(missing)?;
                 Ok(child_index_of(parent_node, parent_index, index))
             }
@@ -2032,6 +2035,9 @@ mod tests {
         assert_eq!(tree.plan_holds(&addresses, &private).expect("holds"), [false, false, true, true, false]);
         let elsewhere = crate::query::Address::Own { handle: encode_handle(9, 0) };
         assert!(tree.plan_holds(&[elsewhere], &private).is_err());
+        let past_end = crate::query::Address::Own { handle: encode_handle(decode_handle(root).0, u32::MAX >> 1) };
+        assert!(tree.plan_holds(&[past_end], &private).is_err());
+        assert!(tree.plan_holds(&[addresses[0], past_end], &private).is_err());
     }
 
     #[test]
