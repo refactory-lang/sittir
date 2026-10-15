@@ -131,62 +131,20 @@ export interface PortableIds {
 	'declaration.function.signature': TSKindId.FunctionSignature;
 	'declaration.interface': TSKindId.InterfaceDeclaration;
 	'declaration.method': TSKindId.AbstractMethodSignature | TSKindId.MethodDefinition | TSKindId.MethodSignature;
-	'declaration.method.getter': TSKindId.AbstractMethodSignature | TSKindId.MethodDefinition | TSKindId.MethodSignature;
-	'declaration.method.getter.private':
-		| TSKindId.AbstractMethodSignature
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature;
-	'declaration.method.getter.protected':
-		| TSKindId.AbstractMethodSignature
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature;
-	'declaration.method.getter.public':
-		| TSKindId.AbstractMethodSignature
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature;
 	'declaration.method.private': TSKindId.AbstractMethodSignature | TSKindId.MethodDefinition | TSKindId.MethodSignature;
 	'declaration.method.protected':
 		| TSKindId.AbstractMethodSignature
 		| TSKindId.MethodDefinition
 		| TSKindId.MethodSignature;
 	'declaration.method.public': TSKindId.AbstractMethodSignature | TSKindId.MethodDefinition | TSKindId.MethodSignature;
-	'declaration.method.setter': TSKindId.AbstractMethodSignature | TSKindId.MethodDefinition | TSKindId.MethodSignature;
-	'declaration.method.setter.private':
-		| TSKindId.AbstractMethodSignature
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature;
-	'declaration.method.setter.protected':
-		| TSKindId.AbstractMethodSignature
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature;
-	'declaration.method.setter.public':
-		| TSKindId.AbstractMethodSignature
-		| TSKindId.MethodDefinition
-		| TSKindId.MethodSignature;
 	'declaration.method.signature': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
 	'declaration.method.signature.abstract': TSKindId.AbstractMethodSignature;
-	'declaration.method.signature.abstract.getter': TSKindId.AbstractMethodSignature;
-	'declaration.method.signature.abstract.getter.private': TSKindId.AbstractMethodSignature;
-	'declaration.method.signature.abstract.getter.protected': TSKindId.AbstractMethodSignature;
-	'declaration.method.signature.abstract.getter.public': TSKindId.AbstractMethodSignature;
 	'declaration.method.signature.abstract.private': TSKindId.AbstractMethodSignature;
 	'declaration.method.signature.abstract.protected': TSKindId.AbstractMethodSignature;
 	'declaration.method.signature.abstract.public': TSKindId.AbstractMethodSignature;
-	'declaration.method.signature.abstract.setter': TSKindId.AbstractMethodSignature;
-	'declaration.method.signature.abstract.setter.private': TSKindId.AbstractMethodSignature;
-	'declaration.method.signature.abstract.setter.protected': TSKindId.AbstractMethodSignature;
-	'declaration.method.signature.abstract.setter.public': TSKindId.AbstractMethodSignature;
-	'declaration.method.signature.getter': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
-	'declaration.method.signature.getter.private': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
-	'declaration.method.signature.getter.protected': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
-	'declaration.method.signature.getter.public': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
 	'declaration.method.signature.private': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
 	'declaration.method.signature.protected': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
 	'declaration.method.signature.public': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
-	'declaration.method.signature.setter': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
-	'declaration.method.signature.setter.private': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
-	'declaration.method.signature.setter.protected': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
-	'declaration.method.signature.setter.public': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
 	'declaration.module': TSKindId.InternalModule | TSKindId.Module;
 	'declaration.module.external': TSKindId.Module;
 	'declaration.module_property': TSKindId.AmbientDeclarationModule;
@@ -194,6 +152,76 @@ export interface PortableIds {
 	'declaration.parameter.private': TSKindId.OptionalParameter | TSKindId.RequiredParameter;
 	'declaration.parameter.protected': TSKindId.OptionalParameter | TSKindId.RequiredParameter;
 	'declaration.parameter.public': TSKindId.OptionalParameter | TSKindId.RequiredParameter;
+	'declaration.property':
+		| TSKindId.AbstractMethodSignature
+		| TSKindId.MethodDefinition
+		| TSKindId.MethodSignature
+		| TSKindId.PublicFieldDefinition;
+	'declaration.property.getter':
+		| TSKindId.AbstractMethodSignature
+		| TSKindId.MethodDefinition
+		| TSKindId.MethodSignature;
+	'declaration.property.getter.private':
+		| TSKindId.AbstractMethodSignature
+		| TSKindId.MethodDefinition
+		| TSKindId.MethodSignature;
+	'declaration.property.getter.protected':
+		| TSKindId.AbstractMethodSignature
+		| TSKindId.MethodDefinition
+		| TSKindId.MethodSignature;
+	'declaration.property.getter.public':
+		| TSKindId.AbstractMethodSignature
+		| TSKindId.MethodDefinition
+		| TSKindId.MethodSignature;
+	'declaration.property.private':
+		| TSKindId.AbstractMethodSignature
+		| TSKindId.MethodDefinition
+		| TSKindId.MethodSignature
+		| TSKindId.PublicFieldDefinition;
+	'declaration.property.protected':
+		| TSKindId.AbstractMethodSignature
+		| TSKindId.MethodDefinition
+		| TSKindId.MethodSignature
+		| TSKindId.PublicFieldDefinition;
+	'declaration.property.public':
+		| TSKindId.AbstractMethodSignature
+		| TSKindId.MethodDefinition
+		| TSKindId.MethodSignature
+		| TSKindId.PublicFieldDefinition;
+	'declaration.property.setter':
+		| TSKindId.AbstractMethodSignature
+		| TSKindId.MethodDefinition
+		| TSKindId.MethodSignature;
+	'declaration.property.setter.private':
+		| TSKindId.AbstractMethodSignature
+		| TSKindId.MethodDefinition
+		| TSKindId.MethodSignature;
+	'declaration.property.setter.protected':
+		| TSKindId.AbstractMethodSignature
+		| TSKindId.MethodDefinition
+		| TSKindId.MethodSignature;
+	'declaration.property.setter.public':
+		| TSKindId.AbstractMethodSignature
+		| TSKindId.MethodDefinition
+		| TSKindId.MethodSignature;
+	'declaration.property.signature': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+	'declaration.property.signature.abstract': TSKindId.AbstractMethodSignature;
+	'declaration.property.signature.abstract.getter': TSKindId.AbstractMethodSignature;
+	'declaration.property.signature.abstract.getter.private': TSKindId.AbstractMethodSignature;
+	'declaration.property.signature.abstract.getter.protected': TSKindId.AbstractMethodSignature;
+	'declaration.property.signature.abstract.getter.public': TSKindId.AbstractMethodSignature;
+	'declaration.property.signature.abstract.setter': TSKindId.AbstractMethodSignature;
+	'declaration.property.signature.abstract.setter.private': TSKindId.AbstractMethodSignature;
+	'declaration.property.signature.abstract.setter.protected': TSKindId.AbstractMethodSignature;
+	'declaration.property.signature.abstract.setter.public': TSKindId.AbstractMethodSignature;
+	'declaration.property.signature.getter': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+	'declaration.property.signature.getter.private': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+	'declaration.property.signature.getter.protected': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+	'declaration.property.signature.getter.public': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+	'declaration.property.signature.setter': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+	'declaration.property.signature.setter.private': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+	'declaration.property.signature.setter.protected': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
+	'declaration.property.signature.setter.public': TSKindId.AbstractMethodSignature | TSKindId.MethodSignature;
 	'declaration.signature':
 		| TSKindId.AbstractMethodSignature
 		| TSKindId.CallSignature
@@ -609,7 +637,7 @@ export interface PortableIds {
 	'type.literal': TSKindId.LiteralType;
 	'type.lookup': TSKindId.LookupType;
 	'type.nullable': TSKindId.FlowMaybeType;
-	'type.object': TSKindId.ObjectType;
+	'type.object': TSKindId.ObjectKeyword | TSKindId.ObjectType;
 	'type.optional': TSKindId.OptionalType;
 	'type.parenthesized': TSKindId.ParenthesizedType;
 	'type.path': TSKindId.NestedTypeIdentifier;
@@ -626,7 +654,26 @@ export interface PortableIds {
 		| TSKindId.Unique
 		| TSKindId.UnknownKeyword
 		| TSKindId.VoidKeyword;
+	'type.primitive.boolean': TSKindId.BooleanKeyword;
+	'type.primitive.floating': TSKindId.NumberKeyword;
+	'type.primitive.floating.float64': TSKindId.NumberKeyword;
 	'type.primitive.never': TSKindId.NeverKeyword;
+	'type.primitive.object': TSKindId.ObjectKeyword;
+	'type.primitive.string': TSKindId.StringKeyword;
+	'type.primitive.symbol':
+		| TSKindId.AnyKeyword
+		| TSKindId.BooleanKeyword
+		| TSKindId.NeverKeyword
+		| TSKindId.NumberKeyword
+		| TSKindId.ObjectKeyword
+		| TSKindId.StringKeyword
+		| TSKindId.SymbolKeyword
+		| TSKindId.Unique
+		| TSKindId.UnknownKeyword
+		| TSKindId.VoidKeyword;
+	'type.primitive.unchecked': TSKindId.AnyKeyword;
+	'type.primitive.unknown': TSKindId.UnknownKeyword;
+	'type.primitive.void': TSKindId.VoidKeyword;
 	'type.query': TSKindId.TypeQuery;
 	'type.readonly': TSKindId.ReadonlyType;
 	'type.rest': TSKindId.RestType;
@@ -739,6 +786,7 @@ export interface PortableKindsAt {
 		readonly module: PortableKindsAt['declaration.module'];
 		readonly module_property: PortableKindsAt['declaration.module_property'];
 		readonly parameter: PortableKindsAt['declaration.parameter'];
+		readonly property: PortableKindsAt['declaration.property'];
 		readonly signature: PortableKindsAt['declaration.signature'];
 		readonly type_alias: PortableKindsAt['declaration.type_alias'];
 		readonly type_parameter: PortableKindsAt['declaration.type_parameter'];
@@ -788,69 +836,26 @@ export interface PortableKindsAt {
 	'declaration.interface': { readonly $ids: readonly PortableIds['declaration.interface'][] };
 	'declaration.method': {
 		readonly $ids: readonly PortableIds['declaration.method'][];
-		readonly getter: PortableKindsAt['declaration.method.getter'];
 		readonly private: PortableKindsAt['declaration.method.private'];
 		readonly protected: PortableKindsAt['declaration.method.protected'];
 		readonly public: PortableKindsAt['declaration.method.public'];
-		readonly setter: PortableKindsAt['declaration.method.setter'];
 		readonly signature: PortableKindsAt['declaration.method.signature'];
 	};
-	'declaration.method.getter': {
-		readonly $ids: readonly PortableIds['declaration.method.getter'][];
-		readonly private: PortableKindsAt['declaration.method.getter.private'];
-		readonly protected: PortableKindsAt['declaration.method.getter.protected'];
-		readonly public: PortableKindsAt['declaration.method.getter.public'];
-	};
-	'declaration.method.getter.private': { readonly $ids: readonly PortableIds['declaration.method.getter.private'][] };
-	'declaration.method.getter.protected': {
-		readonly $ids: readonly PortableIds['declaration.method.getter.protected'][];
-	};
-	'declaration.method.getter.public': { readonly $ids: readonly PortableIds['declaration.method.getter.public'][] };
 	'declaration.method.private': { readonly $ids: readonly PortableIds['declaration.method.private'][] };
 	'declaration.method.protected': { readonly $ids: readonly PortableIds['declaration.method.protected'][] };
 	'declaration.method.public': { readonly $ids: readonly PortableIds['declaration.method.public'][] };
-	'declaration.method.setter': {
-		readonly $ids: readonly PortableIds['declaration.method.setter'][];
-		readonly private: PortableKindsAt['declaration.method.setter.private'];
-		readonly protected: PortableKindsAt['declaration.method.setter.protected'];
-		readonly public: PortableKindsAt['declaration.method.setter.public'];
-	};
-	'declaration.method.setter.private': { readonly $ids: readonly PortableIds['declaration.method.setter.private'][] };
-	'declaration.method.setter.protected': {
-		readonly $ids: readonly PortableIds['declaration.method.setter.protected'][];
-	};
-	'declaration.method.setter.public': { readonly $ids: readonly PortableIds['declaration.method.setter.public'][] };
 	'declaration.method.signature': {
 		readonly $ids: readonly PortableIds['declaration.method.signature'][];
 		readonly abstract: PortableKindsAt['declaration.method.signature.abstract'];
-		readonly getter: PortableKindsAt['declaration.method.signature.getter'];
 		readonly private: PortableKindsAt['declaration.method.signature.private'];
 		readonly protected: PortableKindsAt['declaration.method.signature.protected'];
 		readonly public: PortableKindsAt['declaration.method.signature.public'];
-		readonly setter: PortableKindsAt['declaration.method.signature.setter'];
 	};
 	'declaration.method.signature.abstract': {
 		readonly $ids: readonly PortableIds['declaration.method.signature.abstract'][];
-		readonly getter: PortableKindsAt['declaration.method.signature.abstract.getter'];
 		readonly private: PortableKindsAt['declaration.method.signature.abstract.private'];
 		readonly protected: PortableKindsAt['declaration.method.signature.abstract.protected'];
 		readonly public: PortableKindsAt['declaration.method.signature.abstract.public'];
-		readonly setter: PortableKindsAt['declaration.method.signature.abstract.setter'];
-	};
-	'declaration.method.signature.abstract.getter': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.abstract.getter'][];
-		readonly private: PortableKindsAt['declaration.method.signature.abstract.getter.private'];
-		readonly protected: PortableKindsAt['declaration.method.signature.abstract.getter.protected'];
-		readonly public: PortableKindsAt['declaration.method.signature.abstract.getter.public'];
-	};
-	'declaration.method.signature.abstract.getter.private': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.abstract.getter.private'][];
-	};
-	'declaration.method.signature.abstract.getter.protected': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.abstract.getter.protected'][];
-	};
-	'declaration.method.signature.abstract.getter.public': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.abstract.getter.public'][];
 	};
 	'declaration.method.signature.abstract.private': {
 		readonly $ids: readonly PortableIds['declaration.method.signature.abstract.private'][];
@@ -861,36 +866,6 @@ export interface PortableKindsAt {
 	'declaration.method.signature.abstract.public': {
 		readonly $ids: readonly PortableIds['declaration.method.signature.abstract.public'][];
 	};
-	'declaration.method.signature.abstract.setter': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.abstract.setter'][];
-		readonly private: PortableKindsAt['declaration.method.signature.abstract.setter.private'];
-		readonly protected: PortableKindsAt['declaration.method.signature.abstract.setter.protected'];
-		readonly public: PortableKindsAt['declaration.method.signature.abstract.setter.public'];
-	};
-	'declaration.method.signature.abstract.setter.private': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.abstract.setter.private'][];
-	};
-	'declaration.method.signature.abstract.setter.protected': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.abstract.setter.protected'][];
-	};
-	'declaration.method.signature.abstract.setter.public': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.abstract.setter.public'][];
-	};
-	'declaration.method.signature.getter': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.getter'][];
-		readonly private: PortableKindsAt['declaration.method.signature.getter.private'];
-		readonly protected: PortableKindsAt['declaration.method.signature.getter.protected'];
-		readonly public: PortableKindsAt['declaration.method.signature.getter.public'];
-	};
-	'declaration.method.signature.getter.private': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.getter.private'][];
-	};
-	'declaration.method.signature.getter.protected': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.getter.protected'][];
-	};
-	'declaration.method.signature.getter.public': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.getter.public'][];
-	};
 	'declaration.method.signature.private': {
 		readonly $ids: readonly PortableIds['declaration.method.signature.private'][];
 	};
@@ -899,21 +874,6 @@ export interface PortableKindsAt {
 	};
 	'declaration.method.signature.public': {
 		readonly $ids: readonly PortableIds['declaration.method.signature.public'][];
-	};
-	'declaration.method.signature.setter': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.setter'][];
-		readonly private: PortableKindsAt['declaration.method.signature.setter.private'];
-		readonly protected: PortableKindsAt['declaration.method.signature.setter.protected'];
-		readonly public: PortableKindsAt['declaration.method.signature.setter.public'];
-	};
-	'declaration.method.signature.setter.private': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.setter.private'][];
-	};
-	'declaration.method.signature.setter.protected': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.setter.protected'][];
-	};
-	'declaration.method.signature.setter.public': {
-		readonly $ids: readonly PortableIds['declaration.method.signature.setter.public'][];
 	};
 	'declaration.module': {
 		readonly $ids: readonly PortableIds['declaration.module'][];
@@ -930,6 +890,115 @@ export interface PortableKindsAt {
 	'declaration.parameter.private': { readonly $ids: readonly PortableIds['declaration.parameter.private'][] };
 	'declaration.parameter.protected': { readonly $ids: readonly PortableIds['declaration.parameter.protected'][] };
 	'declaration.parameter.public': { readonly $ids: readonly PortableIds['declaration.parameter.public'][] };
+	'declaration.property': {
+		readonly $ids: readonly PortableIds['declaration.property'][];
+		readonly getter: PortableKindsAt['declaration.property.getter'];
+		readonly private: PortableKindsAt['declaration.property.private'];
+		readonly protected: PortableKindsAt['declaration.property.protected'];
+		readonly public: PortableKindsAt['declaration.property.public'];
+		readonly setter: PortableKindsAt['declaration.property.setter'];
+		readonly signature: PortableKindsAt['declaration.property.signature'];
+	};
+	'declaration.property.getter': {
+		readonly $ids: readonly PortableIds['declaration.property.getter'][];
+		readonly private: PortableKindsAt['declaration.property.getter.private'];
+		readonly protected: PortableKindsAt['declaration.property.getter.protected'];
+		readonly public: PortableKindsAt['declaration.property.getter.public'];
+	};
+	'declaration.property.getter.private': {
+		readonly $ids: readonly PortableIds['declaration.property.getter.private'][];
+	};
+	'declaration.property.getter.protected': {
+		readonly $ids: readonly PortableIds['declaration.property.getter.protected'][];
+	};
+	'declaration.property.getter.public': { readonly $ids: readonly PortableIds['declaration.property.getter.public'][] };
+	'declaration.property.private': { readonly $ids: readonly PortableIds['declaration.property.private'][] };
+	'declaration.property.protected': { readonly $ids: readonly PortableIds['declaration.property.protected'][] };
+	'declaration.property.public': { readonly $ids: readonly PortableIds['declaration.property.public'][] };
+	'declaration.property.setter': {
+		readonly $ids: readonly PortableIds['declaration.property.setter'][];
+		readonly private: PortableKindsAt['declaration.property.setter.private'];
+		readonly protected: PortableKindsAt['declaration.property.setter.protected'];
+		readonly public: PortableKindsAt['declaration.property.setter.public'];
+	};
+	'declaration.property.setter.private': {
+		readonly $ids: readonly PortableIds['declaration.property.setter.private'][];
+	};
+	'declaration.property.setter.protected': {
+		readonly $ids: readonly PortableIds['declaration.property.setter.protected'][];
+	};
+	'declaration.property.setter.public': { readonly $ids: readonly PortableIds['declaration.property.setter.public'][] };
+	'declaration.property.signature': {
+		readonly $ids: readonly PortableIds['declaration.property.signature'][];
+		readonly abstract: PortableKindsAt['declaration.property.signature.abstract'];
+		readonly getter: PortableKindsAt['declaration.property.signature.getter'];
+		readonly setter: PortableKindsAt['declaration.property.signature.setter'];
+	};
+	'declaration.property.signature.abstract': {
+		readonly $ids: readonly PortableIds['declaration.property.signature.abstract'][];
+		readonly getter: PortableKindsAt['declaration.property.signature.abstract.getter'];
+		readonly setter: PortableKindsAt['declaration.property.signature.abstract.setter'];
+	};
+	'declaration.property.signature.abstract.getter': {
+		readonly $ids: readonly PortableIds['declaration.property.signature.abstract.getter'][];
+		readonly private: PortableKindsAt['declaration.property.signature.abstract.getter.private'];
+		readonly protected: PortableKindsAt['declaration.property.signature.abstract.getter.protected'];
+		readonly public: PortableKindsAt['declaration.property.signature.abstract.getter.public'];
+	};
+	'declaration.property.signature.abstract.getter.private': {
+		readonly $ids: readonly PortableIds['declaration.property.signature.abstract.getter.private'][];
+	};
+	'declaration.property.signature.abstract.getter.protected': {
+		readonly $ids: readonly PortableIds['declaration.property.signature.abstract.getter.protected'][];
+	};
+	'declaration.property.signature.abstract.getter.public': {
+		readonly $ids: readonly PortableIds['declaration.property.signature.abstract.getter.public'][];
+	};
+	'declaration.property.signature.abstract.setter': {
+		readonly $ids: readonly PortableIds['declaration.property.signature.abstract.setter'][];
+		readonly private: PortableKindsAt['declaration.property.signature.abstract.setter.private'];
+		readonly protected: PortableKindsAt['declaration.property.signature.abstract.setter.protected'];
+		readonly public: PortableKindsAt['declaration.property.signature.abstract.setter.public'];
+	};
+	'declaration.property.signature.abstract.setter.private': {
+		readonly $ids: readonly PortableIds['declaration.property.signature.abstract.setter.private'][];
+	};
+	'declaration.property.signature.abstract.setter.protected': {
+		readonly $ids: readonly PortableIds['declaration.property.signature.abstract.setter.protected'][];
+	};
+	'declaration.property.signature.abstract.setter.public': {
+		readonly $ids: readonly PortableIds['declaration.property.signature.abstract.setter.public'][];
+	};
+	'declaration.property.signature.getter': {
+		readonly $ids: readonly PortableIds['declaration.property.signature.getter'][];
+		readonly private: PortableKindsAt['declaration.property.signature.getter.private'];
+		readonly protected: PortableKindsAt['declaration.property.signature.getter.protected'];
+		readonly public: PortableKindsAt['declaration.property.signature.getter.public'];
+	};
+	'declaration.property.signature.getter.private': {
+		readonly $ids: readonly PortableIds['declaration.property.signature.getter.private'][];
+	};
+	'declaration.property.signature.getter.protected': {
+		readonly $ids: readonly PortableIds['declaration.property.signature.getter.protected'][];
+	};
+	'declaration.property.signature.getter.public': {
+		readonly $ids: readonly PortableIds['declaration.property.signature.getter.public'][];
+	};
+	'declaration.property.signature.setter': {
+		readonly $ids: readonly PortableIds['declaration.property.signature.setter'][];
+		readonly private: PortableKindsAt['declaration.property.signature.setter.private'];
+		readonly protected: PortableKindsAt['declaration.property.signature.setter.protected'];
+		readonly public: PortableKindsAt['declaration.property.signature.setter.public'];
+	};
+	'declaration.property.signature.setter.private': {
+		readonly $ids: readonly PortableIds['declaration.property.signature.setter.private'][];
+	};
+	'declaration.property.signature.setter.protected': {
+		readonly $ids: readonly PortableIds['declaration.property.signature.setter.protected'][];
+	};
+	'declaration.property.signature.setter.public': {
+		readonly $ids: readonly PortableIds['declaration.property.signature.setter.public'][];
+	};
 	'declaration.signature': {
 		readonly $ids: readonly PortableIds['declaration.signature'][];
 		readonly call: PortableKindsAt['declaration.signature.call'];
@@ -1476,9 +1545,29 @@ export interface PortableKindsAt {
 	'type.predicate.asserts': { readonly $ids: readonly PortableIds['type.predicate.asserts'][] };
 	'type.primitive': {
 		readonly $ids: readonly PortableIds['type.primitive'][];
+		readonly boolean: PortableKindsAt['type.primitive.boolean'];
+		readonly floating: PortableKindsAt['type.primitive.floating'];
 		readonly never: PortableKindsAt['type.primitive.never'];
+		readonly object: PortableKindsAt['type.primitive.object'];
+		readonly string: PortableKindsAt['type.primitive.string'];
+		readonly symbol: PortableKindsAt['type.primitive.symbol'];
+		readonly unchecked: PortableKindsAt['type.primitive.unchecked'];
+		readonly unknown: PortableKindsAt['type.primitive.unknown'];
+		readonly void: PortableKindsAt['type.primitive.void'];
 	};
+	'type.primitive.boolean': { readonly $ids: readonly PortableIds['type.primitive.boolean'][] };
+	'type.primitive.floating': {
+		readonly $ids: readonly PortableIds['type.primitive.floating'][];
+		readonly float64: PortableKindsAt['type.primitive.floating.float64'];
+	};
+	'type.primitive.floating.float64': { readonly $ids: readonly PortableIds['type.primitive.floating.float64'][] };
 	'type.primitive.never': { readonly $ids: readonly PortableIds['type.primitive.never'][] };
+	'type.primitive.object': { readonly $ids: readonly PortableIds['type.primitive.object'][] };
+	'type.primitive.string': { readonly $ids: readonly PortableIds['type.primitive.string'][] };
+	'type.primitive.symbol': { readonly $ids: readonly PortableIds['type.primitive.symbol'][] };
+	'type.primitive.unchecked': { readonly $ids: readonly PortableIds['type.primitive.unchecked'][] };
+	'type.primitive.unknown': { readonly $ids: readonly PortableIds['type.primitive.unknown'][] };
+	'type.primitive.void': { readonly $ids: readonly PortableIds['type.primitive.void'][] };
 	'type.query': { readonly $ids: readonly PortableIds['type.query'][] };
 	'type.readonly': { readonly $ids: readonly PortableIds['type.readonly'][] };
 	'type.rest': { readonly $ids: readonly PortableIds['type.rest'][] };
@@ -1577,6 +1666,7 @@ export interface PortableIsAt {
 		readonly module: PortableIsAt['declaration.module'];
 		readonly module_property: PortableIsAt['declaration.module_property'];
 		readonly parameter: PortableIsAt['declaration.parameter'];
+		readonly property: PortableIsAt['declaration.property'];
 		readonly signature: PortableIsAt['declaration.signature'];
 		readonly type_alias: PortableIsAt['declaration.type_alias'];
 		readonly type_parameter: PortableIsAt['declaration.type_parameter'];
@@ -1617,63 +1707,25 @@ export interface PortableIsAt {
 	'declaration.function.signature': PortableGuard<PortableIds['declaration.function.signature']> & {};
 	'declaration.interface': PortableGuard<PortableIds['declaration.interface']> & {};
 	'declaration.method': PortableGuard<PortableIds['declaration.method']> & {
-		readonly getter: PortableIsAt['declaration.method.getter'];
 		readonly private: PortableIsAt['declaration.method.private'];
 		readonly protected: PortableIsAt['declaration.method.protected'];
 		readonly public: PortableIsAt['declaration.method.public'];
-		readonly setter: PortableIsAt['declaration.method.setter'];
 		readonly signature: PortableIsAt['declaration.method.signature'];
 	};
-	'declaration.method.getter': PortableGuard<PortableIds['declaration.method.getter']> & {
-		readonly private: PortableIsAt['declaration.method.getter.private'];
-		readonly protected: PortableIsAt['declaration.method.getter.protected'];
-		readonly public: PortableIsAt['declaration.method.getter.public'];
-	};
-	'declaration.method.getter.private': PortableGuard<PortableIds['declaration.method.getter.private']> & {};
-	'declaration.method.getter.protected': PortableGuard<PortableIds['declaration.method.getter.protected']> & {};
-	'declaration.method.getter.public': PortableGuard<PortableIds['declaration.method.getter.public']> & {};
 	'declaration.method.private': PortableGuard<PortableIds['declaration.method.private']> & {};
 	'declaration.method.protected': PortableGuard<PortableIds['declaration.method.protected']> & {};
 	'declaration.method.public': PortableGuard<PortableIds['declaration.method.public']> & {};
-	'declaration.method.setter': PortableGuard<PortableIds['declaration.method.setter']> & {
-		readonly private: PortableIsAt['declaration.method.setter.private'];
-		readonly protected: PortableIsAt['declaration.method.setter.protected'];
-		readonly public: PortableIsAt['declaration.method.setter.public'];
-	};
-	'declaration.method.setter.private': PortableGuard<PortableIds['declaration.method.setter.private']> & {};
-	'declaration.method.setter.protected': PortableGuard<PortableIds['declaration.method.setter.protected']> & {};
-	'declaration.method.setter.public': PortableGuard<PortableIds['declaration.method.setter.public']> & {};
 	'declaration.method.signature': PortableGuard<PortableIds['declaration.method.signature']> & {
 		readonly abstract: PortableIsAt['declaration.method.signature.abstract'];
-		readonly getter: PortableIsAt['declaration.method.signature.getter'];
 		readonly private: PortableIsAt['declaration.method.signature.private'];
 		readonly protected: PortableIsAt['declaration.method.signature.protected'];
 		readonly public: PortableIsAt['declaration.method.signature.public'];
-		readonly setter: PortableIsAt['declaration.method.signature.setter'];
 	};
 	'declaration.method.signature.abstract': PortableGuard<PortableIds['declaration.method.signature.abstract']> & {
-		readonly getter: PortableIsAt['declaration.method.signature.abstract.getter'];
 		readonly private: PortableIsAt['declaration.method.signature.abstract.private'];
 		readonly protected: PortableIsAt['declaration.method.signature.abstract.protected'];
 		readonly public: PortableIsAt['declaration.method.signature.abstract.public'];
-		readonly setter: PortableIsAt['declaration.method.signature.abstract.setter'];
 	};
-	'declaration.method.signature.abstract.getter': PortableGuard<
-		PortableIds['declaration.method.signature.abstract.getter']
-	> & {
-		readonly private: PortableIsAt['declaration.method.signature.abstract.getter.private'];
-		readonly protected: PortableIsAt['declaration.method.signature.abstract.getter.protected'];
-		readonly public: PortableIsAt['declaration.method.signature.abstract.getter.public'];
-	};
-	'declaration.method.signature.abstract.getter.private': PortableGuard<
-		PortableIds['declaration.method.signature.abstract.getter.private']
-	> & {};
-	'declaration.method.signature.abstract.getter.protected': PortableGuard<
-		PortableIds['declaration.method.signature.abstract.getter.protected']
-	> & {};
-	'declaration.method.signature.abstract.getter.public': PortableGuard<
-		PortableIds['declaration.method.signature.abstract.getter.public']
-	> & {};
 	'declaration.method.signature.abstract.private': PortableGuard<
 		PortableIds['declaration.method.signature.abstract.private']
 	> & {};
@@ -1683,53 +1735,9 @@ export interface PortableIsAt {
 	'declaration.method.signature.abstract.public': PortableGuard<
 		PortableIds['declaration.method.signature.abstract.public']
 	> & {};
-	'declaration.method.signature.abstract.setter': PortableGuard<
-		PortableIds['declaration.method.signature.abstract.setter']
-	> & {
-		readonly private: PortableIsAt['declaration.method.signature.abstract.setter.private'];
-		readonly protected: PortableIsAt['declaration.method.signature.abstract.setter.protected'];
-		readonly public: PortableIsAt['declaration.method.signature.abstract.setter.public'];
-	};
-	'declaration.method.signature.abstract.setter.private': PortableGuard<
-		PortableIds['declaration.method.signature.abstract.setter.private']
-	> & {};
-	'declaration.method.signature.abstract.setter.protected': PortableGuard<
-		PortableIds['declaration.method.signature.abstract.setter.protected']
-	> & {};
-	'declaration.method.signature.abstract.setter.public': PortableGuard<
-		PortableIds['declaration.method.signature.abstract.setter.public']
-	> & {};
-	'declaration.method.signature.getter': PortableGuard<PortableIds['declaration.method.signature.getter']> & {
-		readonly private: PortableIsAt['declaration.method.signature.getter.private'];
-		readonly protected: PortableIsAt['declaration.method.signature.getter.protected'];
-		readonly public: PortableIsAt['declaration.method.signature.getter.public'];
-	};
-	'declaration.method.signature.getter.private': PortableGuard<
-		PortableIds['declaration.method.signature.getter.private']
-	> & {};
-	'declaration.method.signature.getter.protected': PortableGuard<
-		PortableIds['declaration.method.signature.getter.protected']
-	> & {};
-	'declaration.method.signature.getter.public': PortableGuard<
-		PortableIds['declaration.method.signature.getter.public']
-	> & {};
 	'declaration.method.signature.private': PortableGuard<PortableIds['declaration.method.signature.private']> & {};
 	'declaration.method.signature.protected': PortableGuard<PortableIds['declaration.method.signature.protected']> & {};
 	'declaration.method.signature.public': PortableGuard<PortableIds['declaration.method.signature.public']> & {};
-	'declaration.method.signature.setter': PortableGuard<PortableIds['declaration.method.signature.setter']> & {
-		readonly private: PortableIsAt['declaration.method.signature.setter.private'];
-		readonly protected: PortableIsAt['declaration.method.signature.setter.protected'];
-		readonly public: PortableIsAt['declaration.method.signature.setter.public'];
-	};
-	'declaration.method.signature.setter.private': PortableGuard<
-		PortableIds['declaration.method.signature.setter.private']
-	> & {};
-	'declaration.method.signature.setter.protected': PortableGuard<
-		PortableIds['declaration.method.signature.setter.protected']
-	> & {};
-	'declaration.method.signature.setter.public': PortableGuard<
-		PortableIds['declaration.method.signature.setter.public']
-	> & {};
 	'declaration.module': PortableGuard<PortableIds['declaration.module']> & {
 		readonly external: PortableIsAt['declaration.module.external'];
 	};
@@ -1743,6 +1751,102 @@ export interface PortableIsAt {
 	'declaration.parameter.private': PortableGuard<PortableIds['declaration.parameter.private']> & {};
 	'declaration.parameter.protected': PortableGuard<PortableIds['declaration.parameter.protected']> & {};
 	'declaration.parameter.public': PortableGuard<PortableIds['declaration.parameter.public']> & {};
+	'declaration.property': PortableGuard<PortableIds['declaration.property']> & {
+		readonly getter: PortableIsAt['declaration.property.getter'];
+		readonly private: PortableIsAt['declaration.property.private'];
+		readonly protected: PortableIsAt['declaration.property.protected'];
+		readonly public: PortableIsAt['declaration.property.public'];
+		readonly setter: PortableIsAt['declaration.property.setter'];
+		readonly signature: PortableIsAt['declaration.property.signature'];
+	};
+	'declaration.property.getter': PortableGuard<PortableIds['declaration.property.getter']> & {
+		readonly private: PortableIsAt['declaration.property.getter.private'];
+		readonly protected: PortableIsAt['declaration.property.getter.protected'];
+		readonly public: PortableIsAt['declaration.property.getter.public'];
+	};
+	'declaration.property.getter.private': PortableGuard<PortableIds['declaration.property.getter.private']> & {};
+	'declaration.property.getter.protected': PortableGuard<PortableIds['declaration.property.getter.protected']> & {};
+	'declaration.property.getter.public': PortableGuard<PortableIds['declaration.property.getter.public']> & {};
+	'declaration.property.private': PortableGuard<PortableIds['declaration.property.private']> & {};
+	'declaration.property.protected': PortableGuard<PortableIds['declaration.property.protected']> & {};
+	'declaration.property.public': PortableGuard<PortableIds['declaration.property.public']> & {};
+	'declaration.property.setter': PortableGuard<PortableIds['declaration.property.setter']> & {
+		readonly private: PortableIsAt['declaration.property.setter.private'];
+		readonly protected: PortableIsAt['declaration.property.setter.protected'];
+		readonly public: PortableIsAt['declaration.property.setter.public'];
+	};
+	'declaration.property.setter.private': PortableGuard<PortableIds['declaration.property.setter.private']> & {};
+	'declaration.property.setter.protected': PortableGuard<PortableIds['declaration.property.setter.protected']> & {};
+	'declaration.property.setter.public': PortableGuard<PortableIds['declaration.property.setter.public']> & {};
+	'declaration.property.signature': PortableGuard<PortableIds['declaration.property.signature']> & {
+		readonly abstract: PortableIsAt['declaration.property.signature.abstract'];
+		readonly getter: PortableIsAt['declaration.property.signature.getter'];
+		readonly setter: PortableIsAt['declaration.property.signature.setter'];
+	};
+	'declaration.property.signature.abstract': PortableGuard<PortableIds['declaration.property.signature.abstract']> & {
+		readonly getter: PortableIsAt['declaration.property.signature.abstract.getter'];
+		readonly setter: PortableIsAt['declaration.property.signature.abstract.setter'];
+	};
+	'declaration.property.signature.abstract.getter': PortableGuard<
+		PortableIds['declaration.property.signature.abstract.getter']
+	> & {
+		readonly private: PortableIsAt['declaration.property.signature.abstract.getter.private'];
+		readonly protected: PortableIsAt['declaration.property.signature.abstract.getter.protected'];
+		readonly public: PortableIsAt['declaration.property.signature.abstract.getter.public'];
+	};
+	'declaration.property.signature.abstract.getter.private': PortableGuard<
+		PortableIds['declaration.property.signature.abstract.getter.private']
+	> & {};
+	'declaration.property.signature.abstract.getter.protected': PortableGuard<
+		PortableIds['declaration.property.signature.abstract.getter.protected']
+	> & {};
+	'declaration.property.signature.abstract.getter.public': PortableGuard<
+		PortableIds['declaration.property.signature.abstract.getter.public']
+	> & {};
+	'declaration.property.signature.abstract.setter': PortableGuard<
+		PortableIds['declaration.property.signature.abstract.setter']
+	> & {
+		readonly private: PortableIsAt['declaration.property.signature.abstract.setter.private'];
+		readonly protected: PortableIsAt['declaration.property.signature.abstract.setter.protected'];
+		readonly public: PortableIsAt['declaration.property.signature.abstract.setter.public'];
+	};
+	'declaration.property.signature.abstract.setter.private': PortableGuard<
+		PortableIds['declaration.property.signature.abstract.setter.private']
+	> & {};
+	'declaration.property.signature.abstract.setter.protected': PortableGuard<
+		PortableIds['declaration.property.signature.abstract.setter.protected']
+	> & {};
+	'declaration.property.signature.abstract.setter.public': PortableGuard<
+		PortableIds['declaration.property.signature.abstract.setter.public']
+	> & {};
+	'declaration.property.signature.getter': PortableGuard<PortableIds['declaration.property.signature.getter']> & {
+		readonly private: PortableIsAt['declaration.property.signature.getter.private'];
+		readonly protected: PortableIsAt['declaration.property.signature.getter.protected'];
+		readonly public: PortableIsAt['declaration.property.signature.getter.public'];
+	};
+	'declaration.property.signature.getter.private': PortableGuard<
+		PortableIds['declaration.property.signature.getter.private']
+	> & {};
+	'declaration.property.signature.getter.protected': PortableGuard<
+		PortableIds['declaration.property.signature.getter.protected']
+	> & {};
+	'declaration.property.signature.getter.public': PortableGuard<
+		PortableIds['declaration.property.signature.getter.public']
+	> & {};
+	'declaration.property.signature.setter': PortableGuard<PortableIds['declaration.property.signature.setter']> & {
+		readonly private: PortableIsAt['declaration.property.signature.setter.private'];
+		readonly protected: PortableIsAt['declaration.property.signature.setter.protected'];
+		readonly public: PortableIsAt['declaration.property.signature.setter.public'];
+	};
+	'declaration.property.signature.setter.private': PortableGuard<
+		PortableIds['declaration.property.signature.setter.private']
+	> & {};
+	'declaration.property.signature.setter.protected': PortableGuard<
+		PortableIds['declaration.property.signature.setter.protected']
+	> & {};
+	'declaration.property.signature.setter.public': PortableGuard<
+		PortableIds['declaration.property.signature.setter.public']
+	> & {};
 	'declaration.signature': PortableGuard<PortableIds['declaration.signature']> & {
 		readonly call: PortableIsAt['declaration.signature.call'];
 		readonly construct: PortableIsAt['declaration.signature.construct'];
@@ -2204,9 +2308,28 @@ export interface PortableIsAt {
 	};
 	'type.predicate.asserts': PortableGuard<PortableIds['type.predicate.asserts']> & {};
 	'type.primitive': PortableGuard<PortableIds['type.primitive']> & {
+		readonly boolean: PortableIsAt['type.primitive.boolean'];
+		readonly floating: PortableIsAt['type.primitive.floating'];
 		readonly never: PortableIsAt['type.primitive.never'];
+		readonly object: PortableIsAt['type.primitive.object'];
+		readonly string: PortableIsAt['type.primitive.string'];
+		readonly symbol: PortableIsAt['type.primitive.symbol'];
+		readonly unchecked: PortableIsAt['type.primitive.unchecked'];
+		readonly unknown: PortableIsAt['type.primitive.unknown'];
+		readonly void: PortableIsAt['type.primitive.void'];
 	};
+	'type.primitive.boolean': PortableGuard<PortableIds['type.primitive.boolean']> & {};
+	'type.primitive.floating': PortableGuard<PortableIds['type.primitive.floating']> & {
+		readonly float64: PortableIsAt['type.primitive.floating.float64'];
+	};
+	'type.primitive.floating.float64': PortableGuard<PortableIds['type.primitive.floating.float64']> & {};
 	'type.primitive.never': PortableGuard<PortableIds['type.primitive.never']> & {};
+	'type.primitive.object': PortableGuard<PortableIds['type.primitive.object']> & {};
+	'type.primitive.string': PortableGuard<PortableIds['type.primitive.string']> & {};
+	'type.primitive.symbol': PortableGuard<PortableIds['type.primitive.symbol']> & {};
+	'type.primitive.unchecked': PortableGuard<PortableIds['type.primitive.unchecked']> & {};
+	'type.primitive.unknown': PortableGuard<PortableIds['type.primitive.unknown']> & {};
+	'type.primitive.void': PortableGuard<PortableIds['type.primitive.void']> & {};
 	'type.query': PortableGuard<PortableIds['type.query']> & {};
 	'type.readonly': PortableGuard<PortableIds['type.readonly']> & {};
 	'type.rest': PortableGuard<PortableIds['type.rest']> & {};
@@ -2382,7 +2505,7 @@ const table: PortableTable = {
 		'declaration.constructor.public': { ids: [TSKindId.MethodDefinition], exact: false },
 		'declaration.enum': { ids: [TSKindId.EnumDeclaration], exact: true },
 		'declaration.enum_member': { ids: [TSKindId.EnumAssignment, TSKindId.EnumBodyElementName], exact: true },
-		'declaration.field': { ids: [TSKindId.PropertySignature, TSKindId.PublicFieldDefinition], exact: true },
+		'declaration.field': { ids: [TSKindId.PropertySignature, TSKindId.PublicFieldDefinition], exact: false },
 		'declaration.field.private': { ids: [TSKindId.PropertySignature, TSKindId.PublicFieldDefinition], exact: false },
 		'declaration.field.protected': { ids: [TSKindId.PropertySignature, TSKindId.PublicFieldDefinition], exact: false },
 		'declaration.field.public': { ids: [TSKindId.PropertySignature, TSKindId.PublicFieldDefinition], exact: false },
@@ -2400,22 +2523,6 @@ const table: PortableTable = {
 			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
 			exact: false
 		},
-		'declaration.method.getter': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
-			exact: false
-		},
-		'declaration.method.getter.private': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
-			exact: false
-		},
-		'declaration.method.getter.protected': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
-			exact: false
-		},
-		'declaration.method.getter.public': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
-			exact: false
-		},
 		'declaration.method.private': {
 			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
 			exact: false
@@ -2428,51 +2535,11 @@ const table: PortableTable = {
 			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
 			exact: false
 		},
-		'declaration.method.setter': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
-			exact: false
-		},
-		'declaration.method.setter.private': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
-			exact: false
-		},
-		'declaration.method.setter.protected': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
-			exact: false
-		},
-		'declaration.method.setter.public': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
-			exact: false
-		},
-		'declaration.method.signature': { ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature], exact: true },
-		'declaration.method.signature.abstract': { ids: [TSKindId.AbstractMethodSignature], exact: true },
-		'declaration.method.signature.abstract.getter': { ids: [TSKindId.AbstractMethodSignature], exact: false },
-		'declaration.method.signature.abstract.getter.private': { ids: [TSKindId.AbstractMethodSignature], exact: false },
-		'declaration.method.signature.abstract.getter.protected': { ids: [TSKindId.AbstractMethodSignature], exact: false },
-		'declaration.method.signature.abstract.getter.public': { ids: [TSKindId.AbstractMethodSignature], exact: false },
+		'declaration.method.signature': { ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature], exact: false },
+		'declaration.method.signature.abstract': { ids: [TSKindId.AbstractMethodSignature], exact: false },
 		'declaration.method.signature.abstract.private': { ids: [TSKindId.AbstractMethodSignature], exact: false },
 		'declaration.method.signature.abstract.protected': { ids: [TSKindId.AbstractMethodSignature], exact: false },
 		'declaration.method.signature.abstract.public': { ids: [TSKindId.AbstractMethodSignature], exact: false },
-		'declaration.method.signature.abstract.setter': { ids: [TSKindId.AbstractMethodSignature], exact: false },
-		'declaration.method.signature.abstract.setter.private': { ids: [TSKindId.AbstractMethodSignature], exact: false },
-		'declaration.method.signature.abstract.setter.protected': { ids: [TSKindId.AbstractMethodSignature], exact: false },
-		'declaration.method.signature.abstract.setter.public': { ids: [TSKindId.AbstractMethodSignature], exact: false },
-		'declaration.method.signature.getter': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
-			exact: false
-		},
-		'declaration.method.signature.getter.private': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
-			exact: false
-		},
-		'declaration.method.signature.getter.protected': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
-			exact: false
-		},
-		'declaration.method.signature.getter.public': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
-			exact: false
-		},
 		'declaration.method.signature.private': {
 			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
 			exact: false
@@ -2485,22 +2552,6 @@ const table: PortableTable = {
 			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
 			exact: false
 		},
-		'declaration.method.signature.setter': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
-			exact: false
-		},
-		'declaration.method.signature.setter.private': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
-			exact: false
-		},
-		'declaration.method.signature.setter.protected': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
-			exact: false
-		},
-		'declaration.method.signature.setter.public': {
-			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
-			exact: false
-		},
 		'declaration.module': { ids: [TSKindId.InternalModule, TSKindId.Module], exact: true },
 		'declaration.module.external': { ids: [TSKindId.Module], exact: true },
 		'declaration.module_property': { ids: [TSKindId.AmbientDeclarationModule], exact: true },
@@ -2508,6 +2559,125 @@ const table: PortableTable = {
 		'declaration.parameter.private': { ids: [TSKindId.OptionalParameter, TSKindId.RequiredParameter], exact: false },
 		'declaration.parameter.protected': { ids: [TSKindId.OptionalParameter, TSKindId.RequiredParameter], exact: false },
 		'declaration.parameter.public': { ids: [TSKindId.OptionalParameter, TSKindId.RequiredParameter], exact: false },
+		'declaration.property': {
+			ids: [
+				TSKindId.AbstractMethodSignature,
+				TSKindId.MethodDefinition,
+				TSKindId.MethodSignature,
+				TSKindId.PublicFieldDefinition
+			],
+			exact: false
+		},
+		'declaration.property.getter': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.property.getter.private': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.property.getter.protected': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.property.getter.public': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.property.private': {
+			ids: [
+				TSKindId.AbstractMethodSignature,
+				TSKindId.MethodDefinition,
+				TSKindId.MethodSignature,
+				TSKindId.PublicFieldDefinition
+			],
+			exact: false
+		},
+		'declaration.property.protected': {
+			ids: [
+				TSKindId.AbstractMethodSignature,
+				TSKindId.MethodDefinition,
+				TSKindId.MethodSignature,
+				TSKindId.PublicFieldDefinition
+			],
+			exact: false
+		},
+		'declaration.property.public': {
+			ids: [
+				TSKindId.AbstractMethodSignature,
+				TSKindId.MethodDefinition,
+				TSKindId.MethodSignature,
+				TSKindId.PublicFieldDefinition
+			],
+			exact: false
+		},
+		'declaration.property.setter': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.property.setter.private': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.property.setter.protected': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.property.setter.public': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodDefinition, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.property.signature': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.property.signature.abstract': { ids: [TSKindId.AbstractMethodSignature], exact: false },
+		'declaration.property.signature.abstract.getter': { ids: [TSKindId.AbstractMethodSignature], exact: false },
+		'declaration.property.signature.abstract.getter.private': { ids: [TSKindId.AbstractMethodSignature], exact: false },
+		'declaration.property.signature.abstract.getter.protected': {
+			ids: [TSKindId.AbstractMethodSignature],
+			exact: false
+		},
+		'declaration.property.signature.abstract.getter.public': { ids: [TSKindId.AbstractMethodSignature], exact: false },
+		'declaration.property.signature.abstract.setter': { ids: [TSKindId.AbstractMethodSignature], exact: false },
+		'declaration.property.signature.abstract.setter.private': { ids: [TSKindId.AbstractMethodSignature], exact: false },
+		'declaration.property.signature.abstract.setter.protected': {
+			ids: [TSKindId.AbstractMethodSignature],
+			exact: false
+		},
+		'declaration.property.signature.abstract.setter.public': { ids: [TSKindId.AbstractMethodSignature], exact: false },
+		'declaration.property.signature.getter': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.property.signature.getter.private': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.property.signature.getter.protected': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.property.signature.getter.public': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.property.signature.setter': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.property.signature.setter.private': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.property.signature.setter.protected': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
+		'declaration.property.signature.setter.public': {
+			ids: [TSKindId.AbstractMethodSignature, TSKindId.MethodSignature],
+			exact: false
+		},
 		'declaration.signature': {
 			ids: [
 				TSKindId.AbstractMethodSignature,
@@ -3023,7 +3193,7 @@ const table: PortableTable = {
 		'type.literal': { ids: [TSKindId.LiteralType], exact: true },
 		'type.lookup': { ids: [TSKindId.LookupType], exact: true },
 		'type.nullable': { ids: [TSKindId.FlowMaybeType], exact: true },
-		'type.object': { ids: [TSKindId.ObjectType], exact: true },
+		'type.object': { ids: [TSKindId.ObjectKeyword, TSKindId.ObjectType], exact: false },
 		'type.optional': { ids: [TSKindId.OptionalType], exact: true },
 		'type.parenthesized': { ids: [TSKindId.ParenthesizedType], exact: true },
 		'type.path': { ids: [TSKindId.NestedTypeIdentifier], exact: true },
@@ -3044,7 +3214,30 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
+		'type.primitive.boolean': { ids: [TSKindId.BooleanKeyword], exact: false },
+		'type.primitive.floating': { ids: [TSKindId.NumberKeyword], exact: false },
+		'type.primitive.floating.float64': { ids: [TSKindId.NumberKeyword], exact: false },
 		'type.primitive.never': { ids: [TSKindId.NeverKeyword], exact: false },
+		'type.primitive.object': { ids: [TSKindId.ObjectKeyword], exact: false },
+		'type.primitive.string': { ids: [TSKindId.StringKeyword], exact: false },
+		'type.primitive.symbol': {
+			ids: [
+				TSKindId.AnyKeyword,
+				TSKindId.BooleanKeyword,
+				TSKindId.NeverKeyword,
+				TSKindId.NumberKeyword,
+				TSKindId.ObjectKeyword,
+				TSKindId.StringKeyword,
+				TSKindId.SymbolKeyword,
+				TSKindId.Unique,
+				TSKindId.UnknownKeyword,
+				TSKindId.VoidKeyword
+			],
+			exact: false
+		},
+		'type.primitive.unchecked': { ids: [TSKindId.AnyKeyword], exact: false },
+		'type.primitive.unknown': { ids: [TSKindId.UnknownKeyword], exact: false },
+		'type.primitive.void': { ids: [TSKindId.VoidKeyword], exact: false },
 		'type.query': { ids: [TSKindId.TypeQuery], exact: true },
 		'type.readonly': { ids: [TSKindId.ReadonlyType], exact: true },
 		'type.rest': { ids: [TSKindId.RestType], exact: true },
@@ -3057,7 +3250,7 @@ const table: PortableTable = {
 		[TSKindId.AbstractClassDeclaration]: [{ path: 'declaration.class', within: [], test: [] }],
 		[TSKindId.AbstractMethodSignature]: [
 			{
-				path: 'declaration.method.signature.abstract.getter.private',
+				path: 'declaration.property.signature.abstract.getter.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '294': 2 } } },
@@ -3066,7 +3259,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.signature.abstract.getter.protected',
+				path: 'declaration.property.signature.abstract.getter.protected',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '294': 2 } } },
@@ -3075,7 +3268,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.signature.abstract.getter.public',
+				path: 'declaration.property.signature.abstract.getter.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '294': 2 } } },
@@ -3084,7 +3277,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.signature.abstract.setter.private',
+				path: 'declaration.property.signature.abstract.setter.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '294': 2 } } },
@@ -3093,7 +3286,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.signature.abstract.setter.protected',
+				path: 'declaration.property.signature.abstract.setter.protected',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '294': 2 } } },
@@ -3102,7 +3295,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.signature.abstract.setter.public',
+				path: 'declaration.property.signature.abstract.setter.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '294': 2 } } },
@@ -3135,12 +3328,12 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.signature.abstract.getter',
+				path: 'declaration.property.signature.abstract.getter',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '294': 2 } } }]
 			},
 			{
-				path: 'declaration.method.signature.abstract.setter',
+				path: 'declaration.property.signature.abstract.setter',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '294': 2 } } }]
 			},
@@ -3148,7 +3341,19 @@ const table: PortableTable = {
 		],
 		[TSKindId.AmbientDeclaration]: [{ path: 'declaration.ambient', within: [], test: [] }],
 		[TSKindId.AmbientDeclarationModule]: [{ path: 'declaration.module_property', within: [], test: [] }],
-		[TSKindId.AnyKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
+		[TSKindId.AnyKeyword]: [
+			{
+				path: 'type.primitive.unchecked',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'any', self: true } }]
+			},
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
+			{ path: 'type.primitive', within: [], test: [] }
+		],
 		[TSKindId.Array]: [{ path: 'expression.collection.list', within: [], test: [] }],
 		[TSKindId.ArrayPattern]: [{ path: 'pattern.list', within: [], test: [] }],
 		[TSKindId.ArrayType]: [{ path: 'type.array', within: [], test: [] }],
@@ -3364,7 +3569,19 @@ const table: PortableTable = {
 			},
 			{ path: 'expression.binary', within: [], test: [] }
 		],
-		[TSKindId.BooleanKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
+		[TSKindId.BooleanKeyword]: [
+			{
+				path: 'type.primitive.boolean',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'boolean', self: true } }]
+			},
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
+			{ path: 'type.primitive', within: [], test: [] }
+		],
 		[TSKindId.BreakStatement]: [{ path: 'statement.break', within: [], test: [] }],
 		[TSKindId.CallExpressionCall]: [
 			{
@@ -3577,7 +3794,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.getter.private',
+				path: 'declaration.property.getter.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '285': 5 } } },
@@ -3586,7 +3803,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.getter.protected',
+				path: 'declaration.property.getter.protected',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '285': 5 } } },
@@ -3595,7 +3812,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.getter.public',
+				path: 'declaration.property.getter.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '285': 5 } } },
@@ -3604,7 +3821,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.setter.private',
+				path: 'declaration.property.setter.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '285': 5 } } },
@@ -3613,7 +3830,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.setter.protected',
+				path: 'declaration.property.setter.protected',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '285': 5 } } },
@@ -3622,7 +3839,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.setter.public',
+				path: 'declaration.property.setter.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '285': 5 } } },
@@ -3655,12 +3872,12 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.getter',
+				path: 'declaration.property.getter',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '285': 5 } } }]
 			},
 			{
-				path: 'declaration.method.setter',
+				path: 'declaration.property.setter',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '285': 5 } } }]
 			},
@@ -3668,7 +3885,7 @@ const table: PortableTable = {
 		],
 		[TSKindId.MethodSignature]: [
 			{
-				path: 'declaration.method.signature.getter.private',
+				path: 'declaration.property.signature.getter.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '293': 5 } } },
@@ -3677,7 +3894,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.signature.getter.protected',
+				path: 'declaration.property.signature.getter.protected',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '293': 5 } } },
@@ -3686,7 +3903,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.signature.getter.public',
+				path: 'declaration.property.signature.getter.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '293': 5 } } },
@@ -3695,7 +3912,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.signature.setter.private',
+				path: 'declaration.property.signature.setter.private',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '293': 5 } } },
@@ -3704,7 +3921,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.signature.setter.protected',
+				path: 'declaration.property.signature.setter.protected',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '293': 5 } } },
@@ -3713,7 +3930,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.signature.setter.public',
+				path: 'declaration.property.signature.setter.public',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '293': 5 } } },
@@ -3746,12 +3963,12 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'declaration.method.signature.getter',
+				path: 'declaration.property.signature.getter',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', slots: { '293': 5 } } }]
 			},
 			{
-				path: 'declaration.method.signature.setter',
+				path: 'declaration.property.signature.setter',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', slots: { '293': 5 } } }]
 			},
@@ -3763,6 +3980,11 @@ const table: PortableTable = {
 		[TSKindId.NestedIdentifier]: [{ path: 'identifier.nested', within: [], test: [] }],
 		[TSKindId.NestedTypeIdentifier]: [{ path: 'type.path', within: [], test: [] }],
 		[TSKindId.NeverKeyword]: [
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
 			{
 				path: 'type.primitive.never',
 				within: [],
@@ -3815,14 +4037,38 @@ const table: PortableTable = {
 			{ path: 'literal.number.integer.hex', within: [], test: [] },
 			{ path: 'literal.number', within: [], test: [] }
 		],
-		[TSKindId.NumberKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
+		[TSKindId.NumberKeyword]: [
+			{
+				path: 'type.primitive.floating.float64',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'number', self: true } }]
+			},
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
+			{ path: 'type.primitive', within: [], test: [] }
+		],
 		[TSKindId.NumberOctal]: [
 			{ path: 'literal.number.integer.octal', within: [], test: [] },
 			{ path: 'literal.number', within: [], test: [] }
 		],
 		[TSKindId.Object]: [{ path: 'expression.collection.object', within: [], test: [] }],
 		[TSKindId.ObjectAssignmentPattern]: [{ path: 'pattern.object.assignment', within: [], test: [] }],
-		[TSKindId.ObjectKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
+		[TSKindId.ObjectKeyword]: [
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
+			{
+				path: 'type.primitive.object',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'object', self: true } }]
+			},
+			{ path: 'type.primitive', within: [], test: [] }
+		],
 		[TSKindId.ObjectPattern]: [{ path: 'pattern.object', within: [], test: [] }],
 		[TSKindId.ObjectType]: [{ path: 'type.object', within: [], test: [] }],
 		[TSKindId.OptionalParameter]: [
@@ -3900,6 +4146,33 @@ const table: PortableTable = {
 		],
 		[TSKindId.PublicFieldDefinition]: [
 			{
+				path: 'declaration.property.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'present', slots: { '290': 7 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '290': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '290': 2 } } }
+				]
+			},
+			{
+				path: 'declaration.property.protected',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'present', slots: { '290': 7 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '290': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '290': 2 } } }
+				]
+			},
+			{
+				path: 'declaration.property.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'present', slots: { '290': 7 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '290': 2 } } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '290': 2 } } }
+				]
+			},
+			{
 				path: 'declaration.field.private',
 				within: [],
 				test: [
@@ -3922,6 +4195,11 @@ const table: PortableTable = {
 					{ up: 0, via: [], plan: { op: 'is', types: [318, 32, 33, 34], slots: { '290': 2 } } },
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '290': 2 } } }
 				]
+			},
+			{
+				path: 'declaration.property',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'present', slots: { '290': 7 } } }]
 			},
 			{ path: 'declaration.field', within: [], test: [] }
 		],
@@ -3973,14 +4251,38 @@ const table: PortableTable = {
 		[TSKindId.String]: [{ path: 'literal.string', within: [], test: [] }],
 		[TSKindId.StringDouble]: [{ path: 'literal.string', within: [], test: [] }],
 		[TSKindId.UnescapedDoubleStringFragment]: [{ path: 'literal.string.text', within: [], test: [] }],
-		[TSKindId.StringKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
+		[TSKindId.StringKeyword]: [
+			{
+				path: 'type.primitive.string',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'string', self: true } }]
+			},
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
+			{ path: 'type.primitive', within: [], test: [] }
+		],
 		[TSKindId.StringSingle]: [{ path: 'literal.string', within: [], test: [] }],
 		[TSKindId.SubscriptExpression]: [{ path: 'expression.subscript', within: [], test: [] }],
 		[TSKindId.Super]: [{ path: 'identifier.super', within: [], test: [] }],
 		[TSKindId.SwitchCase]: [{ path: 'clause.case.switch', within: [], test: [] }],
 		[TSKindId.SwitchDefault]: [{ path: 'clause.case.default', within: [], test: [] }],
 		[TSKindId.SwitchStatement]: [{ path: 'statement.switch', within: [], test: [] }],
-		[TSKindId.SymbolKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
+		[TSKindId.SymbolKeyword]: [
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'symbol', self: true } }]
+			},
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
+			{ path: 'type.primitive', within: [], test: [] }
+		],
 		[TSKindId.TemplateLiteralType]: [{ path: 'type.template', within: [], test: [] }],
 		[TSKindId.TemplateString]: [{ path: 'literal.string.interpolated', within: [], test: [] }],
 		[TSKindId.TemplateSubstitution]: [{ path: 'expression.interpolation', within: [], test: [] }],
@@ -4039,8 +4341,27 @@ const table: PortableTable = {
 		[TSKindId.Undefined]: [{ path: 'literal.null.undefined', within: [], test: [] }],
 		[TSKindId.UnescapedSingleStringFragment]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.UnionType]: [{ path: 'type.union', within: [], test: [] }],
-		[TSKindId.Unique]: [{ path: 'type.primitive', within: [], test: [] }],
-		[TSKindId.UnknownKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
+		[TSKindId.Unique]: [
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
+			{ path: 'type.primitive', within: [], test: [] }
+		],
+		[TSKindId.UnknownKeyword]: [
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
+			{
+				path: 'type.primitive.unknown',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'unknown', self: true } }]
+			},
+			{ path: 'type.primitive', within: [], test: [] }
+		],
 		[TSKindId.UpdateExpressionPostfix]: [
 			{
 				path: 'expression.update.increment',
@@ -4079,7 +4400,19 @@ const table: PortableTable = {
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
 		],
-		[TSKindId.VoidKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
+		[TSKindId.VoidKeyword]: [
+			{
+				path: 'type.primitive.symbol',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^unique', self: true } }]
+			},
+			{
+				path: 'type.primitive.void',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'void', self: true } }]
+			},
+			{ path: 'type.primitive', within: [], test: [] }
+		],
 		[TSKindId.WhileStatement]: [{ path: 'statement.loop.while', within: [], test: [] }],
 		[TSKindId.WithStatement]: [{ path: 'statement.scope', within: [], test: [] }],
 		[TSKindId.YieldExpression]: [{ path: 'expression.yield', within: [], test: [] }],
@@ -4263,8 +4596,10 @@ export const queryFlags: QueryFlags = Object.freeze({
 		privateName: { op: 'is', types: [118], slots: { '294': 3 } },
 		computed: { op: 'is', types: [289], slots: { '294': 3 } }
 	},
+	[TSKindId.AnyKeyword]: { unique: null },
 	[TSKindId.ArrowFunction]: { async: { op: 'present', slots: { '249': 0 } } },
 	[TSKindId.AssignmentExpression]: { disposable: { op: 'present', slots: { '259': 0 } } },
+	[TSKindId.BooleanKeyword]: { unique: null },
 	[TSKindId.CallExpressionMember]: { optionalChain: { op: 'and', of: [] } },
 	[TSKindId.ConstructSignature]: { abstract: { op: 'present', slots: { '368': 0 } } },
 	[TSKindId.ConstructorType]: { abstract: { op: 'present', slots: { '337': 0 } } },
@@ -4309,6 +4644,9 @@ export const queryFlags: QueryFlags = Object.freeze({
 		privateName: { op: 'is', types: [118], slots: { '293': 6 } },
 		computed: { op: 'is', types: [289], slots: { '293': 6 } }
 	},
+	[TSKindId.NeverKeyword]: { unique: null },
+	[TSKindId.NumberKeyword]: { unique: null },
+	[TSKindId.ObjectKeyword]: { unique: null },
 	[TSKindId.OptionalParameter]: {
 		override: { op: 'present', slots: { '321': 2 } },
 		readonly: { op: 'present', slots: { '321': 3 } },
@@ -4330,7 +4668,6 @@ export const queryFlags: QueryFlags = Object.freeze({
 		override: { op: 'present', slots: { '290': 4 } },
 		readonly: { op: 'present', slots: { '290': 5 } },
 		abstract: { op: 'present', slots: { '290': 6 } },
-		accessor: { op: 'present', slots: { '290': 7 } },
 		optional: { op: 'eq', text: '?', slots: { '290': 9 } },
 		definite: { op: 'eq', text: '!', slots: { '290': 9 } },
 		privateName: { op: 'is', types: [118], slots: { '290': 8 } },
@@ -4340,7 +4677,12 @@ export const queryFlags: QueryFlags = Object.freeze({
 		override: { op: 'present', slots: { '320': 2 } },
 		readonly: { op: 'present', slots: { '320': 3 } }
 	},
+	[TSKindId.StringKeyword]: { unique: null },
 	[TSKindId.SubscriptExpression]: { optionalChain: { op: 'is', types: [252], slots: { '257': 1 } } },
+	[TSKindId.SymbolKeyword]: { unique: null },
 	[TSKindId.TypeParameter]: { const: { op: 'present', slots: { '365': 0 } } },
-	[TSKindId.VariableDeclaratorDefinite]: { definite: { op: 'and', of: [] } }
+	[TSKindId.Unique]: { unique: null },
+	[TSKindId.UnknownKeyword]: { unique: null },
+	[TSKindId.VariableDeclaratorDefinite]: { definite: { op: 'and', of: [] } },
+	[TSKindId.VoidKeyword]: { unique: null }
 } satisfies QueryFlags);

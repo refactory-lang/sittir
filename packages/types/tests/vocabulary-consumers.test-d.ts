@@ -21,7 +21,8 @@ import type {
 	GrammarContext,
 	Identifier,
 	ScopedVisibility,
-	Statement
+	Statement,
+	Type
 } from '../src/vocabulary/index.ts';
 import { Flags } from '../src/vocabulary/index.ts';
 import type { Flag } from '../src/vocabulary/utils.ts';
@@ -48,11 +49,11 @@ export function parameterless<G extends GrammarContext<G>>(name: G['identifier']
 interface Composed extends GrammarContext<Composed>, Accessors, BoundedQuantification, ScopedVisibility {}
 interface Bare extends GrammarContext<Bare> {}
 
-// A getter is an accessor kind, which `accessors` owns: no member holds `get`.
-export function getter(name: Composed['identifier']): Declaration.Method.Getter<Composed> {
-	return { $kind: 'declaration.method.getter', name, parameters: [] };
+// A getter is a property's accessor kind, which `accessors` owns: no member holds `get`.
+export function getter(name: Declaration.Property.Getter<Composed>['name']): Declaration.Property.Getter<Composed> {
+	return { $kind: 'declaration.property.getter', name, parameters: [], body: { $kind: 'statement.block' } };
 }
-export function getterWithAccessor(name: Composed['identifier']): Declaration.Method.Getter<Composed> {
+export function getterWithAccessor(name: Declaration.Property.Getter<Composed>['name']): Declaration.Property.Getter<Composed> {
 	return {
 		...getter(name),
 		// @ts-expect-error no member holds the accessor kind
@@ -221,3 +222,8 @@ export const narrowedName: string = nameKind<Narrowed>(narrowed);
 export const crate = fn<Narrowed>({ $kind: 'identifier.crate' });
 // @ts-expect-error the narrowed parameters slot refuses an arm the grammar leaves out
 export const textParameter: Declaration.Function<Narrowed> = { ...narrowed, parameters: ['self'] };
+
+// Typescript's `any` is the unchecked primitive, since `Any` names each namespace's union of its kinds, and the union holds it.
+export function unchecked<G extends GrammarContext<G>>(): Type.Primitive.Any<G> {
+	return { $kind: 'type.primitive.unchecked' };
+}

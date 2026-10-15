@@ -44,6 +44,24 @@ export namespace Declaration {
 			readonly type: G['type'];
 		}
 	}
+	export interface Property<G extends GrammarContext<G>> {
+		readonly type?: G['slots']['declaration.property']['type'];
+	}
+	export namespace Property {
+		export interface Getter<G extends GrammarContext<G>> {
+			readonly returnType?: G['slots']['declaration.property.getter']['returnType'];
+		}
+		export namespace Signature {
+			export namespace Abstract {
+				export interface Getter<G extends GrammarContext<G>> {
+					readonly returnType?: G['slots']['declaration.property.signature.abstract.getter']['returnType'];
+				}
+			}
+			export interface Getter<G extends GrammarContext<G>> {
+				readonly returnType?: G['slots']['declaration.property.signature.getter']['returnType'];
+			}
+		}
+	}
 	export interface Variable<G extends GrammarContext<G>> {
 		readonly type?: G['slots']['declaration.variable']['type'];
 	}

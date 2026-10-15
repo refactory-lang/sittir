@@ -536,7 +536,6 @@ declare module './declaration.ts' {
 		}
 		interface Field<G extends GrammarContext<G>> {
 			readonly abstract?: gate.In<G, features.AbstractClasses, abstractClasses.Declaration.Field<G>['abstract']>;
-			readonly accessor?: gate.In<G, features.Accessors, accessors.Declaration.Field<G>['accessor']>;
 			readonly attributes?: gate.In<G, features.Attributes, attributes.Declaration.Field<G>['attributes']>;
 			readonly computed?: gate.In<G, features.ComputedKeys, computedKeys.Declaration.Field<G>['computed']>;
 			readonly declare?: gate.In<G, features.AmbientDeclarations, ambientDeclarations.Declaration.Field<G>['declare']>;
@@ -774,17 +773,6 @@ declare module './declaration.ts' {
 			>;
 		}
 		namespace Method {
-			interface Getter<G extends GrammarContext<G>> extends accessors.Declaration.Method.Getter<G> {}
-			namespace Getter {
-				interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Method.Getter.Private<G> {}
-				interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Method.Getter.Protected<G> {}
-				interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Method.Getter.Public<G> {}
-				type Any<G extends GrammarContext<G>> =
-					| V.Declaration.Method.Getter<G>
-					| V.Declaration.Method.Getter.Private<G>
-					| V.Declaration.Method.Getter.Protected<G>
-					| V.Declaration.Method.Getter.Public<G>;
-			}
 			interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Method.Private<G> {}
 			interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Method.Protected<G> {}
 			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Method.Public<G> {}
@@ -795,17 +783,6 @@ declare module './declaration.ts' {
 					| V.Declaration.Method.Public<G>
 					| V.Declaration.Method.Public.Internal<G>
 					| V.Declaration.Method.Public.Restricted<G>;
-			}
-			interface Setter<G extends GrammarContext<G>> extends accessors.Declaration.Method.Setter<G> {}
-			namespace Setter {
-				interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Method.Setter.Private<G> {}
-				interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Method.Setter.Protected<G> {}
-				interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Method.Setter.Public<G> {}
-				type Any<G extends GrammarContext<G>> =
-					| V.Declaration.Method.Setter<G>
-					| V.Declaration.Method.Setter.Private<G>
-					| V.Declaration.Method.Setter.Protected<G>
-					| V.Declaration.Method.Setter.Public<G>;
 			}
 			interface Signature<G extends GrammarContext<G>> extends methods.Declaration.Method.Signature<G> {
 				readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Declaration.Method.Signature<G>['async']>;
@@ -865,69 +842,17 @@ declare module './declaration.ts' {
 					>;
 				}
 				namespace Abstract {
-					interface Getter<G extends GrammarContext<G>> extends accessors.Declaration.Method.Signature.Abstract
-						.Getter<G> {}
-					namespace Getter {
-						interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Abstract
-							.Getter.Private<G> {}
-						interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Abstract
-							.Getter.Protected<G> {}
-						interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Abstract
-							.Getter.Public<G> {}
-						type Any<G extends GrammarContext<G>> =
-							| V.Declaration.Method.Signature.Abstract.Getter<G>
-							| V.Declaration.Method.Signature.Abstract.Getter.Private<G>
-							| V.Declaration.Method.Signature.Abstract.Getter.Protected<G>
-							| V.Declaration.Method.Signature.Abstract.Getter.Public<G>;
-					}
 					interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Abstract
 						.Private<G> {}
 					interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Abstract
 						.Protected<G> {}
 					interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Abstract
 						.Public<G> {}
-					interface Setter<G extends GrammarContext<G>> extends accessors.Declaration.Method.Signature.Abstract
-						.Setter<G> {}
-					namespace Setter {
-						interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Abstract
-							.Setter.Private<G> {}
-						interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Abstract
-							.Setter.Protected<G> {}
-						interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Abstract
-							.Setter.Public<G> {}
-						type Any<G extends GrammarContext<G>> =
-							| V.Declaration.Method.Signature.Abstract.Setter<G>
-							| V.Declaration.Method.Signature.Abstract.Setter.Private<G>
-							| V.Declaration.Method.Signature.Abstract.Setter.Protected<G>
-							| V.Declaration.Method.Signature.Abstract.Setter.Public<G>;
-					}
 					type Any<G extends GrammarContext<G>> =
 						| V.Declaration.Method.Signature.Abstract<G>
-						| V.Declaration.Method.Signature.Abstract.Getter<G>
-						| V.Declaration.Method.Signature.Abstract.Getter.Private<G>
-						| V.Declaration.Method.Signature.Abstract.Getter.Protected<G>
-						| V.Declaration.Method.Signature.Abstract.Getter.Public<G>
 						| V.Declaration.Method.Signature.Abstract.Private<G>
 						| V.Declaration.Method.Signature.Abstract.Protected<G>
-						| V.Declaration.Method.Signature.Abstract.Public<G>
-						| V.Declaration.Method.Signature.Abstract.Setter<G>
-						| V.Declaration.Method.Signature.Abstract.Setter.Private<G>
-						| V.Declaration.Method.Signature.Abstract.Setter.Protected<G>
-						| V.Declaration.Method.Signature.Abstract.Setter.Public<G>;
-				}
-				interface Getter<G extends GrammarContext<G>> extends accessors.Declaration.Method.Signature.Getter<G> {}
-				namespace Getter {
-					interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Getter
-						.Private<G> {}
-					interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Getter
-						.Protected<G> {}
-					interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Getter
-						.Public<G> {}
-					type Any<G extends GrammarContext<G>> =
-						| V.Declaration.Method.Signature.Getter<G>
-						| V.Declaration.Method.Signature.Getter.Private<G>
-						| V.Declaration.Method.Signature.Getter.Protected<G>
-						| V.Declaration.Method.Signature.Getter.Public<G>;
+						| V.Declaration.Method.Signature.Abstract.Public<G>;
 				}
 				interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Private<G> {}
 				interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Protected<G> {}
@@ -942,90 +867,36 @@ declare module './declaration.ts' {
 						| V.Declaration.Method.Signature.Public.Internal<G>
 						| V.Declaration.Method.Signature.Public.Restricted<G>;
 				}
-				interface Setter<G extends GrammarContext<G>> extends accessors.Declaration.Method.Signature.Setter<G> {}
-				namespace Setter {
-					interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Setter
-						.Private<G> {}
-					interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Setter
-						.Protected<G> {}
-					interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Method.Signature.Setter
-						.Public<G> {}
-					type Any<G extends GrammarContext<G>> =
-						| V.Declaration.Method.Signature.Setter<G>
-						| V.Declaration.Method.Signature.Setter.Private<G>
-						| V.Declaration.Method.Signature.Setter.Protected<G>
-						| V.Declaration.Method.Signature.Setter.Public<G>;
-				}
 				type Any<G extends GrammarContext<G>> =
 					| V.Declaration.Method.Signature<G>
 					| V.Declaration.Method.Signature.Abstract<G>
-					| V.Declaration.Method.Signature.Abstract.Getter<G>
-					| V.Declaration.Method.Signature.Abstract.Getter.Private<G>
-					| V.Declaration.Method.Signature.Abstract.Getter.Protected<G>
-					| V.Declaration.Method.Signature.Abstract.Getter.Public<G>
 					| V.Declaration.Method.Signature.Abstract.Private<G>
 					| V.Declaration.Method.Signature.Abstract.Protected<G>
 					| V.Declaration.Method.Signature.Abstract.Public<G>
-					| V.Declaration.Method.Signature.Abstract.Setter<G>
-					| V.Declaration.Method.Signature.Abstract.Setter.Private<G>
-					| V.Declaration.Method.Signature.Abstract.Setter.Protected<G>
-					| V.Declaration.Method.Signature.Abstract.Setter.Public<G>
-					| V.Declaration.Method.Signature.Getter<G>
-					| V.Declaration.Method.Signature.Getter.Private<G>
-					| V.Declaration.Method.Signature.Getter.Protected<G>
-					| V.Declaration.Method.Signature.Getter.Public<G>
 					| V.Declaration.Method.Signature.Private<G>
 					| V.Declaration.Method.Signature.Protected<G>
 					| V.Declaration.Method.Signature.Public<G>
 					| V.Declaration.Method.Signature.Public.Internal<G>
-					| V.Declaration.Method.Signature.Public.Restricted<G>
-					| V.Declaration.Method.Signature.Setter<G>
-					| V.Declaration.Method.Signature.Setter.Private<G>
-					| V.Declaration.Method.Signature.Setter.Protected<G>
-					| V.Declaration.Method.Signature.Setter.Public<G>;
+					| V.Declaration.Method.Signature.Public.Restricted<G>;
 			}
 			interface Special<G extends GrammarContext<G>> extends methods.Declaration.Method.Special<G> {}
 			type Any<G extends GrammarContext<G>> =
 				| V.Declaration.Method<G>
-				| V.Declaration.Method.Getter<G>
-				| V.Declaration.Method.Getter.Private<G>
-				| V.Declaration.Method.Getter.Protected<G>
-				| V.Declaration.Method.Getter.Public<G>
 				| V.Declaration.Method.Private<G>
 				| V.Declaration.Method.Protected<G>
 				| V.Declaration.Method.Public<G>
 				| V.Declaration.Method.Public.Internal<G>
 				| V.Declaration.Method.Public.Restricted<G>
-				| V.Declaration.Method.Setter<G>
-				| V.Declaration.Method.Setter.Private<G>
-				| V.Declaration.Method.Setter.Protected<G>
-				| V.Declaration.Method.Setter.Public<G>
 				| V.Declaration.Method.Signature<G>
 				| V.Declaration.Method.Signature.Abstract<G>
-				| V.Declaration.Method.Signature.Abstract.Getter<G>
-				| V.Declaration.Method.Signature.Abstract.Getter.Private<G>
-				| V.Declaration.Method.Signature.Abstract.Getter.Protected<G>
-				| V.Declaration.Method.Signature.Abstract.Getter.Public<G>
 				| V.Declaration.Method.Signature.Abstract.Private<G>
 				| V.Declaration.Method.Signature.Abstract.Protected<G>
 				| V.Declaration.Method.Signature.Abstract.Public<G>
-				| V.Declaration.Method.Signature.Abstract.Setter<G>
-				| V.Declaration.Method.Signature.Abstract.Setter.Private<G>
-				| V.Declaration.Method.Signature.Abstract.Setter.Protected<G>
-				| V.Declaration.Method.Signature.Abstract.Setter.Public<G>
-				| V.Declaration.Method.Signature.Getter<G>
-				| V.Declaration.Method.Signature.Getter.Private<G>
-				| V.Declaration.Method.Signature.Getter.Protected<G>
-				| V.Declaration.Method.Signature.Getter.Public<G>
 				| V.Declaration.Method.Signature.Private<G>
 				| V.Declaration.Method.Signature.Protected<G>
 				| V.Declaration.Method.Signature.Public<G>
 				| V.Declaration.Method.Signature.Public.Internal<G>
 				| V.Declaration.Method.Signature.Public.Restricted<G>
-				| V.Declaration.Method.Signature.Setter<G>
-				| V.Declaration.Method.Signature.Setter.Private<G>
-				| V.Declaration.Method.Signature.Setter.Protected<G>
-				| V.Declaration.Method.Signature.Setter.Public<G>
 				| V.Declaration.Method.Special<G>;
 		}
 		interface Module<G extends GrammarContext<G>> extends moduleDeclarations.Declaration.Module<G> {}
@@ -1130,6 +1001,184 @@ declare module './declaration.ts' {
 				| V.Declaration.Parameter.Typed<G>
 				| V.Declaration.Parameter.TypedDefault<G>
 				| V.Declaration.Parameter.Variadic<G>;
+		}
+		interface Property<G extends GrammarContext<G>> extends accessors.Declaration.Property<G> {
+			readonly computed?: gate.In<G, features.ComputedKeys, computedKeys.Declaration.Property<G>['computed']>;
+			readonly decorators?: gate.In<G, features.Decorators, decorators.Declaration.Property<G>['decorators']>;
+			readonly definite?: gate.In<G, features.NonNullAssertions, nonNullAssertions.Declaration.Property<G>['definite']>;
+			readonly override?: gate.In<G, features.ExplicitOverrides, explicitOverrides.Declaration.Property<G>['override']>;
+			readonly privateName?: gate.In<G, features.Encapsulation, encapsulation.Declaration.Property<G>['privateName']>;
+			readonly static?: gate.In<G, features.Classes, classes.Declaration.Property<G>['static']>;
+			readonly type?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Property<G>['type']>;
+		}
+		namespace Property {
+			interface Getter<G extends GrammarContext<G>> extends accessors.Declaration.Property.Getter<G> {
+				readonly returnType?: gate.In<
+					G,
+					features.TypeAnnotations,
+					typeAnnotations.Declaration.Property.Getter<G>['returnType']
+				>;
+			}
+			namespace Getter {
+				interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Property.Getter.Private<G> {}
+				interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Property.Getter.Protected<G> {}
+				interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Property.Getter.Public<G> {}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Property.Getter<G>
+					| V.Declaration.Property.Getter.Private<G>
+					| V.Declaration.Property.Getter.Protected<G>
+					| V.Declaration.Property.Getter.Public<G>;
+			}
+			interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Property.Private<G> {}
+			interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Property.Protected<G> {}
+			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Property.Public<G> {}
+			interface Setter<G extends GrammarContext<G>> extends accessors.Declaration.Property.Setter<G> {}
+			namespace Setter {
+				interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Property.Setter.Private<G> {}
+				interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Property.Setter.Protected<G> {}
+				interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Property.Setter.Public<G> {}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Property.Setter<G>
+					| V.Declaration.Property.Setter.Private<G>
+					| V.Declaration.Property.Setter.Protected<G>
+					| V.Declaration.Property.Setter.Public<G>;
+			}
+			interface Signature<G extends GrammarContext<G>> extends accessors.Declaration.Property.Signature<G> {}
+			namespace Signature {
+				interface Abstract<G extends GrammarContext<G>> extends accessors.Declaration.Property.Signature.Abstract<G> {}
+				namespace Abstract {
+					interface Getter<G extends GrammarContext<G>> extends accessors.Declaration.Property.Signature.Abstract
+						.Getter<G> {
+						readonly returnType?: gate.In<
+							G,
+							features.TypeAnnotations,
+							typeAnnotations.Declaration.Property.Signature.Abstract.Getter<G>['returnType']
+						>;
+					}
+					namespace Getter {
+						interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Property.Signature.Abstract
+							.Getter.Private<G> {}
+						interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Property.Signature.Abstract
+							.Getter.Protected<G> {}
+						interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Property.Signature.Abstract
+							.Getter.Public<G> {}
+						type Any<G extends GrammarContext<G>> =
+							| V.Declaration.Property.Signature.Abstract.Getter<G>
+							| V.Declaration.Property.Signature.Abstract.Getter.Private<G>
+							| V.Declaration.Property.Signature.Abstract.Getter.Protected<G>
+							| V.Declaration.Property.Signature.Abstract.Getter.Public<G>;
+					}
+					interface Setter<G extends GrammarContext<G>> extends accessors.Declaration.Property.Signature.Abstract
+						.Setter<G> {}
+					namespace Setter {
+						interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Property.Signature.Abstract
+							.Setter.Private<G> {}
+						interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Property.Signature.Abstract
+							.Setter.Protected<G> {}
+						interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Property.Signature.Abstract
+							.Setter.Public<G> {}
+						type Any<G extends GrammarContext<G>> =
+							| V.Declaration.Property.Signature.Abstract.Setter<G>
+							| V.Declaration.Property.Signature.Abstract.Setter.Private<G>
+							| V.Declaration.Property.Signature.Abstract.Setter.Protected<G>
+							| V.Declaration.Property.Signature.Abstract.Setter.Public<G>;
+					}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Property.Signature.Abstract<G>
+						| V.Declaration.Property.Signature.Abstract.Getter<G>
+						| V.Declaration.Property.Signature.Abstract.Getter.Private<G>
+						| V.Declaration.Property.Signature.Abstract.Getter.Protected<G>
+						| V.Declaration.Property.Signature.Abstract.Getter.Public<G>
+						| V.Declaration.Property.Signature.Abstract.Setter<G>
+						| V.Declaration.Property.Signature.Abstract.Setter.Private<G>
+						| V.Declaration.Property.Signature.Abstract.Setter.Protected<G>
+						| V.Declaration.Property.Signature.Abstract.Setter.Public<G>;
+				}
+				interface Getter<G extends GrammarContext<G>> extends accessors.Declaration.Property.Signature.Getter<G> {
+					readonly returnType?: gate.In<
+						G,
+						features.TypeAnnotations,
+						typeAnnotations.Declaration.Property.Signature.Getter<G>['returnType']
+					>;
+				}
+				namespace Getter {
+					interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Property.Signature.Getter
+						.Private<G> {}
+					interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Property.Signature.Getter
+						.Protected<G> {}
+					interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Property.Signature.Getter
+						.Public<G> {}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Property.Signature.Getter<G>
+						| V.Declaration.Property.Signature.Getter.Private<G>
+						| V.Declaration.Property.Signature.Getter.Protected<G>
+						| V.Declaration.Property.Signature.Getter.Public<G>;
+				}
+				interface Setter<G extends GrammarContext<G>> extends accessors.Declaration.Property.Signature.Setter<G> {}
+				namespace Setter {
+					interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Property.Signature.Setter
+						.Private<G> {}
+					interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Property.Signature.Setter
+						.Protected<G> {}
+					interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Property.Signature.Setter
+						.Public<G> {}
+					type Any<G extends GrammarContext<G>> =
+						| V.Declaration.Property.Signature.Setter<G>
+						| V.Declaration.Property.Signature.Setter.Private<G>
+						| V.Declaration.Property.Signature.Setter.Protected<G>
+						| V.Declaration.Property.Signature.Setter.Public<G>;
+				}
+				type Any<G extends GrammarContext<G>> =
+					| V.Declaration.Property.Signature<G>
+					| V.Declaration.Property.Signature.Abstract<G>
+					| V.Declaration.Property.Signature.Abstract.Getter<G>
+					| V.Declaration.Property.Signature.Abstract.Getter.Private<G>
+					| V.Declaration.Property.Signature.Abstract.Getter.Protected<G>
+					| V.Declaration.Property.Signature.Abstract.Getter.Public<G>
+					| V.Declaration.Property.Signature.Abstract.Setter<G>
+					| V.Declaration.Property.Signature.Abstract.Setter.Private<G>
+					| V.Declaration.Property.Signature.Abstract.Setter.Protected<G>
+					| V.Declaration.Property.Signature.Abstract.Setter.Public<G>
+					| V.Declaration.Property.Signature.Getter<G>
+					| V.Declaration.Property.Signature.Getter.Private<G>
+					| V.Declaration.Property.Signature.Getter.Protected<G>
+					| V.Declaration.Property.Signature.Getter.Public<G>
+					| V.Declaration.Property.Signature.Setter<G>
+					| V.Declaration.Property.Signature.Setter.Private<G>
+					| V.Declaration.Property.Signature.Setter.Protected<G>
+					| V.Declaration.Property.Signature.Setter.Public<G>;
+			}
+			type Any<G extends GrammarContext<G>> =
+				| V.Declaration.Property<G>
+				| V.Declaration.Property.Getter<G>
+				| V.Declaration.Property.Getter.Private<G>
+				| V.Declaration.Property.Getter.Protected<G>
+				| V.Declaration.Property.Getter.Public<G>
+				| V.Declaration.Property.Private<G>
+				| V.Declaration.Property.Protected<G>
+				| V.Declaration.Property.Public<G>
+				| V.Declaration.Property.Setter<G>
+				| V.Declaration.Property.Setter.Private<G>
+				| V.Declaration.Property.Setter.Protected<G>
+				| V.Declaration.Property.Setter.Public<G>
+				| V.Declaration.Property.Signature<G>
+				| V.Declaration.Property.Signature.Abstract<G>
+				| V.Declaration.Property.Signature.Abstract.Getter<G>
+				| V.Declaration.Property.Signature.Abstract.Getter.Private<G>
+				| V.Declaration.Property.Signature.Abstract.Getter.Protected<G>
+				| V.Declaration.Property.Signature.Abstract.Getter.Public<G>
+				| V.Declaration.Property.Signature.Abstract.Setter<G>
+				| V.Declaration.Property.Signature.Abstract.Setter.Private<G>
+				| V.Declaration.Property.Signature.Abstract.Setter.Protected<G>
+				| V.Declaration.Property.Signature.Abstract.Setter.Public<G>
+				| V.Declaration.Property.Signature.Getter<G>
+				| V.Declaration.Property.Signature.Getter.Private<G>
+				| V.Declaration.Property.Signature.Getter.Protected<G>
+				| V.Declaration.Property.Signature.Getter.Public<G>
+				| V.Declaration.Property.Signature.Setter<G>
+				| V.Declaration.Property.Signature.Setter.Private<G>
+				| V.Declaration.Property.Signature.Setter.Protected<G>
+				| V.Declaration.Property.Signature.Setter.Public<G>;
 		}
 		interface Signature<G extends GrammarContext<G>> extends structuralConformance.Declaration.Signature<G> {}
 		namespace Signature {
@@ -1450,45 +1499,21 @@ declare module './declaration.ts' {
 			| V.Declaration.Interface.Trait.Public.Restricted<G>
 			| V.Declaration.Macro<G>
 			| V.Declaration.Method<G>
-			| V.Declaration.Method.Getter<G>
-			| V.Declaration.Method.Getter.Private<G>
-			| V.Declaration.Method.Getter.Protected<G>
-			| V.Declaration.Method.Getter.Public<G>
 			| V.Declaration.Method.Private<G>
 			| V.Declaration.Method.Protected<G>
 			| V.Declaration.Method.Public<G>
 			| V.Declaration.Method.Public.Internal<G>
 			| V.Declaration.Method.Public.Restricted<G>
-			| V.Declaration.Method.Setter<G>
-			| V.Declaration.Method.Setter.Private<G>
-			| V.Declaration.Method.Setter.Protected<G>
-			| V.Declaration.Method.Setter.Public<G>
 			| V.Declaration.Method.Signature<G>
 			| V.Declaration.Method.Signature.Abstract<G>
-			| V.Declaration.Method.Signature.Abstract.Getter<G>
-			| V.Declaration.Method.Signature.Abstract.Getter.Private<G>
-			| V.Declaration.Method.Signature.Abstract.Getter.Protected<G>
-			| V.Declaration.Method.Signature.Abstract.Getter.Public<G>
 			| V.Declaration.Method.Signature.Abstract.Private<G>
 			| V.Declaration.Method.Signature.Abstract.Protected<G>
 			| V.Declaration.Method.Signature.Abstract.Public<G>
-			| V.Declaration.Method.Signature.Abstract.Setter<G>
-			| V.Declaration.Method.Signature.Abstract.Setter.Private<G>
-			| V.Declaration.Method.Signature.Abstract.Setter.Protected<G>
-			| V.Declaration.Method.Signature.Abstract.Setter.Public<G>
-			| V.Declaration.Method.Signature.Getter<G>
-			| V.Declaration.Method.Signature.Getter.Private<G>
-			| V.Declaration.Method.Signature.Getter.Protected<G>
-			| V.Declaration.Method.Signature.Getter.Public<G>
 			| V.Declaration.Method.Signature.Private<G>
 			| V.Declaration.Method.Signature.Protected<G>
 			| V.Declaration.Method.Signature.Public<G>
 			| V.Declaration.Method.Signature.Public.Internal<G>
 			| V.Declaration.Method.Signature.Public.Restricted<G>
-			| V.Declaration.Method.Signature.Setter<G>
-			| V.Declaration.Method.Signature.Setter.Private<G>
-			| V.Declaration.Method.Signature.Setter.Protected<G>
-			| V.Declaration.Method.Signature.Setter.Public<G>
 			| V.Declaration.Method.Special<G>
 			| V.Declaration.Module<G>
 			| V.Declaration.Module.External<G>
@@ -1511,6 +1536,36 @@ declare module './declaration.ts' {
 			| V.Declaration.Parameter.Typed<G>
 			| V.Declaration.Parameter.TypedDefault<G>
 			| V.Declaration.Parameter.Variadic<G>
+			| V.Declaration.Property<G>
+			| V.Declaration.Property.Getter<G>
+			| V.Declaration.Property.Getter.Private<G>
+			| V.Declaration.Property.Getter.Protected<G>
+			| V.Declaration.Property.Getter.Public<G>
+			| V.Declaration.Property.Private<G>
+			| V.Declaration.Property.Protected<G>
+			| V.Declaration.Property.Public<G>
+			| V.Declaration.Property.Setter<G>
+			| V.Declaration.Property.Setter.Private<G>
+			| V.Declaration.Property.Setter.Protected<G>
+			| V.Declaration.Property.Setter.Public<G>
+			| V.Declaration.Property.Signature<G>
+			| V.Declaration.Property.Signature.Abstract<G>
+			| V.Declaration.Property.Signature.Abstract.Getter<G>
+			| V.Declaration.Property.Signature.Abstract.Getter.Private<G>
+			| V.Declaration.Property.Signature.Abstract.Getter.Protected<G>
+			| V.Declaration.Property.Signature.Abstract.Getter.Public<G>
+			| V.Declaration.Property.Signature.Abstract.Setter<G>
+			| V.Declaration.Property.Signature.Abstract.Setter.Private<G>
+			| V.Declaration.Property.Signature.Abstract.Setter.Protected<G>
+			| V.Declaration.Property.Signature.Abstract.Setter.Public<G>
+			| V.Declaration.Property.Signature.Getter<G>
+			| V.Declaration.Property.Signature.Getter.Private<G>
+			| V.Declaration.Property.Signature.Getter.Protected<G>
+			| V.Declaration.Property.Signature.Getter.Public<G>
+			| V.Declaration.Property.Signature.Setter<G>
+			| V.Declaration.Property.Signature.Setter.Private<G>
+			| V.Declaration.Property.Signature.Setter.Protected<G>
+			| V.Declaration.Property.Signature.Setter.Public<G>
 			| V.Declaration.Signature<G>
 			| V.Declaration.Signature.Call<G>
 			| V.Declaration.Signature.Construct<G>
@@ -2844,8 +2899,62 @@ declare module './type.ts' {
 		}
 		interface Primitive<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive<G> {}
 		namespace Primitive {
+			interface Boolean<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Boolean<G> {}
+			interface Character<G extends GrammarContext<G>> extends characters.Type.Primitive.Character<G> {}
+			interface Floating<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Floating<G> {}
+			namespace Floating {
+				interface Float32<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Floating.Float32<G> {}
+				interface Float64<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Floating.Float64<G> {}
+				type Any<G extends GrammarContext<G>> =
+					| V.Type.Primitive.Floating<G>
+					| V.Type.Primitive.Floating.Float32<G>
+					| V.Type.Primitive.Floating.Float64<G>;
+			}
+			interface Integral<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral<G> {}
+			namespace Integral {
+				interface Int128<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int128<G> {}
+				interface Int16<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int16<G> {}
+				interface Int32<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int32<G> {}
+				interface Int64<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int64<G> {}
+				interface Int8<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int8<G> {}
+				interface Size<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Size<G> {}
+				type Any<G extends GrammarContext<G>> =
+					| V.Type.Primitive.Integral<G>
+					| V.Type.Primitive.Integral.Int128<G>
+					| V.Type.Primitive.Integral.Int16<G>
+					| V.Type.Primitive.Integral.Int32<G>
+					| V.Type.Primitive.Integral.Int64<G>
+					| V.Type.Primitive.Integral.Int8<G>
+					| V.Type.Primitive.Integral.Size<G>;
+			}
 			interface Never<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Never<G> {}
-			type Any<G extends GrammarContext<G>> = V.Type.Primitive<G> | V.Type.Primitive.Never<G>;
+			interface Object<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Object<G> {}
+			interface String<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.String<G> {}
+			interface Symbol<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Symbol<G> {}
+			interface Unchecked<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Unchecked<G> {}
+			interface Unknown<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Unknown<G> {}
+			interface Void<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Void<G> {}
+			type Any<G extends GrammarContext<G>> =
+				| V.Type.Primitive<G>
+				| V.Type.Primitive.Boolean<G>
+				| V.Type.Primitive.Character<G>
+				| V.Type.Primitive.Floating<G>
+				| V.Type.Primitive.Floating.Float32<G>
+				| V.Type.Primitive.Floating.Float64<G>
+				| V.Type.Primitive.Integral<G>
+				| V.Type.Primitive.Integral.Int128<G>
+				| V.Type.Primitive.Integral.Int16<G>
+				| V.Type.Primitive.Integral.Int32<G>
+				| V.Type.Primitive.Integral.Int64<G>
+				| V.Type.Primitive.Integral.Int8<G>
+				| V.Type.Primitive.Integral.Size<G>
+				| V.Type.Primitive.Never<G>
+				| V.Type.Primitive.Object<G>
+				| V.Type.Primitive.String<G>
+				| V.Type.Primitive.Symbol<G>
+				| V.Type.Primitive.Unchecked<G>
+				| V.Type.Primitive.Unknown<G>
+				| V.Type.Primitive.Void<G>;
 		}
 		interface Qualified<G extends GrammarContext<G>> extends typeAnnotations.Type.Qualified<G> {}
 		interface Query<G extends GrammarContext<G>> extends typeAnnotations.Type.Query<G> {}
@@ -2894,7 +3003,25 @@ declare module './type.ts' {
 			| V.Type.Predicate<G>
 			| V.Type.Predicate.Asserts<G>
 			| V.Type.Primitive<G>
+			| V.Type.Primitive.Boolean<G>
+			| V.Type.Primitive.Character<G>
+			| V.Type.Primitive.Floating<G>
+			| V.Type.Primitive.Floating.Float32<G>
+			| V.Type.Primitive.Floating.Float64<G>
+			| V.Type.Primitive.Integral<G>
+			| V.Type.Primitive.Integral.Int128<G>
+			| V.Type.Primitive.Integral.Int16<G>
+			| V.Type.Primitive.Integral.Int32<G>
+			| V.Type.Primitive.Integral.Int64<G>
+			| V.Type.Primitive.Integral.Int8<G>
+			| V.Type.Primitive.Integral.Size<G>
 			| V.Type.Primitive.Never<G>
+			| V.Type.Primitive.Object<G>
+			| V.Type.Primitive.String<G>
+			| V.Type.Primitive.Symbol<G>
+			| V.Type.Primitive.Unchecked<G>
+			| V.Type.Primitive.Unknown<G>
+			| V.Type.Primitive.Void<G>
 			| V.Type.Qualified<G>
 			| V.Type.Query<G>
 			| V.Type.Readonly<G>

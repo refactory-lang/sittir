@@ -374,6 +374,39 @@ describe('portable is: rust', async () => {
 			expect(at('expression.range.inclusive')(range, context), kind).toBe(false);
 		}
 	});
+	it('reads each primitive type by its keyword, an unsigned width as its signed width', () => {
+		const SOURCE = 'fn f(a: i8, b: u8, c: i128, d: isize, e: usize, g: f32, h: f64, i: bool, j: char, k: &str) -> ! { loop {} }\n';
+		for (const [keyword, path] of [
+			['i8_keyword', 'type.primitive.integral.int8'],
+			['u8_keyword', 'type.primitive.integral.int8'],
+			['i128_keyword', 'type.primitive.integral.int128'],
+			['isize_keyword', 'type.primitive.integral.size'],
+			['usize_keyword', 'type.primitive.integral.size'],
+			['f32_keyword', 'type.primitive.floating.float32'],
+			['f64_keyword', 'type.primitive.floating.float64'],
+			['bool_keyword', 'type.primitive.boolean'],
+			['char_keyword', 'type.primitive.character'],
+			['str_keyword', 'type.primitive.string'],
+			['never_type', 'type.primitive.never']
+		] as const) {
+			const [node, context] = find(SOURCE, keyword);
+			expect(at(path)(node, context), keyword).toBe(true);
+			expect(at('type.primitive')(node, context), keyword).toBe(true);
+		}
+		const [f32, fc] = find(SOURCE, 'f32_keyword');
+		const [i8, ic] = find(SOURCE, 'i8_keyword');
+		expect(at('type.primitive.integral')(f32, fc)).toBe(false);
+		expect(at('type.primitive.floating')(i8, ic)).toBe(false);
+		expect(at('type.primitive.integral.int16')(i8, ic)).toBe(false);
+	});
+
+	it.skip('reads an unsigned width by its flag (pending: `unsigned` is a flag of type.primitive.integral, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
+		const SOURCE = 'fn f(a: i8, b: u8) {}\n';
+		const [signed, sc] = find(SOURCE, 'i8_keyword');
+		const [unsigned, uc] = find(SOURCE, 'u8_keyword');
+		expect(at('type.primitive.integral.int8.unsigned')(unsigned, uc)).toBe(true);
+		expect(at('type.primitive.integral.int8.unsigned')(signed, sc)).toBe(false);
+	});
 });
 
 describe('portable is: typescript', async () => {
@@ -580,6 +613,44 @@ describe('portable is: typescript', async () => {
 		expect(froms.map(([n, c]) => at('statement.export')(n, c))).toEqual([true, true, true]);
 	});
 
+	it('reads a getter, a setter and an auto-accessor as properties, and a plain method or field as neither', () => {
+		const SOURCE = 'class C { get g() { return 1; } set s(v) {} private get p() { return 2; } m() {} accessor a = 1; f = 2; }\n';
+		const [getter, gc] = find(SOURCE, 'method_definition');
+		const [setter, sc] = find(SOURCE, 'method_definition', undefined, 1);
+		const [privateGetter, pc] = find(SOURCE, 'method_definition', undefined, 2);
+		const [method, mc] = find(SOURCE, 'method_definition', undefined, 3);
+		const [auto, ac] = find(SOURCE, 'public_field_definition');
+		const [field, fc] = find(SOURCE, 'public_field_definition', undefined, 1);
+		expect(at('declaration.property.getter')(getter, gc)).toBe(true);
+		expect(at('declaration.property')(getter, gc)).toBe(true);
+		expect(at('declaration.method')(getter, gc)).toBe(false);
+		expect(at('declaration.property.setter')(setter, sc)).toBe(true);
+		expect(at('declaration.property.getter')(setter, sc)).toBe(false);
+		expect(at('declaration.property.getter.private')(privateGetter, pc)).toBe(true);
+		expect(at('declaration.method.private')(privateGetter, pc)).toBe(false);
+		expect(at('declaration.method')(method, mc)).toBe(true);
+		expect(at('declaration.property')(method, mc)).toBe(false);
+		expect(at('declaration.property')(auto, ac)).toBe(true);
+		expect(at('declaration.field')(auto, ac)).toBe(false);
+		expect(at('declaration.field')(field, fc)).toBe(true);
+		expect(at('declaration.property')(field, fc)).toBe(false);
+	});
+
+	it('reads an accessor signature as a property signature, abstract or not', () => {
+		const SOURCE = 'interface I { get x(): number; m(): void; }\nabstract class A { abstract set y(v: number); abstract n(): void; }\n';
+		const [getter, gc] = find(SOURCE, 'method_signature');
+		const [method, mc] = find(SOURCE, 'method_signature', undefined, 1);
+		const [setter, sc] = find(SOURCE, 'abstract_method_signature');
+		const [abstractMethod, ac] = find(SOURCE, 'abstract_method_signature', undefined, 1);
+		expect(at('declaration.property.signature.getter')(getter, gc)).toBe(true);
+		expect(at('declaration.method.signature')(getter, gc)).toBe(false);
+		expect(at('declaration.method.signature')(method, mc)).toBe(true);
+		expect(at('declaration.property.signature.abstract.setter')(setter, sc)).toBe(true);
+		expect(at('declaration.property.signature')(setter, sc)).toBe(true);
+		expect(at('declaration.method.signature.abstract')(setter, sc)).toBe(false);
+		expect(at('declaration.method.signature.abstract')(abstractMethod, ac)).toBe(true);
+	});
+
 	it('reads a negative literal type as a negative number', () => {
 		const [negative, context] = find('let x: -1;\n', 'literal_type_negative_number');
 		expect(at('literal.number.negative')(negative, context)).toBe(true);
@@ -591,6 +662,38 @@ describe('portable is: typescript', async () => {
 		const [read, rc] = find(SOURCE, 'private_property_identifier', undefined, 1);
 		expect(at('identifier.property')(declared, dc)).toBe(true);
 		expect(at('identifier.property')(read, rc)).toBe(true);
+	});
+	it('reads each predefined type by its keyword', () => {
+		const SOURCE = 'let a: any; let b: number; let c: boolean; let d: string; let e: symbol; let g: void; let h: unknown; let i: never; let j: object;\n';
+		for (const [keyword, path] of [
+			['any_keyword', 'type.primitive.unchecked'],
+			['number_keyword', 'type.primitive.floating.float64'],
+			['boolean_keyword', 'type.primitive.boolean'],
+			['string_keyword', 'type.primitive.string'],
+			['symbol_keyword', 'type.primitive.symbol'],
+			['void_keyword', 'type.primitive.void'],
+			['unknown_keyword', 'type.primitive.unknown'],
+			['never_keyword', 'type.primitive.never'],
+			['object_keyword', 'type.primitive.object']
+		] as const) {
+			const [node, context] = find(SOURCE, keyword);
+			expect(at(path)(node, context), keyword).toBe(true);
+			expect(at('type.primitive')(node, context), keyword).toBe(true);
+		}
+		const [unknown, uc] = find(SOURCE, 'unknown_keyword');
+		expect(at('type.primitive.unchecked')(unknown, uc)).toBe(false);
+	});
+
+	it('reads a unique symbol as a symbol', () => {
+		const [unique, context] = find('declare const s: unique symbol;\n', 'unique');
+		expect(at('type.primitive.symbol')(unique, context)).toBe(true);
+	});
+
+	it.skip('reads a unique symbol by its flag (pending: `unique` is a flag of type.primitive.symbol, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
+		const [unique, uc] = find('declare const s: unique symbol;\n', 'unique');
+		const [plain, pc] = find('let s: symbol;\n', 'symbol_keyword');
+		expect(at('type.primitive.symbol.unique')(unique, uc)).toBe(true);
+		expect(at('type.primitive.symbol.unique')(plain, pc)).toBe(false);
 	});
 });
 
@@ -625,7 +728,7 @@ describe('portable is agrees with one classification', () => {
 	const SOURCES = {
 		python: 'import os\nclass A(B):\n    @staticmethod\n    def s(x: int = 1) -> str:\n        return f"{x}" + b"y".decode()\nwhile x > 0:\n    x -= 1\n',
 		rust: 'use std::io;\npub static Z: u8 = 0;\nstruct S { a: u8 }\nfn f(x: &mut S) -> Option<u8> { let y = x.a + 1; if y > 2 { return Some(y); } let g = |a, mut b| a; None }\n',
-		typescript: 'import { a } from "b";\nenum E { A, B = 1 }\nclass C extends D implements I { constructor() { super(); } m(): void { const x = a?.b ?? 1; } }\n// c\n'
+		typescript: 'import { a } from "b";\nenum E { A, B = 1 }\nclass C extends D implements I { constructor() { super(); } m(): void { const x = a?.b ?? 1; } get g() { return 1; } accessor p = 1; }\n// c\n'
 	} as const;
 	for (const name of Object.keys(SOURCES) as (keyof typeof SOURCES)[]) {
 		it(`${name}: each guard names facts of one classification and admits the node's kind`, async () => {
