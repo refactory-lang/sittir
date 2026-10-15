@@ -1,13 +1,72 @@
-# Working standards
+# Working Standards
 
-These rules apply to authored code, tooling, native crates, and documentation. [Codegen conventions](codegen-conventions.md) adds the compiler-specific rules.
+Repo-wide rules for all work — codegen, tools, validators, native crates, and
+docs tooling alike. Codegen examples below are illustrative, not the rule's
+scope.
 
-1. **DRY is the primary correctness rule.** Each fact has exactly one source and one derivation. Consolidate competing representations or derivations at their owner; do not patch their downstream disagreements.
-2. **Fix the root boundary.** Prefer a simple, reusable correction to a local workaround. If an audit proves the same defect at several sites, cover all demonstrated sites. Keep unrelated cleanup separate.
-3. **Carry canonical facts.** Resolve identity, routing, shape, and cardinality where the information exists, then consume those facts downstream. Prefer object references to names that every consumer must resolve again. Missing information should produce a useful diagnostic.
-4. **Never hand-edit generated output.** Change the owning source or generator and regenerate. See [Development](../DEVELOPMENT.md#regeneration).
-5. **Prove changed expectations.** Reproduce a failure before fixing it. Do not call a test stale or a failure pre-existing without a comparable base case. Preserve unexpected output and failed-gate evidence while diagnosing it.
-6. **Ratchets constrain regressions.** Validator floors must not be weakened and debt ceilings must not be raised to pass a gate. Tighten them when behavior improves. An authored feature-surface census is a different contract: explain and review its exact membership changes.
-7. **Verify the affected contract.** Use focused tests and type checks for a bounded change, executable checks for documentation/examples, and full unit/native/corpus gates for changes that affect those surfaces. Corpus changes require raw per-grammar counts compared with a recorded baseline. Report exactly which gates ran.
-8. **Respect shared work.** Preserve unrelated dirty files, active worktrees, and in-flight failures. Use an isolated base comparison rather than discarding someone else's edits to obtain a clean result.
-9. **Document live constraints.** Internal function explanations belong in the function glossaries; handwritten public API usage contracts belong in source JSDoc. Comments explain an invariant or non-obvious constraint, not development history. Descriptive links may name the governing document; bare task, PR, or plan numbers are not explanations.
+1. **DRY is the #1 correctness rule.** Each fact has one source and one
+   derivation. When two derivations of the same fact exist, unify them at the
+   root rather than patching one site.
+
+2. **Simple, dry, clean, reusable, consistent > fixed.** Always take the
+   general fix at the true root, even when its blast radius is larger than a
+   local patch. Do not accumulate tech debt, do not mask architectural issues,
+   and do not carry forward existing debt in code you are already touching.
+
+3. **Stamped facts over re-derivation.** Resolve a fact once, where it is
+   created, and consume the stamp downstream (e.g. kindIds are stamped at
+   link/construction time, never re-resolved by name later). A missing fact
+   fails at compile time with a diagnostic, never as an opaque runtime error.
+   This covers predicates and classifiers, not just values: canonical
+   predicates live on the model (word-shape is the grammar's link-pinned
+   `wordMatcher`; hiddenness and kind classification are model attributes) —
+   an inline regex or character-class heuristic re-implementing one in an
+   emitter is a re-derivation smell.
+
+4. **Never trust "this test is stale" on faith.** Before changing a test's
+   expectation, independently reproduce that it pins buggy behavior: stash the
+   fix → the test passes; reapply → it fails; find a production case with the
+   identical shape.
+
+5. **Verification before every commit:**
+   1. targeted probes of the specific cases fixed (render layer);
+   2. `sittir validate history` comparison across all five grammars —
+      numbers compared, not eyeballed;
+   3. the full unit suite, with any new failure isolated via stash-and-rerun
+      before accepting it as pre-existing;
+   4. documentation/example changes are verified by the executable snippet checks.
+
+5b. **A failed gate stops the work for review — it is never auto-reverted.**
+   An unexpected diff under a supposed no-behavior-change edit, or a
+   validation metric that moves when it shouldn't, is evidence of a real
+   latent divergence. Preserve the failing state intact (no revert, reset,
+   stash, or cleanup) and review it; discarding it destroys the finding.
+
+6. **Generated outputs are never hand-edited.** Fix the source or the
+   generator and regenerate, even when nondeterministic regen churn makes that
+   annoying.
+
+7. **A diagnosis's broader-scope findings are the work list, not a future
+   ask.** When an audit finds N sites sharing a defect class, the fix's scope
+   is all N.
+
+8. **Ratchets only tighten.** Debt ceilings (such as phantom-kind counts)
+   may only shrink; validation floors may only rise. A count above its
+   ceiling means a change minted new debt — fix the source, never raise
+   the ceiling. An authored feature-surface census (builder counts, setter
+   counts and similar membership pins) is not a debt ratchet. Its membership
+   changes are reviewed entry by entry against the change that caused them
+   and are never raised just to make a gate pass.
+
+9. **Comments state live constraints, not provenance.** A comment never
+   explains the history of the code or why a change was made — that belongs
+   in the commit message. If removing a comment loses nothing a reader of
+   the current code needs, remove it; the declarations and names should
+   carry the obvious mappings themselves.
+   Comments and docs never reference spec/plan/PR/task numbers or planning
+   documents, because planning artifacts get deleted. State the actual
+   constraint, invariant, or rationale directly.
+
+10. **Respect shared work.** Preserve unrelated dirty files, active worktrees,
+    and in-flight failures. Use an isolated base comparison rather than
+    discarding someone else's edits to obtain a clean result.

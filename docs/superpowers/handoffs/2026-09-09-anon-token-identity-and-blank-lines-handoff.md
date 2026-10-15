@@ -149,7 +149,7 @@ separated by a blank line while statements inside a block stay at `newline`.
      arrive already flattened to bare strings.
 5. **The `ArgsOf` overload class** and the `backend.ts` / `boundary.ts` comment
    residue, both carried from the previous handoff. The
-   `@forFutureUse ADR-0018 (path)` convention still awaits a ruling.
+   `@forFutureUse` annotations name the deferred surface and its current limitation.
 
 ## Gotchas
 

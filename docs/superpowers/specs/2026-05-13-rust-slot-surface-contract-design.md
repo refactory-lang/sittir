@@ -2,7 +2,7 @@
 
 **Status:** Approved, 2026-05-14
 **Branch:** `024-rust-slot-surface-contract`
-**Related:** `docs/superpowers/specs/2026-05-12-slot-debt-cleanup-design.md`, ADR-0018 (NodeData surface), spec 012 (Rust core port), spec 023 (native read parity)
+**Related:** `docs/superpowers/specs/2026-05-12-slot-debt-cleanup-design.md`, spec 012 (Rust core port), spec 023 (native read parity)
 
 This design narrows the slot-arity contract for the Rust path only. It does not redesign the raw native payload. Instead, it makes the target shape of each actual surface explicit so implementation can stop conflating typed storage, wrap, validator reconstruction, native read transport, native render transport, template input, factory config, and widened `from()` input.
 

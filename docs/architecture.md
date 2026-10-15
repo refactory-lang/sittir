@@ -52,7 +52,7 @@ Parsing returns the root directly. Its `$errors` contains parse-error regions; `
 
 An untouched parsed node can render from its original source span. A constructed or updated node renders through its generated grammar body while retaining reusable source/layout information on unchanged children. Thus source-preserving edits and canonical construction share the same render machinery.
 
-`$with` is immutable. Replacing a child does not mutate its parent; reconstruct the ancestor path to obtain an updated root. Queries are views over parsed structure. An updated value needs its documented commit/reparse lifecycle before it can be queried as a new parsed tree.
+`$with` is immutable. Replacing a child does not mutate its parent; reconstruct the ancestor path to obtain an updated root. Queries are views over parsed structure. To query an updated root with the implemented engine surface, render it and parse the result again. The reserved `Project.save` operation writes project files to disk; that project API remains planned.
 
 Use `using` to dispose an engine at scope exit, after its parsed trees and query views are no longer needed. A parsed view's lifetime depends on its engine.
 

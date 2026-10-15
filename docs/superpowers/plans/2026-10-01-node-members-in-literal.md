@@ -215,7 +215,7 @@ Expected: every `it.fails` passes (the assertions fail today: 0 or 1 of 1000 are
 - Modify: `packages/types/src/core-types.ts` (`TriviaSetter`, L149), `packages/types/src/engine-api.ts` (L45)
 - Modify: `packages/common/src/utils.ts` (`TriviaSetterRuntime` L27, `triviaSetterOf` L130-178)
 - Modify tests: `packages/common/tests/utils-runtime.test.ts` (L47, L51), `packages/rust/tests/trivia.test.ts`, `packages/typescript/tests/trivia.test.ts`, `packages/rust/tests/examples-verify.test.ts` (L162-174), `packages/rust/tests/bound-nodes.test.ts` (L83)
-- Modify docs: `packages/{rust,typescript,python}/README.md` (the `$trivia(...)` line), `docs/use-cases-and-examples.md` (§3, L227-257), `README.md` (L143, L479), `docs/adr/0018-dehoist-nodedata-surface.md` is history and stays
+- Modify docs: `packages/{rust,typescript,python}/README.md` (the `$trivia(...)` line), `docs/use-cases-and-examples.md` (§3, L227-257), `README.md` (L143, L479)
 - Test: `packages/types/tests` (a type-level pin), `packages/rust/tests/trivia-types.test-d.ts`
 
 **Interfaces:**

@@ -25,7 +25,14 @@ Use the unified CLI before creating another probe. Useful entry points include:
 
 Run a command's `--help` for its actual flags. The [CLI reference](../docs/cli-command-glossary.md) is generated from the command tree.
 
-Diagnostic implementations live in `packages/tools`; CLI modules live in `packages/cli/src/commands/`. Follow the existing command modules and option helpers rather than adding an independent command parser or a dependency from codegen back to tools.
+### Authoring a diagnostic tool
+
+1. Implement `export async function run(opts: <Name>Options)` in `packages/tools/src/<category>/<name>.ts`.
+2. Re-export it from `packages/tools/src/index.ts` as `export { run as <camelName>, type <Name>Options }`.
+3. Add a `CommandModule` in `packages/cli/src/commands/tool/<name>.ts`, using the option mixins from `packages/cli/src/framework/options.ts`.
+4. Register it in the `toolModules` array in `packages/cli/src/commands/tool/index.ts`.
+
+The existing `packages/tools/src/probe/stages.ts` and `packages/cli/src/commands/tool/probe-stages.ts` implement this pattern. Keep command parsing in the CLI and diagnostic logic in tools; codegen must not depend on tools.
 
 ## Plans and branches
 

@@ -90,38 +90,9 @@ jobs:
         run: pnpm audit --audit-level moderate
         continue-on-error: true
 
-  # Spec 016 T009 (follow-up) — regression-checker (native mode).
-  #
-  # RETIRED the TS/JS-mode sibling job (`regression-checker`, compared
-  # against `specs/016-parity-regressions/baselines/ts.json` via
-  # `SITTIR_BACKEND=typescript`) — it drove the deprecated js/dispatch
-  # engine, which is no longer the source of truth (the Rust native
-  # engine is, per CLAUDE.md) and per
-  # docs/superpowers/specs/2026-04-27-js-backend-rename-design.md,
-  # `SITTIR_BACKEND=typescript` isn't even the supported non-native
-  # selector anymore (`js` is). This native-mode job is the durable gate
-  # going forward; `ts.json` / the retired job's history remain under
-  # specs/016-parity-regressions/ as a record of the completed feature.
-  #
-  # Gated on `napi-build` so the linux x86_64-gnu `.node` artifacts
-  # produced by that matrix are available to dispatch
-  # `SITTIR_BACKEND=native` through the shared native boundary.
-  #
-  # The check-baseline-regression script is backend-agnostic (the same
-  # five verdict rules apply to both `ts.json` and `native.json` per
-  # `contracts/baseline-json.md`); only the input differs. This job
-  # downloads the `bindings-x86_64-unknown-linux-gnu` artifact, places
-  # the `.node` files where the per-grammar napi loaders expect them,
-  # collects the head baseline, and diffs against the base SHA's
-  # committed `native.json`.
-  #
-  # The `napi-build` job runs the parity test suite under `--ignored`
-  # and gates on it, but it does NOT read the baseline JSONs, so a
-  # native-count drop would slip through it. This job is the durable
-  # gate for counts.
-  #
-  # Skipped on direct pushes (no base ref to diff against). Only runs
-  # on `pull_request` events.
+  # Compare native validation counts with the PR base's committed baseline.
+  # Collect counts using the Linux bindings produced by napi-build so this
+  # gate exercises the native runtime. Direct pushes have no comparison base.
   regression-checker-native:
     name: baseline regression check
     runs-on: ubuntu-22.04

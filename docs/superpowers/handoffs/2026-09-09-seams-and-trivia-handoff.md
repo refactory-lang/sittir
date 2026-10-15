@@ -199,7 +199,7 @@ and error messages moved at their emitter, never in generated output.
 Two residues from the comment sweep: `packages/<lang>/src/backend.ts` and
 `boundary.ts` still carry task numbers and I could not find their emitter (the
 literal text appears nowhere outside the generated output, though the manifest
-lists both as generated); and the `@forFutureUse ADR-0018 (path)` family is a
+lists both as generated); and the `@forFutureUse` deferred-surface annotation family is a
 deliberate marker convention awaiting a ruling.
 
 ## Gotchas
