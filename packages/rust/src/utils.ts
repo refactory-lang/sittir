@@ -999,11 +999,31 @@ export const structure: StructureTable = Object.freeze({
 	142: { kind: 'integer_literal_hex', required: [['_content', 'content']] },
 	143: { kind: 'integer_literal_binary', required: [['_content', 'content']] },
 	144: { kind: 'integer_literal_octal', required: [['_content', 'content']] },
-	145: { kind: 'char_literal_plain', required: [['_content', 'content']] },
-	147: { kind: 'char_literal_escaped_simple', required: [['_content', 'content']] },
-	148: { kind: 'char_literal_escaped_unicode_fixed', required: [['_content', 'content']] },
-	149: { kind: 'char_literal_escaped_unicode_braced', required: [['_content', 'content']] },
-	150: { kind: 'char_literal_escaped_hex', required: [['_content', 'content']] },
+	145: {
+		kind: 'char_literal_plain',
+		required: [['_content', 'content']],
+		nodeOnly: [['_byte', 'CharLiteralPlain.byte', 'a boolean']]
+	},
+	147: {
+		kind: 'char_literal_escaped_simple',
+		required: [['_content', 'content']],
+		nodeOnly: [['_byte', 'CharLiteralEscapedSimple.byte', 'a boolean']]
+	},
+	148: {
+		kind: 'char_literal_escaped_unicode_fixed',
+		required: [['_content', 'content']],
+		nodeOnly: [['_byte', 'CharLiteralEscapedUnicodeFixed.byte', 'a boolean']]
+	},
+	149: {
+		kind: 'char_literal_escaped_unicode_braced',
+		required: [['_content', 'content']],
+		nodeOnly: [['_byte', 'CharLiteralEscapedUnicodeBraced.byte', 'a boolean']]
+	},
+	150: {
+		kind: 'char_literal_escaped_hex',
+		required: [['_content', 'content']],
+		nodeOnly: [['_byte', 'CharLiteralEscapedHex.byte', 'a boolean']]
+	},
 	151: { kind: 'escape_sequence_simple', required: [['_content', 'content']] },
 	152: { kind: 'escape_sequence_unicode_fixed', required: [['_content', 'content']] },
 	153: { kind: 'escape_sequence_unicode_braced', required: [['_content', 'content']] },
@@ -1189,6 +1209,8 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_visibility_modifier', 'StaticItem.visibilityModifier', 'a built VisibilityModifier'],
+			['_ref', 'StaticItem.ref', 'a boolean'],
+			['_mutable', 'StaticItem.mutable', 'a boolean'],
 			['_name', 'StaticItem.name', 'buildIdentifier(…)'],
 			['_type', 'StaticItem.type', 'a built Type'],
 			['_value', 'StaticItem.value', 'a built Expression']
@@ -1275,6 +1297,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_visibility_modifier', 'TraitItem.visibilityModifier', 'a built VisibilityModifier'],
+			['_unsafe', 'TraitItem.unsafe', 'a boolean'],
 			['_name', 'TraitItem.name', 'a built TypeIdentifier'],
 			['_type_parameters', 'TraitItem.typeParameters', 'a built TypeParameters'],
 			['_bounds', 'TraitItem.bounds', 'a built TraitBounds'],
@@ -1351,6 +1374,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'let_declaration',
 		required: [['_pattern', 'pattern']],
 		nodeOnly: [
+			['_mutable', 'LetDeclaration.mutable', 'a boolean'],
 			['_pattern', 'LetDeclaration.pattern', 'a built Pattern'],
 			['_type', 'LetDeclaration.type', 'a built Type'],
 			['_value', 'LetDeclaration.value', 'a built Expression'],
@@ -1390,8 +1414,21 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [['_use_wildcard_group', 'UseWildcard.useWildcardGroup', 'a built UseWildcardGroup']]
 	},
 	230: { kind: 'parameters', nodeOnly: [['_elements', 'Parameters.elements', 'a built ParametersElements']] },
-	231: { kind: 'self_parameter', nodeOnly: [['_lifetime', 'SelfParameter.lifetime', 'a built Lifetime']] },
-	232: { kind: 'variadic_parameter', nodeOnly: [['_pattern', 'VariadicParameter.pattern', 'a built Pattern']] },
+	231: {
+		kind: 'self_parameter',
+		nodeOnly: [
+			['_reference', 'SelfParameter.reference', 'a boolean'],
+			['_lifetime', 'SelfParameter.lifetime', 'a built Lifetime'],
+			['_mutable', 'SelfParameter.mutable', 'a boolean']
+		]
+	},
+	232: {
+		kind: 'variadic_parameter',
+		nodeOnly: [
+			['_mutable', 'VariadicParameter.mutable', 'a boolean'],
+			['_pattern', 'VariadicParameter.pattern', 'a built Pattern']
+		]
+	},
 	233: {
 		kind: 'parameter',
 		required: [
@@ -1399,6 +1436,7 @@ export const structure: StructureTable = Object.freeze({
 			['_type', 'type']
 		],
 		nodeOnly: [
+			['_mutable', 'Parameter.mutable', 'a boolean'],
 			['_name', 'Parameter.name', 'a built Pattern'],
 			['_type', 'Parameter.type', 'a built Type']
 		]
@@ -1528,6 +1566,7 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_type', 'type']],
 		nodeOnly: [
 			['_lifetime', 'ReferenceType.lifetime', 'a built Lifetime'],
+			['_mutable', 'ReferenceType.mutable', 'a boolean'],
 			['_type', 'ReferenceType.type', 'a built Type']
 		]
 	},
@@ -1784,7 +1823,8 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_attributes', 'LastMatchArm.attributes', 'a built AttributeItem / InnerAttributeItem'],
 			['_pattern', 'LastMatchArm.pattern', 'a built MatchPattern'],
-			['_value', 'LastMatchArm.value', 'a built Expression']
+			['_value', 'LastMatchArm.value', 'a built Expression'],
+			['_comma', 'LastMatchArm.comma', 'a boolean']
 		]
 	},
 	296: {
@@ -1882,9 +1922,19 @@ export const structure: StructureTable = Object.freeze({
 	310: {
 		kind: 'async_block',
 		required: [['_body', 'body']],
-		nodeOnly: [['_body', 'AsyncBlock.body', 'a built Block']]
+		nodeOnly: [
+			['_move', 'AsyncBlock.move', 'a boolean'],
+			['_body', 'AsyncBlock.body', 'a built Block']
+		]
 	},
-	311: { kind: 'gen_block', required: [['_body', 'body']], nodeOnly: [['_body', 'GenBlock.body', 'a built Block']] },
+	311: {
+		kind: 'gen_block',
+		required: [['_body', 'body']],
+		nodeOnly: [
+			['_move', 'GenBlock.move', 'a boolean'],
+			['_body', 'GenBlock.body', 'a built Block']
+		]
+	},
 	312: { kind: 'try_block', required: [['_body', 'body']], nodeOnly: [['_body', 'TryBlock.body', 'a built Block']] },
 	313: {
 		kind: 'block',
@@ -1947,7 +1997,10 @@ export const structure: StructureTable = Object.freeze({
 	326: {
 		kind: 'reference_pattern',
 		required: [['_pattern', 'pattern']],
-		nodeOnly: [['_pattern', 'ReferencePattern.pattern', 'a built Pattern']]
+		nodeOnly: [
+			['_mutable', 'ReferencePattern.mutable', 'a boolean'],
+			['_pattern', 'ReferencePattern.pattern', 'a built Pattern']
+		]
 	},
 	330: {
 		kind: 'negative_literal',
@@ -2036,6 +2089,9 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'body']
 		],
 		nodeOnly: [
+			['_static', 'ClosureExpressionBlock.static', 'a boolean'],
+			['_async', 'ClosureExpressionBlock.async', 'a boolean'],
+			['_move', 'ClosureExpressionBlock.move', 'a boolean'],
 			['_parameters', 'ClosureExpressionBlock.parameters', 'a built ClosureParameters'],
 			['_return_type', 'ClosureExpressionBlock.returnType', 'a built Type'],
 			['_body', 'ClosureExpressionBlock.body', 'a built Block']
@@ -2048,6 +2104,9 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'body']
 		],
 		nodeOnly: [
+			['_static', 'ClosureExpressionExpr.static', 'a boolean'],
+			['_async', 'ClosureExpressionExpr.async', 'a boolean'],
+			['_move', 'ClosureExpressionExpr.move', 'a boolean'],
 			['_parameters', 'ClosureExpressionExpr.parameters', 'a built ClosureParameters'],
 			['_body', 'ClosureExpressionExpr.body', 'a built Expression']
 		]
@@ -2093,6 +2152,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'body']
 		],
 		nodeOnly: [
+			['_unsafe', 'ImplItemBody.unsafe', 'a boolean'],
 			['_type_parameters', 'ImplItemBody.typeParameters', 'a built TypeParameters'],
 			['_trait_clause', 'ImplItemBody.traitClause', 'a built ImplItemPositiveClause / ImplItemNegativeClause'],
 			['_type', 'ImplItemBody.type', 'a built Type'],
@@ -2104,6 +2164,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'impl_item_semi',
 		required: [['_type', 'type']],
 		nodeOnly: [
+			['_unsafe', 'ImplItemSemi.unsafe', 'a boolean'],
 			['_type_parameters', 'ImplItemSemi.typeParameters', 'a built TypeParameters'],
 			['_trait_clause', 'ImplItemSemi.traitClause', 'a built ImplItemPositiveClause / ImplItemNegativeClause'],
 			['_type', 'ImplItemSemi.type', 'a built Type'],
@@ -2347,7 +2408,11 @@ export const structure: StructureTable = Object.freeze({
 	414: {
 		kind: 'field_pattern_shorthand',
 		required: [['_name', 'name']],
-		nodeOnly: [['_name', 'FieldPatternShorthand.name', 'a built ShorthandFieldIdentifier']]
+		nodeOnly: [
+			['_ref', 'FieldPatternShorthand.ref', 'a boolean'],
+			['_mutable', 'FieldPatternShorthand.mutable', 'a boolean'],
+			['_name', 'FieldPatternShorthand.name', 'a built ShorthandFieldIdentifier']
+		]
 	},
 	415: {
 		kind: 'field_pattern_named',
@@ -2356,6 +2421,8 @@ export const structure: StructureTable = Object.freeze({
 			['_pattern', 'pattern']
 		],
 		nodeOnly: [
+			['_ref', 'FieldPatternNamed.ref', 'a boolean'],
+			['_mutable', 'FieldPatternNamed.mutable', 'a boolean'],
 			['_name', 'FieldPatternNamed.name', 'a built FieldIdentifier'],
 			['_pattern', 'FieldPatternNamed.pattern', 'a built Pattern']
 		]

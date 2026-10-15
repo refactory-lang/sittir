@@ -1098,6 +1098,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'body']
 		],
 		nodeOnly: [
+			['_async', 'ForStatement.async', 'a boolean'],
 			['_left', 'ForStatement.left', 'a built Pattern / PatternList'],
 			['_right', 'ForStatement.right', 'a built Expression / ExpressionList'],
 			['_body', 'ForStatement.body', 'a built Suite'],
@@ -1130,6 +1131,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'except_clause',
 		required: [['_body', 'body']],
 		nodeOnly: [
+			['_group', 'ExceptClause.group', 'a boolean'],
 			['_exception', 'ExceptClause.exception', 'a built ExceptClauseException'],
 			['_body', 'ExceptClause.body', 'a built Suite']
 		]
@@ -1146,6 +1148,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'body']
 		],
 		nodeOnly: [
+			['_async', 'WithStatement.async', 'a boolean'],
 			['_with_clause', 'WithStatement.withClause', 'a built WithClause'],
 			['_body', 'WithStatement.body', 'a built Suite']
 		]
@@ -1163,6 +1166,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'body']
 		],
 		nodeOnly: [
+			['_async', 'FunctionDefinition.async', 'a boolean'],
 			['_name', 'FunctionDefinition.name', 'buildIdentifier(…)'],
 			['_type_parameters', 'FunctionDefinition.typeParameters', 'a built TypeParameter'],
 			['_parameters', 'FunctionDefinition.parameters', 'a built Parameters'],
@@ -1356,6 +1360,7 @@ export const structure: StructureTable = Object.freeze({
 			['_imaginary', 'imaginary']
 		],
 		nodeOnly: [
+			['_sign', 'ComplexPattern.sign', 'a boolean'],
 			['_real', 'ComplexPattern.real', 'a built Integer / Float'],
 			['_operator', 'ComplexPattern.operator', 'a kind id'],
 			['_imaginary', 'ComplexPattern.imaginary', 'a built Integer / Float']
@@ -1702,8 +1707,10 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_left', 'left']],
 		nonEmpty: [['_right', 'for_in_clause.rights']],
 		nodeOnly: [
+			['_async', 'ForInClause.async', 'a boolean'],
 			['_left', 'ForInClause.left', 'a built Pattern / PatternList'],
-			['_right', 'ForInClause.right', 'a built Expression / LambdaWithinForInClause']
+			['_right', 'ForInClause.right', 'a built Expression / LambdaWithinForInClause'],
+			['_comma', 'ForInClause.comma', 'a boolean']
 		]
 	},
 	244: {
@@ -1751,6 +1758,7 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_expression', 'expression']],
 		nodeOnly: [
 			['_expression', 'Interpolation.expression', 'a built Expression / ExpressionList / PatternList / Yield'],
+			['_debug', 'Interpolation.debug', 'a boolean'],
 			['_type_conversion', 'Interpolation.typeConversion', 'buildTypeConversion(…)'],
 			['_format_specifier', 'Interpolation.formatSpecifier', 'a built FormatSpecifier']
 		]
@@ -1821,7 +1829,10 @@ export const structure: StructureTable = Object.freeze({
 	283: {
 		kind: 'simple_pattern_negative',
 		required: [['_value', 'value']],
-		nodeOnly: [['_value', 'SimplePatternNegative.value', 'a built Integer / Float']]
+		nodeOnly: [
+			['_sign', 'SimplePatternNegative.sign', 'a boolean'],
+			['_value', 'SimplePatternNegative.value', 'a built Integer / Float']
+		]
 	},
 	284: {
 		kind: 'except_clause_exception_list',

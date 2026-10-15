@@ -81,8 +81,9 @@ export type Simplify<T> = { [K in keyof T]: T[K] } & {};
  * the alias to mirror the `readonly T[]` shape on plain
  * (`repeat`-sourced) list fields.
  *
- * Runtime enforcement lives in the generated `_assertNonEmpty` helper
- * emitted by factories / from() resolvers.
+ * Builders trust it: an engine constructed with `verifyStructure: 'runtime'`
+ * refuses an empty one when a node is built, and the native render refuses
+ * an empty `repeat1` list.
  */
 export type NonEmptyArray<T> = readonly [T, ...(readonly T[])];
 

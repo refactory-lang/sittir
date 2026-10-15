@@ -194,23 +194,7 @@ The grammar's `api.ts`: the implementation a language descriptor loads. It decla
  * `@sittir/common/utils` (see `.claude/codegen-conventions.md` rule 3).
  * Nothing to emit here.
  *
- * @returns Empty array — kept for call-site symmetry with `emitNonEmptyAssertHelper`.
- */
-```
-
-### `packages/codegen/src/emitters/factories.ts::emitNonEmptyAssertHelper`
-
-```text
-/**
- * Emit the `_assertNonEmpty` runtime guard + static narrowing helper source lines.
- *
- * @returns Array of source lines for the helper (without trailing blank line).
- * @remarks
- *   Callers get `readonly T[]` from input collections (`_children.filter(...)`,
- *   `_resolveMany(...)`, etc.) but the factory's stored shape is the non-empty
- *   tuple `readonly [T, ...T[]]`. This assertion function throws on empty input
- *   AND narrows the static type of the argument so the subsequent assignment /
- *   spread type-checks without a cast.
+ * @returns Empty array.
  */
 ```
 
@@ -1390,7 +1374,7 @@ It answers only for a slot `slotFilledWhenOmitted` accepts, so a default is neve
 
 ### `packages/codegen/src/emitters/shared.ts::assertOmittedSlotsFilled`
 
-Fails generation when a kind's builder may omit a required slot that has no empty default: the model says the slot is filled when omitted (`slotFilledWhenOmitted`), but `emptyDefaultOf` has nothing to fill it with. This keeps two type-level promises true without a runtime check. A strict builder takes `Partial<Config>` only when every required slot is filled this way. The loose `from()` makes its input optional only under the same `argumentOptional`, so its `_requireField` runs only where the `LooseConfig` key is required. It runs in `emitFieldCarryingFactory`, where the kind entries that name fixed text are always present; the types emitter resolves surfaces without them.
+Fails generation when a kind's builder may omit a required slot that has no empty default: the model says the slot is filled when omitted (`slotFilledWhenOmitted`), but `emptyDefaultOf` has nothing to fill it with. This keeps two type-level promises true without a runtime check. A strict builder takes `Partial<Config>` only when every required slot is filled this way. The loose `from()` makes its input optional only under the same `argumentOptional`, so a required slot it can leave unfilled is a required `LooseConfig` key, and leaving it out is a type error. It runs in `emitFieldCarryingFactory`, where the kind entries that name fixed text are always present; the types emitter resolves surfaces without them.
 
 ### `packages/codegen/src/emitters/from.ts::emitBranchFrom`
 
@@ -1489,8 +1473,8 @@ Fails generation when a kind's builder may omit a required slot that has no empt
 // Keyword-presence fields (boolean / bitflag) are NOT array-shaped on
 // the factory's Config surface — they're a `Bitflag<Const, T>` /
 // `BooleanKeyword<T>` brand. Skip the non-empty hoist for those even
-// when the underlying values are repeat1, otherwise we generate a
-// `_ne_X` array hoist + `_assertNonEmpty` call against a non-array.
+// when the underlying values are repeat1: their storage is a brand, not
+// a list to type as non-empty.
 ```
 
 #### body
@@ -1813,7 +1797,7 @@ A builder with leading options is called through an untyped view with the option
  * spread/index call shape `emitRepeatedChildrenFrom` uses for real
  * container-shape branches would bind `children[0]` to `elements` and
  * `children[1]` to `options` instead of the whole array, and nothing would
- * throw: `_assertNonEmpty` is a no-op outside `SITTIR_DEBUG`.
+ * throw: a builder runs no non-empty check of its own.
  *
  * Deliberately NOT `as unknown as Parameters<...>` (the cast pattern that
  * let the original bug hide from tsgo undetected) — empirically confirmed
@@ -2308,42 +2292,6 @@ coercer before the slot resolver sees it, since the element slot is the
 wrapper's content and a kind-less config there would have no single kind to
 take it; every other element goes to `resolve`, the element slot's resolver
 supplied by `emitSeparatedListFrom`.
-
-### `packages/codegen/src/emitters/from.ts::emitAssertNonEmptyHelper`
-
-```text
-/**
- * Emits the `_assertNonEmpty` runtime guard and static narrowing helper into
- * generated from.ts.
- *
- * @remarks
- * Runtime guard + static narrowing helper for repeat1-sourced list fields.
- * `from()` resolves a loose input to a `readonly T[]` via `_resolveMany*`,
- * but the factory's config slot is the non-empty tuple `readonly [T, ...T[]]`.
- * Calling this assertion on the resolver result narrows the static type to
- * the tuple shape AND throws at runtime if the input was empty.
- *
- * @param lines - Output lines array to push into.
- */
-```
-
-### `packages/codegen/src/emitters/from.ts::emitRequireFieldHelper`
-
-```text
-/**
- * Emits the `_requireField` runtime guard into generated from.ts.
- *
- * @remarks
- * Gap A: a required slot whose loose-input value didn't resolve to any
- * known branch/leaf kind comes back `undefined` from `_resolveOne` —
- * indistinguishable from a legitimately-absent optional slot. Call sites
- * for REQUIRED, non-defaultable fields wrap the resolver result in this
- * guard so the failure surfaces at the `from()` boundary (naming the kind
- * and slot) instead of silently constructing a node with a missing field.
- *
- * @param lines - Output lines array to push into.
- */
-```
 
 ### `packages/codegen/src/emitters/from.ts::soleElementKindOf`
 
@@ -5886,7 +5834,7 @@ its parent, or `undefined` when the kind has no public path.
  * Config-object field but wrong for this synthetic elements slot (every
  * separatedList factory requires a real array, even when its content is
  * keyword/literal-shaped). This both satisfies `nonEmpty` lists'
- * `_assertNonEmpty` runtime check and guarantees non-empty render output —
+ * types and the native repeat1 decode, and guarantees non-empty render output —
  * so no separate empty-config render-test branch is needed here (unlike
  * `emitBranchTest`, which must accommodate an all-optional minimal config).
  */
@@ -8712,12 +8660,12 @@ The single gate for the coerce surface: which kinds get a `coerceTo*` and, throu
 ### `packages/codegen/src/emitters/shared.ts::needsNonEmptyHoist`
 
 ```text
-/** A non-empty repeated field reaches the factory config through
- *  `_assertNonEmpty`, which narrows an inline expression to the tuple form
- *  the config demands; a declared resolver return type is a plain array and
- *  loses that narrowing. Keyword-presence fields (boolean / bitflag) are a
- *  brand rather than an array on the Config surface, so they take no hoist
- *  even when the underlying values are repeat1. */
+/** A non-empty repeated field: its loose resolver returns its resolved
+ *  items as the storage's `NonEmptyArray`, which the loose input type
+ *  proves, and its kind's structure row and non-empty proof list it.
+ *  Keyword-presence fields (boolean / bitflag) are a brand rather than an
+ *  array on the Config surface, so they are not one even when the
+ *  underlying values are repeat1. */
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::isWrapChildrenKind`
@@ -10727,7 +10675,7 @@ The keyword-arm texts a strict slot refuses as an identifier: the texts of `keyw
 
 ### `packages/codegen/src/emitters/factories.ts::keywordTextRejection`
 
-Wraps a slot's admitted value in `rejectKeywordText(value, '<Kind>.<configKey>', <word kind id>, [<texts>])` when `seatedKeywordTexts` is non-empty. It runs after `bareTextRejection`, on the built value, so it sees only nodes. Its one job is the message: an identifier spelled as one of the slot's keyword arms is rejected, naming the slot; it does not look up or build the arm.
+Wraps a slot's admitted value in `rejectKeywordText(value, '<Kind>.<configKey>', <word kind id>, [<texts>])` when `seatedKeywordTexts` is non-empty. It runs on the stored value, so a keyword arm's text is already its kind id. Its one job is the message: an identifier spelled as one of the slot's keyword arms is rejected, naming the slot; it does not look up or build the arm.
 
 ### `packages/codegen/src/emitters/factories.ts::slotStorageFromValueExpr`
 
@@ -10749,7 +10697,7 @@ A slot that can default to its empty form stores `orDefault(<config value>, () =
 // an array, never `| undefined` — storage draws no distinction between
 // "empty array" and "absent" for array-shaped slots; "must have at least
 // one" is enforced elsewhere (the Config type's required key, or
-// `_assertNonEmpty` at the from.ts boundary), not by leaving storage
+// a `'runtime'` engine's structure verifier), not by leaving storage
 // `undefined`. Default here unconditionally for any multiple field so a
 // bypassed/omitted value still stores `[]` rather than `undefined`.
 ```
@@ -11122,8 +11070,8 @@ never one permissive `...args: (Options | E)[]` that admits a lone options bag
 and so zero elements for a `repeat1` list. Overload order is load-bearing: the
 coercers reach these builders through `Parameters<typeof F.build<Kind>>`, which
 resolves to the last declared overload, so the elements-only form is declared
-last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
-`SITTIR_DEBUG`, and a `repeat1` list takes no spread of a possibly-empty array
+last. The arity is a type-level contract only: the builder runs no non-empty check,
+a `'runtime'` engine's verifier refuses an empty list, and a `repeat1` list takes no spread of a possibly-empty array
 (`T[]` is not `NonEmptyArray<T>`).
 
 A compound target whose builder takes leading options declares both forms as `paramsOverloads`, the options-led one first, so a forwarding builder offers the same pair.
@@ -11649,9 +11597,9 @@ The placeholder seats the optional single-valued slots of the top-level stub as 
 // `...children` rest args. We need a placeholder element when:
 //   - the singular child is required, OR
 //   - the multi children slot is `nonEmpty` (repeat1-sourced)
-//     — the factory's `_assertNonEmpty` helper throws on empty
-//     input, so the no-arg form `ir.kind()` would fail at
-//     runtime even though it type-checks.
+//     — an empty list fails the native decode at render (and a
+//     `'runtime'` engine's verifier at the call), so the no-arg form
+//     `ir.kind()` would not render.
 //
 // `soleSlotFacts` is the same canonical derivation
 // `emitFieldCarryingFactory` (factories.ts) bases its real signature
@@ -14832,13 +14780,9 @@ The text leaves one slot admits: the slot's node-stored values whose kind is a p
 
 What a strict slot expects in place of a string, or `undefined` when a string is a legal strict value. A slot with text leaves (`textLeaves`) names their builders (`buildStringOpen(…)`); otherwise a slot with at least one node-stored value and no `literal`-stored value names the built types it stores (`a built Expression / ExpressionList`). A `literal` value's text is its stored form, and a slot with no node value stores kind ids or verbatim text, so neither takes the guard. The same predicate decides the `rejectBareText` import.
 
-### `packages/codegen/src/emitters/factories.ts::bareTextRejection`
-
-Wraps a slot's stored value in `rejectBareText(value, bareTextLabel, bareTextExpectation)` when the slot has an expectation. It runs after the slot's enum storage coercion, so a mixed slot's keyword members are already kind ids and only a string left over is rejected.
-
 ### `packages/codegen/src/emitters/factories.ts::bareTextExpectation`
 
-What a strict slot takes instead of bare text, for the bare-text refusal: the leaf builders or built node types `strictNodeExpectation` names, else `a kind id` for a slot that stores kind ids. `undefined` when bare text is not refused. The builder's guard and the slot's structure row both read it.
+What a strict slot takes instead of bare text, for the bare-text refusal: the leaf builders or built node types `strictNodeExpectation` names, else `a kind id` for a slot that stores kind ids. A boolean-keyword slot takes `a boolean`. `undefined` when bare text is not refused. The slot's structure row reads it; a `'runtime'` engine refuses with it.
 
 ### `packages/codegen/src/emitters/factories.ts::bareTextLabel`
 
@@ -14846,7 +14790,7 @@ What a strict slot takes instead of bare text, for the bare-text refusal: the le
 
 ### `packages/codegen/src/emitters/factories.ts::storedSlotValueExpr`
 
-The storage coercion of one slot value (boolean keyword, bitflag, kind enum, mixed enum, or verbatim), before the bare-text rejection. `slotStorageFromValueExpr` composes it with `bareTextRejection`.
+The storage coercion of one slot value (boolean keyword, bitflag, kind enum, mixed enum, or verbatim), before the keyword-text rejection. A strict boolean-keyword slot stores through `strictBooleanStorage`, so bare text stays visible to a `'runtime'` engine's verifier. `slotStorageFromValueExpr` composes it with `admittedSlotInput`.
 
 ### `packages/codegen/src/emitters/factories.ts::leafReDeclaration`
 

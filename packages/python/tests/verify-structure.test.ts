@@ -14,6 +14,11 @@ describe('verifyStructure', () => {
 		expect(() => (verifying.build.expressionStatement.strict as unknown as () => unknown)()).toThrow("Missing required slot 'content' on expression_statement");
 	});
 
+	it("refuses a loose build that leaves a required slot empty, in 'runtime' mode at the call", () => {
+		const assign = verifying.build.assignment.eq as unknown as (config: unknown) => unknown;
+		expect(() => assign({})).toThrow(/Missing required slot 'left' on \w*assignment\w*/);
+	});
+
 	it("refuses a $with that empties a non-empty list, in 'runtime' mode at the call", () => {
 		expect(() => decorated(verifying).$with.decorators()).toThrow('decorated_definition.decorators: requires at least one element');
 	});

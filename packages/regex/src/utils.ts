@@ -176,11 +176,14 @@ export const structure: StructureTable = Object.freeze({
 	58: {
 		kind: 'character_class',
 		nodeOnly: [
+			['_negation', 'CharacterClass.negation', 'a boolean'],
+			['_leading', 'CharacterClass.leading', 'a boolean'],
 			[
 				'_class_atoms',
 				'CharacterClass.classAtoms',
 				'buildClassCharacter(…) / buildControlEscape(…) / buildControlLetterEscape(…)'
-			]
+			],
+			['_trailing', 'CharacterClass.trailing', 'a boolean']
 		]
 	},
 	59: {
@@ -222,10 +225,16 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_pattern', 'pattern']],
 		nodeOnly: [['_pattern', 'NonCapturingGroup.pattern', 'a built Pattern']]
 	},
+	67: { kind: 'zero_or_more', nodeOnly: [['_lazy', 'ZeroOrMore.lazy', 'a boolean']] },
+	68: { kind: 'one_or_more', nodeOnly: [['_lazy', 'OneOrMore.lazy', 'a boolean']] },
+	69: { kind: 'optional', nodeOnly: [['_lazy', 'Optional.lazy', 'a boolean']] },
 	70: {
 		kind: 'count_quantifier',
 		required: [['_content', 'content']],
-		nodeOnly: [['_content', 'CountQuantifier.content', 'buildDecimalDigits(…)']]
+		nodeOnly: [
+			['_content', 'CountQuantifier.content', 'buildDecimalDigits(…)'],
+			['_lazy', 'CountQuantifier.lazy', 'a boolean']
+		]
 	},
 	71: {
 		kind: 'backreference_escape',

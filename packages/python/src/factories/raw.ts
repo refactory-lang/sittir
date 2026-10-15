@@ -34,20 +34,13 @@ import {
 	describeValue,
 	restItems,
 	admitAliasContent,
-	coerceBooleanKeywordStorage,
 	kindIdStorage,
 	numberText,
 	orDefault,
-	rejectBareText,
 	rejectKeywordText,
+	strictBooleanStorage,
 	unaffixed
 } from '@sittir/common/utils';
-
-function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
-	if (arr.length === 0) {
-		throw new Error(`${label}: requires at least one element`);
-	}
-}
 
 const _reservedWordList_buildIdentifier = [
 	'False',
@@ -137,7 +130,7 @@ const _delimited_buildString: DelimitedSpec = {
 export function buildModule(): T.EmptyModule;
 export function buildModule(...children: Admit<T.Statement[]>): T.Module.Bound;
 export function buildModule(...children: Admit<T.Statement[]>): T.Module.Bound {
-	const _statements = rejectBareText(children, 'Module.statements', 'a built Statement');
+	const _statements = children;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Module as const,
@@ -188,9 +181,7 @@ export function buildSimpleStatements(...args: unknown[]) {
 			);
 }
 function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.SimpleStatements.Bound {
-	const _elements = hydrateStored(
-		rejectBareText(value, 'SimpleStatements.elements', 'a built SimpleStatementsElements')
-	);
+	const _elements = hydrateStored(value);
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
@@ -247,10 +238,9 @@ export function buildImportStatement(...args: unknown[]) {
 			);
 }
 function _buildImportStatement(value: Admit<T.Names | T.Names.Types>): T.ImportStatement.Bound {
-	const _names = admitAliasContent<NonNullable<T.ImportStatement['_names']>>(
-		rejectBareText(value, 'ImportStatement.names', 'a built Names'),
-		[[[135], (v: unknown) => buildNames(v as never)]]
-	);
+	const _names = admitAliasContent<NonNullable<T.ImportStatement['_names']>>(value, [
+		[[135], (v: unknown) => buildNames(v as never)]
+	]);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ImportStatement as const,
@@ -292,8 +282,8 @@ export function buildImportPrefix(text: string): T.ImportPrefix.Bound {
 }
 
 export function buildRelativeImport(config: T.RelativeImport.Config): T.RelativeImport.Bound {
-	const _prefix = rejectBareText(config.prefix, 'RelativeImport.prefix', 'buildImportPrefix(…)');
-	const _name = rejectBareText(config.name, 'RelativeImport.name', 'a built DottedName');
+	const _prefix = config.prefix;
+	const _name = config.name;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.RelativeImport as const,
@@ -322,11 +312,7 @@ export function buildRelativeImport(config: T.RelativeImport.Config): T.Relative
 export function buildFutureImportStatement(
 	value: Admit<T.ImportList | T.ParenthesizedImportList>
 ): T.FutureImportStatement.Bound {
-	const _content = rejectBareText(
-		value,
-		'FutureImportStatement.content',
-		'a built ImportList / ParenthesizedImportList'
-	);
+	const _content = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FutureImportStatement as const,
@@ -349,16 +335,8 @@ export function buildFutureImportStatement(
 }
 
 export function buildImportFromStatement(config: T.ImportFromStatement.Config): T.ImportFromStatement.Bound {
-	const _module_name = rejectBareText(
-		config.moduleName,
-		'ImportFromStatement.moduleName',
-		'a built RelativeImport / DottedName'
-	);
-	const _content = rejectBareText(
-		kindIdStorage<NonNullable<T.ImportFromStatement['_content']>>(config.content),
-		'ImportFromStatement.content',
-		'a built ImportList / ParenthesizedImportList'
-	);
+	const _module_name = config.moduleName;
+	const _content = kindIdStorage<NonNullable<T.ImportFromStatement['_content']>>(config.content);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ImportFromStatement as const,
@@ -410,7 +388,6 @@ function _buildImportList(
 	elements: NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ImportList.Bound {
-	_assertNonEmpty(elements, 'import_list.elements');
 	const _name = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_name);
@@ -448,8 +425,8 @@ function _buildImportList(
 }
 
 export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImport.Bound {
-	const _name = rejectBareText(config.name, 'AliasedImport.name', 'a built DottedName');
-	const _alias = rejectBareText(config.alias, 'AliasedImport.alias', 'buildIdentifier(…)');
+	const _name = config.name;
+	const _alias = config.alias;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AliasedImport as const,
@@ -479,11 +456,7 @@ export const buildWildcardImport: TSKindId.WildcardImport = TSKindId.WildcardImp
 export function buildPrintStatement(
 	value: Admit<T.PrintStatementChevron | T.PrintStatementPlain>
 ): T.PrintStatement.Bound {
-	const _content = rejectBareText(
-		value,
-		'PrintStatement.content',
-		'a built PrintStatementChevron / PrintStatementPlain'
-	);
+	const _content = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.PrintStatement as const,
@@ -506,11 +479,7 @@ export function buildPrintStatement(
 }
 
 export function buildChevron(value: Admit<T.Expression>): T.Chevron.Bound {
-	const _expression = rejectBareText(
-		kindIdStorage<NonNullable<T.Chevron['_expression']>>(value),
-		'Chevron.expression',
-		'a built Expression'
-	);
+	const _expression = kindIdStorage<NonNullable<T.Chevron['_expression']>>(value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Chevron as const,
@@ -532,8 +501,7 @@ export function buildChevron(value: Admit<T.Expression>): T.Chevron.Bound {
 }
 
 export function buildAssertStatement(...children: NonEmptyArray<Admit<T.Expression>>): T.AssertStatement.Bound {
-	_assertNonEmpty(children, 'assert_statement.children');
-	const _expression = rejectBareText(children, 'AssertStatement.expression', 'a built Expression');
+	const _expression = children;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AssertStatement as const,
@@ -558,11 +526,7 @@ export function buildAssertStatement(...children: NonEmptyArray<Admit<T.Expressi
 export function buildExpressionStatement(
 	value: Admit<T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield>
 ): T.ExpressionStatement.Bound {
-	const _content = rejectBareText(
-		kindIdStorage<NonNullable<T.ExpressionStatement['_content']>>(value),
-		'ExpressionStatement.content',
-		'a built Expression / ExpressionStatementTuple / Assignment / AugmentedAssignment / Yield'
-	);
+	const _content = kindIdStorage<NonNullable<T.ExpressionStatement['_content']>>(value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExpressionStatement as const,
@@ -588,12 +552,8 @@ export function buildExpressionStatement(
 }
 
 export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedExpression.Bound {
-	const _name = rejectBareText(config.name, 'NamedExpression.name', 'buildIdentifier(…)');
-	const _value = rejectBareText(
-		kindIdStorage<NonNullable<T.NamedExpression['_value']>>(config.value),
-		'NamedExpression.value',
-		'a built Expression'
-	);
+	const _name = config.name;
+	const _value = kindIdStorage<NonNullable<T.NamedExpression['_value']>>(config.value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NamedExpression as const,
@@ -620,7 +580,7 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 }
 
 export function buildNamedExpressionLhs(config: T.NamedExpressionLhs.Config): T.NamedExpressionLhs.Bound {
-	const _identifier = rejectBareText(config.identifier, 'NamedExpressionLhs.identifier', 'buildIdentifier(…)');
+	const _identifier = config.identifier;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NamedExpressionLhs as const,
@@ -643,11 +603,7 @@ export function buildNamedExpressionLhs(config: T.NamedExpressionLhs.Config): T.
 }
 
 export function buildReturnStatement(value?: Admit<T.Expression | T.ExpressionList>): T.ReturnStatement.Bound {
-	const _expressions = rejectBareText(
-		kindIdStorage<NonNullable<T.ReturnStatement['_expressions']>>(value),
-		'ReturnStatement.expressions',
-		'a built Expression / ExpressionList'
-	);
+	const _expressions = kindIdStorage<NonNullable<T.ReturnStatement['_expressions']>>(value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ReturnStatement as const,
@@ -670,11 +626,7 @@ export function buildReturnStatement(value?: Admit<T.Expression | T.ExpressionLi
 }
 
 export function buildDeleteStatement(value: Admit<T.Expression | T.ExpressionList>): T.DeleteStatement.Bound {
-	const _expressions = rejectBareText(
-		kindIdStorage<NonNullable<T.DeleteStatement['_expressions']>>(value),
-		'DeleteStatement.expressions',
-		'a built Expression / ExpressionList'
-	);
+	const _expressions = kindIdStorage<NonNullable<T.DeleteStatement['_expressions']>>(value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DeleteStatement as const,
@@ -697,16 +649,8 @@ export function buildDeleteStatement(value: Admit<T.Expression | T.ExpressionLis
 }
 
 export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {}): T.RaiseStatement.Bound {
-	const _expressions = rejectBareText(
-		kindIdStorage<NonNullable<T.RaiseStatement['_expressions']>>(config.expressions),
-		'RaiseStatement.expressions',
-		'a built Expression / ExpressionList'
-	);
-	const _cause = rejectBareText(
-		kindIdStorage<NonNullable<T.RaiseStatement['_cause']>>(config.cause),
-		'RaiseStatement.cause',
-		'a built Expression'
-	);
+	const _expressions = kindIdStorage<NonNullable<T.RaiseStatement['_expressions']>>(config.expressions);
+	const _cause = kindIdStorage<NonNullable<T.RaiseStatement['_cause']>>(config.cause);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.RaiseStatement as const,
@@ -739,17 +683,9 @@ export const buildBreakStatement: TSKindId.BreakStatement = TSKindId.BreakStatem
 export const buildContinueStatement: TSKindId.ContinueStatement = TSKindId.ContinueStatement;
 
 export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bound {
-	const _condition = rejectBareText(
-		kindIdStorage<NonNullable<T.IfStatement['_condition']>>(config.condition),
-		'IfStatement.condition',
-		'a built Expression'
-	);
-	const _consequence = rejectBareText(config.consequence, 'IfStatement.consequence', 'a built Suite');
-	const _alternative = rejectBareText(
-		config.alternative ?? [],
-		'IfStatement.alternative',
-		'a built ElifClause / ElseClause'
-	);
+	const _condition = kindIdStorage<NonNullable<T.IfStatement['_condition']>>(config.condition);
+	const _consequence = config.consequence;
+	const _alternative = config.alternative ?? [];
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.IfStatement as const,
@@ -780,12 +716,8 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 }
 
 export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Bound {
-	const _condition = rejectBareText(
-		kindIdStorage<NonNullable<T.ElifClause['_condition']>>(config.condition),
-		'ElifClause.condition',
-		'a built Expression'
-	);
-	const _consequence = rejectBareText(config.consequence, 'ElifClause.consequence', 'a built Suite');
+	const _condition = kindIdStorage<NonNullable<T.ElifClause['_condition']>>(config.condition);
+	const _consequence = config.consequence;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ElifClause as const,
@@ -812,7 +744,7 @@ export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Bound
 }
 
 export function buildElseClause(value: Admit<T.Suite>): T.ElseClause.Bound {
-	const _body = rejectBareText(value, 'ElseClause.body', 'a built Suite');
+	const _body = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ElseClause as const,
@@ -834,8 +766,8 @@ export function buildElseClause(value: Admit<T.Suite>): T.ElseClause.Bound {
 }
 
 export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchStatement.Bound {
-	const _subjects = rejectBareText(config.subjects, 'MatchStatement.subjects', 'a built Subjects');
-	const _body = rejectBareText(config.body, 'MatchStatement.body', 'a built MatchBlock');
+	const _subjects = config.subjects;
+	const _body = config.body;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MatchStatement as const,
@@ -867,7 +799,7 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 }
 
 export function buildMatchBlock(value: Admit<T.MatchBlockBlock | T.MatchBlockEmpty>): T.MatchBlock.Bound {
-	const _content = rejectBareText(value, 'MatchBlock.content', 'a built MatchBlockBlock / MatchBlockEmpty');
+	const _content = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MatchBlock as const,
@@ -890,9 +822,9 @@ export function buildMatchBlock(value: Admit<T.MatchBlockBlock | T.MatchBlockEmp
 }
 
 export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Bound {
-	const _case_patterns = rejectBareText(config.casePatterns, 'CaseClause.casePatterns', 'a built CasePatterns');
-	const _guard = rejectBareText(config.guard, 'CaseClause.guard', 'a built IfClause');
-	const _consequence = rejectBareText(config.consequence, 'CaseClause.consequence', 'a built Suite');
+	const _case_patterns = config.casePatterns;
+	const _guard = config.guard;
+	const _consequence = config.consequence;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CaseClause as const,
@@ -928,15 +860,11 @@ export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Bound
 }
 
 export function buildForStatement(config: T.ForStatement.Config): T.ForStatement.Bound {
-	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'ForStatement.async', 'a boolean'));
-	const _left = rejectBareText(config.left, 'ForStatement.left', 'a built Pattern / PatternList');
-	const _right = rejectBareText(
-		kindIdStorage<NonNullable<T.ForStatement['_right']>>(config.right),
-		'ForStatement.right',
-		'a built Expression / ExpressionList'
-	);
-	const _body = rejectBareText(config.body, 'ForStatement.body', 'a built Suite');
-	const _alternative = rejectBareText(config.alternative, 'ForStatement.alternative', 'a built ElseClause');
+	const _async = strictBooleanStorage(config.async);
+	const _left = config.left;
+	const _right = kindIdStorage<NonNullable<T.ForStatement['_right']>>(config.right);
+	const _body = config.body;
+	const _alternative = config.alternative;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ForStatement as const,
@@ -974,13 +902,9 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 }
 
 export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileStatement.Bound {
-	const _condition = rejectBareText(
-		kindIdStorage<NonNullable<T.WhileStatement['_condition']>>(config.condition),
-		'WhileStatement.condition',
-		'a built Expression'
-	);
-	const _body = rejectBareText(config.body, 'WhileStatement.body', 'a built Suite');
-	const _alternative = rejectBareText(config.alternative, 'WhileStatement.alternative', 'a built ElseClause');
+	const _condition = kindIdStorage<NonNullable<T.WhileStatement['_condition']>>(config.condition);
+	const _body = config.body;
+	const _alternative = config.alternative;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.WhileStatement as const,
@@ -1010,14 +934,10 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 }
 
 export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement.Bound {
-	const _body = rejectBareText(config.body, 'TryStatement.body', 'a built Suite');
-	const _except_clauses = rejectBareText(
-		config.exceptClauses ?? [],
-		'TryStatement.exceptClauses',
-		'a built ExceptClause'
-	);
-	const _else_clause = rejectBareText(config.elseClause, 'TryStatement.elseClause', 'a built ElseClause');
-	const _finally_clause = rejectBareText(config.finallyClause, 'TryStatement.finallyClause', 'a built FinallyClause');
+	const _body = config.body;
+	const _except_clauses = config.exceptClauses ?? [];
+	const _else_clause = config.elseClause;
+	const _finally_clause = config.finallyClause;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TryStatement as const,
@@ -1053,9 +973,9 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 }
 
 export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause.Bound {
-	const _group = coerceBooleanKeywordStorage(rejectBareText(config.group, 'ExceptClause.group', 'a boolean'));
-	const _exception = rejectBareText(config.exception, 'ExceptClause.exception', 'a built ExceptClauseException');
-	const _body = rejectBareText(config.body, 'ExceptClause.body', 'a built Suite');
+	const _group = strictBooleanStorage(config.group);
+	const _exception = config.exception;
+	const _body = config.body;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExceptClause as const,
@@ -1085,7 +1005,7 @@ export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause
 }
 
 export function buildFinallyClause(value: Admit<T.Suite>): T.FinallyClause.Bound {
-	const _block = rejectBareText(value, 'FinallyClause.block', 'a built Suite');
+	const _block = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FinallyClause as const,
@@ -1107,9 +1027,9 @@ export function buildFinallyClause(value: Admit<T.Suite>): T.FinallyClause.Bound
 }
 
 export function buildWithStatement(config: T.WithStatement.Config): T.WithStatement.Bound {
-	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'WithStatement.async', 'a boolean'));
-	const _with_clause = rejectBareText(config.withClause, 'WithStatement.withClause', 'a built WithClause');
-	const _body = rejectBareText(config.body, 'WithStatement.body', 'a built Suite');
+	const _async = strictBooleanStorage(config.async);
+	const _with_clause = config.withClause;
+	const _body = config.body;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.WithStatement as const,
@@ -1139,11 +1059,7 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 }
 
 export function buildWithItem(value: Admit<T.Expression>): T.WithItem.Bound {
-	const _value = rejectBareText(
-		kindIdStorage<NonNullable<T.WithItem['_value']>>(value),
-		'WithItem.value',
-		'a built Expression'
-	);
+	const _value = kindIdStorage<NonNullable<T.WithItem['_value']>>(value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.WithItem as const,
@@ -1165,20 +1081,12 @@ export function buildWithItem(value: Admit<T.Expression>): T.WithItem.Bound {
 }
 
 export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.FunctionDefinition.Bound {
-	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'FunctionDefinition.async', 'a boolean'));
-	const _name = rejectBareText(config.name, 'FunctionDefinition.name', 'buildIdentifier(…)');
-	const _type_parameters = rejectBareText(
-		config.typeParameters,
-		'FunctionDefinition.typeParameters',
-		'a built TypeParameter'
-	);
-	const _parameters = rejectBareText(
-		orDefault(config.parameters, () => buildParameters()),
-		'FunctionDefinition.parameters',
-		'a built Parameters'
-	);
-	const _return_type = rejectBareText(config.returnType, 'FunctionDefinition.returnType', 'a built Type');
-	const _body = rejectBareText(config.body, 'FunctionDefinition.body', 'a built Suite');
+	const _async = strictBooleanStorage(config.async);
+	const _name = config.name;
+	const _type_parameters = config.typeParameters;
+	const _parameters = orDefault(config.parameters, () => buildParameters());
+	const _return_type = config.returnType;
+	const _body = config.body;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FunctionDefinition as const,
@@ -1254,7 +1162,7 @@ export function buildParameters(...args: unknown[]) {
 			);
 }
 function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bound {
-	const _elements = hydrateStored(rejectBareText(value, 'Parameters.elements', 'a built ParametersElements'));
+	const _elements = hydrateStored(value);
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
@@ -1320,9 +1228,7 @@ export function buildLambdaParameters(...args: unknown[]) {
 			);
 }
 function _buildLambdaParameters(value: Admit<T.ParametersElements>): T.LambdaParameters.Bound {
-	const _parameters_elements = hydrateStored(
-		rejectBareText(value, 'LambdaParameters.parametersElements', 'a built ParametersElements')
-	);
+	const _parameters_elements = hydrateStored(value);
 	const listView = ownerView(_parameters_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_parameters_elements');
 	const handle = currentHandle();
@@ -1362,11 +1268,7 @@ function _buildLambdaParameters(value: Admit<T.ParametersElements>): T.LambdaPar
 }
 
 export function buildListSplat(value: Admit<T.Expression>): T.ListSplat.Bound {
-	const _expression = rejectBareText(
-		kindIdStorage<NonNullable<T.ListSplat['_expression']>>(value),
-		'ListSplat.expression',
-		'a built Expression'
-	);
+	const _expression = kindIdStorage<NonNullable<T.ListSplat['_expression']>>(value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ListSplat as const,
@@ -1388,11 +1290,7 @@ export function buildListSplat(value: Admit<T.Expression>): T.ListSplat.Bound {
 }
 
 export function buildDictionarySplat(value: Admit<T.Expression>): T.DictionarySplat.Bound {
-	const _expression = rejectBareText(
-		kindIdStorage<NonNullable<T.DictionarySplat['_expression']>>(value),
-		'DictionarySplat.expression',
-		'a built Expression'
-	);
+	const _expression = kindIdStorage<NonNullable<T.DictionarySplat['_expression']>>(value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DictionarySplat as const,
@@ -1414,8 +1312,7 @@ export function buildDictionarySplat(value: Admit<T.Expression>): T.DictionarySp
 }
 
 export function buildGlobalStatement(...children: NonEmptyArray<Admit<T.Identifier>>): T.GlobalStatement.Bound {
-	_assertNonEmpty(children, 'global_statement.children');
-	const _names = rejectBareText(children, 'GlobalStatement.names', 'buildIdentifier(…)');
+	const _names = children;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.GlobalStatement as const,
@@ -1438,8 +1335,7 @@ export function buildGlobalStatement(...children: NonEmptyArray<Admit<T.Identifi
 }
 
 export function buildNonlocalStatement(...children: NonEmptyArray<Admit<T.Identifier>>): T.NonlocalStatement.Bound {
-	_assertNonEmpty(children, 'nonlocal_statement.children');
-	const _names = rejectBareText(children, 'NonlocalStatement.names', 'buildIdentifier(…)');
+	const _names = children;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NonlocalStatement as const,
@@ -1462,12 +1358,8 @@ export function buildNonlocalStatement(...children: NonEmptyArray<Admit<T.Identi
 }
 
 export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatement.Bound {
-	const _code = rejectBareText(config.code, 'ExecStatement.code', 'buildIdentifier(…)');
-	const _in_clause = rejectBareText(
-		kindIdStorage<NonNullable<T.ExecStatement['_in_clause']>>(config.inClause ?? []),
-		'ExecStatement.inClause',
-		'a built Expression'
-	);
+	const _code = config.code;
+	const _in_clause = kindIdStorage<NonNullable<T.ExecStatement['_in_clause']>>(config.inClause ?? []);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExecStatement as const,
@@ -1494,8 +1386,8 @@ export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatem
 }
 
 export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config): T.TypeAliasStatement.Bound {
-	const _left = rejectBareText(config.left, 'TypeAliasStatement.left', 'a built Type');
-	const _right = rejectBareText(config.right, 'TypeAliasStatement.right', 'a built Type');
+	const _left = config.left;
+	const _right = config.right;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypeAliasStatement as const,
@@ -1520,14 +1412,10 @@ export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config): T.
 }
 
 export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassDefinition.Bound {
-	const _name = rejectBareText(config.name, 'ClassDefinition.name', 'buildIdentifier(…)');
-	const _type_parameters = rejectBareText(
-		config.typeParameters,
-		'ClassDefinition.typeParameters',
-		'a built TypeParameter'
-	);
-	const _superclasses = rejectBareText(config.superclasses, 'ClassDefinition.superclasses', 'a built ArgumentList');
-	const _body = rejectBareText(config.body, 'ClassDefinition.body', 'a built Suite');
+	const _name = config.name;
+	const _type_parameters = config.typeParameters;
+	const _superclasses = config.superclasses;
+	const _body = config.body;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ClassDefinition as const,
@@ -1594,7 +1482,7 @@ export function buildTypeParameter(...args: unknown[]) {
 			);
 }
 function _buildTypeParameter(value: Admit<T.Types>): T.TypeParameter.Bound {
-	const _types = hydrateStored(rejectBareText(value, 'TypeParameter.types', 'a built Types'));
+	const _types = hydrateStored(value);
 	const listView = ownerView(_types, '_item');
 	if (listView.stored === undefined) refuseReadStub('_types');
 	const handle = currentHandle();
@@ -1636,11 +1524,7 @@ function _buildTypeParameter(value: Admit<T.Types>): T.TypeParameter.Bound {
 export function buildParenthesizedListSplat(
 	value: Admit<T.ParenthesizedListSplat | T.ListSplat>
 ): T.ParenthesizedListSplat.Bound {
-	const _content = rejectBareText(
-		value,
-		'ParenthesizedListSplat.content',
-		'a built ParenthesizedListSplat / ListSplat'
-	);
+	const _content = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ParenthesizedListSplat as const,
@@ -1691,7 +1575,7 @@ export function buildArgumentList(...args: unknown[]) {
 			);
 }
 function _buildArgumentList(value?: Admit<T.ArgumentListElements>): T.ArgumentList.Bound {
-	const _arguments = hydrateStored(rejectBareText(value, 'ArgumentList.arguments', 'a built ArgumentListElements'));
+	const _arguments = hydrateStored(value);
 	const listView = ownerView(_arguments, '_item');
 	if (listView.stored === undefined) refuseReadStub('_arguments');
 	const handle = currentHandle();
@@ -1732,12 +1616,8 @@ function _buildArgumentList(value?: Admit<T.ArgumentListElements>): T.ArgumentLi
 }
 
 export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): T.DecoratedDefinition.Bound {
-	const _decorator = rejectBareText(config.decorator, 'DecoratedDefinition.decorator', 'a built Decorator');
-	const _definition = rejectBareText(
-		config.definition,
-		'DecoratedDefinition.definition',
-		'a built ClassDefinition / FunctionDefinition'
-	);
+	const _decorator = config.decorator;
+	const _definition = config.definition;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DecoratedDefinition as const,
@@ -1766,11 +1646,7 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): 
 }
 
 export function buildDecorator(value: Admit<T.Expression>): T.Decorator.Bound {
-	const _expression = rejectBareText(
-		kindIdStorage<NonNullable<T.Decorator['_expression']>>(value),
-		'Decorator.expression',
-		'a built Expression'
-	);
+	const _expression = kindIdStorage<NonNullable<T.Decorator['_expression']>>(value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Decorator as const,
@@ -1792,7 +1668,7 @@ export function buildDecorator(value: Admit<T.Expression>): T.Decorator.Bound {
 }
 
 export function buildBlock(...children: Admit<T.Statement[]>): T.Block.Bound {
-	const _statements = rejectBareText(children, 'Block.statements', 'a built Statement');
+	const _statements = children;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Block as const,
@@ -1838,7 +1714,6 @@ function _buildExpressionList(
 	elements: NonEmptyArray<Admit<T.Expression>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ExpressionList.Bound {
-	_assertNonEmpty(elements, 'expression_list.elements');
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -1876,8 +1751,7 @@ function _buildExpressionList(
 }
 
 export function buildDottedName(...children: NonEmptyArray<Admit<T.Identifier>>): T.DottedName.Bound {
-	_assertNonEmpty(children, 'dotted_name.children');
-	const _names = rejectBareText(children, 'DottedName.names', 'buildIdentifier(…)');
+	const _names = children;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DottedName as const,
@@ -1902,11 +1776,7 @@ export function buildDottedName(...children: NonEmptyArray<Admit<T.Identifier>>)
 export function buildCasePattern(
 	value: Admit<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>
 ): T.CasePattern.Bound {
-	const _content = rejectBareText(
-		value,
-		'CasePattern.content',
-		'a built CaseAsPattern / KeywordPattern / SimplePattern'
-	);
+	const _content = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CasePattern as const,
@@ -1947,11 +1817,7 @@ export function buildSimplePattern(
 		| TSKindId.WildcardPattern
 	>
 ): T.SimplePattern.Bound {
-	const _content = rejectBareText(
-		kindIdStorage<NonNullable<T.SimplePattern['_content']>>(value),
-		'SimplePattern.content',
-		'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / SimplePatternNegative / ComplexPattern / DottedName'
-	);
+	const _content = kindIdStorage<NonNullable<T.SimplePattern['_content']>>(value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SimplePattern as const,
@@ -1993,8 +1859,8 @@ export function buildSimplePattern(
 }
 
 export function buildCaseAsPattern(config: T.CaseAsPattern.Config): T.CaseAsPattern.Bound {
-	const _case_pattern = rejectBareText(config.casePattern, 'CaseAsPattern.casePattern', 'a built CasePattern');
-	const _identifier = rejectBareText(config.identifier, 'CaseAsPattern.identifier', 'buildIdentifier(…)');
+	const _case_pattern = config.casePattern;
+	const _identifier = config.identifier;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CaseAsPattern as const,
@@ -2041,12 +1907,7 @@ export function buildUnionPattern(
 		>
 	>
 ): T.UnionPattern.Bound {
-	_assertNonEmpty(children, 'union_pattern.children');
-	const _patterns = rejectBareText(
-		children,
-		'UnionPattern.patterns',
-		'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / SimplePatternNegative / ComplexPattern / DottedName'
-	);
+	const _patterns = children;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.UnionPattern as const,
@@ -2119,7 +1980,7 @@ export function buildDictPattern(...args: unknown[]) {
 			);
 }
 function _buildDictPattern(value?: Admit<T.DictPatternElements>): T.DictPattern.Bound {
-	const _elements = hydrateStored(rejectBareText(value, 'DictPattern.elements', 'a built DictPatternElements'));
+	const _elements = hydrateStored(value);
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
@@ -2160,12 +2021,8 @@ function _buildDictPattern(value?: Admit<T.DictPatternElements>): T.DictPattern.
 }
 
 export function buildKeyValuePattern(config: T.KeyValuePattern.Config): T.KeyValuePattern.Bound {
-	const _key = rejectBareText(
-		kindIdStorage<NonNullable<T.KeyValuePattern['_key']>>(config.key),
-		'KeyValuePattern.key',
-		'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / SimplePatternNegative / ComplexPattern / DottedName'
-	);
-	const _value = rejectBareText(config.value, 'KeyValuePattern.value', 'a built CasePattern');
+	const _key = kindIdStorage<NonNullable<T.KeyValuePattern['_key']>>(config.key);
+	const _value = config.value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.KeyValuePattern as const,
@@ -2192,12 +2049,8 @@ export function buildKeyValuePattern(config: T.KeyValuePattern.Config): T.KeyVal
 }
 
 export function buildKeywordPattern(config: T.KeywordPattern.Config): T.KeywordPattern.Bound {
-	const _name = rejectBareText(config.name, 'KeywordPattern.name', 'buildIdentifier(…)');
-	const _value = rejectBareText(
-		kindIdStorage<NonNullable<T.KeywordPattern['_value']>>(config.value),
-		'KeywordPattern.value',
-		'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / SimplePatternNegative / ComplexPattern / DottedName'
-	);
+	const _name = config.name;
+	const _value = kindIdStorage<NonNullable<T.KeywordPattern['_value']>>(config.value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.KeywordPattern as const,
@@ -2224,17 +2077,9 @@ export function buildKeywordPattern(config: T.KeywordPattern.Config): T.KeywordP
 }
 
 export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern.Bound {
-	const _operator = rejectBareText(
-		kindIdStorage<NonNullable<T.SplatPattern['_operator']>>(config.operator),
-		'SplatPattern.operator',
-		'a kind id'
-	);
+	const _operator = kindIdStorage<NonNullable<T.SplatPattern['_operator']>>(config.operator);
 	const _name = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.SplatPattern['_name']>>(config.name),
-			'SplatPattern.name',
-			'buildIdentifier(…)'
-		),
+		kindIdStorage<NonNullable<T.SplatPattern['_name']>>(config.name),
 		'SplatPattern.name',
 		TSKindId.Identifier,
 		['_']
@@ -2265,8 +2110,8 @@ export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern
 }
 
 export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern.Bound {
-	const _name = rejectBareText(config.name, 'ClassPattern.name', 'a built DottedName');
-	const _arguments = rejectBareText(config.arguments, 'ClassPattern.arguments', 'a built ListPatternCasePatterns');
+	const _name = config.name;
+	const _arguments = config.arguments;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ClassPattern as const,
@@ -2298,14 +2143,10 @@ export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern
 }
 
 export function buildComplexPattern(config: T.ComplexPattern.Config): T.ComplexPattern.Bound {
-	const _sign = coerceBooleanKeywordStorage(rejectBareText(config.sign, 'ComplexPattern.sign', 'a boolean'));
-	const _real = rejectBareText(config.real, 'ComplexPattern.real', 'a built Integer / Float');
-	const _operator = rejectBareText(
-		kindIdStorage<NonNullable<T.ComplexPattern['_operator']>>(config.operator),
-		'ComplexPattern.operator',
-		'a kind id'
-	);
-	const _imaginary = rejectBareText(config.imaginary, 'ComplexPattern.imaginary', 'a built Integer / Float');
+	const _sign = strictBooleanStorage(config.sign);
+	const _real = config.real;
+	const _operator = kindIdStorage<NonNullable<T.ComplexPattern['_operator']>>(config.operator);
+	const _imaginary = config.imaginary;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ComplexPattern as const,
@@ -2363,7 +2204,6 @@ function _buildParametersElements(
 	elements: NonEmptyArray<Admit<T.Parameter>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ParametersElements.Bound {
-	_assertNonEmpty(elements, 'parameters_elements.elements');
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -2420,7 +2260,6 @@ function _buildPatterns(
 	elements: NonEmptyArray<Admit<T.Pattern>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Patterns.Bound {
-	_assertNonEmpty(elements, 'patterns.elements');
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -2479,7 +2318,7 @@ export function buildTuplePattern(...args: unknown[]) {
 			);
 }
 function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePattern.Bound {
-	const _elements = hydrateStored(rejectBareText(value, 'TuplePattern.elements', 'a built TuplePatternElements'));
+	const _elements = hydrateStored(value);
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
@@ -2542,7 +2381,7 @@ export function buildListPattern(...args: unknown[]) {
 			);
 }
 function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
-	const _patterns = hydrateStored(rejectBareText(value, 'ListPattern.patterns', 'a built Patterns'));
+	const _patterns = hydrateStored(value);
 	const listView = ownerView(_patterns, '_item');
 	if (listView.stored === undefined) refuseReadStub('_patterns');
 	const handle = currentHandle();
@@ -2583,12 +2422,8 @@ function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
 }
 
 export function buildDefaultParameter(config: T.DefaultParameter.Config): T.DefaultParameter.Bound {
-	const _name = rejectBareText(config.name, 'DefaultParameter.name', 'buildIdentifier(…)');
-	const _value = rejectBareText(
-		kindIdStorage<NonNullable<T.DefaultParameter['_value']>>(config.value),
-		'DefaultParameter.value',
-		'a built Expression'
-	);
+	const _name = config.name;
+	const _value = kindIdStorage<NonNullable<T.DefaultParameter['_value']>>(config.value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DefaultParameter as const,
@@ -2615,13 +2450,9 @@ export function buildDefaultParameter(config: T.DefaultParameter.Config): T.Defa
 }
 
 export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Config): T.TypedDefaultParameter.Bound {
-	const _name = rejectBareText(config.name, 'TypedDefaultParameter.name', 'buildIdentifier(…)');
-	const _type = rejectBareText(config.type, 'TypedDefaultParameter.type', 'a built Type');
-	const _value = rejectBareText(
-		kindIdStorage<NonNullable<T.TypedDefaultParameter['_value']>>(config.value),
-		'TypedDefaultParameter.value',
-		'a built Expression'
-	);
+	const _name = config.name;
+	const _type = config.type;
+	const _value = kindIdStorage<NonNullable<T.TypedDefaultParameter['_value']>>(config.value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypedDefaultParameter as const,
@@ -2654,7 +2485,7 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 export function buildListSplatPattern(
 	value: Admit<T.Identifier | T.Subscript | T.Attribute>
 ): T.ListSplatPattern.Bound {
-	const _target = rejectBareText(value, 'ListSplatPattern.target', 'buildIdentifier(…)');
+	const _target = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ListSplatPattern as const,
@@ -2679,7 +2510,7 @@ export function buildListSplatPattern(
 export function buildDictionarySplatPattern(
 	value: Admit<T.Identifier | T.Subscript | T.Attribute>
 ): T.DictionarySplatPattern.Bound {
-	const _target = rejectBareText(value, 'DictionarySplatPattern.target', 'buildIdentifier(…)');
+	const _target = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DictionarySplatPattern as const,
@@ -2702,23 +2533,16 @@ export function buildDictionarySplatPattern(
 }
 
 export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
-	const _expression = rejectBareText(
-		kindIdStorage<NonNullable<T.AsPattern['_expression']>>(config.expression),
-		'AsPattern.expression',
-		'a built Expression'
-	);
-	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(
-		rejectBareText(config.alias, 'AsPattern.alias', 'a built AsPatternTarget'),
+	const _expression = kindIdStorage<NonNullable<T.AsPattern['_expression']>>(config.expression);
+	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 		[
 			[
-				[
-					212, 206, 207, 213, 256, 208, 1, 247, 246, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71, 72, 209, 220, 221, 223,
-					232, 237, 235, 238, 233, 239, 234, 241, 240, 64, 200, 245, 142, 202
-				],
-				(v: unknown) => buildAsPatternTarget(v as never)
-			]
+				212, 206, 207, 213, 256, 208, 1, 247, 246, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71, 72, 209, 220, 221, 223,
+				232, 237, 235, 238, 233, 239, 234, 241, 240, 64, 200, 245, 142, 202
+			],
+			(v: unknown) => buildAsPatternTarget(v as never)
 		]
-	);
+	]);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AsPattern as const,
@@ -2745,11 +2569,7 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 }
 
 export function buildNotOperator(value: Admit<T.Expression>): T.NotOperator.Bound {
-	const _argument = rejectBareText(
-		kindIdStorage<NonNullable<T.NotOperator['_argument']>>(value),
-		'NotOperator.argument',
-		'a built Expression'
-	);
+	const _argument = kindIdStorage<NonNullable<T.NotOperator['_argument']>>(value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NotOperator as const,
@@ -2771,21 +2591,9 @@ export function buildNotOperator(value: Admit<T.Expression>): T.NotOperator.Boun
 }
 
 export function buildBooleanOperator(config: T.BooleanOperator.Config): T.BooleanOperator.Bound {
-	const _left = rejectBareText(
-		kindIdStorage<NonNullable<T.BooleanOperator['_left']>>(config.left),
-		'BooleanOperator.left',
-		'a built Expression'
-	);
-	const _operator = rejectBareText(
-		kindIdStorage<NonNullable<T.BooleanOperator['_operator']>>(config.operator),
-		'BooleanOperator.operator',
-		'a kind id'
-	);
-	const _right = rejectBareText(
-		kindIdStorage<NonNullable<T.BooleanOperator['_right']>>(config.right),
-		'BooleanOperator.right',
-		'a built Expression'
-	);
+	const _left = kindIdStorage<NonNullable<T.BooleanOperator['_left']>>(config.left);
+	const _operator = kindIdStorage<NonNullable<T.BooleanOperator['_operator']>>(config.operator);
+	const _right = kindIdStorage<NonNullable<T.BooleanOperator['_right']>>(config.right);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.BooleanOperator as const,
@@ -2816,21 +2624,9 @@ export function buildBooleanOperator(config: T.BooleanOperator.Config): T.Boolea
 }
 
 export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOperator.Bound {
-	const _left = rejectBareText(
-		kindIdStorage<NonNullable<T.BinaryOperator['_left']>>(config.left),
-		'BinaryOperator.left',
-		'a built PrimaryExpression'
-	);
-	const _operator = rejectBareText(
-		kindIdStorage<NonNullable<T.BinaryOperator['_operator']>>(config.operator),
-		'BinaryOperator.operator',
-		'a kind id'
-	);
-	const _right = rejectBareText(
-		kindIdStorage<NonNullable<T.BinaryOperator['_right']>>(config.right),
-		'BinaryOperator.right',
-		'a built PrimaryExpression'
-	);
+	const _left = kindIdStorage<NonNullable<T.BinaryOperator['_left']>>(config.left);
+	const _operator = kindIdStorage<NonNullable<T.BinaryOperator['_operator']>>(config.operator);
+	const _right = kindIdStorage<NonNullable<T.BinaryOperator['_right']>>(config.right);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.BinaryOperator as const,
@@ -2861,16 +2657,8 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOp
 }
 
 export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOperator.Bound {
-	const _operator = rejectBareText(
-		kindIdStorage<NonNullable<T.UnaryOperator['_operator']>>(config.operator),
-		'UnaryOperator.operator',
-		'a kind id'
-	);
-	const _argument = rejectBareText(
-		kindIdStorage<NonNullable<T.UnaryOperator['_argument']>>(config.argument),
-		'UnaryOperator.argument',
-		'a built PrimaryExpression'
-	);
+	const _operator = kindIdStorage<NonNullable<T.UnaryOperator['_operator']>>(config.operator);
+	const _argument = kindIdStorage<NonNullable<T.UnaryOperator['_argument']>>(config.argument);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.UnaryOperator as const,
@@ -2897,16 +2685,8 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOpera
 }
 
 export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.ComparisonOperator.Bound {
-	const _left = rejectBareText(
-		kindIdStorage<NonNullable<T.ComparisonOperator['_left']>>(config.left),
-		'ComparisonOperator.left',
-		'a built PrimaryExpression'
-	);
-	const _comparators = rejectBareText(
-		config.comparators,
-		'ComparisonOperator.comparators',
-		'a built ComparisonOperatorComparator'
-	);
+	const _left = kindIdStorage<NonNullable<T.ComparisonOperator['_left']>>(config.left);
+	const _comparators = config.comparators;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ComparisonOperator as const,
@@ -2940,12 +2720,8 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 }
 
 export function buildLambda(config: T.Lambda.Config): T.Lambda.Bound {
-	const _parameters = rejectBareText(config.parameters, 'Lambda.parameters', 'a built LambdaParameters');
-	const _body = rejectBareText(
-		kindIdStorage<NonNullable<T.Lambda['_body']>>(config.body),
-		'Lambda.body',
-		'a built Expression'
-	);
+	const _parameters = config.parameters;
+	const _body = kindIdStorage<NonNullable<T.Lambda['_body']>>(config.body);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Lambda as const,
@@ -2980,16 +2756,8 @@ export function buildLambda(config: T.Lambda.Config): T.Lambda.Bound {
 export function buildLambdaWithinForInClause(
 	config: T.LambdaWithinForInClause.Config
 ): T.LambdaWithinForInClause.Bound {
-	const _parameters = rejectBareText(
-		config.parameters,
-		'LambdaWithinForInClause.parameters',
-		'a built LambdaParameters'
-	);
-	const _body = rejectBareText(
-		kindIdStorage<NonNullable<T.LambdaWithinForInClause['_body']>>(config.body),
-		'LambdaWithinForInClause.body',
-		'a built Expression / LambdaWithinForInClause'
-	);
+	const _parameters = config.parameters;
+	const _body = kindIdStorage<NonNullable<T.LambdaWithinForInClause['_body']>>(config.body);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.LambdaWithinForInClause as const,
@@ -3022,17 +2790,9 @@ export function buildLambdaWithinForInClause(
 }
 
 export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): T.AugmentedAssignment.Bound {
-	const _left = rejectBareText(config.left, 'AugmentedAssignment.left', 'a built Pattern / PatternList');
-	const _operator = rejectBareText(
-		kindIdStorage<NonNullable<T.AugmentedAssignment['_operator']>>(config.operator),
-		'AugmentedAssignment.operator',
-		'a kind id'
-	);
-	const _right = rejectBareText(
-		kindIdStorage<NonNullable<T.AugmentedAssignment['_right']>>(config.right),
-		'AugmentedAssignment.right',
-		'a built Expression / ExpressionList / Assignment / AugmentedAssignment / PatternList / Yield'
-	);
+	const _left = config.left;
+	const _operator = kindIdStorage<NonNullable<T.AugmentedAssignment['_operator']>>(config.operator);
+	const _right = kindIdStorage<NonNullable<T.AugmentedAssignment['_right']>>(config.right);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AugmentedAssignment as const,
@@ -3082,7 +2842,6 @@ function _buildPatternList(
 	elements: NonEmptyArray<Admit<T.Pattern>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.PatternList.Bound {
-	_assertNonEmpty(elements, 'pattern_list.elements');
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -3119,11 +2878,7 @@ function _buildPatternList(
 }
 
 export function buildYield(value?: Admit<T.YieldFromClause | T.Expression | T.ExpressionList>): T.Yield.Bound {
-	const _content = rejectBareText(
-		kindIdStorage<NonNullable<T.Yield['_content']>>(value),
-		'Yield.content',
-		'a built YieldFromClause / Expression / ExpressionList'
-	);
+	const _content = kindIdStorage<NonNullable<T.Yield['_content']>>(value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Yield as const,
@@ -3146,12 +2901,8 @@ export function buildYield(value?: Admit<T.YieldFromClause | T.Expression | T.Ex
 }
 
 export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
-	const _object = rejectBareText(
-		kindIdStorage<NonNullable<T.Attribute['_object']>>(config.object),
-		'Attribute.object',
-		'a built PrimaryExpression'
-	);
-	const _attribute = rejectBareText(config.attribute, 'Attribute.attribute', 'buildIdentifier(…)');
+	const _object = kindIdStorage<NonNullable<T.Attribute['_object']>>(config.object);
+	const _attribute = config.attribute;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Attribute as const,
@@ -3178,12 +2929,8 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 }
 
 export function buildSubscript(config: T.Subscript.Config): T.Subscript.Bound {
-	const _value = rejectBareText(
-		kindIdStorage<NonNullable<T.Subscript['_value']>>(config.value),
-		'Subscript.value',
-		'a built PrimaryExpression'
-	);
-	const _subscripts = rejectBareText(config.subscripts, 'Subscript.subscripts', 'a built Subscripts');
+	const _value = kindIdStorage<NonNullable<T.Subscript['_value']>>(config.value);
+	const _subscripts = config.subscripts;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Subscript as const,
@@ -3216,17 +2963,9 @@ export function buildSubscript(config: T.Subscript.Config): T.Subscript.Bound {
 }
 
 export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound {
-	const _start = rejectBareText(
-		kindIdStorage<NonNullable<T.Slice['_start']>>(config.start),
-		'Slice.start',
-		'a built Expression'
-	);
-	const _stop = rejectBareText(
-		kindIdStorage<NonNullable<T.Slice['_stop']>>(config.stop),
-		'Slice.stop',
-		'a built Expression'
-	);
-	const _step = rejectBareText(config.step, 'Slice.step', 'a built SliceGroup');
+	const _start = kindIdStorage<NonNullable<T.Slice['_start']>>(config.start);
+	const _stop = kindIdStorage<NonNullable<T.Slice['_stop']>>(config.stop);
+	const _step = config.step;
 	const readGroup_step = () => _step;
 	const handle = currentHandle();
 	const node = {
@@ -3277,12 +3016,8 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 export const buildEllipsis: TSKindId.Ellipsis = TSKindId.Ellipsis;
 
 export function buildCall(config: T.Call.Config): T.Call.Bound {
-	const _function = rejectBareText(
-		kindIdStorage<NonNullable<T.Call['_function']>>(config.function),
-		'Call.function',
-		'a built PrimaryExpression'
-	);
-	const _arguments = rejectBareText(config.arguments, 'Call.arguments', 'a built GeneratorExpression / ArgumentList');
+	const _function = kindIdStorage<NonNullable<T.Call['_function']>>(config.function);
+	const _arguments = config.arguments;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Call as const,
@@ -3309,8 +3044,8 @@ export function buildCall(config: T.Call.Config): T.Call.Bound {
 }
 
 export function buildTypedParameter(config: T.TypedParameter.Config): T.TypedParameter.Bound {
-	const _name = rejectBareText(config.name, 'TypedParameter.name', 'buildIdentifier(…)');
-	const _type = rejectBareText(config.type, 'TypedParameter.type', 'a built Type');
+	const _name = config.name;
+	const _type = config.type;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TypedParameter as const,
@@ -3338,11 +3073,7 @@ export function buildTypedParameter(config: T.TypedParameter.Config): T.TypedPar
 export function buildType(
 	value: Admit<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>
 ): T.Type.Bound {
-	const _content = rejectBareText(
-		kindIdStorage<NonNullable<T.Type['_content']>>(value),
-		'Type.content',
-		'a built Expression / SplatType / GenericType / UnionType / ConstrainedType / MemberType'
-	);
+	const _content = kindIdStorage<NonNullable<T.Type['_content']>>(value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Type as const,
@@ -3368,12 +3099,8 @@ export function buildType(
 }
 
 export function buildSplatType(config: T.SplatType.Config): T.SplatType.Bound {
-	const _operator = rejectBareText(
-		kindIdStorage<NonNullable<T.SplatType['_operator']>>(config.operator),
-		'SplatType.operator',
-		'a kind id'
-	);
-	const _name = rejectBareText(config.name, 'SplatType.name', 'buildIdentifier(…)');
+	const _operator = kindIdStorage<NonNullable<T.SplatType['_operator']>>(config.operator);
+	const _name = config.name;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SplatType as const,
@@ -3399,8 +3126,8 @@ export function buildSplatType(config: T.SplatType.Config): T.SplatType.Bound {
 }
 
 export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bound {
-	const _name = rejectBareText(config.name, 'GenericType.name', 'buildIdentifier(…)');
-	const _type_parameter = rejectBareText(config.typeParameter, 'GenericType.typeParameter', 'a built TypeParameter');
+	const _name = config.name;
+	const _type_parameter = config.typeParameter;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.GenericType as const,
@@ -3432,8 +3159,8 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 }
 
 export function buildUnionType(config: T.UnionType.Config): T.UnionType.Bound {
-	const _left = rejectBareText(config.left, 'UnionType.left', 'a built Type');
-	const _right = rejectBareText(config.right, 'UnionType.right', 'a built Type');
+	const _left = config.left;
+	const _right = config.right;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.UnionType as const,
@@ -3458,8 +3185,8 @@ export function buildUnionType(config: T.UnionType.Config): T.UnionType.Bound {
 }
 
 export function buildConstrainedType(config: T.ConstrainedType.Config): T.ConstrainedType.Bound {
-	const _base_type = rejectBareText(config.baseType, 'ConstrainedType.baseType', 'a built Type');
-	const _constraint = rejectBareText(config.constraint, 'ConstrainedType.constraint', 'a built Type');
+	const _base_type = config.baseType;
+	const _constraint = config.constraint;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ConstrainedType as const,
@@ -3486,8 +3213,8 @@ export function buildConstrainedType(config: T.ConstrainedType.Config): T.Constr
 }
 
 export function buildMemberType(config: T.MemberType.Config): T.MemberType.Bound {
-	const _base_type = rejectBareText(config.baseType, 'MemberType.baseType', 'a built Type');
-	const _name = rejectBareText(config.name, 'MemberType.name', 'buildIdentifier(…)');
+	const _base_type = config.baseType;
+	const _name = config.name;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MemberType as const,
@@ -3512,12 +3239,8 @@ export function buildMemberType(config: T.MemberType.Config): T.MemberType.Bound
 }
 
 export function buildKeywordArgument(config: T.KeywordArgument.Config): T.KeywordArgument.Bound {
-	const _name = rejectBareText(config.name, 'KeywordArgument.name', 'buildIdentifier(…)');
-	const _value = rejectBareText(
-		kindIdStorage<NonNullable<T.KeywordArgument['_value']>>(config.value),
-		'KeywordArgument.value',
-		'a built Expression'
-	);
+	const _name = config.name;
+	const _value = kindIdStorage<NonNullable<T.KeywordArgument['_value']>>(config.value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.KeywordArgument as const,
@@ -3568,9 +3291,7 @@ export function buildList(...args: unknown[]) {
 			);
 }
 function _buildList(value?: Admit<T.CollectionElements>): T.List.Bound {
-	const _collection_elements = hydrateStored(
-		rejectBareText(value, 'List.collectionElements', 'a built CollectionElements')
-	);
+	const _collection_elements = hydrateStored(value);
 	const listView = ownerView(_collection_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_collection_elements');
 	const handle = currentHandle();
@@ -3632,9 +3353,7 @@ export function buildSet(...args: unknown[]) {
 		: _buildSet((buildCollectionElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildSet>[0]);
 }
 function _buildSet(value: Admit<T.CollectionElements>): T.Set.Bound {
-	const _collection_elements = hydrateStored(
-		rejectBareText(value, 'Set.collectionElements', 'a built CollectionElements')
-	);
+	const _collection_elements = hydrateStored(value);
 	const listView = ownerView(_collection_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_collection_elements');
 	const handle = currentHandle();
@@ -3696,7 +3415,7 @@ export function buildTuple(...args: unknown[]) {
 		: _buildTuple((buildTupleElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTuple>[0]);
 }
 function _buildTuple(value?: Admit<T.TupleElements>): T.Tuple.Bound {
-	const _elements = hydrateStored(rejectBareText(value, 'Tuple.elements', 'a built TupleElements'));
+	const _elements = hydrateStored(value);
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
@@ -3761,7 +3480,7 @@ export function buildDictionary(...args: unknown[]) {
 			);
 }
 function _buildDictionary(value?: Admit<T.DictionaryElements>): T.Dictionary.Bound {
-	const _elements = hydrateStored(rejectBareText(value, 'Dictionary.elements', 'a built DictionaryElements'));
+	const _elements = hydrateStored(value);
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
@@ -3802,12 +3521,8 @@ function _buildDictionary(value?: Admit<T.DictionaryElements>): T.Dictionary.Bou
 }
 
 export function buildPair(config: T.Pair.Config): T.Pair.Bound {
-	const _key = rejectBareText(kindIdStorage<NonNullable<T.Pair['_key']>>(config.key), 'Pair.key', 'a built Expression');
-	const _value = rejectBareText(
-		kindIdStorage<NonNullable<T.Pair['_value']>>(config.value),
-		'Pair.value',
-		'a built Expression'
-	);
+	const _key = kindIdStorage<NonNullable<T.Pair['_key']>>(config.key);
+	const _value = kindIdStorage<NonNullable<T.Pair['_value']>>(config.value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Pair as const,
@@ -3834,12 +3549,8 @@ export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 }
 
 export function buildListComprehension(config: T.ListComprehension.Config): T.ListComprehension.Bound {
-	const _body = rejectBareText(
-		kindIdStorage<NonNullable<T.ListComprehension['_body']>>(config.body),
-		'ListComprehension.body',
-		'a built Expression'
-	);
-	const _clauses = rejectBareText(config.clauses, 'ListComprehension.clauses', 'a built ComprehensionClauses');
+	const _body = kindIdStorage<NonNullable<T.ListComprehension['_body']>>(config.body);
+	const _clauses = config.clauses;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ListComprehension as const,
@@ -3868,8 +3579,8 @@ export function buildListComprehension(config: T.ListComprehension.Config): T.Li
 export function buildDictionaryComprehension(
 	config: T.DictionaryComprehension.Config
 ): T.DictionaryComprehension.Bound {
-	const _body = rejectBareText(config.body, 'DictionaryComprehension.body', 'a built Pair');
-	const _clauses = rejectBareText(config.clauses, 'DictionaryComprehension.clauses', 'a built ComprehensionClauses');
+	const _body = config.body;
+	const _clauses = config.clauses;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DictionaryComprehension as const,
@@ -3896,12 +3607,8 @@ export function buildDictionaryComprehension(
 }
 
 export function buildSetComprehension(config: T.SetComprehension.Config): T.SetComprehension.Bound {
-	const _body = rejectBareText(
-		kindIdStorage<NonNullable<T.SetComprehension['_body']>>(config.body),
-		'SetComprehension.body',
-		'a built Expression'
-	);
-	const _clauses = rejectBareText(config.clauses, 'SetComprehension.clauses', 'a built ComprehensionClauses');
+	const _body = kindIdStorage<NonNullable<T.SetComprehension['_body']>>(config.body);
+	const _clauses = config.clauses;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SetComprehension as const,
@@ -3928,12 +3635,8 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 }
 
 export function buildGeneratorExpression(config: T.GeneratorExpression.Config): T.GeneratorExpression.Bound {
-	const _body = rejectBareText(
-		kindIdStorage<NonNullable<T.GeneratorExpression['_body']>>(config.body),
-		'GeneratorExpression.body',
-		'a built Expression'
-	);
-	const _clauses = rejectBareText(config.clauses, 'GeneratorExpression.clauses', 'a built ComprehensionClauses');
+	const _body = kindIdStorage<NonNullable<T.GeneratorExpression['_body']>>(config.body);
+	const _clauses = config.clauses;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.GeneratorExpression as const,
@@ -3960,11 +3663,7 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 }
 
 export function buildParenthesizedExpression(value: Admit<T.Expression | T.Yield>): T.ParenthesizedExpression.Bound {
-	const _expression = rejectBareText(
-		kindIdStorage<NonNullable<T.ParenthesizedExpression['_expression']>>(value),
-		'ParenthesizedExpression.expression',
-		'a built Expression / Yield'
-	);
+	const _expression = kindIdStorage<NonNullable<T.ParenthesizedExpression['_expression']>>(value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ParenthesizedExpression as const,
@@ -4015,7 +3714,6 @@ function _buildCollectionElements(
 	elements: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.CollectionElements.Bound {
-	_assertNonEmpty(elements, 'collection_elements.elements');
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -4053,14 +3751,10 @@ function _buildCollectionElements(
 }
 
 export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bound {
-	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'ForInClause.async', 'a boolean'));
-	const _left = rejectBareText(config.left, 'ForInClause.left', 'a built Pattern / PatternList');
-	const _right = rejectBareText(
-		kindIdStorage<NonNullable<T.ForInClause['_right']>>(config.right),
-		'ForInClause.right',
-		'a built Expression / LambdaWithinForInClause'
-	);
-	const _comma = coerceBooleanKeywordStorage(rejectBareText(config.comma, 'ForInClause.comma', 'a boolean'));
+	const _async = strictBooleanStorage(config.async);
+	const _left = config.left;
+	const _right = kindIdStorage<NonNullable<T.ForInClause['_right']>>(config.right);
+	const _comma = strictBooleanStorage(config.comma);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ForInClause as const,
@@ -4095,11 +3789,7 @@ export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bo
 }
 
 export function buildIfClause(value: Admit<T.Expression>): T.IfClause.Bound {
-	const _condition = rejectBareText(
-		kindIdStorage<NonNullable<T.IfClause['_condition']>>(value),
-		'IfClause.condition',
-		'a built Expression'
-	);
+	const _condition = kindIdStorage<NonNullable<T.IfClause['_condition']>>(value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.IfClause as const,
@@ -4121,21 +3811,9 @@ export function buildIfClause(value: Admit<T.Expression>): T.IfClause.Bound {
 }
 
 export function buildConditionalExpression(config: T.ConditionalExpression.Config): T.ConditionalExpression.Bound {
-	const _body = rejectBareText(
-		kindIdStorage<NonNullable<T.ConditionalExpression['_body']>>(config.body),
-		'ConditionalExpression.body',
-		'a built Expression'
-	);
-	const _condition = rejectBareText(
-		kindIdStorage<NonNullable<T.ConditionalExpression['_condition']>>(config.condition),
-		'ConditionalExpression.condition',
-		'a built Expression'
-	);
-	const _alternative = rejectBareText(
-		kindIdStorage<NonNullable<T.ConditionalExpression['_alternative']>>(config.alternative),
-		'ConditionalExpression.alternative',
-		'a built Expression'
-	);
+	const _body = kindIdStorage<NonNullable<T.ConditionalExpression['_body']>>(config.body);
+	const _condition = kindIdStorage<NonNullable<T.ConditionalExpression['_condition']>>(config.condition);
+	const _alternative = kindIdStorage<NonNullable<T.ConditionalExpression['_alternative']>>(config.alternative);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ConditionalExpression as const,
@@ -4166,8 +3844,7 @@ export function buildConditionalExpression(config: T.ConditionalExpression.Confi
 }
 
 export function buildConcatenatedString(...children: NonEmptyArray<Admit<T.String>>): T.ConcatenatedString.Bound {
-	_assertNonEmpty(children, 'concatenated_string.children');
-	const _string = rejectBareText(children, 'ConcatenatedString.string', 'a built String');
+	const _string = children;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ConcatenatedString as const,
@@ -4190,9 +3867,9 @@ export function buildConcatenatedString(...children: NonEmptyArray<Admit<T.Strin
 }
 
 export function buildString(config: T.String.Config): T.String.Bound {
-	const _string_start = rejectBareText(config.stringStart, 'String.stringStart', 'buildStringStart(…)');
-	const _content = rejectBareText(config.content ?? [], 'String.content', 'a built Interpolation / StringContent');
-	const _string_end = rejectBareText(config.stringEnd, 'String.stringEnd', 'buildStringEnd(…)');
+	const _string_start = config.stringStart;
+	const _content = config.content ?? [];
+	const _string_end = config.stringEnd;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.String as const,
@@ -4228,12 +3905,7 @@ export function buildStringContent(
 		Admit<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>
 	>
 ): T.StringContent.Bound {
-	_assertNonEmpty(children, 'string_content.children');
-	const _elements = rejectBareText(
-		children,
-		'StringContent.elements',
-		'buildEscapeInterpolation(…) / buildStringFragment(…)'
-	);
+	const _elements = children;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.StringContent as const,
@@ -4259,22 +3931,10 @@ export function buildStringContent(
 }
 
 export function buildInterpolation(config: T.Interpolation.Config): T.Interpolation.Bound {
-	const _expression = rejectBareText(
-		kindIdStorage<NonNullable<T.Interpolation['_expression']>>(config.expression),
-		'Interpolation.expression',
-		'a built Expression / ExpressionList / PatternList / Yield'
-	);
-	const _debug = coerceBooleanKeywordStorage(rejectBareText(config.debug, 'Interpolation.debug', 'a boolean'));
-	const _type_conversion = rejectBareText(
-		config.typeConversion,
-		'Interpolation.typeConversion',
-		'buildTypeConversion(…)'
-	);
-	const _format_specifier = rejectBareText(
-		config.formatSpecifier,
-		'Interpolation.formatSpecifier',
-		'a built FormatSpecifier'
-	);
+	const _expression = kindIdStorage<NonNullable<T.Interpolation['_expression']>>(config.expression);
+	const _debug = strictBooleanStorage(config.debug);
+	const _type_conversion = config.typeConversion;
+	const _format_specifier = config.formatSpecifier;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Interpolation as const,
@@ -4313,10 +3973,9 @@ export const buildNotEscapeSequence: TSKindId.NotEscapeSequence = TSKindId.NotEs
 export function buildFormatSpecifier(
 	...children: Admit<((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[]>
 ): T.FormatSpecifier.Bound {
-	const _elements = admitAliasContent<NonNullable<T.FormatSpecifier['_elements']>>(
-		rejectBareText(children, 'FormatSpecifier.elements', 'buildFormatSpecifierText(…)'),
-		[[[249], (v: unknown) => buildFormatExpression(v as never)]]
-	);
+	const _elements = admitAliasContent<NonNullable<T.FormatSpecifier['_elements']>>(children, [
+		[[249], (v: unknown) => buildFormatExpression(v as never)]
+	]);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FormatSpecifier as const,
@@ -4388,11 +4047,7 @@ export const buildFalse: TSKindId.False = TSKindId.False;
 export const buildNone: TSKindId.None = TSKindId.None;
 
 export function buildAwait(value: Admit<T.PrimaryExpression>): T.Await.Bound {
-	const _expression = rejectBareText(
-		kindIdStorage<NonNullable<T.Await['_expression']>>(value),
-		'Await.expression',
-		'a built PrimaryExpression'
-	);
+	const _expression = kindIdStorage<NonNullable<T.Await['_expression']>>(value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Await as const,
@@ -4468,7 +4123,6 @@ function _buildSimpleStatementsElements(
 	elements: NonEmptyArray<Admit<T.SimpleStatement>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.SimpleStatementsElements.Bound {
-	_assertNonEmpty(elements, 'simple_statements_elements.elements');
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -4525,7 +4179,6 @@ function _buildSubjects(
 	elements: NonEmptyArray<Admit<T.Expression>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Subjects.Bound {
-	_assertNonEmpty(elements, 'subjects.elements');
 	const _subject = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_subject);
@@ -4586,7 +4239,6 @@ function _buildCasePatterns(
 	elements: NonEmptyArray<Admit<T.CasePattern>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.CasePatterns.Bound {
-	_assertNonEmpty(elements, 'case_patterns.elements');
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -4647,7 +4299,6 @@ function _buildWithClauseWithItems(
 	elements: NonEmptyArray<Admit<T.WithItem>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.WithClauseWithItems.Bound {
-	_assertNonEmpty(elements, 'with_clause_with_items.elements');
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -4704,7 +4355,6 @@ function _buildTypes(
 	elements: NonEmptyArray<Admit<T.Type>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Types.Bound {
-	_assertNonEmpty(elements, 'types.elements');
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -4775,7 +4425,6 @@ function _buildArgumentListElements(
 	>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ArgumentListElements.Bound {
-	_assertNonEmpty(elements, 'argument_list_elements.elements');
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -4839,7 +4488,6 @@ function _buildListPatternCasePatterns(
 	elements: NonEmptyArray<Admit<T.CasePattern>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ListPatternCasePatterns.Bound {
-	_assertNonEmpty(elements, 'list_pattern_case_patterns.elements');
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -4902,7 +4550,6 @@ function _buildDictPatternElements(
 	elements: NonEmptyArray<Admit<T.KeyValuePattern | T.SplatPattern>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.DictPatternElements.Bound {
-	_assertNonEmpty(elements, 'dict_pattern_elements.elements');
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -4963,7 +4610,6 @@ function _buildSubscripts(
 	elements: NonEmptyArray<Admit<T.Expression | T.Slice>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Subscripts.Bound {
-	_assertNonEmpty(elements, 'subscripts.elements');
 	const _subscript = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_subscript);
@@ -5024,7 +4670,6 @@ function _buildDictionaryElements(
 	elements: NonEmptyArray<Admit<T.Pair | T.DictionarySplat>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.DictionaryElements.Bound {
-	_assertNonEmpty(elements, 'dictionary_elements.elements');
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -5062,11 +4707,7 @@ function _buildDictionaryElements(
 }
 
 export function buildSliceGroup(value?: Admit<T.Expression>): T.SliceGroup.Bound {
-	const _expression = rejectBareText(
-		kindIdStorage<NonNullable<T.SliceGroup['_expression']>>(value),
-		'SliceGroup.expression',
-		'a built Expression'
-	);
+	const _expression = kindIdStorage<NonNullable<T.SliceGroup['_expression']>>(value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SliceGroup as const,
@@ -5131,7 +4772,6 @@ function _buildTuplePatternElements(
 	elements: NonEmptyArray<Admit<T.Pattern>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TuplePatternElements.Bound {
-	_assertNonEmpty(elements, 'tuple_pattern_elements.elements');
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -5197,7 +4837,6 @@ function _buildTupleElements(
 	elements: NonEmptyArray<Admit<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TupleElements.Bound {
-	_assertNonEmpty(elements, 'tuple_elements.elements');
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -5237,16 +4876,8 @@ function _buildTupleElements(
 export function buildExceptClauseExceptionAs(
 	config: T.ExceptClauseExceptionAs.Config
 ): T.ExceptClauseExceptionAs.Bound {
-	const _value = rejectBareText(
-		kindIdStorage<NonNullable<T.ExceptClauseExceptionAs['_value']>>(config.value),
-		'ExceptClauseExceptionAs.value',
-		'a built Expression'
-	);
-	const _alias = rejectBareText(
-		kindIdStorage<NonNullable<T.ExceptClauseExceptionAs['_alias']>>(config.alias),
-		'ExceptClauseExceptionAs.alias',
-		'a built Expression'
-	);
+	const _value = kindIdStorage<NonNullable<T.ExceptClauseExceptionAs['_value']>>(config.value);
+	const _alias = kindIdStorage<NonNullable<T.ExceptClauseExceptionAs['_alias']>>(config.alias);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExceptClauseExceptionAs as const,
@@ -5301,9 +4932,7 @@ export function buildCaseTuplePattern(...args: unknown[]) {
 			);
 }
 function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.CaseTuplePattern.Bound {
-	const _elements = hydrateStored(
-		rejectBareText(value, 'CaseTuplePattern.elements', 'a built ListPatternCasePatterns')
-	);
+	const _elements = hydrateStored(value);
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
@@ -5372,7 +5001,7 @@ export function buildCaseListPattern(...args: unknown[]) {
 			);
 }
 function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.CaseListPattern.Bound {
-	const _elements = hydrateStored(rejectBareText(value, 'CaseListPattern.elements', 'a built ListPatternCasePatterns'));
+	const _elements = hydrateStored(value);
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
@@ -5436,7 +5065,6 @@ function _buildPrintArguments(
 	elements: NonEmptyArray<Admit<T.Expression>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.PrintArguments.Bound {
-	_assertNonEmpty(elements, 'print_arguments.elements');
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -5497,7 +5125,6 @@ function _buildPrintChevronArguments(
 	elements: NonEmptyArray<Admit<T.Expression>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.PrintChevronArguments.Bound {
-	_assertNonEmpty(elements, 'print_chevron_arguments.elements');
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -5535,11 +5162,9 @@ function _buildPrintChevronArguments(
 }
 
 export function buildPrintStatementChevron(config: T.PrintStatementChevron.Config): T.PrintStatementChevron.Bound {
-	const _chevron = rejectBareText(config.chevron, 'PrintStatementChevron.chevron', 'a built Chevron');
-	const _print_chevron_arguments = rejectBareText(
-		kindIdStorage<NonNullable<T.PrintStatementChevron['_print_chevron_arguments']>>(config.printChevronArguments),
-		'PrintStatementChevron.printChevronArguments',
-		'a built PrintChevronArguments'
+	const _chevron = config.chevron;
+	const _print_chevron_arguments = kindIdStorage<NonNullable<T.PrintStatementChevron['_print_chevron_arguments']>>(
+		config.printChevronArguments
 	);
 	const handle = currentHandle();
 	const node = {
@@ -5599,9 +5224,7 @@ export function buildPrintStatementPlain(...args: unknown[]) {
 			);
 }
 function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintStatementPlain.Bound {
-	const _print_arguments = hydrateStored(
-		rejectBareText(value, 'PrintStatementPlain.printArguments', 'a built PrintArguments')
-	);
+	const _print_arguments = hydrateStored(value);
 	const listView = ownerView(_print_arguments, '_item');
 	if (listView.stored === undefined) refuseReadStub('_print_arguments');
 	const handle = currentHandle();
@@ -5670,7 +5293,7 @@ export function buildParenthesizedImportList(...args: unknown[]) {
 			);
 }
 function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.ParenthesizedImportList.Bound {
-	const _import_list = hydrateStored(rejectBareText(value, 'ParenthesizedImportList.importList', 'a built ImportList'));
+	const _import_list = hydrateStored(value);
 	const listView = ownerView(_import_list, '_name');
 	if (listView.stored === undefined) refuseReadStub('_import_list');
 	const handle = currentHandle();
@@ -5712,8 +5335,7 @@ function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.Parenthesi
 export function buildComprehensionClauses(
 	...children: NonEmptyArray<Admit<T.ForInClause | T.IfClause>>
 ): T.ComprehensionClauses.Bound {
-	_assertNonEmpty(children, 'comprehension_clauses.children');
-	const _content = rejectBareText(children, 'ComprehensionClauses.content', 'a built ForInClause / IfClause');
+	const _content = children;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ComprehensionClauses as const,
@@ -6343,8 +5965,8 @@ export function buildLineContinuationNewline(text: string): T.LineContinuationNe
 export const buildLineContinuationNul: TSKindId.LineContinuationNul = TSKindId.LineContinuationNul;
 
 export function buildSimplePatternNegative(config: T.SimplePatternNegative.Config): T.SimplePatternNegative.Bound {
-	const _sign = coerceBooleanKeywordStorage(rejectBareText(config.sign, 'SimplePatternNegative.sign', 'a boolean'));
-	const _value = rejectBareText(config.value, 'SimplePatternNegative.value', 'a built Integer / Float');
+	const _sign = strictBooleanStorage(config.sign);
+	const _value = config.value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SimplePatternNegative as const,
@@ -6373,8 +5995,7 @@ export function buildSimplePatternNegative(config: T.SimplePatternNegative.Confi
 export function buildExceptClauseExceptionList(
 	...children: NonEmptyArray<Admit<T.Expression>>
 ): T.ExceptClauseExceptionList.Bound {
-	_assertNonEmpty(children, 'except_clause_exception_list.children');
-	const _value = rejectBareText(children, 'ExceptClauseExceptionList.value', 'a built Expression');
+	const _value = children;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExceptClauseExceptionList as const,
@@ -6399,11 +6020,7 @@ export function buildExceptClauseExceptionList(
 export function buildExceptClauseException(
 	value: Admit<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>
 ): T.ExceptClauseException.Bound {
-	const _content = rejectBareText(
-		value,
-		'ExceptClauseException.content',
-		'a built ExceptClauseExceptionAs / ExceptClauseExceptionList'
-	);
+	const _content = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExceptClauseException as const,
@@ -6426,12 +6043,8 @@ export function buildExceptClauseException(
 }
 
 export function buildAssignmentEq(config: T.AssignmentEq.Config): T.AssignmentEq.Bound {
-	const _left = rejectBareText(config.left, 'AssignmentEq.left', 'a built Pattern / PatternList');
-	const _right = rejectBareText(
-		kindIdStorage<NonNullable<T.AssignmentEq['_right']>>(config.right),
-		'AssignmentEq.right',
-		'a built Expression / ExpressionList / Assignment / AugmentedAssignment / PatternList / Yield'
-	);
+	const _left = config.left;
+	const _right = kindIdStorage<NonNullable<T.AssignmentEq['_right']>>(config.right);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AssignmentEq as const,
@@ -6458,8 +6071,8 @@ export function buildAssignmentEq(config: T.AssignmentEq.Config): T.AssignmentEq
 }
 
 export function buildAssignmentType(config: T.AssignmentType.Config): T.AssignmentType.Bound {
-	const _left = rejectBareText(config.left, 'AssignmentType.left', 'a built Pattern / PatternList');
-	const _type = rejectBareText(config.type, 'AssignmentType.type', 'a built Type');
+	const _left = config.left;
+	const _type = config.type;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AssignmentType as const,
@@ -6485,13 +6098,9 @@ export function buildAssignmentType(config: T.AssignmentType.Config): T.Assignme
 }
 
 export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.AssignmentTyped.Bound {
-	const _left = rejectBareText(config.left, 'AssignmentTyped.left', 'a built Pattern / PatternList');
-	const _type = rejectBareText(config.type, 'AssignmentTyped.type', 'a built Type');
-	const _right = rejectBareText(
-		kindIdStorage<NonNullable<T.AssignmentTyped['_right']>>(config.right),
-		'AssignmentTyped.right',
-		'a built Expression / ExpressionList / Assignment / AugmentedAssignment / PatternList / Yield'
-	);
+	const _left = config.left;
+	const _type = config.type;
+	const _right = kindIdStorage<NonNullable<T.AssignmentTyped['_right']>>(config.right);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AssignmentTyped as const,
@@ -6544,7 +6153,6 @@ function _buildExpressionStatementTuple(
 	elements: NonEmptyArray<Admit<T.Expression>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ExpressionStatementTuple.Bound {
-	_assertNonEmpty(elements, 'expression_statement_tuple.elements');
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -6605,7 +6213,6 @@ function _buildWithClauseBare(
 	elements: NonEmptyArray<Admit<T.WithItem>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.WithClauseBare.Bound {
-	_assertNonEmpty(elements, 'with_clause_bare.elements');
 	const _item = elements;
 	const _delimiter = options.delimiter;
 	const listedStored = storedElements(_item);
@@ -6668,7 +6275,7 @@ export function buildWithClauseParen(...args: unknown[]) {
 			);
 }
 function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClauseParen.Bound {
-	const _with_items = hydrateStored(rejectBareText(value, 'WithClauseParen.withItems', 'a built WithClauseWithItems'));
+	const _with_items = hydrateStored(value);
 	const listView = ownerView(_with_items, '_item');
 	if (listView.stored === undefined) refuseReadStub('_with_items');
 	const handle = currentHandle();
@@ -6710,7 +6317,7 @@ function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClaus
 export function buildMatchBlockBlock(): T.EmptyMatchBlockBlock;
 export function buildMatchBlockBlock(...children: Admit<T.CaseClause[]>): T.MatchBlockBlock.Bound;
 export function buildMatchBlockBlock(...children: Admit<T.CaseClause[]>): T.MatchBlockBlock.Bound {
-	const _alternative = rejectBareText(children, 'MatchBlockBlock.alternative', 'a built CaseClause');
+	const _alternative = children;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MatchBlockBlock as const,
@@ -6749,10 +6356,8 @@ export function buildMatchBlockEmpty(...args: unknown[]) {
 		: _buildMatchBlockEmpty(buildNewline as Parameters<typeof _buildMatchBlockEmpty>[0]);
 }
 function _buildMatchBlockEmpty(value?: Admit<TSKindId.Newline>): T.MatchBlockEmpty.Bound {
-	const _newline = rejectBareText(
-		kindIdStorage<NonNullable<T.MatchBlockEmpty['_newline']>>(orDefault(value, () => TSKindId.Newline as const)),
-		'MatchBlockEmpty.newline',
-		'a kind id'
+	const _newline = kindIdStorage<NonNullable<T.MatchBlockEmpty['_newline']>>(
+		orDefault(value, () => TSKindId.Newline as const)
 	);
 	const handle = currentHandle();
 	const node = {
@@ -6801,7 +6406,7 @@ export function buildSuiteInline(...args: unknown[]) {
 			);
 }
 function _buildSuiteInline(value: Admit<T.SimpleStatementsElements>): T.SuiteInline.Bound {
-	const _elements = hydrateStored(rejectBareText(value, 'SuiteInline.elements', 'a built SimpleStatementsElements'));
+	const _elements = hydrateStored(value);
 	const listView = ownerView(_elements, '_item');
 	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
@@ -6859,7 +6464,7 @@ export function buildSuiteBlock(...args: unknown[]) {
 		: _buildSuiteBlock((buildBlock as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildSuiteBlock>[0]);
 }
 function _buildSuiteBlock(value: Admit<T.Block>): T.SuiteBlock.Bound {
-	const _block = rejectBareText(value, 'SuiteBlock.block', 'a built Block');
+	const _block = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SuiteBlock as const,
@@ -6896,10 +6501,8 @@ export function buildSuiteEmpty(...args: unknown[]) {
 		: _buildSuiteEmpty(buildNewline as Parameters<typeof _buildSuiteEmpty>[0]);
 }
 function _buildSuiteEmpty(value?: Admit<TSKindId.Newline>): T.SuiteEmpty.Bound {
-	const _newline = rejectBareText(
-		kindIdStorage<NonNullable<T.SuiteEmpty['_newline']>>(orDefault(value, () => TSKindId.Newline as const)),
-		'SuiteEmpty.newline',
-		'a kind id'
+	const _newline = kindIdStorage<NonNullable<T.SuiteEmpty['_newline']>>(
+		orDefault(value, () => TSKindId.Newline as const)
 	);
 	const handle = currentHandle();
 	const node = {
@@ -6924,15 +6527,9 @@ function _buildSuiteEmpty(value?: Admit<TSKindId.Newline>): T.SuiteEmpty.Bound {
 export function buildComparisonOperatorComparator(
 	config: T.ComparisonOperatorComparator.Config
 ): T.ComparisonOperatorComparator.Bound {
-	const _operators = rejectBareText(
-		kindIdStorage<NonNullable<T.ComparisonOperatorComparator['_operators']>>(config.operators),
-		'ComparisonOperatorComparator.operators',
-		'a kind id'
-	);
-	const _primary_expression = rejectBareText(
-		kindIdStorage<NonNullable<T.ComparisonOperatorComparator['_primary_expression']>>(config.primaryExpression),
-		'ComparisonOperatorComparator.primaryExpression',
-		'a built PrimaryExpression'
+	const _operators = kindIdStorage<NonNullable<T.ComparisonOperatorComparator['_operators']>>(config.operators);
+	const _primary_expression = kindIdStorage<NonNullable<T.ComparisonOperatorComparator['_primary_expression']>>(
+		config.primaryExpression
 	);
 	const handle = currentHandle();
 	const node = {
@@ -6960,11 +6557,7 @@ export function buildComparisonOperatorComparator(
 }
 
 export function buildYieldFromClause(value: Admit<T.Expression>): T.YieldFromClause.Bound {
-	const _expression = rejectBareText(
-		kindIdStorage<NonNullable<T.YieldFromClause['_expression']>>(value),
-		'YieldFromClause.expression',
-		'a built Expression'
-	);
+	const _expression = kindIdStorage<NonNullable<T.YieldFromClause['_expression']>>(value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.YieldFromClause as const,
@@ -7082,7 +6675,7 @@ export const buildBlankline: TSKindId.Blankline = TSKindId.Blankline;
 export const buildDoubleBlankline: TSKindId.DoubleBlankline = TSKindId.DoubleBlankline;
 
 export function buildNames(value: Admit<T.ImportList>): T.Names.Bound {
-	const _content = rejectBareText(value, 'Names.content', 'a built ImportList');
+	const _content = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Names as const,
@@ -7111,11 +6704,7 @@ export function buildNames(value: Admit<T.ImportList>): T.Names.Bound {
 }
 
 export function buildAsPatternTarget(value: Admit<T.Expression>): T.AsPatternTarget.Bound {
-	const _content = rejectBareText(
-		kindIdStorage<NonNullable<T.AsPatternTarget['_content']>>(value),
-		'AsPatternTarget.content',
-		'a built Expression'
-	);
+	const _content = kindIdStorage<NonNullable<T.AsPatternTarget['_content']>>(value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AsPatternTarget as const,
@@ -7137,7 +6726,7 @@ export function buildAsPatternTarget(value: Admit<T.Expression>): T.AsPatternTar
 }
 
 export function buildFormatExpression(value: Admit<T.Interpolation>): T.FormatExpression.Bound {
-	const _content = rejectBareText(value, 'FormatExpression.content', 'a built Interpolation');
+	const _content = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FormatExpression as const,

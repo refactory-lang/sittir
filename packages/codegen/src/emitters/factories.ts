@@ -127,25 +127,21 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 			const storageInfo = resolveFieldStorageInfo(slot, nodeMap, kindEntries);
 			switch (storageInfo.kind) {
 				case 'boolean':
-					imports.add('coerceBooleanKeywordStorage');
-					imports.add('rejectBareText');
+					imports.add(slot.registeredOption === undefined ? 'strictBooleanStorage' : 'coerceBooleanKeywordStorage');
 					break;
 				case 'bitflag':
 					imports.add('coerceBitflagStorage');
 					break;
 				case 'kindEnum':
 					if (kindEntries) imports.add(slot.registeredOption === 'choice' ? 'coerceKindEnumStorage' : 'kindIdStorage');
-					if (kindEntries && slot.registeredOption !== 'choice') imports.add('rejectBareText');
 					break;
 				case 'mixedEnum':
 					if (kindEntries) imports.add(slot.registeredOption === 'choice' ? 'coerceMixedEnumStorage' : 'kindIdStorage');
-					if (kindEntries && slot.registeredOption !== 'choice') imports.add('rejectBareText');
 					break;
 				case 'verbatim':
 					break;
 			}
 			if (!isMultiple(slot) && emptyDefaultOf(slot, nodeMap, kindEntries)) imports.add('orDefault');
-			if (strictNodeExpectation(slot, nodeMap) !== undefined) imports.add('rejectBareText');
 			if (seatedKeywordTexts(slot, nodeMap, kindEntries).length > 0) imports.add('rejectKeywordText');
 			if (kindEntries !== undefined && slotAliases(slot, nodeMap).length > 0) imports.add('admitAliasContent');
 		}
@@ -173,19 +169,6 @@ function collectUsesKindIdFromName(nodeMap: NodeMap, kindEntries: readonly KindE
 
 function emitFluentSetterHelpers(): string[] {
 	return [];
-}
-
-function emitNonEmptyAssertHelper(): string[] {
-	return [
-		'function _assertNonEmpty<T>(',
-		'  arr: readonly T[],',
-		'  label: string,',
-		'): asserts arr is readonly [T, ...(readonly T[])] {',
-		'  if (arr.length === 0) {',
-		'    throw new Error(`${label}: requires at least one element`);',
-		'  }',
-		'}'
-	];
 }
 
 function slotGuardKey(kind: string, slot: string): string {
@@ -334,6 +317,7 @@ export function textLeaves(f: AssembledNonterminal, nodeMap: NodeMap): Assembled
 
 function bareTextExpectation(f: AssembledNonterminal, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string | undefined {
 	const kind = resolveFieldStorageInfo(f, nodeMap, kindEntries).kind;
+	if (kind === 'boolean') return 'a boolean';
 	return strictNodeExpectation(f, nodeMap) ?? (kind === 'kindEnum' || kind === 'mixedEnum' ? 'a kind id' : undefined);
 }
 
@@ -341,17 +325,6 @@ function bareTextLabel(f: AssembledNonterminal, typeName: string): string {
 	return `${typeName}.${f.configKey}`;
 }
 
-function bareTextRejection(
-	f: AssembledNonterminal,
-	expr: string,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	typeName: string
-): string {
-	const expected = bareTextExpectation(f, nodeMap, kindEntries);
-	if (expected === undefined) return expr;
-	return `rejectBareText(${expr}, '${bareTextLabel(f, typeName)}', ${JSON.stringify(expected)})`;
-}
 
 function keywordTextRejection(
 	f: AssembledNonterminal,
@@ -656,7 +629,7 @@ function admittedSlotInput(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	typeName: string
 ): string {
-	const admitted = keywordTextRejection(f, bareTextRejection(f, expr, nodeMap, kindEntries, typeName), nodeMap, kindEntries, typeName);
+	const admitted = keywordTextRejection(f, expr, nodeMap, kindEntries, typeName);
 	return aliasContentAdmission(f, admitted, nodeMap, kindEntries, `NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>`);
 }
 
@@ -725,7 +698,7 @@ function storedSlotValueExpr(
 		case 'boolean':
 			return textInput
 				? `coerceBooleanKeywordStorage(${valueExpr})`
-				: `coerceBooleanKeywordStorage(rejectBareText(${valueExpr}, '${typeName}.${f.configKey}', 'a boolean'))`;
+				: `strictBooleanStorage(${valueExpr})`;
 		case 'bitflag':
 			return `coerceBitflagStorage(${valueExpr}, ${bitflagTextsExpr(storageInfo.texts)})`;
 		case 'kindEnum':
@@ -1587,9 +1560,6 @@ function emitFieldCarryingFactory(
 	if (leadingOptions !== undefined) {
 		lines.push(...leadingOptionsSplit(leadingOptions, 'children', strictParamType(surface.param)));
 	}
-	if (spreadFacts?.multiple && spreadFacts.nonEmpty) {
-		lines.push(`  _assertNonEmpty(children, '${node.kind}.children');`);
-	}
 	const plan = seatPlanOf(node, nodeMap, kindEntries);
 	const owner = plan.viewPlan?.owner;
 	for (const f of slotsToEmit) {
@@ -2412,15 +2382,11 @@ function emitSeparatedListFactory(
 	} else {
 		lines.push(`export function ${fn}(...elements: ${elementsType}): ${listBuiltName} {`);
 	}
-	if (node.nonEmpty) {
-		lines.push(`  _assertNonEmpty(elements, '${node.kind}.elements');`);
-	}
 	const w = surface.wrapper;
 	if (w !== undefined) {
 		lines.push(
 			`  const _mapped = elements.map((e): T.${w.typeName} => ((isNodeOfKind(e, TSKindId.${w.member}) ? (e as unknown) : ${w.factory}({ ${w.contentKey}: e } as Parameters<typeof ${w.factory}>[0])) as T.${w.typeName}));`
 		);
-		if (node.nonEmpty) lines.push(`  _assertNonEmpty(_mapped, '${node.kind}.elements');`);
 		lines.push(`  const ${contentStorageKey} = _mapped;`);
 	} else {
 		const admitted = aliasContentAdmission(buildSeparatedListContentSlot(node), 'elements', nodeMap, kindEntries, surface.storageElementsType);
@@ -2573,7 +2539,6 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
-		lines.push(...emitNonEmptyAssertHelper());
 		lines.push('');
 
 		const leafReConsts = buildLeafReConsts(nodeMap, kindEntries, lines);

@@ -231,7 +231,10 @@ export const structure: StructureTable = Object.freeze({
 	58: {
 		kind: 'grouping_group',
 		required: [['_group_expression', 'groupExpression']],
-		nodeOnly: [['_group_expression', 'GroupingGroup.groupExpression', 'a built Definition / GroupExpressionArm']]
+		nodeOnly: [
+			['_group_expression', 'GroupingGroup.groupExpression', 'a built Definition / GroupExpressionArm'],
+			['_anchor', 'GroupingGroup.anchor', 'a boolean']
+		]
 	},
 	61: {
 		kind: 'named_node_plain',
@@ -259,6 +262,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'named_node_group_children',
 		nonEmpty: [['_named_node_expressions', 'named_node_group_children.namedNodeExpressions']],
 		nodeOnly: [
+			['_anchor', 'NamedNodeGroupChildren.anchor', 'a boolean'],
 			[
 				'_named_node_expressions',
 				'NamedNodeGroupChildren.namedNodeExpressions',
@@ -270,6 +274,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'named_node_group_anchored_last',
 		required: [['_last', 'last']],
 		nodeOnly: [
+			['_anchor', 'NamedNodeGroupAnchoredLast.anchor', 'a boolean'],
 			[
 				'_named_node_expressions',
 				'NamedNodeGroupAnchoredLast.namedNodeExpressions',

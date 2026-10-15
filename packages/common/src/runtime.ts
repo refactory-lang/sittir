@@ -122,6 +122,10 @@ export function coerceKindEnumStorage<T = unknown>(
 	return value as T;
 }
 
+export function strictBooleanStorage(value: unknown): boolean | string | bigint {
+	return typeof value === 'string' || typeof value === 'bigint' ? value : coerceBooleanKeywordStorage(value);
+}
+
 export function coerceBooleanKeywordStorage(value: unknown): boolean {
 	if (value === undefined || value === null || value === false) return false;
 	if (Array.isArray(value)) return value.length > 0;

@@ -1219,6 +1219,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'body']
 		],
 		nodeOnly: [
+			['_await', 'ForInStatement.await', 'a boolean'],
 			['_header', 'ForInStatement.header', 'a built ForHeader'],
 			['_body', 'ForInStatement.body', 'a built Statement']
 		]
@@ -1418,6 +1419,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'body']
 		],
 		nodeOnly: [
+			['_async', 'FunctionExpression.async', 'a boolean'],
 			['_name', 'FunctionExpression.name', 'buildIdentifier(…)'],
 			['_type_parameters', 'FunctionExpression.typeParameters', 'a built TypeParameters'],
 			['_parameters', 'FunctionExpression.parameters', 'a built FormalParameters'],
@@ -1437,6 +1439,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'body']
 		],
 		nodeOnly: [
+			['_async', 'FunctionDeclaration.async', 'a boolean'],
 			['_name', 'FunctionDeclaration.name', 'buildIdentifier(…)'],
 			['_type_parameters', 'FunctionDeclaration.typeParameters', 'a built TypeParameters'],
 			['_parameters', 'FunctionDeclaration.parameters', 'a built FormalParameters'],
@@ -1455,6 +1458,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'body']
 		],
 		nodeOnly: [
+			['_async', 'GeneratorFunction.async', 'a boolean'],
 			['_name', 'GeneratorFunction.name', 'buildIdentifier(…)'],
 			['_type_parameters', 'GeneratorFunction.typeParameters', 'a built TypeParameters'],
 			['_parameters', 'GeneratorFunction.parameters', 'a built FormalParameters'],
@@ -1474,6 +1478,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'body']
 		],
 		nodeOnly: [
+			['_async', 'GeneratorFunctionDeclaration.async', 'a boolean'],
 			['_name', 'GeneratorFunctionDeclaration.name', 'buildIdentifier(…)'],
 			['_type_parameters', 'GeneratorFunctionDeclaration.typeParameters', 'a built TypeParameters'],
 			['_parameters', 'GeneratorFunctionDeclaration.parameters', 'a built FormalParameters'],
@@ -1492,6 +1497,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'body']
 		],
 		nodeOnly: [
+			['_async', 'ArrowFunction.async', 'a boolean'],
 			['_content', 'ArrowFunction.content', 'a built ArrowFunctionParameter / CallSignature'],
 			['_body', 'ArrowFunction.body', 'a built Expression / StatementBlock']
 		]
@@ -1531,6 +1537,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_object', 'SubscriptExpression.object', 'a built Expression / PrimaryExpression'],
+			['_optional_chain', 'SubscriptExpression.optionalChain', 'a boolean'],
 			['_index', 'SubscriptExpression.index', 'a built Expression / SequenceExpression']
 		]
 	},
@@ -1546,6 +1553,7 @@ export const structure: StructureTable = Object.freeze({
 			['_right', 'right']
 		],
 		nodeOnly: [
+			['_using', 'AssignmentExpression.using', 'a boolean'],
 			['_left', 'AssignmentExpression.left', 'a built ParenthesizedExpression / LhsExpression'],
 			['_right', 'AssignmentExpression.right', 'a built Expression']
 		]
@@ -1673,12 +1681,17 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_accessibility_modifier', 'MethodDefinition.accessibilityModifier', 'a kind id'],
+			['_static', 'MethodDefinition.static', 'a boolean'],
+			['_override', 'MethodDefinition.override', 'a boolean'],
+			['_readonly', 'MethodDefinition.readonly', 'a boolean'],
+			['_async', 'MethodDefinition.async', 'a boolean'],
 			['_accessor_kind', 'MethodDefinition.accessorKind', 'a kind id'],
 			[
 				'_name',
 				'MethodDefinition.name',
 				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
 			],
+			['_optional', 'MethodDefinition.optional', 'a boolean'],
 			['_type_parameters', 'MethodDefinition.typeParameters', 'a built TypeParameters'],
 			['_parameters', 'MethodDefinition.parameters', 'a built FormalParameters'],
 			[
@@ -1729,7 +1742,13 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_name', 'name']],
 		nodeOnly: [
 			['_decorator', 'PublicFieldDefinition.decorator', 'a built Decorator'],
+			['_declare', 'PublicFieldDefinition.declare', 'a boolean'],
 			['_accessibility_modifier', 'PublicFieldDefinition.accessibilityModifier', 'a kind id'],
+			['_static', 'PublicFieldDefinition.static', 'a boolean'],
+			['_override', 'PublicFieldDefinition.override', 'a boolean'],
+			['_readonly', 'PublicFieldDefinition.readonly', 'a boolean'],
+			['_abstract', 'PublicFieldDefinition.abstract', 'a boolean'],
+			['_accessor', 'PublicFieldDefinition.accessor', 'a boolean'],
 			[
 				'_name',
 				'PublicFieldDefinition.name',
@@ -1753,12 +1772,17 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_accessibility_modifier', 'MethodSignature.accessibilityModifier', 'a kind id'],
+			['_static', 'MethodSignature.static', 'a boolean'],
+			['_override', 'MethodSignature.override', 'a boolean'],
+			['_readonly', 'MethodSignature.readonly', 'a boolean'],
+			['_async', 'MethodSignature.async', 'a boolean'],
 			['_accessor_kind', 'MethodSignature.accessorKind', 'a kind id'],
 			[
 				'_name',
 				'MethodSignature.name',
 				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
 			],
+			['_optional', 'MethodSignature.optional', 'a boolean'],
 			['_type_parameters', 'MethodSignature.typeParameters', 'a built TypeParameters'],
 			['_parameters', 'MethodSignature.parameters', 'a built FormalParameters'],
 			[
@@ -1776,12 +1800,14 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_accessibility_modifier', 'AbstractMethodSignature.accessibilityModifier', 'a kind id'],
+			['_override', 'AbstractMethodSignature.override', 'a boolean'],
 			['_accessor_kind', 'AbstractMethodSignature.accessorKind', 'a kind id'],
 			[
 				'_name',
 				'AbstractMethodSignature.name',
 				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
 			],
+			['_optional', 'AbstractMethodSignature.optional', 'a boolean'],
 			['_type_parameters', 'AbstractMethodSignature.typeParameters', 'a built TypeParameters'],
 			['_parameters', 'AbstractMethodSignature.parameters', 'a built FormalParameters'],
 			[
@@ -1798,6 +1824,7 @@ export const structure: StructureTable = Object.freeze({
 			['_parameters', 'parameters']
 		],
 		nodeOnly: [
+			['_async', 'FunctionSignature.async', 'a boolean'],
 			['_name', 'FunctionSignature.name', 'buildIdentifier(…)'],
 			['_type_parameters', 'FunctionSignature.typeParameters', 'a built TypeParameters'],
 			['_parameters', 'FunctionSignature.parameters', 'a built FormalParameters'],
@@ -1974,6 +2001,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'body']
 		],
 		nodeOnly: [
+			['_const', 'EnumDeclaration.const', 'a boolean'],
 			['_name', 'EnumDeclaration.name', 'buildIdentifier(…)'],
 			['_body', 'EnumDeclaration.body', 'a built EnumBody']
 		]
@@ -2012,6 +2040,8 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_decorator', 'RequiredParameter.decorator', 'a built Decorator'],
 			['_accessibility_modifier', 'RequiredParameter.accessibilityModifier', 'a kind id'],
+			['_override', 'RequiredParameter.override', 'a boolean'],
+			['_readonly', 'RequiredParameter.readonly', 'a boolean'],
 			['_pattern', 'RequiredParameter.pattern', 'a built Pattern'],
 			['_type', 'RequiredParameter.type', 'a built TypeAnnotation'],
 			['_value', 'RequiredParameter.value', 'a built Expression']
@@ -2023,6 +2053,8 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_decorator', 'OptionalParameter.decorator', 'a built Decorator'],
 			['_accessibility_modifier', 'OptionalParameter.accessibilityModifier', 'a kind id'],
+			['_override', 'OptionalParameter.override', 'a boolean'],
+			['_readonly', 'OptionalParameter.readonly', 'a boolean'],
 			['_pattern', 'OptionalParameter.pattern', 'a built Pattern'],
 			['_type', 'OptionalParameter.type', 'a built TypeAnnotation'],
 			['_value', 'OptionalParameter.value', 'a built Expression']
@@ -2127,6 +2159,7 @@ export const structure: StructureTable = Object.freeze({
 			['_type', 'type']
 		],
 		nodeOnly: [
+			['_abstract', 'ConstructorType.abstract', 'a boolean'],
 			['_type_parameters', 'ConstructorType.typeParameters', 'a built TypeParameters'],
 			['_parameters', 'ConstructorType.parameters', 'a built FormalParameters'],
 			['_type', 'ConstructorType.type', 'a built Type']
@@ -2212,6 +2245,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_object', 'TypeQuerySubscriptExpression.object', 'buildIdentifier(…)'],
+			['_optional_chain', 'TypeQuerySubscriptExpression.optionalChain', 'a boolean'],
 			['_index', 'TypeQuerySubscriptExpression.index', 'a built String / Number']
 		]
 	},
@@ -2320,11 +2354,15 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_name', 'name']],
 		nodeOnly: [
 			['_accessibility_modifier', 'PropertySignature.accessibilityModifier', 'a kind id'],
+			['_static', 'PropertySignature.static', 'a boolean'],
+			['_override', 'PropertySignature.override', 'a boolean'],
+			['_readonly', 'PropertySignature.readonly', 'a boolean'],
 			[
 				'_name',
 				'PropertySignature.name',
 				'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
 			],
+			['_optional', 'PropertySignature.optional', 'a boolean'],
 			['_type', 'PropertySignature.type', 'a built TypeAnnotation']
 		]
 	},
@@ -2337,6 +2375,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'type_parameter',
 		required: [['_name', 'name']],
 		nodeOnly: [
+			['_const', 'TypeParameter.const', 'a boolean'],
 			['_name', 'TypeParameter.name', 'a built TypeIdentifier'],
 			['_constraint', 'TypeParameter.constraint', 'a built Constraint'],
 			['_value', 'TypeParameter.value', 'a built DefaultType']
@@ -2362,6 +2401,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'construct_signature',
 		required: [['_parameters', 'parameters']],
 		nodeOnly: [
+			['_abstract', 'ConstructSignature.abstract', 'a boolean'],
 			['_type_parameters', 'ConstructSignature.typeParameters', 'a built TypeParameters'],
 			['_parameters', 'ConstructSignature.parameters', 'a built FormalParameters'],
 			['_type', 'ConstructSignature.type', 'a built TypeAnnotation']
@@ -2522,6 +2562,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_sign', 'IndexSignatureColon.sign', 'a kind id'],
+			['_readonly', 'IndexSignatureColon.readonly', 'a boolean'],
 			['_name', 'IndexSignatureColon.name', 'buildIdentifier(…)'],
 			['_index_type', 'IndexSignatureColon.indexType', 'a built Type'],
 			[
@@ -2539,6 +2580,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_sign', 'IndexSignatureMappedTypeClause.sign', 'a kind id'],
+			['_readonly', 'IndexSignatureMappedTypeClause.readonly', 'a boolean'],
 			['_mapped_type_clause', 'IndexSignatureMappedTypeClause.mappedTypeClause', 'a built MappedTypeClause'],
 			[
 				'_type',
@@ -2688,6 +2730,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'export_statement_default_from',
 		required: [['_content', 'content']],
 		nodeOnly: [
+			['_type', 'ExportStatementDefaultFrom.type', 'a boolean'],
 			[
 				'_content',
 				'ExportStatementDefaultFrom.content',
