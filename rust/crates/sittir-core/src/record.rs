@@ -78,11 +78,8 @@ impl<T, const ADJACENT: bool> RecordCell for SlotValue<T, ADJACENT> {
 /// Absent is tag 0 of the inner cell.
 impl<T: RecordCell> RecordCell for Option<T> {
     const WIDTH: u32 = T::WIDTH;
+    const RUN: u32 = T::RUN;
     const PRESENCE: bool = T::PRESENCE;
-}
-
-impl<T: RecordCell> RecordCell for Box<T> {
-    const WIDTH: u32 = T::WIDTH;
 }
 
 /// A list: the offset and length of its run of item cells.
@@ -139,5 +136,11 @@ mod tests {
         assert!(fits_bit::<bool>());
         assert!(!fits_cell::<bool>(5, 0));
         assert!(!fits_bit::<SlotValue<()>>());
+    }
+
+    #[test]
+    fn an_optional_cell_preserves_its_list_items_width() {
+        assert!(fits_cell::<Option<Vec<SlotValue<()>>>>(2, 5));
+        assert!(!fits_cell::<Option<Vec<SlotValue<()>>>>(2, 4));
     }
 }
