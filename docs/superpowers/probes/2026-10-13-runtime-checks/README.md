@@ -95,7 +95,7 @@ The native side has no check to switch off today. Every native refusal of built 
 
 Skipping any of these means one of two things. Either the Rust types weaken (`Vec` for `NonEmptyVec`, `Option` for a required slot), and the renderer gains a branch for a case the types used to exclude. Or the decode trusts the input, and a JavaScript caller that bypasses the types reaches a panic, which aborts the process unless the binding catches unwinds. Neither is a saving. The decode already reads the length, the field and the kind, so the refusal costs nothing extra.
 
-**So the native decode refuses in both modes. That refines the ruling: it is the type boundary, not a duplicate check.** The option reaches native when native gains a verification step beyond decode. That happens when the arena writer lands: native then writes built nodes, and the client checks below move with the write. Until then, `NativeEngineOptions` gets no new field, because there is nothing to gate.
+**So the native decode refuses in both modes. That refines the ruling: it is the type boundary, not a duplicate check.** The option reaches native when native gains a verification step beyond decode. That happens when the arena writer lands: native then writes built nodes, and the client checks below move with the write. Until then, `NativeEngineOptions` gets no new field, because there is nothing to gate. Today those refusals are napi's own conversion (`NonEmptyVec`'s `FromNapiValue`, the derived object codecs), not a sittir check. The question returns when the record/arena codec replaces napi's object decode: that codec is sittir's, and whatever it checks beyond building the Rust value is gated then.
 
 ### Census: proved by the types or not
 
