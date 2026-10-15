@@ -50,35 +50,32 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 	}
 }
 
-const _leafRe_buildIdentifier = /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
-const _leafRe_buildTokenRepetitionPatternText = /^(?:(?:[^+*?]+))$/u;
-const _leafRe_buildStringOpen = /^(?:(?:[bc]?"))$/u;
-const _leafRe_buildCharLiteralEmpty = /^(?:(?:b)?'')$/u;
-const _leafRe_buildLineCommentExtraSlashes = /^(?:(?:\/\/)(?:.*))$/u;
-const _leafRe_buildLineCommentRegular = /^(?:(?:.*))$/u;
-const _leafRe_buildBlockCommentRegular = /^(?:(?:[^]*))$/u;
-const _leafRe_buildFloatLiteral =
+export const _leafRe_buildIdentifier = /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
+export const _leafRe_buildTokenRepetitionPatternText = /^(?:(?:[^+*?]+))$/u;
+export const _leafRe_buildStringOpen = /^(?:(?:[bc]?"))$/u;
+export const _leafRe_buildCharLiteralEmpty = /^(?:(?:b)?'')$/u;
+export const _leafRe_buildLineCommentExtraSlashes = /^(?:(?:\/\/)(?:.*))$/u;
+export const _leafRe_buildLineCommentRegular = /^(?:(?:.*))$/u;
+export const _leafRe_buildBlockCommentRegular = /^(?:(?:[^]*))$/u;
+export const _leafRe_buildFloatLiteral =
 	/^(?:(?:[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?))$/u;
-const _leafRe_buildStringContent = /^(?:(?:[^"\\]+))$/u;
-const _leafRe_buildRawStringLiteralContent = /^(?:(?:[\s\S]*))$/u;
-const _leafRe_buildRawStringLiteralStart = /^(?:(?:[bc]?r#*"))$/u;
-const _leafRe_buildRawStringLiteralEnd = /^(?:(?:"#*))$/u;
-const _leafRe_buildDocComment = /^(?:(?:.*\n?))$/u;
-const _leafRe_buildBlockCommentContent = /^(?:(?:[^]*))$/u;
+export const _leafRe_buildStringContent = /^(?:(?:[^"\\]+))$/u;
+export const _leafRe_buildRawStringLiteralContent = /^(?:(?:[\s\S]*))$/u;
+export const _leafRe_buildRawStringLiteralStart = /^(?:(?:[bc]?r#*"))$/u;
+export const _leafRe_buildRawStringLiteralEnd = /^(?:(?:"#*))$/u;
+export const _leafRe_buildDocComment = /^(?:(?:.*\n?))$/u;
+export const _leafRe_buildBlockCommentContent = _leafRe_buildBlockCommentRegular;
 export const _slotRe_buildShebang_content = /^(?:[\r\f\t\v ]*(?:[^[\n].*)?)$/u;
 export const _slotRe_buildMetavariable_name = /^(?:[a-zA-Z_]\w*)$/u;
 export const _slotRe_buildIntegerLiteralDecimal_content = /^(?:(?:[0-9][0-9_]*))$/u;
 export const _slotRe_buildIntegerLiteralDecimal_suffix =
 	/^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
 export const _slotRe_buildIntegerLiteralHex_content = /^(?:(?:0x[0-9a-fA-F_]+))$/u;
-export const _slotRe_buildIntegerLiteralHex_suffix =
-	/^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
+export const _slotRe_buildIntegerLiteralHex_suffix = _slotRe_buildIntegerLiteralDecimal_suffix;
 export const _slotRe_buildIntegerLiteralBinary_content = /^(?:(?:0b[01_]+))$/u;
-export const _slotRe_buildIntegerLiteralBinary_suffix =
-	/^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
+export const _slotRe_buildIntegerLiteralBinary_suffix = _slotRe_buildIntegerLiteralDecimal_suffix;
 export const _slotRe_buildIntegerLiteralOctal_content = /^(?:(?:0o[0-7_]+))$/u;
-export const _slotRe_buildIntegerLiteralOctal_suffix =
-	/^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
+export const _slotRe_buildIntegerLiteralOctal_suffix = _slotRe_buildIntegerLiteralDecimal_suffix;
 export const _slotRe_buildCharLiteralPlain_content = /^(?:(?:[^\\']))$/u;
 export const _slotRe_buildCharLiteralEscapedSimple_content = /^(?:\\(?:[^xu]))$/u;
 export const _slotRe_buildCharLiteralEscapedUnicodeFixed_content = /^(?:\\(?:u[0-9a-fA-F]{4}))$/u;

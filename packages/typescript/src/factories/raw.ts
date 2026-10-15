@@ -58,38 +58,37 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 	}
 }
 
-const _leafRe_buildUnescapedDoubleStringFragment = /^(?:(?:[^"\\\r\n]+))$/u;
-const _leafRe_buildUnescapedSingleStringFragment = /^(?:(?:[^'\\\r\n]+))$/u;
-const _leafRe_buildRegexPattern = /^(?:(?:(?:\[(?:(?:\\(?:.)|(?:[^\]\n\\])))*\]|\\(?:.)|(?:[^/\\[\n])))+)$/u;
-const _leafRe_buildRegexFlags = /^(?:(?:[a-z]+))$/u;
-const _leafRe_buildIdentifier =
+export const _leafRe_buildUnescapedDoubleStringFragment = /^(?:(?:[^"\\\r\n]+))$/u;
+export const _leafRe_buildUnescapedSingleStringFragment = /^(?:(?:[^'\\\r\n]+))$/u;
+export const _leafRe_buildRegexPattern = /^(?:(?:(?:\[(?:(?:\\(?:.)|(?:[^\]\n\\])))*\]|\\(?:.)|(?:[^/\\[\n])))+)$/u;
+export const _leafRe_buildRegexFlags = /^(?:(?:[a-z]+))$/u;
+export const _leafRe_buildIdentifier =
 	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
-const _leafRe_buildNumberDecimal = /^(?:(?:\d(_?\d)*))$/u;
-const _leafRe_buildHtmlComment = /^(?:(?:<!--[\s\S]*?-->))$/u;
-const _leafRe_buildJsxText = /^(?:(?:[^{}<>]+))$/u;
-const _leafRe_buildTemplateChars = /^(?:(?:[^`\\$]+))$/u;
+export const _leafRe_buildNumberDecimal = /^(?:(?:\d(_?\d)*))$/u;
+export const _leafRe_buildHtmlComment = /^(?:(?:<!--[\s\S]*?-->))$/u;
+export const _leafRe_buildJsxText = /^(?:(?:[^{}<>]+))$/u;
+export const _leafRe_buildTemplateChars = /^(?:(?:[^`\\$]+))$/u;
 export const _slotRe_buildHashBangLine_content = /^(?:.*)$/u;
 export const _slotRe_buildEscapeSequence_content =
 	/^(?:(?:(?:[^xu0-7])|(?:[0-7]{1,3})|(?:x[0-9a-fA-F]{2})|(?:u[0-9a-fA-F]{4})|(?:u\{[0-9a-fA-F]+\})|(?:[\r?][\n\u2028\u2029])))$/u;
-export const _slotRe_buildPrivatePropertyIdentifier_content =
-	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
+export const _slotRe_buildPrivatePropertyIdentifier_content = _leafRe_buildIdentifier;
 export const _slotRe_buildCommentLine_content = /^(?:(?:[^\r\n\u2028\u2029]*))$/u;
 export const _slotRe_buildCommentBlock_content = /^(?:(?:([^*]|\*+[^*/])*\**))$/u;
 export const _slotRe_buildNumberHex_prefix = /^(?:0x|0X)$/u;
 export const _slotRe_buildNumberHex_content = /^(?:(?:[\da-fA-F](_?[\da-fA-F])*))$/u;
 export const _slotRe_buildNumberFloatPoint_integer = /^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?))$/u;
-export const _slotRe_buildNumberFloatPoint_fraction = /^(?:(?:\d(_?\d)*))$/u;
+export const _slotRe_buildNumberFloatPoint_fraction = _leafRe_buildNumberDecimal;
 export const _slotRe_buildNumberFloatPoint_marker = /^(?:e|E)$/u;
 export const _slotRe_buildNumberFloatPoint_sign = /^(?:-|\+)$/u;
-export const _slotRe_buildNumberFloatPoint_exponent = /^(?:(?:\d(_?\d)*))$/u;
-export const _slotRe_buildNumberFloatLeadingPoint_fraction = /^(?:(?:\d(_?\d)*))$/u;
-export const _slotRe_buildNumberFloatLeadingPoint_marker = /^(?:e|E)$/u;
-export const _slotRe_buildNumberFloatLeadingPoint_sign = /^(?:-|\+)$/u;
-export const _slotRe_buildNumberFloatLeadingPoint_exponent = /^(?:(?:\d(_?\d)*))$/u;
-export const _slotRe_buildNumberFloatScientific_integer = /^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?))$/u;
-export const _slotRe_buildNumberFloatScientific_marker = /^(?:e|E)$/u;
-export const _slotRe_buildNumberFloatScientific_sign = /^(?:-|\+)$/u;
-export const _slotRe_buildNumberFloatScientific_exponent = /^(?:(?:\d(_?\d)*))$/u;
+export const _slotRe_buildNumberFloatPoint_exponent = _leafRe_buildNumberDecimal;
+export const _slotRe_buildNumberFloatLeadingPoint_fraction = _leafRe_buildNumberDecimal;
+export const _slotRe_buildNumberFloatLeadingPoint_marker = _slotRe_buildNumberFloatPoint_marker;
+export const _slotRe_buildNumberFloatLeadingPoint_sign = _slotRe_buildNumberFloatPoint_sign;
+export const _slotRe_buildNumberFloatLeadingPoint_exponent = _leafRe_buildNumberDecimal;
+export const _slotRe_buildNumberFloatScientific_integer = _slotRe_buildNumberFloatPoint_integer;
+export const _slotRe_buildNumberFloatScientific_marker = _slotRe_buildNumberFloatPoint_marker;
+export const _slotRe_buildNumberFloatScientific_sign = _slotRe_buildNumberFloatPoint_sign;
+export const _slotRe_buildNumberFloatScientific_exponent = _leafRe_buildNumberDecimal;
 export const _slotRe_buildNumberBinary_prefix = /^(?:0b|0B)$/u;
 export const _slotRe_buildNumberBinary_content = /^(?:(?:[0-1](_?[0-1])*))$/u;
 export const _slotRe_buildNumberOctal_prefix = /^(?:0o|0O)$/u;
@@ -97,7 +96,7 @@ export const _slotRe_buildNumberOctal_content = /^(?:(?:[0-7](_?[0-7])*))$/u;
 export const _slotRe_buildNumberBigintHex_content = /^(?:(?:0x|0X)(?:[\da-fA-F](_?[\da-fA-F])*))$/u;
 export const _slotRe_buildNumberBigintBinary_content = /^(?:(?:0b|0B)(?:[0-1](_?[0-1])*))$/u;
 export const _slotRe_buildNumberBigintOctal_content = /^(?:(?:0o|0O)(?:[0-7](_?[0-7])*))$/u;
-export const _slotRe_buildNumberBigintDecimal_content = /^(?:(?:\d(_?\d)*))$/u;
+export const _slotRe_buildNumberBigintDecimal_content = _leafRe_buildNumberDecimal;
 const _delimited_buildCommentBlock: DelimitedSpec = {
 	kind: 'comment_block',
 	id: TSKindId.CommentBlock as const,
