@@ -2,19 +2,20 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** sittir's parsers reject what each language's grammar productions exclude, take the upstream fixes already released, port rust's open upstream fixes, and then accept the valid syntax the trackers report as rejected.
+**Goal:** sittir's parsers reject what each language's grammar productions exclude, take the upstream fixes already released, port rust's open upstream fixes, accept the valid syntax the trackers report as rejected, and give the builder contexts the kinds their rules need.
 
 **Architecture:**
 - A new rule cause, `reauthored('accepts-invalid-syntax', witnesses, body)`, is the mirror of `rejects-valid-syntax`. Each witness names the production that excludes its text, and the gate proves that upstream derives the form while the authored body does not.
 - Every witnessed cause takes a non-empty witness array, even for one witness. The three existing declarations migrate: python's `tuple` and `tuple_pattern`, and typescript's `export_statement`.
 - The pins come first, so authoring is written against the grammars it will ship on.
 - Then one authoring stage per grammar, each a set of `grammar.sittir.ts` rules.
-- A last stage takes the valid syntax the trackers report as rejected. Each row there is dropped when upstream releases its fix.
+- A fifth stage takes the valid syntax the trackers report as rejected. Each row there is dropped when upstream releases its fix.
+- A last stage gives each distinction the builder contexts need a kind of its own: an async function, a generator method, an unlabeled `break`, a trait impl. Each is a set of arms that enrich mints as variant forms.
 - Early errors (context, labels, strict mode, duplicate names) are not parser work. They are the stated bound of "valid by construction", and the contexts spec takes the context rules into the builder.
 
 **Tech Stack:** the grammar DSL (`packages/codegen/src/dsl`), the rule-cause gate (`packages/codegen/src/compiler/diagnostics/rule-causes.ts`), web-tree-sitter, vitest, pnpm overrides.
 
-**Spec:** the census, [docs/superpowers/probes/2026-10-15-grammar-over-acceptance/README.md](../probes/2026-10-15-grammar-over-acceptance/README.md). Every row this plan authors is a `production` row in its `witnesses.json` or `upstream-rows.json`, with the citation carried there.
+**Spec:** the census, [docs/superpowers/probes/2026-10-15-grammar-over-acceptance/README.md](../probes/2026-10-15-grammar-over-acceptance/README.md). Every row this plan authors is a `production` row in its `witnesses.json` or `upstream-rows.json`, with the citation carried there. Stage 6 implements the gaps listed in [the builder contexts spec](../specs/2026-10-15-builder-contexts-design.md), §11.
 
 ## Global Constraints
 
@@ -363,6 +364,85 @@ These are ports or authored structure, each with a witness array: `rejects-valid
 | 5.9 | typescript | `bigint` missing from `predefined_type` (mis-parse; no upstream issue or PR) | authored | `predefined_type` gains `'bigint'`; afterwards `bindings.scm` claims it as a primitive, named by the vocabulary's primitives-by-width ruling |
 
 For each port, fetch the PR's diff with `gh pr diff <n> -R tree-sitter/tree-sitter-typescript` and author it against the pinned rule. Use its corpus case as the witness, and add that case to `local.txt`.
+
+## Stage 6: kinds the builder contexts need
+
+The builder contexts key every rule by kind, and a distinction with no kind is a gap that the contexts table over-approximates (builder contexts spec, §3 and §11). Each task below gives one distinction a kind of its own.
+
+- The rule is reauthored as arms. Enrich mints each arm as a variant form that holds the arm's slots, as it mints `impl_item_body` and `impl_item_semi` under `impl_item` today.
+- Each rule is declared `reauthored('semantic-gap', witnesses, body)`. The upstream kind accepts the text and stays the parent. Each witness's `meaning` states what differs: what the arm's body admits.
+- Each task changes the generated surface: the parent's builder gains its variants' routes, as `impl_item`'s has. So each task reports the surface diff with its gate numbers.
+
+**Gate, for every task:**
+- **Valid input parses to the same trees apart from the new kinds:** every corpus tree, compared node by node after each new variant node is replaced by its children.
+- **Validation rows** are unchanged, or each moved row is named.
+- **The census row closes as the task lands.** The contexts table moves onto the new kind: in the probe's `tables.mts`, and in the `contexts` block once it exists. It then refuses the row's witness, and still refuses no valid corpus entry.
+
+### Task 6.1: TypeScript async function forms
+
+**Rules:** `function_declaration`, `function_expression`, `generator_function_declaration`, `generator_function`, `arrow_function`, and `method_definition`'s plain arm from Task 2.1.
+**Depends on:** Task 0.1 (witness arrays) and Task 2.1.
+
+```ts
+function_declaration: reauthored('semantic-gap', [{
+	text: 'async function f() { await p; }',
+	form: ['async', 'function', { symbol: 'identifier' }, { symbol: 'formal_parameters' }, { symbol: 'statement_block' }],
+	kind: 'function_declaration',
+	meaning: "an async function's body admits await"
+}], ($) => choice(
+	variant('async', seq('async', 'function', field('name', $.identifier), $._call_signature, field('body', $.statement_block), …)),
+	variant('plain', seq('function', field('name', $.identifier), $._call_signature, field('body', $.statement_block), …))
+)),
+```
+
+- **Contexts:** `Await` is provided at the async forms' bodies, and bounded at the plain forms' bodies.
+- **Closes:** `await outside an async function`.
+- **Valid neighbours:** `async () => await p`, `async function* g() { await p; yield 1; }`, `class A { async m() { await p; } }`, and a plain function holding an async arrow that awaits.
+
+### Task 6.2: TypeScript generator methods
+
+**Rule:** `method_definition`. Task 2.1's plain arm splits `*` into an arm of its own.
+- **Contexts:** `Yield` is provided at the generator method form's body, and bounded at the plain method form's body.
+- **Closes:** no census row. It refuses `yield` in a method that is not a generator.
+
+### Task 6.3: TypeScript `for await`
+
+**Rule:** `for_in_statement`, with arms for `for await` and plain `for … of`.
+- **Contexts:** the `await` form requires `Await`.
+
+### Task 6.4: TypeScript abstract fields
+
+**Rule:** `public_field_definition`, with an arm for `abstract` fields.
+- **Contexts:** the abstract form requires `Abstract`, beside `abstract_method_signature`.
+
+### Task 6.5: Python `async def`, `async for` and `async with`
+
+**Rules:** `function_definition`, `for_statement` and `with_statement`, each with an async arm and a plain arm.
+- **Contexts:** `Await` is provided at the async `def` form's body, and bounded at the plain form's. The async `for` and `with` forms require `Await`.
+- **Valid neighbours:** `async def f(): [await x for x in y]`, and `async def f(): async with a: pass`.
+
+### Task 6.6: Rust unlabeled `break`
+
+**Rule:** `break_expression`, with labeled and unlabeled arms.
+- **Contexts:**
+  - `Break` is required by the unlabeled form.
+  - It is provided at loop bodies, and bounded at function, closure and async-block bodies and at constant values.
+  - The labeled form requires nothing, since label scope is outside the bound.
+- **Closes:** rust's `break outside a loop`.
+- **Valid neighbours:** `'a: { break 'a; }` and `loop { break 1; }`.
+
+### Task 6.7: Rust trait-impl bodies
+
+**Rule:** `impl_item_body`, with arms with and without `trait_clause`.
+- **Contexts:** `Visibility` is bounded at the trait-impl form's body.
+- **Closes:** `visibility on a trait impl item`.
+- **Valid neighbours:** `impl S { pub fn f() {} }`, and `impl T for S { fn f() {} }`.
+
+### Task 6.8: Rust async functions and closures
+
+**Rules:** `function_item`, `closure_expression_block` and `closure_expression_expr`.
+**Depends on:** Task 4.2, which orders the qualifiers, so `async` sits at one position in `_item_modifiers`.
+- **Contexts:** `Await` is provided at the async forms' bodies and at `async_block`'s, and bounded at the others'.
 
 ## Known gaps
 

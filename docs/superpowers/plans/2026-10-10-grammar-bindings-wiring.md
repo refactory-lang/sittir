@@ -77,13 +77,29 @@ Ruled to be parser aliases at a context-unique site, with the ancestor clones ke
 
 The aliases retire the interim placed claim that reads any decorated function in a python class body as `declaration.method`.
 
-**Planned with the aliases: typescript's constructor as a kind.**
-- typescript's `bindings.scm` claims the constructor by a predicate today: `((method_definition name: (property_identifier) @name) @declaration.constructor (#eq? @name "constructor"))`. It becomes a kind of its own.
-- In a class body, a member whose name is the token `constructor` is its own rule, authored in typescript's `grammar.sittir.ts` at the class-body site. Object-literal methods keep `method_definition`, since a method named `constructor` there is an ordinary method. The claim then names the kind, and `$type` decides it.
-- It lands with the aliases because the claim and the read test change together.
-- The builder contexts depend on it. A member modifier is permitted in the constructor's parameters and in no other function's, and until this kind exists the `Visibility` table has to provide at every method's parameters (builder contexts spec, §11).
-- **Census:** the STATE and `parser.c` deltas, and every read of `declaration.constructor` and `declaration.method`.
-- **Gate:** reads classify the same.
+**Literal splits.** A claim that names a kind by a fixed text on the claimed node's own leaf becomes a parser split. It is built on this stage's one copy primitive: one primitive serves splits, contextual aliases and the receiver lead, and a copy aliases back to its source's name unless it is named.
+
+- **Input:** a kind claim whose predicate is `#eq?` or `#any-of?` on a leaf of the captured node. Typescript's constructor is the case that motivates it: `((method_definition name: (property_identifier) @name) @declaration.constructor (#eq? @name "constructor"))`.
+  - A regex predicate (`#match?`) is the lexical floor and stays a read test.
+  - A flag claim stays a flag read (stage 1): python's `staticmethod` names a flag, not a kind.
+- **The split:**
+  - The claimed kind's rule is copied with the leaf replaced by the literal, aliased back to the leaf's kind (`alias('constructor', $.property_identifier)`), so the leaf node does not change.
+  - The copy is named from the claim's path, as the aliases are (`declaration.constructor` → `constructor_declaration`). It sits beside its source at each use site the claim's pattern names.
+  - Ancestors the pattern names as context are copied, and alias back.
+  - The claim then names the copy, and `$type` decides it.
+- **Precondition: the literal lexes as a keyword token at that position**, as `get` and `set` do in a method's head. It matches the grammar's `word` token, and the leaf is the word token or an alias of it (`property_identifier` over `identifier`). Tree-sitter's keyword extraction then lexes it as the literal wherever the copy's arm is valid, and as the identifier everywhere else.
+- **Diagnostic:** `literal-split-not-keyword`, blocking, for a fixed-text kind claim that fails the precondition: text that is not word-shaped, or a leaf that is a string, a number or a token other than the word. The claim is dropped, or rewritten on a kind the grammar already has.
+- **What promotion takes away:** at the parse states where the copy's arm is valid, the literal no longer reads as an identifier in any other arm. The gate finds every such reading. Each must be one the language rejects too, as with a class field named `constructor` (TS18006), or the split is refused.
+- **The claims it covers today:**
+  - **Typescript's `constructor`.** Its claim gains the class body as context, so an object literal's method named `constructor` stays a method; today the claim reads it as a constructor.
+  - **Typescript's `never`, and rust's `true` and `false`.** These are already keyword tokens in their rules, so they split with no promotion.
+  - **Python's `__init__`**, on the class-body method alias above.
+  - **Out of scope:** every `#match?` claim (comment shapes, dunders, constants, string prefixes, rust's prelude type names), and python's `staticmethod` and `classmethod` flags.
+- **The builder contexts depend on it.** A member modifier is permitted in the constructor's parameters and in no other function's. Until the split lands, the `Visibility` table provides at every method's parameters (builder contexts spec, §11).
+- **Census:** each split's STATE and `parser.c` deltas, and the parse states where each literal becomes a keyword.
+- **Gate:**
+  - Every valid corpus tree parses the same, apart from the split kinds.
+  - Every read of a split claim classifies the same, except an object literal's `constructor` method, which reads as a method.
 
 **`static` reads from the method's own node.** Today both `static` facts come from context: rust's from a placed claim in an impl body with a per-parameter `#not-kind-eq?`, and python's from the parent `decorated_definition`'s decorator. With the aliases, each is read from the method's own node, or, for python, from the envelope the portable method is read through. The aliases' claims replace the placed ones:
 - **rust** (also needs 2b's receiver form): a method or method signature whose parameter list is not the receiver form is static. The per-parameter test misses a typed `self` (`self: Box<Self>`), which 2b moves into the receiver form.

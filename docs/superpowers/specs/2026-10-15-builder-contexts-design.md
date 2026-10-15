@@ -23,6 +23,9 @@ The user's rulings:
 - **Names are vocabulary terms** (`Break`, `Return`, `Await`, …), so portable code gets the same compile-time proof.
 - **`Bound` defaults to every context.**
 - **Strict mode stays outside**, in the stated bound. TypeScript is always strict, and a sloppy-mode context is a future JavaScript-grammar item.
+- **The gaps are filled.**
+  - The distinctions with no kind get one each, in a stage of the acceptance authoring plan.
+  - The constructor gets its kind through a general literal split: a fixed-text claim on a contextual keyword becomes a parser split. It is built on the one copy primitive that serves splits, contextual aliases and the receiver lead.
 
 Labels in scope are out of scope, because they depend on identifiers.
 
@@ -259,23 +262,12 @@ needs(node) = contextRequires(kind)
 
 | distinction | grammar | today | census rows waiting | route to a kind | stage |
 | --- | --- | --- | --- | --- | --- |
-| the constructor in a class body | typescript | `method_definition`'s parameters provide `Visibility`, so a member modifier on any method's parameter is accepted | parameter property outside a constructor | bindings.scm claims it by a predicate today (`#eq? @name "constructor"`); it becomes a kind authored at the class-body site | grammar-bindings wiring, 2c (planned there) |
-| async functions | typescript (function declarations and expressions, generators, arrows, methods) | every function body provides `Await` | `await` outside an async function | the optional `async` authored as arms, which enrich mints as variant forms | none yet |
-| generator methods | typescript | method bodies provide `Yield` | none | `method_definition`'s `*` as an arm; the acceptance plan's accessor task already splits `method_definition` into arms | none yet |
-| `for await` | typescript | not required | none | an arm of `for_in_statement` | none yet |
-| abstract fields | typescript | not required | none | an arm of `public_field_definition` | none yet |
-| `async def`, `async for`, `async with` | python | every function body provides `Await`; the loops are not required | none | arms | none yet |
-| an unlabeled `break` | rust | `Break` is not declared: a labeled block is the plain `block` kind, so a labeled `break` cannot be told from one that needs a loop | `break` outside a loop | `break_expression`'s label as arms. The unlabeled form requires `Break`; the labeled one requires nothing, since label scope is out of scope | none yet |
-| a trait impl | rust | impl bodies pass `Visibility` through | visibility on a trait-impl item | `impl_item_body`'s `trait_clause` as arms | none yet |
-| async functions and closures | rust | every function and closure body provides `Await` | none | arms | none yet |
-
-## Questions
-
-Rulings return through brainstorm.
-
-1. **The gaps with no stage.** Each fills with authored arms that enrich mints as variant forms, so each adds kinds and builders.
-   - (a) Plan them as a stage of the acceptance authoring plan, which already authors arms in the same rules (recommended). Its gate is that valid input parses to the same trees apart from the new kinds.
-   - (b) Leave them listed until a feature needs one.
-2. **The constructor kind**, planned in the wiring plan's 2c.
-   - (a) Author it as its own rule at the class-body site, with the token `constructor` as its name, so `$type` decides it and object-literal methods keep `method_definition` (recommended).
-   - (b) A general bindings mechanism that turns a `#eq?` predicate claim on a fixed text into a kind.
+| the constructor in a class body | typescript | `method_definition`'s parameters provide `Visibility`, so a member modifier on any method's parameter is accepted | parameter property outside a constructor | bindings.scm claims it by a fixed-text predicate (`#eq? @name "constructor"`), which a literal split turns into a parser kind: `constructor` lexes as a keyword at a class member's name, as `get` and `set` do | grammar-bindings wiring, 2c and 2e (literal splits) |
+| async functions | typescript (function declarations and expressions, generators, arrows, methods) | every function body provides `Await` | `await` outside an async function | the optional `async` authored as arms, which enrich mints as variant forms | acceptance plan, Task 6.1 |
+| generator methods | typescript | method bodies provide `Yield` | none | `method_definition`'s `*` as an arm, beside the accessor arms the acceptance plan authors | acceptance plan, Task 6.2 |
+| `for await` | typescript | not required | none | an arm of `for_in_statement` | acceptance plan, Task 6.3 |
+| abstract fields | typescript | not required | none | an arm of `public_field_definition` | acceptance plan, Task 6.4 |
+| `async def`, `async for`, `async with` | python | every function body provides `Await`; the loops are not required | none | arms | acceptance plan, Task 6.5 |
+| an unlabeled `break` | rust | `Break` is not declared: a labeled block is the plain `block` kind, so a labeled `break` cannot be told from one that needs a loop | `break` outside a loop | `break_expression`'s label as arms. The unlabeled form requires `Break`; the labeled one requires nothing, since label scope is out of scope | acceptance plan, Task 6.6 |
+| a trait impl | rust | impl bodies pass `Visibility` through | visibility on a trait-impl item | `impl_item_body`'s `trait_clause` as arms | acceptance plan, Task 6.7 |
+| async functions and closures | rust | every function and closure body provides `Await` | none | arms | acceptance plan, Task 6.8 |
