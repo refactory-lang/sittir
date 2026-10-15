@@ -90,6 +90,34 @@ describe('lead fact projection', () => {
 		);
 	});
 
+	it('routes the tests, predicates and sibling order of ordinary parameters through the rest list, not the receiver', async () => {
+		const facts = await readBindings(
+			'((function (entries . (parameter name: (self)) @receiver (parameter name: (self)) . (parameter name: (identifier) @rest))) @declaration.method (#eq? @rest "x"))'
+		);
+		const projected = projectLeadFacts(facts, [effect]);
+		const claim = projected.claims[0]!;
+		const rest = [
+			expect.objectContaining({ kind: 'entries_receiver' }),
+			expect.objectContaining({ kind: 'entries_receiver_group' }),
+			expect.objectContaining({ kind: 'entries', field: 'elements' })
+		];
+		const restParameter = expect.objectContaining({ kind: 'parameter', field: null, anchor: null });
+		expect(claim.predicates[0]?.subject?.down).toEqual([...rest, restParameter, expect.objectContaining({ kind: 'identifier', field: 'name' })]);
+		expect(claim.children).toContainEqual({ subject: { up: 0, down: [...rest, restParameter, expect.objectContaining({ kind: 'self', field: 'name' })] }, kinds: ['self'], captured: false });
+		expect(claim.children).toContainEqual({
+			subject: { up: 0, down: rest },
+			siblings: [
+				{ selector: { field: null, kind: 'parameter', after: null, anchor: null, adjacent: { next: expect.objectContaining({ kind: 'parameter' }) } }, bare: false },
+				{ selector: expect.objectContaining({ kind: 'parameter', adjacent: { previous: expect.objectContaining({ kind: 'parameter' }) } }), bare: false }
+			]
+		});
+		const steps = claim.children.flatMap((child) => child.subject.down);
+		expect(steps.filter((step) => step.field === 'receiver')).toEqual(steps.filter((step) => step.field === 'receiver' && step.adjacent === undefined));
+		expect(projected.members).toContainEqual(
+			expect.objectContaining({ name: 'rest', parent: 'parameter', via: [restParameter, ...rest.toReversed()] })
+		);
+	});
+
 	it('discharges only the kind restriction guaranteed by the minted receiver', async () => {
 		const facts = await readBindings(
 			'(function (entries . (parameter name: (self) type: (identifier)) @receiver)) @declaration.method'

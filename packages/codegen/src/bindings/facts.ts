@@ -303,6 +303,15 @@ function bindPath(
 	});
 }
 
+function bindVia(
+	via: readonly SlotSelector[],
+	owner: string,
+	rename: (kind: string) => string,
+	fieldNameOf: FieldNameOf
+): readonly SlotSelector[] {
+	return bindPath(via.toReversed(), owner, rename, fieldNameOf).toReversed();
+}
+
 function siteRootKind(site: CaptureSite, claim: ClaimFact): string | null {
 	return site.up === 0 ? claim.kind : (claim.within[site.up - 1] ?? null);
 }
@@ -322,14 +331,14 @@ function bindSite(
 
 function bindMember(m: MemberFact, rename: (kind: string) => string, fieldNameOf: FieldNameOf): MemberFact {
 	if (m.route === 'presence')
-		return { ...m, owner: rename(m.owner), via: bindPath(m.via, m.owner, rename, fieldNameOf) };
+		return { ...m, owner: rename(m.owner), via: bindVia(m.via, m.owner, rename, fieldNameOf) };
 	if (m.route === 'kind') return { ...m, owner: rename(m.owner), kind: rename(m.kind) };
 	if (m.route === 'nested')
 		return {
 			...bindSelector(m, rename, fieldNameOf, m.parent),
 			owner: rename(m.owner),
 			parent: rename(m.parent),
-			via: bindPath(m.via, m.owner, rename, fieldNameOf)
+			via: bindVia(m.via, m.owner, rename, fieldNameOf)
 		};
 	return { ...bindSelector(m, rename, fieldNameOf, m.owner), owner: rename(m.owner) };
 }

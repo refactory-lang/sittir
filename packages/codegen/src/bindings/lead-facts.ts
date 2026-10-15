@@ -10,66 +10,67 @@ const selector = (kind: string, field: string | null = null): SlotSelector => ({
 
 function receiverSelector(step: SlotSelector, effect: LeadEffect): SlotSelector {
 	return {
-		...step,
-		kind: step.kind === null ? null : (effect.variants[step.kind] ?? step.kind),
 		field: effect.field,
+		kind: step.kind === null ? null : (effect.variants[step.kind] ?? step.kind),
 		after: null,
 		anchor: null
 	};
 }
 
+const isLead = (step: SlotSelector): boolean => step.anchor === 'first';
+
+const restSelector = (step: SlotSelector): SlotSelector => ({
+	...step,
+	after: step.after !== null && isLead(step.after) ? null : step.after
+});
+
+const restPrefix = (effect: LeadEffect): readonly SlotSelector[] => [selector(effect.group), selector(effect.list, effect.restField)];
+
 function headPath(path: readonly SlotSelector[], root: string | null, effect: LeadEffect): readonly SlotSelector[] {
 	let parent = root;
-	let inside = root === effect.list || (root !== null && root in effect.variants);
-	return path.map((step) => {
-		const projected =
-			parent === effect.list
-				? receiverSelector(step, effect)
-				: {
-						...step,
-						kind:
-							step.kind === effect.list
-								? effect.receiver
-								: inside && step.kind !== null
-									? (effect.variants[step.kind] ?? step.kind)
-									: step.kind
-					};
-		if (step.kind === effect.list) inside = true;
+	let inside = root !== null && root in effect.variants;
+	return path.flatMap((step) => {
+		const below = parent === effect.list;
 		parent = step.kind;
-		return projected;
+		if (below) inside = isLead(step);
+		if (below) return inside ? [receiverSelector(step, effect)] : [...restPrefix(effect), restSelector(step)];
+		if (step.kind === effect.list) return [{ ...step, kind: effect.receiver }];
+		return [inside && step.kind !== null ? { ...step, kind: effect.variants[step.kind] ?? step.kind } : step];
 	});
 }
+
+const siteRoot = (site: CaptureSite, claim: ClaimFact): string | null =>
+	site.up === 0 ? claim.kind : (claim.within[site.up - 1] ?? null);
 
 function headSite(site: CaptureSite, claim: ClaimFact, effect: LeadEffect): CaptureSite {
 	return {
 		...site,
-		down: headPath(site.down, site.up === 0 ? claim.kind : (claim.within[site.up - 1] ?? null), effect)
+		down: headPath(site.down, siteRoot(site, claim), effect)
 	};
 }
 
-function headChild(child: ChildFact, claim: ClaimFact, effect: LeadEffect): ChildFact {
+function headChild(child: ChildFact, claim: ClaimFact, effect: LeadEffect): readonly ChildFact[] {
 	const subject = headSite(child.subject, claim, effect);
+	if ('siblings' in child) {
+		if ((child.subject.down.at(-1)?.kind ?? siteRoot(child.subject, claim)) !== effect.list) return [{ ...child, subject }];
+		const rest = child.siblings.filter((sibling) => !isLead(sibling.selector));
+		return rest.length === 0 ? [] : [{ subject: { ...subject, down: [...subject.down, ...restPrefix(effect)] }, siblings: rest.map((sibling) => ({ ...sibling, selector: restSelector(sibling.selector) })) }];
+	}
 	const original = child.subject.down.at(-1)?.kind;
 	const target = subject.down.at(-1)?.kind;
-	return {
-		...child,
-		subject,
-		...('kinds' in child
-			? {
-					kinds: child.kinds.map((kind) =>
-						kind === original && target !== null && target !== undefined ? target : kind
-					)
-				}
-			: {}),
-		...('siblings' in child
-			? {
-					siblings: child.siblings.map((sibling) => ({
-						...sibling,
-						selector: original === effect.list ? receiverSelector(sibling.selector, effect) : sibling.selector
-					}))
-				}
-			: {})
-	};
+	return [
+		{
+			...child,
+			subject,
+			...('kinds' in child
+				? {
+						kinds: child.kinds.map((kind) =>
+							kind === original && target !== null && target !== undefined ? target : kind
+						)
+					}
+				: {})
+		}
+	];
 }
 
 const isHeadMember = (member: MemberFact, effect: LeadEffect): boolean =>
@@ -91,6 +92,7 @@ function guaranteedHeadChild(child: ChildFact, claim: ClaimFact, effect: LeadEff
 	const listAt = path.findIndex((step) => step.kind === effect.list);
 	let matches = listAt < 0 ? matchesNamed(effect.admits, claim.kind ?? '') : effect.admits;
 	const remaining = listAt < 0 ? path : path.slice(listAt + 1);
+	if (listAt >= 0 && remaining[0] !== undefined && !isLead(remaining[0])) return false;
 	for (const [index, step] of remaining.entries()) {
 		if (listAt >= 0 && index === 0) matches = matches.filter((match) => match.kind === step.kind);
 		else {
@@ -121,7 +123,7 @@ function headClaim(claim: ClaimFact, effect: LeadEffect): ClaimFact {
 		within: claim.within.map((kind) => (kind === effect.list ? effect.receiver : (effect.variants[kind] ?? kind))),
 		children: claim.children
 			.filter((child) => !guaranteedHeadChild(child, claim, effect))
-			.map((child) => headChild(child, claim, effect)),
+			.flatMap((child) => headChild(child, claim, effect)),
 		predicates: claim.predicates.map((predicate) => ({
 			...predicate,
 			subject: predicate.subject === null ? null : headSite(predicate.subject, claim, effect)
@@ -131,24 +133,9 @@ function headClaim(claim: ClaimFact, effect: LeadEffect): ClaimFact {
 
 function headMember(member: MemberFact, effect: LeadEffect): MemberFact | undefined {
 	if (member.route !== 'nested' || !member.via.some((step) => step.kind === effect.list)) return undefined;
-	const path = [...member.via].reverse();
-	if (isHeadMember(member, effect)) {
-		return {
-			...member,
-			...receiverSelector(member, effect),
-			parent: effect.receiver,
-			via: headPath(path, member.owner, effect).toReversed()
-		};
-	}
-	const at = path.findIndex((step) => step.kind === effect.list);
-	const via = [
-		...path.slice(0, at),
-		{ ...path[at]!, kind: effect.receiver },
-		selector(effect.group),
-		selector(effect.list, effect.restField),
-		...path.slice(at + 1)
-	].toReversed();
-	return { ...member, via };
+	const path = headPath([...member.via.toReversed(), member], member.owner, effect);
+	const { field, kind, after, anchor, adjacent } = path.at(-1)!;
+	return { ...member, field, kind, after, anchor, adjacent, parent: path.at(-2)?.kind ?? member.parent, via: path.slice(0, -1).toReversed() };
 }
 
 interface ClaimIndices {

@@ -98,6 +98,28 @@ describe('bindFacts', () => {
 		});
 	});
 
+	it('binds each step of a member’s via against the kind that holds it, walking from the owner outward though via is nearest first', () => {
+		const step = (field: string, kind: string) => ({ field, kind, after: null, anchor: null });
+		const fields: Record<string, Record<string, string>> = {
+			required_parameter: { pattern: 'name' },
+			object_pattern: { elements: 'items' }
+		};
+		const via = [step('elements', 'pair_pattern'), step('pattern', 'object_pattern')];
+		const mapped = bindFacts(
+			{
+				...facts,
+				members: [
+					{ route: 'nested', owner: 'required_parameter', name: 'key', parent: 'pair_pattern', multiple: false, via, ...step('key', 'property_identifier') },
+					{ route: 'presence', owner: 'required_parameter', name: 'shorthand', token: '...', via }
+				]
+			},
+			(kind) => kind,
+			(owner: string, field: string) => fields[owner]?.[field] ?? field
+		);
+		const bound = [step('items', 'pair_pattern'), step('name', 'object_pattern')];
+		expect(mapped.members.map((m) => ('via' in m ? m.via : undefined))).toEqual([bound, bound]);
+	});
+
 	it('names every claimed kind and placement by its bound kind, and leaves a wildcard claim as it is', () => {
 		expect(bound.claims.map((c) => [c.kind, c.within])).toEqual([
 			['bound_function_item', ['bound_impl_item']],

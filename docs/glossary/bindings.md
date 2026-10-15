@@ -1530,6 +1530,10 @@ Maps one non-null field through its known owner; an unknown owner preserves the 
 
 Binds a selector path in order, using each original selected kind as the owner of the next step.
 
+### `packages/codegen/src/bindings/facts.ts::bindVia`
+
+Binds a member's `via` path. `via` lists the nearest enclosing kind first, so its outermost step is the one the owner holds: the path is bound from the owner outward and returned in its original order, each field read against the kind that holds it.
+
 ### `packages/codegen/src/bindings/facts.ts::siteRootKind`
 
 The claimed kind when no upward step is taken, otherwise the counted enclosing kind; an unavailable enclosing kind remains unknown.
@@ -1553,15 +1557,36 @@ route through the exact minted rest group and its original list field.
 
 ### `packages/codegen/src/bindings/lead-facts.ts::headPath`
 
-Maps a downward capture path through the receiver form and its first field,
-using the effect's actual visible variants. Nested member facts store their
-`via` paths innermost first, so their boundary reverses the path before and
-after this operation.
+Maps a downward capture path through the receiver form. The list step becomes the receiver form; the step directly below it is either the lead, which becomes the receiver field with its visible variant, or an ordinary item, which crosses the canonical group and the original rest-list field and keeps its kind. Steps below the lead take the effect's visible variants; steps below an ordinary item do not. Nested member facts store their `via` paths innermost first, so their boundary reverses the path before and after this operation.
+
+### `packages/codegen/src/bindings/lead-facts.ts::isLead`
+
+A step directly below the list is the lead exactly when it is anchored first, the same test the reader uses to give a capture its lead match.
+
+### `packages/codegen/src/bindings/lead-facts.ts::receiverSelector`
+
+The lead's selector in the receiver form: the effect's receiver field, holding the lead's visible variant. The receiver is a field of its own there, so the list position, anchors and neighbours it held among the list's items no longer apply.
+
+### `packages/codegen/src/bindings/lead-facts.ts::restSelector`
+
+An ordinary item's selector in the rest list. An `after` that names the lead is dropped, since the lead is no longer a sibling there.
+
+### `packages/codegen/src/bindings/lead-facts.ts::restPrefix`
+
+The canonical group and the original list under its rest field: the steps between the receiver form and an ordinary item.
+
+### `packages/codegen/src/bindings/lead-facts.ts::siteRoot`
+
+The kind a capture site starts from: the claimed kind, or its counted enclosing kind.
+
+### `packages/codegen/src/bindings/lead-facts.ts::headChild`
+
+Projects one child test of a receiver claim. Kind, text and presence tests follow their projected path. A sibling-order test on the list itself splits: the lead's place is now the receiver field, so only the ordinary items' order remains, tested on the rest list; a test that orders the lead alone disappears.
 
 ### `packages/codegen/src/bindings/lead-facts.ts::guaranteedHeadChild`
 
 Discharges a kind test only when the lead restriction guarantees every admitted
-alternative at that exact position. It retains tests distinguishing receiver
+alternative at that exact position; a test below an ordinary item is never discharged. It retains tests distinguishing receiver
 alternatives and unrelated constraints. This matters when a narrowed fixed
 terminal becomes a scalar slot rather than a separately navigable child.
 
@@ -1574,9 +1599,7 @@ ordinary alias builder policy.
 
 ### `packages/codegen/src/bindings/lead-facts.ts::headMember`
 
-Projects a receiver capture to its new singular field. A rest capture instead
-crosses the receiver form, canonical group and original rest-list field. Every
-name comes from the realization record; no naming convention is reconstructed.
+Projects a capture whose route crosses the list by appending its own selector to its `via` path and projecting both through `headPath`: a receiver capture lands on its new singular field, a rest capture crosses the receiver form, canonical group and original rest-list field, and the projected step above the capture is its parent. Every name comes from the realization record; no naming convention is reconstructed.
 
 
 Lead projection uses one `bindFacts` projection for the minted variants. Besides owned captures, it preserves explicit container declarations and unclaimed-kind declarations on their cloned owners, including the container's element, captured slots, and dropped layout. Without that projection a receiver wrapper loses its declared content route even though its parser shape is correct.
