@@ -659,6 +659,26 @@ A pattern value contributes `string`; a slot holding only pattern values never t
 // where no builder is in scope.
 ```
 
+### `packages/codegen/src/emitters/factories.ts::emittedSlots`
+
+The slots a field-carrying builder stores on its node: every slot, or for a spread builder the spread slot and the registered options. The builder and its structure row take them from here, so the row checks only keys the builder writes.
+
+### `packages/codegen/src/emitters/factories.ts::compoundStructureRow`
+
+A field-carrying kind's structure row: what each built node of the kind holds, by storage key. Among the stored slots that are not registered options, a required single slot must hold a value. A non-empty list (`needsNonEmptyHoist`) must hold an item, labelled `<kind>.children` for a spread builder's parameter and `<kind>.<property>` otherwise. A slot with a `bareTextExpectation` holds no bare text, with the builder's label and expectation. `undefined` when there is nothing to check.
+
+### `packages/codegen/src/emitters/factories.ts::listStructureRow`
+
+A separated list's structure row: a non-empty list's elements, under its content key, must hold an item (`<kind>.elements`).
+
+### `packages/codegen/src/emitters/factories.ts::structureRow`
+
+A row from its three check lists, empty lists dropped; `undefined` when all three are empty.
+
+### `packages/codegen/src/emitters/factories.ts::listContentStorageKey`
+
+Where a separated list stores its elements: its canonical field's storage key, or `_content` for a list with more than one field.
+
 ### `packages/codegen/src/emitters/factories.ts::emitFieldCarryingFactory`
 
 A list owner's storage expression passes through `hydrateStored` before the shared view sizes it. The existing seat plan identifies that storage; the initializer, getter and list view then use the same resolved value. A missing live tree binding retains the existing refusal.
@@ -10247,6 +10267,10 @@ Each kind's slots, by stamped kind id: the accessor a node reads the slot throug
 
 Emits `querySlots`, the `querySlotRows` table as a frozen object keyed by kind id. The language hooks carry it to the engine, where a node's query facet takes its slot names from the row of the node's kind and a `where` condition compiles each slot it reads to that slot's routes.
 
+### `packages/codegen/src/emitters/client-utils.ts::emitStructure`
+
+Emits `structure`, the factories emitter's structure table as a frozen object keyed by kind id. The language hooks carry it to the engine, where `verifyStructure: 'runtime'` checks each built node against its kind's row.
+
 ### `packages/codegen/src/emitters/emit.ts::module`
 
 ```text
@@ -11408,6 +11432,10 @@ Throws when one of the node's accessors or options has the name of a `ReadonlyAr
 // Emitter protocol — init / dispatchNode / finalize
 // ---------------------------------------------------------------------------
 ```
+
+### `packages/codegen/src/emitters/factories.ts::FactoryEmitter.structure`
+
+The structure table the emitter recorded while emitting builders: each emitted compound's or list's row, by kind id. A kind without a builder or a kind id has no row. The language utils print it as `structure`.
 
 ### `packages/codegen/src/emitters/factories.ts::FactoryEmitter.constructor`
 
@@ -14806,7 +14834,15 @@ What a strict slot expects in place of a string, or `undefined` when a string is
 
 ### `packages/codegen/src/emitters/factories.ts::bareTextRejection`
 
-Wraps a slot's stored value in `rejectBareText(value, '<Kind>.<configKey>', '<expected>')` when `strictNodeExpectation` names an expectation. It runs after the slot's enum storage coercion, so a mixed slot's keyword members are already kind ids and only a string left over is rejected.
+Wraps a slot's stored value in `rejectBareText(value, bareTextLabel, bareTextExpectation)` when the slot has an expectation. It runs after the slot's enum storage coercion, so a mixed slot's keyword members are already kind ids and only a string left over is rejected.
+
+### `packages/codegen/src/emitters/factories.ts::bareTextExpectation`
+
+What a strict slot takes instead of bare text, for the bare-text refusal: the leaf builders or built node types `strictNodeExpectation` names, else `a kind id` for a slot that stores kind ids. `undefined` when bare text is not refused. The builder's guard and the slot's structure row both read it.
+
+### `packages/codegen/src/emitters/factories.ts::bareTextLabel`
+
+`<TypeName>.<configKey>`: how a bare-text refusal names the slot, in the builder and in the structure row alike.
 
 ### `packages/codegen/src/emitters/factories.ts::storedSlotValueExpr`
 

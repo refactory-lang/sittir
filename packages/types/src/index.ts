@@ -1335,6 +1335,8 @@ export type {
 	Rendered,
 	StrictMembers,
 	StrictSurface,
+	StructureRow,
+	StructureTable,
 	TriviaFacts,
 	Types
 } from './engine-api.ts';

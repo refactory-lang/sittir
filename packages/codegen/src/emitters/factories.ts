@@ -1,3 +1,4 @@
+import type { StructureRow } from '@sittir/types';
 import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
 import { hostTemplateFor } from '@sittir/common';
 import type { ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
@@ -72,6 +73,8 @@ import {
 	resolveDirectFactorySlot,
 	warnSkippedParserSymbol,
 	soleSlotFacts,
+	type SoleSlotFacts,
+	needsNonEmptyHoist,
 	emptyDefaultOf,
 	assertOmittedSlotsFilled,
 	kindEnumTextEntries,
@@ -329,6 +332,15 @@ export function textLeaves(f: AssembledNonterminal, nodeMap: NodeMap): Assembled
 	return [...leaves];
 }
 
+function bareTextExpectation(f: AssembledNonterminal, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string | undefined {
+	const kind = resolveFieldStorageInfo(f, nodeMap, kindEntries).kind;
+	return strictNodeExpectation(f, nodeMap) ?? (kind === 'kindEnum' || kind === 'mixedEnum' ? 'a kind id' : undefined);
+}
+
+function bareTextLabel(f: AssembledNonterminal, typeName: string): string {
+	return `${typeName}.${f.configKey}`;
+}
+
 function bareTextRejection(
 	f: AssembledNonterminal,
 	expr: string,
@@ -336,10 +348,9 @@ function bareTextRejection(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	typeName: string
 ): string {
-	const kind = resolveFieldStorageInfo(f, nodeMap, kindEntries).kind;
-	const expected = strictNodeExpectation(f, nodeMap) ?? (kind === 'kindEnum' || kind === 'mixedEnum' ? 'a kind id' : undefined);
+	const expected = bareTextExpectation(f, nodeMap, kindEntries);
 	if (expected === undefined) return expr;
-	return `rejectBareText(${expr}, '${typeName}.${f.configKey}', ${JSON.stringify(expected)})`;
+	return `rejectBareText(${expr}, '${bareTextLabel(f, typeName)}', ${JSON.stringify(expected)})`;
 }
 
 function keywordTextRejection(
@@ -1438,6 +1449,46 @@ export function constructorSurface(
 	}
 }
 
+function emittedSlots(
+	slots: readonly AssembledNonterminal[],
+	spreadFacts: SoleSlotFacts | null,
+	registered: ReadonlySet<AssembledNonterminal>
+): readonly AssembledNonterminal[] {
+	return spreadFacts === null ? slots : slots.filter((f) => f === spreadFacts.slot || registered.has(f));
+}
+
+export function compoundStructureRow(
+	node: FieldCarryingNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): StructureRow | undefined {
+	const { spreadFacts } = resolveFactorySurface(node, nodeMap, kindEntries);
+	const registered = new Set(registeredSlots(node));
+	const stored = emittedSlots(node.slots, spreadFacts, registered).filter((f) => !registered.has(f));
+	const required = stored.filter((f) => isRequired(f) && !isMultiple(f)).map((f) => [f.storageKey, f.configKey] as const);
+	const nonEmpty = stored
+		.filter((f) => needsNonEmptyHoist(f, nodeMap))
+		.map((f) => [f.storageKey, `${node.kind}.${f === spreadFacts?.slot ? 'children' : f.propertyName}`] as const);
+	const nodeOnly = stored.flatMap((f) => {
+		const expected = bareTextExpectation(f, nodeMap, kindEntries);
+		return expected === undefined ? [] : [[f.storageKey, bareTextLabel(f, node.typeName), expected] as const];
+	});
+	return structureRow(node.kind, { required, nonEmpty, nodeOnly });
+}
+
+export function listStructureRow(node: AssembledList): StructureRow | undefined {
+	return structureRow(node.kind, { nonEmpty: node.nonEmpty ? [[listContentStorageKey(node), `${node.kind}.elements`]] : [] });
+}
+
+function structureRow(kind: string, checks: { readonly [K in 'required' | 'nonEmpty' | 'nodeOnly']?: NonNullable<StructureRow[K]> }): StructureRow | undefined {
+	const present = Object.entries(checks).filter(([, entries]) => entries.length > 0);
+	return present.length === 0 ? undefined : { kind, ...Object.fromEntries(present) };
+}
+
+function listContentStorageKey(node: AssembledList): string {
+	return node.slots.length > 1 ? '_content' : canonicalSeparatedListField(node).storageKey;
+}
+
 function emitFieldCarryingFactory(
 	node: FieldCarryingNode,
 	slots: readonly AssembledNonterminal[],
@@ -1476,7 +1527,7 @@ function emitFieldCarryingFactory(
 	let setters: SetterEntry[];
 
 	if (spreadFacts) {
-		slotsToEmit = slots.filter((f) => f === spreadFacts.slot || registeredSet.has(f));
+		slotsToEmit = emittedSlots(slots, spreadFacts, registeredSet);
 		const elementType = surface.elementType!;
 		const setter = spreadFacts.slot.propertyName;
 		const optionsFirst = leadingOptions === undefined ? '' : 'options, ';
@@ -2340,7 +2391,7 @@ function emitSeparatedListFactory(
 
 	const isMultiField = node.slots.length > 1;
 	const canonical = isMultiField ? undefined : canonicalSeparatedListField(node);
-	const contentStorageKey = canonical?.storageKey ?? '_content';
+	const contentStorageKey = listContentStorageKey(node);
 	const contentAccessorName = canonical?.propertyName ?? 'content';
 	const surface = separatedListSurface(node, nodeMap, kindEntries);
 	const { elemTypeForArray, elementsType, separatorKindUnion, hasSeparatorKindOption, hasDelimiterOption } = surface;
@@ -2492,6 +2543,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	readonly #refineByKind: Map<string, RefineKindInfo>;
 	readonly #preambleLines: string[];
 	readonly #output: string[] = [];
+	readonly #structure = new Map<number, StructureRow>();
 
 	constructor(config: EmitFactoriesConfig) {
 		const { nodeMap, generatedIdTables, kindEntries: providedKindEntries, inlineKinds, synthesizedKinds } = config;
@@ -2548,10 +2600,20 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 
 	emitBranch(node: FieldCarryingNode): void {
 		factory.branch(this.#output, node, this.#nodeMap, this.#kindEntries, this.#leafReConsts);
+		this.#recordStructure(node, compoundStructureRow(node, this.#nodeMap, this.#kindEntries));
 	}
 
 	emitSeparatedList(node: AssembledList): void {
 		factory.separatedList(this.#output, node, this.#nodeMap, this.#kindEntries);
+		this.#recordStructure(node, listStructureRow(node));
+	}
+
+	#recordStructure(node: AssembledNode, row: StructureRow | undefined): void {
+		if (row !== undefined && node.rawFactoryName !== undefined && node.kindId !== undefined) this.#structure.set(node.kindId, row);
+	}
+
+	get structure(): ReadonlyMap<number, StructureRow> {
+		return this.#structure;
 	}
 
 	emitRefineForms(kind: string, node: AssembledNode): void {
