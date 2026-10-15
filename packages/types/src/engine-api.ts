@@ -1,4 +1,11 @@
-import type { AnyUntypedNode, ErrorNode, ErrorRegion, GrammarTriviaEntry, TriviaItem, TriviaSetter } from './core-types.ts';
+import type {
+	AnyUntypedNode,
+	ErrorNode,
+	ErrorRegion,
+	GrammarTriviaEntry,
+	TriviaItem,
+	TriviaSetter
+} from './core-types.ts';
 import type { IndentOption } from './options.ts';
 import type { Admit, Snapshot } from './node-surface.ts';
 import type { KindMembership, QueryFacet, QuerySlots } from './query.ts';
@@ -121,7 +128,9 @@ export interface Language<API extends LanguageAPI> {
 	 * @returns The engine, once the language has loaded.
 	 * @throws When an option the engine does not implement yet is set, or the language fails to load.
 	 */
-	createEngine<const R extends API['options'] = API['options']>(options?: CreateEngineOptions<API, R>): Promise<Engine<API>>;
+	createEngine<const R extends API['options'] = API['options']>(
+		options?: CreateEngineOptions<API, R>
+	): Promise<Engine<API>>;
 }
 
 export interface NativeEngineOptions<O extends object = Readonly<Record<string, unknown>>> {
@@ -243,9 +252,9 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	 */
 	readonly query: <N extends API['node']>(node: N) => FacetOf<N>;
 	readonly read: (path: string, options?: ParseOptions) => Promise<API['root']>;
-	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API> | SnapshotInput<API>>;
+	readonly render: RenderCall<API, Draft<API>> &
+		RenderCall<API, StoredInput<API> | RenderBuilder<API> | SnapshotInput<API>>;
 	readonly create: (path: string, fn: (build: API['build']) => API['root']) => Pending;
-	readonly edit: (path: string, fn: (root: API['root']) => API['root']) => Pending;
 	readonly write: (path: string, node: API['root']) => Pending;
 	readonly dispose: () => void;
 }
@@ -278,11 +287,16 @@ export type RenderArgument<API extends LanguageAPI> = RenderInput<API> | RenderB
 export type RenderOptionsCheck<API extends LanguageAPI, R, Extra extends PropertyKey = never> =
 	IsExactly<R, API['options']> extends true
 		? unknown
-		: IndentOption<R extends { readonly layout?: { readonly indent?: infer I extends string } } ? I : string, API['indentChar']> & {
+		: IndentOption<
+				R extends { readonly layout?: { readonly indent?: infer I extends string } } ? I : string,
+				API['indentChar']
+			> & {
 				readonly [K in Exclude<keyof R, keyof API['options'] | Extra>]: never;
 			} & LayoutKeysCheck<API, R>;
 
-type DeclaredLayout<API extends LanguageAPI> = API['options'] extends { readonly layout?: infer G } ? NonNullable<G> : object;
+type DeclaredLayout<API extends LanguageAPI> = API['options'] extends { readonly layout?: infer G }
+	? NonNullable<G>
+	: object;
 
 type LayoutKeysCheck<API extends LanguageAPI, R> = R extends { readonly layout?: infer L extends object }
 	? { readonly layout?: { readonly [K in Exclude<keyof L, keyof DeclaredLayout<API>>]: never } }
@@ -297,13 +311,13 @@ export interface EngineOptions<API extends LanguageAPI, M extends ApiSurface = '
 }
 
 export interface Interceptor<API extends LanguageAPI> {
-	build?(call: { readonly path: readonly string[]; readonly args: readonly unknown[] }, next: () => API['node']): API['node'];
+	build?(
+		call: { readonly path: readonly string[]; readonly args: readonly unknown[] },
+		next: () => API['node']
+	): API['node'];
 	render?(call: { readonly node: RenderInput<API>; readonly options: API['options'] }, next: () => string): string;
 	parse?(call: { readonly source: string }, next: () => API['root']): API['root'];
-	file?(
-		change: FileChange & { readonly verb: 'create' | 'edit' | 'write' },
-		next: () => Promise<void>
-	): Promise<void>;
+	file?(change: FileChange & { readonly verb: 'create' | 'write' }, next: () => Promise<void>): Promise<void>;
 }
 
 export interface Project extends AsyncDisposable {
@@ -312,7 +326,7 @@ export interface Project extends AsyncDisposable {
 	staged(): readonly string[];
 	diff(): readonly FileChange[];
 	files(): ReadonlyMap<string, string>;
-	commit(): Promise<void>;
+	save(): Promise<void>;
 	discard(): void;
 }
 
@@ -327,7 +341,11 @@ export type KindTypes<Keys extends object, NsMap extends object> = {
 export type NodeOfNamespaces<NsMap extends object> = Extract<
 	{
 		[Id in keyof NsMap]: NsMap[Id] extends { readonly Node: infer N; readonly Bound: infer B }
-			? NsMap[Id] extends { readonly Parsed: infer P } ? ([P] extends [never] ? N | B : B | P) : N | B
+			? NsMap[Id] extends { readonly Parsed: infer P }
+				? [P] extends [never]
+					? N | B
+					: B | P
+				: N | B
 			: never;
 	}[keyof NsMap],
 	object

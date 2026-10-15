@@ -14,7 +14,7 @@ The one mapping from an engine's options to its native engine's: `format` passes
 
 ### `packages/common/src/create-engine.ts::unimplementedVerb`
 
-The error a file verb (`read`, `create`, `edit`, `write`) raises while file changes are not implemented.
+The error a file verb (`read`, `create`, `write`) raises while file changes are not implemented.
 
 ### `packages/common/src/create-engine.ts::languageGuards`
 

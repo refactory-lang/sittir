@@ -148,7 +148,7 @@ The type of an engine's `build` for a surface: the builder table, its strict sur
 
 ### `packages/types/src/engine-api.ts::Engine`
 
-A language engine: the only value surface of a language. It carries its `EngineIdentity` (descriptor, render module hash, options, trivia facts), and builds, guards (the node guards narrow to this engine's language, by the language a node's engine carries), parses, reads, renders, and creates, edits and writes files. The engine's `types` member is type-only, mapping each kind to its node type for generic code.
+A language engine: the only value surface of a language. It carries its `EngineIdentity` (descriptor, render module hash, options, trivia facts), and builds, guards (the node guards narrow to this engine's language, by the language a node's engine carries), parses and renders. Its `read`, `create` and `write` file verbs remain unimplemented. The engine's `types` member is type-only, mapping each kind to its node type for generic code.
 
 ### `packages/types/src/engine-api.ts::RenderInput`
 
@@ -186,7 +186,7 @@ Middleware around an engine's operations. Each hook receives the call and a `nex
 
 ### `packages/types/src/engine-api.ts::Project`
 
-A group of engines over one file set. Their file changes are staged, inspected with `staged`, `diff` and `files`, and written all or none by `commit`. Disposal discards what was not committed and disposes the engines.
+A group of engines over one file set. Their file changes are staged, inspected with `staged`, `diff` and `files`, and written all or none by `save`. Disposal discards what was not saved and disposes the engines. Draft `commit` updates a parsed tree; project `save` writes committed files to disk. The runtime project implementation remains pending.
 
 ### `packages/types/src/engine-api.ts::KindTypes`
 

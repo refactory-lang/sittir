@@ -166,7 +166,11 @@ describe('createEngine', () => {
 		const e = await engineOf();
 		await expect(e.read('a')).rejects.toThrow('file verb "read" is not implemented');
 		expect(() => e.create('a', () => e.build.leaf('a'))).toThrow('file verb "create" is not implemented');
-		expect(() => e.edit('a', (r: unknown) => r)).toThrow('file verb "edit" is not implemented');
 		expect(() => e.write('a', e.build.leaf('a'))).toThrow('file verb "write" is not implemented');
+	});
+
+	it('does not expose the retired whole-file edit callback', async () => {
+		const e = await engineOf();
+		expect(e).not.toHaveProperty('edit');
 	});
 });
