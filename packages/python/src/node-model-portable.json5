@@ -3323,7 +3323,8 @@
               "owner": "except_clause",
               "slot": "group"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "body",
@@ -3815,7 +3816,8 @@
               "owner": "for_in_clause",
               "slot": "async"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "left",
@@ -3873,7 +3875,8 @@
               "owner": "for_statement",
               "slot": "async"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "left",
@@ -4083,7 +4086,8 @@
               "owner": "function_definition",
               "slot": "async"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -4710,7 +4714,8 @@
               "owner": "interpolation",
               "slot": "debug"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "typeConversion",
@@ -7196,7 +7201,8 @@
               "owner": "with_statement",
               "slot": "async"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "withClause",

@@ -187,9 +187,11 @@ export function resolveFlags(facts: BindingFacts, vocabulary: Vocabulary, model:
 		const segment = flagSegment(vocabulary, claim.vocab);
 		return segment === undefined ? claim : { ...claim, vocab: segment.parent, flag: segment.flag };
 	});
+	const flagsOf = (path: string): ReadonlySet<string> => new Set([...vocabulary.members(path)].flatMap(([name, member]) => (member.flag ? [name] : [])));
 	return {
 		...facts,
 		claims,
+		flagsByPath: new Map([...new Set(claims.map((claim) => claim.vocab))].map((path) => [path, flagsOf(path)])),
 		members: facts.members.map((member) => {
 			if (!isNamedMember(member)) return member;
 			const owns = (kind: string | null): boolean => kind !== null && (kind === member.owner || formsOf(model, kind).includes(member.owner));

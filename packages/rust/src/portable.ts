@@ -7726,8 +7726,30 @@ const table: PortableTable = {
 export const portable = portableSurface<PortableKinds, PortableIs>(table, querySlots);
 
 export const queryFlags: QueryFlags = Object.freeze({
-	[TSKindId.FieldPatternNamed]: { byReference: { op: 'present', fields: ['ref'], kinds: [] } },
-	[TSKindId.FieldPatternShorthand]: { byReference: { op: 'present', fields: ['ref'], kinds: [] } },
+	[TSKindId.AsyncBlock]: { move: { op: 'present', fields: ['move'], kinds: [] } },
+	[TSKindId.CharLiteralEscapedHex]: { byte: { op: 'present', fields: ['byte'], kinds: [] } },
+	[TSKindId.CharLiteralEscapedSimple]: { byte: { op: 'present', fields: ['byte'], kinds: [] } },
+	[TSKindId.CharLiteralEscapedUnicodeBraced]: { byte: { op: 'present', fields: ['byte'], kinds: [] } },
+	[TSKindId.CharLiteralEscapedUnicodeFixed]: { byte: { op: 'present', fields: ['byte'], kinds: [] } },
+	[TSKindId.CharLiteralPlain]: { byte: { op: 'present', fields: ['byte'], kinds: [] } },
+	[TSKindId.ClosureExpressionBlock]: {
+		static: { op: 'present', fields: ['static'], kinds: [] },
+		async: { op: 'present', fields: ['async'], kinds: [] },
+		move: { op: 'present', fields: ['move'], kinds: [] }
+	},
+	[TSKindId.ClosureExpressionExpr]: {
+		static: { op: 'present', fields: ['static'], kinds: [] },
+		async: { op: 'present', fields: ['async'], kinds: [] },
+		move: { op: 'present', fields: ['move'], kinds: [] }
+	},
+	[TSKindId.FieldPatternNamed]: {
+		mutable: { op: 'present', fields: ['mutable'], kinds: [] },
+		byReference: { op: 'present', fields: ['ref'], kinds: [] }
+	},
+	[TSKindId.FieldPatternShorthand]: {
+		mutable: { op: 'present', fields: ['mutable'], kinds: [] },
+		byReference: { op: 'present', fields: ['ref'], kinds: [] }
+	},
 	[TSKindId.FunctionItem]: {
 		async: {
 			op: 'child',
@@ -7768,6 +7790,10 @@ export const queryFlags: QueryFlags = Object.freeze({
 			}
 		}
 	},
+	[TSKindId.GenBlock]: { move: { op: 'present', fields: ['move'], kinds: [] } },
+	[TSKindId.ImplItemBody]: { unsafe: { op: 'present', fields: ['unsafe'], kinds: [] } },
+	[TSKindId.ImplItemSemi]: { unsafe: { op: 'present', fields: ['unsafe'], kinds: [] } },
+	[TSKindId.LetDeclaration]: { mutable: { op: 'present', fields: ['mutable'], kinds: [] } },
 	[TSKindId.Parameter]: { mutable: { op: 'is', types: [57], fields: ['mutable'], kinds: [] } },
 	[TSKindId.PointerTypeMut]: { writable: { op: 'and', of: [] } },
 	[TSKindId.ReferenceExpressionMut]: { exclusive: { op: 'and', of: [] } },
@@ -7776,5 +7802,10 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ReferencePattern]: { exclusive: { op: 'is', types: [57], fields: ['mutable'], kinds: [] } },
 	[TSKindId.ReferenceType]: { exclusive: { op: 'is', types: [57], fields: ['mutable'], kinds: [] } },
 	[TSKindId.SelfParameter]: { mutable: { op: 'is', types: [57], fields: ['mutable'], kinds: [] } },
-	[TSKindId.StaticItem]: { byReference: { op: 'present', fields: ['ref'], kinds: [] } }
+	[TSKindId.StaticItem]: {
+		mutable: { op: 'present', fields: ['mutable'], kinds: [] },
+		byReference: { op: 'present', fields: ['ref'], kinds: [] }
+	},
+	[TSKindId.TraitItem]: { unsafe: { op: 'present', fields: ['unsafe'], kinds: [] } },
+	[TSKindId.VariadicParameter]: { mutable: { op: 'present', fields: ['mutable'], kinds: [] } }
 } satisfies QueryFlags);

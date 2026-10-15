@@ -567,10 +567,11 @@ function membersOf(
 		}
 		const name = memberNameOf(names, slot.name, slot.propertyName);
 		const path = [{ owner: kind, slot: slot.name }];
+		const flag = entries.some((entry) => input.bindings.flagsByPath?.get(entry.vocab)?.has(name) === true) ? { flag: true as const } : {};
 		routes.push(
 			except.length === 0
-				? { route: 'slot', name, slot, path }
-				: { route: 'slot', name, slot: { ...slot, kinds: slot.kinds.filter((k) => !via.has(k)) }, except, path }
+				? { route: 'slot', name, slot, path, ...flag }
+				: { route: 'slot', name, slot: { ...slot, kinds: slot.kinds.filter((k) => !via.has(k)) }, except, path, ...flag }
 		);
 	}
 	for (const [member, slot] of flagSlots) routes.push(flagRouteOf(kind, member, slot));

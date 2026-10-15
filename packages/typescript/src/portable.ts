@@ -4479,48 +4479,93 @@ export const portable = portableSurface<PortableKinds, PortableIs>(table, queryS
 export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.AbstractClassDeclaration]: { abstract: { op: 'and', of: [] } },
 	[TSKindId.AbstractMethodSignature]: {
+		override: { op: 'present', fields: ['override'], kinds: [] },
+		optional: { op: 'present', fields: ['optional'], kinds: [] },
 		generator: { op: 'eq', text: '*', fields: ['accessor_kind'], kinds: [] },
 		privateName: { op: 'is', types: [118], fields: ['name'], kinds: [] },
 		computed: { op: 'is', types: [289], fields: ['name'], kinds: [] }
 	},
+	[TSKindId.ArrowFunction]: { async: { op: 'present', fields: ['async'], kinds: [] } },
 	[TSKindId.AssignmentExpression]: { disposable: { op: 'present', fields: ['using'], kinds: [] } },
 	[TSKindId.CallExpressionMember]: { optionalChain: { op: 'and', of: [] } },
+	[TSKindId.ConstructSignature]: { abstract: { op: 'present', fields: ['abstract'], kinds: [] } },
+	[TSKindId.ConstructorType]: { abstract: { op: 'present', fields: ['abstract'], kinds: [] } },
+	[TSKindId.EnumDeclaration]: { const: { op: 'present', fields: ['const'], kinds: [] } },
 	[TSKindId.ExportSpecifier]: { typeOnly: { op: 'eq', text: 'type', fields: ['export_kind'], kinds: [] } },
 	[TSKindId.ExportStatementDefaultFrom]: { typeOnly: { op: 'present', fields: ['type'], kinds: [] } },
 	[TSKindId.ForInStatement]: { async: { op: 'present', fields: ['await'], kinds: [] } },
-	[TSKindId.GeneratorFunction]: { generator: { op: 'and', of: [] } },
-	[TSKindId.GeneratorFunctionDeclaration]: { generator: { op: 'and', of: [] } },
+	[TSKindId.FunctionDeclaration]: { async: { op: 'present', fields: ['async'], kinds: [] } },
+	[TSKindId.FunctionExpression]: { async: { op: 'present', fields: ['async'], kinds: [] } },
+	[TSKindId.FunctionSignature]: { async: { op: 'present', fields: ['async'], kinds: [] } },
+	[TSKindId.GeneratorFunction]: {
+		async: { op: 'present', fields: ['async'], kinds: [] },
+		generator: { op: 'and', of: [] }
+	},
+	[TSKindId.GeneratorFunctionDeclaration]: {
+		async: { op: 'present', fields: ['async'], kinds: [] },
+		generator: { op: 'and', of: [] }
+	},
 	[TSKindId.ImportSpecifierAs]: { typeOnly: { op: 'eq', text: 'type', fields: ['import_kind'], kinds: [] } },
 	[TSKindId.ImportSpecifierName]: { typeOnly: { op: 'eq', text: 'type', fields: ['import_kind'], kinds: [] } },
 	[TSKindId.ImportStatement]: { typeOnly: { op: 'eq', text: 'type', fields: ['import_clause'], kinds: [] } },
+	[TSKindId.IndexSignatureColon]: { readonly: { op: 'present', fields: ['readonly'], kinds: [] } },
+	[TSKindId.IndexSignatureMappedTypeClause]: { readonly: { op: 'present', fields: ['readonly'], kinds: [] } },
 	[TSKindId.MemberExpression]: {
 		optionalChain: { op: 'is', types: [252], fields: ['separator'], kinds: [] },
 		privateName: { op: 'is', types: [118], fields: ['property'], kinds: [] }
 	},
 	[TSKindId.MethodDefinition]: {
-		generator: { op: 'eq', text: '*', fields: ['accessor_kind'], kinds: [] },
+		static: { op: 'present', fields: ['static'], kinds: [] },
+		override: { op: 'present', fields: ['override'], kinds: [] },
+		readonly: { op: 'present', fields: ['readonly'], kinds: [] },
+		async: { op: 'present', fields: ['async'], kinds: [] },
 		optional: { op: 'present', fields: ['optional'], kinds: [] },
+		generator: { op: 'eq', text: '*', fields: ['accessor_kind'], kinds: [] },
 		privateName: { op: 'is', types: [118], fields: ['name'], kinds: [] },
 		computed: { op: 'is', types: [289], fields: ['name'], kinds: [] }
 	},
 	[TSKindId.MethodSignature]: {
+		static: { op: 'present', fields: ['static'], kinds: [] },
+		override: { op: 'present', fields: ['override'], kinds: [] },
+		readonly: { op: 'present', fields: ['readonly'], kinds: [] },
+		async: { op: 'present', fields: ['async'], kinds: [] },
+		optional: { op: 'present', fields: ['optional'], kinds: [] },
 		generator: { op: 'eq', text: '*', fields: ['accessor_kind'], kinds: [] },
 		privateName: { op: 'is', types: [118], fields: ['name'], kinds: [] },
 		computed: { op: 'is', types: [289], fields: ['name'], kinds: [] }
 	},
-	[TSKindId.OptionalParameter]: { optional: { op: 'and', of: [] } },
+	[TSKindId.OptionalParameter]: {
+		override: { op: 'present', fields: ['override'], kinds: [] },
+		readonly: { op: 'present', fields: ['readonly'], kinds: [] },
+		optional: { op: 'and', of: [] }
+	},
 	[TSKindId.Pair]: { computed: { op: 'is', types: [289], fields: ['key'], kinds: [] } },
 	[TSKindId.PairPattern]: { computed: { op: 'is', types: [289], fields: ['key'], kinds: [] } },
 	[TSKindId.PropertySignature]: {
+		static: { op: 'present', fields: ['static'], kinds: [] },
+		override: { op: 'present', fields: ['override'], kinds: [] },
+		readonly: { op: 'present', fields: ['readonly'], kinds: [] },
+		optional: { op: 'present', fields: ['optional'], kinds: [] },
 		privateName: { op: 'is', types: [118], fields: ['name'], kinds: [] },
 		computed: { op: 'is', types: [289], fields: ['name'], kinds: [] }
 	},
 	[TSKindId.PublicFieldDefinition]: {
+		declare: { op: 'present', fields: ['declare'], kinds: [] },
+		static: { op: 'present', fields: ['static'], kinds: [] },
+		override: { op: 'present', fields: ['override'], kinds: [] },
+		readonly: { op: 'present', fields: ['readonly'], kinds: [] },
+		abstract: { op: 'present', fields: ['abstract'], kinds: [] },
+		accessor: { op: 'present', fields: ['accessor'], kinds: [] },
 		optional: { op: 'eq', text: '?', fields: ['optionality'], kinds: [] },
 		definite: { op: 'eq', text: '!', fields: ['optionality'], kinds: [] },
 		privateName: { op: 'is', types: [118], fields: ['name'], kinds: [] },
 		computed: { op: 'is', types: [289], fields: ['name'], kinds: [] }
 	},
+	[TSKindId.RequiredParameter]: {
+		override: { op: 'present', fields: ['override'], kinds: [] },
+		readonly: { op: 'present', fields: ['readonly'], kinds: [] }
+	},
 	[TSKindId.SubscriptExpression]: { optionalChain: { op: 'is', types: [252], fields: ['optional_chain'], kinds: [] } },
+	[TSKindId.TypeParameter]: { const: { op: 'present', fields: ['const'], kinds: [] } },
 	[TSKindId.VariableDeclaratorDefinite]: { definite: { op: 'and', of: [] } }
 } satisfies QueryFlags);

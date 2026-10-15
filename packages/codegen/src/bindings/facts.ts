@@ -142,6 +142,7 @@ export interface BindingFacts {
 	readonly containers: readonly ContainerFact[];
 	readonly templates: readonly TemplateFact[];
 	readonly unclaimed: readonly UnclaimedFact[];
+	readonly flagsByPath?: ReadonlyMap<string, ReadonlySet<string>>;
 }
 
 export interface ModelSlot {

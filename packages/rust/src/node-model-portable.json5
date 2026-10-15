@@ -372,7 +372,8 @@
               "owner": "async_block",
               "slot": "move"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "body",
@@ -2073,7 +2074,8 @@
               "owner": "char_literal_escaped_hex",
               "slot": "byte"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "content",
@@ -2118,7 +2120,8 @@
               "owner": "char_literal_escaped_simple",
               "slot": "byte"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "content",
@@ -2163,7 +2166,8 @@
               "owner": "char_literal_escaped_unicode_braced",
               "slot": "byte"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "content",
@@ -2208,7 +2212,8 @@
               "owner": "char_literal_escaped_unicode_fixed",
               "slot": "byte"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "content",
@@ -2253,7 +2258,8 @@
               "owner": "char_literal_plain",
               "slot": "byte"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "content",
@@ -2302,7 +2308,8 @@
               "owner": "closure_expression_block",
               "slot": "static"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "async",
@@ -2313,7 +2320,8 @@
               "owner": "closure_expression_block",
               "slot": "async"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "move",
@@ -2324,7 +2332,8 @@
               "owner": "closure_expression_block",
               "slot": "move"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "parameters",
@@ -2382,7 +2391,8 @@
               "owner": "closure_expression_expr",
               "slot": "static"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "async",
@@ -2393,7 +2403,8 @@
               "owner": "closure_expression_expr",
               "slot": "async"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "move",
@@ -2404,7 +2415,8 @@
               "owner": "closure_expression_expr",
               "slot": "move"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "parameters",
@@ -6940,7 +6952,8 @@
               "owner": "field_pattern_named",
               "slot": "mutable"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -7000,7 +7013,8 @@
               "owner": "field_pattern_shorthand",
               "slot": "mutable"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -10861,7 +10875,8 @@
               "owner": "gen_block",
               "slot": "move"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "body",
@@ -11256,7 +11271,8 @@
               "owner": "impl_item_body",
               "slot": "unsafe"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "typeParameters",
@@ -11352,7 +11368,8 @@
               "owner": "impl_item_semi",
               "slot": "unsafe"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "typeParameters",
@@ -11857,7 +11874,8 @@
               "owner": "let_declaration",
               "slot": "mutable"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -15759,7 +15777,8 @@
               "owner": "static_item",
               "slot": "mutable"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -18298,7 +18317,8 @@
               "owner": "trait_item",
               "slot": "unsafe"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -20823,7 +20843,8 @@
               "owner": "variadic_parameter",
               "slot": "mutable"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "pattern",

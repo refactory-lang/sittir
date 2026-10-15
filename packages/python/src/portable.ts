@@ -2832,5 +2832,10 @@ const table: PortableTable = {
 export const portable = portableSurface<PortableKinds, PortableIs>(table, querySlots);
 
 export const queryFlags: QueryFlags = Object.freeze({
-	[TSKindId.FunctionDefinition]: { static: null }
+	[TSKindId.ExceptClause]: { group: { op: 'present', fields: ['group'], kinds: [] } },
+	[TSKindId.ForInClause]: { async: { op: 'present', fields: ['async'], kinds: [] } },
+	[TSKindId.ForStatement]: { async: { op: 'present', fields: ['async'], kinds: [] } },
+	[TSKindId.FunctionDefinition]: { async: { op: 'present', fields: ['async'], kinds: [] }, static: null },
+	[TSKindId.Interpolation]: { debug: { op: 'present', fields: ['debug'], kinds: [] } },
+	[TSKindId.WithStatement]: { async: { op: 'present', fields: ['async'], kinds: [] } }
 } satisfies QueryFlags);

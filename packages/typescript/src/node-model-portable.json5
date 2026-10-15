@@ -680,7 +680,8 @@
               "owner": "abstract_method_signature",
               "slot": "override"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -702,7 +703,8 @@
               "owner": "abstract_method_signature",
               "slot": "optional"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "typeParameters",
@@ -1006,7 +1008,8 @@
               "owner": "arrow_function",
               "slot": "async"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "body",
@@ -3256,7 +3259,8 @@
               "owner": "construct_signature",
               "slot": "abstract"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "typeParameters",
@@ -3314,7 +3318,8 @@
               "owner": "constructor_type",
               "slot": "abstract"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "typeParameters",
@@ -3735,7 +3740,8 @@
               "owner": "enum_declaration",
               "slot": "const"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -4636,7 +4642,8 @@
               "owner": "function_declaration",
               "slot": "async"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -4716,7 +4723,8 @@
               "owner": "function_expression",
               "slot": "async"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -4796,7 +4804,8 @@
               "owner": "function_signature",
               "slot": "async"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -4912,7 +4921,8 @@
               "owner": "generator_function",
               "slot": "async"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -5001,7 +5011,8 @@
               "owner": "generator_function_declaration",
               "slot": "async"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -5772,7 +5783,8 @@
               "owner": "index_signature_colon",
               "slot": "readonly"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -5848,7 +5860,8 @@
               "owner": "index_signature_mapped_type_clause",
               "slot": "readonly"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "mappedTypeClause",
@@ -7273,7 +7286,8 @@
               "owner": "method_definition",
               "slot": "static"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "override",
@@ -7284,7 +7298,8 @@
               "owner": "method_definition",
               "slot": "override"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "readonly",
@@ -7295,7 +7310,8 @@
               "owner": "method_definition",
               "slot": "readonly"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "async",
@@ -7306,7 +7322,8 @@
               "owner": "method_definition",
               "slot": "async"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -7328,7 +7345,8 @@
               "owner": "method_definition",
               "slot": "optional"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "typeParameters",
@@ -7940,7 +7958,8 @@
               "owner": "method_signature",
               "slot": "static"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "override",
@@ -7951,7 +7970,8 @@
               "owner": "method_signature",
               "slot": "override"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "readonly",
@@ -7962,7 +7982,8 @@
               "owner": "method_signature",
               "slot": "readonly"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "async",
@@ -7973,7 +7994,8 @@
               "owner": "method_signature",
               "slot": "async"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -7995,7 +8017,8 @@
               "owner": "method_signature",
               "slot": "optional"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "typeParameters",
@@ -9282,7 +9305,8 @@
               "owner": "optional_parameter",
               "slot": "override"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "readonly",
@@ -9293,7 +9317,8 @@
               "owner": "optional_parameter",
               "slot": "readonly"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -9849,7 +9874,8 @@
               "owner": "property_signature",
               "slot": "static"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "override",
@@ -9860,7 +9886,8 @@
               "owner": "property_signature",
               "slot": "override"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "readonly",
@@ -9871,7 +9898,8 @@
               "owner": "property_signature",
               "slot": "readonly"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -9893,7 +9921,8 @@
               "owner": "property_signature",
               "slot": "optional"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "type",
@@ -10095,7 +10124,8 @@
               "owner": "public_field_definition",
               "slot": "declare"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "static",
@@ -10106,7 +10136,8 @@
               "owner": "public_field_definition",
               "slot": "static"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "override",
@@ -10117,7 +10148,8 @@
               "owner": "public_field_definition",
               "slot": "override"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "readonly",
@@ -10128,7 +10160,8 @@
               "owner": "public_field_definition",
               "slot": "readonly"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "abstract",
@@ -10139,7 +10172,8 @@
               "owner": "public_field_definition",
               "slot": "abstract"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "accessor",
@@ -10150,7 +10184,8 @@
               "owner": "public_field_definition",
               "slot": "accessor"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -10505,7 +10540,8 @@
               "owner": "required_parameter",
               "slot": "override"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "readonly",
@@ -10516,7 +10552,8 @@
               "owner": "required_parameter",
               "slot": "readonly"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",
@@ -11694,7 +11731,8 @@
               "owner": "type_parameter",
               "slot": "const"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "name",

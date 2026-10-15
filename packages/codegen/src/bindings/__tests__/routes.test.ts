@@ -781,7 +781,8 @@ describe('flag captures', () => {
 		node('mods', [slot('modifier', [], { multiple: true, terminals: ['async', 'const'] })]),
 		node('ref_expr', [], { modelType: 'supertype' }),
 		node('ref_expr_raw', [slot('value', ['identifier'])], { variantOf: 'ref_expr' }),
-		node('ref_expr_mut', [slot('value', ['identifier'])], { variantOf: 'ref_expr' })
+		node('ref_expr_mut', [slot('value', ['identifier'])], { variantOf: 'ref_expr' }),
+		node('def', [slot('async', [], { required: false, storage: 'boolean', terminals: ['async'] }), slot('name', ['identifier'])])
 	];
 	const member = (flag: boolean): VocabularyMember => ({ optional: true, flag });
 	const vocabulary = (own: Readonly<Record<string, Readonly<Record<string, boolean>>>>): Vocabulary => {
@@ -848,6 +849,12 @@ describe('flag captures', () => {
 	it('marks a flag a variant form spells, captured as a node no slot of the form holds', async () => {
 		const members = await membersOf(['(ref_expr) @expression.reference', '(ref_expr_mut (mutable_specifier) @exclusive)'].join('\n'), 'ref_expr_mut');
 		expect(members?.find((r) => r.name === 'exclusive')).toEqual({ route: 'kind', name: 'exclusive', kind: 'mutable_specifier', path: undefined, flag: true, spelled: true });
+	});
+
+	it('marks a slot member whose name is a flag of the claimed path, though no capture names it', async () => {
+		const members = await membersOf('(def) @declaration.function', 'def');
+		expect(members?.find((r) => r.name === 'async')).toMatchObject({ route: 'slot', name: 'async', flag: true });
+		expect(members?.find((r) => r.name === 'name')).not.toHaveProperty('flag');
 	});
 
 	it('refuses a node flag no slot holds on an owner that is no variant form', async () => {
