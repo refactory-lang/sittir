@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, ByteSpan, ErrorNode, NodeTrivia, TransportCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { carryRead, carrySource, coordinateOf, holdsSlots, indexOf, isRead, isStorageKey, PLAIN_KINDS, sideOf, sourceHandleOf, sourceOf, tableAt, toTransportData, treeHandleOf, triviaOf } from './transport-data.ts';
+import { carryRead, carrySource, coordinateOf, holdsSlots, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, sourceHandleOf, sourceOf, tableAt, toTransportData, treeHandleOf, triviaOf } from './transport-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
@@ -64,6 +64,7 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	const node = source as AnyUntypedNode;
 	const result = handle === undefined ? build() : inEngine(handle, build);
 	if (!isNode(result)) return result;
+	markRebuilt(result);
 	carryRead(node, result);
 	carrySource(node, result);
 	const facts = handle?.current.trivia;

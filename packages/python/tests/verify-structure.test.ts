@@ -28,6 +28,12 @@ describe('verifyStructure', () => {
 		expect(() => decorated(trusting).$with.decorators().$render()).toThrow(/a repeat1 list holds no item on DecoratedDefinitionTransport\._decorator/);
 	});
 
+	it("refuses a parent that holds a rebuild another engine let through, and trusts an untouched read, in 'runtime' mode", () => {
+		const module = verifying.build.module as unknown as (...statements: unknown[]) => unknown;
+		expect(() => module(decorated(trusting).$with.decorators())).toThrow('decorated_definition.decorators: requires at least one element');
+		expect(() => module(decorated(trusting))).not.toThrow();
+	});
+
 	it('renders an untouched parse the same in either mode', () => {
 		expect(decorated(verifying).$render()).toBe(decorated(trusting).$render());
 	});
