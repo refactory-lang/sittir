@@ -41,7 +41,8 @@ import type * as T from './types.js';
 import type { ERROR_KIND_ID } from '@sittir/common/error-kind';
 
 export type LeafScalarMap = {
-	boolean: [TSKindId.True, TSKindId.False];
+	[TSKindId.True]: true;
+	[TSKindId.False]: false;
 	[TSKindId.IntegerDecimalPlain]: number | bigint;
 	[TSKindId.FloatPoint]: number;
 	[TSKindId.FloatLeadingPoint]: number;

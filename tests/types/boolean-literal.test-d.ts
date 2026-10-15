@@ -18,11 +18,11 @@ interface MixedSlots {
 }
 
 type Loose = LooseConfigOf<MixedSlots, LeafScalarMap>;
-type TrueOnly = Expect<Equal<Extract<Loose['trueOrIdentifier'], boolean>, never>>;
-type FalseOnly = Expect<Equal<Extract<Loose['falseOrIdentifier'], boolean>, never>>;
+type TrueOnly = Expect<Equal<Extract<Loose['trueOrIdentifier'], boolean>, true>>;
+type FalseOnly = Expect<Equal<Extract<Loose['falseOrIdentifier'], boolean>, false>>;
 type Both = Expect<Equal<Extract<Loose['booleanOrIdentifier'], boolean>, boolean>>;
-type OptionalTrue = Expect<Equal<Extract<Loose['optionalTrue'], boolean>, never>>;
-type TrueList = Expect<Equal<Extract<Extract<Loose['trueList'], readonly unknown[]>[number], boolean>, never>>;
+type OptionalTrue = Expect<Equal<Extract<Loose['optionalTrue'], boolean>, true>>;
+type TrueList = Expect<Equal<Extract<Extract<Loose['trueList'], readonly unknown[]>[number], boolean>, true>>;
 type BooleanList = Expect<Equal<Extract<Extract<Loose['booleanList'], readonly unknown[]>[number], boolean>, boolean>>;
 type Numeric = Expect<Equal<Extract<Loose['numeric'], number | bigint>, number | bigint>>;
 

@@ -81,10 +81,11 @@ describe('a boolean resolves to the enum member of the two texts', () => {
 		expect(emitted).toContain('if (typeof v === "boolean") return v ? TSKindId.TrueKeyword : TSKindId.FalseKeyword;');
 		expect(emitted).not.toContain('_leafRegistry["boolean_literal"]');
 	});
-
-	it('keeps the two scalar ids paired in the type map', () => {
+	it('emits one literal-valued scalar row per boolean member', () => {
 		const emitted = emitTypes({ grammar: 'synth', nodeMap });
-		expect(emitted).toContain('boolean: ["true_keyword", "false_keyword"];');
+		expect(emitted).toContain('["true_keyword"]: true;');
+		expect(emitted).toContain('["false_keyword"]: false;');
+		expect(emitted).not.toContain('  boolean:');
 	});
 });
 
@@ -125,10 +126,11 @@ describe('a boolean resolves to the keyword kinds of the two texts, whatever the
 		const emitted = emitFrom({ grammar: 'synth', nodeMap, kindEntries: entries });
 		expect(emitted).toContain('if (typeof v === "boolean") return v ? TSKindId.True : TSKindId.False;');
 	});
-
-	it('keeps the two keyword ids paired in the type map', () => {
+	it('emits literal-valued scalar rows for keyword kinds', () => {
 		const emitted = emitTypes({ grammar: 'synth', nodeMap });
-		expect(emitted).toContain('boolean: ["true", "false"];');
+		expect(emitted).toContain('["true"]: true;');
+		expect(emitted).toContain('["false"]: false;');
+		expect(emitted).not.toContain('  boolean:');
 	});
 });
 
@@ -154,9 +156,7 @@ describe('a grammar with no scalar kinds emits no scalar resolver', () => {
 	);
 	nodes.set(
 		'_expression',
-		new AssembledSupertype('_expression', { type: CHOICE, members: [{ type: SYMBOL, name: 'mode' }] }, [
-			{ name: 'mode' }
-		])
+		new AssembledSupertype('_expression', { type: CHOICE, members: [{ type: SYMBOL, name: 'mode' }] }, [{ name: 'mode' }])
 	);
 	nodes.set('let_declaration', new AssembledBranch('let_declaration', flatten(slotRule), flatten(slotRule)));
 	const nodeMap = makeNodeMapWith(nodes);
