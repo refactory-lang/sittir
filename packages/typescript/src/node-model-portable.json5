@@ -977,6 +977,40 @@
       "vocab": "type.primitive",
       "read": [
         {
+          "vocab": "type.primitive.unchecked",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "any",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "type.primitive.symbol",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^unique",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -2536,6 +2570,40 @@
     "boolean_keyword": {
       "vocab": "type.primitive",
       "read": [
+        {
+          "vocab": "type.primitive.boolean",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "boolean",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "type.primitive.symbol",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^unique",
+                "self": true
+              }
+            }
+          ]
+        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -9549,6 +9617,23 @@
       "vocab": "type.primitive",
       "read": [
         {
+          "vocab": "type.primitive.symbol",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^unique",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "type.primitive.never",
           "toplevel": true,
           "within": [],
@@ -10137,6 +10222,40 @@
       "vocab": "type.primitive",
       "read": [
         {
+          "vocab": "type.primitive.floating.float64",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "number",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "type.primitive.symbol",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^unique",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -10286,6 +10405,40 @@
     "object_keyword": {
       "vocab": "type.primitive",
       "read": [
+        {
+          "vocab": "type.primitive.symbol",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^unique",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "type.primitive.object",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "object",
+                "self": true
+              }
+            }
+          ]
+        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -12634,6 +12787,40 @@
       "vocab": "type.primitive",
       "read": [
         {
+          "vocab": "type.primitive.string",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "string",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "type.primitive.symbol",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^unique",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -12853,6 +13040,40 @@
     "symbol_keyword": {
       "vocab": "type.primitive",
       "read": [
+        {
+          "vocab": "type.primitive.symbol",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "symbol",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "type.primitive.symbol",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^unique",
+                "self": true
+              }
+            }
+          ]
+        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -13796,6 +14017,23 @@
       "vocab": "type.primitive",
       "read": [
         {
+          "vocab": "type.primitive.symbol",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^unique",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -13808,6 +14046,40 @@
     "unknown_keyword": {
       "vocab": "type.primitive",
       "read": [
+        {
+          "vocab": "type.primitive.symbol",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^unique",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "type.primitive.unknown",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "unknown",
+                "self": true
+              }
+            }
+          ]
+        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -14114,6 +14386,40 @@
       "vocab": "type.primitive",
       "read": [
         {
+          "vocab": "type.primitive.symbol",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "match",
+                "pattern": "^unique",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "type.primitive.void",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "void",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -14277,14 +14583,14 @@
       },
       {
         "depth": 3,
-        "paths": 101,
-        "kinds": 82,
-        "refinements": 75
+        "paths": 109,
+        "kinds": 91,
+        "refinements": 83
       },
       {
         "depth": 4,
-        "paths": 67,
-        "kinds": 19,
+        "paths": 68,
+        "kinds": 20,
         "refinements": 40
       },
       {

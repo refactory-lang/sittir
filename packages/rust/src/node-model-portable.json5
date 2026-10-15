@@ -1760,6 +1760,23 @@
       "vocab": "type.primitive",
       "read": [
         {
+          "vocab": "type.primitive.boolean",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "bool",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -1994,6 +2011,23 @@
     "char_keyword": {
       "vocab": "type.primitive",
       "read": [
+        {
+          "vocab": "type.primitive.character",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "char",
+                "self": true
+              }
+            }
+          ]
+        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -6254,6 +6288,23 @@
       "vocab": "type.primitive",
       "read": [
         {
+          "vocab": "type.primitive.floating.float32",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "f32",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -6266,6 +6317,23 @@
     "f64_keyword": {
       "vocab": "type.primitive",
       "read": [
+        {
+          "vocab": "type.primitive.floating.float64",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "f64",
+                "self": true
+              }
+            }
+          ]
+        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -11562,6 +11630,23 @@
       "vocab": "type.primitive",
       "read": [
         {
+          "vocab": "type.primitive.integral.int128",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "i128",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -11574,6 +11659,23 @@
     "i16_keyword": {
       "vocab": "type.primitive",
       "read": [
+        {
+          "vocab": "type.primitive.integral.int16",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "i16",
+                "self": true
+              }
+            }
+          ]
+        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -11588,6 +11690,23 @@
       "vocab": "type.primitive",
       "read": [
         {
+          "vocab": "type.primitive.integral.int32",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "i32",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -11601,6 +11720,23 @@
       "vocab": "type.primitive",
       "read": [
         {
+          "vocab": "type.primitive.integral.int64",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "i64",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -11613,6 +11749,23 @@
     "i8_keyword": {
       "vocab": "type.primitive",
       "read": [
+        {
+          "vocab": "type.primitive.integral.int8",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "i8",
+                "self": true
+              }
+            }
+          ]
+        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -12144,6 +12297,23 @@
     "isize_keyword": {
       "vocab": "type.primitive",
       "read": [
+        {
+          "vocab": "type.primitive.integral.size",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "isize",
+                "self": true
+              }
+            }
+          ]
+        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -16386,6 +16556,23 @@
       "vocab": "type.primitive",
       "read": [
         {
+          "vocab": "type.primitive.string",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "str",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -20003,6 +20190,23 @@
       "vocab": "type.primitive",
       "read": [
         {
+          "vocab": "type.primitive.integral.int128",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "u128",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -20015,6 +20219,23 @@
     "u16_keyword": {
       "vocab": "type.primitive",
       "read": [
+        {
+          "vocab": "type.primitive.integral.int16",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "u16",
+                "self": true
+              }
+            }
+          ]
+        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -20029,6 +20250,23 @@
       "vocab": "type.primitive",
       "read": [
         {
+          "vocab": "type.primitive.integral.int32",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "u32",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -20042,6 +20280,23 @@
       "vocab": "type.primitive",
       "read": [
         {
+          "vocab": "type.primitive.integral.int64",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "u64",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -20054,6 +20309,23 @@
     "u8_keyword": {
       "vocab": "type.primitive",
       "read": [
+        {
+          "vocab": "type.primitive.integral.int8",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "u8",
+                "self": true
+              }
+            }
+          ]
+        },
         {
           "vocab": "type.primitive",
           "toplevel": true,
@@ -21318,6 +21590,23 @@
       "vocab": "type.primitive",
       "read": [
         {
+          "vocab": "type.primitive.integral.size",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "usize",
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "type.primitive",
           "toplevel": true,
           "within": [],
@@ -21886,14 +22175,14 @@
       },
       {
         "depth": 3,
-        "paths": 104,
-        "kinds": 117,
-        "refinements": 76
+        "paths": 109,
+        "kinds": 120,
+        "refinements": 81
       },
       {
         "depth": 4,
-        "paths": 83,
-        "kinds": 41,
+        "paths": 91,
+        "kinds": 55,
         "refinements": 65
       },
       {

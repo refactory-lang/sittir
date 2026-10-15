@@ -352,6 +352,23 @@
 
 ; ── type ───────────────────────────────────────────────────────────────────────
 (primitive_type) @type.primitive
+((primitive_type) @type.primitive.integral.int8 (#eq? @type.primitive.integral.int8 "i8"))
+((primitive_type) @type.primitive.integral.int8.unsigned (#eq? @type.primitive.integral.int8.unsigned "u8"))
+((primitive_type) @type.primitive.integral.int16 (#eq? @type.primitive.integral.int16 "i16"))
+((primitive_type) @type.primitive.integral.int16.unsigned (#eq? @type.primitive.integral.int16.unsigned "u16"))
+((primitive_type) @type.primitive.integral.int32 (#eq? @type.primitive.integral.int32 "i32"))
+((primitive_type) @type.primitive.integral.int32.unsigned (#eq? @type.primitive.integral.int32.unsigned "u32"))
+((primitive_type) @type.primitive.integral.int64 (#eq? @type.primitive.integral.int64 "i64"))
+((primitive_type) @type.primitive.integral.int64.unsigned (#eq? @type.primitive.integral.int64.unsigned "u64"))
+((primitive_type) @type.primitive.integral.int128 (#eq? @type.primitive.integral.int128 "i128"))
+((primitive_type) @type.primitive.integral.int128.unsigned (#eq? @type.primitive.integral.int128.unsigned "u128"))
+((primitive_type) @type.primitive.integral.size (#eq? @type.primitive.integral.size "isize"))
+((primitive_type) @type.primitive.integral.size.unsigned (#eq? @type.primitive.integral.size.unsigned "usize"))
+((primitive_type) @type.primitive.floating.float32 (#eq? @type.primitive.floating.float32 "f32"))
+((primitive_type) @type.primitive.floating.float64 (#eq? @type.primitive.floating.float64 "f64"))
+((primitive_type) @type.primitive.boolean (#eq? @type.primitive.boolean "bool"))
+((primitive_type) @type.primitive.character (#eq? @type.primitive.character "char"))
+((primitive_type) @type.primitive.string (#eq? @type.primitive.string "str"))
 (generic_type) @type.generic
 (generic_type_with_turbofish) @type.generic.turbofish
 (type_argument) @element.type_argument

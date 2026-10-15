@@ -374,6 +374,39 @@ describe('portable is: rust', async () => {
 			expect(at('expression.range.inclusive')(range, context), kind).toBe(false);
 		}
 	});
+	it('reads each primitive type by its keyword, an unsigned width as its signed width', () => {
+		const SOURCE = 'fn f(a: i8, b: u8, c: i128, d: isize, e: usize, g: f32, h: f64, i: bool, j: char, k: &str) -> ! { loop {} }\n';
+		for (const [keyword, path] of [
+			['i8_keyword', 'type.primitive.integral.int8'],
+			['u8_keyword', 'type.primitive.integral.int8'],
+			['i128_keyword', 'type.primitive.integral.int128'],
+			['isize_keyword', 'type.primitive.integral.size'],
+			['usize_keyword', 'type.primitive.integral.size'],
+			['f32_keyword', 'type.primitive.floating.float32'],
+			['f64_keyword', 'type.primitive.floating.float64'],
+			['bool_keyword', 'type.primitive.boolean'],
+			['char_keyword', 'type.primitive.character'],
+			['str_keyword', 'type.primitive.string'],
+			['never_type', 'type.primitive.never']
+		] as const) {
+			const [node, context] = find(SOURCE, keyword);
+			expect(at(path)(node, context), keyword).toBe(true);
+			expect(at('type.primitive')(node, context), keyword).toBe(true);
+		}
+		const [f32, fc] = find(SOURCE, 'f32_keyword');
+		const [i8, ic] = find(SOURCE, 'i8_keyword');
+		expect(at('type.primitive.integral')(f32, fc)).toBe(false);
+		expect(at('type.primitive.floating')(i8, ic)).toBe(false);
+		expect(at('type.primitive.integral.int16')(i8, ic)).toBe(false);
+	});
+
+	it.skip('reads an unsigned width by its flag (pending: `unsigned` is a flag of type.primitive.integral, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
+		const SOURCE = 'fn f(a: i8, b: u8) {}\n';
+		const [signed, sc] = find(SOURCE, 'i8_keyword');
+		const [unsigned, uc] = find(SOURCE, 'u8_keyword');
+		expect(at('type.primitive.integral.int8.unsigned')(unsigned, uc)).toBe(true);
+		expect(at('type.primitive.integral.int8.unsigned')(signed, sc)).toBe(false);
+	});
 });
 
 describe('portable is: typescript', async () => {
@@ -629,6 +662,38 @@ describe('portable is: typescript', async () => {
 		const [read, rc] = find(SOURCE, 'private_property_identifier', undefined, 1);
 		expect(at('identifier.property')(declared, dc)).toBe(true);
 		expect(at('identifier.property')(read, rc)).toBe(true);
+	});
+	it('reads each predefined type by its keyword', () => {
+		const SOURCE = 'let a: any; let b: number; let c: boolean; let d: string; let e: symbol; let g: void; let h: unknown; let i: never; let j: object;\n';
+		for (const [keyword, path] of [
+			['any_keyword', 'type.primitive.unchecked'],
+			['number_keyword', 'type.primitive.floating.float64'],
+			['boolean_keyword', 'type.primitive.boolean'],
+			['string_keyword', 'type.primitive.string'],
+			['symbol_keyword', 'type.primitive.symbol'],
+			['void_keyword', 'type.primitive.void'],
+			['unknown_keyword', 'type.primitive.unknown'],
+			['never_keyword', 'type.primitive.never'],
+			['object_keyword', 'type.primitive.object']
+		] as const) {
+			const [node, context] = find(SOURCE, keyword);
+			expect(at(path)(node, context), keyword).toBe(true);
+			expect(at('type.primitive')(node, context), keyword).toBe(true);
+		}
+		const [unknown, uc] = find(SOURCE, 'unknown_keyword');
+		expect(at('type.primitive.unchecked')(unknown, uc)).toBe(false);
+	});
+
+	it('reads a unique symbol as a symbol', () => {
+		const [unique, context] = find('declare const s: unique symbol;\n', 'unique');
+		expect(at('type.primitive.symbol')(unique, context)).toBe(true);
+	});
+
+	it.skip('reads a unique symbol by its flag (pending: `unique` is a flag of type.primitive.symbol, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
+		const [unique, uc] = find('declare const s: unique symbol;\n', 'unique');
+		const [plain, pc] = find('let s: symbol;\n', 'symbol_keyword');
+		expect(at('type.primitive.symbol.unique')(unique, uc)).toBe(true);
+		expect(at('type.primitive.symbol.unique')(plain, pc)).toBe(false);
 	});
 });
 

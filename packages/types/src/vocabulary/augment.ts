@@ -2899,8 +2899,62 @@ declare module './type.ts' {
 		}
 		interface Primitive<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive<G> {}
 		namespace Primitive {
+			interface Boolean<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Boolean<G> {}
+			interface Character<G extends GrammarContext<G>> extends characters.Type.Primitive.Character<G> {}
+			interface Floating<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Floating<G> {}
+			namespace Floating {
+				interface Float32<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Floating.Float32<G> {}
+				interface Float64<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Floating.Float64<G> {}
+				type Any<G extends GrammarContext<G>> =
+					| V.Type.Primitive.Floating<G>
+					| V.Type.Primitive.Floating.Float32<G>
+					| V.Type.Primitive.Floating.Float64<G>;
+			}
+			interface Integral<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral<G> {}
+			namespace Integral {
+				interface Int128<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int128<G> {}
+				interface Int16<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int16<G> {}
+				interface Int32<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int32<G> {}
+				interface Int64<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int64<G> {}
+				interface Int8<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Int8<G> {}
+				interface Size<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Integral.Size<G> {}
+				type Any<G extends GrammarContext<G>> =
+					| V.Type.Primitive.Integral<G>
+					| V.Type.Primitive.Integral.Int128<G>
+					| V.Type.Primitive.Integral.Int16<G>
+					| V.Type.Primitive.Integral.Int32<G>
+					| V.Type.Primitive.Integral.Int64<G>
+					| V.Type.Primitive.Integral.Int8<G>
+					| V.Type.Primitive.Integral.Size<G>;
+			}
 			interface Never<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Never<G> {}
-			type Any<G extends GrammarContext<G>> = V.Type.Primitive<G> | V.Type.Primitive.Never<G>;
+			interface Object<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Object<G> {}
+			interface String<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.String<G> {}
+			interface Symbol<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Symbol<G> {}
+			interface Unchecked<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Unchecked<G> {}
+			interface Unknown<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Unknown<G> {}
+			interface Void<G extends GrammarContext<G>> extends typeAnnotations.Type.Primitive.Void<G> {}
+			type Any<G extends GrammarContext<G>> =
+				| V.Type.Primitive<G>
+				| V.Type.Primitive.Boolean<G>
+				| V.Type.Primitive.Character<G>
+				| V.Type.Primitive.Floating<G>
+				| V.Type.Primitive.Floating.Float32<G>
+				| V.Type.Primitive.Floating.Float64<G>
+				| V.Type.Primitive.Integral<G>
+				| V.Type.Primitive.Integral.Int128<G>
+				| V.Type.Primitive.Integral.Int16<G>
+				| V.Type.Primitive.Integral.Int32<G>
+				| V.Type.Primitive.Integral.Int64<G>
+				| V.Type.Primitive.Integral.Int8<G>
+				| V.Type.Primitive.Integral.Size<G>
+				| V.Type.Primitive.Never<G>
+				| V.Type.Primitive.Object<G>
+				| V.Type.Primitive.String<G>
+				| V.Type.Primitive.Symbol<G>
+				| V.Type.Primitive.Unchecked<G>
+				| V.Type.Primitive.Unknown<G>
+				| V.Type.Primitive.Void<G>;
 		}
 		interface Qualified<G extends GrammarContext<G>> extends typeAnnotations.Type.Qualified<G> {}
 		interface Query<G extends GrammarContext<G>> extends typeAnnotations.Type.Query<G> {}
@@ -2949,7 +3003,25 @@ declare module './type.ts' {
 			| V.Type.Predicate<G>
 			| V.Type.Predicate.Asserts<G>
 			| V.Type.Primitive<G>
+			| V.Type.Primitive.Boolean<G>
+			| V.Type.Primitive.Character<G>
+			| V.Type.Primitive.Floating<G>
+			| V.Type.Primitive.Floating.Float32<G>
+			| V.Type.Primitive.Floating.Float64<G>
+			| V.Type.Primitive.Integral<G>
+			| V.Type.Primitive.Integral.Int128<G>
+			| V.Type.Primitive.Integral.Int16<G>
+			| V.Type.Primitive.Integral.Int32<G>
+			| V.Type.Primitive.Integral.Int64<G>
+			| V.Type.Primitive.Integral.Int8<G>
+			| V.Type.Primitive.Integral.Size<G>
 			| V.Type.Primitive.Never<G>
+			| V.Type.Primitive.Object<G>
+			| V.Type.Primitive.String<G>
+			| V.Type.Primitive.Symbol<G>
+			| V.Type.Primitive.Unchecked<G>
+			| V.Type.Primitive.Unknown<G>
+			| V.Type.Primitive.Void<G>
 			| V.Type.Qualified<G>
 			| V.Type.Query<G>
 			| V.Type.Readonly<G>
