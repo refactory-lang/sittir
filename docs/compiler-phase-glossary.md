@@ -1,375 +1,103 @@
-# Codegen Glossary
+# Compiler and codegen reference
 
-Entry point for the sittir codegen pipeline — the DSL authoring layer
-(enrich / wire / overrides), the compiler phases, and the emitters. This
-document tells the pipeline story — what each stage is responsible for,
-what flows between stages, and where each lives — and indexes into the
-per-directory function glossaries under [`docs/glossary/`](glossary/),
-which hold the per-function reference (mechanically relocated from source
-JSDoc; the source files remain the ground truth).
+The compiler turns a tree-sitter-compatible grammar into the model used by TypeScript and native emitters. This page describes the phase boundaries and indexes the function glossaries. For runtime/package structure, read [Architecture](architecture.md).
 
 ## Pipeline order
 
-```
-enrich (author wraps grammar(enrich(base), wire({ … })))   ← module-load, pre-tree-sitter
-  → evaluate (compiler/evaluate.ts: runs the DSL; dsl/wire/wire.ts folds overrides)
-    → link (compiler/link.ts)
-      → normalize (compiler/normalize.ts + compiler/wrapper-deletion.ts)
-        → simplify (compiler/simplify.ts)
-          → assemble (compiler/assemble.ts + compiler/model/node-map.ts + compiler/collect-slots.ts)
-            → emit (emitters/*.ts, orchestrated by emitters/emit.ts)
+```text
+grammar.sittir.ts
+  → sittirGrammar: enrich → wire → active grammar implementation
+  → evaluate
+  → link
+  → normalize
+  → simplify
+  → assemble
+  → emit TypeScript APIs + Rust transports/render bodies
 ```
 
-`packages/codegen/src/run-codegen.ts` drives the whole run and writes the
-per-grammar diagnostics file
-(`packages/<lang>/.sittir/grammar-diagnostics.json`).
+`packages/codegen/src/run-codegen.ts` orchestrates generation; `compiler/generate.ts` drives the compiler and emitter boundary. Parser metadata is an input to this process, not an identity table independently reconstructed by each emitter.
 
 ## Dual-pipeline execution model
 
-`packages/<lang>/grammar.sittir.ts` executes **twice**, in two different
-runtimes:
+The grammar entry executes in two environments:
 
-1. **Tree-sitter side.** `packages/<lang>/.sittir/grammar.js` re-exports
-   the entry, and Node strips its types (`packages/codegen/src/transpile/`
-   writes the scaffolding). The tree-sitter CLI executes it with **its own**
-   implementations of the
-   `grammar()` / `seq()` / `choice()` / `optional()` DSL runtime to
-   produce the parser artifacts (`.sittir/src/grammar.json`,
-   `node-types.json`, `parser.c`, `parser.wasm`).
-2. **Sittir side.** `evaluate()` (compiler/evaluate.ts) imports the same
-   module and executes it with **sittir's own** implementations of the
-   same DSL surface, producing the `RawGrammar` the compiler phases
-   consume.
+1. Tree-sitter loads the `.sittir/grammar.js` re-export and executes the entry with its grammar DSL to generate parser artifacts.
+2. Sittir evaluates the entry with its own DSL implementation to obtain the compiler's rule graph.
 
-Both executions run the very same enrich/wire modules, which is what
-keeps the two sides in agreement. Consequences:
+`sittirGrammar` applies enrichment and authored wiring before calling the active `grammar` implementation. Both executions therefore see those structural edits. A kind minted only after the parser boundary cannot acquire a parser-issued identity merely by appearing in the TypeScript model.
 
-- **Code inside the DSL execution reaches both sides.** Anything enrich,
-  wire, clause-hoist, or the overrides do at module load (field promotion,
-  `_kw_*` synthesis, hoisted `_<parent>_optional<N>` / `_<parent>_group<N>`
-  helpers, field-enum synthesis, alias injection) is seen by the parser AND
-  by the IR.
-- **Anything minted only in evaluate's post-passes exists only on the
-  sittir side**: it has no parser symbol and therefore no parser-issued
-  kindId — the phantom-kind class the ratchet tracks (see Link). Field-enum
-  synthesis moved from an evaluate-only post-pass to `enrich()` for exactly
-  this reason — see Phase 0.
-- The two runtimes normalize differently (sittir keeps a lowercase
-  `optional` wrapper; tree-sitter lowers it to `CHOICE[x, BLANK]`), so
-  DSL-side passes use the dual-case predicates in
-  `types/runtime-shapes.ts` to recognize both forms.
-- **Ground truth for "did tree-sitter see it" is
-  `packages/<lang>/.sittir/src/grammar.json`** — not the sittir-side rule
-  map.
+The DSL encounters lowercase Sittir shapes and tree-sitter's uppercase/normalized shapes. Use `types/runtime-shapes.ts` predicates at this boundary. The generated `.sittir/src/grammar.json` and a CST probe establish the parser's actual structure.
 
-## DSL layer (`dsl/`)
+## Phase contracts
 
-The authoring surface `grammar(enrich(base), wire({ … }))` and everything
-that runs inside it:
+| Phase | Source | Responsibility |
+| --- | --- | --- |
+| Enrich / wire | `dsl/enrich.ts`, `dsl/wire/`, `dsl/sittir-grammar.ts` | Apply mechanical grammar structure and authored changes in both executions |
+| Evaluate | `compiler/evaluate.ts` | Execute the DSL and establish the compiler grammar boundary |
+| Link | `compiler/link.ts` | Resolve references, parser identities, aliases, and canonical facts |
+| Normalize | `compiler/normalize.ts` | Normalize structure and flatten wrappers into phase-appropriate attributes |
+| Simplify | `compiler/simplify.ts` | Produce the derivation view used for slot/model construction |
+| Assemble | `compiler/assemble.ts`, `compiler/model/`, `compiler/collect-slots.ts` | Materialize kinds, slots, references, and construction/render facts |
+| Emit | `emitters/emit.ts`, `emitters/` | Derive the language package and native render module |
 
-- **`enrich(base)`** (`dsl/enrich.ts`) — mechanical pre-passes over the
-  base grammar; see Phase 0 below.
-- **`wire(config, base?)`** (`dsl/wire/wire.ts`) — folds the declarative
-  override config (rules, patches, groups, renderAs, conflicts, inline)
-  into the options object before either runtime's
-  `grammar()` sees it, and exposes collected metadata to the compiler
-  phases via its wire context.
-- **`transform()` / overrides** (`dsl/transform/`) — path-addressed
-  structural rewrites of a rule body, the last-resort override form (after
-  explicit rule structure and earlier-phase fixes).
-- **DSL primitives** (`dsl/primitives/`) — sittir's implementations of the
-  constructor surface, plus `role()` / `variant()` extensions.
+### Rule views
 
-Reference: [glossary/dsl.md](glossary/dsl.md),
-[glossary/dsl-wire.md](glossary/dsl-wire.md),
-[glossary/dsl-transform.md](glossary/dsl-transform.md),
-[glossary/dsl-primitives.md](glossary/dsl-primitives.md).
+The discriminated rule union lives in `types/rule.ts`. Phase-specific views retain different information for different consumers:
+
+- The linked view retains wrapped structure and reference provenance.
+- The normalized render view retains the syntax needed for rendering, with wrapper meaning represented by attributes.
+- The simplified derivation view supports slot and construction-model derivation.
+
+`normalizeGrammar` uses the canonical `flattenRules` path and invokes `computeSimplifiedRules` with the attribute builder. It processes alias bodies through the corresponding views as well. Consumers should read the view/fact they need rather than reconstructing it from another view.
+
+### Identity and aliases
+
+A reference occurrence can carry an alias identity different from its source rule's isolated identity. Storage identity, parser grammar identity, display identity, and emitted names are separate facts. Resolve them where the reference and parser metadata are available, then carry them downstream.
+
+Native storage and routing use grammar IDs; the parser's display ID has specific alias/envelope uses. See [Clippy policy](clippy-policy.md#kind-ids).
+
+### Slot and construction facts
+
+Assemble produces the model consumed by types, factories, readers, and render emission. Slot content, cardinality, names, and construction routes must have one owner and one derivation. A consumer-local walker or a parallel name table creates another correctness boundary.
+
+A missing fact should be added at the earliest phase that can determine it honestly. Reaching back from an emitter to infer a fact again is not a substitute for that model change.
+
+## Render emission
+
+`emitAll` resolves shared render rules and spacing/site facts, dispatches the model to the emitters, and finalizes the generated outputs. The render-body IR (`emitters/render-body.ts`) represents literals, slots, conditions, indentation, and seams. The native emitter prints Rust code from those bodies and the model's transport facts.
+
+`TemplateEmitter` is an internal codegen name: its finalized body catalog also feeds native emission and diagnostics. It is not a JavaScript template-rendering backend. There is no Jinja/Askama engine in the supported runtime.
+
+The generated `.sittir/render-bodies.json` is a diagnostic catalog; the runtime uses compiled grammar-owned Rust code. Fix a rule/model/emitter defect at its source, not by editing the catalog or emitted Rust.
+
+## Diagnostics and verification
+
+Grammar diagnostics identify unsupported shapes or authoring conflicts. Compiler invariants belong to the phase that owns them. Keep a source witness and inspect the first boundary at which its structure, identity, or routing differs.
+
+Use `tool probe-stages`, `tool probe-kind`, and `tool grammar-diagnostics` through the unified CLI. The exact commands and required generation/native/corpus gates are in [Development](../DEVELOPMENT.md).
+
+A compiler refactor claiming no behavior change must preserve generated output. A behavior change needs an explicit witness and comparable per-grammar validation counts. A source-preserving parse/render result is distinct from a fresh build/render/reparse result.
 
 ## Function reference index
 
-| Source directory (`packages/codegen/src/…`) | Glossary |
+The source implementation is authoritative. Each function's detailed contract and rationale live in its directory glossary.
+
+| Source area | Reference |
 | --- | --- |
-| `compiler/` (phases, ctx, rule catalog, SCC, generate) | [glossary/compiler.md](glossary/compiler.md) |
-| `compiler/model/` (`NodeMap`, Assembled hierarchy, slots) | [glossary/compiler-model.md](glossary/compiler-model.md) |
-| `compiler/diagnostics/` (grammar diagnostics, preflight) | [glossary/compiler-diagnostics.md](glossary/compiler-diagnostics.md) |
-| `dsl/` (enrich, rule-transforms, rule-attrs, walker) | [glossary/dsl.md](glossary/dsl.md) |
-| `dsl/primitives/` (seq/choice/field/alias constructors) | [glossary/dsl-primitives.md](glossary/dsl-primitives.md) |
-| `dsl/transform/` (override `transform()` machinery) | [glossary/dsl-transform.md](glossary/dsl-transform.md) |
-| `dsl/wire/` (override folding into the options object) | [glossary/dsl-wire.md](glossary/dsl-wire.md) |
-| `emitters/` (all generated-output emitters) | [glossary/emitters.md](glossary/emitters.md) |
-| `grammar-shapes/` (typed grammar-shape projections) | [glossary/grammar-shapes.md](glossary/grammar-shapes.md) |
-| `transpile/` (grammar.sittir.ts → .sittir/grammar.js) | [glossary/transpile.md](glossary/transpile.md) |
-| `types/` (Rule IR, runtime shapes, diagnostics types) | [glossary/types.md](glossary/types.md) |
-| `scm/` | [glossary/scm.md](glossary/scm.md) |
-| `scripts/` | [glossary/scripts.md](glossary/scripts.md) |
-| `util/` | [glossary/util.md](glossary/util.md) |
-| `validate/` (codegen-side validation helpers) | [glossary/validate.md](glossary/validate.md) |
-| `src/` root (run-codegen, engine loader) | [glossary/root.md](glossary/root.md) |
-
-## Rule IR and snapshots
-
-One discriminated union (`Rule`, `packages/codegen/src/types/rule.ts`) flows
-through the pipeline; which variants are present depends on the phase. Every
-variant extends `RuleBase`, whose pushed-down modifier attributes
-(`fieldName`, `multiplicity`, `nonterminal`, `separator`, `aliasedTo`)
-deliberately mirror the slot vocabulary so values flow
-rule → slot under identical names. `nonterminal === true` is the
-authoritative slot-presence signal.
-
-Three rule views coexist after Normalize (two carried as `SimplifiedGrammar`
-fields — `rules` and `normalizedRules` — the post-link view attached only
-per node in Assemble):
-
-| View | Type | Produced by | Attached as | Consumed by |
-| --- | --- | --- | --- | --- |
-| Post-link wrapped view | `Rule<'link'>` | `applyNormalizationPasses` | `node.rule` (per node only) | the few justified wrapper-shape-dependent consumers (enumerated on `NodeMap.linkRules`'s doc comment) |
-| Wrapper-free render view | `RenderRule` | `applyWrapperDeletion` | `normalizedRules` / `node.renderRule` | the `TemplateEmitter` |
-| Derivation view | `SimplifiedRule` | `computeSimplifiedRules` | `rules` / `node.simplifiedRule` | slot derivation (`collectSlots`) → factories / wrap / from |
-
-`RenderRule` excludes the wrapper node types (`optional` / `field` /
-`repeat` / `repeat1`) — their meaning lives in leaf attributes.
-`SimplifiedRule` additionally approaches the flat seq-of-leaves shape
-(assertable via `SITTIR_ASSERT_UNIVERSAL_SHAPE=1`).
-
-Wrapper-shape-dependent consumers are rare and live where a real
-`Rule<'link'>` tree is in hand (`link.ts`'s own classification). At
-normalize/simplify a FIELD has already collapsed to the `fieldName` /
-`nonterminal` `RuleBase` attribute — a different, phase-appropriate check
-(`hasSlotBearingContent` in `compiler/assemble.ts`) answers the same
-question there instead of re-deriving it by walking wrappers.
-
-## Phase 0: Enrich (`dsl/enrich.ts`)
-
-`enrich(base)` runs at module load, **before tree-sitter consumes the
-grammar** — the author writes `grammar(enrich(base), wire({ … }))` in
-`packages/<lang>/grammar.sittir.ts`. Every rewrite therefore reaches both
-the parser and the downstream IR; there is no second authoring layer.
-Mechanical, strictly local passes: unambiguous bare-symbol → `field()`
-wrapping (including inside choice arms), bare/optional keyword promotion
-into hidden `_kw_*` rules, optional-symbol promotion, and clause hoisting
-(`applyClauseHoist`) — `optional(seq(...))` content is minted into a hidden
-`_<parent>_optional<N>` helper when inline-safe, or surfaced as a visible
-kind via a hidden `_<parent>_group<N>` rule plus a reference-site `alias()`
-when it carries multiple slots. Enrich-added fields carry
-`source: 'enriched'`; collisions skip with a notification. Enrich stamps no
-derived slot attributes — those are wrapper-deletion's job.
-
-Runs last, over the fully merged rules bag (base + `_kw_*` + clause-hoist
-groups): `synthesizeFieldEnumRules` mints a named, `prec(-1, …)`-wrapped
-hidden rule for an inline field-enum (`field('operator', choice('+', '-',
-…))`), giving tree-sitter a real symbol for a shape that would otherwise
-collapse to anonymous tokens with no catalog row. Canonical naming prefers,
-in order: an existing rule anywhere in the grammar with the identical
-member set (reused verbatim, regardless of field name — the general fix
-for what would otherwise be a duplicate, separately-symbolized production);
-a field name shared by ≥2 distinct parent kinds; else `_<parent>_<field>`.
-The low precedence defers to whatever else the same literal could
-previously start, without a `conflicts:` entry per migrated occurrence.
-
-A whole-rule token whose body alternates between forms is distributed into
-one token kind per form (`hoistTokenForms`), so the parser lexes the forms
-as distinct symbols and the rule becomes their supertype; the arms carry
-polymorph annotations, with one default arm the parent's own factory builds
-(`defaultTokenFormArm`, overridden by `variant(name, { default: true })`).
-
-Reference: [glossary/dsl.md](glossary/dsl.md).
-
-## Phase 1: Evaluate (`compiler/evaluate.ts`, `dsl/wire/wire.ts`, `types/runtime-shapes.ts`)
-
-`evaluate(entryPath)` executes the grammar DSL (grammar.js or
-grammar.sittir.ts) with sittir extensions (`role()`, `variant()`,
-`transform()`) and produces a `RawGrammar`. The DSL constructors build
-the shapes tree-sitter's DSL builds — the one rewrite is
-`choice(x, blank())` → `optional(x)`, the same language; `isBlank`,
-`optionalContentOf` and `isImmediateToken` (dsl/rule-patterns.ts) read each
-representation pair as one shape. `evaluate` then crosses the compile
-boundary (`compiler/canonical-rules.ts`): precedence wrappers are peeled,
-immediate tokens folded and degenerate nesting collapsed, once, into the
-canonical shape the later phases read. Inline
-alias content is not rewritten here: enrich (Phase 0) distributes an alias
-over a choice and mints the storage of an alias over literals, and
-field-enum synthesis is enrich's job too, so the same rule tree-sitter
-compiled reaches the IR unchanged. `wire(config, base?)` folds the declarative override config (rules,
-patches, groups, renderAs, conflicts, inline) into the
-options object before tree-sitter sees it, and exposes the collected
-metadata to the later phases via its wire context. The DSL globals run in
-two runtimes (sittir's evaluator and tree-sitter's CLI), so
-`types/runtime-shapes.ts` provides dual-case predicates that recognize both
-the lowercase and the tree-sitter-normalized uppercase rule forms.
-
-Reference: [glossary/compiler.md](glossary/compiler.md),
-[glossary/dsl-wire.md](glossary/dsl-wire.md),
-[glossary/types.md](glossary/types.md).
-
-## Phase 2: Link (`compiler/link.ts`)
-
-`link(raw, ctx?)` resolves what each node *is*, shape-preserving (no
-restructuring). It resolves aliases (named aliases become symbols carrying
-`aliasedFrom` provenance — the hidden source rule stays the single source
-of truth and is promoted to user-facing visibility later by assemble's
-alias-source mechanism), flattens token wrappers, classifies hidden rules
-(enum / supertype / group), centralizes the separated-list lift
-(`liftSeparators` — `repeat(seq(sep, x))` and `commaSep1` shapes become
-separator-bearing repeats), infers field names from the symbol-reference
-graph, classifies polymorphs (heuristic and `variant()`-sourced), and
-annotates block-bearer fields. Link also stamps parser-issued kindIds onto
-catalog refs; names it cannot stamp are reported as `kindid-unstamped-*`
-diagnostics — the per-build phantom-kind inventory persisted to
-`grammar-diagnostics.json` and ratcheted by
-`packages/codegen/src/__tests__/phantom-kind-ratchet.test.ts` (shrink-only
-ceilings).
-
-Link also structures token interiors (`compiler/token-interior.ts`). A `token(seq(...))` that mixes literal text
-with a pattern-bearing slot, and a bare pattern that draws named groups, become a seq of literals and FIELD-named
-slots on the sittir side; the parser rule is untouched. The kind is then a compound stamped `lexed`: its text is read
-as one token, its template writes the literal runs with adjacency marks, and `interiorOf` (emitters) serializes the
-structure once for the node model, the runtime `TOKEN_INTERIORS` table, the wrap projection, the leaf registry and
-the per-slot guards.
-
-Reference: [glossary/compiler.md](glossary/compiler.md).
-
-## Phase 3: Normalize (`compiler/normalize.ts`, `compiler/wrapper-deletion.ts`)
-
-`normalizeGrammar(linked, ctx?)` runs four steps and returns a
-`SimplifiedGrammar` carrying all three rule views. First
-`applyNormalizationPasses`: collapse degenerate wrappers, fan out
-`seq(a, choice(b, c), d)` into a choice of seqs, factor common
-prefix/suffix across choice branches, dedupe adjacent structurally-equal
-members, inline single-use hidden rules (fixpoint) — non-lossy on named
-content. Then `applyWrapperDeletion` pushes `optional` / `field` /
-`repeat` / `repeat1` / `alias` wrappers down to leaf `RuleBase` attributes
-("outer wins", idempotent), producing the wrapper-free `RenderRule` view.
-Third, a fixed-point loop (up to 8 passes) of `inlineHiddenSeqRefs` splices
-hidden-seq refs into their use sites on the render view — each pass can
-expose fresh hidden-seq refs, and the keep-set is re-derived per pass.
-Finally it calls `computeSimplifiedRules` (Phase 3.5) and threads top-level
-alias bodies through the same three-step pipeline so Assemble reads
-snapshots and never re-simplifies per call.
-
-Reference: [glossary/compiler.md](glossary/compiler.md).
-
-## Phase 3.5: Simplify (`compiler/simplify.ts`)
-
-`computeSimplifiedRules(normalizedRules, ctx?)` computes the derivation-only
-`SimplifiedRule` view consumed by slot derivation — templates deliberately
-do NOT use it, so delimiters survive in render. It inlines parser-inlined
-helpers (`inlineRefs` in `dsl/rule-transforms.ts`: anything in
-`grammar.inline`, plus hidden group/multi refs, re-stamping the referring
-symbol's attributes onto the inlined leaves), strips anonymous delimiters,
-merges position-equivalent choice branches, hoists shared fields across
-branches, and canonicalizes toward a flat seq of leaves. Simplify is
-wrapper-node-free by construction: all rule construction goes through the
-phase-injected `ctx.builder` (the `attributeBuilder`, which pushes
-attributes instead of building wrapper nodes), and `simplifyRule`'s
-`default` case throws if a stray wrapper node reaches it. Multiplicities
-combine through an explicit lattice (`combineMultiplicity`) rather than a
-survivor silently keeping its own.
-
-Reference: [glossary/compiler.md](glossary/compiler.md),
-[glossary/dsl.md](glossary/dsl.md).
-
-## Phase 4: Assemble (`compiler/assemble.ts`, `compiler/model/node-map.ts`, `compiler/collect-slots.ts`)
-
-`assemble(ctx)` is the first materialization of nodes. Each rule is
-classified into a model type (branch / polymorph / supertype / group /
-multi / enum / pattern / keyword / token), constructed as an
-`AssembledNode` carrying its rule snapshots, and given names
-(snake_case kind → PascalCase type / camelCase factory + property names,
-with collision resolution and `ir.*` key assignment). Slot derivation is
-`collectSlots` over the simplified rule — "a slot IS a
-`nonterminal`-flagged node": seqs distribute member slots, field-named
-choices stay one union slot, unnamed structural choices distribute into
-arms and merge by name, and same-named slots across positions fold into one
-slot whose values union. `hydrateSlotRefs` later replaces unresolved slot
-value refs with concrete nodes (making the graph cyclic); parameterless and
-user-facing kinds are marked by fixpoint passes.
-
-Reference: [glossary/compiler.md](glossary/compiler.md),
-[glossary/compiler-model.md](glossary/compiler-model.md).
-
-### `classifyNode`'s RenderRule-only design
-
-`classifyNode` (`compiler/assemble.ts`) reads `RenderRule` (the
-wrapper-deleted normalize-phase view) exclusively, never the link-phase
-`inlinedRule` — the reverse of `assemble()`'s node CONSTRUCTORS, most of
-which still need `inlinedRule`'s pre-deletion wrapper node (`AssembledGroup`
-being the deliberate exception noted on its own construction site;
-`AssembledMulti` also constructs directly off `RenderRule` since a hidden
-repeat helper's own body IS the repeat). An "undecorated" guard
-(`fieldName === undefined && multiplicity === undefined`) gates the
-SUPERTYPE/GROUP/PATTERN/STRING early-exit switch: `PATTERN`/`STRING` are
-wrapper-COLLAPSIBLE (a `repeat1('.')` collapses to a bare-looking `STRING`
-carrying `multiplicity: 'nonEmptyArray'`), so a *decorated* one is really a
-field/repeat-wrapped leaf masquerading as bare and must fall through to
-`classifyTerminalFallback` instead of early-exiting as keyword/token/pattern.
-`hasSlotBearingContent` asks "is there a named field or a rule reference
-here" — narrower than "does this produce a slot at all"
-(a repeat over terminals genuinely IS a slot per Table 2, which
-`nonterminal` correctly reflects; `hasSlotBearingContent` isn't asking that).
-`isAllTextShape` is phase-invariant by construction: `OPTIONAL`/`REPEAT`/
-`REPEAT1`/`FIELD`/`ALIAS`/`TOKEN` collapse to `never` outside evaluate/link,
-so the same switch correctly serves all three of its real callers —
-`collectAnonymousNodes` (still-wrapper-bearing `Rule<'link'>`),
-`classifyTerminalFallback` (normalize-phase `RenderRule`), and
-`diagnoseSlotGrouping` (simplify-phase `SimplifiedRule`).
-
-## Phase 5: Emit (`emitters/*.ts`)
-
-`emitAll` (emitters/emit.ts) fans out to the emitters. Every emitter
-follows the same canonical pattern: iterate `nodeMap.nodes`, dispatch on
-`node.modelType`, and own all string generation locally — the compiler-side
-Assembled classes expose data only. Template emission is the
-`TemplateEmitter` (`runTemplateEmitter`, emitters/templates.ts), which
-consumes `node.renderRule` per kind (per-form for polymorphs) and enforces
-a slot-preservation gate (each declared slot appears exactly once in the
-output; bypass with `SITTIR_SLOT_PRESERVATION=0`). Other emitters produce
-types, factories, `.from()` resolvers, wrap functions, guards, consts, the
-`ir.*` namespace, the native render/transport Rust modules, the
-`node-model.json5` snapshot, `overrides.suggested.ts` (only when there are
-suggestions), and per-kind tests.
-
-Reference: [glossary/emitters.md](glossary/emitters.md).
-
-## Diagnostics
-
-Two vocabularies, kept apart. **Grammar diagnostics**
-(`compiler/diagnostics/grammar-diagnostics.ts`) report shapes and
-declarations the grammar's author resolves; each carries its code's
-intrinsic `canProceed`, and they are persisted per grammar to
-`packages/<lang>/.sittir/grammar-diagnostics.json` (committed, so drift
-shows up in review). `compile.ts::compileGrammar` gates them twice through
-`assertGatePasses`: the evaluate-time records before link, so a grammar
-tree-sitter rejects is never linked, and the shape records after assemble.
-The grammar's `expectDiagnostics:` floors, per code and per owner, apply
-only at the gate. Inspect via `sittir tool grammar-diagnostics`.
-
-**Compiler diagnostics** go to the phase sink (`DiagnosticSink`) and print
-in the gen log. A compiler invariant (a fixpoint that never converges, an
-alias target the parser never mints, a `factoryInline` kind with nowhere
-to nest, a hydrate-time reference to an absent kind) is a throw in the
-phase that owns it, not a diagnostic. An automatic type-name rename is a
-naming event (`AssembledNodeMap.namingEvents`), printed in the gen log as
-`[naming]` lines.
-
-`kindid-unstamped-symbols`/`kindid-unstamped-literals` (`link.ts`'s
-`reportKindIdStampMisses`) are compiler warnings, not grammar diagnostics:
-they compare sittir's kinds with the parser's ids, and the phantom-kind
-ratchet gates the count. A
-stamp miss means a referenced kind or literal never resolved a parser
-kindId — visible now instead of deferring the gap to a native "unknown
-kind id" render error, per the invariant's end-state goal. They report the
-FULL miss set, not split by exclusion class — `reportVaporizedKinds`
-partitions symbol misses three ways: `kindid-inline-excluded-symbols`
-(in the grammar's authoritative `inline:` array), `kindid-vaporized-symbols`
-(not inline AND unreachable from the grammar's root by an independent
-reference-graph walk — real evidence of dead surface, not just the
-complement of the inline check), and `kindid-unclassified-symbols`
-(not inline but reachable — a genuine, unaccepted gap, reported at
-`warning` severity so a future regression can't hide inside "vaporized").
-Literal misses stay a two-way split (inline-excluded vs vaporized) since
-bare literal text has no rule-name identity to test reachability against.
-Cross-reference these codes against the unstamped codes to see which
-entries already have an accepted reason.
-
-Reference:
-[glossary/compiler-diagnostics.md](glossary/compiler-diagnostics.md).
+| Compiler phases and contexts | [compiler](glossary/compiler.md) |
+| Assembled model and slots | [compiler model](glossary/compiler-model.md) |
+| Grammar and shape diagnostics | [compiler diagnostics](glossary/compiler-diagnostics.md) |
+| Enrichment and DSL transforms | [DSL](glossary/dsl.md) |
+| DSL primitives | [primitives](glossary/dsl-primitives.md) |
+| Path-addressed transforms | [transform](glossary/dsl-transform.md) |
+| Authored wiring | [wire](glossary/dsl-wire.md) |
+| TypeScript and native emission | [emitters](glossary/emitters.md) |
+| Construction overlays | [overlays](glossary/emitters-overlays.md) |
+| Grammar-shape projections | [grammar shapes](glossary/grammar-shapes.md) |
+| Parser scaffolding | [transpile](glossary/transpile.md) |
+| Rule and diagnostic types | [types](glossary/types.md) |
+| SCM support | [SCM](glossary/scm.md) |
+| Codegen diagnostics/scripts | [scripts](glossary/scripts.md) |
+| Shared utilities | [utilities](glossary/util.md) |
+| Codegen validation helpers | [validation](glossary/validate.md) |
+| Codegen orchestration | [root](glossary/root.md) |

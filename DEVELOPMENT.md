@@ -1,226 +1,130 @@
 # Development
 
-Contributor workflow for the sittir monorepo. This file is the single
-source for dev commands; other docs link here instead of restating them.
+This is the command reference for a source checkout. The [README](README.md) describes the public API; [CLAUDE.md](CLAUDE.md) contains shared contributor and agent instructions.
 
 ## Setup
 
-Prerequisites: Node 20+, [pnpm](https://pnpm.io), and a Rust toolchain
-(the native render engines are N-API crates built with `napi`).
+Use Node **22.18 or newer**, the pnpm version pinned in `package.json`, and the Rust toolchain pinned in `rust-toolchain.toml`. The Rust workspace declares its minimum version separately in `Cargo.toml`. Parser regeneration also needs the WebAssembly toolchain used by tree-sitter.
 
-```bash
+```sh
 pnpm run bootstrap
+pnpm run build
 ```
 
-`bootstrap` installs dependencies, installs the tracked git hooks from
-`.githooks/` (the generated-output pre-commit gate, and a post-checkout hook), and
-builds every grammar's native binding. Git never copies hooks into a clone, so
-a fresh clone runs it once by hand; after that, every new worktree bootstraps
-itself on checkout when its commit is already on a local or origin branch. A
-worktree of anything else, such as a fork's pull request, skips it until you
-have reviewed the code and run `pnpm run bootstrap` yourself. Set
-`SITTIR_NO_BOOTSTRAP=1` to skip it for a throwaway checkout, and re-run
-`pnpm run bootstrap` by hand after pulling a lockfile or native crate change.
-An existing hook sittir does not manage is kept as `<name>.pre-sittir`.
+`bootstrap` installs dependencies, tracked Git hooks, and grammar-native bindings. `build` compiles the workspace packages as well. Native bindings are local platform binaries; installing JavaScript dependencies alone does not build them.
 
-`pnpm exec tsx packages/cli/src/cli.ts tool sync-base [--base origin/master]` brings a branch up to date with its base: it merges, and when the only conflicts are generated files it takes the base's side; after any merge it verifies every grammar and regenerates the grammars whose files conflicted or went stale, then commits the merge. Any other conflict, or a regeneration that changes a file outside the generated roots, stops it for review.
+Hooks are installed into Git's hooks directory by `.githooks/install`; they are not selected by setting `core.hooksPath` to this repository's `.githooks`. Existing unmanaged hooks are preserved beside the installed hook. The post-checkout hook can bootstrap a known branch checkout; `SITTIR_NO_BOOTSTRAP=1` skips that automatic setup. Run setup manually after reviewing an unfamiliar checkout.
 
-## Everyday commands
+Each worktree needs its own dependencies. Do not symlink another checkout's `node_modules`: workspace package resolution would then read the other checkout's sources. In an Infigraph-indexed repository, also run `infigraph worktree init <path>` after creating a worktree.
 
-```bash
-pnpm test                     # all vitest suites (records test history)
-pnpm test:watch               # watch mode
-pnpm type-check               # tsc --noEmit across the workspace
-pnpm run type-check:examples  # type-check the example modules
-pnpm lint                     # oxlint
-pnpm format:check             # oxfmt
-pnpm build                    # full workspace build
+## Everyday checks
+
+Run commands from the repository root.
+
+```sh
+pnpm test
+pnpm run type-check
+pnpm run lint
+pnpm run format:check
+pnpm run build
 ```
 
-## Documentation gates
+For focused work, call Vitest directly with the relevant paths. This avoids recording a full-suite result for a partial run.
 
-Two acceptance tests keep the documentation honest, and both run under `pnpm test`:
+```sh
+pnpm exec vitest run tests/acceptance/readme-snippets.test.ts tests/acceptance/examples-run.test.ts
+pnpm run type-check:examples
+pnpm run type-check:generated-examples
+```
 
-- `tests/acceptance/examples-run.test.ts` calls every function the compile-checked `examples/` export and renders every node they return. A function that takes an argument needs a sample input in that test.
-- `tests/acceptance/readme-snippets.test.ts` runs and type-checks every `ts` snippet in the root README and the four package READMEs. A statement `expr; // "text"` (or `// true`, `// false`) is asserted to equal that value. A snippet that shows a shape rather than a program is marked with `<!-- snippet: illustrative -->` on the line above its fence and is skipped; nothing else is.
+The documentation checks execute and type-check snippets in the root/package READMEs and usage guide, and run every exported function in the compile-checked example modules. An example with parameters needs a sample input in `tests/acceptance/examples-run.test.ts`. Generated reconstruction examples have a separate type-check and freshness gate.
 
-The snippet type-check resolves `@sittir/*` through `node_modules`, so a git worktree needs its own `pnpm install`. A `node_modules` symlinked to another checkout resolves the packages to that checkout's sources and reports unrelated type errors.
+Use `expression; // "expected text"` trailing expectations in executable Markdown snippets; the acceptance harness asserts string, boolean, and numeric expectations. A genuinely illustrative TypeScript block must carry `<!-- snippet: illustrative -->` immediately before its fence. Do not use that marker to hide a broken usage example.
 
-## Regenerating grammar packages
+## Regeneration
 
-Generated packages (`packages/{rust,typescript,python}/src`, `templates/`,
-`.sittir/`) are derived outputs — never hand-edit them; fix
-`packages/codegen/src/` or `packages/<lang>/grammar.sittir.ts` and
-regenerate.
+All five workspace grammars—Rust, TypeScript, Python, regex, and SCM—are included in the stable grammar set.
 
-```bash
-pnpm run regen:all            # regenerate all three grammars
+```sh
+pnpm run regen:all
 
-# One grammar via the unified sittir CLI
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
+pnpm run gen:examples
 ```
 
-### The local generated-output check
+Language `src/`, parser artifacts under `.sittir/`, native render modules, fixture tables, and `*.generated.ts` examples are derived output. Fix codegen, the grammar entry, or the example emitter/input and regenerate; never patch the result by hand.
 
-Validators, probes and the pre-commit hook refuse to run on generated files
-that did not come from the current source. Nothing about this is committed.
-`gen` records what it produced in
-`node_modules/.cache/sittir/generated-manifest/<grammar>.json`: a hash per
-generated file and the last eight (source, output) pairs it has seen. The
-check passes when the tree is one of those pairs, or when its source inputs
-and generated files equal HEAD (or, during a merge, the commit being merged;
-both must equal the same one). So a fresh clone, a branch switch, and a merge
-of a base that regenerated all pass without regenerating. Editing codegen
-source, a grammar, or a generated file by hand does not, until you regenerate.
+A full grammar generation aligns the parser, TypeScript model, Rust render module, native binding, and extracted fixtures. Skipping a step is useful for a focused diagnostic, but is not evidence that the full pipeline passes. Do not run tests concurrently with regeneration: both read parser metadata and generated artifacts.
 
-The file is per worktree and survives `pnpm install`. Deleting it, or
-`node_modules`, loses nothing: the tree is compared with HEAD instead.
+### Local consistency and CI drift
 
-### The CI drift check
+Generation records source/output hashes in `node_modules/.cache/sittir/generated-manifest/`. The local verifier accepts a recorded source/output pair or a tree whose inputs and outputs both match the same committed revision. The pre-commit hook and diagnostics reject stale combinations.
 
-The `generated output drift` job regenerates every grammar and fails when the
-tree differs from the commit: a changed generated file, or an untracked one.
-So a pull request that changes codegen source or a grammar must commit its
-regenerated output. Regeneration is deterministic across platforms, so output
-generated on macOS matches the Linux runner.
+The manifests are per worktree and uncommitted. A fresh checkout can be verified against Git; deleting a cache is not a repair for mismatched source and generated output.
 
-The job runs on pull requests against the merge result, and on master after
-each merge. Two pull requests that each change generated output can merge
-cleanly and still leave master stale for the combined source; the master run
-catches that. A red master run is fixed by a pull request that regenerates.
-CI never commits.
+CI regenerates every grammar and requires the resulting tree to match the commit, including newly generated files. Commit regenerated output with its authored change. CI reports drift; it does not commit a repair.
 
 ## Validation
 
-```bash
-pnpm run validate:native      # regen all grammars + native validator counts
-pnpm run validate:history     # compare recorded validation runs (objective before/after)
-cargo test --workspace --no-default-features   # every crate's tests, grammar crates included
+```sh
+pnpm run validate:native
+pnpm run validate:history
+cargo test --workspace --no-default-features
+cargo clippy --workspace --all-targets --no-default-features -- -D warnings
 ```
 
-`cargo test -p sittir-core` alone misses the grammar crates' own tests
-(`rust/crates/sittir-<lang>/tests/`), which build against the generated
-transports; `--no-default-features` is what lets their test binaries link
-without a Node runtime.
+`validate:native` regenerates and rebuilds before collecting native validator counts. `validate:history` compares recorded runs. Run the full Rust workspace from this repository root; testing only `sittir-core` does not compile every generated grammar transport. Disabling default features allows standalone Rust tests to link without a Node host.
 
-`validate:native` is the primary gate for codegen-affecting work. For
-corpus-affecting changes report raw per-grammar counts (from, cov,
-read-render-parse and its shallow run, factory-storage, ir-storage,
-built-render-parse; `pnpm run validate:history` prints them), compared
-against a recorded baseline — not eyeballed.
+Corpus-affecting changes require comparable raw counts **per grammar**, including pass/total and AST matches. Preserve the universe of admitted kinds and fixtures; aggregate totals can hide exclusions.
 
-Runs are recorded only on the recording branches (`master` and
-`feat/bindings`, `RECORDING_BRANCHES` in `packages/tools/src/history-recording.ts`):
-there a validation run appends its rows to
-`packages/tools/validation-history.jsonl`, and a recorded test run its row to
-`test-history.jsonl`, and commits them. On any other branch a run writes
-nothing, so a pull request's tree stays clean for merges from the
-integration branch; the pull request reports its rows in its body instead.
-`SITTIR_HISTORY_COMMIT=1` records and commits on any branch;
-`SITTIR_HISTORY_NO_COMMIT=1` appends without committing on a recording branch.
+The committed regression contracts are:
 
-Two committed ratchets back the run (both only ever tighten):
+- `packages/tools/baselines/native.json`: validator floors and excluded kinds
+- `packages/tools/sclass-ceilings.json`: maximum classified round-trip debt
+- `packages/tools/validation-report.json`: the measured report checked against those ceilings
 
-- `packages/tools/baselines/native.json` — exact per-grammar validator
-  floors (pass counts, AST-match counts, parity fixtures, per-validator
-  `failingKinds` = the documented exclusions). Refresh with
-  `sittir tool check-baseline --collect --backend native`; CI diffs a fresh
-  head collection against the base commit's copy via
-  `sittir tool check-baseline --base <base.json> --head <head.json>`.
-- `packages/tools/sclass-ceilings.json` — per-grammar ceilings on
-  round-trip-fidelity S-class counts in `validation-report.json`. Every
-  `validate counts` run fails when a class exceeds its ceiling (new debt in
-  a tracked source class); a class absent from the file has ceiling 0, so
-  cleared classes stay cleared. When a run reports a class below its
-  ceiling, lower the ceiling in the same commit.
-- `packages/tools/validation-report.json` — the report the committed
-  ceilings are checked against (a unit test pins the committed pair).
-  Commit it, as `validate` wrote it, in the same commit as any change to
-  `sclass-ceilings.json` or to the validated rows; otherwise leave it out,
-  since every run rewrites it.
+Do not weaken a floor or raise a debt ceiling to make a gate pass. Tighten the matching baseline when a defect is removed, and commit a changed report with its corresponding validated change.
 
-## Native engine build
+Validation/test history is recorded and committed automatically on the configured recording branches (`master` and `feat/bindings`). Other branches leave those histories alone. `SITTIR_HISTORY_NO_COMMIT=1` suppresses that automatic commit on a recording branch; `SITTIR_HISTORY_COMMIT=1` explicitly enables recording on another branch.
 
-Each grammar's render engine is a Rust N-API crate under
-`rust/crates/sittir-<lang>/` (shared core in `rust/crates/sittir-core/`).
+## Native bindings
 
-```bash
-cd rust/crates/sittir-rust
-pnpm run build                # release binding, written into packages/rust/native
-pnpm run build:debug          # debug binding (dev only)
+Native crates live under `rust/crates/`; the Cargo workspace root is the repository root. Each grammar's build script writes its loader, declarations, and platform `.node` binary into `packages/<grammar>/native/`.
+
+```sh
+pnpm --dir rust/crates/sittir-rust run build
+pnpm --dir rust/crates/sittir-rust run build:debug
 ```
 
-Both go through `scripts/build-native.mts <lang>`, which writes the loader
-(`index.cjs`), its typings (`index.d.ts`) and the host's `.node` into
-`packages/<lang>/native/` — the directory the grammar package ships. The loader
-and typings are committed; the binaries are git-ignored.
+Use release bindings for corpus validation. Build through the package script or the full generation command, which also refreshes N-API declarations; copying a compiled library by hand can leave declarations and code out of sync.
 
-Prefer release builds when running the validators; the validation load is
-sized for the optimized binding.
+### Reader diagnostics
 
-Rebuild natives through `pnpm exec tsx packages/cli/src/cli.ts gen --grammar
-<lang> --all --output packages/<lang>/src` (or `pnpm run validate:native`), not
-by running cargo and copying the dylib: only the `napi build` step regenerates
-`packages/<lang>/native/index.d.ts`, so a hand-copied binary leaves it stale.
-The workspace `[profile.release] strip = "none"` keeps the binding loadable on
-macOS (see the comment in `Cargo.toml`).
+The typed reader always checks required slots and cardinality. Its default-off `read-debug-checks` feature additionally checks leftover parser children against generated layout metadata.
 
-### Reader debug diagnostics
-
-The reader routes slots through their field types and generated parser facts.
-Required slots and cardinality are always checked. By default, children left
-after routing are skipped as fixed syntax. To diagnose parser/model drift,
-enable the core's default-off `read-debug-checks` feature: the reader then
-checks leftover children against the generated `layout` token list and
-reports `ReadError::Unrouted` for an unlisted child.
-
-```bash
+```sh
 cargo test -p sittir-parity-tests --no-default-features --test typed_read --features sittir-core/read-debug-checks
 ```
 
-This feature is independent of Rust's debug/release profile. Generated
-language crates share the core switch; they need no matching feature flag.
+This feature is independent of the Rust debug/release profile. See [Clippy policy](docs/clippy-policy.md) for lint and allocation constraints.
 
-### Published shape
+### Package verification
 
-A grammar package ships its native binaries inside itself (`files` lists
-`native`), so a consumer installs one package per grammar. Check what would be
-published with:
-
-```bash
-pnpm run build
-pnpm run check:published                 # pack, install outside the workspace, createEngine + parse + render
-pnpm run check:published --release       # also require a binary for every declared target
+```sh
+pnpm run check:published
+pnpm run check:published --release
 ```
 
-The default run accepts a pack holding only the host's binary; `--release`
-fails unless every target in `NATIVE_TARGETS`
-(`packages/codegen/src/grammars.ts`) has one.
+The first command packs, installs outside the workspace, and exercises the available host binding. The release check also requires every declared native target. A successful host check does not establish coverage of all targets or that a release has been published.
 
-## Diagnostic tooling
+## Diagnostics and references
 
-Developer diagnostics live behind the unified `sittir` CLI:
-
-```bash
-pnpm exec tsx packages/cli/src/cli.ts tool <tool> [flags]   # tool --help lists all
-pnpm exec tsx packages/cli/src/cli.ts validate counts
+```sh
+pnpm exec tsx packages/cli/src/cli.ts --help
+pnpm exec tsx packages/cli/src/cli.ts tool --help
+pnpm exec tsx packages/cli/src/cli.ts tool probe-kind --help
+pnpm docs
+pnpm run docs:md
 ```
 
-See [docs/cli-command-glossary.md](docs/cli-command-glossary.md) for the
-full command reference and
-[.claude/project-workflow.md](.claude/project-workflow.md) for tool
-highlights and the convention for adding a new diagnostic.
-
-## API docs
-
-```bash
-pnpm docs                     # typedoc
-pnpm run docs:md              # markdown output
-```
-
-## Further reading
-
-- [.claude/coding-standards.md](.claude/coding-standards.md) — repo-wide working standards
-- [.claude/codegen-conventions.md](.claude/codegen-conventions.md) — codegen/TS conventions
-- [.claude/grammar-workflow.md](.claude/grammar-workflow.md) — grammar, template, and override workflow
-- [docs/compiler-phase-glossary.md](docs/compiler-phase-glossary.md) — codegen glossary: DSL layer, dual-pipeline model, phase narrative, function-glossary index
+Use the existing diagnostics before writing a one-off probe. The [CLI reference](docs/cli-command-glossary.md), [grammar workflow](.claude/grammar-workflow.md), and [compiler glossary](docs/compiler-phase-glossary.md) provide the detailed entry points.

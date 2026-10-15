@@ -1,73 +1,42 @@
-# Grammar, Templates, and Overrides Workflow
+# Grammar and rendering workflow
 
-Use this file for grammar generation, parser/debugging work, template fixes, or override design.
+Use [Development](../DEVELOPMENT.md#regeneration) for generation commands and [architecture](../docs/architecture.md) for the dual execution model.
 
-## Generation commands
+## Diagnose at the owning layer
 
-```bash
-pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
-pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
-pnpm exec tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
-```
+Use `tool probe-kind` for parse → typed read → render → reparse inspection before creating another probe. Use `tool probe-stages` to inspect rule structure. A parser error, a storage/read mismatch, and a render mismatch are different failures; establish which boundary loses the fact.
 
-## Debugging and triage
+For a construction or round-trip gap, inspect in this order:
 
-- Use `pnpm exec tsx packages/cli/src/cli.ts tool probe-kind` before writing one-off probe scripts.
-- Prefer explicit `packages/<lang>/grammar.sittir.ts` structure over heuristics that infer grammar intent from parse output.
-- For template/from/round-trip failures, check in this order:
-  1. existing override correctness
-  2. earliest codegen phase that still has the needed information (`Evaluate → Link → Assemble`)
-  3. missing type/model facts
-  4. `transform(original, { ... })` as a last resort
+1. An incorrect existing override.
+2. The earliest compiler phase that still has the required information.
+3. A missing fact in the rule/model type.
+4. A structural override when the grammar genuinely needs one.
 
-## Render bodies
+Prefer explicit grammar structure to downstream guesses. Keep a concrete source witness and distinguish source-preserving rendering from rebuilding the same construct without source identity.
 
-Render bodies are generated from the render rules — there is no template to
-author. A slot renders where its rule sits; an optional slot is gated on its
-presence; separators and their spacing come from the list view. Fix the rule
-(an override, an `enrich` promotion, a `variant()`), never the emitted body.
+## Authoring rules
 
-## Override patterns
+- `grammar.sittir.ts` executes in tree-sitter and Sittir. Structure needed by the parser must be present before parser generation; a compile-only mutation cannot create a parser-issued symbol.
+- Enrichment runs before the active grammar implementation. The authored wire layer and enriched grammar must agree in both executions. Verify the compiled shape in `.sittir/src/grammar.json` and a CST probe.
+- Preserve upstream conflicts when extending them. Use the conflict tooling and the parser's concrete conflict report; do not compensate for a wrong rule with unrelated precedence noise.
+- Make distinct forms explicit when their literals, delimiters, separators, or shape differ. Use the existing DSL primitives rather than adding a second naming or variant mechanism.
+- Fixed required syntax belongs in the rule and is emitted as literal text. An optional token may need a field so its presence can be represented.
+- Preserve a hidden semicolon's field when the parser can omit it. For promoted keyword fields, the synthesized hidden keyword rule may need to be inlined to retain LR behavior.
+- Do not assume aliasing a multi-step sequence preserves one grouped parser node when its rule is also inlined. Inspect the actual CST and node types.
+- Positional transform paths descend transparently through single-content wrappers; sequence/choice positions consume indices. Verify a path with `probe-stages` rather than copying a superficially similar override.
+- Match grouped bodies against their current structure, including field names. A group is not a string-based synonym for a similar rule elsewhere.
 
-- Use `variant()` for choice arms with different literals, delimiters, or separators.
-- Extend conflicts with `...(previous ?? [])` or `previous.concat(...)`; do not replace the base grammar conflicts.
-- Use `field('semicolon', $._semicolon)` for hidden-semicolon drops.
-- If variant/conflict work changes parser shape, rerun the full transpile/generate/compile-parser/emit chain so `.sittir` artifacts and emitted TS stay aligned.
-- `enrich()` runs before tree-sitter's `grammar()` and DOES change the parser surface: its promoted fields and synthesized hidden rules (`_kw_*`, clause-hoist `_<parent>_optional<N>` / `_<parent>_group<N>`) are injected into the base rules, so the parser and the downstream codegen see the same enriched grammar. Clause hoisting (`applyClauseHoist` in `dsl/enrich.ts`) is the pre-generate minting path: inline-safe `optional(seq(...))` content hoists into a hidden helper; inline-unsafe (multi-slot) content becomes a visible kind via a hidden rule + `alias($._hidden, $.visible)`.
-- When a promoted keyword/token field causes LR conflicts, add a synthesized `_kw_<name>` rule to `inline:` instead of compensating with precedence/conflict noise.
-- Content-alias minting in link (`mintContentAliasKinds`) is retired: an alias's hidden source rule stays the single source of truth, referenced via `aliasedFrom` provenance in `resolveRule`, and is promoted to user-facing visibility by assemble's alias-source mechanism once its slot reference hydrates. Do not author overrides that depend on link duplicating alias bodies into new top-level rules.
-- `enrich`'s optional-keyword-prefix promotion (pass 3, `tryPromoteInnerKeyword` in `dsl/enrich.ts`) only fires for WORD-shaped (identifier-like) keywords, gated by `matchesWordShape`/the grammar's `wordMatcher`. Punctuation/single-char optional markers (`*`, `=`, etc.) are never auto-promoted this way — write an explicit `field('<name>_marker')` transform override at the right position instead (see "Positional path addressing" below).
-- Required (non-optional) literals never need a `field()` wrap for rendering: they bake straight into the auto-generated template as literal text (e.g. `interpolation`'s `{`/`}`, `yield`'s own leading `'yield'`). Only reach for `field()` on a marker that's actually optional in the grammar, where the template needs an `{% if ... | isPresent %}` to decide whether to print it at all.
-- `inline:` + alias-target + multi-step `seq(...)` body is a trap: tree-sitter's `process_inlines` splices a multi-step seq body into SIBLING nodes at parse time, distributing the alias per step, not onto one surviving grouped node. Never assume `alias(seq(a, b, ...), $.visible)` "survives inlining" just because it's a single alias in the DSL source — for a multi-step body it does not. Confirm the real compiled shape via `node-types.json`/a CST probe, not the DSL source, before trusting an `inline:` entry that's also an alias target. Fix by removing the ref from `inline:` and resolving the resulting LR conflict with `conflicts:` entries (see below) instead of leaving the flattening in place.
-- When un-inlining a rule, or promoting a previously-anonymous shape to a new named kind (via `groups:`, see below), introduces a fresh "Unresolved conflict" error at generate time: resolve it by iterating — run `gen`, read tree-sitter's own `Add a conflict for these rules: X, Y, Z` suggestion verbatim, append `[$.X, $.Y, $.Z]` to `conflicts:`, regen, repeat until clean. This usually converges in single-digit rounds. Reach for `prec`/associativity only if `conflicts:` alone doesn't resolve it — GLR forking is almost always the right tool when two genuinely different named rules share a prefix.
+Long grammar-specific rationale belongs in the [authoring glossaries](../docs/README.md#reference). Keep source comments brief and focused on live constraints.
 
-### Positional path addressing (`transform(original, { '<path>': ... })`)
+## Rendering and identity
 
-Path segments (`packages/codegen/src/dsl/transform/transform-path.ts`) are numeric indices, `_` wildcards, `(kind)` matches, or `name:` field-traversal — see the file's own header comment for the full grammar. The part that isn't written down anywhere else: **numeric-index segments transparently descend through single-content wrapper types** (`OPTIONAL`, `TOKEN`, `PREC`/`PREC_LEFT`/`PREC_RIGHT`/`PREC_DYNAMIC`, `FIELD`) without those wrappers consuming their own path segment. So `'1/0'` can reach straight through `optional(token(prec(1, '*')))` at seq position 1 to the bare `STRING '*'` inside it — the `OPTIONAL` and `TOKEN`/`PREC` layers are transparent, only the `CHOICE`/`SEQ` container at that position counts as a level. Verify the exact path with `sittir tool probe-stages --grammar <g> --kind <k> --no-overrides` (the pre-override evaluate-phase view) rather than guessing from a superficially similar existing override — a wrong index does not error, it silently wraps the wrong content (root cause of a real bug, `985933068`).
+The active renderer is generated Rust. There are no Jinja/Askama templates to patch. A render gap is corrected in the rule, canonical model, or emitter that owns it, then regenerated.
 
-### Promoting a collapsed choice arm to a real kind (`groups:`)
+Use physical grammar identities for storage and transport. A parser display/alias symbol is a separate fact; do not substitute it because its name looks more convenient. [Clippy policy](../docs/clippy-policy.md#kind-ids) describes the native boundary.
 
-When a choice arm mixes a bare literal with an unlabeled polymorphic symbol (the "choice-branches-with-literals" cluster — e.g. `choice(seq('from', $.expression), optional($._expressions))`), sittir's union-content-naming collapses same-shape no-field arms into one shared slot. Symptoms: field-wrapping just the literal (e.g. `field('from_marker')` on the `'from'`) un-collapses the naming but does NOT fix the ambiguity — both arms' remaining content still resolve through the same underlying raw-key fallback (e.g. an `expression` polymorph), so both slots populate from the one physical parsed node and the render duplicates it. Re-merging the two auto-named slots under one shared `storageName` is correctly rejected by codegen's `storagename-collision` diagnostic gate (`canProceed: false`) — do not try to work around that gate.
+Parser-affecting changes require the full parser/generation/native chain. A TypeScript-only fast pass cannot prove that the emitted shape has a parser identity.
 
-The real fix: promote the WHOLE arm to a genuine, distinguishable CST node via a `groups:` entry (`wire({ groups: { <visibleName>: ($) => <bodyExpr> } })`, same DSL surface as e.g. `comparison_operator_comparator`). The body must structurally match the arm's CURRENT shape exactly — the matcher (`patternBodyEqual` in `dsl/wire/wire.ts`) walks the tree comparing `type`, `value`/`name` for `STRING`/`SYMBOL`, and (critically) **field names** for `FIELD` nodes, so a group whose body includes `field('value', ...)` will only match sites that already have that exact field, and a superficially-similar arm elsewhere with a differently-named field (e.g. `raise ... from cause`) will not collide. Once the pattern matches, the wire pass auto-replaces every occurrence with `alias($._<hidden>, $.<visible>)`, so the arm becomes its own named kind and the union becomes a dispatch between two structurally distinct kinds instead of one ambiguous collapsed slot — no separate `patches:` field-wrap is usually needed afterward (see the "required literals" bullet above: a bare required literal inside the new group's body bakes into its own auto-generated template for free).
+## Reporting
 
-## Reporting expectations
-
-For corpus-affecting iterations, report raw per-grammar counts, not just aggregates:
-
-- `from` and `cov`
-- `read-render-parse` and `read-render-parse-shallow` (pass, total, AST match)
-- `factory-storage` and `ir-storage`: a built node's storage against the read's
-- `built-render-parse`: a built node, with no source identity, rendered and reparsed (pass, total, AST match)
-
-## KindID / parser-symbol rules
-
-- Invariant: every kind name the generated model exposes should carry a parser-issued kindId. Link stamps ids while canonicalizing catalog refs; names it cannot stamp are reported per build as `kindid-unstamped-*` entries in `packages/<lang>/.sittir/grammar-diagnostics.json` (the phantom-kind inventory), and `packages/codegen/src/__tests__/phantom-kind-ratchet.test.ts` enforces shrink-only per-grammar ceilings — fix the minting site, never raise a ceiling.
-- For KindID work, `packages/<lang>/.sittir/src/parser.c` `enum ts_symbol_identifiers` is the authoritative parser identity source.
-- Do not derive identity from `ts_symbol_names[]` or `parser.wasm`.
-- Preserve parser-origin facts as metadata flags (`anon`, `aux`, `alias`, `hidden`) instead of baking them into cleanup heuristics.
-- `key` is the canonical cross-pipeline join term; do not replace it with minimally cleaned parser names just because they came from `parser.c`.
-- Keep parser identity, canonical key, emitted JS/native names, presence flags, and use flags as separate facts.
-- Use:
-  - `KindPresenceFlag`: `TSGrammar`, `TSNodeTypes`, `TSRuntime`
-  - `KindUseFlag`: `Readable`, `Buildable`, `Renderable`
+For a corpus-affecting iteration, report per-grammar from/coverage pass totals, round-trip and AST matches, factory/IR storage counts, and built-render-parse counts against the same baseline. Name changes in the admitted kind or fixture universe. Never hide them in an aggregate percentage.

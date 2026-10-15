@@ -1,501 +1,102 @@
 # sittir
 
-Take any [tree-sitter](https://tree-sitter.github.io/) grammar; emit a typed,
-tree-shakeable IR — factories, render templates, parse-tree readers, type
-guards, and per-kind tests — that can build, render, read, and edit source in
-the original language with zero hand-authored per-kind code.
+Sittir derives typed TypeScript syntax APIs from tree-sitter grammars: constructors, readers, kind guards, query facets, immutable updates, and native renderers. The same grammar model determines the construction types and the code that renders their values.
 
-> **Alpha.** Public APIs, generated package shapes, override conventions, and
-> native render fidelity are still moving. Pin versions and review generated
-> edits before applying them at scale.
+The node API follows the grammar's concrete forms. Parsed nodes retain source identity for unchanged regions; constructed and edited regions render through generated Rust code. This supports both syntax construction and source-to-source transformation without maintaining a separate handwritten AST library for each language.
 
-## Why
+## Examples
 
-Cross-language source manipulation is split across three kinds of tooling
-that don't compose:
+### Construct syntax
 
-- **Parsers and CST libraries** (tree-sitter, the various per-language
-  parser crates) give you a syntax tree, but the tree is untyped at the
-  application layer — you check `node.type === 'function_item'` against
-  string constants and reach into anonymous children by index. There is no
-  construction API and no canonical way back to source text.
-- **Pattern engines** (ast-grep, semgrep, comby) find and rewrite by
-  syntactic pattern. They are excellent for matching, but their rewrites
-  are template strings with metavariables, not typed node manipulation;
-  anything that needs to *compose* AST fragments — let alone construct one
-  from scratch — falls out of the model.
-- **Typed AST libraries** (Babel for JavaScript, libcst for Python,
-  syn/quote for Rust, Roslyn for C#) give you the construction and
-  rendering surface, but each one is a per-language, hand-authored project
-  with its own conventions, lifecycle, and ergonomics. Anything that wants
-  to touch more than one language ends up gluing three of them together.
+```ts
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
 
-A codemod that reads Rust, edits a TypeScript declaration, and emits a
-Python equivalent currently means hand-stitching three separate AST
-libraries with three separate mental models — and accepting that two of
-them probably can't render back to source faithfully.
+const engine = await createEngine(rust);
+const fn = engine.build.statement.function({
+	visibilityModifier: 'pub',
+	name: 'main',
+	parameters: engine.build.parameters(),
+	body: engine.build.block()
+});
 
-### Why tree-sitter and ast-grep as the base
+fn.$render(); // "pub fn main() {}"
+engine.dispose();
+```
 
-tree-sitter is the only widely adopted parsing layer with grammars for
-essentially every mainstream language, error-recovering parses (a hard
-requirement for codemods that touch real-world, sometimes-broken source),
-incremental reparse, and a uniform CST shape with field labels. Building
-on top of it means inheriting the entire grammar ecosystem instead of
-reinventing it.
+The ordinary builder resolves ergonomic inputs such as strings in node slots. Its `.strict` entry accepts the explicit grammar-derived construction shape. Both produce the same node family.
 
-ast-grep sits one step above tree-sitter as the matching layer — typed
-patterns with metavariables (`$NAME`, `$$$ARGS`), language-aware queries,
-and a stable selection model. sittir doesn't replace ast-grep; it
-complements it. ast-grep finds the nodes, sittir reads the matches into
-typed `UntypedNode`, the typed factories let you compose replacements
-without string-mashing, and the render pipeline puts the result back into
-source text.
+### Transform a parsed tree
 
-### What this unlocks
+```ts
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
 
-**A single typed platform for source manipulation.** TypeScript + ast-grep
-+ sittir is one toolchain covering the whole lifecycle — parse, query,
-read into typed `UntypedNode`, construct or modify with typed factories,
-render back to source, emit byte-range edits — under one set of types
-and one mental model. The same `is.functionItem` guard narrows both an
-ast-grep match and a constructed node, and the same `wrapNode` produces
-a typed accessor surface for either. There is no glue layer between
-three separately-evolving AST libraries.
+const engine = await createEngine(rust);
+const source = 'fn greet( ) { /* retained */ }\n';
+const root = engine.parse(source);
+const statements = root.statements().map((node) =>
+	engine.is.functionItem(node)
+		? node.$with.name(engine.build.identifier('hello'))
+		: node
+);
+const updated = root.$with.statements(...statements);
 
-**Type-intelligent use of tree-sitter and ast-grep.** Both projects are
-already powerful, but at the application layer their outputs are
-string-typed: `node.type === 'function_item'`, `match.kind() === 'block'`,
-metavariable bindings handed back as opaque `SgNode` references.
-sittir's generated package types each kind exhaustively from the
-grammar — so a tree-sitter parse becomes a discriminated `UntypedNode`
-union, an ast-grep match wraps into a `wrapNode(match, tree)` accessor
-with field-typed getters, and a metavariable replacement composes
-through typed factories instead of template-string concatenation.
-Every check the grammar already makes implicitly is reflected in the
-type system explicitly.
+root.$render() === source; // true
+updated.$render(); // "fn hello( ) { /* retained */ }\n"
+engine.dispose();
+```
 
-**Syntactic validity by construction — no reparse step.** Most
-code-generation tools emit text and then leave validation to whoever
-re-parses the output. sittir collapses the two:
-
-- *Structurally, at compile time.* Each kind's slot signature is
-  derived from its grammar rule. The TypeScript type system enforces
-  that every required field is supplied, every named field gets a node
-  of the right kind (or a coercible value resolving to one),
-  and every list slot honors the rule's multiplicity (`optional`,
-  `repeat`, `repeat1`). Trees that don't typecheck are trees the parser
-  would reject.
-- *Literally, at runtime.* Terminal-text inputs to leaf factories
-  (identifier names, integer/string literals, etc.) are validated
-  against the same regex / enum / keyword definition the grammar uses.
-  An invalid identifier fails at construction, before render.
-
-Because validity is enforced where the tree is built, you don't need to
-parse the rendered output to know it's well-formed. The render pipeline
-also doesn't need to re-tokenize — it walks an already-validated tree
-and emits text directly through the grammar-derived templates.
-
-### Natural extensions
-
-The shape of the runtime makes a few additions almost free; we haven't
-shipped them yet but they are in scope:
-
-- **Construction templates.** Authoring replacement source as a
-  template string with metavariable slots — `pub fn $NAME($...PARAMS)
-  -> $RET { $BODY }` — and filling it with typed `UntypedNode` to produce
-  either another `UntypedNode` or rendered text. The same override
-  pipeline that produces the production parser also produces a
-  template-mode parser per grammar (a tiny patch injects a metavariable
-  rule and merges it into the relevant nominal rules), so templates
-  parse cleanly without preprocessing or `ERROR` nodes. Slot types are
-  derived at codegen time by walking the template parse tree and
-  reading each metavariable's parent-field storage type — the same
-  storage type the factory's `Config` already uses, so factory
-  construction and template filling stay in sync by construction.
-  Stubbed in `examples/04-precompiled-templates.ts` and
-  `examples/05-inline-templates.ts`.
-- **Type-aware structural query API.** Pattern matching directly over
-  `UntypedNode` trees with the same kind/field types the rest of the
-  surface uses, so the same tree you constructed (or modified, or read)
-  can be queried without re-rendering and handing it back to ast-grep.
-- **Typed node traversal.** Parent / child / sibling / ancestor walks
-  with TypeScript narrowing on the result. ast-grep already covers
-  traversal over parse trees; the gap is over `UntypedNode` trees that
-  exist only in memory (constructed factories, modified copies after
-  `$with`).
-- **More grammars.** Adding a language is a workspace package, a
-  `tree-sitter-<lang>` dependency, and an `grammar.sittir.ts`. Go, Java, C,
-  SQL, and others have mature tree-sitter grammars and are candidates
-  whenever a use case appears.
-
-## Goals
-
-- **One pipeline, many languages.** All language-specific knowledge enters
-  through `grammar.json`, `node-types.json`, and a per-grammar
-  `grammar.sittir.ts`. The compiler is grammar-agnostic; the same emitters
-  produce Rust, TypeScript, and Python packages today and accept any other
-  tree-sitter grammar without code changes.
-- **Render fidelity, then ergonomics.** A round-trip
-  `read(source) → render` must be byte-identical for well-formed input on
-  each grammar before any ergonomic surface is layered on top. Render lives
-  on the canonical rule tree; coercion, `$with` immutability,
-  fluent getters, and `.$trivia` are projections over the same
-  `UntypedNode`.
-- **One engine, one contract.** A native engine with generated Rust render bodies sits behind a
-  single `SittirEngineLike` interface. `createEngine()` throws if the
-  native binding for the grammar isn't loadable rather than silently
-  falling back — there is no JS rendering engine to fall back to.
-- **Determinism.** Same grammar version, same overrides, byte-identical
-  generated output. No timestamps, no Map iteration order, no PRNG.
-- **DRY as a correctness rule.** Every fact (a field name, a separator, a
-  kind classification) has one source and one derivation. Drift between
-  the rule tree and the generated client is treated as a codegen bug, not
-  a patchable mismatch.
+Accessors and guards are grammar-specific and statically typed. `$with` produces an updated value; it does not mutate the parsed tree or propagate a child replacement into its ancestors. Rebuild the containing slots, as above, to obtain an updated root.
 
 ## Architecture
 
-### Codegen pipeline
-
-A full regeneration runs in two stages. First, an auto-chain pushes the
-override DSL into the actual parser:
-
-```
-grammar.sittir.ts ──▶ transpile ──▶ .sittir/grammar.js ──▶ tree-sitter generate
-                                                          │
-                                                          ├─▶ grammar.json
-                                                          ├─▶ node-types.json
-                                                          └─▶ compile-parser ─▶ parser.wasm
-```
-
-Both `enrich(base)` and the per-rule overrides (`transform()`, `role()`,
-`variant()`) participate in this transpile, so the grammar tree-sitter
-parses with — and the type information sittir reads downstream — see the
-same enriched shape. There is no second authoring layer; one source
-patches both surfaces.
-
-The compiler proper then runs in seven ordered phases over the parser
-artifacts. Each phase has a single responsibility and produces a
-well-defined intermediate representation; later phases never revisit
-decisions earlier ones made. The phase narrative and an index into the
-per-directory function glossaries live in
-[`docs/compiler-phase-glossary.md`](docs/compiler-phase-glossary.md); the
-summary below is the contract a reader needs to navigate the source.
-
-| Phase                | Source                       | Input                           | Output                              | Responsibility                                                                                                                                                                                            |
-| -------------------- | ---------------------------- | ------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **0. Enrich**        | `dsl/enrich.ts`              | `GrammarResult`                 | Enriched `GrammarResult` + `_kw_*`  | Mechanical grammar pre-pass invoked from `grammar.sittir.ts` as `grammar(enrich(base), {...})`. Promotes bare symbols to `field()`, lifts `optional(literal)` keywords into hidden `_kw_*` rules, and hoists `optional(seq(...))` content into synthesized hidden helpers or visible aliased group kinds (clause hoist). Because enrich runs inside the override-DSL transpile, its rewrites end up in `.sittir/grammar.js` — the parser and the downstream codegen see identical rules. |
-| **1. Evaluate**      | `compiler/evaluate.ts`       | `grammar.js` / `grammar.sittir.ts`   | `RawGrammar`                        | Executes the tree-sitter DSL with sittir extensions (`role()`, `variant()`, `transform()`). Normalizes seq/choice/optional/repeat, lifts `commaSep` patterns, synthesizes hidden enum rules from inline `field(name, choice('a','b','c'))`. |
-| **2. Link**          | `compiler/link.ts`           | `RawGrammar`, `node-types.json` | `LinkedGrammar`                     | Resolves what each node *is*. Strips `alias` and `token` wrappers, classifies hidden rules (enum / supertype / group), lifts separated lists into separator-bearing repeats, infers field names from the symbol-reference graph, classifies polymorphs (both heuristic and `variant()`-sourced), stamps parser-issued kindIds onto catalog refs (unstamped names are reported to `.sittir/grammar-diagnostics.json`), annotates block-bearer fields. Shape-preserving — no restructuring. |
-| **3. Normalize**     | `compiler/normalize.ts` + `compiler/wrapper-deletion.ts` | `LinkedGrammar`                 | `SimplifiedGrammar`                 | Non-lossy structural normalization: collapses degenerate wrappers, fans out `seq(a, choice(b, c))`, factors common prefix/suffix, dedupes adjacent members, inlines single-use hidden rules. Then wrapper deletion pushes `optional`/`field`/`repeat`/`repeat1`/`alias` wrappers down to leaf attributes, producing the wrapper-free `RenderRule` view templates consume. |
-| **3.5. Simplify**    | `compiler/simplify.ts`       | `RenderRule` map                | `SimplifiedRule` map                | Derivation-only view. Inlines parser-inlined helpers, strips anonymous delimiters, merges position-equivalent choice branches, canonicalizes toward a flat seq-of-leaves. Used to derive each kind's slots — *not* used by template emission, which reads the wrapper-free render rule so delimiters survive. |
-| **4. Assemble**      | `compiler/assemble.ts`       | `SimplifiedGrammar`             | `NodeMap`                           | First materialization of nodes. Classifies each rule into a model type (branch / polymorph / supertype / group / enum / pattern / keyword / token), hydrates slot refs, marks parameterless kinds (kinds whose required slots auto-stamp from a single literal or a single parameterless ref), resolves colliding names, assigns short `ir.*` keys. |
-| **5. Emit**          | `emitters/*`                 | `NodeMap`                       | `.ts` + `.rs` files                 | Renders types, factories, coercion resolvers, `wrap.ts`, type guards, the `ir.ts` namespace, consts, the render bodies (as Rust in the native render/transport modules, as a `.sittir/render-bodies.json` catalog for the validators), and per-kind tests. |
-
-Three commitments worth flagging:
-
-- **Single source of truth for shape.** The rule tree is canonical. Every
-  derived artifact — types, factories, render templates, field
-  projections, supertype unions — is computed from it. There is no sidecar
-  config that restates the same fact.
-- **Mechanical only.** No phase makes heuristic judgments based on
-  thresholds or frequency counts. Anything that would ask "is this common
-  enough?" stays out of the automated path; grammar maintainers express it
-  explicitly via `transform()`, `role()`, or `variant()` in the override
-  DSL.
-- **Same pipeline runs every grammar.** Rust, TypeScript, and Python share
-  one compiler. New grammars enter through a workspace package and a
-  `packages/<lang>/grammar.sittir.ts`; no compiler fork.
-
-### Runtime
-
-The runtime is split into a backend-neutral contract layer and a single
-native engine implementation. The JS (Nunjucks) `SittirEngineLike` engine
-has been removed — native is the only supported backend, and
-`createEngine()` throws if the native binding is unavailable rather than
-falling back.
-
-```
-                 ┌──────────────────────────────────┐
-                 │  @sittir/<grammar>                │  generated, per-grammar
-                 │   ir, from, wrap, is, types,      │
-                 │   ConfigOf<T>, TreeNodeOf<T>,     │
-                 │   .sittir/render-bodies.json      │
-                 │   createEngine() ──┐              │
-                 └────────────────────┼──────────────┘
-                                      ▼
-                       ┌────────────────────────────────┐
-                       │  @sittir/<grammar>/native       │
-                       │  N-API binding (generated render)│
-                       │  built from rust/crates/sittir-* │
-                       └──────────────┬───────────────────┘
-                                      │  implements SittirEngineLike
-                                      ▼
-                          ┌────────────────────────────┐
-                          │  @sittir/common             │
-                          │  readUntypedNode,                   │
-                          │  UntypedNode,                  │
-                          │  TreeHandle, native boundary│
-                          └─────────────────────────────┘
-                                      │
-                                      ▼
-                          ┌────────────────────────────┐
-                          │  @sittir/types              │
-                          │  AnyUntypedNode, ConfigOf<T>,  │
-                          │  TreeNodeOf<T>, ...         │
-                          │  (zero runtime)             │
-                          └─────────────────────────────┘
+```mermaid
+flowchart LR
+    G["tree-sitter grammar + grammar.sittir.ts"] --> D["enrich / wire"]
+    D --> P["tree-sitter parser + symbol metadata"]
+    D --> C["evaluate → link → normalize → simplify → assemble"]
+    P --> C
+    C --> T["TypeScript types, builders, readers, queries"]
+    C --> R["Rust transports + render functions"]
+    T --> E["engine API"]
+    R --> E
 ```
 
-- **`@sittir/types`** — pure TypeScript types. Zero runtime. Owns
-  `AnyUntypedNode`, `ConfigOf<T>`, `TreeNodeOf<T>`, `FromInputOf<T>`,
-  `StringIndexRange`, `RenderContext`.
-- **`@sittir/common`** — backend-neutral runtime. Implements
-  `readUntypedNode(tree, handle?, childIndex?)` (parse-tree → `UntypedNode`),
-  the native boundary
-  invariant (`assertRenderableUntypedNode`), and
-  `createNativeEngine()`, which the native backend implements against the
-  shared `SittirEngineLike`/tree-handle interfaces.
-- **Generated `@sittir/<grammar>` packages** — per-grammar surface. The
-  package root's default export is the language descriptor (`name`,
-  `fileTypes`, and a lazy `load()`), which `createEngine(descriptor)` from
-  `@sittir/common` turns into a native-only engine; beside it the root
-  exports only types (the node interfaces, render options, `IsGuards`).
-  `load()` resolves the grammar's API: the `ir.*` namespace of coercing
-  constructors, the `is.*` guards, kind constants, trivia facts, and the
-  native template-bundle hash. Reading and wrapping a parse stay internal
-  to the engine.
+The grammar entry executes in both tree-sitter's generation environment and Sittir's evaluator. Parser-issued kind identities and authored structure are carried through the compiler model; emitters consume those facts rather than independently reconstructing grammar intent.
 
-#### UntypedNode shape
+| Layer | Responsibility |
+| --- | --- |
+| `@sittir/types` | Shared type projections and engine contracts |
+| `@sittir/codegen` | Grammar evaluation, canonical model, TypeScript and Rust emission |
+| `@sittir/common` | Engine binding, node lifecycle, queries, and the native boundary |
+| Grammar packages | Language descriptors, generated types, and native bindings |
+| `sittir-core` | Native parsing, typed reads, source/layout handling, and rendering |
+| `@sittir/cli` / `@sittir/tools` | Generation, diagnostics, corpus validation, and regression gates |
 
-`UntypedNode` is plain frozen data — not an ES class. Every node carries
-`$type` (numeric `TSKindId`), `$source` (`0=ts`, `1=sg`, `2=factory`),
-`$named`, plus either `_<field>` storage and `$children` (branch) or
-`$text` (leaf). Field storage is enumerable and lower-cased
-(`_visibilityModifier`, not `_visibility_modifier`). Arrays in storage are
-themselves frozen.
+The runtime is native-only. Each grammar package contains its own N-API binding; a missing or incompatible binding is an error. Generated files are derived artifacts: grammar changes belong in `grammar.sittir.ts`, and compiler changes belong in codegen.
 
-#### Construction surface
+[Architecture](docs/architecture.md) covers the model, generated artifacts, and runtime boundaries in more detail.
 
-Each kind ships in two forms with the same output type:
+## Grammars and installation
 
-<!-- snippet: illustrative -->
-```ts
-engine.build.statement.function.strict({ /* every field explicit, no coercion */ })
-engine.build.statement.function({        /* loose input — strings / arrays / plain objects */ })
+The workspace includes Rust, TypeScript, Python, regex, and tree-sitter query syntax (SCM). They use the same engine contract, with types and construction paths derived separately for each grammar.
+
+```sh
+pnpm add @sittir/common @sittir/rust
 ```
 
-Coercion is closed-form: it walks the expected slot type and
-never guesses. The slot taxonomy splits cleanly into:
+Substitute the grammar package you need. For a source checkout, use the [development setup](DEVELOPMENT.md) to build the native bindings.
 
-- **Single-slot kinds** (one unnamed `$children` slot, no named fields):
-  the factory takes the child(ren) directly — singular for one slot,
-  variadic for arrays, non-empty variadic when the rule requires `repeat1`.
-- **Multi-slot kinds** (named fields, with or without `$children`): the
-  factory takes a config object whose keys map to field names.
+Sittir is alpha software. Grammar-derived shape checks and lexical guards constrain construction; they do not establish a program's semantic validity. Corpus validation tracks supported construction and round-trip behavior, including known exclusions.
 
-Strings only resolve when the slot expects a single concrete kind with a
-no-arg factory. Arrays auto-wrap when the slot is a `$children`
-container. Plain objects resolve recursively against the slot type.
-Required slots whose type has a parameterless factory default to the
-empty form when omitted.
+## Documentation
 
-#### Cursor / value duality
-
-The generated surface separates the cursor (a handle into the rule tree)
-from the resolved value (the underlying UntypedNode):
-
-<!-- snippet: illustrative -->
-```ts
-fn.name        // cursor — handle into the tree, lazy
-fn.name()      // value  — the resolved node, an Identifier or a Metavariable
-fn.$with.name(engine.build.identifier('greet'))     // returns a new frozen node
-fn.$with.body(engine.build.block.strict())           // chainable, immutable
-```
-
-Accessor functions (`fn.name()`) are non-enumerable; they don't appear in
-`Object.keys` or JSON serialization. Storage (`fn._name`) is enumerable
-and represents the canonical persisted state. `$with` is the immutable
-update namespace; for kinds with a single unnamed slot it exposes
-`$with.$child(v)` and `$with.$children([...])` instead of named keys.
-
-#### Render pipeline
-
-```
-UntypedNode ──▶ render rule ──▶ Jinja template ──▶ source text
-              (wrapper-free)   (per kind)
-```
-
-Render reads `_<field>` and `$children` directly off `UntypedNode`. Templates
-are emitted from the wrapper-free post-Normalize render rule, deliberately
-ahead of Simplify, so anonymous delimiters and separator placement survive.
-Slot derivation reads the simplified rule; templates and derivation are two
-views of the same tree.
-
-`createEngine()` delegates to the native binding and throws if it isn't
-loadable or its baked `renderModuleHash` doesn't match the generated
-package's hash — there is no JS engine left to fall back to. The native
-FFI path is N-API direct — no `serde_json` round-trip on either side — and
-streams `Renderable::Transport` references through generated per-kind render
-bodies rather than materializing per-field intermediate strings. `getActiveBackend()`
-still reports a `'js'` status in the unavailable/mismatched case (a
-holdover name meaning "native isn't being used", not an active JS render
-path); `SITTIR_BACKEND=native|js|wasm` forces that status for testing, and
-`SITTIR_BACKEND_DEBUG=1` logs which status was selected and why.
-
-#### Read pipeline
-
-```
-source ──▶ tree-sitter parse ──▶ TreeHandle ──▶ readUntypedNode(tree) ──▶ UntypedNode
-                                                                       │
-                                                              wrapNode(node, tree)
-                                                                       ▼
-                                                       UntypedNode + fluent getters
-                                                       + lazy hydration via $parentHandle
-```
-
-`readUntypedNode` is the shared parse-tree reader: it maps field children into
-`_<field>` slots and unfielded children into `$children`, recurses to a
-configurable depth, and produces the same `UntypedNode` shape whether the
-parse tree came from `web-tree-sitter` or `@ast-grep/napi`. `wrapNode`
-attaches the typed accessor surface and hydrates each lazy stub (`$parentHandle`
-+ `$childIndex`) back through the engine's reader on demand.
-
-#### Editing a parsed tree
-
-```
-parsed node ──▶ node.$with.<slot>(value) ──▶ edited node ──▶ edited.$render() ──▶ the node's new text
-```
-
-A change is made with `$with` on the parsed node, which returns the edited node;
-rendering that node writes the change. A child the change did not touch renders
-the bytes it was read from. Neither the parsed node nor its parents change.
-
-### Generated package layout
-
-Every `@sittir/<grammar>` package is regenerated as a unit. Hand edits to
-generated files are reverted on the next run; language-specific knowledge
-lives in `packages/<lang>/grammar.sittir.ts`.
-
-| File                                          | Contents                                                                                       |
-| --------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `types.ts`                                    | Per-kind interfaces, `TSKindId` const enum, `KIND_NAMES`, `ConfigFor<K>`, `NamespaceMap`, supertype unions |
-| `factories.ts`                                | One factory per kind: `kind.strict(config)` and the coercing `kind(input)` with shared output          |
-| `from.ts`                                     | Closed-form coercion resolver — no runtime inference                                          |
-| `wrap.ts`                                     | `wrapNode(node, tree)` / `readNode(node)` — typed accessors with lazy hydration             |
-| `ir.ts`                                       | `ir.*` namespace + grouped supertype namespaces (`expression`, `statement`, ...)               |
-| `is.ts`                                       | Kind guards (`is.*`)                                                                           |
-| `consts.ts`                                   | Discoverable arrays/maps: kind names, keywords, operators                                      |
-| `utils.ts`                                    | Per-grammar resolution helpers and transport coercion                                          |
-| `engine.ts`                                   | `createEngine()` — native-only, throws if the native binding is unavailable                    |
-| `backend.ts` / `hash.ts`                      | Backend selection, baked render-module hash                                                    |
-| `grammar.ts`, `node-model.json5`              | Grammar literal type and a debug snapshot of the assembled model                               |
-| `.sittir/render-bodies.json`                  | One render body per renderable kind, the validators' catalog                                   |
-
-## Quickstart
-
-The compile-checked examples live under [`examples/`](examples/) and are
-type-checked by `pnpm run type-check:examples`. The four below are the
-ones backed by the current public API; the rest of the directory documents
-target surfaces in flight.
-
-### Construct and render
-
-A node belongs to the engine that built or read it, and renders, edits and takes trivia through that engine. Build through `engine.build`; a node made anywhere else has no engine, and `$render()` says so.
-
-```ts
-import { createEngine } from '@sittir/common';
-import rust from '@sittir/rust';
-
-const engine = await createEngine(rust);
-
-// Strict construction — every slot explicit.
-const fn = engine.build.statement.function.strict({
-  visibilityModifier: engine.build.visibilityModifier.pub(),
-  name: engine.build.identifier('main'),
-  parameters: engine.build.parameters.strict(),
-  body: engine.build.block.strict()
-});
-
-fn.$render();      // "pub fn main() {}"
-fn.name();         // the Identifier node
-fn.body();         // the Block node
-```
-
-```ts
-import { createEngine } from '@sittir/common';
-import rust from '@sittir/rust';
-
-const engine = await createEngine(rust);
-
-// Coercion — strings, arrays, and plain objects resolve to their
-// expected slot kind.
-const fn = engine.build.statement.function({
-  visibilityModifier: 'pub',                                       // string → VisibilityModifier
-  name: 'greet',                                                   // string → Identifier
-  parameters: engine.build.parameters(
-    engine.build.parameter({ name: 'name', type: 'String' })       // nested coercion
-  ),
-  body: engine.build.block.strict()
-});
-
-fn.$render();      // "pub fn greet(name: String) {}"
-```
-
-### Read source into UntypedNode
-
-```ts
-import { createEngine } from '@sittir/common';
-import rust from '@sittir/rust';
-
-const engine = await createEngine(rust);
-const source = 'fn main() {}\nfn greet() {}\n';
-
-const names: unknown[] = [];
-for (const stmt of engine.parse(source).statements()) {
-  if (engine.is.functionItem(stmt)) {
-    names.push(stmt.name());
-  }
-}
-
-names.length;      // 2
-```
-
-### Round-trip
-
-```ts
-import { createEngine } from '@sittir/common';
-import rust from '@sittir/rust';
-
-const engine = await createEngine(rust);
-const source = 'fn main() {\n    // kept\n    run( 1 );\n}\n';
-
-engine.parse(source).$render() === source;      // true, for well-formed input
-```
-
-For the broader target surface — `.$trivia`, construction templates,
-find-and-edit codemods, cross-language migration — see
-[`docs/use-cases-and-examples.md`](docs/use-cases-and-examples.md). Each
-section there is annotated with whether it tracks shipped behavior or a
-target API in flight.
-
-## Packages
-
-| Package                                     | Purpose                                                                              |
-| ------------------------------------------- | ------------------------------------------------------------------------------------ |
-| [`@sittir/types`](packages/types)           | Pure TypeScript types — zero runtime                                                 |
-| [`@sittir/common`](packages/common)         | Backend-neutral runtime: `readUntypedNode`, native boundary, engine interface |
-| [`@sittir/codegen`](packages/codegen)       | The compiler (enrich → evaluate → link → normalize → simplify → assemble → emit) and emitters |
-| [`@sittir/cli`](packages/cli)               | Unified `sittir` binary: `gen`, `tool *`, `validate *` (see [docs/cli-command-glossary.md](docs/cli-command-glossary.md)) |
-| [`@sittir/tools`](packages/tools)           | Diagnostics + validation implementations: `probe-*`, `walk`, `exercise`, `inspect-*`, validator counts/history (run APIs behind the CLI) |
-| [`@sittir/rust`](packages/rust)             | Generated Rust package                                                               |
-| [`@sittir/typescript`](packages/typescript) | Generated TypeScript package                                                         |
-| [`@sittir/python`](packages/python)         | Generated Python package                                                             |
-
-## Development
-
-Contributor setup, regeneration, validation, native-build, and diagnostic
-commands live in [DEVELOPMENT.md](DEVELOPMENT.md).
+- [Usage guide](docs/use-cases-and-examples.md) — construction, parsing, queries, updates, rendering, and types
+- [Examples](examples/README.md) — runnable modules and generated reconstruction fixtures
+- [Development](DEVELOPMENT.md) — setup, commands, regeneration, and verification
+- [Documentation index](docs/README.md) — reference material and explicitly planned work
+- [Contributor and agent instructions](CLAUDE.md)
 
 ## License
 

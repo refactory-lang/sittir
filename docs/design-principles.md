@@ -1,116 +1,41 @@
-# Design Principles
+# Design principles
 
-Stable principle IDs that ADRs and reviews can link to. Each principle has a one-line rule, the failure mode it prevents, and a prompt shape an LLM agent can apply during design work.
-
-These emerged from concrete decisions in `docs/adr/`. When an ADR says "we did X because of P-003," read P-003 here — don't guess from the name.
-
----
-
-## P-001 — External contract first
-
-**Rule**: When a design interacts with a tool or schema we don't own, that tool's contract is a hard boundary we conform to. We don't defer compatibility concerns to "later."
-
-**Failure mode**: Designing a clean internal model that the external tool can't consume, then discovering it at integration time.
-
-**Prompt shape**: "What external tool or consumer will also read this artifact? What shape does it require? Does my design produce that shape, or am I assuming a translation layer I haven't built yet?"
-
-**Seen in**: ADR-0001 (tree-sitter must read grammar.sittir.ts), ADR-0004 (post-transform grammar is tree-sitter input), ADR-0005 (transpile to grammar.js because tree-sitter expects JS).
-
----
-
-## P-002 — Mechanical vs heuristic
-
-**Rule**: Automation runs on determinism, not cleverness. Any transformation that requires a threshold, a frequency count, or a judgment call stays out of the automated path and remains hand-authored.
-
-**Failure mode**: A heuristic produces a "helpful" rewrite 95% of the time, and the remaining 5% are unexplainable without reading the tool's source.
-
-**Prompt shape**: "Would this transformation ask 'is this common enough?' or 'does this look like a Y?' If yes, it's heuristic — don't automate it, surface it as a suggestion or leave it to the author."
-
-**Seen in**: ADR-0002 (enrich only does mechanical passes), ADR-0005 (transpile is mechanical, not a second authoring layer).
-
----
-
-## P-003 — Reuse existing structure
-
-**Rule**: When introducing a new capability, prefer producing values in shapes the rest of the system already understands, so composition comes for free.
-
-**Failure mode**: Inventing a new intermediate representation that needs its own consumers, its own serialization, and its own debugger.
-
-**Prompt shape**: "Can I return a value in a shape the downstream already consumes? If I can't, is that because of an essential difference or because I haven't thought about composition yet?"
-
-**Seen in**: ADR-0002 (enrich returns a tree-sitter grammar, not a sittir IR, so it composes with hand-authored rules in the same `grammar(...)` call).
-
----
-
-## P-004 — Effects over sentinels
-
-**Rule**: When a call needs to carry metadata out-of-band but must also return a value the external contract expects, record the metadata as a side-effect and return a neutral value. Sentinel returns fight the contract.
-
-**Failure mode**: A "clever" sentinel return value that works in the controlled environment and crashes or silently corrupts the external consumer.
-
-**Prompt shape**: "Does this call live in a position where someone else decides what the return value must look like? If yes, the metadata needs a side channel — don't overload the return."
-
-**Seen in**: ADR-0003 (role() pushes into an accumulator and returns blank()).
-
----
+DRY is the primary correctness principle: every program fact has one source and one derivation. The principles below describe how that constraint shapes the compiler, generated APIs, and runtime boundaries.
 
 ## P-005 — Single source of truth
 
-**Rule**: A piece of information lives in exactly one place. If two files must agree, you have drift waiting to happen.
+Store a fact once and define its derivation once. A second walker collecting a partial projection, a parallel lookup table, or a consumer resolving the same identity again can drift even if each implementation looks locally reasonable.
 
-**Failure mode**: Sidecar config blocks that restate what's already declared in the main file, kept in sync by discipline until someone forgets.
+Resolve the fact at its owner, carry it on the canonical representation, and expose projections from there. Generated output is a derivation, not another authoring surface.
 
-**Prompt shape**: "Is this information already expressed somewhere else? If yes, can I read it from there instead of restating it? If I must restate, what enforces the agreement?"
+## P-001 — External contract first
 
-**Seen in**: ADR-0001 (grammar.sittir.ts is the only grammar-extension file), ADR-0003 (role declarations live next to their symbols, not in a sidecar).
+Tree-sitter, TypeScript, Rust, and N-API own contracts Sittir must satisfy. Establish their actual accepted shape at the boundary; an internal model is useful only if the external consumer can represent it correctly.
 
----
+## P-002 — Mechanical versus heuristic
+
+Automate deterministic structural facts. A frequency threshold, naming guess, or guess about grammar intent needs explicit authoring or a diagnostic rather than a silent rewrite. A heuristic that works on one grammar is not a grammar-independent contract.
+
+## P-003 — Reuse existing structure
+
+Prefer a shape the existing pipeline can consume. Introducing a separate representation also introduces readers, validators, serialization, and opportunities for disagreement; require a concrete need for that cost.
+
+## P-004 — Effects over sentinels
+
+When an external API owns a return shape, preserve that shape. If a DSL operation must also retain metadata, record it through the established metadata channel rather than returning a sentinel that the external tool cannot interpret.
 
 ## P-006 — Consumer alignment
 
-**Rule**: Design the call site for the consumer that reads it most. The producer pays the cost of translation so every reader doesn't.
-
-**Failure mode**: An API that's convenient for the one function that writes it and awkward for the ten functions that read it.
-
-**Prompt shape**: "Who reads this more: the author or the consumers? If consumers, what shape would they prefer? Is that shape expensive to produce? If not, produce it."
-
-**Seen in**: ADR-0003 (both tools see return values they expect because role() adapts, not the consumers).
-
----
+Put translation at the boundary that owns it. A producer should not make every downstream consumer repeat name conversion, shape inference, or optionality handling.
 
 ## P-007 — Cut speculative scope
 
-**Rule**: Don't design for hypothetical future requirements. Three similar cases are better than a premature abstraction. If nobody has asked for the general version, don't build it.
-
-**Failure mode**: A configuration system for a problem nobody has; an extension point nobody uses; abstraction layers that exist to support a second implementation that never arrives.
-
-**Prompt shape**: "Is there a real second case that needs this generality right now, or am I imagining one? If imagined, cut it and revisit when the second case shows up."
-
-**Seen in**: ADR-0002 (deferred heuristic inference system instead of designing configurable thresholds for passes nobody needs yet).
-
----
+Implement demonstrated requirements. An extension point without a real consumer, or a restriction protecting a situation no grammar exercises, needs a stronger justification than hypothetical future convenience.
 
 ## P-008 — Composition over configuration
 
-**Rule**: Prefer designs where adding behavior means calling a function, not setting a flag. Function calls compose; flags accumulate into combinatorial matrices.
+Prefer composable existing operations over flags that create another behavior matrix. Keep unavoidable configuration typed by the grammar and derive its consequences in one place.
 
-**Failure mode**: A `{ enableFoo: true, strictBar: false, compatMode: 'v2' }` options object that needs a truth table to reason about.
+## Applying the principles
 
-**Prompt shape**: "Am I reaching for a flag to turn behavior on? Can I express the same intent as calling or not calling a function? If yes, do that."
-
-**Seen in**: ADR-0002 (enrich is opt-in by wrapping, not by a flag), ADR-0004 (pre-evaluate phase runs based on whether transform calls exist, not a setting).
-
----
-
-## How to use these in ADRs
-
-In the "Principles Applied" section of a new ADR, cite the ID and one phrase:
-
-```markdown
-## Principles Applied
-
-- **P-001 (External contract first)** — tree-sitter's schema is a hard boundary we conform to.
-- **P-004 (Effects over sentinels)** — role() records as a side-effect and returns blank().
-```
-
-When adding a new principle, give it the next sequential ID, write it in the same shape (Rule / Failure mode / Prompt shape / Seen in), and backfill at least one existing ADR under "Seen in" — a principle with no real uses is speculative (P-007).
+State the concrete invariant a change preserves, the boundary that owns its facts, and the evidence used to verify it. A design label or historical decision number is not a substitute for that explanation.

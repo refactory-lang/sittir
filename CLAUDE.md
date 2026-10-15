@@ -1,38 +1,27 @@
 # sittir
 
-Generate typed factories, render templates, and native bindings from tree-sitter grammars.
+Sittir derives typed syntax APIs and native renderers from tree-sitter grammars. Read the [README](README.md) for the project overview and [architecture](docs/architecture.md) for its boundaries.
 
-## Quick reference
+## Rules for every task
 
-Dev commands are sourced from [DEVELOPMENT.md](DEVELOPMENT.md) — the three most-used, inline for convenience:
+- **DRY is the primary correctness rule:** every fact has one source and one derivation. Fix the owning source rather than adding a second representation or inference path.
+- Read and follow the [working standards](.claude/coding-standards.md).
+- Use Infigraph first for code discovery, symbol context, references, and refactor impact. Non-code documents may be read directly. See [tool routing and session continuity](.claude/infigraph.md).
+- Never hand-edit generated language or native render output. Change codegen or `packages/<grammar>/grammar.sittir.ts`, then regenerate.
+- Preserve unrelated edits and active worktrees. Report failed gates and retain the evidence; do not make a failure disappear by loosening a ratchet.
+- Document the API that exists on the task's base revision. Mark planned capabilities explicitly.
 
-- Validate (and generate): `pnpm run validate:native` (compare runs: `pnpm run validate:history`)
-- Developer diagnostics: `pnpm exec tsx packages/cli/src/cli.ts tool <tool> [flags]` (`--help` lists all) — see [project workflow doc](.claude/project-workflow.md#diagnostic-tools-sittirtools) for tool highlights and authoring conventions.
-- Independently generate a grammar package: `pnpm exec tsx packages/cli/src/cli.ts gen --grammar <rust|typescript|python> --all --output packages/<lang>/src`
+## Commands
 
-CLI command reference: [docs/cli-command-glossary.md](docs/cli-command-glossary.md) — every `sittir` command, generated from the commander tree.
+Use pnpm and the repository's pinned Node/Rust requirements. [DEVELOPMENT.md](DEVELOPMENT.md) is the command reference for setup, checks, generation, and native builds.
 
-## Universal rules
+## Task-specific guidance
 
-- DRY is the #1 core correctness rule for codegen work: each fact should have one source and one derivation. For example, the source of truth for node kinds is the tree-sitter grammar; the source of truth for factory signatures is the rendered template. Avoid hand-editing derived outputs, and fix the source or codegen logic instead.
-- Use Infigraph for code and doc search: the `infigraph-tool-routing` skill (`~/.claude/skills/infigraph-tool-routing/SKILL.md`) says which tool answers which question and how to set up a worktree.
-- The js/dispatch-based render engine is **removed**. The Rust render engine and Rust tree-sitter bindings are the source of truth; `createEngine()` is native-only and throws rather than falling back.
-- Generated artifacts are derived outputs. Do not hand-edit `packages/{rust,python,typescript}/src/*`, `packages/{rust,python,typescript}/.sittir/*`, `rust/crates/sittir-{rust,python,typescript}/src/*`; fix codegen or `packages/<lang>/grammar.sittir.ts` and regenerate.
-- TypeScript is ESM; local imports use `.ts` extensions.
-- Explanatory comments do not live in `packages/codegen/src/` — they live in the per-directory glossaries under `docs/glossary/`, one `###` section per declaration ([how to look one up / add one](docs/glossary/README.md)). Read a function's glossary entry before editing it; document new code there, not in source.
-- Exception — the public API: hand-written declarations reachable through the engine (`createEngine` and what it returns — engine methods, node surface, factories, exported types) carry JSDoc in source (the usage contract: what it does, parameters, returns, throws). Detailed exposition (rationale, design, internals) still lives in the glossary, and the two do not repeat each other. Generated public surfaces are not covered yet. Everything else stays glossary-only.
-- Comments and documentation (glossary entries, ADRs, JSDoc, inline) must not reference spec/plan/PR/task numbers (e.g. "PR-137", "ADR-0009", "spec 026", "R11", "task 8"). Those planning artifacts get archived, renamed, or deleted — a numbered reference rots into a dangling pointer nobody can resolve. Describe the actual constraint, invariant, or rationale directly instead of citing where it was decided.
-- The grammar executes TWICE: tree-sitter's CLI runs `grammar.sittir.ts` through the `.sittir/grammar.js` re-export (Node strips the types, so every file it imports must use erasable syntax only), and sittir's `evaluate()` runs its own implementation of the tree-sitter DSL — both call the same enrich/wire modules, so DSL-layer synthesis reaches parser AND IR, while anything minted only in compile-time post-passes exists only on the sittir side (a phantom kind: a name with no parser-issued kindId). Ground truth for "did tree-sitter see it" is `.sittir/src/grammar.json`. Full model: [Codegen glossary](docs/compiler-phase-glossary.md).
+| Work | Read |
+| --- | --- |
+| Compiler, emitters, generated TypeScript | [Codegen conventions](.claude/codegen-conventions.md) and [compiler glossary](docs/compiler-phase-glossary.md) |
+| Grammar authoring, parser or render gaps | [Grammar workflow](.claude/grammar-workflow.md) |
+| Tests, diagnostics, branches, verification | [Project workflow](.claude/project-workflow.md) |
+| Rust lint or allocation policy | [Clippy policy](docs/clippy-policy.md) |
 
-## Working standards
-
-@.claude/coding-standards.md
-
-## Detailed instructions
-
-- [Codegen glossary](docs/compiler-phase-glossary.md) — DSL layer + dual-pipeline execution model + compiler-phase narrative, with an index into the per-directory function glossaries (`docs/glossary/`).
-- [Architecture and data model](.claude/architecture.md)
-- [TypeScript and codegen conventions](.claude/codegen-conventions.md)
-- [Grammar, templates, and overrides workflow](.claude/grammar-workflow.md)
-- [Validation and project workflow](.claude/project-workflow.md)
-
+Internal codegen function documentation belongs in the [function glossaries](docs/glossary/README.md). Handwritten public API declarations carry usage JSDoc; longer design explanations belong in linked documentation. Comments state live constraints rather than development history.

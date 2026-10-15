@@ -1,97 +1,40 @@
-# TypeScript and Codegen Conventions
+# TypeScript and codegen conventions
 
-Use this file for emitter changes, generated TypeScript work, or any task that edits codegen-adjacent TS.
+Read the [working standards](coding-standards.md) first. Use these conventions for compiler, DSL, and emitter work.
 
-Repo-wide rules (DRY, root fixes, stamped facts, verification gates,
-ratchets) live in [coding-standards.md](coding-standards.md); this file adds
-the codegen-specific conventions.
+## Types and model facts
 
-## Core correctness rule
-
-DRY is the main correctness rule for the pipeline:
-
-> Every fact about the program has exactly one source, and exactly one derivation.
-
-Apply it concretely:
-
-- Do not store the same fact in parallel structures.
-- Do not add ad hoc tree walkers that duplicate an existing derivation.
-- Prefer object references over string re-resolution.
-- End discriminated-union switches with `assertNever(...)`; no silent `default:` fallbacks.
-- A `NodeRef`'s own per-reference-site stamps (`parseKind`, `parseKindId`, `storageKindId`) are the authoritative alias-aware facts for a field value's kind identity — they know whether THIS occurrence is an alias target. The shared `AssembledKeyword`/`AssembledPunctuation`/etc. model instance's own `resolvedKind`/`resolvedKindId` reflect only that rule's isolated definition and have no per-occurrence alias awareness (the alias fact is stamped onto the SYMBOL REFERENCE by `link.ts`, never onto the referenced rule's own body). Any site consuming a keyword/token/enum field's kind identity should prefer `value.parseKind?.name ?? node.resolvedKind` / `value.parseKindId ?? value.storageKindId ?? node.resolvedKindId`, not the shared instance's fields alone — see `acceptedIdPairsByKindOf` for the established, already-correct pattern.
-
-## Fix the generator, not the generated output
-
-Generated files are derived artifacts. If they are wrong, fix `packages/codegen/src/` or `packages/<lang>/grammar.sittir.ts`, then regenerate.
-
-Never hand-edit:
-
-- `packages/{rust,python,typescript}/src/*`
-- `packages/{rust,python,typescript}/.sittir/*`
-- `packages/{rust,python,typescript}/overrides.suggested.ts` (written next to `grammar.sittir.ts` only when there are suggestions)
-
-## Generated-output hygiene
-
-When touching emitters or generated-TS-facing helpers:
-
-1. Do not emit `Object.defineProperty`; use inline object-literal methods/properties plus `withMethods<T>`.
-2. Do not use `Record<string, unknown>` bridges when a typed property access or generic preserves the shape.
-3. Grammar-specific shared helpers belong in per-grammar `utils.ts`, not `@sittir/legacy-core`.
-4. Shared helpers must preserve caller types with generics; do not widen public helper inputs to `object`.
-5. Avoid `AnyUntypedNode` in factory/wrap/from code except in genuinely generic shared infrastructure.
-6. Do not spread shared method objects into factory literals; use `withMethods<T>(literal)` instead.
-
-## TypeScript rules
-
-- TypeScript is ESM and local imports use `.ts` extensions.
-- Prefer `sg`/ast-grep for structural multi-site edits instead of serial text edits.
-- Do not use type-escape hatches (`as any`, `as unknown`, `@ts-ignore`, `@ts-nocheck`, `eslint-disable`) as workaround fixes.
-- Allowed exceptions:
-  - `as const`
-  - `@ts-nocheck` in `grammar.sittir.ts`
-  - narrow `as unknown as Foo` bridges inside `packages/codegen/src/dsl/*` when guarded by `types/runtime-shapes.ts`, with a one-line reason
+- Use ESM with `.ts` extensions for local imports.
+- Use honest types and guarded boundaries. Do not silence disagreements with `as any`, `as unknown`, `@ts-ignore`, `@ts-nocheck`, or lint suppression. Allowed exceptions are `as const`, intentional `@ts-nocheck` on grammar entries, and guarded cross-runtime bridges in the DSL with a short reason.
+- A reference site's parser/storage identity is not necessarily the referenced rule's isolated identity. Consume its stamped alias-aware facts rather than re-resolving the name or reading a shared node's identity alone.
+- Prefer canonical predicates and facts on the model over emitter-local regexes, walkers, or name heuristics.
 
 ## Rule discrimination
 
-For the Rule IR (`packages/codegen/src/types/rule.ts`):
+The rule union is defined in `packages/codegen/src/types/rule.ts`.
 
 1. Prefer `switch (rule.type)` with `assertNever(rule)`.
-2. Use exported type guards (`isSeq`, `isChoice`, `isField`, `isSymbol`, ...) in predicates such as `.find()` or `.filter()`.
-3. Use inline `rule.type === 'seq'` checks only for simple one-off cases.
+2. Use exported variant guards in `.find`, `.filter`, `.some`, and similar predicates.
+3. A simple inline discriminant check is fine; enum/const indirection for rule type strings is not.
 
-Do not introduce enum/const indirection for rule-type strings.
+The DSL also encounters tree-sitter's uppercase shapes. Use the dual-case predicates in `packages/codegen/src/types/runtime-shapes.ts`; do not add parallel lowercase/uppercase ladders.
 
-For DSL runtime-shape bridging, use the dual-case helpers in `packages/codegen/src/types/runtime-shapes.ts` instead of hand-written `'seq' || 'SEQ'` ladders.
+## Generated surfaces
 
-## Function-structure rule
+- Derive outputs from the canonical model. Avoid a second classification in an emitter.
+- Preserve the caller's types in shared helpers; do not replace a specific generic with `object` or an untyped record bridge.
+- Keep grammar-owned helpers in their generated package and shared runtime behavior in the common runtime.
+- Keep methods inline on generated node literals using the existing method-binding mechanism; do not add `Object.defineProperty` or spread a shared method object into every literal.
+- A refactor claiming no behavior change must preserve generated output byte for byte. An unexpected change is a finding to diagnose.
 
-When a TS function body grows a 3+ line inline comment block explaining the next chunk, extract that chunk into a named private helper with JSDoc (`@param`, `@returns`, `@throws`, `@remarks`, `@see`) instead of keeping a long narrated body.
+## Function structure and documentation
 
-## Test layout
+A long inline comment explaining the next chunk of a TypeScript function is a signal to extract a named helper. Keep the body linear and scannable. Internal codegen functions are documented in their [function glossary](../docs/glossary/README.md), not with a new JSDoc block above the implementation. Keep a short source comment only for a non-obvious live constraint.
 
-- Tests: unit tests live module-adjacent (`<module>/__tests__/*.test.ts`); `src/__tests__/` is reserved for cross-module integration tests. No co-located `*.test.ts` next to source.
+Handwritten public API declarations are the exception: source JSDoc states their usage contract. Longer rationale belongs in documentation. Grammar rationale belongs in the per-grammar authoring glossaries.
 
-## `@forFutureUse` tagging convention
+## Tests and deferred code
 
-A JSDoc tag mirroring `@deprecated` but with the opposite intent: marks a
-symbol that is deliberately kept despite having no current caller, because
-it implements (or partially implements) an Accepted ADR or a
-drafted-but-deferred (not rejected) spec. `@deprecated` says "remove this
-despite it having callers"; `@forFutureUse` says "keep this despite it
-having none."
+Unit tests live under the owning module's `__tests__/` directory. Cross-module integration tests belong under `src/__tests__/`.
 
-Format — always include a one-line reason naming the deferred surface (cite
-the ADR by file path, not by bare number, so the reference stays resolvable):
-
-```ts
-/**
- * @forFutureUse dehoisted UntypedNode surface (docs/adr/0018-dehoist-nodedata-surface.md, accepted) — $with
- * update namespace. Not yet wired into generated output; scaffolding only.
- */
-```
-
-Before deleting any exported symbol with zero (or test-only) callers,
-check whether it carries this tag. If it does, do not delete it as part
-of a routine dead-code sweep — its disposition (finish wiring it up, or
-formally retire it) is a decision for whoever owns the referenced
-ADR/spec, not a mechanical cleanup pass.
+Before deleting an apparently unused export, check whether it carries an intentional `@forFutureUse` contract. Establish whether that contract is still active; zero callers alone does not settle its disposition. Deferred code must name the intended surface, not just an old task number.

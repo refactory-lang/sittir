@@ -8,13 +8,18 @@ import { afterAll, describe, expect, it } from 'vitest';
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const SCRATCH = join(fileURLToPath(new URL('.', import.meta.url)), '.readme-snippets');
 
-const READMES = ['README.md', ...['rust', 'python', 'typescript', 'types'].map((name) => `packages/${name}/README.md`)];
+const READMES = [
+	'README.md',
+	'docs/use-cases-and-examples.md',
+	...['common', 'rust', 'python', 'typescript', 'regex', 'scm', 'types'].map((name) => `packages/${name}/README.md`)
+];
 
 // A fence preceded by this line shows a shape rather than a program, and is not run.
 const ILLUSTRATIVE = '<!-- snippet: illustrative -->';
 
 // A statement `expr; // "text"` (or `// true`, `// false`, `// 3`) in a snippet states the value of `expr`; the gate asserts it. A boolean or number may be followed by `, prose`.
-const EXPECTED_VALUE = /^(?!(?:import|const|let|export|if|for|function|type|interface)\b)(.+?);\s*\/\/ (".*"|(?:true|false|-?\d+(?:\.\d+)?)(?=$|, ))(?:, .*)?$/;
+const EXPECTED_VALUE =
+	/^(?!(?:import|const|let|export|if|for|function|type|interface)\b)(.+?);\s*\/\/ (".*"|(?:true|false|-?\d+(?:\.\d+)?)(?=$|, ))(?:, .*)?$/;
 
 function tsBlocks(markdown: string): string[] {
 	return [...markdown.matchAll(/(^.*\n)?```ts\n([\s\S]*?)```/gm)]
@@ -25,7 +30,9 @@ function tsBlocks(markdown: string): string[] {
 function withAssertions(block: string): string {
 	const body = block
 		.split('\n')
-		.map((line) => line.replace(EXPECTED_VALUE, (_, expr: string, literal: string) => `expect(${expr}).toEqual(${literal});`))
+		.map((line) =>
+			line.replace(EXPECTED_VALUE, (_, expr: string, literal: string) => `expect(${expr}).toEqual(${literal});`)
+		)
 		.join('\n');
 	return `import { expect } from 'vitest';\n${body}`;
 }
@@ -43,7 +50,7 @@ function writeSnippets(): Snippet[] {
 	const snippets = READMES.flatMap((readme) =>
 		tsBlocks(readFileSync(join(ROOT, readme), 'utf8')).map((block, at): Snippet => {
 			const index = at + 1;
-			const file = join(SCRATCH, `${readme.replace(/\/?README\.md$/, '').replace('packages/', '') || 'root'}-${index}.ts`);
+			const file = join(SCRATCH, `${readme.replace(/\.md$/, '').replaceAll('/', '-')}-${index}.ts`);
 			writeFileSync(file, withAssertions(block));
 			return { readme, index, heading: block.split('\n').find((line) => line.trim() !== '') ?? '', file };
 		})
@@ -87,7 +94,9 @@ describe('the package README snippets', () => {
 		try {
 			execFileSync(process.execPath, [tsc, '-p', join(SCRATCH, 'tsconfig.json')], { encoding: 'utf8', stdio: 'pipe' });
 		} catch (error) {
-			throw new Error(`a README snippet does not type-check:\n${(error as { stdout?: string }).stdout ?? String(error)}`);
+			throw new Error(
+				`a README snippet does not type-check:\n${(error as { stdout?: string }).stdout ?? String(error)}`
+			);
 		}
 	}, 120_000);
 });

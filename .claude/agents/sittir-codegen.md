@@ -48,7 +48,7 @@ Gate numbers are **necessary but not sufficient**: when the dispatcher names a c
 
 `tsx` + tsconfig paths resolve `@sittir/*` to source, so **NO build is needed** for unit tests or probes.
 
-1. **Type-check**: `cd packages/codegen && pnpm exec tsc --noEmit -p tsconfig.json 2>&1 | grep -c 'error TS'`. The baseline is the number the dispatcher gives you (currently **0**). Any error is yours. For a task that also edits Rust, `cd rust && cargo build --workspace && cargo test -p sittir-core` is a fast signal too; the generated crates only compile against core once they are regenerated.
+1. **Type-check**: `cd packages/codegen && pnpm exec tsc --noEmit -p tsconfig.json 2>&1 | grep -c 'error TS'`. The baseline is the number the dispatcher gives you (currently **0**). Any error is yours. For a task that also edits Rust, `cargo build --workspace && cargo test -p sittir-core` from the repository root is a fast signal too; the generated crates only compile against core once they are regenerated.
 2. **Unit tests, from the REPO ROOT**: `pnpm exec vitest run packages/codegen/src/<dir-or-file>` — green, with old-mechanism tests updated to the new mechanism. Never run vitest from `packages/codegen`: `loadGeneratedIdTables` resolves `packages/<g>/.sittir/src/parser.c` from `process.cwd()`, so every test that calls `generate()` (roundtrip, baseline-diff, strict-terminal) fails with "wrap emitter named no root surface" — a cwd artifact, not a regression. Never run tests while a regen is in progress either (same symptom, different cause).
 3. **Probes**: `pnpm exec tsx <scratch>.mts` running `evaluate` → `link` → `normalizeGrammar` → `assemble` on `packages/<g>/grammar.sittir.ts` (pass `generatedIdTables` when node NAMES matter — without the catalog, anonymous nodes key by raw text and any name diff is a probe artifact). `SITTIR_TRACE=<kind,…> … gen …` dumps a rule after every phase.
 4. **Finish with the comment gates, in this order, before reporting:**
@@ -75,6 +75,6 @@ Gate numbers are **necessary but not sufficient**: when the dispatcher names a c
 
 ## Reference
 
-- The governing spec + plan for your task: the dispatcher names them — do not assume a default. The newest file under `docs/superpowers/handoffs/` is the current state of the branch; read it when the brief's context is not enough.
+- The governing spec + plan for your task: the dispatcher names them — do not assume a default. Use the task's explicit brief and the current branch state; a historical handoff is not an authoritative description of the current API.
 - Project rules: `CLAUDE.md` and `.claude/*.md` — **`.claude/coding-standards.md` first** (DRY at the root, stamped facts, verification gates, ratchets).
 - Compiler reference: `docs/compiler-phase-glossary.md` (read first for any compiler-phase question).

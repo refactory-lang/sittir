@@ -1,644 +1,139 @@
-# sittir — Use Cases & Examples
+# Usage guide
 
-> **Purpose:** Mixes **current** public API examples with **target** examples for
-> surfaces that are planned but not fully landed yet. It still serves as a
-> user guide and a development litmus test, but not every snippet below is
-> expected to compile against today's implementation.
->
-> **Grammars:** Rust (`@sittir/rust`), TypeScript (`@sittir/typescript`), Python (`@sittir/python`).
->
-> **Status:** The compile-checked current examples live under
-> [`examples/`](../examples/) and currently cover:
-> `01-construct-nodes.ts`, `02-render-round-trip.ts`,
-> `07-read-source.ts`, `09-type-guards.ts`, and `23-read-query-with.ts`.
->
-> The biggest **pending** surfaces called out below are:
->
-> - `template(...)` and `snippets.*` construction helpers — not shipped yet
-> - `engine.findAndRead(...)` — intended surface, but not wired/implemented yet
-> - older docs that still show `wrap(...)` instead of the current `wrapNode(...)`,
->   and `engine.findAndRead(...)` results that a shipped surface would already
->   hand back wrapped
->
-> **Access conventions:** Factory and wrap output exposes named fields via getter methods (`fn.name()`). Raw storage uses `_storageName` prefix (`fn._name`). `$with` provides immutable updates. All sittir methods use `$`-prefix.
->
-> **Executable companions:** Source-form TypeScript versions of these examples
-> live under [`examples/`](../examples/). Stable examples graduate into the
-> compile gate, which also runs them (`tests/acceptance/examples-run.test.ts`); pending target-surface examples stay documented here until the
-> implementation catches up.
+These examples target `master` and are type-checked and executed by the documentation acceptance test. Larger runnable modules are indexed in [examples](../examples/README.md).
 
-## 1. Construct nodes with factories
+## Engine and language
 
-A node belongs to the engine that built or read it, and renders, edits and takes trivia through that engine. Every snippet below builds through an engine — `ir` is that engine's `build` — because a node made anywhere else has no engine and `$render()` says so.
-
-### Factory API — explicit construction
-
-Every node is constructed with its factory. No-arg calls produce empty nodes: no children and optional fields absent.
-
-```ts
-import { createEngine } from '@sittir/common';
-import rust from '@sittir/rust';
-
-const { build: ir } = await createEngine(rust);
-
-// pub fn main() {}
-const fn = ir.functionItem({
-	visibilityModifier: ir.visibilityModifier(),
-	name: ir.identifier('main'),
-	parameters: ir.parameters(),
-	body: ir.block()
-});
-
-// Access via getter methods.
-fn.name(); // returns the name value (terminal-hoisted: string "main")
-fn.body(); // returns the Block UntypedNode
-fn.$render(); // "pub fn main() {}"
-```
-
-### Factory API — nested
-
-```ts
-import { createEngine } from '@sittir/common';
-import rust from '@sittir/rust';
-
-const { build: ir } = await createEngine(rust);
-
-// pub fn greet(name: &str) -> String {
-//     format!("Hello, {}!", name)
-// }
-const fn = ir.functionItem({
-	visibilityModifier: ir.visibilityModifier(),
-	name: ir.identifier('greet'),
-	parameters: ir.parameters([
-		ir.parameter({
-			pattern: ir.identifier('name'),
-			type: ir.referenceType({
-				type: ir.primitiveType('str')
-			})
-		})
-	]),
-	returnType: ir.typeIdentifier('String'),
-	body: ir.block([
-		ir.expressionStatement({
-			expression: ir.macroInvocation({
-				macro: ir.identifier('format!'),
-				args: ir.tokenTree([
-					ir.stringLiteral('"Hello, {}!"'),
-					ir.identifier('name')
-				])
-			})
-		})
-	])
-});
-```
-
-### Coercion — the same function, simplified
-
-Coercion resolves at every level:
-
-- Strings become appropriate leaf nodes.
-- Single values wrap in an array where an array is expected.
-- Arrays wrap in the parent node where a parent is expected.
-- Omitted optional fields produce no output.
-
-```ts
-import { createEngine } from '@sittir/common';
-import rust from '@sittir/rust';
-
-const { build: ir } = await createEngine(rust);
-
-const fn = ir.functionItem({
-	visibilityModifier: 'pub',
-	name: 'greet',
-	parameters: { pattern: 'name', type: '&str' },
-	returnType: 'String',
-	body: ir.expressionStatement({
-		expression: ir.macroInvocation({
-			macro: ir.identifier('format!'),
-			args: ir.tokenTree([
-				ir.stringLiteral('"Hello, {}!"'),
-				ir.identifier('name')
-			])
-		})
-	})
-});
-```
-
-### Coercion — minimal
-
-```ts
-import { createEngine } from '@sittir/common';
-import rust from '@sittir/rust';
-
-const { build: ir } = await createEngine(rust);
-
-// fn main() {}
-const fn = ir.functionItem({ name: 'main' });
-```
-
-### Immutable updates with `$with`
-
-```ts
-import { createEngine } from '@sittir/common';
-import rust from '@sittir/rust';
-
-const { build: ir } = await createEngine(rust);
-
-const fn = ir.functionItem({ name: 'main' });
-const stmt = ir.expressionStatement({ expression: 'todo!()' });
-
-const renamed = fn.$with.name(ir.identifier('greet'));
-const withReturn = renamed.$with.returnType(ir.typeIdentifier('String'));
-const withBody = withReturn.$with.body(ir.block([stmt]));
-
-// Chained:
-const updated = fn
-	.$with.name(ir.identifier('greet'))
-	.$with.returnType(ir.typeIdentifier('String'))
-	.$with.body(ir.block([stmt]));
-```
-
-### Side-by-side: struct
-
-```ts
-import { createEngine } from '@sittir/common';
-import rust from '@sittir/rust';
-
-const { build: ir } = await createEngine(rust);
-
-// pub struct Config { pub host: String, port: u16 }
-
-// Factory API.
-const s = ir.structItem({
-	visibilityModifier: ir.visibilityModifier(),
-	name: ir.typeIdentifier('Config'),
-	body: ir.fieldDeclarationList([
-		ir.fieldDeclaration({
-			visibilityModifier: ir.visibilityModifier(),
-			name: ir.fieldIdentifier('host'),
-			type: ir.typeIdentifier('String')
-		}),
-		ir.fieldDeclaration({
-			name: ir.fieldIdentifier('port'),
-			type: ir.primitiveType('u16')
-		})
-	])
-});
-
-// coercing API.
-const sFrom = ir.structItem({
-	visibilityModifier: 'pub',
-	name: 'Config',
-	body: [
-		{ visibilityModifier: 'pub', name: 'host', type: 'String' },
-		{ name: 'port', type: 'u16' }
-	]
-});
-```
-
-## 2. Render UntypedNode to source
-
-```ts
-import { createEngine } from '@sittir/common';
-import rust from '@sittir/rust';
-
-const { build: ir } = await createEngine(rust);
-
-const fn = ir.functionItem({ visibilityModifier: 'pub', name: 'main' });
-fn.$render();
-// "pub fn main() {}"
-```
-
-### Round-trip: read → render
+A grammar package exports a language descriptor and its generated types. Create an engine from the descriptor, then use its `build`, `is`, `kinds`, `parse`, and `render` surface. A node's rendering and query operations depend on its engine.
 
 ```ts
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
 const engine = await createEngine(rust);
-const tree = engine.parse(source);
-tree.$render() === source; // nothing was rebuilt, so nothing is re-spelled
+const name = engine.build.identifier('value');
+name.$render(); // "value"
+engine.isFactoryNode(name); // true
+engine.dispose();
 ```
 
-Rendering is format-preserving by default. Only what you rebuild renders in
-the canonical spelling; anything you left alone comes back as its own bytes,
-comments and blank lines and indentation included.
+## Construction and coercion
 
-## 3. Attach comments with `.$trivia`
+The ordinary builder resolves ergonomic inputs according to the slot's grammar-derived type. `.strict` takes the explicit constructor shape. A lexical builder still takes text, and fixed syntax may be represented by a kind ID rather than a node factory.
 
 ```ts
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const { build: ir } = await createEngine(rust);
-
-const fn = ir
-	.functionItem({ visibilityModifier: 'pub', name: 'main' })
-	.$trivia.leading(ir.docComment('/// Entry point.'));
-
-fn.$render();
-// "/// Entry point.\npub fn main() {}"
-```
-
-### Leading and trailing trivia
-
-```ts
-import { createEngine } from '@sittir/common';
-import rust from '@sittir/rust';
-
-const { build: ir } = await createEngine(rust);
-
-const fn = ir
-	.functionItem({ visibilityModifier: 'pub', name: 'main' })
-	.$trivia.leading(ir.lineComment('// @generated'), ir.docComment('/// Main.'))
-	.$trivia.trailing(ir.lineComment('// end main'));
-```
-
-`$trivia.leading(...)` and `$trivia.trailing(...)` each take a spread and set one side, keeping the other, so they chain. `$trivia` is its positions; the node itself is not callable.
-
-A node with nothing in it takes inner trivia, rendered where its children would go:
-
-```ts
-const todo = ir.functionItem({
-	name: 'todo',
-	parameters: ir.parameters(),
-	body: ir.block().$trivia.inner(ir.lineComment(' TODO'))
+const engine = await createEngine(rust);
+const fn = engine.build.statement.function.strict({
+	name: engine.build.identifier('main'),
+	parameters: engine.build.parameters.strict(),
+	body: engine.build.block.strict()
 });
-todo.$render(); // fn todo() {\n    // TODO\n}
+fn.$render(); // "fn main() {}"
+engine.dispose();
 ```
 
-Only an empty node has `inner`: a factory call with no arguments returns the empty form (`EmptyBlock`), and `engine.isEmptyNode(node)` narrows a read node to it.
+Builders expose the grammar's forms, not a uniform object constructor for every kind. Lists may be variadic; forms may have separate named paths; required slots remain required. Use the generated signature rather than guessing an omitted field or a default arm. Lexical validation does not establish semantic validity of the resulting program.
 
-## 4. Construction templates — pre-compiled
+## Parsing and errors
 
-### Template file
-
-```rust
-// snippets/impl-display.rust.template
-impl std::fmt::Display for $TYPE {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", $EXPR)
-    }
-}
-```
-
-### Usage
-
-```ts
-import { snippets, ir } from '@sittir/rust';
-
-const source = snippets.implDisplay
-	.fill({
-		TYPE: ir.typeIdentifier('Config'),
-		EXPR: ir.fieldExpression({
-			value: ir.selfExpression(),
-			field: ir.fieldIdentifier('host')
-		})
-	})
-	.render();
-```
-
-### With `.from()` on slots
-
-```ts
-import { snippets, ir } from '@sittir/rust';
-
-const source = snippets.implDisplay
-	.from({
-		TYPE: 'Config',
-		EXPR: ir.fieldExpression({
-			value: ir.selfExpression(),
-			field: ir.fieldIdentifier('host')
-		})
-	})
-	.render();
-```
-
-## 5. Construction templates — inline
-
-```ts
-import { template, ir } from '@sittir/rust';
-
-const letBinding = template('let $NAME: $TYPE = $VALUE;');
-
-const source = letBinding
-	.fill({
-		NAME: ir.identifier('config'),
-		TYPE: ir.typeIdentifier('Config'),
-		VALUE: ir.structExpression({
-			name: 'Config',
-			body: [
-				{ name: 'host', value: '"localhost"' },
-				{ name: 'port', value: '8080' }
-			]
-		})
-	})
-	.render();
-```
-
-## 6. Composition
-
-`.read()` returns UntypedNode, so its output is valid as a slot for another template.
-
-```ts
-import { snippets, template, ir } from '@sittir/rust';
-
-const method = snippets.pubMethod
-	.fill({
-		NAME: ir.identifier('new'),
-		PARAMS: ir.parameter({ name: 'host', type: 'String' }),
-		RET: ir.typeIdentifier('Self'),
-		BODY: template('Self { $...FIELDS }')
-			.fill({
-				FIELDS: [ir.fieldInitializer({ name: 'host', value: 'host' })]
-			})
-			.read()
-	})
-	.read();
-
-const source = snippets.implBlock
-	.fill({
-		TYPE: ir.typeIdentifier('Config'),
-		METHODS: method
-	})
-	.render();
-```
-
-## 7. Read source into UntypedNode
-
-```ts
-import { createEngine } from '@sittir/rust';
-
-const engine = createEngine();
-const tree = engine.parse(source);
-// tree.statements()[0].name() — accessors return wrapped nodes at every level.
-// engine.diagnostics.parseAndRead(source) exposes the raw `{ root, tree }` instead.
-```
-
-### Read depth
-
-Reading is lazy: `parse` reads one level, and a child below it is a coordinate
-(its tree and index) that the accessors read and wrap on first access.
-`{ depth: Infinity }` reads the whole tree up front instead — one crossing
-rather than one per level, at the cost of reading what you may never touch.
-
-```ts
-import { createEngine } from '@sittir/common';
-import rust from '@sittir/rust';
-
-const engine = await createEngine(rust);
-const lazy = engine.parse(source);
-const eager = engine.parse(source, { depth: Infinity });
-```
-
-Depth does not change a render: a node nothing edited crosses as its
-coordinate at any depth, so `lazy.$render()` and `eager.$render()` both return
-the source byte for byte.
-
-`engine.diagnostics.parseAndRead(source, { depth })` returns the same read
-un-wrapped, as `{ root, tree }`, for tooling; the tree is bound to the engine,
-so what is wrapped over it renders through it.
-
-### Wrapped access
-
-```ts
-import { createEngine } from '@sittir/common';
-import rust from '@sittir/rust';
-
-const engine = await createEngine(rust);
-const fn = engine.parse(source).statements()[0];
-fn.name(); // read from the tree on first access
-fn.body(); // returns the Block; the same node on every later call
-fn.body().statements(); // the statements list, also the same list each time
-```
-
-### Query a parsed tree
-
-`$query()` on a parsed node returns its query facet: `$children` (one level
-down), `$descendants` (every level, in source order), and one view per slot,
-holding what that slot's accessor returns. A view is lazy and takes the
-read-only array verbs (`filter`, `map`, `find`, `some`, `slice`, `at`, …) plus
-`ofType(kind)` and `where(condition)`. `ofType` and `where` run in the native
-walk, so only the nodes that pass them are hydrated, and a terminal such as
-`find` stops the walk at its answer. A condition names slots of the kind and
-tests their text with `eq` or `match`, combined with `and`, `or` and `not`.
-`engine.query(node)` returns the same facet for any node; a leaf's facet has
-no slots and empty traversals.
-
-```ts
-import { createEngine } from '@sittir/common';
-import python from '@sittir/python';
-
-const engine = await createEngine(python);
-const root = engine.parse(source);
-
-// Calls whose callee is `open`, at any depth.
-const opens = [...root.$query().$descendants.ofType(engine.kinds.Call).where((call) => call.function.eq('open'))];
-
-// Names of private, non-dunder functions.
-const helpers = root
-	.$query()
-	.$descendants.ofType(engine.kinds.FunctionDefinition)
-	.where((fn) => fn.name.match(/^_/).and(fn.name.match(/^__/).not()))
-	.map((fn) => fn.name());
-```
-
-In Python, a statement that is only `print(x)` parses as the Python 2 print
-statement (`PrintStatement`), not a `Call`; inside an expression it is a call.
-
-### Edit a parsed node with `$with`
-
-`$with.<slot>(value)` returns a copy of a parsed node with one slot replaced;
-every child the edit did not touch renders the bytes it was read from. An
-edited child goes back into its parent through the parent's `$with`.
-
-```ts
-const fn = root
-	.$query()
-	.$descendants.ofType(engine.kinds.FunctionDefinition)
-	.where((candidate) => candidate.name.eq('_next'))
-	.find();
-const renamed = fn?.$with.name(engine.build.identifier('_advance'));
-
-const file = root.$with.statements(
-	...root
-		.statements()
-		.map((statement) =>
-			engine.is.functionDefinition(statement) && engine.render(statement.name()).toString() === 'load'
-				? statement.$with.name(engine.build.identifier('read_file'))
-				: statement
-		)
-);
-```
-
-A node a view yields is a separate object from the one an accessor returns
-for the same place in the source, so `===` cannot match them; a view's
-`includes` compares places in the source instead.
-
-The runnable versions, with an outline read through the accessors, are in
-[`examples/23-read-query-with.ts`](../examples/23-read-query-with.ts).
-
-## 8. Find nodes by pattern
-
-```ts
-import { createEngine, wrap } from '@sittir/rust';
-
-const engine = createEngine();
-const tree = engine.parse(source);
-const matches = engine.findAndRead(source, 'pub fn $NAME($...PARAMS) $BODY');
-for (const match of matches) {
-	console.log(wrap(match, tree).name());
-}
-```
-
-## 9. Type guards
-
-```ts
-import { is } from '@sittir/rust';
-
-for (const stmt of tree.statements()) {
-	if (is.functionItem(stmt)) {
-		console.log(`Function: ${stmt.name()}`);
-	} else if (is.structItem(stmt)) {
-		console.log(`Struct: ${stmt.name()}`);
-	}
-}
-```
-
-## 10. Cross-language migration
-
-TypeScript interface → Python dataclass.
+`parse` returns the typed root. Accessors materialize children on demand. An untouched root retains its source spelling.
 
 ```ts
 import { createEngine } from '@sittir/common';
 import typescript from '@sittir/typescript';
 
 const engine = await createEngine(typescript);
-
-const typeMap: Record<string, string> = {
-	string: 'str',
-	number: 'int',
-	boolean: 'bool',
-};
-
-export function interfaceToPythonDataclass(tsSource: string) {
-	const program = engine.parse(tsSource);
-	const iface = program.statements().find(engine.is.interfaceDeclaration);
-	if (iface === undefined) {
-		throw new Error('Expected a top-level TypeScript interface declaration.');
-	}
-
-	const fields = (iface.body().content().members()?.members() ?? []).flatMap((member) => {
-		if (!engine.is.propertySignature(member)) return [];
-		const annotation = member.type()?.type();
-		const rawType = annotation === undefined ? 'Any' : engine.render(annotation).toString();
-		return [`    ${engine.render(member.name())}: ${typeMap[rawType] ?? rawType}`];
-	});
-
-	return ['@dataclass', `class ${engine.render(iface.name())}:`, ...(fields.length > 0 ? fields : ['    pass'])].join('\n');
-}
+const source = 'const answer: number = 42; // retained\n';
+const root = engine.parse(source, { errors: 'throw' });
+root.$errors.length === 0; // true
+root.$render() === source; // true
+engine.dispose();
 ```
 
-## 11. Generate a file from scratch
+Without `errors: 'throw'`, inspect `root.$errors` before assuming a complete parse. `depth` controls eager hydration; increasing it is not a repair for an invalid grammar or source.
+
+## Accessors, guards, and immutable updates
+
+Accessors return their declared slot values. A guard narrows a grammar kind; it is not a structural test for an arbitrary object with a matching `$type`.
 
 ```ts
-import fs from 'node:fs';
-import { ir, snippets, template } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
 
-const file = ir.sourceFile({
-	statements: [
-		ir.useDeclaration({ path: 'std::collections::HashMap' }),
+const engine = await createEngine(rust);
+const root = engine.parse('fn old_name() {}\n');
+const statements = root.statements().map((node) =>
+	engine.is.functionItem(node)
+		? node.$with.name(engine.build.identifier('new_name'))
+		: node
+);
+const updated = root.$with.statements(...statements);
+updated.$render(); // "fn new_name() {}\n"
+root.$render(); // "fn old_name() {}\n"
+engine.dispose();
+```
 
-		ir
-			.structItem({
-				visibilityModifier: 'pub',
-				name: 'Cache',
-				body: { name: 'entries', type: 'HashMap<String, String>' }
-			})
-			.$trivia.leading(ir.docComment('/// In-memory key-value cache.')),
+Rebuilding a child leaves its ancestors unchanged. Return or render the updated root when transforming an entire file. Source-preserving edits retain untouched child bytes; rebuilt syntax follows the grammar's render rules.
 
-		snippets.implBlock
-			.fill({
-				TYPE: ir.typeIdentifier('Cache'),
-				METHODS: snippets.pubMethod
-					.fill({
-						NAME: ir.identifier('new'),
-						RET: ir.typeIdentifier('Self'),
-						BODY: template('Self { entries: HashMap::new() }').fill({}).read()
-					})
-					.read()
-			})
-			.read()
-	]
+## Querying parsed syntax
+
+A parsed node's `$query()` exposes typed slot views and structural walks. `ofType` narrows kinds; `where` predicates operate on query facets rather than eagerly materialized node accessors.
+
+```ts
+import { createEngine } from '@sittir/common';
+import python from '@sittir/python';
+
+const engine = await createEngine(python);
+const root = engine.parse('load(1)\nstore(2)\n');
+const calls = Array.from(
+	root.$query().$descendants.ofType(engine.kinds.Call)
+		.where((call) => call.function.eq('load'))
+);
+calls.length === 1; // true
+engine.dispose();
+```
+
+Queries require parsed structure. A newly constructed node or draft is not a parsed tree; use the commit/reparse lifecycle before querying an updated value. [Read/query/update examples](../examples/23-read-query-with.ts) show slot views, traversal, and ancestor reconstruction together.
+
+## Rendering
+
+`node.$render()` returns source text. `engine.render(node)` returns a render result with `toString()`, `print()`, and `save(path)`. Render options are typed by the selected grammar.
+
+```ts
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const engine = await createEngine(rust);
+const name = engine.build.identifier('value');
+engine.render(name).toString(); // "value"
+engine.dispose();
+```
+
+Parsed nodes can reuse their source bytes. A fresh build is rendered from its structure. Neither path promises that every grammar construct is covered without exclusions; the native validation baseline records that coverage.
+
+## Comments and layout
+
+Use `$trivia` rather than editing raw layout storage. Leading and trailing trivia belong to the node. Inner trivia requires an appropriate empty node; the grammar and engine determine eligibility.
+
+```ts
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const engine = await createEngine(rust);
+const fn = engine.build.statement.function({
+	name: 'main',
+	parameters: engine.build.parameters(),
+	body: engine.build.block()
 });
-
-fs.writeFileSync('src/cache.rs', file.$render());
+fn.$trivia.leading('// entry point').$render(); // "// entry point\nfn main() {}"
+engine.dispose();
 ```
 
-## 12. Dogfooding
+## Types and engine selection
 
-sittir's codegen emitters use TypeScript grammar construction templates.
+Use per-kind exported types for language-specific code, or `Engine<LanguageAPI>` and the engine type map for generic utilities. Select `api: 'strict'` when the engine's ordinary `build` calls should expose strict construction directly. Portable vocabulary APIs are planned work, not a substitute for the current language-specific surface.
 
-```ts
-import { snippets, template, ir } from '@sittir/typescript';
-
-export function emitIsModule(grammar: GrammarModel): string {
-	const guards = grammar.kinds.map((kind) =>
-		snippets.typeGuard
-			.fill({
-				NAME: ir.identifier(`is${pascalCase(kind)}`),
-				TYPE: ir.typeReference(pascalCase(kind)),
-				KIND: ir.stringLiteral(kind)
-			})
-			.render()
-	);
-
-	const dispatchObj = template('export const is = { $...ENTRIES }')
-		.fill({
-			ENTRIES: grammar.kinds.map((kind) =>
-				ir.shorthandPropertyAssignment(ir.identifier(`is${pascalCase(kind)}`))
-			)
-		})
-		.render();
-
-	return [...guards, dispatchObj].join('\n\n');
-}
-```
-
-## Coercion resolution rules
-
-| Input                           | Field expects             | Resolution                                  |
-| ------------------------------- | ------------------------- | ------------------------------------------- |
-| `'main'`                        | Identifier                | `ir.identifier('main')`                     |
-| `'String'`                      | Type                      | `ir.typeIdentifier('String')`               |
-| `'pub'`                         | Visibility                | `ir.visibilityModifier()`                   |
-| `42`                            | Expression                | `ir.integerLiteral('42')`                   |
-| `{ pattern: 'x', type: 'i32' }` | Parameter                 | `ir.parameter(...)`                    |
-| `{ pattern: 'x', type: 'i32' }` | Parameters                | `ir.parameters(ir.parameter(...))`     |
-| `[p1, p2]`                      | Parameters                | `ir.parameters(resolved(p1), resolved(p2))` |
-| `parameterNode`                 | Parameters                | `ir.parameters(parameterNode)`              |
-| `parametersNode`                | Parameters                | pass through                                |
-| `stmt`                          | Block                     | `ir.block({ children: [stmt] })`            |
-| `[s1, s2]`                      | Block                     | `ir.block({ children: [s1, s2] })`          |
-| `blockNode`                     | Block                     | pass through                                |
-| omitted                         | Optional                  | no output                                   |
-| omitted                         | Required no-arg factory   | empty node                                  |
-
-## Litmus test
-
-- [ ] `ir.*()` — no-arg = empty node
-- [ ] `ir.*(...)` — string → leaf, single → array, array → wrapped, omitted → none
-- [ ] `is.*()` runtime type guards
-- [ ] `$render()` producing byte-identical round-trips
-- [ ] `.$trivia` — leading/trailing comment attachment, typed per grammar
-- [ ] `$with.field(v)` — immutable per-field updates, chaining works
-- [ ] `snippets.*.fill({}).read()` / `.render()` — pre-compiled templates
-- [ ] `snippets.*.from({})` — template fill with coercion
-- [ ] `template('...').fill({}).read()` / `.render()` — inline templates
-- [ ] Composition: `.read()` output as slot input for another template
-- [x] `engine.parse()` with depth control, `$parentHandle` / `$childIndex` hydration
-- [ ] `engine.readUntypedNode(handle, childIndex)` for lazy hydration
-- [ ] `engine.findAndRead()` with pattern matching
-- [ ] `wrap(node, tree)` — getter methods with `hydrateChild` for lazy hydration
-- [ ] Format-preserving transforms
-- [ ] Native backend: one crossing per terminal
+See [shared types](../packages/types/README.md), the generated declarations, and [architecture](architecture.md) for the type families and runtime boundaries.

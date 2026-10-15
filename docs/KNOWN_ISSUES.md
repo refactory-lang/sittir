@@ -1,44 +1,25 @@
-# Known Issues
+# Known limits and defect tracking
 
-Running list of known, non-blocking gaps discovered during feature work — documented here rather than silently forgotten, but not urgent enough to have blocked the work that found them. When one gets fixed, delete its entry rather than marking it done.
+[GitHub issues](https://github.com/refactory-lang/sittir/issues) track concrete defects and their disposition. This document describes how to interpret the current guarantees; it is not a second backlog of historical compiler investigations.
 
-Every entry heading starts with a stable backticked `ki-*` id — refer to an entry by that id (in conversation, commits, or across sessions); ids never renumber when neighbors are deleted, and a fixed entry's id simply disappears with it. Pick unused ids for new entries.
+## Syntax and semantic validity
 
-Suggested attack order (by payoff ÷ effort; remove a line when its entry is deleted):
+Builder types encode grammar-derived construction shapes, and lexical guards validate admitted terminal text. They do not perform target-language type checking, name resolution, or every context-sensitive validity check. A structurally constructible node can still require a surrounding context or a nonempty body to form a valid program.
 
-1. `ki-sclass-residuals` — the corpus clusters, biggest first (python deep-AST mismatches, rust rrp residuals)
-2. `ki-from-string-composition` — blocked on a quote-style design decision
-11. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
+## Coverage and exclusions
 
-## `ki-emitsymbol-fielded-seq` — `emitSymbol`'s generalized hidden-helper inlining doesn't yet handle a fielded sequence inside the inlined target
+Use `packages/tools/baselines/native.json` for per-grammar validator floors and failing kinds, and `packages/tools/sclass-ceilings.json` with `packages/tools/validation-report.json` for classified round-trip debt. Counts belong to the measured revision and its fixture universe; this page does not duplicate them.
 
-**Found during:** indent-aware rendering for python (`rrp-ast-match-sweep`), generalizing `emitSymbol` (`packages/codegen/src/emitters/templates.ts`) so a NAMED field wrapping a hidden `inline: true` target (e.g. `function_definition.body` → `_suite`) inlines the target's `renderRule` the same way an unnamed group-lift helper already does, instead of always emitting an opaque `{{ body }}` slot reference. Confirmed via a full-grammar scan: 46 total "named field → hidden inline:true target" occurrences across the 3 grammars (python 11, all → `_suite`; rust 12 and typescript 23, all → 0-slot `pattern`/`enum` leaf wrappers like `_type_identifier`/`_semicolon`) — the fix was applied generically to all 46 since the non-`_suite` targets have no internal structure to be affected by inlining.
+A source-preserving render of an untouched parsed node and a fresh construction/render/reparse are different checks. Report both where the change affects both. See [Development](../DEVELOPMENT.md#validation).
 
-The generalization was verified safe for every CURRENT occurrence (`_suite`'s own 3 choice arms declare no fields of their own; the 35 pattern/enum targets have zero slots), but the inlining logic itself does not yet handle the case where the inlined target's content is a `seq` whose members are ALL themselves field-wrapped (as opposed to `_suite`'s arm-2 shape, `seq($._indent, $.block)`, where only the `$.block` member is field-addressable and `$._indent` is a bare terminal). If a future grammar or override introduces a hidden `inline: true` helper referenced from a named field where every seq member carries its own `fieldName`, the current inlining path's conditional-gating logic (keyed on a single `condKey`, preferring the outer field's own name) has not been exercised against that shape and may need additional handling — e.g. surfacing each inner field independently rather than gating the whole inlined body on one presence check.
+## Parse errors and lifecycle
 
-**Status: not yet encountered, flagged proactively during design review — not blocking the current fix.**
+A default parse can return a root containing errors; inspect `$errors` or request `errors: 'throw'`. Query views require parsed structure and a live engine. An immutable update does not mutate its ancestors or immediately create a newly parsed query tree.
 
-**Fix, if/when prioritized:** when a future case exercises this shape, extend `emitSymbol`'s inlining block (`packages/codegen/src/emitters/templates.ts`, the `if (rule.type === SYMBOL && rule.inline === true)` branch) to detect "target's own top-level rule is a SEQ whose members are all field-wrapped" and route each inner field through its own presence/emission logic instead of a single shared conditional — likely mirroring render-module.ts's existing "group-lift inner field hoisting" pattern (hoisting a helper's inner named fields onto the parent struct) for the template side too.
+## Planned surfaces
 
-## `ki-sclass-residuals` — Round-trip-fidelity residual inventory — the corpus failures behind the committed S-class ceilings
+Internal types and design proposals can precede runtime implementation. Use the [usage guide](use-cases-and-examples.md) and executable examples for the current API, and the [documentation index](README.md#planned-work) for the distinction between current usage and planned work.
 
-**Found during:** the floor-ratchet + S-class-gate work that closed out the round-trip-fidelity restoration program's final phase. The live SSOT for these counts is `packages/tools/sclass-ceilings.json` (per-grammar ceilings the `validate counts` run enforces) + `packages/tools/validation-report.json` (the classified entries themselves) + `packages/tools/baselines/native.json` (exact pass floors and per-validator `failingKinds`). This entry names the failure *clusters* so each can be chipped at as its own work item — chip one, lower its ceiling in the same commit.
+## Reporting a defect
 
-- **S1 — alias-identity: closed.** The wire `$type` is the grammar symbol (the native read stamps `node.grammar_id()`), so alias display collapses are injective on the wire by construction and the runtime restamp machinery (drillAs pairs, `_aliasTargetToSource`) is deleted. The `parsekind-noninjective` records that remain in the report are severity-`info` audit trails of enrich's own unalias rewrites ("automatically resolved") — provenance, excluded from ceiling counting. The unresolved-coords refusal ("native coords unresolved for alias target") stays as a guard for kinds whose only corpus occurrence has no native node (e.g. swallowed into a verbatim-text carrier like a macro token tree) — the sound response there is a corpus entry exposing the kind in a materializable position, which is how the last open row (rust `block_comment`) was closed.
-- **S4 — `union-slot-mixed-row` grammar diagnostics** (typescript `binary_expression`/`_jsx_opening_element_content`): static modeling warnings, order-lossy or singular mixed rows.
-- **python `_content: value "0"/"3"/"3j" ≠ undefined`** (×5, all `_simple_pattern_negative`): the factory output is missing `_content` because `nodeToConfig` drops the slot — polymorph FORM kinds are excluded from factory metadata (`buildFactoryMap`'s `polymorphFormKinds` gate for `factoryShapes`/`factorySlots`), and this form is additionally absent from `factoryFields` because `collectAliasSourceKinds` walks only direct slot values while `_simple_pattern_negative` is reachable solely through the `_simple_pattern` supertype expansion. NOT the render-side `-` defect (that row is fixed); closing this needs a decision on how polymorph forms surface factory metadata.
-
-**Status: documented exclusions — every count above is pinned by the committed ceilings; a fix must lower the matching ceiling in the same commit (the gate prints a reminder when a class drops below its ceiling).**
-
-## `ki-let-destructuring-parse-divergence` — the typescript override parser never parses `let [...] = ...` as a declaration
-
-**Found during:** closing the `rest_pattern` reparse rows — their wrapper (`let [${r}] = [];`) never reparsed because of this, not because of wrapper selection.
-
-The override parser resolves `let [`'s declaration-vs-subscript ambiguity to the EXPRESSION fork: `let [c] = [];` parses as `expression_statement > assignment_expression > subscript_expression(object: reserved_identifier, ERROR, …)` — even the simplest array-destructuring `let` fails, while `const [c] = [];` (unambiguous keyword) parses correctly, and upstream tree-sitter-typescript parses the `let` form as a `lexical_declaration`. A GLR tie-break in the override grammar diverges from upstream's here (`let` doubles as a reserved identifier, so `let [` genuinely forks). No corpus entry currently exercises statement-level `let`-destructuring, so no validator row pins this — but it corrupts any real-world source using the construct. Fix belongs at the grammar level (a dynamic-precedence tie-break restoring upstream's resolution, the `primary_expression`/`list_splat_pattern` treatment in python's grammar being the in-repo precedent), not in consumers.
-
-## `ki-from-string-composition` — Rust `from.string` / `from.comment` canonical factories are not emitted — composition needs a design decision
-
-**Found during:** re-pinning `packages/codegen/src/scm/__tests__/scm-roles.test.ts`. Rust's `string_literal` factory takes a config with an explicit `stringOpen` slot (the open-quote token variant: `"`, `b"`, …) plus an `elements` array, so `emitFromString` has no single-positional-child surface to compose and deliberately skips rather than inventing a default quote style (`line_comment`'s content-node shape skips `from.comment` the same way). The test now pins the absence.
-
-**Fix, if/when prioritized:** a composition rule needs an explicit decision on the default open-quote (probably plain `"` with sub-entries like `from.string.raw(...)` for other variants) — an overrides-level declaration, not an emitter heuristic. Flip the scm-roles pin when it lands.
-
+Include the revision, grammar, smallest source or construction input, expected result, and actual parse/read/render behavior. Use the existing probe tools to identify the boundary before proposing a generator or grammar fix.
