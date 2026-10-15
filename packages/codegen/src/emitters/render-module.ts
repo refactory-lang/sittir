@@ -1,3 +1,4 @@
+import { relaxedKeywordIds } from './kind-id-rust.ts';
 import { ERROR_KIND_ID } from '@sittir/common/error-kind';
 import { depthMembersOf } from '../compiler/model/layout-kinds.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
@@ -1216,7 +1217,7 @@ function readPrintOf(
 			names: readNames(kindEntries, generatedFieldIds(generatedIdTables)),
 			listOwners: new Set(listViewOwners(nodeMap).map((node) => node.kind)),
 			envelopeIds: new Set(aliasEnvelopeIds(aliasEnvelopesOf(nodeMap))),
-			folds: generatedIdTables.folds ?? new Map(),
+			folds: foldsWithRelaxed(generatedIdTables.folds ?? new Map(), nodeMap, kindEntries),
 			grammar
 		},
 		admitted: new Map(),
@@ -1224,6 +1225,19 @@ function readPrintOf(
 		blankChoices: new Set(),
 		choicePayloads: new Set()
 	};
+}
+
+function foldsWithRelaxed(
+	folds: ReadonlyMap<number, readonly number[]>,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[]
+): ReadonlyMap<number, readonly number[]> {
+	const relaxed = relaxedKeywordIds(nodeMap, kindEntries);
+	const word = nodeMap.word === null || nodeMap.word === undefined ? undefined : findKindEntry(kindEntries, nodeMap.word);
+	if (relaxed.length === 0 || word === undefined) return folds;
+	const merged = new Map(folds);
+	merged.set(word.id, [...new Set([...(folds.get(word.id) ?? []), ...relaxed])]);
+	return merged;
 }
 
 const TRANSPORT_DERIVE = '#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]';

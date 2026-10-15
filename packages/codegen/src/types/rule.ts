@@ -307,6 +307,7 @@ export type AliasRule<Phase extends PhaseName = 'link'> = Phase extends WrapperP
 			readonly named: boolean;
 			readonly value: string;
 			readonly kindId?: number;
+			readonly relaxation?: true;
 		}
 	: never;
 

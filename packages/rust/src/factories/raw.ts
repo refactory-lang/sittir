@@ -719,31 +719,7 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 		),
 		'Attribute.path',
 		TSKindId.Identifier,
-		[
-			'self',
-			'u8',
-			'i8',
-			'u16',
-			'i16',
-			'u32',
-			'i32',
-			'u64',
-			'i64',
-			'u128',
-			'i128',
-			'isize',
-			'usize',
-			'f32',
-			'f64',
-			'bool',
-			'str',
-			'char',
-			'super',
-			'crate',
-			'default',
-			'union',
-			'gen'
-		]
+		['self', 'super', 'crate']
 	);
 	const _input = rejectBareText(config.input, 'Attribute.input', 'a built AttributeInput');
 	const handle = currentHandle();
@@ -2405,31 +2381,7 @@ export function buildUseDeclaration(config: T.UseDeclaration.Config): T.UseDecla
 		),
 		'UseDeclaration.argument',
 		TSKindId.Identifier,
-		[
-			'self',
-			'u8',
-			'i8',
-			'u16',
-			'i16',
-			'u32',
-			'i32',
-			'u64',
-			'i64',
-			'u128',
-			'i128',
-			'isize',
-			'usize',
-			'f32',
-			'f64',
-			'bool',
-			'str',
-			'char',
-			'super',
-			'crate',
-			'default',
-			'union',
-			'gen'
-		]
+		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
 	const node = {
@@ -2465,31 +2417,7 @@ export function buildScopedUseList(config: Partial<T.ScopedUseList.Config> = {})
 		),
 		'ScopedUseList.path',
 		TSKindId.Identifier,
-		[
-			'self',
-			'u8',
-			'i8',
-			'u16',
-			'i16',
-			'u32',
-			'i32',
-			'u64',
-			'i64',
-			'u128',
-			'i128',
-			'isize',
-			'usize',
-			'f32',
-			'f64',
-			'bool',
-			'str',
-			'char',
-			'super',
-			'crate',
-			'default',
-			'union',
-			'gen'
-		]
+		['self', 'super', 'crate']
 	);
 	const _list = rejectBareText(
 		orDefault(config.list, () => buildUseList()),
@@ -2534,31 +2462,11 @@ export function buildUseList(
 	...elements: NonEmptyArray<
 		Admit<
 			| TSKindId.Self
-			| TSKindId.U8Keyword
-			| TSKindId.I8Keyword
-			| TSKindId.U16Keyword
-			| TSKindId.I16Keyword
-			| TSKindId.U32Keyword
-			| TSKindId.I32Keyword
-			| TSKindId.U64Keyword
-			| TSKindId.I64Keyword
-			| TSKindId.U128Keyword
-			| TSKindId.I128Keyword
-			| TSKindId.IsizeKeyword
-			| TSKindId.UsizeKeyword
-			| TSKindId.F32Keyword
-			| TSKindId.F64Keyword
-			| TSKindId.BoolKeyword
-			| TSKindId.StrKeyword
-			| TSKindId.CharKeyword
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
 			| T.Identifier
 			| T.ScopedIdentifier
-			| TSKindId.DefaultKeyword
-			| TSKindId.UnionKeyword
-			| TSKindId.GenKeyword
 			| T.UseAsClause
 			| T.UseList
 			| T.ScopedUseList
@@ -2570,31 +2478,11 @@ export function buildUseList(
 	...elements: NonEmptyArray<
 		Admit<
 			| TSKindId.Self
-			| TSKindId.U8Keyword
-			| TSKindId.I8Keyword
-			| TSKindId.U16Keyword
-			| TSKindId.I16Keyword
-			| TSKindId.U32Keyword
-			| TSKindId.I32Keyword
-			| TSKindId.U64Keyword
-			| TSKindId.I64Keyword
-			| TSKindId.U128Keyword
-			| TSKindId.I128Keyword
-			| TSKindId.IsizeKeyword
-			| TSKindId.UsizeKeyword
-			| TSKindId.F32Keyword
-			| TSKindId.F64Keyword
-			| TSKindId.BoolKeyword
-			| TSKindId.StrKeyword
-			| TSKindId.CharKeyword
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
 			| T.Identifier
 			| T.ScopedIdentifier
-			| TSKindId.DefaultKeyword
-			| TSKindId.UnionKeyword
-			| TSKindId.GenKeyword
 			| T.UseAsClause
 			| T.UseList
 			| T.ScopedUseList
@@ -2665,31 +2553,7 @@ export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bo
 		),
 		'UseAsClause.path',
 		TSKindId.Identifier,
-		[
-			'self',
-			'u8',
-			'i8',
-			'u16',
-			'i16',
-			'u32',
-			'i32',
-			'u64',
-			'i64',
-			'u128',
-			'i128',
-			'isize',
-			'usize',
-			'f32',
-			'f64',
-			'bool',
-			'str',
-			'char',
-			'super',
-			'crate',
-			'default',
-			'union',
-			'gen'
-		]
+		['self', 'super', 'crate']
 	);
 	const _alias = rejectBareText(config.alias, 'UseAsClause.alias', 'buildIdentifier(…)');
 	const handle = currentHandle();
@@ -2718,34 +2582,7 @@ export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bo
 
 export function buildUseWildcard(value?: Admit<T.UseWildcardGroup>): ReturnType<typeof _buildUseWildcard>;
 export function buildUseWildcard(
-	value?: Admit<
-		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| T.Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| T.Identifier
-		| T.ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
-	>
+	value?: Admit<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>
 ): ReturnType<typeof _buildUseWildcard>;
 export function buildUseWildcard(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -3449,14 +3286,7 @@ export function buildGenericFunction(config: T.GenericFunction.Config): T.Generi
 }
 
 export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bound {
-	const _type = admitAliasContent<NonNullable<T.GenericType['_type']>>(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.GenericType['_type']>>(config.type),
-			'GenericType.type',
-			'a built TypeIdentifier / ScopedTypeIdentifier'
-		),
-		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
-	);
+	const _type = rejectBareText(config.type, 'GenericType.type', 'buildIdentifier(…)');
 	const _type_arguments = rejectBareText(config.typeArguments, 'GenericType.typeArguments', 'a built TypeArguments');
 	const handle = currentHandle();
 	const node = {
@@ -3466,7 +3296,7 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 		_type,
 		_type_arguments,
 		$with: {
-			type: (value: Admit<NonNullable<T.GenericType.Config>['type']>) =>
+			type: (value: Admit<T.TypeIdentifier | T.Identifier | T.ScopedTypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildGenericType({ ...config, type: value })),
 			typeArguments: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -3936,16 +3766,7 @@ export function buildDynamicType(
 export const buildMutableSpecifier: TSKindId.MutableSpecifier = TSKindId.MutableSpecifier;
 
 export function buildMacroInvocation(config: T.MacroInvocation.Config): T.MacroInvocation.Bound {
-	const _macro = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.MacroInvocation['_macro']>>(config.macro),
-			'MacroInvocation.macro',
-			'buildIdentifier(…)'
-		),
-		'MacroInvocation.macro',
-		TSKindId.Identifier,
-		['default', 'union', 'gen']
-	);
+	const _macro = rejectBareText(config.macro, 'MacroInvocation.macro', 'buildIdentifier(…)');
 	const _arguments = rejectBareText(config.arguments, 'MacroInvocation.arguments', 'a built DelimTokenTree');
 	const handle = currentHandle();
 	const node = {
@@ -3955,7 +3776,7 @@ export function buildMacroInvocation(config: T.MacroInvocation.Config): T.MacroI
 		_macro,
 		_arguments,
 		$with: {
-			macro: (value: Admit<NonNullable<T.MacroInvocation.Config>['macro']>) =>
+			macro: (value: Admit<T.ScopedIdentifier | T.Identifier>) =>
 				rebuilt(node, handle, () => buildMacroInvocation({ ...config, macro: value })),
 			arguments: (value: Admit<T.DelimTokenTree>) =>
 				rebuilt(node, handle, () => buildMacroInvocation({ ...config, arguments: value }))
@@ -3981,31 +3802,7 @@ export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): T.Scop
 		),
 		'ScopedIdentifier.path',
 		TSKindId.Identifier,
-		[
-			'self',
-			'u8',
-			'i8',
-			'u16',
-			'i16',
-			'u32',
-			'i32',
-			'u64',
-			'i64',
-			'u128',
-			'i128',
-			'isize',
-			'usize',
-			'f32',
-			'f64',
-			'bool',
-			'str',
-			'char',
-			'super',
-			'crate',
-			'default',
-			'union',
-			'gen'
-		]
+		['self', 'super', 'crate']
 	);
 	const _name = rejectKeywordText(
 		rejectBareText(
@@ -4053,31 +3850,7 @@ export function buildScopedTypeIdentifierInExpressionPosition(
 		),
 		'ScopedTypeIdentifierInExpressionPosition.path',
 		TSKindId.Identifier,
-		[
-			'self',
-			'u8',
-			'i8',
-			'u16',
-			'i16',
-			'u32',
-			'i32',
-			'u64',
-			'i64',
-			'u128',
-			'i128',
-			'isize',
-			'usize',
-			'f32',
-			'f64',
-			'bool',
-			'str',
-			'char',
-			'super',
-			'crate',
-			'default',
-			'union',
-			'gen'
-		]
+		['self', 'super', 'crate']
 	);
 	const _name = admitAliasContent<NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_name']>>(
 		rejectBareText(config.name, 'ScopedTypeIdentifierInExpressionPosition.name', 'a built TypeIdentifier'),
@@ -4117,31 +3890,7 @@ export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config)
 		),
 		'ScopedTypeIdentifier.path',
 		TSKindId.Identifier,
-		[
-			'self',
-			'u8',
-			'i8',
-			'u16',
-			'i16',
-			'u32',
-			'i32',
-			'u64',
-			'i64',
-			'u128',
-			'i128',
-			'isize',
-			'usize',
-			'f32',
-			'f64',
-			'bool',
-			'str',
-			'char',
-			'super',
-			'crate',
-			'default',
-			'union',
-			'gen'
-		]
+		['self', 'super', 'crate']
 	);
 	const _name = admitAliasContent<NonNullable<T.ScopedTypeIdentifier['_name']>>(
 		rejectBareText(config.name, 'ScopedTypeIdentifier.name', 'a built TypeIdentifier'),
@@ -4461,29 +4210,7 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 		),
 		'CallExpression.function',
 		TSKindId.Identifier,
-		[
-			'u8',
-			'i8',
-			'u16',
-			'i16',
-			'u32',
-			'i32',
-			'u64',
-			'i64',
-			'u128',
-			'i128',
-			'isize',
-			'usize',
-			'f32',
-			'f64',
-			'bool',
-			'str',
-			'char',
-			'default',
-			'union',
-			'gen',
-			'self'
-		]
+		['self']
 	);
 	const _arguments = rejectBareText(
 		orDefault(config.arguments, () => buildArguments()),
@@ -6877,31 +6604,11 @@ export function buildUseClauses(
 	...elements: NonEmptyArray<
 		Admit<
 			| TSKindId.Self
-			| TSKindId.U8Keyword
-			| TSKindId.I8Keyword
-			| TSKindId.U16Keyword
-			| TSKindId.I16Keyword
-			| TSKindId.U32Keyword
-			| TSKindId.I32Keyword
-			| TSKindId.U64Keyword
-			| TSKindId.I64Keyword
-			| TSKindId.U128Keyword
-			| TSKindId.I128Keyword
-			| TSKindId.IsizeKeyword
-			| TSKindId.UsizeKeyword
-			| TSKindId.F32Keyword
-			| TSKindId.F64Keyword
-			| TSKindId.BoolKeyword
-			| TSKindId.StrKeyword
-			| TSKindId.CharKeyword
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
 			| T.Identifier
 			| T.ScopedIdentifier
-			| TSKindId.DefaultKeyword
-			| TSKindId.UnionKeyword
-			| TSKindId.GenKeyword
 			| T.UseAsClause
 			| T.UseList
 			| T.ScopedUseList
@@ -6914,31 +6621,11 @@ export function buildUseClauses(
 	...elements: NonEmptyArray<
 		Admit<
 			| TSKindId.Self
-			| TSKindId.U8Keyword
-			| TSKindId.I8Keyword
-			| TSKindId.U16Keyword
-			| TSKindId.I16Keyword
-			| TSKindId.U32Keyword
-			| TSKindId.I32Keyword
-			| TSKindId.U64Keyword
-			| TSKindId.I64Keyword
-			| TSKindId.U128Keyword
-			| TSKindId.I128Keyword
-			| TSKindId.IsizeKeyword
-			| TSKindId.UsizeKeyword
-			| TSKindId.F32Keyword
-			| TSKindId.F64Keyword
-			| TSKindId.BoolKeyword
-			| TSKindId.StrKeyword
-			| TSKindId.CharKeyword
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
 			| T.Identifier
 			| T.ScopedIdentifier
-			| TSKindId.DefaultKeyword
-			| TSKindId.UnionKeyword
-			| TSKindId.GenKeyword
 			| T.UseAsClause
 			| T.UseList
 			| T.ScopedUseList
@@ -6951,31 +6638,11 @@ export function buildUseClauses(
 		| { delimiter?: Delimiter.None | Delimiter.Trailing }
 		| Admit<
 				| TSKindId.Self
-				| TSKindId.U8Keyword
-				| TSKindId.I8Keyword
-				| TSKindId.U16Keyword
-				| TSKindId.I16Keyword
-				| TSKindId.U32Keyword
-				| TSKindId.I32Keyword
-				| TSKindId.U64Keyword
-				| TSKindId.I64Keyword
-				| TSKindId.U128Keyword
-				| TSKindId.I128Keyword
-				| TSKindId.IsizeKeyword
-				| TSKindId.UsizeKeyword
-				| TSKindId.F32Keyword
-				| TSKindId.F64Keyword
-				| TSKindId.BoolKeyword
-				| TSKindId.StrKeyword
-				| TSKindId.CharKeyword
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
 				| T.Identifier
 				| T.ScopedIdentifier
-				| TSKindId.DefaultKeyword
-				| TSKindId.UnionKeyword
-				| TSKindId.GenKeyword
 				| T.UseAsClause
 				| T.UseList
 				| T.ScopedUseList
@@ -6993,31 +6660,11 @@ export function buildUseClauses(
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		Admit<
 			| TSKindId.Self
-			| TSKindId.U8Keyword
-			| TSKindId.I8Keyword
-			| TSKindId.U16Keyword
-			| TSKindId.I16Keyword
-			| TSKindId.U32Keyword
-			| TSKindId.I32Keyword
-			| TSKindId.U64Keyword
-			| TSKindId.I64Keyword
-			| TSKindId.U128Keyword
-			| TSKindId.I128Keyword
-			| TSKindId.IsizeKeyword
-			| TSKindId.UsizeKeyword
-			| TSKindId.F32Keyword
-			| TSKindId.F64Keyword
-			| TSKindId.BoolKeyword
-			| TSKindId.StrKeyword
-			| TSKindId.CharKeyword
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
 			| T.Identifier
 			| T.ScopedIdentifier
-			| TSKindId.DefaultKeyword
-			| TSKindId.UnionKeyword
-			| TSKindId.GenKeyword
 			| T.UseAsClause
 			| T.UseList
 			| T.ScopedUseList
@@ -7030,31 +6677,11 @@ function _buildUseClauses(
 	elements: NonEmptyArray<
 		Admit<
 			| TSKindId.Self
-			| TSKindId.U8Keyword
-			| TSKindId.I8Keyword
-			| TSKindId.U16Keyword
-			| TSKindId.I16Keyword
-			| TSKindId.U32Keyword
-			| TSKindId.I32Keyword
-			| TSKindId.U64Keyword
-			| TSKindId.I64Keyword
-			| TSKindId.U128Keyword
-			| TSKindId.I128Keyword
-			| TSKindId.IsizeKeyword
-			| TSKindId.UsizeKeyword
-			| TSKindId.F32Keyword
-			| TSKindId.F64Keyword
-			| TSKindId.BoolKeyword
-			| TSKindId.StrKeyword
-			| TSKindId.CharKeyword
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
 			| T.Identifier
 			| T.ScopedIdentifier
-			| TSKindId.DefaultKeyword
-			| TSKindId.UnionKeyword
-			| TSKindId.GenKeyword
 			| T.UseAsClause
 			| T.UseList
 			| T.ScopedUseList
@@ -7079,31 +6706,11 @@ function _buildUseClauses(
 				...vs: NonEmptyArray<
 					Admit<
 						| TSKindId.Self
-						| TSKindId.U8Keyword
-						| TSKindId.I8Keyword
-						| TSKindId.U16Keyword
-						| TSKindId.I16Keyword
-						| TSKindId.U32Keyword
-						| TSKindId.I32Keyword
-						| TSKindId.U64Keyword
-						| TSKindId.I64Keyword
-						| TSKindId.U128Keyword
-						| TSKindId.I128Keyword
-						| TSKindId.IsizeKeyword
-						| TSKindId.UsizeKeyword
-						| TSKindId.F32Keyword
-						| TSKindId.F64Keyword
-						| TSKindId.BoolKeyword
-						| TSKindId.StrKeyword
-						| TSKindId.CharKeyword
 						| T.Metavariable
 						| TSKindId.Super
 						| TSKindId.Crate
 						| T.Identifier
 						| T.ScopedIdentifier
-						| TSKindId.DefaultKeyword
-						| TSKindId.UnionKeyword
-						| TSKindId.GenKeyword
 						| T.UseAsClause
 						| T.UseList
 						| T.ScopedUseList
@@ -7957,34 +7564,7 @@ function _buildStructPatternElements(
 }
 
 export function buildUseWildcardGroup(
-	value?: Admit<
-		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| T.Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| T.Identifier
-		| T.ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
-	>
+	value?: Admit<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>
 ): T.UseWildcardGroup.Bound {
 	const _path = rejectKeywordText(
 		rejectBareText(
@@ -7994,31 +7574,7 @@ export function buildUseWildcardGroup(
 		),
 		'UseWildcardGroup.path',
 		TSKindId.Identifier,
-		[
-			'self',
-			'u8',
-			'i8',
-			'u16',
-			'i16',
-			'u32',
-			'i32',
-			'u64',
-			'i64',
-			'u128',
-			'i128',
-			'isize',
-			'usize',
-			'f32',
-			'f64',
-			'bool',
-			'str',
-			'char',
-			'super',
-			'crate',
-			'default',
-			'union',
-			'gen'
-		]
+		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
 	const node = {
@@ -8030,32 +7586,7 @@ export function buildUseWildcardGroup(
 			path: (
 				value?: Admit<
 					NonNullable<
-						| TSKindId.Self
-						| TSKindId.U8Keyword
-						| TSKindId.I8Keyword
-						| TSKindId.U16Keyword
-						| TSKindId.I16Keyword
-						| TSKindId.U32Keyword
-						| TSKindId.I32Keyword
-						| TSKindId.U64Keyword
-						| TSKindId.I64Keyword
-						| TSKindId.U128Keyword
-						| TSKindId.I128Keyword
-						| TSKindId.IsizeKeyword
-						| TSKindId.UsizeKeyword
-						| TSKindId.F32Keyword
-						| TSKindId.F64Keyword
-						| TSKindId.BoolKeyword
-						| TSKindId.StrKeyword
-						| TSKindId.CharKeyword
-						| T.Metavariable
-						| TSKindId.Super
-						| TSKindId.Crate
-						| T.Identifier
-						| T.ScopedIdentifier
-						| TSKindId.DefaultKeyword
-						| TSKindId.UnionKeyword
-						| TSKindId.GenKeyword
+						TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 					>
 				>
 			) => rebuilt(node, handle, () => buildUseWildcardGroup(value))
@@ -9213,34 +8744,7 @@ export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi
 }
 
 export function buildVisibilityModifierPubScopeInPath(
-	value: Admit<
-		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| T.Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| T.Identifier
-		| T.ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
-	>
+	value: Admit<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>
 ): T.VisibilityModifierPubScopeInPath.Bound {
 	const _path = rejectKeywordText(
 		rejectBareText(
@@ -9250,31 +8754,7 @@ export function buildVisibilityModifierPubScopeInPath(
 		),
 		'VisibilityModifierPubScopeInPath.path',
 		TSKindId.Identifier,
-		[
-			'self',
-			'u8',
-			'i8',
-			'u16',
-			'i16',
-			'u32',
-			'i32',
-			'u64',
-			'i64',
-			'u128',
-			'i128',
-			'isize',
-			'usize',
-			'f32',
-			'f64',
-			'bool',
-			'str',
-			'char',
-			'super',
-			'crate',
-			'default',
-			'union',
-			'gen'
-		]
+		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
 	const node = {
@@ -9286,32 +8766,7 @@ export function buildVisibilityModifierPubScopeInPath(
 			path: (
 				value: Admit<
 					NonNullable<
-						| TSKindId.Self
-						| TSKindId.U8Keyword
-						| TSKindId.I8Keyword
-						| TSKindId.U16Keyword
-						| TSKindId.I16Keyword
-						| TSKindId.U32Keyword
-						| TSKindId.I32Keyword
-						| TSKindId.U64Keyword
-						| TSKindId.I64Keyword
-						| TSKindId.U128Keyword
-						| TSKindId.I128Keyword
-						| TSKindId.IsizeKeyword
-						| TSKindId.UsizeKeyword
-						| TSKindId.F32Keyword
-						| TSKindId.F64Keyword
-						| TSKindId.BoolKeyword
-						| TSKindId.StrKeyword
-						| TSKindId.CharKeyword
-						| T.Metavariable
-						| TSKindId.Super
-						| TSKindId.Crate
-						| T.Identifier
-						| T.ScopedIdentifier
-						| TSKindId.DefaultKeyword
-						| TSKindId.UnionKeyword
-						| TSKindId.GenKeyword
+						TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 					>
 				>
 			) => rebuilt(node, handle, () => buildVisibilityModifierPubScopeInPath(value))
@@ -10652,16 +10107,7 @@ export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.Fi
 }
 
 export function buildMacroDefinitionParen(config: T.MacroDefinitionParen.Config): T.MacroDefinitionParen.Bound {
-	const _name = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.MacroDefinitionParen['_name']>>(config.name),
-			'MacroDefinitionParen.name',
-			'buildIdentifier(…)'
-		),
-		'MacroDefinitionParen.name',
-		TSKindId.Identifier,
-		['default', 'union', 'gen']
-	);
+	const _name = rejectBareText(config.name, 'MacroDefinitionParen.name', 'buildIdentifier(…)');
 	const _macro_rules = rejectBareText(config.macroRules, 'MacroDefinitionParen.macroRules', 'a built MacroRules');
 	const handle = currentHandle();
 	const node = {
@@ -10671,7 +10117,7 @@ export function buildMacroDefinitionParen(config: T.MacroDefinitionParen.Config)
 		_name,
 		_macro_rules,
 		$with: {
-			name: (value: Admit<NonNullable<T.MacroDefinitionParen.Config>['name']>) =>
+			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildMacroDefinitionParen({ ...config, name: value })),
 			macroRules: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -10695,16 +10141,7 @@ export function buildMacroDefinitionParen(config: T.MacroDefinitionParen.Config)
 }
 
 export function buildMacroDefinitionBracket(config: T.MacroDefinitionBracket.Config): T.MacroDefinitionBracket.Bound {
-	const _name = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.MacroDefinitionBracket['_name']>>(config.name),
-			'MacroDefinitionBracket.name',
-			'buildIdentifier(…)'
-		),
-		'MacroDefinitionBracket.name',
-		TSKindId.Identifier,
-		['default', 'union', 'gen']
-	);
+	const _name = rejectBareText(config.name, 'MacroDefinitionBracket.name', 'buildIdentifier(…)');
 	const _macro_rules = rejectBareText(config.macroRules, 'MacroDefinitionBracket.macroRules', 'a built MacroRules');
 	const handle = currentHandle();
 	const node = {
@@ -10714,7 +10151,7 @@ export function buildMacroDefinitionBracket(config: T.MacroDefinitionBracket.Con
 		_name,
 		_macro_rules,
 		$with: {
-			name: (value: Admit<NonNullable<T.MacroDefinitionBracket.Config>['name']>) =>
+			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildMacroDefinitionBracket({ ...config, name: value })),
 			macroRules: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -10738,16 +10175,7 @@ export function buildMacroDefinitionBracket(config: T.MacroDefinitionBracket.Con
 }
 
 export function buildMacroDefinitionBrace(config: T.MacroDefinitionBrace.Config): T.MacroDefinitionBrace.Bound {
-	const _name = rejectKeywordText(
-		rejectBareText(
-			kindIdStorage<NonNullable<T.MacroDefinitionBrace['_name']>>(config.name),
-			'MacroDefinitionBrace.name',
-			'buildIdentifier(…)'
-		),
-		'MacroDefinitionBrace.name',
-		TSKindId.Identifier,
-		['default', 'union', 'gen']
-	);
+	const _name = rejectBareText(config.name, 'MacroDefinitionBrace.name', 'buildIdentifier(…)');
 	const _macro_rules = rejectBareText(config.macroRules, 'MacroDefinitionBrace.macroRules', 'a built MacroRules');
 	const handle = currentHandle();
 	const node = {
@@ -10757,7 +10185,7 @@ export function buildMacroDefinitionBrace(config: T.MacroDefinitionBrace.Config)
 		_name,
 		_macro_rules,
 		$with: {
-			name: (value: Admit<NonNullable<T.MacroDefinitionBrace.Config>['name']>) =>
+			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildMacroDefinitionBrace({ ...config, name: value })),
 			macroRules: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -10794,31 +10222,7 @@ export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.
 		),
 		'RangePatternPrefix.right',
 		TSKindId.Identifier,
-		[
-			'self',
-			'u8',
-			'i8',
-			'u16',
-			'i16',
-			'u32',
-			'i32',
-			'u64',
-			'i64',
-			'u128',
-			'i128',
-			'isize',
-			'usize',
-			'f32',
-			'f64',
-			'bool',
-			'str',
-			'char',
-			'super',
-			'crate',
-			'default',
-			'union',
-			'gen'
-		]
+		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
 	const node = {
@@ -10861,31 +10265,7 @@ export function buildRangePatternWithLeftWithRight(
 		),
 		'RangePatternWithLeftWithRight.right',
 		TSKindId.Identifier,
-		[
-			'self',
-			'u8',
-			'i8',
-			'u16',
-			'i16',
-			'u32',
-			'i32',
-			'u64',
-			'i64',
-			'u128',
-			'i128',
-			'isize',
-			'usize',
-			'f32',
-			'f64',
-			'bool',
-			'str',
-			'char',
-			'super',
-			'crate',
-			'default',
-			'union',
-			'gen'
-		]
+		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
 	const node = {
@@ -10923,31 +10303,7 @@ export function buildRangePatternWithLeft(config: T.RangePatternWithLeft.Config)
 		),
 		'RangePatternWithLeft.left',
 		TSKindId.Identifier,
-		[
-			'self',
-			'u8',
-			'i8',
-			'u16',
-			'i16',
-			'u32',
-			'i32',
-			'u64',
-			'i64',
-			'u128',
-			'i128',
-			'isize',
-			'usize',
-			'f32',
-			'f64',
-			'bool',
-			'str',
-			'char',
-			'super',
-			'crate',
-			'default',
-			'union',
-			'gen'
-		]
+		['self', 'super', 'crate']
 	);
 	const _content = rejectBareText(
 		kindIdStorage<NonNullable<T.RangePatternWithLeft['_content']>>(config.content),

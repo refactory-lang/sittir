@@ -19847,14 +19847,20 @@
         {
           "$type": 223,
           "_mutable": false,
-          "_pattern": 72,
+          "_pattern": {
+            "$type": 1,
+            "$text": "bool"
+          },
           "_type": 72,
           "_value": 118
         },
         {
           "$type": 223,
           "_mutable": false,
-          "_pattern": 62,
+          "_pattern": {
+            "$type": 1,
+            "$text": "u32"
+          },
           "_type": 73,
           "_value": {
             "$type": 332,
@@ -20089,7 +20095,10 @@
     "input": {
       "$type": 223,
       "_mutable": false,
-      "_pattern": 72,
+      "_pattern": {
+        "$type": 1,
+        "$text": "bool"
+      },
       "_type": 72,
       "_value": 118
     },
@@ -20118,7 +20127,10 @@
     "input": {
       "$type": 223,
       "_mutable": false,
-      "_pattern": 62,
+      "_pattern": {
+        "$type": 1,
+        "$text": "u32"
+      },
       "_type": 73,
       "_value": {
         "$type": 332,
@@ -22489,7 +22501,10 @@
         {
           "$type": 223,
           "_mutable": false,
-          "_pattern": 51,
+          "_pattern": {
+            "$type": 1,
+            "$text": "default"
+          },
           "_value": {
             "$type": 141,
             "_content": "1"
@@ -22498,7 +22513,10 @@
         {
           "$type": 223,
           "_mutable": false,
-          "_pattern": 32,
+          "_pattern": {
+            "$type": 1,
+            "$text": "union"
+          },
           "_value": {
             "$type": 141,
             "_content": "2"
@@ -22532,7 +22550,10 @@
     "input": {
       "$type": 223,
       "_mutable": false,
-      "_pattern": 51,
+      "_pattern": {
+        "$type": 1,
+        "$text": "default"
+      },
       "_value": {
         "$type": 141,
         "_content": "1"
@@ -22563,7 +22584,10 @@
     "input": {
       "$type": 223,
       "_mutable": false,
-      "_pattern": 32,
+      "_pattern": {
+        "$type": 1,
+        "$text": "union"
+      },
       "_value": {
         "$type": 141,
         "_content": "2"
@@ -64305,7 +64329,10 @@
                           "$type": 276,
                           "_function": {
                             "$type": 308,
-                            "_value": 51,
+                            "_value": {
+                              "$type": 1,
+                              "$text": "default"
+                            },
                             "_field": {
                               "$type": 465,
                               "_content": {
@@ -64405,7 +64432,10 @@
                       "$type": 276,
                       "_function": {
                         "$type": 308,
-                        "_value": 51,
+                        "_value": {
+                          "$type": 1,
+                          "$text": "default"
+                        },
                         "_field": {
                           "$type": 465,
                           "_content": {
@@ -64524,7 +64554,10 @@
                     "$type": 276,
                     "_function": {
                       "$type": 308,
-                      "_value": 51,
+                      "_value": {
+                        "$type": 1,
+                        "$text": "default"
+                      },
                       "_field": {
                         "$type": 465,
                         "_content": {
@@ -64607,7 +64640,10 @@
                 "$type": 276,
                 "_function": {
                   "$type": 308,
-                  "_value": 51,
+                  "_value": {
+                    "$type": 1,
+                    "$text": "default"
+                  },
                   "_field": {
                     "$type": 465,
                     "_content": {
@@ -64731,7 +64767,10 @@
               "$type": 276,
               "_function": {
                 "$type": 308,
-                "_value": 51,
+                "_value": {
+                  "$type": 1,
+                  "$text": "default"
+                },
                 "_field": {
                   "$type": 465,
                   "_content": {
@@ -64791,7 +64830,10 @@
           "$type": 276,
           "_function": {
             "$type": 308,
-            "_value": 51,
+            "_value": {
+              "$type": 1,
+              "$text": "default"
+            },
             "_field": {
               "$type": 465,
               "_content": {
@@ -64837,7 +64879,10 @@
         "$type": 276,
         "_function": {
           "$type": 308,
-          "_value": 51,
+          "_value": {
+            "$type": 1,
+            "$text": "default"
+          },
           "_field": {
             "$type": 465,
             "_content": {
@@ -64880,7 +64925,10 @@
       "$type": 276,
       "_function": {
         "$type": 308,
-        "_value": 51,
+        "_value": {
+          "$type": 1,
+          "$text": "default"
+        },
         "_field": {
           "$type": 465,
           "_content": {
@@ -64920,7 +64968,10 @@
     "pattern": "field_expression",
     "input": {
       "$type": 308,
-      "_value": 51,
+      "_value": {
+        "$type": 1,
+        "$text": "default"
+      },
       "_field": {
         "$type": 465,
         "_content": {
@@ -81468,7 +81519,10 @@
                   "_content": {
                     "$type": 233,
                     "_mutable": false,
-                    "_name": 73,
+                    "_name": {
+                      "$type": 1,
+                      "$text": "str"
+                    },
                     "_type": {
                       "$type": 388,
                       "_type": {
@@ -81506,7 +81560,10 @@
                   "_content": {
                     "$type": 233,
                     "_mutable": false,
-                    "_name": 72,
+                    "_name": {
+                      "$type": 1,
+                      "$text": "bool"
+                    },
                     "_type": 72
                   }
                 }
@@ -81567,7 +81624,10 @@
               "_content": {
                 "$type": 233,
                 "_mutable": false,
-                "_name": 73,
+                "_name": {
+                  "$type": 1,
+                  "$text": "str"
+                },
                 "_type": {
                   "$type": 388,
                   "_type": {
@@ -81627,7 +81687,10 @@
               "_content": {
                 "$type": 233,
                 "_mutable": false,
-                "_name": 72,
+                "_name": {
+                  "$type": 1,
+                  "$text": "bool"
+                },
                 "_type": 72
               }
             }
@@ -81672,7 +81735,10 @@
             "_content": {
               "$type": 233,
               "_mutable": false,
-              "_name": 73,
+              "_name": {
+                "$type": 1,
+                "$text": "str"
+              },
               "_type": {
                 "$type": 388,
                 "_type": {
@@ -81721,7 +81787,10 @@
             "_content": {
               "$type": 233,
               "_mutable": false,
-              "_name": 72,
+              "_name": {
+                "$type": 1,
+                "$text": "bool"
+              },
               "_type": 72
             }
           }
@@ -81759,7 +81828,10 @@
           "_content": {
             "$type": 233,
             "_mutable": false,
-            "_name": 73,
+            "_name": {
+              "$type": 1,
+              "$text": "str"
+            },
             "_type": {
               "$type": 388,
               "_type": {
@@ -81805,7 +81877,10 @@
           "_content": {
             "$type": 233,
             "_mutable": false,
-            "_name": 72,
+            "_name": {
+              "$type": 1,
+              "$text": "bool"
+            },
             "_type": 72
           }
         }
@@ -81839,7 +81914,10 @@
       "_content": {
         "$type": 233,
         "_mutable": false,
-        "_name": 73,
+        "_name": {
+          "$type": 1,
+          "$text": "str"
+        },
         "_type": {
           "$type": 388,
           "_type": {
@@ -81879,7 +81957,10 @@
       "_content": {
         "$type": 233,
         "_mutable": false,
-        "_name": 72,
+        "_name": {
+          "$type": 1,
+          "$text": "bool"
+        },
         "_type": 72
       }
     },
@@ -81908,7 +81989,10 @@
     "input": {
       "$type": 233,
       "_mutable": false,
-      "_name": 73,
+      "_name": {
+        "$type": 1,
+        "$text": "str"
+      },
       "_type": {
         "$type": 388,
         "_type": {
@@ -81945,7 +82029,10 @@
     "input": {
       "$type": 233,
       "_mutable": false,
-      "_name": 72,
+      "_name": {
+        "$type": 1,
+        "$text": "bool"
+      },
       "_type": 72
     },
     "expectedOutput": "bool: bool",
@@ -96202,7 +96289,10 @@
                     },
                     "_type": {
                       "$type": 265,
-                      "_path": 51,
+                      "_path": {
+                        "$type": 1,
+                        "$text": "default"
+                      },
                       "_name": {
                         "$type": 468,
                         "_content": {
@@ -96227,7 +96317,10 @@
                     },
                     "_type": {
                       "$type": 265,
-                      "_path": 32,
+                      "_path": {
+                        "$type": 1,
+                        "$text": "union"
+                      },
                       "_name": {
                         "$type": 468,
                         "_content": {
@@ -96299,7 +96392,10 @@
                 },
                 "_type": {
                   "$type": 265,
-                  "_path": 51,
+                  "_path": {
+                    "$type": 1,
+                    "$text": "default"
+                  },
                   "_name": {
                     "$type": 468,
                     "_content": {
@@ -96324,7 +96420,10 @@
                 },
                 "_type": {
                   "$type": 265,
-                  "_path": 32,
+                  "_path": {
+                    "$type": 1,
+                    "$text": "union"
+                  },
                   "_name": {
                     "$type": 468,
                     "_content": {
@@ -96480,7 +96579,10 @@
               },
               "_type": {
                 "$type": 265,
-                "_path": 51,
+                "_path": {
+                  "$type": 1,
+                  "$text": "default"
+                },
                 "_name": {
                   "$type": 468,
                   "_content": {
@@ -96505,7 +96607,10 @@
               },
               "_type": {
                 "$type": 265,
-                "_path": 32,
+                "_path": {
+                  "$type": 1,
+                  "$text": "union"
+                },
                 "_name": {
                   "$type": 468,
                   "_content": {
@@ -96562,7 +96667,10 @@
             },
             "_type": {
               "$type": 265,
-              "_path": 51,
+              "_path": {
+                "$type": 1,
+                "$text": "default"
+              },
               "_name": {
                 "$type": 468,
                 "_content": {
@@ -96587,7 +96695,10 @@
             },
             "_type": {
               "$type": 265,
-              "_path": 32,
+              "_path": {
+                "$type": 1,
+                "$text": "union"
+              },
               "_name": {
                 "$type": 468,
                 "_content": {
@@ -96640,7 +96751,10 @@
         },
         "_type": {
           "$type": 265,
-          "_path": 51,
+          "_path": {
+            "$type": 1,
+            "$text": "default"
+          },
           "_name": {
             "$type": 468,
             "_content": {
@@ -96690,7 +96804,10 @@
         },
         "_type": {
           "$type": 265,
-          "_path": 32,
+          "_path": {
+            "$type": 1,
+            "$text": "union"
+          },
           "_name": {
             "$type": 468,
             "_content": {
@@ -96737,7 +96854,10 @@
       },
       "_type": {
         "$type": 265,
-        "_path": 51,
+        "_path": {
+          "$type": 1,
+          "$text": "default"
+        },
         "_name": {
           "$type": 468,
           "_content": {
@@ -96783,7 +96903,10 @@
       },
       "_type": {
         "$type": 265,
-        "_path": 32,
+        "_path": {
+          "$type": 1,
+          "$text": "union"
+        },
         "_name": {
           "$type": 468,
           "_content": {
@@ -96884,7 +97007,10 @@
     "pattern": "scoped_type_identifier",
     "input": {
       "$type": 265,
-      "_path": 51,
+      "_path": {
+        "$type": 1,
+        "$text": "default"
+      },
       "_name": {
         "$type": 468,
         "_content": {
@@ -96920,7 +97046,10 @@
     "pattern": "scoped_type_identifier",
     "input": {
       "$type": 265,
-      "_path": 32,
+      "_path": {
+        "$type": 1,
+        "$text": "union"
+      },
       "_name": {
         "$type": 468,
         "_content": {
@@ -150575,7 +150704,10 @@
             "$type": 394,
             "_expression": {
               "$type": 259,
-              "_macro": 51,
+              "_macro": {
+                "$type": 1,
+                "$text": "default"
+              },
               "_arguments": {
                 "$type": 411,
                 "_delim_tokens": [
@@ -150597,7 +150729,10 @@
             "$type": 394,
             "_expression": {
               "$type": 259,
-              "_macro": 32,
+              "_macro": {
+                "$type": 1,
+                "$text": "union"
+              },
               "_arguments": {
                 "$type": 411,
                 "_delim_tokens": [
@@ -151232,7 +151367,10 @@
         "$type": 394,
         "_expression": {
           "$type": 259,
-          "_macro": 51,
+          "_macro": {
+            "$type": 1,
+            "$text": "default"
+          },
           "_arguments": {
             "$type": 411,
             "_delim_tokens": [
@@ -151276,7 +151414,10 @@
         "$type": 394,
         "_expression": {
           "$type": 259,
-          "_macro": 32,
+          "_macro": {
+            "$type": 1,
+            "$text": "union"
+          },
           "_arguments": {
             "$type": 411,
             "_delim_tokens": [
@@ -151998,7 +152139,10 @@
       "$type": 394,
       "_expression": {
         "$type": 259,
-        "_macro": 51,
+        "_macro": {
+          "$type": 1,
+          "$text": "default"
+        },
         "_arguments": {
           "$type": 411,
           "_delim_tokens": [
@@ -152039,7 +152183,10 @@
       "$type": 394,
       "_expression": {
         "$type": 259,
-        "_macro": 32,
+        "_macro": {
+          "$type": 1,
+          "$text": "union"
+        },
         "_arguments": {
           "$type": 411,
           "_delim_tokens": [
@@ -152770,7 +152917,10 @@
     "pattern": "macro_invocation",
     "input": {
       "$type": 259,
-      "_macro": 51,
+      "_macro": {
+        "$type": 1,
+        "$text": "default"
+      },
       "_arguments": {
         "$type": 411,
         "_delim_tokens": [
@@ -152808,7 +152958,10 @@
     "pattern": "macro_invocation",
     "input": {
       "$type": 259,
-      "_macro": 32,
+      "_macro": {
+        "$type": 1,
+        "$text": "union"
+      },
       "_arguments": {
         "$type": 411,
         "_delim_tokens": [

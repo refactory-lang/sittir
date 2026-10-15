@@ -927,14 +927,14 @@ describe('lifetime_parameter', () => {
 describe('let_declaration', () => {
 	it('factory produces correct type', () => {
 		const node = ir.letDeclaration({
-			pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+			pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.LetDeclaration);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.letDeclaration({
-			pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+			pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -1435,13 +1435,7 @@ describe('generic_function', () => {
 describe('generic_type', () => {
 	it('factory produces correct type', () => {
 		const node = ir.genericType({
-			type: {
-				$type: TSKindId.TypeIdentifier,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-			} as any,
+			type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			typeArguments: {
 				$type: TSKindId.TypeArguments,
 				$text: 'test',
@@ -1469,13 +1463,7 @@ describe('generic_type', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.genericType({
-			type: {
-				$type: TSKindId.TypeIdentifier,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-			} as any,
+			type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			typeArguments: {
 				$type: TSKindId.TypeArguments,
 				$text: 'test',
@@ -2272,7 +2260,7 @@ describe('if_expression', () => {
 describe('let_condition', () => {
 	it('factory produces correct type', () => {
 		const node = ir.letCondition({
-			pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any,
+			pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.LetCondition);
@@ -2280,7 +2268,7 @@ describe('let_condition', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.letCondition({
-			pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any,
+			pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
@@ -2369,7 +2357,7 @@ describe('last_match_arm', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+				_pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
 			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
@@ -2383,7 +2371,7 @@ describe('last_match_arm', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+				_pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
 			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
@@ -2395,14 +2383,14 @@ describe('last_match_arm', () => {
 describe('match_pattern', () => {
 	it('factory produces correct type', () => {
 		const node = ir.matchPattern({
-			pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+			pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.MatchPattern);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.matchPattern({
-			pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+			pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -2448,7 +2436,7 @@ describe('loop_expression', () => {
 describe('for_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.forExpression({
-			pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any,
+			pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.Block, $text: 'test', $source: 2, $named: true, _statements: [] } as any
 		});
@@ -2457,7 +2445,7 @@ describe('for_expression', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.forExpression({
-			pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any,
+			pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.Block, $text: 'test', $source: 2, $named: true, _statements: [] } as any
 		});
@@ -2889,29 +2877,29 @@ describe('remaining_field_pattern', () => {
 
 describe('mut_pattern', () => {
 	it('factory produces correct type', () => {
-		const node = ir.mutPattern({ $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any);
+		const node = ir.mutPattern({ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.MutPattern);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.mutPattern({ $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any);
+		const node = ir.mutPattern({ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
-		expect(rendered).toContain('u8');
+		expect(rendered).toContain('test');
 	});
 });
 
 describe('ref_pattern', () => {
 	it('factory produces correct type', () => {
-		const node = ir.refPattern({ $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any);
+		const node = ir.refPattern({ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.RefPattern);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.refPattern({ $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any);
+		const node = ir.refPattern({ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
-		expect(rendered).toContain('u8');
+		expect(rendered).toContain('test');
 	});
 });
 
@@ -2919,7 +2907,7 @@ describe('captured_pattern', () => {
 	it('factory produces correct type', () => {
 		const node = ir.capturedPattern({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+			pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CapturedPattern);
 		expect(node.$source).toBe(2);
@@ -2927,7 +2915,7 @@ describe('captured_pattern', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.capturedPattern({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+			pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -2937,14 +2925,14 @@ describe('captured_pattern', () => {
 describe('reference_pattern', () => {
 	it('factory produces correct type', () => {
 		const node = ir.referencePattern({
-			pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+			pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ReferencePattern);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.referencePattern({
-			pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+			pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -3685,14 +3673,14 @@ describe('field_initializer_list_elements', () => {
 describe('tuple_pattern_elements', () => {
 	it('factory produces correct type', () => {
 		const node = ir.tuplePatternElements(
-			...[{ $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any]
+			...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		);
 		expect(node.$type).toBe(TSKindId.TuplePatternElements);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.tuplePatternElements(
-			...[{ $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any]
+			...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -3700,12 +3688,12 @@ describe('tuple_pattern_elements', () => {
 
 describe('patterns', () => {
 	it('factory produces correct type', () => {
-		const node = ir.patterns(...[{ $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any]);
+		const node = ir.patterns(...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]);
 		expect(node.$type).toBe(TSKindId.Patterns);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.patterns(...[{ $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any]);
+		const node = ir.patterns(...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -4241,16 +4229,16 @@ describe('mod_item_inline', () => {
 describe('or_pattern_binary', () => {
 	it('factory produces correct type', () => {
 		const node = ir.orPatternBinary({
-			left: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any,
-			right: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.OrPatternBinary);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.orPatternBinary({
-			left: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any,
-			right: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -4259,15 +4247,15 @@ describe('or_pattern_binary', () => {
 
 describe('or_pattern_prefix', () => {
 	it('factory produces correct type', () => {
-		const node = ir.orPatternPrefix({ $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any);
+		const node = ir.orPatternPrefix({ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.OrPatternPrefix);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.orPatternPrefix({ $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any);
+		const node = ir.orPatternPrefix({ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
-		expect(rendered).toContain('u8');
+		expect(rendered).toContain('test');
 	});
 });
 
@@ -4436,7 +4424,7 @@ describe('match_arm_with_comma', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+				_pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
 			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
@@ -4450,7 +4438,7 @@ describe('match_arm_with_comma', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+				_pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
 			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
@@ -4467,7 +4455,7 @@ describe('match_arm_block_ending', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+				_pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
 			value: {
 				$type: TSKindId.UnsafeBlock,
@@ -4487,7 +4475,7 @@ describe('match_arm_block_ending', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+				_pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
 			value: {
 				$type: TSKindId.UnsafeBlock,
@@ -4676,7 +4664,7 @@ describe('field_pattern_named', () => {
 				$named: true,
 				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
-			pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+			pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.FieldPatternNamed);
 		expect(node.$source).toBe(2);
@@ -4690,7 +4678,7 @@ describe('field_pattern_named', () => {
 				$named: true,
 				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
-			pattern: { $type: TSKindId.U8Keyword, $text: 'u8', $source: 2, $named: true } as any
+			pattern: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);

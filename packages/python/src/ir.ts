@@ -71,94 +71,6 @@ export const statement: {
 	match: F.matchStatement
 };
 
-export const pattern: {
-	readonly identifier: typeof F.buildIdentifier;
-	readonly subscript: typeof F.subscript;
-	readonly attribute: typeof F.attribute;
-	readonly listSplat: typeof F.listSplatPattern;
-	readonly tuple: typeof F.tuplePattern;
-	readonly list: typeof F.listPattern;
-} = {
-	identifier: F.buildIdentifier,
-	subscript: F.subscript,
-	attribute: F.attribute,
-	listSplat: F.listSplatPattern,
-	tuple: F.tuplePattern,
-	list: F.listPattern
-};
-
-export const expression: {
-	readonly comparison: typeof F.comparisonOperator;
-	readonly not: typeof F.notOperator;
-	readonly boolean: typeof F.booleanOperator;
-	readonly lambda: typeof F.lambda;
-	readonly conditional: typeof F.conditionalExpression;
-	readonly named: typeof F.namedExpression;
-	readonly as: typeof F.asPattern;
-} = {
-	comparison: F.comparisonOperator,
-	not: F.notOperator,
-	boolean: F.booleanOperator,
-	lambda: F.lambda,
-	conditional: F.conditionalExpression,
-	named: F.namedExpression,
-	as: F.asPattern
-};
-
-export const primaryExpression: {
-	readonly await: typeof F.await_;
-	readonly binary: typeof F.binaryOperator;
-	readonly identifier: typeof F.buildIdentifier;
-	readonly string: typeof F.string;
-	readonly concatenatedString: typeof F.concatenatedString;
-	readonly integer: typeof F.integer;
-	readonly float: typeof F.float;
-	readonly true: typeof F.buildTrue;
-	readonly false: typeof F.buildFalse;
-	readonly none: typeof F.buildNone;
-	readonly unary: typeof F.unaryOperator;
-	readonly attribute: typeof F.attribute;
-	readonly subscript: typeof F.subscript;
-	readonly call: typeof F.call;
-	readonly list: typeof F.list;
-	readonly listComprehension: typeof F.listComprehension;
-	readonly dictionary: typeof F.dictionary;
-	readonly dictionaryComprehension: typeof F.dictionaryComprehension;
-	readonly set: typeof F.set;
-	readonly setComprehension: typeof F.setComprehension;
-	readonly tuple: typeof F.tuple;
-	readonly parenthesized: typeof F.parenthesizedExpression;
-	readonly generator: typeof F.generatorExpression;
-	readonly ellipsis: typeof F.buildEllipsis;
-	readonly listSplat: typeof F.listSplatPattern;
-} = {
-	await: F.await_,
-	binary: F.binaryOperator,
-	identifier: F.buildIdentifier,
-	string: F.string,
-	concatenatedString: F.concatenatedString,
-	integer: F.integer,
-	float: F.float,
-	true: F.buildTrue,
-	false: F.buildFalse,
-	none: F.buildNone,
-	unary: F.unaryOperator,
-	attribute: F.attribute,
-	subscript: F.subscript,
-	call: F.call,
-	list: F.list,
-	listComprehension: F.listComprehension,
-	dictionary: F.dictionary,
-	dictionaryComprehension: F.dictionaryComprehension,
-	set: F.set,
-	setComprehension: F.setComprehension,
-	tuple: F.tuple,
-	parenthesized: F.parenthesizedExpression,
-	generator: F.generatorExpression,
-	ellipsis: F.buildEllipsis,
-	listSplat: F.listSplatPattern
-};
-
 export const layout: {
 	readonly tight: typeof F.buildTight;
 	readonly space: typeof F.buildSpace;
@@ -185,6 +97,8 @@ export const suite: typeof F.suite = F.suite;
 
 export const parameter: typeof F.parameter = F.parameter;
 
+export const pattern: typeof F.pattern = F.pattern;
+
 export const assignment: typeof F.assignment = F.assignment;
 
 export const escapeSequence: typeof F.escapeSequence = F.escapeSequence;
@@ -196,6 +110,10 @@ export const lineContinuation: typeof F.lineContinuation = F.lineContinuation;
 export const integerDecimal: typeof F.integerDecimal = F.integerDecimal;
 
 export const integer: typeof F.integer = F.integer;
+
+export const primaryExpression: typeof F.primaryExpression = F.primaryExpression;
+
+export const expression: typeof F.expression = F.expression;
 
 export const ir: {
 	readonly module: typeof F.module;
@@ -348,12 +266,15 @@ export const ir: {
 	readonly withClause: typeof F.withClause;
 	readonly suite: typeof F.suite;
 	readonly parameter: typeof F.parameter;
+	readonly pattern: typeof F.pattern;
 	readonly assignment: typeof F.assignment;
 	readonly escapeSequence: typeof F.escapeSequence;
 	readonly float: typeof F.float;
 	readonly lineContinuation: typeof F.lineContinuation;
 	readonly integerDecimal: typeof F.integerDecimal;
 	readonly integer: typeof F.integer;
+	readonly primaryExpression: typeof F.primaryExpression;
+	readonly expression: typeof F.expression;
 	readonly wildcardImport: typeof F.buildWildcardImport;
 	readonly passStatement: typeof F.buildPassStatement;
 	readonly breakStatement: typeof F.buildBreakStatement;
@@ -384,9 +305,6 @@ export const ir: {
 	readonly escapeInterpolation: typeof F.buildEscapeInterpolation;
 	readonly stringEnd: typeof F.buildStringEnd;
 	readonly statement: typeof statement;
-	readonly pattern: typeof pattern;
-	readonly expression: typeof expression;
-	readonly primaryExpression: typeof primaryExpression;
 	readonly layout: typeof layout;
 	readonly synonym: typeof synonym;
 } = Object.freeze({
@@ -541,12 +459,15 @@ export const ir: {
 	withClause: F.withClause,
 	suite: F.suite,
 	parameter: F.parameter,
+	pattern: F.pattern,
 	assignment: F.assignment,
 	escapeSequence: F.escapeSequence,
 	float: F.float,
 	lineContinuation: F.lineContinuation,
 	integerDecimal: F.integerDecimal,
 	integer: F.integer,
+	primaryExpression: F.primaryExpression,
+	expression: F.expression,
 
 	// Keyword factories
 	wildcardImport: F.buildWildcardImport,
@@ -585,9 +506,6 @@ export const ir: {
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	statement,
-	pattern,
-	expression,
-	primaryExpression,
 	layout,
 	synonym
 });

@@ -6,28 +6,12 @@ import type {
 	AugmentedAssignment,
 	PatternList,
 	Yield,
-	Identifier,
-	PrintKeyword,
-	ExecKeyword,
-	AsyncKeyword,
-	AwaitKeyword,
-	TypeKeyword,
-	MatchKeyword,
 	Pattern,
 	Expression,
 	Assignment,
 	TSKindId
 } from './types.js';
 export type * from './types.js';
-
-export type NamedExpressionLhs =
-	| Identifier
-	| PrintKeyword
-	| ExecKeyword
-	| AsyncKeyword
-	| AwaitKeyword
-	| TypeKeyword
-	| MatchKeyword;
 
 export type Expressions = Expression | ExpressionList;
 
@@ -38,12 +22,6 @@ export type LeftHandSide = Pattern | PatternList;
 export type RightHandSide = Expression | ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
 
 export type FExpression = Expression | ExpressionList | PatternList | Yield;
-
-export type KeywordIdentifier = PrintKeyword | ExecKeyword | AsyncKeyword | AwaitKeyword | TypeKeyword | MatchKeyword;
-
-export namespace NamedExpressionLhs {
-	export type Kind = '_named_expression_lhs';
-}
 
 export namespace Expressions {
 	export type Kind = '_expressions';
@@ -63,10 +41,6 @@ export namespace RightHandSide {
 
 export namespace FExpression {
 	export type Kind = '_f_expression';
-}
-
-export namespace KeywordIdentifier {
-	export type Kind = 'keyword_identifier';
 }
 
 export interface SubBuilderRowKind {
@@ -90,6 +64,48 @@ export interface SubBuilderRowKind {
 	'escapeSequence.simple': TSKindId.EscapeSequenceSimple;
 	'escapeSequence.unicodeFixed': TSKindId.EscapeSequenceUnicodeFixed;
 	'escapeSequence.unicodeWide': TSKindId.EscapeSequenceUnicodeWide;
+	'expression.as': TSKindId.AsPattern;
+	'expression.boolean': TSKindId.BooleanOperator;
+	'expression.comparison': TSKindId.ComparisonOperator;
+	'expression.conditional': TSKindId.ConditionalExpression;
+	'expression.lambda': TSKindId.Lambda;
+	'expression.named': TSKindId.NamedExpression;
+	'expression.not': TSKindId.NotOperator;
+	'expression.primary.attribute': TSKindId.Attribute;
+	'expression.primary.await': TSKindId.Await;
+	'expression.primary.binary': TSKindId.BinaryOperator;
+	'expression.primary.call': TSKindId.Call;
+	'expression.primary.concatenatedString': TSKindId.ConcatenatedString;
+	'expression.primary.dictionary': TSKindId.Dictionary;
+	'expression.primary.dictionaryComprehension': TSKindId.DictionaryComprehension;
+	'expression.primary.ellipsis': TSKindId.Ellipsis;
+	'expression.primary.false': TSKindId.False;
+	'expression.primary.float': TSKindId.FloatPoint;
+	'expression.primary.float.leadingPoint': TSKindId.FloatLeadingPoint;
+	'expression.primary.float.point': TSKindId.FloatPoint;
+	'expression.primary.float.scientific': TSKindId.FloatScientific;
+	'expression.primary.generator': TSKindId.GeneratorExpression;
+	'expression.primary.identifier': TSKindId.Identifier;
+	'expression.primary.integer': TSKindId.IntegerDecimalPlain;
+	'expression.primary.integer.binary': TSKindId.IntegerBinary;
+	'expression.primary.integer.decimal': TSKindId.IntegerDecimalPlain;
+	'expression.primary.integer.decimal.imaginary': TSKindId.IntegerDecimalImaginary;
+	'expression.primary.integer.decimal.long': TSKindId.IntegerDecimalLong;
+	'expression.primary.integer.decimal.plain': TSKindId.IntegerDecimalPlain;
+	'expression.primary.integer.hex': TSKindId.IntegerHex;
+	'expression.primary.integer.octal': TSKindId.IntegerOctal;
+	'expression.primary.list': TSKindId.List;
+	'expression.primary.listComprehension': TSKindId.ListComprehension;
+	'expression.primary.listSplat': TSKindId.ListSplatPattern;
+	'expression.primary.none': TSKindId.None;
+	'expression.primary.parenthesized': TSKindId.ParenthesizedExpression;
+	'expression.primary.set': TSKindId.Set;
+	'expression.primary.setComprehension': TSKindId.SetComprehension;
+	'expression.primary.string': TSKindId.String;
+	'expression.primary.subscript': TSKindId.Subscript;
+	'expression.primary.true': TSKindId.True;
+	'expression.primary.tuple': TSKindId.Tuple;
+	'expression.primary.unary': TSKindId.UnaryOperator;
 	float: TSKindId.FloatPoint;
 	'float.leadingPoint': TSKindId.FloatLeadingPoint;
 	'float.point': TSKindId.FloatPoint;
@@ -118,6 +134,47 @@ export interface SubBuilderRowKind {
 	'parameter.tuple': TSKindId.TuplePattern;
 	'parameter.typed': TSKindId.TypedParameter;
 	'parameter.typedDefault': TSKindId.TypedDefaultParameter;
+	'pattern.attribute': TSKindId.Attribute;
+	'pattern.identifier': TSKindId.Identifier;
+	'pattern.list': TSKindId.ListPattern;
+	'pattern.listSplat': TSKindId.ListSplatPattern;
+	'pattern.subscript': TSKindId.Subscript;
+	'pattern.tuple': TSKindId.TuplePattern;
+	'primaryExpression.attribute': TSKindId.Attribute;
+	'primaryExpression.await': TSKindId.Await;
+	'primaryExpression.binary': TSKindId.BinaryOperator;
+	'primaryExpression.call': TSKindId.Call;
+	'primaryExpression.concatenatedString': TSKindId.ConcatenatedString;
+	'primaryExpression.dictionary': TSKindId.Dictionary;
+	'primaryExpression.dictionaryComprehension': TSKindId.DictionaryComprehension;
+	'primaryExpression.ellipsis': TSKindId.Ellipsis;
+	'primaryExpression.false': TSKindId.False;
+	'primaryExpression.float': TSKindId.FloatPoint;
+	'primaryExpression.float.leadingPoint': TSKindId.FloatLeadingPoint;
+	'primaryExpression.float.point': TSKindId.FloatPoint;
+	'primaryExpression.float.scientific': TSKindId.FloatScientific;
+	'primaryExpression.generator': TSKindId.GeneratorExpression;
+	'primaryExpression.identifier': TSKindId.Identifier;
+	'primaryExpression.integer': TSKindId.IntegerDecimalPlain;
+	'primaryExpression.integer.binary': TSKindId.IntegerBinary;
+	'primaryExpression.integer.decimal': TSKindId.IntegerDecimalPlain;
+	'primaryExpression.integer.decimal.imaginary': TSKindId.IntegerDecimalImaginary;
+	'primaryExpression.integer.decimal.long': TSKindId.IntegerDecimalLong;
+	'primaryExpression.integer.decimal.plain': TSKindId.IntegerDecimalPlain;
+	'primaryExpression.integer.hex': TSKindId.IntegerHex;
+	'primaryExpression.integer.octal': TSKindId.IntegerOctal;
+	'primaryExpression.list': TSKindId.List;
+	'primaryExpression.listComprehension': TSKindId.ListComprehension;
+	'primaryExpression.listSplat': TSKindId.ListSplatPattern;
+	'primaryExpression.none': TSKindId.None;
+	'primaryExpression.parenthesized': TSKindId.ParenthesizedExpression;
+	'primaryExpression.set': TSKindId.Set;
+	'primaryExpression.setComprehension': TSKindId.SetComprehension;
+	'primaryExpression.string': TSKindId.String;
+	'primaryExpression.subscript': TSKindId.Subscript;
+	'primaryExpression.true': TSKindId.True;
+	'primaryExpression.tuple': TSKindId.Tuple;
+	'primaryExpression.unary': TSKindId.UnaryOperator;
 	'simpleStatement.assert': TSKindId.AssertStatement;
 	'simpleStatement.break': TSKindId.BreakStatement;
 	'simpleStatement.continue': TSKindId.ContinueStatement;
