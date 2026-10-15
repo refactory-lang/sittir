@@ -546,7 +546,7 @@ describe('expression_statement sub-factories', () => {
 	});
 	it('conditional builds the parent', () => {
 		const node = ir.expressionStatement.conditional({
-			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			consequence: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			condition: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			alternative: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
@@ -556,8 +556,8 @@ describe('expression_statement sub-factories', () => {
 	});
 	it('named builds the parent', () => {
 		const node = ir.expressionStatement.named({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ExpressionStatement);
 		expect((node as any).content()).toBeDefined();
@@ -591,8 +591,8 @@ describe('expression_statement sub-factories', () => {
 	});
 	it('eq builds the parent', () => {
 		const node = ir.expressionStatement.eq({
-			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ExpressionStatement);
 		expect((node as any).content()).toBeDefined();
@@ -600,7 +600,7 @@ describe('expression_statement sub-factories', () => {
 	});
 	it('type builds the parent', () => {
 		const node = ir.expressionStatement.type({
-			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			type: {
 				$type: TSKindId.Type,
 				$text: 'test',
@@ -615,7 +615,7 @@ describe('expression_statement sub-factories', () => {
 	});
 	it('typed builds the parent', () => {
 		const node = ir.expressionStatement.typed({
-			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			type: {
 				$type: TSKindId.Type,
 				$text: 'test',
@@ -623,7 +623,7 @@ describe('expression_statement sub-factories', () => {
 				$named: true,
 				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
-			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ExpressionStatement);
 		expect((node as any).content()).toBeDefined();
@@ -652,8 +652,8 @@ describe('expression_statement sub-factories', () => {
 	});
 	it('named.identifier builds the parent', () => {
 		const node = ir.expressionStatement.named.identifier({
-			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			name: ['test']
+			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			left: ['test']
 		});
 		expect(node.$type).toBe(TSKindId.ExpressionStatement);
 		expect((node as any).content()).toBeDefined();
@@ -719,7 +719,7 @@ describe('expression_statement sub-factories', () => {
 	});
 	it('yield.fromClause.conditional builds the parent', () => {
 		const node = ir.expressionStatement.yield.fromClause.conditional({
-			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			consequence: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			condition: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			alternative: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
@@ -729,8 +729,8 @@ describe('expression_statement sub-factories', () => {
 	});
 	it('yield.fromClause.named builds the parent', () => {
 		const node = ir.expressionStatement.yield.fromClause.named({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ExpressionStatement);
 		expect((node as any).content()).toBeDefined();
@@ -753,8 +753,8 @@ describe('expression_statement sub-factories', () => {
 	});
 	it('yield.fromClause.named.identifier builds the parent', () => {
 		const node = ir.expressionStatement.yield.fromClause.named.identifier({
-			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			name: ['test']
+			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			left: ['test']
 		});
 		expect(node.$type).toBe(TSKindId.ExpressionStatement);
 		expect((node as any).content()).toBeDefined();
@@ -765,16 +765,16 @@ describe('expression_statement sub-factories', () => {
 describe('named_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.namedExpression({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.NamedExpression);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.namedExpression({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -784,11 +784,11 @@ describe('named_expression', () => {
 describe('named_expression sub-factories', () => {
 	it('identifier builds the parent', () => {
 		const node = ir.namedExpression.identifier({
-			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			name: ['test']
+			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			left: ['test']
 		});
 		expect(node.$type).toBe(TSKindId.NamedExpression);
-		expect((node as any).name()?.$type).toBe(TSKindId.Identifier);
+		expect((node as any).left()?.$type).toBe(TSKindId.Identifier);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -3353,7 +3353,7 @@ describe('default_parameter', () => {
 	it('factory produces correct type', () => {
 		const node = ir.defaultParameter({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			default: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.DefaultParameter);
 		expect(node.$source).toBe(2);
@@ -3361,7 +3361,7 @@ describe('default_parameter', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.defaultParameter({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			default: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -3379,7 +3379,7 @@ describe('typed_default_parameter', () => {
 				$named: true,
 				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
-			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			default: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.TypedDefaultParameter);
 		expect(node.$source).toBe(2);
@@ -3394,7 +3394,7 @@ describe('typed_default_parameter', () => {
 				$named: true,
 				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
-			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			default: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -3713,7 +3713,7 @@ describe('yield sub-factories', () => {
 	});
 	it('fromClause.conditional builds the parent', () => {
 		const node = ir.yield.fromClause.conditional({
-			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			consequence: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			condition: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			alternative: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
@@ -3723,8 +3723,8 @@ describe('yield sub-factories', () => {
 	});
 	it('fromClause.named builds the parent', () => {
 		const node = ir.yield.fromClause.named({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.Yield);
 		expect((node as any).content()).toBeDefined();
@@ -3747,8 +3747,8 @@ describe('yield sub-factories', () => {
 	});
 	it('fromClause.named.identifier builds the parent', () => {
 		const node = ir.yield.fromClause.named.identifier({
-			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			name: ['test']
+			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			left: ['test']
 		});
 		expect(node.$type).toBe(TSKindId.Yield);
 		expect((node as any).content()).toBeDefined();
@@ -3760,7 +3760,7 @@ describe('attribute', () => {
 	it('factory produces correct type', () => {
 		const node = ir.attribute({
 			object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			attribute: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			property: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.Attribute);
 		expect(node.$source).toBe(2);
@@ -3768,7 +3768,7 @@ describe('attribute', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.attribute({
 			object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			attribute: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			property: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -3778,7 +3778,7 @@ describe('attribute', () => {
 describe('subscript', () => {
 	it('factory produces correct type', () => {
 		const node = ir.subscript({
-			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			subscripts: {
 				$type: TSKindId.Subscripts,
 				$text: 'test',
@@ -3792,7 +3792,7 @@ describe('subscript', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.subscript({
-			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			subscripts: {
 				$type: TSKindId.Subscripts,
 				$text: 'test',
@@ -3977,7 +3977,7 @@ describe('type sub-factories', () => {
 	});
 	it('conditional builds the parent', () => {
 		const node = ir.type.conditional({
-			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			consequence: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			condition: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			alternative: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
@@ -3987,8 +3987,8 @@ describe('type sub-factories', () => {
 	});
 	it('named builds the parent', () => {
 		const node = ir.type.named({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.Type);
 		expect((node as any).content()).toBeDefined();
@@ -4012,7 +4012,7 @@ describe('type sub-factories', () => {
 	it('splatType builds the parent', () => {
 		const node = ir.type.splatType({
 			operator: '*',
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.Type);
 		expect((node as any).content()).toBeDefined();
@@ -4106,8 +4106,8 @@ describe('type sub-factories', () => {
 	});
 	it('named.identifier builds the parent', () => {
 		const node = ir.type.named.identifier({
-			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			name: ['test']
+			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			left: ['test']
 		});
 		expect(node.$type).toBe(TSKindId.Type);
 		expect((node as any).content()).toBeDefined();
@@ -4119,7 +4119,7 @@ describe('splat_type', () => {
 	it('factory produces correct type', () => {
 		const node = ir.splatType({
 			operator: '*',
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.SplatType);
 		expect(node.$source).toBe(2);
@@ -4127,7 +4127,7 @@ describe('splat_type', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.splatType({
 			operator: '*',
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -4696,7 +4696,7 @@ describe('if_clause', () => {
 describe('conditional_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.conditionalExpression({
-			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			consequence: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			condition: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			alternative: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
@@ -4705,7 +4705,7 @@ describe('conditional_expression', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.conditionalExpression({
-			body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			consequence: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			condition: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			alternative: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
@@ -5607,16 +5607,16 @@ describe('escape_sequence_named', () => {
 describe('assignment_eq', () => {
 	it('factory produces correct type', () => {
 		const node = ir.assignmentEq({
-			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.AssignmentEq);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.assignmentEq({
-			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -5626,7 +5626,7 @@ describe('assignment_eq', () => {
 describe('assignment_type', () => {
 	it('factory produces correct type', () => {
 		const node = ir.assignmentType({
-			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			type: {
 				$type: TSKindId.Type,
 				$text: 'test',
@@ -5640,7 +5640,7 @@ describe('assignment_type', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.assignmentType({
-			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			type: {
 				$type: TSKindId.Type,
 				$text: 'test',
@@ -5657,7 +5657,7 @@ describe('assignment_type', () => {
 describe('assignment_typed', () => {
 	it('factory produces correct type', () => {
 		const node = ir.assignmentTyped({
-			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			type: {
 				$type: TSKindId.Type,
 				$text: 'test',
@@ -5665,14 +5665,14 @@ describe('assignment_typed', () => {
 				$named: true,
 				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
-			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.AssignmentTyped);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.assignmentTyped({
-			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			type: {
 				$type: TSKindId.Type,
 				$text: 'test',
@@ -5680,7 +5680,7 @@ describe('assignment_typed', () => {
 				$named: true,
 				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
-			right: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);

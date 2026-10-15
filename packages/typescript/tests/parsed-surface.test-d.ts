@@ -40,11 +40,19 @@ export function listsReadAsReadonlyArrays(): string {
 	const item = engine.parse('function f(a) {}\n').statements()[0]!;
 	if (!engine.is.functionDeclaration(item)) return '';
 	const params = item.parameters();
-	type Item = ItemOf<typeof params>;
-	const owner: ReadonlyArray<Item> = params;
-	const list: ReadonlyArray<Item> | undefined = params.elements();
-	const rendered = params.map((param) => (typeof param === 'number' ? '' : param.$render()));
-	const first: Item | undefined = params[0];
+	expectTrue<
+		Equals<
+			ReturnType<typeof params.elements>,
+			T.FormalParametersElements.Parsed | T.FormalParametersElementsReceiver.Parsed | undefined
+		>
+	>();
+	const elements = params.elements();
+	if (elements === undefined || !engine.is.formalParametersElements(elements)) return '';
+	type Item = ItemOf<typeof elements>;
+	const owner: ReadonlyArray<Item> = elements;
+	const list: ReadonlyArray<Item> = elements;
+	const rendered = elements.map((param) => (typeof param === 'number' ? '' : param.$render()));
+	const first: Item | undefined = elements[0];
 	return [owner.length, list?.length, rendered.join(','), String(first)].join('');
 }
 
@@ -52,8 +60,14 @@ export function aListSlotTakesItsBuilderArguments(): string {
 	const item = engine.parse('function f(a) {}\n').statements()[0]!;
 	if (!engine.is.functionDeclaration(item)) return '';
 	const params = item.parameters();
-	const fromItems = item.$with.parameters(...params);
+	const elements = params.elements();
+	if (elements === undefined || !engine.is.formalParametersElements(elements)) return '';
+	const [first, ...rest] = elements;
+	if (first === undefined) return '';
+	const fromItems = item.$with.parameters(
+		engine.build.formalParameters(engine.build.formalParametersElements(first, ...rest))
+	);
 	const fromNode = item.$with.parameters(params);
-	const inner = params.$with.elements(...params);
+	const inner = params.$with.elements(engine.build.formalParametersElements(first, ...rest));
 	return fromItems.$render() + fromNode.$render() + inner.$render();
 }

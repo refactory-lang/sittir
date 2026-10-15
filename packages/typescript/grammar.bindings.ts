@@ -1,9 +1,9 @@
 // Generated from bindings.scm and the vocabulary by `pnpm exec tsx packages/cli/src/cli.ts tool bindings-inventory --write`. Do not edit.
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
-import { bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
+import { bindings, field, lead, match, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "4cf51dc22299c3b3f70f7ede61845a9414042222cb750b9af06f77156dc52e92",
+	hash: "47a55b347acf760b8b6f3cfff17b0ea1012a11417caabdbf230dac7a895ae207",
 	patches: {
 		_number: { "1": field("value") },
 		_parameter_name: { "4": field("name") },
@@ -135,6 +135,7 @@ export default bindings({
 		rename("undefined", "undefined_null_literal"),
 		rename("regex_pattern", "pattern_regex_literal"),
 		rename("regex_flags", "flags_regex_literal"),
+		rename("private_property_identifier", "property_identifier"),
 		rename("nested_type_identifier", "path_type"),
 		rename("this", "receiver_identifier"),
 		rename("super", "super_identifier"),
@@ -143,6 +144,8 @@ export default bindings({
 		rename("comment_block", "block_comment"),
 		rename("comment_line", "line_comment")
 	],
-	leads: [],
+	leads: [
+		lead("formal_parameters_elements", "formal_parameter", "receiver", match("required_parameter", { "pattern": [match("this")] }, "receiver_parameter_declaration"))
+	],
 	splits: []
 });

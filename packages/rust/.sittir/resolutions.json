@@ -1,5 +1,5 @@
 {
-	"grammarHash": "6080eb1ed15159d5d1d657bc0c69aeaa0775d6c8aaccfb79f66fe3f9ec3c1fc3",
+	"grammarHash": "dedaf2f3c3e971f295418fdde73eb709b769df6a83cfb67ad27f3d5bc4e28d2f",
 	"resolutions": [
 		{
 			"resolution": {
@@ -221,7 +221,38 @@
 		}
 	],
 	"bound": {
-		"grammarHash": "6080eb1ed15159d5d1d657bc0c69aeaa0775d6c8aaccfb79f66fe3f9ec3c1fc3",
-		"resolutions": []
+		"grammarHash": "30fcedd091b56f0c62366f32397d98d8a00c5e62b963c7c024f4b9a45ec3c480",
+		"resolutions": [
+			{
+				"resolution": {
+					"kind": "AddConflict",
+					"symbols": [
+						"shorthand_field_initializer",
+						"field_initializer"
+					]
+				},
+				"step": "default",
+				"sourceChains": [
+					[
+						"shorthand_field_initializer"
+					],
+					[
+						"field_initializer"
+					]
+				],
+				"conflict": {
+					"symbolSequence": [
+						"identifier",
+						"'{'",
+						"attribute_item"
+					],
+					"lookahead": "'#'",
+					"interpretations": [
+						"tuple_expression_repeat1",
+						"field_initializer_repeat1"
+					]
+				}
+			}
+		]
 	}
 }

@@ -67,7 +67,10 @@ member routes, container unwraps), and make templates hole members of every
 claim in their pattern; fold each read entry's own member routes, claim by claim
 in file order, into member types (a slot route's slot resolved, a presence or
 a flag an optional `boolean`, a nested member its named kind or the kinds of the slot its
-selector finds in its parent; a member is optional when some kind the path is read from in that
+selector finds in its parent. A nested repeated capture remains a required collection even
+when its empty wrapper is absent; a single capture stays optional, including one whose
+captured wrapper resolves to a list.
+A member is optional when some kind the path is read from in that
 grammar does not carry it, a supertype counting as none since its forms stand in for it). An
 entry a form inherits from its supertype's claim folds in only when that path is the form's own
 vocabulary kind (`GrammarRoutes.vocabOf`): a form its own claim names by another path brings its
@@ -252,15 +255,15 @@ Every claim as a `RefinedClaim`, derived from the claims and the forms each kind
 
 ### `packages/codegen/src/bindings/facts.ts::bindSelector`
 
-A slot selector, the selectors chained after it, and the neighbours its anchors name, with every kind named by its bound kind.
+Binds a selector and its after/adjacent selectors through the kind mapping and the field mapping of their shared owning kind. Portable capture names stay unchanged.
 
 ### `packages/codegen/src/bindings/facts.ts::bindFacts`
 
-The facts with every grammar kind they name (claims and their placements, the kind arguments of `KIND_PREDICATE_OPERATORS` predicates, the selectors of every predicate's and child condition's site, the kinds a child condition names and the selectors of a sibling order, member owners, paths and selectors, the kinds of a claim's match and a member's lead match, containers and their captures, unclaimed kinds) named by its bound kind. The facts are read and written in base names; with the grammar bindings on, a consumer binds them through the node model's stamped `renamedFrom` (`boundNameOf`). A wildcard claim stays a wildcard, and templates name no kinds.
+Binds all grammar kind and field references in claims, member routes, containers and their selectors. Field mappings are scoped to the original owning kind; predicates, literals, nested paths, anchors and lead matches use the same mapping. Portable paths, member names and templates stay unchanged. The input supplies the canonical binding patch effects through `boundFieldNameOf`, beside the existing kind mapping.
 
 ### `packages/codegen/src/bindings/facts.ts::bindSite`
 
-A `CaptureSite` with the kind of each of its `down` selectors named by its bound kind.
+Binds a capture site from the claimed kind, or its counted enclosing kind when `up` is nonzero, through the owning kind of each down step.
 
 ### `packages/codegen/src/bindings/vocabulary.ts::readVocabularySource`
 
@@ -502,7 +505,12 @@ claim, the first in file order as in `resolveRoutes`: that claim renames the
 kind to its path's bound name. A further kind named by the same path aliases to
 it only when nothing about its shape tells it from the path's first kind
 (`sameShapeAs`); otherwise it is kept apart under its own grammar name, and a
-path left with one kind is renamed as a single claim is.
+path left with one kind is renamed as a single claim is. Only base rules take
+part in a merge: a claimed kind that is no base rule (an external token, such
+as rust's `doc_comment`) takes no patch, so counting it would turn a lone
+alias into a rename. When a path's claimed kinds do not all merge, the residue
+says so under `claimed kinds not merged`, with the partition: the merged group
+(`a + b`), each kind kept apart, and the kinds that are no base rule.
 A later plain claim on the kind stays a mapping, as a refinement does. A placed
 claim splits its kind by placement, its containers named by the placement's
 bound name and the member that holds them. Renames apply at once, so a name is
@@ -532,7 +540,7 @@ Leads: `deriveLeads` derives them from the same facts against the same grammar, 
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::sameShapeAs`
 
-The kinds one path names that the grammar bindings may merge under the path's name: the path's first kind and every further kind that supplies the same member names, where neither is read as a kind (a flag's kind). A kind's members are its routed members (`GrammarBindingsInput.routedMembers`): its captures, renamed, and every other non-layout slot by its property name, so a slot no claim captures still tells two kinds apart (python's `assignment_typed` carries a `type` that `assignment_eq` lacks). A form restricted to a context is a legitimate merge: python's `lambda_within_for_in_clause` supplies `lambda`'s `parameters` and `body`, and differs only in what its body admits. It is the other face of injectivity: two kinds share a vocabulary leaf only where a holder's flag or a member's absence tells them apart, and a kind told apart that way keeps its own grammar kind so the reader and the builder can tell it. Containment is no distinction: a container member admitting both kinds does not keep them apart.
+The kinds one path names that the grammar bindings may merge under the path's name: the path's first kind and every further kind that supplies the same member names and has the same terminal/nonterminal class in the canonical predicted symbol catalog, where neither is read as a kind (a flag's kind). A terminal and a nonterminal cannot share a parser display union even when neither supplies portable members (Python's `escape_interpolation` and `escape_sequence`). A kind's members are its routed members (`GrammarBindingsInput.routedMembers`): its captures, renamed, and every other non-layout slot by its property name, so a slot no claim captures still tells two kinds apart (python's `assignment_typed` carries a `type` that `assignment_eq` lacks). A form restricted to a context is a legitimate merge: python's `lambda_within_for_in_clause` supplies `lambda`'s `parameters` and `body`, and differs only in what its body admits. It is the other face of injectivity: two kinds share a vocabulary leaf only where a holder's flag or a member's absence tells them apart, and a kind told apart that way keeps its own grammar kind so the reader and the builder can tell it. Containment is no distinction: a container member admitting both kinds does not keep them apart.
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::grammarBindingsPatches`
 
@@ -1235,7 +1243,7 @@ The serialized model's kinds, whether it stores them as a list or keyed by kind.
 
 ### `packages/codegen/src/bindings/input.ts::EvaluatedGrammarFacts`
 
-The facts of the evaluated grammar the bindings input needs beside the model: its text tokens and its options block.
+The evaluated grammar facts needed beside its node model: text tokens, options, and the canonical binding effects emitted while its binding patches applied.
 
 ### `packages/codegen/src/bindings/routes.ts::admittedKinds`
 
@@ -1457,13 +1465,9 @@ What reading a pattern as a `match` tree gives: the tree (`dsl/bind.ts::LeadMatc
 
 A `MatchRead` with the line of the `bindings.scm` pattern it was read from, which a `lead-refused` record names.
 
-### `packages/codegen/src/bindings/facts.ts::bindMatch`
-
-A match tree with every kind it names bound, its `as` kept.
-
 ### `packages/codegen/src/bindings/facts.ts::bindMember`
 
-A member fact with its owner, selector, `via` steps and parent bound; `bindFacts` binds its lead match beside it.
+Binds a member owner and its selectors. A nested route binds its path from the owner and its final selector against its recorded parent; presence and lead-match facts retain their declared meaning.
 
 ### `packages/codegen/src/bindings/facts.ts::bindLeadMatch`
 
@@ -1517,3 +1521,62 @@ The leads of a grammar's facts against its grammar evaluated without its binding
 ### `packages/codegen/src/bindings/module.ts::matchCall`
 
 A `LeadMatch` as the `match(…)` call that builds it: an unfielded restriction as an array, a fielded one as a one-key record, and the variant name last (after an explicit `undefined` when the match restricts nothing).
+
+### `packages/codegen/src/bindings/facts.ts::bindField`
+
+Maps one non-null field through its known owner; an unknown owner preserves the field spelling.
+
+### `packages/codegen/src/bindings/facts.ts::bindPath`
+
+Binds a selector path in order, using each original selected kind as the owner of the next step.
+
+### `packages/codegen/src/bindings/facts.ts::siteRootKind`
+
+The claimed kind when no upward step is taken, otherwise the counted enclosing kind; an unavailable enclosing kind remains unknown.
+
+### `packages/codegen/src/bindings/facts.ts::siteTargetKind`
+
+The original kind reached by a capture site, used to scope the selectors of sibling conditions.
+
+### `packages/codegen/src/bindings/facts.ts::bindClaim`
+
+Binds one claim, including its parent field, literal fields, predicate and child sites, sibling selectors and lead match.
+
+### `packages/codegen/src/bindings/lead-facts.ts::projectLeadFacts`
+
+Projects portable facts through the canonical `LeadEffect` records produced by
+parser wiring. Only captures owning the lead field identify receiver claims;
+an unrelated first-child capture is not evidence of a receiver. Claim indices
+are remapped when a source claim also applies to a minted visible variant.
+Plain-list member routes remain available, with an additional receiver-form
+route through the exact minted rest group and its original list field.
+
+### `packages/codegen/src/bindings/lead-facts.ts::headPath`
+
+Maps a downward capture path through the receiver form and its first field,
+using the effect's actual visible variants. Nested member facts store their
+`via` paths innermost first, so their boundary reverses the path before and
+after this operation.
+
+### `packages/codegen/src/bindings/lead-facts.ts::guaranteedHeadChild`
+
+Discharges a kind test only when the lead restriction guarantees every admitted
+alternative at that exact position. It retains tests distinguishing receiver
+alternatives and unrelated constraints. This matters when a narrowed fixed
+terminal becomes a scalar slot rather than a separately navigable child.
+
+### `packages/codegen/src/bindings/lead-facts.ts::headClaim`
+
+Projects receiver child and predicate subjects into the transformed grammar,
+retaining constraints except the kind tests proved by the lead itself. Minted
+visible variants receive their source's applicable claims without changing
+ordinary alias builder policy.
+
+### `packages/codegen/src/bindings/lead-facts.ts::headMember`
+
+Projects a receiver capture to its new singular field. A rest capture instead
+crosses the receiver form, canonical group and original rest-list field. Every
+name comes from the realization record; no naming convention is reconstructed.
+
+
+Lead projection uses one `bindFacts` projection for the minted variants. Besides owned captures, it preserves explicit container declarations and unclaimed-kind declarations on their cloned owners, including the container's element, captured slots, and dropped layout. Without that projection a receiver wrapper loses its declared content route even though its parser shape is correct.

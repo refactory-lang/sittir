@@ -27,7 +27,7 @@ export const triviaFacts = Object.freeze({
 		352, 353, 354, 355, 356, 357, 358, 359, 360, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379,
 		380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 400, 401, 402, 403,
 		405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 422, 423, 424, 425, 427, 428, 429,
-		430, 431, 432, 433, 434, 465, 467, 468
+		430, 431, 432, 433, 434, 436, 438, 470, 472, 473
 	]),
 	listKinds: new Set<number>([
 		342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359
@@ -158,8 +158,8 @@ export const querySlots: QuerySlots = Object.freeze({
 			}
 		]
 	],
-	190: [['attribute', { fields: ['attribute'], kinds: [] }]],
-	191: [['attribute', { fields: ['attribute'], kinds: [] }]],
+	190: [['content', { fields: ['content'], kinds: [] }]],
+	191: [['content', { fields: ['content'], kinds: [] }]],
 	192: [
 		['path', { fields: ['path'], kinds: [] }],
 		['input', { fields: ['input'], kinds: [] }]
@@ -206,7 +206,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	206: [
 		['visibilityModifier', { fields: ['visibility_modifier'], kinds: [] }],
-		['ref', { fields: ['ref'], kinds: [] }, 'ref'],
+		['byReference', { fields: ['by_reference'], kinds: [] }, 'ref'],
 		['mutable', { fields: ['mutable'], kinds: [] }, 'mut'],
 		['name', { fields: ['name'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }],
@@ -217,7 +217,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['name', { fields: ['name'], kinds: [] }],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['whereClause', { fields: ['where_clause'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }],
+		['value', { fields: ['value'], kinds: [] }],
 		['trailingWhereClause', { fields: ['trailing_where_clause'], kinds: [] }]
 	],
 	208: [
@@ -240,7 +240,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['whereClause', { fields: ['where_clause'], kinds: [] }]
 	],
 	210: [['modifiers', { fields: ['modifier'], kinds: [] }]],
-	211: [['wherePredicates', { fields: [], kinds: ['where_predicates'] }]],
+	211: [['wherePredicates', { fields: ['where_predicates'], kinds: [] }]],
 	212: [
 		['left', { fields: ['left'], kinds: [] }],
 		['bounds', { fields: ['bounds'], kinds: [] }]
@@ -270,12 +270,12 @@ export const querySlots: QuerySlots = Object.freeze({
 	220: [
 		['name', { fields: ['name'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }]
+		['default', { fields: ['default'], kinds: [] }]
 	],
 	221: [
 		['name', { fields: ['name'], kinds: [] }],
 		['bounds', { fields: ['bounds'], kinds: [] }],
-		['defaultType', { fields: ['default_type'], kinds: [] }]
+		['default', { fields: ['default'], kinds: [] }]
 	],
 	222: [
 		['name', { fields: ['name'], kinds: [] }],
@@ -283,7 +283,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	223: [
 		['mutable', { fields: ['mutable'], kinds: [] }, 'mut'],
-		['pattern', { fields: ['pattern'], kinds: [] }],
+		['name', { fields: ['name'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }],
 		['value', { fields: ['value'], kinds: [] }],
 		['alternative', { fields: ['alternative'], kinds: [] }]
@@ -296,12 +296,12 @@ export const querySlots: QuerySlots = Object.freeze({
 		['path', { fields: ['path'], kinds: [] }],
 		['list', { fields: ['list'], kinds: [] }]
 	],
-	227: [['useClauses', { fields: [], kinds: ['use_clauses'] }]],
+	227: [['useClauses', { fields: ['use_clauses'], kinds: [] }]],
 	228: [
-		['path', { fields: ['path'], kinds: [] }],
+		['name', { fields: ['name'], kinds: [] }],
 		['alias', { fields: ['alias'], kinds: [] }]
 	],
-	229: [['useWildcardGroup', { fields: [], kinds: ['use_wildcard_group'] }]],
+	229: [['useWildcardGroup', { fields: ['use_wildcard_group'], kinds: [] }]],
 	230: [['elements', { fields: ['elements'], kinds: [] }]],
 	231: [
 		['reference', { fields: ['reference'], kinds: [] }, '&'],
@@ -329,14 +329,14 @@ export const querySlots: QuerySlots = Object.freeze({
 		['element', { fields: ['element'], kinds: [] }],
 		['length', { fields: ['length'], kinds: [] }]
 	],
-	241: [['lifetimes', { fields: [], kinds: ['lifetimes'] }]],
+	241: [['lifetimes', { fields: ['lifetimes'], kinds: [] }]],
 	242: [
 		['forLifetimes', { fields: ['for_lifetimes'], kinds: [] }],
 		['content', { fields: [], kinds: ['function_type_trait_form', 'function_type_fn_form'] }],
 		['parameters', { fields: ['parameters'], kinds: [] }],
 		['returnType', { fields: ['return_type'], kinds: [] }]
 	],
-	243: [['types', { fields: [], kinds: ['types'] }]],
+	243: [['types', { fields: ['types'], kinds: [] }]],
 	245: [
 		['function', { fields: ['function'], kinds: [] }],
 		['typeArguments', { fields: ['type_arguments'], kinds: [] }]
@@ -362,7 +362,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	252: [
 		['lifetime', { fields: ['lifetime'], kinds: [] }],
-		['mutable', { fields: ['mutable'], kinds: [] }, 'mut'],
+		['exclusive', { fields: ['exclusive'], kinds: [] }, 'mut'],
 		['type', { fields: ['type'], kinds: [] }]
 	],
 	255: [
@@ -371,7 +371,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	256: [['trait', { fields: ['trait'], kinds: [] }]],
 	259: [
-		['macro', { fields: ['macro'], kinds: [] }],
+		['function', { fields: ['function'], kinds: [] }],
 		['arguments', { fields: ['arguments'], kinds: [] }]
 	],
 	263: [
@@ -388,9 +388,9 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	267: [
 		['operator', { fields: ['operator'], kinds: [] }],
-		['operand', { fields: ['operand'], kinds: [] }]
+		['argument', { fields: ['argument'], kinds: [] }]
 	],
-	268: [['value', { fields: ['value'], kinds: [] }]],
+	268: [['argument', { fields: ['argument'], kinds: [] }]],
 	270: [
 		['left', { fields: ['left'], kinds: [] }],
 		['operator', { fields: ['operator'], kinds: [] }],
@@ -406,7 +406,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['right', { fields: ['right'], kinds: [] }]
 	],
 	273: [
-		['value', { fields: ['value'], kinds: [] }],
+		['expression', { fields: ['expression'], kinds: [] }],
 		['type', { fields: ['type'], kinds: [] }]
 	],
 	274: [['expression', { fields: ['expression'], kinds: [] }]],
@@ -419,7 +419,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	279: [['expression', { fields: ['expression'], kinds: [] }]],
 	280: [
 		['attributes', { fields: ['attributes'], kinds: [] }],
-		['expressions', { fields: [], kinds: ['expressions'] }]
+		['elements', { fields: ['elements'], kinds: [] }]
 	],
 	282: [
 		['name', { fields: ['name'], kinds: [] }],
@@ -428,10 +428,10 @@ export const querySlots: QuerySlots = Object.freeze({
 	283: [['initializers', { fields: ['initializers'], kinds: [] }]],
 	284: [
 		['attributes', { fields: ['attributes'], kinds: [] }],
-		['name', { fields: ['name'], kinds: [] }]
+		['field', { fields: ['field'], kinds: [] }]
 	],
 	285: [
-		['attributeItems', { fields: [], kinds: ['attribute_item'] }],
+		['attributes', { fields: ['attributes'], kinds: [] }],
 		['field', { fields: ['field'], kinds: [] }],
 		['value', { fields: ['value'], kinds: [] }]
 	],
@@ -451,7 +451,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	291: [['body', { fields: ['body'], kinds: [] }]],
 	292: [
-		['value', { fields: ['value'], kinds: [] }],
+		['subject', { fields: ['subject'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
 	293: [['matchBlockArms', { fields: [], kinds: ['match_block_arms'] }]],
@@ -476,8 +476,8 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	299: [
 		['label', { fields: ['label'], kinds: [] }],
-		['pattern', { fields: ['pattern'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }],
+		['left', { fields: ['left'], kinds: [] }],
+		['right', { fields: ['right'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
 	300: [['body', { fields: ['body'], kinds: [] }]],
@@ -562,8 +562,8 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	307: [['expression', { fields: ['expression'], kinds: [] }]],
 	308: [
-		['value', { fields: ['value'], kinds: [] }],
-		['field', { fields: ['field'], kinds: [] }]
+		['object', { fields: ['object'], kinds: [] }],
+		['property', { fields: ['property'], kinds: [] }]
 	],
 	309: [['body', { fields: ['body'], kinds: [] }]],
 	310: [
@@ -585,10 +585,10 @@ export const querySlots: QuerySlots = Object.freeze({
 		['typeArguments', { fields: ['type_arguments'], kinds: [] }]
 	],
 	316: [['elements', { fields: ['elements'], kinds: [] }]],
-	317: [['patterns', { fields: [], kinds: ['patterns'] }]],
+	317: [['elements', { fields: ['elements'], kinds: [] }]],
 	318: [
 		['type', { fields: ['type'], kinds: [] }],
-		['patterns', { fields: [], kinds: ['patterns'] }]
+		['patterns', { fields: ['patterns'], kinds: [] }]
 	],
 	319: [
 		['type', { fields: ['type'], kinds: [] }],
@@ -601,7 +601,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['pattern', { fields: ['pattern'], kinds: [] }]
 	],
 	326: [
-		['mutable', { fields: ['mutable'], kinds: [] }, 'mut'],
+		['exclusive', { fields: ['exclusive'], kinds: [] }, 'mut'],
 		['pattern', { fields: ['pattern'], kinds: [] }]
 	],
 	330: [['value', { fields: ['value'], kinds: [] }]],
@@ -800,7 +800,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['visibilityModifier', { fields: ['visibility_modifier'], kinds: [] }],
 		['name', { fields: ['name'], kinds: [] }],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['whereClause', { fields: [], kinds: ['where_clause'] }],
+		['whereClause', { fields: ['where_clause'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],
 	424: [
@@ -808,7 +808,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['name', { fields: ['name'], kinds: [] }],
 		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }],
-		['whereClause', { fields: [], kinds: ['where_clause'] }]
+		['whereClause', { fields: ['where_clause'], kinds: [] }]
 	],
 	425: [
 		['visibilityModifier', { fields: ['visibility_modifier'], kinds: [] }],
@@ -831,7 +831,6 @@ export const querySlots: QuerySlots = Object.freeze({
 				fields: [],
 				kinds: [
 					'parameter',
-					'self_parameter',
 					'variadic_parameter',
 					'underscore',
 					'type_identifier',
@@ -987,9 +986,22 @@ export const querySlots: QuerySlots = Object.freeze({
 		['arms', { fields: ['arms'], kinds: [] }],
 		['lastArm', { fields: ['last_arm'], kinds: [] }]
 	],
-	465: [['content', { fields: ['content'], kinds: [] }]],
-	467: [['content', { fields: ['content'], kinds: [] }]],
-	468: [['content', { fields: ['content'], kinds: [] }]]
+	435: [
+		['mutable', { fields: ['mutable'], kinds: [] }, 'mut'],
+		['type', { fields: ['type'], kinds: [] }]
+	],
+	436: [
+		['attributeItem', { fields: [], kinds: ['attribute_item'] }],
+		['content', { fields: [], kinds: ['receiver_parameter_declaration', 'self_parameter'] }]
+	],
+	437: [
+		['receiver', { fields: ['receiver'], kinds: [] }],
+		['parametersElementsReceiverGroup', { fields: [], kinds: ['parameters_elements_receiver_group'] }]
+	],
+	438: [['elements', { fields: ['elements'], kinds: [] }]],
+	470: [['content', { fields: ['content'], kinds: [] }]],
+	472: [['content', { fields: ['content'], kinds: [] }]],
+	473: [['content', { fields: ['content'], kinds: [] }]]
 });
 
 export const { isNode } = bindRuntime<RustTypeMap>();

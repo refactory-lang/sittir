@@ -9,6 +9,7 @@
 
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
+import grammarBindings from './grammar.bindings.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import {
 	field,
@@ -27,6 +28,7 @@ import {
 
 export default sittirGrammar(base, {
 	resolutions,
+	bindings: grammarBindings,
 	name: 'typescript',
 	groups: {
 		jsx_opening_element_content: ($) =>

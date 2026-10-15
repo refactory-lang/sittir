@@ -59,23 +59,26 @@ export function rebuildSpliceGenerated() {
 			type: rs.build.identifier("SpliceError"),
 			body: rs.build.declarationList.strict(rs.build.functionItem.strict({
 				name: rs.build.identifier("fmt"),
-				parameters: rs.build.parameters.strict(rs.build.selfParameter.strict({
-					reference: true,
-				}), rs.build.parameter.strict({
-					name: rs.build.identifier("f"),
-					type: rs.build.referenceType.strict({
-						mutable: true,
-						type: rs.build.genericType.strict({
-							type: rs.build.scopedTypeIdentifier.strict({
-								path: rs.build.scopedIdentifier.strict({
-									path: rs.build.identifier("std"),
-									name: rs.build.identifier("fmt"),
-								}),
-								name: rs.build.identifier("Formatter"),
-							}),
-							typeArguments: rs.build.typeArguments.strict(rs.build.lifetime.strict(rs.build.identifier("_"))),
-						}),
+				parameters: rs.build.parameters.strict(rs.build.parametersElementsReceiver.strict({
+					content: rs.build.selfParameter.strict({
+						reference: true,
 					}),
+					parametersElementsReceiverGroup: [rs.build.parametersElements.strict(rs.build.parameter.strict({
+						name: rs.build.identifier("f"),
+						type: rs.build.referenceType.strict({
+							exclusive: true,
+							type: rs.build.genericType.strict({
+								type: rs.build.scopedTypeIdentifier.strict({
+									path: rs.build.scopedIdentifier.strict({
+										path: rs.build.identifier("std"),
+										name: rs.build.identifier("fmt"),
+									}),
+									name: rs.build.identifier("Formatter"),
+								}),
+								typeArguments: rs.build.typeArguments.strict(rs.build.lifetime.strict(rs.build.identifier("_"))),
+							}),
+						}),
+					}))],
 				})),
 				returnType: rs.build.scopedTypeIdentifier.strict({
 					path: rs.build.scopedIdentifier.strict({
@@ -86,7 +89,7 @@ export function rebuildSpliceGenerated() {
 				}),
 				body: rs.build.block.strict({
 					statements: [rs.build.expressionStatement.strict(rs.build.matchExpression.strict({
-						value: rs.kinds.Self,
+						subject: rs.kinds.Self,
 						body: rs.build.matchBlock.strict({
 							arms: [rs.build.matchArmBlockEnding.strict({
 								pattern: rs.build.structPattern.strict({
@@ -102,7 +105,7 @@ export function rebuildSpliceGenerated() {
 								}),
 								value: rs.build.block.strict({
 									trailingExpression: rs.build.macroInvocation.strict({
-										macro: rs.build.identifier("write"),
+										function: rs.build.identifier("write"),
 										arguments: rs.build.delimTokenTreeParen.strict(rs.build.nonSpecialToken.strict(rs.build.identifier("f")), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.stringLiteral.strict({
 											stringOpen: rs.build.stringOpen("\""),
 											elements: [rs.build.stringContent("invalid edit range: start={start}, end={end}")],
@@ -122,7 +125,7 @@ export function rebuildSpliceGenerated() {
 									})],
 								}),
 								value: rs.build.macroInvocation.strict({
-									macro: rs.build.identifier("write"),
+									function: rs.build.identifier("write"),
 									arguments: rs.build.delimTokenTreeParen.strict(rs.build.nonSpecialToken.strict(rs.build.identifier("f")), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.stringLiteral.strict({
 										stringOpen: rs.build.stringOpen("\""),
 										elements: [rs.build.stringContent("edit out of bounds: end={end} > source length={source_len}")],
@@ -142,7 +145,7 @@ export function rebuildSpliceGenerated() {
 									})],
 								}),
 								value: rs.build.macroInvocation.strict({
-									macro: rs.build.identifier("write"),
+									function: rs.build.identifier("write"),
 									arguments: rs.build.delimTokenTreeParen.strict(rs.build.nonSpecialToken.strict(rs.build.identifier("f")), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.stringLiteral.strict({
 										stringOpen: rs.build.stringOpen("\""),
 										elements: [rs.build.stringContent("edit range not at UTF-8 char boundary: start={start}, end={end}")],
@@ -167,7 +170,7 @@ export function rebuildSpliceGenerated() {
 		}), rs.build.functionItem.strict({
 			visibilityModifier: rs.build.visibilityModifier.pub.strict(),
 			name: rs.build.identifier("apply_edits"),
-			parameters: rs.build.parameters.strict(rs.build.parameter.strict({
+			parameters: rs.build.parameters.strict(rs.build.parametersElements.strict(rs.build.parameter.strict({
 				name: rs.build.identifier("source"),
 				type: rs.build.referenceType.strict({
 					type: rs.kinds.StrKeyword,
@@ -179,35 +182,35 @@ export function rebuildSpliceGenerated() {
 					type: rs.build.identifier("Vec"),
 					typeArguments: rs.build.typeArguments.strict(rs.build.identifier("Edit")),
 				}),
-			})),
+			}))),
 			returnType: rs.build.genericType.strict({
 				type: rs.build.identifier("Result"),
 				typeArguments: rs.build.typeArguments.strict(rs.build.identifier("String"), rs.build.identifier("SpliceError")),
 			}),
 			body: rs.build.block.strict({
 				statements: [rs.build.letDeclaration.strict({
-					pattern: rs.build.identifier("source_len"),
+					name: rs.build.identifier("source_len"),
 					value: rs.build.callExpression.strict({
 						function: rs.build.fieldExpression.strict({
-							value: rs.build.identifier("source"),
-							field: rs.build.identifier("len"),
+							object: rs.build.identifier("source"),
+							property: rs.build.identifier("len"),
 						}),
 						arguments: rs.build.arguments.strict(),
 					}),
 				}).$trivia.leading(rs.build.lineComment.strict(rs.build.lineCommentRegular(" Pre-validate every edit up-front so we fail atomically (no")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" partial application)."))), rs.build.expressionStatement.strict(rs.build.forExpression.strict({
-					pattern: rs.build.identifier("e"),
-					value: rs.build.referenceExpressionBare.strict(rs.build.identifier("edits")),
+					left: rs.build.identifier("e"),
+					right: rs.build.referenceExpressionBare.strict(rs.build.identifier("edits")),
 					body: rs.build.block.strict({
 						statements: [rs.build.expressionStatement.strict(rs.build.ifExpression.strict({
 							condition: rs.build.binaryExpression.strict({
 								left: rs.build.fieldExpression.strict({
-									value: rs.build.identifier("e"),
-									field: rs.build.identifier("end_pos"),
+									object: rs.build.identifier("e"),
+									property: rs.build.identifier("end_pos"),
 								}),
 								operator: rs.kinds.Lt,
 								right: rs.build.fieldExpression.strict({
-									value: rs.build.identifier("e"),
-									field: rs.build.identifier("start_pos"),
+									object: rs.build.identifier("e"),
+									property: rs.build.identifier("start_pos"),
 								}),
 							}),
 							consequence: rs.build.block.strict({
@@ -221,14 +224,14 @@ export function rebuildSpliceGenerated() {
 										body: rs.build.fieldInitializerList.strict({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer.strict({
 											field: rs.build.identifier("start"),
 											value: rs.build.fieldExpression.strict({
-												value: rs.build.identifier("e"),
-												field: rs.build.identifier("start_pos"),
+												object: rs.build.identifier("e"),
+												property: rs.build.identifier("start_pos"),
 											}),
 										}), rs.build.fieldInitializer.strict({
 											field: rs.build.identifier("end"),
 											value: rs.build.fieldExpression.strict({
-												value: rs.build.identifier("e"),
-												field: rs.build.identifier("end_pos"),
+												object: rs.build.identifier("e"),
+												property: rs.build.identifier("end_pos"),
 											}),
 										})),
 									})),
@@ -237,9 +240,9 @@ export function rebuildSpliceGenerated() {
 						})), rs.build.expressionStatement.strict(rs.build.ifExpression.strict({
 							condition: rs.build.binaryExpression.strict({
 								left: rs.build.parenthesizedExpression.strict(rs.build.typeCastExpression.strict({
-									value: rs.build.fieldExpression.strict({
-										value: rs.build.identifier("e"),
-										field: rs.build.identifier("end_pos"),
+									expression: rs.build.fieldExpression.strict({
+										object: rs.build.identifier("e"),
+										property: rs.build.identifier("end_pos"),
 									}),
 									type: rs.kinds.UsizeKeyword,
 								})),
@@ -257,11 +260,11 @@ export function rebuildSpliceGenerated() {
 										body: rs.build.fieldInitializerList.strict({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer.strict({
 											field: rs.build.identifier("end"),
 											value: rs.build.fieldExpression.strict({
-												value: rs.build.identifier("e"),
-												field: rs.build.identifier("end_pos"),
+												object: rs.build.identifier("e"),
+												property: rs.build.identifier("end_pos"),
 											}),
 										}), rs.build.shorthandFieldInitializer.strict({
-											name: rs.build.identifier("source_len"),
+											field: rs.build.identifier("source_len"),
 										})),
 									})),
 								})))],
@@ -270,15 +273,15 @@ export function rebuildSpliceGenerated() {
 							condition: rs.build.binaryExpression.strict({
 								left: rs.build.unaryExpression.strict({
 									operator: rs.kinds.Bang,
-									operand: rs.build.callExpression.strict({
+									argument: rs.build.callExpression.strict({
 										function: rs.build.fieldExpression.strict({
-											value: rs.build.identifier("source"),
-											field: rs.build.identifier("is_char_boundary"),
+											object: rs.build.identifier("source"),
+											property: rs.build.identifier("is_char_boundary"),
 										}),
 										arguments: rs.build.arguments.strict(rs.build.typeCastExpression.strict({
-											value: rs.build.fieldExpression.strict({
-												value: rs.build.identifier("e"),
-												field: rs.build.identifier("start_pos"),
+											expression: rs.build.fieldExpression.strict({
+												object: rs.build.identifier("e"),
+												property: rs.build.identifier("start_pos"),
 											}),
 											type: rs.kinds.UsizeKeyword,
 										})),
@@ -287,15 +290,15 @@ export function rebuildSpliceGenerated() {
 								operator: rs.kinds.PipePipe,
 								right: rs.build.unaryExpression.strict({
 									operator: rs.kinds.Bang,
-									operand: rs.build.callExpression.strict({
+									argument: rs.build.callExpression.strict({
 										function: rs.build.fieldExpression.strict({
-											value: rs.build.identifier("source"),
-											field: rs.build.identifier("is_char_boundary"),
+											object: rs.build.identifier("source"),
+											property: rs.build.identifier("is_char_boundary"),
 										}),
 										arguments: rs.build.arguments.strict(rs.build.typeCastExpression.strict({
-											value: rs.build.fieldExpression.strict({
-												value: rs.build.identifier("e"),
-												field: rs.build.identifier("end_pos"),
+											expression: rs.build.fieldExpression.strict({
+												object: rs.build.identifier("e"),
+												property: rs.build.identifier("end_pos"),
 											}),
 											type: rs.kinds.UsizeKeyword,
 										})),
@@ -313,14 +316,14 @@ export function rebuildSpliceGenerated() {
 										body: rs.build.fieldInitializerList.strict({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer.strict({
 											field: rs.build.identifier("start"),
 											value: rs.build.fieldExpression.strict({
-												value: rs.build.identifier("e"),
-												field: rs.build.identifier("start_pos"),
+												object: rs.build.identifier("e"),
+												property: rs.build.identifier("start_pos"),
 											}),
 										}), rs.build.fieldInitializer.strict({
 											field: rs.build.identifier("end"),
 											value: rs.build.fieldExpression.strict({
-												value: rs.build.identifier("e"),
-												field: rs.build.identifier("end_pos"),
+												object: rs.build.identifier("e"),
+												property: rs.build.identifier("end_pos"),
 											}),
 										})),
 									})),
@@ -330,42 +333,42 @@ export function rebuildSpliceGenerated() {
 					}),
 				})), rs.build.expressionStatement.withSemi.strict(rs.build.callExpression.strict({
 					function: rs.build.fieldExpression.strict({
-						value: rs.build.identifier("edits"),
-						field: rs.build.identifier("sort_by"),
+						object: rs.build.identifier("edits"),
+						property: rs.build.identifier("sort_by"),
 					}),
 					arguments: rs.build.arguments.strict(rs.build.closureExpressionExpr.strict({
 						parameters: rs.build.closureParameters.strict(rs.build.identifier("a"), rs.build.identifier("b")),
 						body: rs.build.block.strict({
 							trailingExpression: rs.build.callExpression.strict({
 								function: rs.build.fieldExpression.strict({
-									value: rs.build.callExpression.strict({
+									object: rs.build.callExpression.strict({
 										function: rs.build.fieldExpression.strict({
-											value: rs.build.fieldExpression.strict({
-												value: rs.build.identifier("b"),
-												field: rs.build.identifier("start_pos"),
+											object: rs.build.fieldExpression.strict({
+												object: rs.build.identifier("b"),
+												property: rs.build.identifier("start_pos"),
 											}),
-											field: rs.build.identifier("cmp"),
+											property: rs.build.identifier("cmp"),
 										}),
 										arguments: rs.build.arguments.strict(rs.build.referenceExpressionBare.strict(rs.build.fieldExpression.strict({
-											value: rs.build.identifier("a"),
-											field: rs.build.identifier("start_pos"),
+											object: rs.build.identifier("a"),
+											property: rs.build.identifier("start_pos"),
 										}))),
 									}),
-									field: rs.build.identifier("then_with"),
+									property: rs.build.identifier("then_with"),
 								}),
 								arguments: rs.build.arguments.strict(rs.build.closureExpressionExpr.strict({
 									parameters: rs.build.closureParameters.strict(),
 									body: rs.build.callExpression.strict({
 										function: rs.build.fieldExpression.strict({
-											value: rs.build.fieldExpression.strict({
-												value: rs.build.identifier("b"),
-												field: rs.build.identifier("end_pos"),
+											object: rs.build.fieldExpression.strict({
+												object: rs.build.identifier("b"),
+												property: rs.build.identifier("end_pos"),
 											}),
-											field: rs.build.identifier("cmp"),
+											property: rs.build.identifier("cmp"),
 										}),
 										arguments: rs.build.arguments.strict(rs.build.referenceExpressionBare.strict(rs.build.fieldExpression.strict({
-											value: rs.build.identifier("a"),
-											field: rs.build.identifier("end_pos"),
+											object: rs.build.identifier("a"),
+											property: rs.build.identifier("end_pos"),
 										}))),
 									}),
 								})),
@@ -374,7 +377,7 @@ export function rebuildSpliceGenerated() {
 					})),
 				})).$trivia.leading(rs.build.lineComment.strict(rs.build.lineCommentRegular(" Sort descending by start_pos. Ties broken by end_pos descending —")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" with identical start positions, the longer replacement applies")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" first so the shorter doesn't overwrite its tail. (Tie-breaking is")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" documented consumer-visible behavior; overlap detection is still")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" theirs.)"))), rs.build.letDeclaration.strict({
 					mutable: true,
-					pattern: rs.build.identifier("buf"),
+					name: rs.build.identifier("buf"),
 					value: rs.build.callExpression.strict({
 						function: rs.build.scopedIdentifier.strict({
 							path: rs.build.identifier("String"),
@@ -383,39 +386,39 @@ export function rebuildSpliceGenerated() {
 						arguments: rs.build.arguments.strict(rs.build.identifier("source")),
 					}),
 				}), rs.build.expressionStatement.strict(rs.build.forExpression.strict({
-					pattern: rs.build.identifier("e"),
-					value: rs.build.identifier("edits"),
+					left: rs.build.identifier("e"),
+					right: rs.build.identifier("edits"),
 					body: rs.build.block.strict({
 						statements: [rs.build.letDeclaration.strict({
-							pattern: rs.build.identifier("start"),
+							name: rs.build.identifier("start"),
 							value: rs.build.typeCastExpression.strict({
-								value: rs.build.fieldExpression.strict({
-									value: rs.build.identifier("e"),
-									field: rs.build.identifier("start_pos"),
+								expression: rs.build.fieldExpression.strict({
+									object: rs.build.identifier("e"),
+									property: rs.build.identifier("start_pos"),
 								}),
 								type: rs.kinds.UsizeKeyword,
 							}),
 						}), rs.build.letDeclaration.strict({
-							pattern: rs.build.identifier("end"),
+							name: rs.build.identifier("end"),
 							value: rs.build.typeCastExpression.strict({
-								value: rs.build.fieldExpression.strict({
-									value: rs.build.identifier("e"),
-									field: rs.build.identifier("end_pos"),
+								expression: rs.build.fieldExpression.strict({
+									object: rs.build.identifier("e"),
+									property: rs.build.identifier("end_pos"),
 								}),
 								type: rs.kinds.UsizeKeyword,
 							}),
 						}), rs.build.expressionStatement.withSemi.strict(rs.build.callExpression.strict({
 							function: rs.build.fieldExpression.strict({
-								value: rs.build.identifier("buf"),
-								field: rs.build.identifier("replace_range"),
+								object: rs.build.identifier("buf"),
+								property: rs.build.identifier("replace_range"),
 							}),
 							arguments: rs.build.arguments.strict(rs.build.rangeExpressionBinary.strict({
 								start: rs.build.identifier("start"),
 								operator: rs.kinds.DotDot,
 								end: rs.build.identifier("end"),
 							}), rs.build.referenceExpressionBare.strict(rs.build.fieldExpression.strict({
-								value: rs.build.identifier("e"),
-								field: rs.build.identifier("inserted_text"),
+								object: rs.build.identifier("e"),
+								property: rs.build.identifier("inserted_text"),
 							}))),
 						}))],
 					}),

@@ -102,6 +102,7 @@ export interface PortableIds {
 		| TSKindId.OptionalParameter
 		| TSKindId.PropertySignature
 		| TSKindId.PublicFieldDefinition
+		| TSKindId.ReceiverParameterDeclaration
 		| TSKindId.RequiredParameter
 		| TSKindId.TypeAliasDeclaration
 		| TSKindId.TypeParameter
@@ -190,10 +191,23 @@ export interface PortableIds {
 	'declaration.module': TSKindId.InternalModule | TSKindId.Module;
 	'declaration.module.external': TSKindId.Module;
 	'declaration.module_property': TSKindId.AmbientDeclarationModule;
-	'declaration.parameter': TSKindId.OptionalParameter | TSKindId.RequiredParameter;
-	'declaration.parameter.private': TSKindId.OptionalParameter | TSKindId.RequiredParameter;
-	'declaration.parameter.protected': TSKindId.OptionalParameter | TSKindId.RequiredParameter;
-	'declaration.parameter.public': TSKindId.OptionalParameter | TSKindId.RequiredParameter;
+	'declaration.parameter':
+		| TSKindId.OptionalParameter
+		| TSKindId.ReceiverParameterDeclaration
+		| TSKindId.RequiredParameter;
+	'declaration.parameter.private':
+		| TSKindId.OptionalParameter
+		| TSKindId.ReceiverParameterDeclaration
+		| TSKindId.RequiredParameter;
+	'declaration.parameter.protected':
+		| TSKindId.OptionalParameter
+		| TSKindId.ReceiverParameterDeclaration
+		| TSKindId.RequiredParameter;
+	'declaration.parameter.public':
+		| TSKindId.OptionalParameter
+		| TSKindId.ReceiverParameterDeclaration
+		| TSKindId.RequiredParameter;
+	'declaration.parameter.receiver': TSKindId.ReceiverParameterDeclaration | TSKindId.RequiredParameter;
 	'declaration.signature':
 		| TSKindId.AbstractMethodSignature
 		| TSKindId.CallSignature
@@ -926,10 +940,12 @@ export interface PortableKindsAt {
 		readonly private: PortableKindsAt['declaration.parameter.private'];
 		readonly protected: PortableKindsAt['declaration.parameter.protected'];
 		readonly public: PortableKindsAt['declaration.parameter.public'];
+		readonly receiver: PortableKindsAt['declaration.parameter.receiver'];
 	};
 	'declaration.parameter.private': { readonly $ids: readonly PortableIds['declaration.parameter.private'][] };
 	'declaration.parameter.protected': { readonly $ids: readonly PortableIds['declaration.parameter.protected'][] };
 	'declaration.parameter.public': { readonly $ids: readonly PortableIds['declaration.parameter.public'][] };
+	'declaration.parameter.receiver': { readonly $ids: readonly PortableIds['declaration.parameter.receiver'][] };
 	'declaration.signature': {
 		readonly $ids: readonly PortableIds['declaration.signature'][];
 		readonly call: PortableKindsAt['declaration.signature.call'];
@@ -1739,10 +1755,12 @@ export interface PortableIsAt {
 		readonly private: PortableIsAt['declaration.parameter.private'];
 		readonly protected: PortableIsAt['declaration.parameter.protected'];
 		readonly public: PortableIsAt['declaration.parameter.public'];
+		readonly receiver: PortableIsAt['declaration.parameter.receiver'];
 	};
 	'declaration.parameter.private': PortableGuard<PortableIds['declaration.parameter.private']> & {};
 	'declaration.parameter.protected': PortableGuard<PortableIds['declaration.parameter.protected']> & {};
 	'declaration.parameter.public': PortableGuard<PortableIds['declaration.parameter.public']> & {};
+	'declaration.parameter.receiver': PortableGuard<PortableIds['declaration.parameter.receiver']> & {};
 	'declaration.signature': PortableGuard<PortableIds['declaration.signature']> & {
 		readonly call: PortableIsAt['declaration.signature.call'];
 		readonly construct: PortableIsAt['declaration.signature.construct'];
@@ -2365,6 +2383,7 @@ const table: PortableTable = {
 				TSKindId.OptionalParameter,
 				TSKindId.PropertySignature,
 				TSKindId.PublicFieldDefinition,
+				TSKindId.ReceiverParameterDeclaration,
 				TSKindId.RequiredParameter,
 				TSKindId.TypeAliasDeclaration,
 				TSKindId.TypeParameter,
@@ -2504,10 +2523,26 @@ const table: PortableTable = {
 		'declaration.module': { ids: [TSKindId.InternalModule, TSKindId.Module], exact: true },
 		'declaration.module.external': { ids: [TSKindId.Module], exact: true },
 		'declaration.module_property': { ids: [TSKindId.AmbientDeclarationModule], exact: true },
-		'declaration.parameter': { ids: [TSKindId.OptionalParameter, TSKindId.RequiredParameter], exact: true },
-		'declaration.parameter.private': { ids: [TSKindId.OptionalParameter, TSKindId.RequiredParameter], exact: false },
-		'declaration.parameter.protected': { ids: [TSKindId.OptionalParameter, TSKindId.RequiredParameter], exact: false },
-		'declaration.parameter.public': { ids: [TSKindId.OptionalParameter, TSKindId.RequiredParameter], exact: false },
+		'declaration.parameter': {
+			ids: [TSKindId.OptionalParameter, TSKindId.ReceiverParameterDeclaration, TSKindId.RequiredParameter],
+			exact: true
+		},
+		'declaration.parameter.private': {
+			ids: [TSKindId.OptionalParameter, TSKindId.ReceiverParameterDeclaration, TSKindId.RequiredParameter],
+			exact: false
+		},
+		'declaration.parameter.protected': {
+			ids: [TSKindId.OptionalParameter, TSKindId.ReceiverParameterDeclaration, TSKindId.RequiredParameter],
+			exact: false
+		},
+		'declaration.parameter.public': {
+			ids: [TSKindId.OptionalParameter, TSKindId.ReceiverParameterDeclaration, TSKindId.RequiredParameter],
+			exact: false
+		},
+		'declaration.parameter.receiver': {
+			ids: [TSKindId.ReceiverParameterDeclaration, TSKindId.RequiredParameter],
+			exact: false
+		},
 		'declaration.signature': {
 			ids: [
 				TSKindId.AbstractMethodSignature,
@@ -3060,7 +3095,7 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.abstract.getter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['generator'], kinds: [] } },
 					{
 						up: 0,
 						via: [],
@@ -3073,7 +3108,7 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.abstract.getter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['generator'], kinds: [] } },
 					{
 						up: 0,
 						via: [],
@@ -3086,7 +3121,7 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.abstract.getter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['generator'], kinds: [] } },
 					{
 						up: 0,
 						via: [],
@@ -3099,7 +3134,7 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.abstract.setter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['generator'], kinds: [] } },
 					{
 						up: 0,
 						via: [],
@@ -3112,7 +3147,7 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.abstract.setter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['generator'], kinds: [] } },
 					{
 						up: 0,
 						via: [],
@@ -3125,7 +3160,7 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.abstract.setter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['generator'], kinds: [] } },
 					{
 						up: 0,
 						via: [],
@@ -3173,12 +3208,12 @@ const table: PortableTable = {
 			{
 				path: 'declaration.method.signature.abstract.getter',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['generator'], kinds: [] } }]
 			},
 			{
 				path: 'declaration.method.signature.abstract.setter',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['generator'], kinds: [] } }]
 			},
 			{ path: 'declaration.method.signature.abstract', within: [], test: [] }
 		],
@@ -3450,7 +3485,7 @@ const table: PortableTable = {
 			{
 				path: 'clause.export.specifier.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', fields: ['export_kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', fields: ['type_only'], kinds: [] } }]
 			},
 			{ path: 'clause.export.specifier', within: [], test: [] }
 		],
@@ -3467,24 +3502,8 @@ const table: PortableTable = {
 						plan: {
 							op: 'is',
 							types: [425],
-							fields: [],
-							kinds: [
-								'function_declaration',
-								'generator_function_declaration',
-								'class_declaration',
-								'lexical_declaration',
-								'variable_declaration',
-								'function_signature',
-								'abstract_class_declaration',
-								'module',
-								'internal_module',
-								'type_alias_declaration',
-								'enum_declaration',
-								'interface_declaration',
-								'import_alias',
-								'ambient_declaration',
-								'export_statement_default_declaration_default_kw'
-							]
+							fields: ['declaration'],
+							kinds: ['export_statement_default_declaration_default_kw']
 						}
 					}
 				]
@@ -3545,7 +3564,7 @@ const table: PortableTable = {
 			{
 				path: 'clause.import.specifier.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', fields: ['import_kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', fields: ['type_only'], kinds: [] } }]
 			},
 			{ path: 'clause.import.specifier', within: [], test: [] }
 		],
@@ -3553,7 +3572,7 @@ const table: PortableTable = {
 			{
 				path: 'clause.import.specifier.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', fields: ['import_kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', fields: ['type_only'], kinds: [] } }]
 			},
 			{ path: 'clause.import.specifier', within: [], test: [] }
 		],
@@ -3561,7 +3580,7 @@ const table: PortableTable = {
 			{
 				path: 'statement.import.typeof',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', fields: ['import_clause'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'typeof', fields: ['type_only'], kinds: [] } }]
 			},
 			{ path: 'statement.import', within: [], test: [] }
 		],
@@ -3618,7 +3637,7 @@ const table: PortableTable = {
 						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
 					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: ['accessibility_modifier'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [461], fields: ['name'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [466], fields: ['name'], kinds: [] } }
 				]
 			},
 			{
@@ -3639,7 +3658,7 @@ const table: PortableTable = {
 						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
 					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: ['accessibility_modifier'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [461], fields: ['name'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [466], fields: ['name'], kinds: [] } }
 				]
 			},
 			{
@@ -3660,7 +3679,7 @@ const table: PortableTable = {
 						plan: { op: 'is', types: [318, 32, 33, 34], fields: ['accessibility_modifier'], kinds: [] }
 					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: ['accessibility_modifier'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [461], fields: ['name'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [466], fields: ['name'], kinds: [] } }
 				]
 			},
 			{
@@ -3675,14 +3694,14 @@ const table: PortableTable = {
 						],
 						plan: { op: 'eq', text: 'constructor', self: true }
 					},
-					{ up: 0, via: [], plan: { op: 'is', types: [461], fields: ['name'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'is', types: [466], fields: ['name'], kinds: [] } }
 				]
 			},
 			{
 				path: 'declaration.method.getter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['generator'], kinds: [] } },
 					{
 						up: 0,
 						via: [],
@@ -3695,7 +3714,7 @@ const table: PortableTable = {
 				path: 'declaration.method.getter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['generator'], kinds: [] } },
 					{
 						up: 0,
 						via: [],
@@ -3708,7 +3727,7 @@ const table: PortableTable = {
 				path: 'declaration.method.getter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['generator'], kinds: [] } },
 					{
 						up: 0,
 						via: [],
@@ -3721,7 +3740,7 @@ const table: PortableTable = {
 				path: 'declaration.method.setter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['generator'], kinds: [] } },
 					{
 						up: 0,
 						via: [],
@@ -3734,7 +3753,7 @@ const table: PortableTable = {
 				path: 'declaration.method.setter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['generator'], kinds: [] } },
 					{
 						up: 0,
 						via: [],
@@ -3747,7 +3766,7 @@ const table: PortableTable = {
 				path: 'declaration.method.setter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['generator'], kinds: [] } },
 					{
 						up: 0,
 						via: [],
@@ -3795,12 +3814,12 @@ const table: PortableTable = {
 			{
 				path: 'declaration.method.getter',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['generator'], kinds: [] } }]
 			},
 			{
 				path: 'declaration.method.setter',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['generator'], kinds: [] } }]
 			},
 			{ path: 'declaration.method', within: [], test: [] }
 		],
@@ -3809,7 +3828,7 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.getter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['generator'], kinds: [] } },
 					{
 						up: 0,
 						via: [],
@@ -3822,7 +3841,7 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.getter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['generator'], kinds: [] } },
 					{
 						up: 0,
 						via: [],
@@ -3835,7 +3854,7 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.getter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['generator'], kinds: [] } },
 					{
 						up: 0,
 						via: [],
@@ -3848,7 +3867,7 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.setter.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['generator'], kinds: [] } },
 					{
 						up: 0,
 						via: [],
@@ -3861,7 +3880,7 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.setter.protected',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['generator'], kinds: [] } },
 					{
 						up: 0,
 						via: [],
@@ -3874,7 +3893,7 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.setter.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['generator'], kinds: [] } },
 					{
 						up: 0,
 						via: [],
@@ -3922,12 +3941,12 @@ const table: PortableTable = {
 			{
 				path: 'declaration.method.signature.getter',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['accessor_kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'get', fields: ['generator'], kinds: [] } }]
 			},
 			{
 				path: 'declaration.method.signature.setter',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['accessor_kind'], kinds: [] } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'set', fields: ['generator'], kinds: [] } }]
 			},
 			{ path: 'declaration.method.signature', within: [], test: [] }
 		],
@@ -4140,6 +4159,46 @@ const table: PortableTable = {
 			{ path: 'modifier.visibility', within: [], test: [] }
 		],
 		[TSKindId.ReadonlyType]: [{ path: 'type.readonly', within: [], test: [] }],
+		[TSKindId.ReceiverParameterDeclaration]: [
+			{
+				path: 'declaration.parameter.private',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
+					},
+					{ up: 0, via: [], plan: { op: 'eq', text: 'private', fields: [], kinds: ['accessibility_modifier'] } }
+				]
+			},
+			{
+				path: 'declaration.parameter.protected',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
+					},
+					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', fields: [], kinds: ['accessibility_modifier'] } }
+				]
+			},
+			{
+				path: 'declaration.parameter.public',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [],
+						plan: { op: 'is', types: [318, 32, 33, 34], fields: [], kinds: ['accessibility_modifier'] }
+					},
+					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: [], kinds: ['accessibility_modifier'] } }
+				]
+			},
+			{ path: 'declaration.parameter', within: [], test: [] },
+			{ path: 'declaration.parameter.receiver', within: [], test: [] }
+		],
 		[TSKindId.Regex]: [{ path: 'literal.regex', within: [], test: [] }],
 		[TSKindId.RegexFlags]: [{ path: 'literal.regex.flags', within: [], test: [] }],
 		[TSKindId.RegexPattern]: [{ path: 'literal.regex.pattern', within: [], test: [] }],
@@ -4179,6 +4238,11 @@ const table: PortableTable = {
 					},
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', fields: [], kinds: ['accessibility_modifier'] } }
 				]
+			},
+			{
+				path: 'declaration.parameter.receiver',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [119], fields: ['name'], kinds: [] } }]
 			},
 			{ path: 'declaration.parameter', within: [], test: [] }
 		],

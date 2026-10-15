@@ -144,7 +144,10 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	const wordMatcherRegex = normalized.wordMatcher;
 	const nodes = ctx.nodes;
 	const kindEntries = ctx.kindEntries ?? collectGeneratedKindEntries(ctx.generatedIdTables);
-	const supertypeArms = supertypeArmsOf(normalized.supertypes, normalized.normalizedRules);
+	const supertypeArms = supertypeArmsOf(
+		new Set([...normalized.supertypes, ...Object.keys(normalized.rules).filter((kind) => normalized.rules[kind]?.type === SUPERTYPE)]),
+		normalized.normalizedRules
+	);
 	const facts: KindFacts = { kindEntries, supertypeArms, provenance: normalized.provenance };
 	const assembleDiagnostics = ctx.assembleDiagnostics;
 	const droppedKinds = new Set<string>();

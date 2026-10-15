@@ -8,6 +8,7 @@
  */
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
+import grammarBindings from './grammar.bindings.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 
 import {
@@ -27,6 +28,7 @@ import {
 
 export default sittirGrammar(base, {
 	resolutions,
+	bindings: { ...grammarBindings, splits: [] },
 	name: 'rust',
 	supertypes: ($, previous) => [...(previous ?? []), $.comment, $._statement],
 

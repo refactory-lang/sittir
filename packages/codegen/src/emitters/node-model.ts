@@ -5,12 +5,8 @@ import type { RuleAnnotations } from '../types/rule.ts';
 import { seatOf, type Seat } from '../compiler/model/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
-import type { NodeMap } from '../compiler/types.ts';
-import type {
-	AssembledNode,
-	AssembledNonterminal,
-	NodeOrTerminal
-} from '../compiler/model/node-map.ts';
+import type { DisplayUnionMember, NodeMap } from '../compiler/types.ts';
+import type { AssembledNode, AssembledNonterminal, NodeOrTerminal } from '../compiler/model/node-map.ts';
 import {
 	AssembledSupertype,
 	isNodeRef,
@@ -150,6 +146,7 @@ export interface SerializedNodeModel {
 	extras: readonly RuleListEntry[];
 	polymorphVariants: PolymorphVariantMap;
 	fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
+	displayUnions: Readonly<Record<string, readonly DisplayUnionMember[]>>;
 	factorySlots: Readonly<Record<string, Readonly<Record<string, FactorySlotMeta>>>>;
 	spelledTrivia: SpelledTriviaTable | null;
 	nodes: SerializedNode[];
@@ -207,6 +204,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		extras: nodeMap.extras ?? [],
 		polymorphVariants: factoryData.polymorphVariants,
 		fieldAliasMap: factoryData.fieldAliasMap,
+		displayUnions: Object.fromEntries(nodeMap.displayUnions ?? []),
 		factorySlots: factoryData.factorySlots,
 		spelledTrivia: spelledTriviaTable(nodeMap) ?? null,
 		nodes

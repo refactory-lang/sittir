@@ -59,24 +59,27 @@ export function rebuildSpliceLoose() {
 			type: "SpliceError",
 			body: rs.build.functionItem({
 				name: "fmt",
-				parameters: [rs.build.selfParameter({
-					reference: true,
-				}), rs.build.parameter({
-					name: "f",
-					type: rs.build.referenceType({
-						mutable: true,
-						type: rs.build.genericType({
-							type: rs.build.scopedTypeIdentifier({
-								path: rs.build.scopedIdentifier({
-									path: "std",
-									name: "fmt",
-								}),
-								name: "Formatter",
-							}),
-							typeArguments: rs.build.lifetime("_"),
-						}),
+				parameters: rs.build.parametersElementsReceiver({
+					content: rs.build.selfParameter({
+						reference: true,
 					}),
-				})],
+					parametersElementsReceiverGroup: [rs.build.parametersElements(rs.build.parameter({
+						name: "f",
+						type: rs.build.referenceType({
+							exclusive: true,
+							type: rs.build.genericType({
+								type: rs.build.scopedTypeIdentifier({
+									path: rs.build.scopedIdentifier({
+										path: "std",
+										name: "fmt",
+									}),
+									name: "Formatter",
+								}),
+								typeArguments: rs.build.lifetime("_"),
+							}),
+						}),
+					}))],
+				}),
 				returnType: rs.build.scopedTypeIdentifier({
 					path: rs.build.scopedIdentifier({
 						path: "std",
@@ -86,7 +89,7 @@ export function rebuildSpliceLoose() {
 				}),
 				body: rs.build.block({
 					statements: [rs.build.matchExpression({
-						value: rs.kinds.Self,
+						subject: rs.kinds.Self,
 						body: rs.build.matchBlock({
 							arms: [rs.build.matchArmBlockEnding({
 								pattern: rs.build.structPattern({
@@ -102,7 +105,7 @@ export function rebuildSpliceLoose() {
 								}),
 								value: rs.build.block({
 									trailingExpression: rs.build.macroInvocation({
-										macro: "write",
+										function: "write",
 										arguments: rs.build.delimTokenTreeParen(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
 											stringOpen: "\"",
 											elements: ["invalid edit range: start={start}, end={end}"],
@@ -122,7 +125,7 @@ export function rebuildSpliceLoose() {
 									})],
 								}),
 								value: rs.build.macroInvocation({
-									macro: "write",
+									function: "write",
 									arguments: rs.build.delimTokenTreeParen(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
 										stringOpen: "\"",
 										elements: ["edit out of bounds: end={end} > source length={source_len}"],
@@ -142,7 +145,7 @@ export function rebuildSpliceLoose() {
 									})],
 								}),
 								value: rs.build.macroInvocation({
-									macro: "write",
+									function: "write",
 									arguments: rs.build.delimTokenTreeParen(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
 										stringOpen: "\"",
 										elements: ["edit range not at UTF-8 char boundary: start={start}, end={end}"],
@@ -167,7 +170,7 @@ export function rebuildSpliceLoose() {
 		}), rs.build.functionItem({
 			visibilityModifier: rs.build.visibilityModifier.pub(),
 			name: "apply_edits",
-			parameters: [rs.build.parameter({
+			parameters: rs.build.parametersElements(rs.build.parameter({
 				name: "source",
 				type: rs.build.referenceType({
 					type: rs.kinds.StrKeyword,
@@ -179,35 +182,35 @@ export function rebuildSpliceLoose() {
 					type: "Vec",
 					typeArguments: "Edit",
 				}),
-			})],
+			})),
 			returnType: rs.build.genericType({
 				type: "Result",
 				typeArguments: ["String", "SpliceError"],
 			}),
 			body: rs.build.block({
 				statements: [rs.build.letDeclaration({
-					pattern: "source_len",
+					name: "source_len",
 					value: rs.build.callExpression({
 						function: rs.build.fieldExpression({
-							value: "source",
-							field: "len",
+							object: "source",
+							property: "len",
 						}),
 						arguments: rs.build.arguments(),
 					}),
 				}).$trivia.leading(rs.build.lineComment(" Pre-validate every edit up-front so we fail atomically (no"), rs.build.lineComment(" partial application).")), rs.build.forExpression({
-					pattern: "e",
-					value: rs.build.referenceExpressionBare("edits"),
+					left: "e",
+					right: rs.build.referenceExpressionBare("edits"),
 					body: rs.build.block({
 						statements: [rs.build.ifExpression({
 							condition: rs.build.binaryExpression({
 								left: rs.build.fieldExpression({
-									value: "e",
-									field: "end_pos",
+									object: "e",
+									property: "end_pos",
 								}),
 								operator: rs.kinds.Lt,
 								right: rs.build.fieldExpression({
-									value: "e",
-									field: "start_pos",
+									object: "e",
+									property: "start_pos",
 								}),
 							}),
 							consequence: rs.build.block({
@@ -221,14 +224,14 @@ export function rebuildSpliceLoose() {
 										body: rs.build.fieldInitializerList({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
 											field: "start",
 											value: rs.build.fieldExpression({
-												value: "e",
-												field: "start_pos",
+												object: "e",
+												property: "start_pos",
 											}),
 										}), rs.build.fieldInitializer({
 											field: "end",
 											value: rs.build.fieldExpression({
-												value: "e",
-												field: "end_pos",
+												object: "e",
+												property: "end_pos",
 											}),
 										})),
 									}),
@@ -237,9 +240,9 @@ export function rebuildSpliceLoose() {
 						}), rs.build.ifExpression({
 							condition: rs.build.binaryExpression({
 								left: rs.build.parenthesizedExpression(rs.build.typeCastExpression({
-									value: rs.build.fieldExpression({
-										value: "e",
-										field: "end_pos",
+									expression: rs.build.fieldExpression({
+										object: "e",
+										property: "end_pos",
 									}),
 									type: rs.kinds.UsizeKeyword,
 								})),
@@ -257,11 +260,11 @@ export function rebuildSpliceLoose() {
 										body: rs.build.fieldInitializerList({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
 											field: "end",
 											value: rs.build.fieldExpression({
-												value: "e",
-												field: "end_pos",
+												object: "e",
+												property: "end_pos",
 											}),
 										}), rs.build.shorthandFieldInitializer({
-											name: "source_len",
+											field: "source_len",
 										})),
 									}),
 								})))],
@@ -270,15 +273,15 @@ export function rebuildSpliceLoose() {
 							condition: rs.build.binaryExpression({
 								left: rs.build.unaryExpression({
 									operator: rs.kinds.Bang,
-									operand: rs.build.callExpression({
+									argument: rs.build.callExpression({
 										function: rs.build.fieldExpression({
-											value: "source",
-											field: "is_char_boundary",
+											object: "source",
+											property: "is_char_boundary",
 										}),
 										arguments: rs.build.typeCastExpression({
-											value: rs.build.fieldExpression({
-												value: "e",
-												field: "start_pos",
+											expression: rs.build.fieldExpression({
+												object: "e",
+												property: "start_pos",
 											}),
 											type: rs.kinds.UsizeKeyword,
 										}),
@@ -287,15 +290,15 @@ export function rebuildSpliceLoose() {
 								operator: rs.kinds.PipePipe,
 								right: rs.build.unaryExpression({
 									operator: rs.kinds.Bang,
-									operand: rs.build.callExpression({
+									argument: rs.build.callExpression({
 										function: rs.build.fieldExpression({
-											value: "source",
-											field: "is_char_boundary",
+											object: "source",
+											property: "is_char_boundary",
 										}),
 										arguments: rs.build.typeCastExpression({
-											value: rs.build.fieldExpression({
-												value: "e",
-												field: "end_pos",
+											expression: rs.build.fieldExpression({
+												object: "e",
+												property: "end_pos",
 											}),
 											type: rs.kinds.UsizeKeyword,
 										}),
@@ -313,14 +316,14 @@ export function rebuildSpliceLoose() {
 										body: rs.build.fieldInitializerList({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
 											field: "start",
 											value: rs.build.fieldExpression({
-												value: "e",
-												field: "start_pos",
+												object: "e",
+												property: "start_pos",
 											}),
 										}), rs.build.fieldInitializer({
 											field: "end",
 											value: rs.build.fieldExpression({
-												value: "e",
-												field: "end_pos",
+												object: "e",
+												property: "end_pos",
 											}),
 										})),
 									}),
@@ -330,42 +333,42 @@ export function rebuildSpliceLoose() {
 					}),
 				}), rs.build.expressionStatement.withSemi(rs.build.callExpression({
 					function: rs.build.fieldExpression({
-						value: "edits",
-						field: "sort_by",
+						object: "edits",
+						property: "sort_by",
 					}),
 					arguments: rs.build.closureExpressionExpr({
 						parameters: ["a", "b"],
 						body: rs.build.block({
 							trailingExpression: rs.build.callExpression({
 								function: rs.build.fieldExpression({
-									value: rs.build.callExpression({
+									object: rs.build.callExpression({
 										function: rs.build.fieldExpression({
-											value: rs.build.fieldExpression({
-												value: "b",
-												field: "start_pos",
+											object: rs.build.fieldExpression({
+												object: "b",
+												property: "start_pos",
 											}),
-											field: "cmp",
+											property: "cmp",
 										}),
 										arguments: rs.build.referenceExpressionBare(rs.build.fieldExpression({
-											value: "a",
-											field: "start_pos",
+											object: "a",
+											property: "start_pos",
 										})),
 									}),
-									field: "then_with",
+									property: "then_with",
 								}),
 								arguments: rs.build.closureExpressionExpr({
 									parameters: rs.build.closureParameters(),
 									body: rs.build.callExpression({
 										function: rs.build.fieldExpression({
-											value: rs.build.fieldExpression({
-												value: "b",
-												field: "end_pos",
+											object: rs.build.fieldExpression({
+												object: "b",
+												property: "end_pos",
 											}),
-											field: "cmp",
+											property: "cmp",
 										}),
 										arguments: rs.build.referenceExpressionBare(rs.build.fieldExpression({
-											value: "a",
-											field: "end_pos",
+											object: "a",
+											property: "end_pos",
 										})),
 									}),
 								}),
@@ -374,7 +377,7 @@ export function rebuildSpliceLoose() {
 					}),
 				})).$trivia.leading(rs.build.lineComment(" Sort descending by start_pos. Ties broken by end_pos descending —"), rs.build.lineComment(" with identical start positions, the longer replacement applies"), rs.build.lineComment(" first so the shorter doesn't overwrite its tail. (Tie-breaking is"), rs.build.lineComment(" documented consumer-visible behavior; overlap detection is still"), rs.build.lineComment(" theirs.)")), rs.build.letDeclaration({
 					mutable: true,
-					pattern: "buf",
+					name: "buf",
 					value: rs.build.callExpression({
 						function: rs.build.scopedIdentifier({
 							path: "String",
@@ -383,39 +386,39 @@ export function rebuildSpliceLoose() {
 						arguments: "source",
 					}),
 				}), rs.build.forExpression({
-					pattern: "e",
-					value: "edits",
+					left: "e",
+					right: "edits",
 					body: rs.build.block({
 						statements: [rs.build.letDeclaration({
-							pattern: "start",
+							name: "start",
 							value: rs.build.typeCastExpression({
-								value: rs.build.fieldExpression({
-									value: "e",
-									field: "start_pos",
+								expression: rs.build.fieldExpression({
+									object: "e",
+									property: "start_pos",
 								}),
 								type: rs.kinds.UsizeKeyword,
 							}),
 						}), rs.build.letDeclaration({
-							pattern: "end",
+							name: "end",
 							value: rs.build.typeCastExpression({
-								value: rs.build.fieldExpression({
-									value: "e",
-									field: "end_pos",
+								expression: rs.build.fieldExpression({
+									object: "e",
+									property: "end_pos",
 								}),
 								type: rs.kinds.UsizeKeyword,
 							}),
 						}), rs.build.expressionStatement.withSemi(rs.build.callExpression({
 							function: rs.build.fieldExpression({
-								value: "buf",
-								field: "replace_range",
+								object: "buf",
+								property: "replace_range",
 							}),
 							arguments: [rs.build.rangeExpressionBinary({
 								start: "start",
 								operator: rs.kinds.DotDot,
 								end: "end",
 							}), rs.build.referenceExpressionBare(rs.build.fieldExpression({
-								value: "e",
-								field: "inserted_text",
+								object: "e",
+								property: "inserted_text",
 							}))],
 						}))],
 					}),

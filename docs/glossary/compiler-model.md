@@ -2061,7 +2061,7 @@ parent is `seated`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::KindFacts`
 
-The grammar-wide facts every node constructor reads about its kind: the parser's kind entries, the direct arms of the declared supertypes (`supertypeArmsOf`) and the kind's provenance. `assemble` builds one per grammar and hands the same object to each construction, so a fact added here reaches every node without another parameter at each site.
+The grammar-wide facts every node constructor reads about its kind: the parser's kind entries, the direct arms of the supertypes (`supertypeArmsOf`) and the kind's provenance. `assemble` builds one per grammar and hands the same object to each construction, so a fact added here reaches every node without another parameter at each site.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::provenanceOf`
 
@@ -2090,7 +2090,7 @@ node but a direct supertype arm.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.ownSurface`
 
-Whether the node has entries of its own on the generated surface: a bundle entry, an `ir` key, an `is` guard, generated tests and a key from the `irKey` phases. A node that does not seat has one. A seated node has none, being built through its parent, unless it is a direct arm of a parser-declared supertype (`KindFacts.supertypeArms`): such an arm keeps its seat and its parent route and also gets its own entries, so the low-level surface reaches it two ways. Stamped once in the constructor; the surface readers read it, and the seating readers (overlays, node model, wrap) read `seated`.
+Whether the node has entries of its own on the generated surface: a bundle entry, an `ir` key, an `is` guard, generated tests and a key from the `irKey` phases. A node that does not seat has one. A seated node has none, being built through its parent, unless it is a direct arm of a supertype, declared by the grammar or made by link of a hidden choice (`KindFacts.supertypeArms`): such an arm keeps its seat and its parent route and also gets its own entries, so the low-level surface reaches it two ways. Stamped once in the constructor; the surface readers read it, and the seating readers (overlays, node model, wrap) read `seated`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.diagnosticRule`
 
@@ -6147,3 +6147,6 @@ Whether a direct arm is a namespace with no call of its own: its child is a vari
 ### `packages/codegen/src/compiler/model/ir-surface.ts::irSurfaceOf`
 
 The stamped `ir` surface; a node map that was never stamped throws rather than deriving one on the spot, so every emitter reads the one surface the compilation decided.
+
+
+A config parent's tuple seats include hidden forwarded groups whose canonical target is a spread or separated list. The existing tuple adapter constructs the hidden group from its own builder arguments: omitting the optional seat leaves it absent, while `[undefined]` constructs a comma-only receiver rest group. The forwarding target walk remains canonical; its existing spread-only callers retain their policy, while tuple seating admits separated lists too.

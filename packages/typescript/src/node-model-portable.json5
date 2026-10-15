@@ -173,8 +173,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "get"
             }
           ],
@@ -186,7 +186,7 @@
                 "op": "eq",
                 "text": "get",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -228,8 +228,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "get"
             }
           ],
@@ -241,7 +241,7 @@
                 "op": "eq",
                 "text": "get",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -283,8 +283,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "get"
             }
           ],
@@ -296,7 +296,7 @@
                 "op": "eq",
                 "text": "get",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -338,8 +338,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "set"
             }
           ],
@@ -351,7 +351,7 @@
                 "op": "eq",
                 "text": "set",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -393,8 +393,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "set"
             }
           ],
@@ -406,7 +406,7 @@
                 "op": "eq",
                 "text": "set",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -448,8 +448,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "set"
             }
           ],
@@ -461,7 +461,7 @@
                 "op": "eq",
                 "text": "set",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -614,8 +614,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "get"
             }
           ],
@@ -627,7 +627,7 @@
                 "op": "eq",
                 "text": "get",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -640,8 +640,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "set"
             }
           ],
@@ -653,7 +653,7 @@
                 "op": "eq",
                 "text": "set",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -714,17 +714,6 @@
           ]
         },
         {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "abstract_method_signature",
-              "slot": "parameters"
-            }
-          ]
-        },
-        {
           "name": "returnType",
           "route": "slot",
           "slot": "return_type",
@@ -743,7 +732,7 @@
           "path": [
             {
               "owner": "abstract_method_signature",
-              "slot": "accessor_kind"
+              "slot": "generator"
             }
           ]
         },
@@ -766,6 +755,131 @@
             {
               "owner": "abstract_method_signature",
               "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "abstract_method_signature",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "abstract_method_signature",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "formal_parameters_elements_receiver_group"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "abstract_method_signature",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "receiver"
             }
           ]
         }
@@ -1101,11 +1215,11 @@
         {
           "name": "type",
           "route": "slot",
-          "slot": "type_annotation",
+          "slot": "type",
           "path": [
             {
               "owner": "as_expression",
-              "slot": "type_annotation"
+              "slot": "type"
             }
           ]
         }
@@ -1187,7 +1301,7 @@
           "path": [
             {
               "owner": "assignment_expression",
-              "slot": "using"
+              "slot": "disposable"
             }
           ]
         }
@@ -2640,17 +2754,6 @@
           ]
         },
         {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "call_signature",
-              "slot": "parameters"
-            }
-          ]
-        },
-        {
           "name": "returnType",
           "route": "slot",
           "slot": "return_type",
@@ -2658,6 +2761,131 @@
             {
               "owner": "call_signature",
               "slot": "return_type"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "call_signature",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "call_signature",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "formal_parameters_elements_receiver_group"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "call_signature",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "receiver"
             }
           ]
         }
@@ -3217,11 +3445,11 @@
         {
           "name": "bounds",
           "route": "slot",
-          "slot": "type",
+          "slot": "bounds",
           "path": [
             {
               "owner": "constraint",
-              "slot": "type"
+              "slot": "bounds"
             }
           ]
         }
@@ -3262,17 +3490,6 @@
           ]
         },
         {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "construct_signature",
-              "slot": "parameters"
-            }
-          ]
-        },
-        {
           "name": "type",
           "route": "slot",
           "slot": "type",
@@ -3280,6 +3497,96 @@
             {
               "owner": "construct_signature",
               "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "construct_signature",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "construct_signature",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "formal_parameters_elements_receiver_group"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
             }
           ]
         }
@@ -3320,17 +3627,6 @@
           ]
         },
         {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "constructor_type",
-              "slot": "parameters"
-            }
-          ]
-        },
-        {
           "name": "type",
           "route": "slot",
           "slot": "type",
@@ -3338,6 +3634,131 @@
             {
               "owner": "constructor_type",
               "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "constructor_type",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "constructor_type",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "formal_parameters_elements_receiver_group"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "constructor_type",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "receiver"
             }
           ]
         }
@@ -3396,11 +3817,11 @@
         {
           "name": "content",
           "route": "slot",
-          "slot": "expression",
+          "slot": "content",
           "path": [
             {
               "owner": "decorator",
-              "slot": "expression"
+              "slot": "content"
             }
           ]
         }
@@ -3832,8 +4253,8 @@
           "within": [],
           "pins": [
             {
-              "member": "exportKind",
-              "slot": "export_kind",
+              "member": "typeOnly",
+              "slot": "type_only",
               "text": "typeof"
             }
           ],
@@ -3845,7 +4266,7 @@
                 "op": "eq",
                 "text": "typeof",
                 "fields": [
-                  "export_kind"
+                  "type_only"
                 ],
                 "kinds": []
               }
@@ -3891,7 +4312,7 @@
           "path": [
             {
               "owner": "export_specifier",
-              "slot": "export_kind"
+              "slot": "type_only"
             }
           ]
         }
@@ -3949,22 +4370,10 @@
                 "types": [
                   425
                 ],
-                "fields": [],
+                "fields": [
+                  "declaration"
+                ],
                 "kinds": [
-                  "function_declaration",
-                  "generator_function_declaration",
-                  "class_declaration",
-                  "lexical_declaration",
-                  "variable_declaration",
-                  "function_signature",
-                  "abstract_class_declaration",
-                  "module",
-                  "internal_module",
-                  "type_alias_declaration",
-                  "enum_declaration",
-                  "interface_declaration",
-                  "import_alias",
-                  "ambient_declaration",
                   "export_statement_default_declaration_default_kw"
                 ]
               }
@@ -4121,7 +4530,7 @@
           "path": [
             {
               "owner": "export_statement_default_from",
-              "slot": "type"
+              "slot": "type_only"
             }
           ]
         },
@@ -4276,11 +4685,11 @@
         {
           "name": "value",
           "route": "slot",
-          "slot": "expression",
+          "slot": "value",
           "path": [
             {
               "owner": "export_statement_equals_export",
-              "slot": "expression"
+              "slot": "value"
             }
           ]
         }
@@ -4521,7 +4930,7 @@
           "path": [
             {
               "owner": "for_in_statement",
-              "slot": "await"
+              "slot": "async"
             }
           ]
         }
@@ -4585,15 +4994,6 @@
         }
       ]
     },
-    "formal_parameters": {
-      "container": {
-        "kinds": [
-          "formal_parameters_elements"
-        ],
-        "terminals": [],
-        "list": false
-      }
-    },
     "formal_parameters_elements": {
       "container": {
         "kinds": [
@@ -4602,6 +5002,15 @@
         ],
         "terminals": [],
         "list": true
+      }
+    },
+    "formal_parameters_elements_receiver_group": {
+      "container": {
+        "kinds": [
+          "formal_parameters_elements"
+        ],
+        "terminals": [],
+        "list": false
       }
     },
     "function_declaration": {
@@ -4650,17 +5059,6 @@
           ]
         },
         {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "function_declaration",
-              "slot": "parameters"
-            }
-          ]
-        },
-        {
           "name": "returnType",
           "route": "slot",
           "slot": "return_type",
@@ -4679,6 +5077,131 @@
             {
               "owner": "function_declaration",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "function_declaration",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "function_declaration",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "formal_parameters_elements_receiver_group"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_declaration",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "receiver"
             }
           ]
         }
@@ -4730,17 +5253,6 @@
           ]
         },
         {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "function_expression",
-              "slot": "parameters"
-            }
-          ]
-        },
-        {
           "name": "returnType",
           "route": "slot",
           "slot": "return_type",
@@ -4759,6 +5271,131 @@
             {
               "owner": "function_expression",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "function_expression",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "function_expression",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "formal_parameters_elements_receiver_group"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_expression",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "receiver"
             }
           ]
         }
@@ -4810,17 +5447,6 @@
           ]
         },
         {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "function_signature",
-              "slot": "parameters"
-            }
-          ]
-        },
-        {
           "name": "returnType",
           "route": "slot",
           "slot": "return_type",
@@ -4828,6 +5454,131 @@
             {
               "owner": "function_signature",
               "slot": "return_type"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "function_signature",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "function_signature",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "formal_parameters_elements_receiver_group"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_signature",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "receiver"
             }
           ]
         }
@@ -4857,17 +5608,6 @@
           ]
         },
         {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "function_type",
-              "slot": "parameters"
-            }
-          ]
-        },
-        {
           "name": "returnType",
           "route": "slot",
           "slot": "return_type",
@@ -4875,6 +5615,131 @@
             {
               "owner": "function_type",
               "slot": "return_type"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "function_type",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "function_type",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "formal_parameters_elements_receiver_group"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "function_type",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "receiver"
             }
           ]
         }
@@ -4926,17 +5791,6 @@
           ]
         },
         {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "generator_function",
-              "slot": "parameters"
-            }
-          ]
-        },
-        {
           "name": "returnType",
           "route": "slot",
           "slot": "return_type",
@@ -4955,6 +5809,131 @@
             {
               "owner": "generator_function",
               "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "generator_function",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "generator_function",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "formal_parameters_elements_receiver_group"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "generator_function",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "receiver"
             }
           ]
         },
@@ -5013,17 +5992,6 @@
           ]
         },
         {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "generator_function_declaration",
-              "slot": "parameters"
-            }
-          ]
-        },
-        {
           "name": "returnType",
           "route": "slot",
           "slot": "return_type",
@@ -5051,6 +6019,131 @@
           "via": [],
           "token": "*",
           "path": null
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "generator_function_declaration",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "generator_function_declaration",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "formal_parameters_elements_receiver_group"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "generator_function_declaration",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "receiver"
+            }
+          ]
         }
       ]
     },
@@ -5445,8 +6538,8 @@
           "within": [],
           "pins": [
             {
-              "member": "importKind",
-              "slot": "import_kind",
+              "member": "typeOnly",
+              "slot": "type_only",
               "text": "typeof"
             }
           ],
@@ -5458,7 +6551,7 @@
                 "op": "eq",
                 "text": "typeof",
                 "fields": [
-                  "import_kind"
+                  "type_only"
                 ],
                 "kinds": []
               }
@@ -5504,7 +6597,7 @@
           "path": [
             {
               "owner": "import_specifier_as",
-              "slot": "import_kind"
+              "slot": "type_only"
             }
           ]
         }
@@ -5519,8 +6612,8 @@
           "within": [],
           "pins": [
             {
-              "member": "importKind",
-              "slot": "import_kind",
+              "member": "typeOnly",
+              "slot": "type_only",
               "text": "typeof"
             }
           ],
@@ -5532,7 +6625,7 @@
                 "op": "eq",
                 "text": "typeof",
                 "fields": [
-                  "import_kind"
+                  "type_only"
                 ],
                 "kinds": []
               }
@@ -5567,7 +6660,7 @@
           "path": [
             {
               "owner": "import_specifier_name",
-              "slot": "import_kind"
+              "slot": "type_only"
             }
           ]
         }
@@ -5591,8 +6684,8 @@
           "within": [],
           "pins": [
             {
-              "member": "importClause",
-              "slot": "import_clause",
+              "member": "typeOnly",
+              "slot": "type_only",
               "text": "typeof"
             }
           ],
@@ -5604,7 +6697,7 @@
                 "op": "eq",
                 "text": "typeof",
                 "fields": [
-                  "import_clause"
+                  "type_only"
                 ],
                 "kinds": []
               }
@@ -5653,7 +6746,7 @@
           "path": [
             {
               "owner": "import_statement",
-              "slot": "import_clause"
+              "slot": "type_only"
             }
           ]
         },
@@ -6279,11 +7372,11 @@
         {
           "name": "value",
           "route": "slot",
-          "slot": "argument",
+          "slot": "value",
           "path": [
             {
               "owner": "literal_type_negative_number",
-              "slot": "argument"
+              "slot": "value"
             }
           ]
         }
@@ -6420,7 +7513,7 @@
           "path": [
             {
               "owner": "member_expression",
-              "slot": "separator"
+              "slot": "optional_chain"
             }
           ]
         },
@@ -6542,7 +7635,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  461
+                  466
                 ],
                 "fields": [
                   "name"
@@ -6615,7 +7708,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  461
+                  466
                 ],
                 "fields": [
                   "name"
@@ -6688,7 +7781,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  461
+                  466
                 ],
                 "fields": [
                   "name"
@@ -6732,7 +7825,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  461
+                  466
                 ],
                 "fields": [
                   "name"
@@ -6748,8 +7841,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "get"
             }
           ],
@@ -6761,7 +7854,7 @@
                 "op": "eq",
                 "text": "get",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -6803,8 +7896,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "get"
             }
           ],
@@ -6816,7 +7909,7 @@
                 "op": "eq",
                 "text": "get",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -6858,8 +7951,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "get"
             }
           ],
@@ -6871,7 +7964,7 @@
                 "op": "eq",
                 "text": "get",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -6913,8 +8006,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "set"
             }
           ],
@@ -6926,7 +8019,7 @@
                 "op": "eq",
                 "text": "set",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -6968,8 +8061,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "set"
             }
           ],
@@ -6981,7 +8074,7 @@
                 "op": "eq",
                 "text": "set",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -7023,8 +8116,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "set"
             }
           ],
@@ -7036,7 +8129,7 @@
                 "op": "eq",
                 "text": "set",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -7189,8 +8282,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "get"
             }
           ],
@@ -7202,7 +8295,7 @@
                 "op": "eq",
                 "text": "get",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -7215,8 +8308,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "set"
             }
           ],
@@ -7228,7 +8321,7 @@
                 "op": "eq",
                 "text": "set",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -7322,17 +8415,6 @@
           ]
         },
         {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "method_definition",
-              "slot": "parameters"
-            }
-          ]
-        },
-        {
           "name": "returnType",
           "route": "slot",
           "slot": "return_type",
@@ -7362,7 +8444,7 @@
           "path": [
             {
               "owner": "method_definition",
-              "slot": "accessor_kind"
+              "slot": "generator"
             }
           ]
         },
@@ -7399,6 +8481,131 @@
               "slot": "name"
             }
           ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "method_definition",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "method_definition",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "formal_parameters_elements_receiver_group"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "method_definition",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "receiver"
+            }
+          ]
         }
       ]
     },
@@ -7411,8 +8618,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "get"
             }
           ],
@@ -7424,7 +8631,7 @@
                 "op": "eq",
                 "text": "get",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -7466,8 +8673,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "get"
             }
           ],
@@ -7479,7 +8686,7 @@
                 "op": "eq",
                 "text": "get",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -7521,8 +8728,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "get"
             }
           ],
@@ -7534,7 +8741,7 @@
                 "op": "eq",
                 "text": "get",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -7576,8 +8783,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "set"
             }
           ],
@@ -7589,7 +8796,7 @@
                 "op": "eq",
                 "text": "set",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -7631,8 +8838,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "set"
             }
           ],
@@ -7644,7 +8851,7 @@
                 "op": "eq",
                 "text": "set",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -7686,8 +8893,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "set"
             }
           ],
@@ -7699,7 +8906,7 @@
                 "op": "eq",
                 "text": "set",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -7852,8 +9059,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "get"
             }
           ],
@@ -7865,7 +9072,7 @@
                 "op": "eq",
                 "text": "get",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -7878,8 +9085,8 @@
           "within": [],
           "pins": [
             {
-              "member": "accessorKind",
-              "slot": "accessor_kind",
+              "member": "generator",
+              "slot": "generator",
               "text": "set"
             }
           ],
@@ -7891,7 +9098,7 @@
                 "op": "eq",
                 "text": "set",
                 "fields": [
-                  "accessor_kind"
+                  "generator"
                 ],
                 "kinds": []
               }
@@ -7985,17 +9192,6 @@
           ]
         },
         {
-          "name": "parameters",
-          "route": "slot",
-          "slot": "parameters",
-          "path": [
-            {
-              "owner": "method_signature",
-              "slot": "parameters"
-            }
-          ]
-        },
-        {
           "name": "returnType",
           "route": "slot",
           "slot": "return_type",
@@ -8014,7 +9210,7 @@
           "path": [
             {
               "owner": "method_signature",
-              "slot": "accessor_kind"
+              "slot": "generator"
             }
           ]
         },
@@ -8037,6 +9233,131 @@
             {
               "owner": "method_signature",
               "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "method_signature",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "method_signature",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "formal_parameters_elements_receiver_group"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "method_signature",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "receiver"
             }
           ]
         }
@@ -8269,11 +9590,11 @@
         {
           "name": "function",
           "route": "slot",
-          "slot": "constructor",
+          "slot": "function",
           "path": [
             {
               "owner": "new_expression",
-              "slot": "constructor"
+              "slot": "function"
             }
           ]
         },
@@ -9271,11 +10592,11 @@
         {
           "name": "name",
           "route": "slot",
-          "slot": "pattern",
+          "slot": "name",
           "path": [
             {
               "owner": "optional_parameter",
-              "slot": "pattern"
+              "slot": "name"
             }
           ]
         },
@@ -10263,6 +11584,193 @@
         "list": false
       }
     },
+    "receiver_parameter_declaration": {
+      "vocab": "declaration.parameter",
+      "read": [
+        {
+          "vocab": "declaration.parameter.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318,
+                  32,
+                  33,
+                  34
+                ],
+                "fields": [],
+                "kinds": [
+                  "accessibility_modifier"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "fields": [],
+                "kinds": [
+                  "accessibility_modifier"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.parameter.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318,
+                  32,
+                  33,
+                  34
+                ],
+                "fields": [],
+                "kinds": [
+                  "accessibility_modifier"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "fields": [],
+                "kinds": [
+                  "accessibility_modifier"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.parameter.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  318,
+                  32,
+                  33,
+                  34
+                ],
+                "fields": [],
+                "kinds": [
+                  "accessibility_modifier"
+                ]
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "fields": [],
+                "kinds": [
+                  "accessibility_modifier"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.parameter",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "declaration.parameter.receiver",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "decorators",
+          "route": "slot",
+          "slot": "decorator",
+          "path": [
+            {
+              "owner": "receiver_parameter_declaration",
+              "slot": "decorator"
+            }
+          ]
+        },
+        {
+          "name": "override",
+          "route": "slot",
+          "slot": "override",
+          "path": [
+            {
+              "owner": "receiver_parameter_declaration",
+              "slot": "override"
+            }
+          ]
+        },
+        {
+          "name": "readonly",
+          "route": "slot",
+          "slot": "readonly",
+          "path": [
+            {
+              "owner": "receiver_parameter_declaration",
+              "slot": "readonly"
+            }
+          ]
+        },
+        {
+          "name": "type",
+          "route": "slot",
+          "slot": "type",
+          "path": [
+            {
+              "owner": "receiver_parameter_declaration",
+              "slot": "type"
+            }
+          ]
+        },
+        {
+          "name": "default",
+          "route": "slot",
+          "slot": "value",
+          "path": [
+            {
+              "owner": "receiver_parameter_declaration",
+              "slot": "value"
+            }
+          ]
+        }
+      ]
+    },
     "regex": {
       "vocab": "literal.regex",
       "read": [
@@ -10440,6 +11948,28 @@
           ]
         },
         {
+          "vocab": "declaration.parameter.receiver",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  119
+                ],
+                "fields": [
+                  "name"
+                ],
+                "kinds": []
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.parameter",
           "toplevel": true,
           "within": [],
@@ -10484,11 +12014,11 @@
         {
           "name": "name",
           "route": "slot",
-          "slot": "pattern",
+          "slot": "name",
           "path": [
             {
               "owner": "required_parameter",
-              "slot": "pattern"
+              "slot": "name"
             }
           ]
         },
@@ -10637,11 +12167,11 @@
         {
           "name": "type",
           "route": "slot",
-          "slot": "type_annotation",
+          "slot": "type",
           "path": [
             {
               "owner": "satisfies_expression",
-              "slot": "type_annotation"
+              "slot": "type"
             }
           ]
         }
@@ -11398,11 +12928,11 @@
         {
           "name": "handlers",
           "route": "slot",
-          "slot": "handler",
+          "slot": "handlers",
           "path": [
             {
               "owner": "try_statement",
-              "slot": "handler"
+              "slot": "handlers"
             }
           ]
         },
@@ -11672,11 +13202,11 @@
         {
           "name": "default",
           "route": "slot",
-          "slot": "value",
+          "slot": "default",
           "path": [
             {
               "owner": "type_parameter",
-              "slot": "value"
+              "slot": "default"
             }
           ]
         },
@@ -11692,7 +13222,7 @@
             }
           ],
           "parent": "constraint",
-          "slot": "type",
+          "slot": "bounds",
           "multiple": false,
           "path": [
             {
@@ -11701,7 +13231,7 @@
             },
             {
               "owner": "constraint",
-              "slot": "type"
+              "slot": "bounds"
             }
           ]
         }
@@ -12566,14 +14096,14 @@
       {
         "depth": 2,
         "paths": 111,
-        "kinds": 144,
+        "kinds": 145,
         "refinements": 6
       },
       {
         "depth": 3,
-        "paths": 96,
-        "kinds": 81,
-        "refinements": 70
+        "paths": 97,
+        "kinds": 82,
+        "refinements": 71
       },
       {
         "depth": 4,

@@ -653,17 +653,17 @@ export function buildAttributeItem(...args: unknown[]) {
 			);
 }
 function _buildAttributeItem(value: Admit<T.Attribute>): T.AttributeItem.Bound {
-	const _attribute = rejectBareText(value, 'AttributeItem.attribute', 'a built Attribute');
+	const _content = rejectBareText(value, 'AttributeItem.content', 'a built Attribute');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AttributeItem as const,
 		$source: 2 as const,
 		$named: true as const,
-		_attribute,
+		_content,
 		$with: {
-			attribute: (value: Admit<T.Attribute>) => rebuilt(node, handle, () => _buildAttributeItem(value))
+			content: (value: Admit<T.Attribute>) => rebuilt(node, handle, () => _buildAttributeItem(value))
 		},
-		attribute: () => hydrateStoredSlot(node, '_attribute'),
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -692,17 +692,17 @@ export function buildInnerAttributeItem(...args: unknown[]) {
 			);
 }
 function _buildInnerAttributeItem(value: Admit<T.Attribute>): T.InnerAttributeItem.Bound {
-	const _attribute = rejectBareText(value, 'InnerAttributeItem.attribute', 'a built Attribute');
+	const _content = rejectBareText(value, 'InnerAttributeItem.content', 'a built Attribute');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.InnerAttributeItem as const,
 		$source: 2 as const,
 		$named: true as const,
-		_attribute,
+		_content,
 		$with: {
-			attribute: (value: Admit<T.Attribute>) => rebuilt(node, handle, () => _buildInnerAttributeItem(value))
+			content: (value: Admit<T.Attribute>) => rebuilt(node, handle, () => _buildInnerAttributeItem(value))
 		},
-		attribute: () => hydrateStoredSlot(node, '_attribute'),
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1370,7 +1370,9 @@ export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Bound
 		'StaticItem.visibilityModifier',
 		'a built VisibilityModifier'
 	);
-	const _ref = coerceBooleanKeywordStorage(rejectBareText(config.ref, 'StaticItem.ref', 'a boolean'));
+	const _by_reference = coerceBooleanKeywordStorage(
+		rejectBareText(config.byReference, 'StaticItem.byReference', 'a boolean')
+	);
 	const _mutable = coerceBooleanKeywordStorage(rejectBareText(config.mutable, 'StaticItem.mutable', 'a boolean'));
 	const _name = rejectBareText(config.name, 'StaticItem.name', 'buildIdentifier(…)');
 	const _type = admitAliasContent<NonNullable<T.StaticItem['_type']>>(
@@ -1388,7 +1390,7 @@ export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Bound
 		$source: 2 as const,
 		$named: true as const,
 		_visibility_modifier,
-		_ref,
+		_by_reference,
 		_mutable,
 		_name,
 		_type,
@@ -1396,8 +1398,8 @@ export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Bound
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildStaticItem({ ...config, visibilityModifier: value })),
-			ref: (value?: Admit<NonNullable<T.StaticItem.Config>['ref']>) =>
-				rebuilt(node, handle, () => buildStaticItem({ ...config, ref: value })),
+			byReference: (value?: Admit<NonNullable<T.StaticItem.Config>['byReference']>) =>
+				rebuilt(node, handle, () => buildStaticItem({ ...config, byReference: value })),
 			mutable: (value?: Admit<NonNullable<T.StaticItem.Config>['mutable']>) =>
 				rebuilt(node, handle, () => buildStaticItem({ ...config, mutable: value })),
 			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildStaticItem({ ...config, name: value })),
@@ -1407,7 +1409,7 @@ export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Bound
 				rebuilt(node, handle, () => buildStaticItem({ ...config, value: value }))
 		},
 		visibilityModifier: () => hydrateStoredSlot(node, '_visibility_modifier'),
-		ref: () => _ref,
+		byReference: () => _by_reference,
 		mutable: () => _mutable,
 		name: () => hydrateStoredSlot(node, '_name'),
 		type: () => hydrateStoredSlot(node, '_type'),
@@ -1434,8 +1436,8 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
 	);
 	const _type_parameters = rejectBareText(config.typeParameters, 'TypeItem.typeParameters', 'a built TypeParameters');
 	const _where_clause = rejectBareText(config.whereClause, 'TypeItem.whereClause', 'a built WhereClause');
-	const _type = admitAliasContent<NonNullable<T.TypeItem['_type']>>(
-		rejectBareText(kindIdStorage<NonNullable<T.TypeItem['_type']>>(config.type), 'TypeItem.type', 'a built Type'),
+	const _value = admitAliasContent<NonNullable<T.TypeItem['_value']>>(
+		rejectBareText(kindIdStorage<NonNullable<T.TypeItem['_value']>>(config.value), 'TypeItem.value', 'a built Type'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _trailing_where_clause = rejectBareText(
@@ -1452,7 +1454,7 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
 		_name,
 		_type_parameters,
 		_where_clause,
-		_type,
+		_value,
 		_trailing_where_clause,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
@@ -1480,8 +1482,8 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
 						(value?: Admit<T.WhereClause>) => buildTypeItem({ ...config, whereClause: value })
 					)
 				),
-			type: (value: Admit<NonNullable<T.TypeItem.Config>['type']>) =>
-				rebuilt(node, handle, () => buildTypeItem({ ...config, type: value })),
+			value: (value: Admit<NonNullable<T.TypeItem.Config>['value']>) =>
+				rebuilt(node, handle, () => buildTypeItem({ ...config, value: value })),
 			trailingWhereClause: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -1495,7 +1497,7 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
 		name: () => hydrateStoredSlot(node, '_name'),
 		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
 		whereClause: () => hydrateStoredSlot(node, '_where_clause'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		value: () => hydrateStoredSlot(node, '_value'),
 		trailingWhereClause: () => hydrateStoredSlot(node, '_trailing_where_clause'),
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -1576,19 +1578,8 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 						(value?: Admit<T.TypeParameters>) => buildFunctionItem({ ...config, typeParameters: value })
 					)
 				),
-			parameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{
-							kind: TSKindId.Parameters as const,
-							optional: false,
-							make: buildParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
-						},
-						(value: Admit<T.Parameters>) => buildFunctionItem({ ...config, parameters: value })
-					)
-				),
+			parameters: (value: Admit<T.Parameters>) =>
+				rebuilt(node, handle, () => buildFunctionItem({ ...config, parameters: value })),
 			returnType: (value?: Admit<NonNullable<T.FunctionItem.Config>['returnType']>) =>
 				rebuilt(node, handle, () => buildFunctionItem({ ...config, returnType: value })),
 			whereClause: (...args: unknown[]) =>
@@ -1682,19 +1673,8 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 						(value?: Admit<T.TypeParameters>) => buildFunctionSignatureItem({ ...config, typeParameters: value })
 					)
 				),
-			parameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{
-							kind: TSKindId.Parameters as const,
-							optional: false,
-							make: buildParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
-						},
-						(value: Admit<T.Parameters>) => buildFunctionSignatureItem({ ...config, parameters: value })
-					)
-				),
+			parameters: (value: Admit<T.Parameters>) =>
+				rebuilt(node, handle, () => buildFunctionSignatureItem({ ...config, parameters: value })),
 			returnType: (value?: Admit<NonNullable<T.FunctionSignatureItem.Config>['returnType']>) =>
 				rebuilt(node, handle, () => buildFunctionSignatureItem({ ...config, returnType: value })),
 			whereClause: (...args: unknown[]) =>
@@ -2207,9 +2187,9 @@ export function buildConstParameter(config: T.ConstParameter.Config): T.ConstPar
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	const _value = rejectBareText(
-		kindIdStorage<NonNullable<T.ConstParameter['_value']>>(config.value),
-		'ConstParameter.value',
+	const _default = rejectBareText(
+		kindIdStorage<NonNullable<T.ConstParameter['_default']>>(config.default),
+		'ConstParameter.default',
 		'buildIdentifier(…)'
 	);
 	const handle = currentHandle();
@@ -2219,18 +2199,18 @@ export function buildConstParameter(config: T.ConstParameter.Config): T.ConstPar
 		$named: true as const,
 		_name,
 		_type,
-		_value,
+		_default,
 		$with: {
 			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildConstParameter({ ...config, name: value })),
 			type: (value: Admit<NonNullable<T.ConstParameter.Config>['type']>) =>
 				rebuilt(node, handle, () => buildConstParameter({ ...config, type: value })),
-			value: (value?: Admit<NonNullable<T.ConstParameter.Config>['value']>) =>
-				rebuilt(node, handle, () => buildConstParameter({ ...config, value: value }))
+			default: (value?: Admit<NonNullable<T.ConstParameter.Config>['default']>) =>
+				rebuilt(node, handle, () => buildConstParameter({ ...config, default: value }))
 		},
 		name: () => hydrateStoredSlot(node, '_name'),
 		type: () => hydrateStoredSlot(node, '_type'),
-		value: () => hydrateStoredSlot(node, '_value'),
+		default: () => hydrateStoredSlot(node, '_default'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2247,10 +2227,10 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _bounds = rejectBareText(config.bounds, 'TypeParameter.bounds', 'a built TraitBounds');
-	const _default_type = admitAliasContent<NonNullable<T.TypeParameter['_default_type']>>(
+	const _default = admitAliasContent<NonNullable<T.TypeParameter['_default']>>(
 		rejectBareText(
-			kindIdStorage<NonNullable<T.TypeParameter['_default_type']>>(config.defaultType),
-			'TypeParameter.defaultType',
+			kindIdStorage<NonNullable<T.TypeParameter['_default']>>(config.default),
+			'TypeParameter.default',
 			'a built Type'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -2262,18 +2242,18 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 		$named: true as const,
 		_name,
 		_bounds,
-		_default_type,
+		_default,
 		$with: {
 			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildTypeParameter({ ...config, name: value })),
 			bounds: (value?: Admit<T.TraitBounds>) =>
 				rebuilt(node, handle, () => buildTypeParameter({ ...config, bounds: value })),
-			defaultType: (value?: Admit<NonNullable<T.TypeParameter.Config>['defaultType']>) =>
-				rebuilt(node, handle, () => buildTypeParameter({ ...config, defaultType: value }))
+			default: (value?: Admit<NonNullable<T.TypeParameter.Config>['default']>) =>
+				rebuilt(node, handle, () => buildTypeParameter({ ...config, default: value }))
 		},
 		name: () => hydrateStoredSlot(node, '_name'),
 		bounds: () => hydrateStoredSlot(node, '_bounds'),
-		defaultType: () => hydrateStoredSlot(node, '_default_type'),
+		default: () => hydrateStoredSlot(node, '_default'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2314,9 +2294,9 @@ export function buildLifetimeParameter(config: T.LifetimeParameter.Config): T.Li
 
 export function buildLetDeclaration(config: T.LetDeclaration.Config): T.LetDeclaration.Bound {
 	const _mutable = coerceBooleanKeywordStorage(rejectBareText(config.mutable, 'LetDeclaration.mutable', 'a boolean'));
-	const _pattern = rejectBareText(
-		kindIdStorage<NonNullable<T.LetDeclaration['_pattern']>>(config.pattern),
-		'LetDeclaration.pattern',
+	const _name = rejectBareText(
+		kindIdStorage<NonNullable<T.LetDeclaration['_name']>>(config.name),
+		'LetDeclaration.name',
 		'a built Pattern'
 	);
 	const _type = admitAliasContent<NonNullable<T.LetDeclaration['_type']>>(
@@ -2339,15 +2319,15 @@ export function buildLetDeclaration(config: T.LetDeclaration.Config): T.LetDecla
 		$source: 2 as const,
 		$named: true as const,
 		_mutable,
-		_pattern,
+		_name,
 		_type,
 		_value,
 		_alternative,
 		$with: {
 			mutable: (value?: Admit<NonNullable<T.LetDeclaration.Config>['mutable']>) =>
 				rebuilt(node, handle, () => buildLetDeclaration({ ...config, mutable: value })),
-			pattern: (value: Admit<NonNullable<T.LetDeclaration.Config>['pattern']>) =>
-				rebuilt(node, handle, () => buildLetDeclaration({ ...config, pattern: value })),
+			name: (value: Admit<NonNullable<T.LetDeclaration.Config>['name']>) =>
+				rebuilt(node, handle, () => buildLetDeclaration({ ...config, name: value })),
 			type: (value?: Admit<NonNullable<T.LetDeclaration.Config>['type']>) =>
 				rebuilt(node, handle, () => buildLetDeclaration({ ...config, type: value })),
 			value: (value?: Admit<NonNullable<T.LetDeclaration.Config>['value']>) =>
@@ -2356,7 +2336,7 @@ export function buildLetDeclaration(config: T.LetDeclaration.Config): T.LetDecla
 				rebuilt(node, handle, () => buildLetDeclaration({ ...config, alternative: value }))
 		},
 		mutable: () => _mutable,
-		pattern: () => hydrateStoredSlot(node, '_pattern'),
+		name: () => hydrateStoredSlot(node, '_name'),
 		type: () => hydrateStoredSlot(node, '_type'),
 		value: () => hydrateStoredSlot(node, '_value'),
 		alternative: () => hydrateStoredSlot(node, '_alternative'),
@@ -2548,13 +2528,13 @@ function _buildUseList(value?: Admit<T.UseClauses>): T.UseList.Bound {
 }
 
 export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bound {
-	const _path = rejectKeywordText(
+	const _name = rejectKeywordText(
 		rejectBareText(
-			kindIdStorage<NonNullable<T.UseAsClause['_path']>>(config.path),
-			'UseAsClause.path',
+			kindIdStorage<NonNullable<T.UseAsClause['_name']>>(config.name),
+			'UseAsClause.name',
 			'buildIdentifier(…)'
 		),
-		'UseAsClause.path',
+		'UseAsClause.name',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
@@ -2564,14 +2544,14 @@ export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bo
 		$type: TSKindId.UseAsClause as const,
 		$source: 2 as const,
 		$named: true as const,
-		_path,
+		_name,
 		_alias,
 		$with: {
-			path: (value: Admit<NonNullable<T.UseAsClause.Config>['path']>) =>
-				rebuilt(node, handle, () => buildUseAsClause({ ...config, path: value })),
+			name: (value: Admit<NonNullable<T.UseAsClause.Config>['name']>) =>
+				rebuilt(node, handle, () => buildUseAsClause({ ...config, name: value })),
 			alias: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildUseAsClause({ ...config, alias: value }))
 		},
-		path: () => hydrateStoredSlot(node, '_path'),
+		name: () => hydrateStoredSlot(node, '_name'),
 		alias: () => hydrateStoredSlot(node, '_alias'),
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -2645,53 +2625,15 @@ function _buildUseWildcard(value?: Admit<T.UseWildcardGroup>): T.UseWildcard.Bou
 }
 
 export function buildParameters(): T.EmptyParameters;
-export function buildParameters(value?: Admit<T.ParametersElements>): ReturnType<typeof _buildParameters>;
+export function buildParameters(value?: Admit<T.ParametersElements | T.ParametersElementsReceiver>): T.Parameters.Bound;
 export function buildParameters(
-	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: NonEmptyArray<
-		Admit<
-			| T.AttributedParameter
-			| T.Parameter
-			| T.SelfParameter
-			| T.VariadicParameter
-			| TSKindId.Underscore
-			| T.Type
-			| T.TypeIdentifier.Types
-		>
-	>
-): ReturnType<typeof _buildParameters>;
-export function buildParameters(
-	...elements: NonEmptyArray<
-		Admit<
-			| T.AttributedParameter
-			| T.Parameter
-			| T.SelfParameter
-			| T.VariadicParameter
-			| TSKindId.Underscore
-			| T.Type
-			| T.TypeIdentifier.Types
-		>
-	>
-): ReturnType<typeof _buildParameters>;
-export function buildParameters(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildParameters(args[0] as Parameters<typeof _buildParameters>[0]);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.ParametersElements as const);
-	return prebuilt
-		? _buildParameters(args[0] as Parameters<typeof _buildParameters>[0])
-		: _buildParameters(
-				(buildParametersElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildParameters>[0]
-			);
-}
-function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bound {
-	const _elements = hydrateStored(rejectBareText(value, 'Parameters.elements', 'a built ParametersElements'));
-	const listView = ownerView(_elements, '_item');
-	if (listView.stored === undefined) refuseReadStub('_elements');
+	value?: Admit<T.ParametersElements | T.ParametersElementsReceiver>
+): T.Parameters.Bound {
+	const _elements = rejectBareText(
+		value,
+		'Parameters.elements',
+		'a built ParametersElements / ParametersElementsReceiver'
+	);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Parameters as const,
@@ -2699,34 +2641,10 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 		$named: true as const,
 		_elements,
 		$with: {
-			elements: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{
-							kind: TSKindId.ParametersElements as const,
-							optional: true,
-							make: buildParametersElements,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
-						},
-						(value?: Admit<T.ParametersElements>) => _buildParameters(value)
-					)
-				)
+			elements: (value?: Admit<T.ParametersElements | T.ParametersElementsReceiver>) =>
+				rebuilt(node, handle, () => buildParameters(value))
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listView.stored?.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () =>
-			listItems(ownerElements(node.elements(), 'items'), {
-				kind: TSKindId.AttributedParameter,
-				content: 'content',
-				decorations: ['_attribute_item']
-			}),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2735,7 +2653,6 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.stored?.length ?? 0);
 	return node as unknown as T.Parameters.Bound;
 }
 
@@ -3152,19 +3069,8 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 				),
 			content: (value: Admit<T.FunctionTypeTraitForm | T.FunctionTypeFnForm>) =>
 				rebuilt(node, handle, () => buildFunctionType({ ...config, content: value })),
-			parameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{
-							kind: TSKindId.Parameters as const,
-							optional: false,
-							make: buildParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
-						},
-						(value: Admit<T.Parameters>) => buildFunctionType({ ...config, parameters: value })
-					)
-				),
+			parameters: (value: Admit<T.Parameters>) =>
+				rebuilt(node, handle, () => buildFunctionType({ ...config, parameters: value })),
 			returnType: (value?: Admit<NonNullable<T.FunctionType.Config>['returnType']>) =>
 				rebuilt(node, handle, () => buildFunctionType({ ...config, returnType: value }))
 		},
@@ -3613,7 +3519,9 @@ export function buildTypeBinding(config: T.TypeBinding.Config): T.TypeBinding.Bo
 
 export function buildReferenceType(config: T.ReferenceType.Config): T.ReferenceType.Bound {
 	const _lifetime = rejectBareText(config.lifetime, 'ReferenceType.lifetime', 'a built Lifetime');
-	const _mutable = coerceBooleanKeywordStorage(rejectBareText(config.mutable, 'ReferenceType.mutable', 'a boolean'));
+	const _exclusive = coerceBooleanKeywordStorage(
+		rejectBareText(config.exclusive, 'ReferenceType.exclusive', 'a boolean')
+	);
 	const _type = admitAliasContent<NonNullable<T.ReferenceType['_type']>>(
 		rejectBareText(
 			kindIdStorage<NonNullable<T.ReferenceType['_type']>>(config.type),
@@ -3628,18 +3536,18 @@ export function buildReferenceType(config: T.ReferenceType.Config): T.ReferenceT
 		$source: 2 as const,
 		$named: true as const,
 		_lifetime,
-		_mutable,
+		_exclusive,
 		_type,
 		$with: {
 			lifetime: (value?: Admit<T.Lifetime>) =>
 				rebuilt(node, handle, () => buildReferenceType({ ...config, lifetime: value })),
-			mutable: (value?: Admit<NonNullable<T.ReferenceType.Config>['mutable']>) =>
-				rebuilt(node, handle, () => buildReferenceType({ ...config, mutable: value })),
+			exclusive: (value?: Admit<NonNullable<T.ReferenceType.Config>['exclusive']>) =>
+				rebuilt(node, handle, () => buildReferenceType({ ...config, exclusive: value })),
 			type: (value: Admit<NonNullable<T.ReferenceType.Config>['type']>) =>
 				rebuilt(node, handle, () => buildReferenceType({ ...config, type: value }))
 		},
 		lifetime: () => hydrateStoredSlot(node, '_lifetime'),
-		mutable: () => _mutable,
+		exclusive: () => _exclusive,
 		type: () => hydrateStoredSlot(node, '_type'),
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -3769,22 +3677,22 @@ export function buildDynamicType(
 export const buildMutableSpecifier: TSKindId.MutableSpecifier = TSKindId.MutableSpecifier;
 
 export function buildMacroInvocation(config: T.MacroInvocation.Config): T.MacroInvocation.Bound {
-	const _macro = rejectBareText(config.macro, 'MacroInvocation.macro', 'buildIdentifier(…)');
+	const _function = rejectBareText(config.function, 'MacroInvocation.function', 'buildIdentifier(…)');
 	const _arguments = rejectBareText(config.arguments, 'MacroInvocation.arguments', 'a built DelimTokenTree');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MacroInvocation as const,
 		$source: 2 as const,
 		$named: true as const,
-		_macro,
+		_function,
 		_arguments,
 		$with: {
-			macro: (value: Admit<T.ScopedIdentifier | T.Identifier>) =>
-				rebuilt(node, handle, () => buildMacroInvocation({ ...config, macro: value })),
+			function: (value: Admit<T.ScopedIdentifier | T.Identifier>) =>
+				rebuilt(node, handle, () => buildMacroInvocation({ ...config, function: value })),
 			arguments: (value: Admit<T.DelimTokenTree>) =>
 				rebuilt(node, handle, () => buildMacroInvocation({ ...config, arguments: value }))
 		},
-		macro: () => hydrateStoredSlot(node, '_macro'),
+		function: () => hydrateStoredSlot(node, '_function'),
 		arguments: () => hydrateStoredSlot(node, '_arguments'),
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -3930,9 +3838,9 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryE
 		'UnaryExpression.operator',
 		'a kind id'
 	);
-	const _operand = rejectBareText(
-		kindIdStorage<NonNullable<T.UnaryExpression['_operand']>>(config.operand),
-		'UnaryExpression.operand',
+	const _argument = rejectBareText(
+		kindIdStorage<NonNullable<T.UnaryExpression['_argument']>>(config.argument),
+		'UnaryExpression.argument',
 		'a built Expression'
 	);
 	const handle = currentHandle();
@@ -3941,15 +3849,15 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryE
 		$source: 2 as const,
 		$named: true as const,
 		_operator,
-		_operand,
+		_argument,
 		$with: {
 			operator: (value: Admit<NonNullable<T.UnaryExpression.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildUnaryExpression({ ...config, operator: value })),
-			operand: (value: Admit<NonNullable<T.UnaryExpression.Config>['operand']>) =>
-				rebuilt(node, handle, () => buildUnaryExpression({ ...config, operand: value }))
+			argument: (value: Admit<NonNullable<T.UnaryExpression.Config>['argument']>) =>
+				rebuilt(node, handle, () => buildUnaryExpression({ ...config, argument: value }))
 		},
 		operator: () => _operator,
-		operand: () => hydrateStoredSlot(node, '_operand'),
+		argument: () => hydrateStoredSlot(node, '_argument'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -3961,9 +3869,9 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryE
 }
 
 export function buildTryExpression(value: Admit<T.Expression>): T.TryExpression.Bound {
-	const _value = rejectBareText(
-		kindIdStorage<NonNullable<T.TryExpression['_value']>>(value),
-		'TryExpression.value',
+	const _argument = rejectBareText(
+		kindIdStorage<NonNullable<T.TryExpression['_argument']>>(value),
+		'TryExpression.argument',
 		'a built Expression'
 	);
 	const handle = currentHandle();
@@ -3971,11 +3879,11 @@ export function buildTryExpression(value: Admit<T.Expression>): T.TryExpression.
 		$type: TSKindId.TryExpression as const,
 		$source: 2 as const,
 		$named: true as const,
-		_value,
+		_argument,
 		$with: {
-			value: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildTryExpression(value))
+			argument: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildTryExpression(value))
 		},
-		value: () => hydrateStoredSlot(node, '_value'),
+		argument: () => hydrateStoredSlot(node, '_argument'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4113,9 +4021,9 @@ export function buildCompoundAssignmentExpr(config: T.CompoundAssignmentExpr.Con
 }
 
 export function buildTypeCastExpression(config: T.TypeCastExpression.Config): T.TypeCastExpression.Bound {
-	const _value = rejectBareText(
-		kindIdStorage<NonNullable<T.TypeCastExpression['_value']>>(config.value),
-		'TypeCastExpression.value',
+	const _expression = rejectBareText(
+		kindIdStorage<NonNullable<T.TypeCastExpression['_expression']>>(config.expression),
+		'TypeCastExpression.expression',
 		'a built Expression'
 	);
 	const _type = admitAliasContent<NonNullable<T.TypeCastExpression['_type']>>(
@@ -4131,15 +4039,15 @@ export function buildTypeCastExpression(config: T.TypeCastExpression.Config): T.
 		$type: TSKindId.TypeCastExpression as const,
 		$source: 2 as const,
 		$named: true as const,
-		_value,
+		_expression,
 		_type,
 		$with: {
-			value: (value: Admit<NonNullable<T.TypeCastExpression.Config>['value']>) =>
-				rebuilt(node, handle, () => buildTypeCastExpression({ ...config, value: value })),
+			expression: (value: Admit<NonNullable<T.TypeCastExpression.Config>['expression']>) =>
+				rebuilt(node, handle, () => buildTypeCastExpression({ ...config, expression: value })),
 			type: (value: Admit<NonNullable<T.TypeCastExpression.Config>['type']>) =>
 				rebuilt(node, handle, () => buildTypeCastExpression({ ...config, type: value }))
 		},
-		value: () => hydrateStoredSlot(node, '_value'),
+		expression: () => hydrateStoredSlot(node, '_expression'),
 		type: () => hydrateStoredSlot(node, '_type'),
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -4360,28 +4268,28 @@ export function buildParenthesizedExpression(value: Admit<T.Expression>): T.Pare
 
 export function buildTupleExpression(config: T.TupleExpression.Config): T.TupleExpression.Bound {
 	const _attributes = rejectBareText(config.attributes ?? [], 'TupleExpression.attributes', 'a built AttributeItem');
-	const _expressions = rejectBareText(config.expressions, 'TupleExpression.expressions', 'a built Expressions');
+	const _elements = rejectBareText(config.elements, 'TupleExpression.elements', 'a built Expressions');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TupleExpression as const,
 		$source: 2 as const,
 		$named: true as const,
 		_attributes,
-		_expressions,
+		_elements,
 		$with: {
 			attributes: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () => buildTupleExpression({ ...config, attributes: restItems('attributes', values) })),
-			expressions: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.Expressions as const, optional: false, make: buildExpressions },
-						(value: Admit<T.Expressions>) => buildTupleExpression({ ...config, expressions: value })
+						(value: Admit<T.Expressions>) => buildTupleExpression({ ...config, elements: value })
 					)
 				)
 		},
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
-		expressions: () => hydrateStoredSlot(node, '_expressions'),
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4528,24 +4436,24 @@ export function buildShorthandFieldInitializer(
 		'ShorthandFieldInitializer.attributes',
 		'a built AttributeItem'
 	);
-	const _name = rejectBareText(config.name, 'ShorthandFieldInitializer.name', 'buildIdentifier(…)');
+	const _field = rejectBareText(config.field, 'ShorthandFieldInitializer.field', 'buildIdentifier(…)');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ShorthandFieldInitializer as const,
 		$source: 2 as const,
 		$named: true as const,
 		_attributes,
-		_name,
+		_field,
 		$with: {
 			attributes: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
 					buildShorthandFieldInitializer({ ...config, attributes: restItems('attributes', values) })
 				),
-			name: (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildShorthandFieldInitializer({ ...config, name: value }))
+			field: (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildShorthandFieldInitializer({ ...config, field: value }))
 		},
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
-		name: () => hydrateStoredSlot(node, '_name'),
+		field: () => hydrateStoredSlot(node, '_field'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -4557,11 +4465,7 @@ export function buildShorthandFieldInitializer(
 }
 
 export function buildFieldInitializer(config: T.FieldInitializer.Config): T.FieldInitializer.Bound {
-	const _attribute_item = rejectBareText(
-		config.attributeItem ?? [],
-		'FieldInitializer.attributeItem',
-		'a built AttributeItem'
-	);
+	const _attributes = rejectBareText(config.attributes ?? [], 'FieldInitializer.attributes', 'a built AttributeItem');
 	const _field = admitAliasContent<NonNullable<T.FieldInitializer['_field']>>(
 		rejectBareText(config.field, 'FieldInitializer.field', 'a built FieldIdentifier / IntegerLiteral'),
 		[[[1], (v: unknown) => buildFieldIdentifier(v as never)]]
@@ -4576,20 +4480,18 @@ export function buildFieldInitializer(config: T.FieldInitializer.Config): T.Fiel
 		$type: TSKindId.FieldInitializer as const,
 		$source: 2 as const,
 		$named: true as const,
-		_attribute_item,
+		_attributes,
 		_field,
 		_value,
 		$with: {
-			attributeItems: (...values: Admit<T.AttributeItem[]>) =>
-				rebuilt(node, handle, () =>
-					buildFieldInitializer({ ...config, attributeItem: restItems('attributeItems', values) })
-				),
+			attributes: (...values: Admit<T.AttributeItem[]>) =>
+				rebuilt(node, handle, () => buildFieldInitializer({ ...config, attributes: restItems('attributes', values) })),
 			field: (value: Admit<T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildFieldInitializer({ ...config, field: value })),
 			value: (value: Admit<NonNullable<T.FieldInitializer.Config>['value']>) =>
 				rebuilt(node, handle, () => buildFieldInitializer({ ...config, value: value }))
 		},
-		attributeItems: () => hydrateStoredSlots(node, '_attribute_item'),
+		attributes: () => hydrateStoredSlots(node, '_attributes'),
 		field: () => hydrateStoredSlot(node, '_field'),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
@@ -4764,9 +4666,9 @@ export function buildElseClause(value: Admit<T.Block | T.IfExpression>): T.ElseC
 }
 
 export function buildMatchExpression(config: T.MatchExpression.Config): T.MatchExpression.Bound {
-	const _value = rejectBareText(
-		kindIdStorage<NonNullable<T.MatchExpression['_value']>>(config.value),
-		'MatchExpression.value',
+	const _subject = rejectBareText(
+		kindIdStorage<NonNullable<T.MatchExpression['_subject']>>(config.subject),
+		'MatchExpression.subject',
 		'a built Expression'
 	);
 	const _body = rejectBareText(
@@ -4779,15 +4681,15 @@ export function buildMatchExpression(config: T.MatchExpression.Config): T.MatchE
 		$type: TSKindId.MatchExpression as const,
 		$source: 2 as const,
 		$named: true as const,
-		_value,
+		_subject,
 		_body,
 		$with: {
-			value: (value: Admit<NonNullable<T.MatchExpression.Config>['value']>) =>
-				rebuilt(node, handle, () => buildMatchExpression({ ...config, value: value })),
+			subject: (value: Admit<NonNullable<T.MatchExpression.Config>['subject']>) =>
+				rebuilt(node, handle, () => buildMatchExpression({ ...config, subject: value })),
 			body: (value: Admit<T.MatchBlock>) =>
 				rebuilt(node, handle, () => buildMatchExpression({ ...config, body: value }))
 		},
-		value: () => hydrateStoredSlot(node, '_value'),
+		subject: () => hydrateStoredSlot(node, '_subject'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -5059,14 +4961,14 @@ export function buildLoopExpression(config: Partial<T.LoopExpression.Config> = {
 
 export function buildForExpression(config: T.ForExpression.Config): T.ForExpression.Bound {
 	const _label = rejectBareText(config.label, 'ForExpression.label', 'a built Label');
-	const _pattern = rejectBareText(
-		kindIdStorage<NonNullable<T.ForExpression['_pattern']>>(config.pattern),
-		'ForExpression.pattern',
+	const _left = rejectBareText(
+		kindIdStorage<NonNullable<T.ForExpression['_left']>>(config.left),
+		'ForExpression.left',
 		'a built Pattern'
 	);
-	const _value = rejectBareText(
-		kindIdStorage<NonNullable<T.ForExpression['_value']>>(config.value),
-		'ForExpression.value',
+	const _right = rejectBareText(
+		kindIdStorage<NonNullable<T.ForExpression['_right']>>(config.right),
+		'ForExpression.right',
 		'a built Expression'
 	);
 	const _body = rejectBareText(
@@ -5080,20 +4982,20 @@ export function buildForExpression(config: T.ForExpression.Config): T.ForExpress
 		$source: 2 as const,
 		$named: true as const,
 		_label,
-		_pattern,
-		_value,
+		_left,
+		_right,
 		_body,
 		$with: {
 			label: (value?: Admit<T.Label>) => rebuilt(node, handle, () => buildForExpression({ ...config, label: value })),
-			pattern: (value: Admit<NonNullable<T.ForExpression.Config>['pattern']>) =>
-				rebuilt(node, handle, () => buildForExpression({ ...config, pattern: value })),
-			value: (value: Admit<NonNullable<T.ForExpression.Config>['value']>) =>
-				rebuilt(node, handle, () => buildForExpression({ ...config, value: value })),
+			left: (value: Admit<NonNullable<T.ForExpression.Config>['left']>) =>
+				rebuilt(node, handle, () => buildForExpression({ ...config, left: value })),
+			right: (value: Admit<NonNullable<T.ForExpression.Config>['right']>) =>
+				rebuilt(node, handle, () => buildForExpression({ ...config, right: value })),
 			body: (value: Admit<T.Block>) => rebuilt(node, handle, () => buildForExpression({ ...config, body: value }))
 		},
 		label: () => hydrateStoredSlot(node, '_label'),
-		pattern: () => hydrateStoredSlot(node, '_pattern'),
-		value: () => hydrateStoredSlot(node, '_value'),
+		left: () => hydrateStoredSlot(node, '_left'),
+		right: () => hydrateStoredSlot(node, '_right'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -5309,13 +5211,13 @@ export function buildAwaitExpression(value: Admit<T.Expression>): T.AwaitExpress
 }
 
 export function buildFieldExpression(config: T.FieldExpression.Config): T.FieldExpression.Bound {
-	const _value = rejectBareText(
-		kindIdStorage<NonNullable<T.FieldExpression['_value']>>(config.value),
-		'FieldExpression.value',
+	const _object = rejectBareText(
+		kindIdStorage<NonNullable<T.FieldExpression['_object']>>(config.object),
+		'FieldExpression.object',
 		'a built Expression'
 	);
-	const _field = admitAliasContent<NonNullable<T.FieldExpression['_field']>>(
-		rejectBareText(config.field, 'FieldExpression.field', 'a built FieldIdentifier / IntegerLiteral'),
+	const _property = admitAliasContent<NonNullable<T.FieldExpression['_property']>>(
+		rejectBareText(config.property, 'FieldExpression.property', 'a built FieldIdentifier / IntegerLiteral'),
 		[[[1], (v: unknown) => buildFieldIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
@@ -5323,16 +5225,16 @@ export function buildFieldExpression(config: T.FieldExpression.Config): T.FieldE
 		$type: TSKindId.FieldExpression as const,
 		$source: 2 as const,
 		$named: true as const,
-		_value,
-		_field,
+		_object,
+		_property,
 		$with: {
-			value: (value: Admit<NonNullable<T.FieldExpression.Config>['value']>) =>
-				rebuilt(node, handle, () => buildFieldExpression({ ...config, value: value })),
-			field: (value: Admit<T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildFieldExpression({ ...config, field: value }))
+			object: (value: Admit<NonNullable<T.FieldExpression.Config>['object']>) =>
+				rebuilt(node, handle, () => buildFieldExpression({ ...config, object: value })),
+			property: (value: Admit<T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildFieldExpression({ ...config, property: value }))
 		},
-		value: () => hydrateStoredSlot(node, '_value'),
-		field: () => hydrateStoredSlot(node, '_field'),
+		object: () => hydrateStoredSlot(node, '_object'),
+		property: () => hydrateStoredSlot(node, '_property'),
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -5657,17 +5559,17 @@ export function buildSlicePattern(...args: unknown[]) {
 			);
 }
 function _buildSlicePattern(value?: Admit<T.Patterns>): T.SlicePattern.Bound {
-	const _patterns = hydrateStored(rejectBareText(value, 'SlicePattern.patterns', 'a built Patterns'));
-	const listView = ownerView(_patterns, '_item');
-	if (listView.stored === undefined) refuseReadStub('_patterns');
+	const _elements = hydrateStored(rejectBareText(value, 'SlicePattern.elements', 'a built Patterns'));
+	const listView = ownerView(_elements, '_item');
+	if (listView.stored === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SlicePattern as const,
 		$source: 2 as const,
 		$named: true as const,
-		_patterns,
+		_elements,
 		$with: {
-			patterns: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -5676,10 +5578,10 @@ function _buildSlicePattern(value?: Admit<T.Patterns>): T.SlicePattern.Bound {
 					)
 				)
 		},
-		patterns: () => hydrateStoredSlot(node, '_patterns'),
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.stored?.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.patterns(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -5855,7 +5757,9 @@ export function buildCapturedPattern(config: T.CapturedPattern.Config): T.Captur
 }
 
 export function buildReferencePattern(config: T.ReferencePattern.Config): T.ReferencePattern.Bound {
-	const _mutable = coerceBooleanKeywordStorage(rejectBareText(config.mutable, 'ReferencePattern.mutable', 'a boolean'));
+	const _exclusive = coerceBooleanKeywordStorage(
+		rejectBareText(config.exclusive, 'ReferencePattern.exclusive', 'a boolean')
+	);
 	const _pattern = rejectBareText(
 		kindIdStorage<NonNullable<T.ReferencePattern['_pattern']>>(config.pattern),
 		'ReferencePattern.pattern',
@@ -5866,15 +5770,15 @@ export function buildReferencePattern(config: T.ReferencePattern.Config): T.Refe
 		$type: TSKindId.ReferencePattern as const,
 		$source: 2 as const,
 		$named: true as const,
-		_mutable,
+		_exclusive,
 		_pattern,
 		$with: {
-			mutable: (value?: Admit<NonNullable<T.ReferencePattern.Config>['mutable']>) =>
-				rebuilt(node, handle, () => buildReferencePattern({ ...config, mutable: value })),
+			exclusive: (value?: Admit<NonNullable<T.ReferencePattern.Config>['exclusive']>) =>
+				rebuilt(node, handle, () => buildReferencePattern({ ...config, exclusive: value })),
 			pattern: (value: Admit<NonNullable<T.ReferencePattern.Config>['pattern']>) =>
 				rebuilt(node, handle, () => buildReferencePattern({ ...config, pattern: value }))
 		},
-		mutable: () => _mutable,
+		exclusive: () => _exclusive,
 		pattern: () => hydrateStoredSlot(node, '_pattern'),
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -6747,13 +6651,7 @@ function _buildUseClauses(
 export function buildParametersElements(
 	...elements: NonEmptyArray<
 		Admit<
-			| T.AttributedParameter
-			| T.Parameter
-			| T.SelfParameter
-			| T.VariadicParameter
-			| TSKindId.Underscore
-			| T.Type
-			| T.TypeIdentifier.Types
+			T.AttributedParameter | T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type | T.TypeIdentifier.Types
 		>
 	>
 ): ReturnType<typeof _buildParametersElements>;
@@ -6761,13 +6659,7 @@ export function buildParametersElements(
 	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 	...elements: NonEmptyArray<
 		Admit<
-			| T.AttributedParameter
-			| T.Parameter
-			| T.SelfParameter
-			| T.VariadicParameter
-			| TSKindId.Underscore
-			| T.Type
-			| T.TypeIdentifier.Types
+			T.AttributedParameter | T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type | T.TypeIdentifier.Types
 		>
 	>
 ): ReturnType<typeof _buildParametersElements>;
@@ -6777,7 +6669,6 @@ export function buildParametersElements(
 		| Admit<
 				| T.AttributedParameter
 				| T.Parameter
-				| T.SelfParameter
 				| T.VariadicParameter
 				| TSKindId.Underscore
 				| T.Type
@@ -6794,13 +6685,7 @@ export function buildParametersElements(
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		Admit<
-			| T.AttributedParameter
-			| T.Parameter
-			| T.SelfParameter
-			| T.VariadicParameter
-			| TSKindId.Underscore
-			| T.Type
-			| T.TypeIdentifier.Types
+			T.AttributedParameter | T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type | T.TypeIdentifier.Types
 		>
 	>;
 	return _buildParametersElements(elements, options);
@@ -6808,13 +6693,7 @@ export function buildParametersElements(
 function _buildParametersElements(
 	elements: NonEmptyArray<
 		Admit<
-			| T.AttributedParameter
-			| T.Parameter
-			| T.SelfParameter
-			| T.VariadicParameter
-			| TSKindId.Underscore
-			| T.Type
-			| T.TypeIdentifier.Types
+			T.AttributedParameter | T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type | T.TypeIdentifier.Types
 		>
 	>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
@@ -6850,7 +6729,6 @@ function _buildParametersElements(
 								Admit<
 									| T.AttributedParameter
 									| T.Parameter
-									| T.SelfParameter
 									| T.VariadicParameter
 									| TSKindId.Underscore
 									| T.Type
@@ -10655,7 +10533,7 @@ export function buildAttributedParameter(config: T.AttributedParameter.Config): 
 		rejectBareText(
 			kindIdStorage<NonNullable<T.AttributedParameter['_content']>>(config.content),
 			'AttributedParameter.content',
-			'a built Parameter / SelfParameter / VariadicParameter / Type'
+			'a built Parameter / VariadicParameter / Type'
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
@@ -11036,6 +10914,269 @@ export const buildIndent: TSKindId.Indent = TSKindId.Indent;
 
 export const buildDedent: TSKindId.Dedent = TSKindId.Dedent;
 
+export function buildReceiverParameterDeclaration(
+	config: T.ReceiverParameterDeclaration.Config
+): T.ReceiverParameterDeclaration.Bound {
+	const _mutable = coerceBooleanKeywordStorage(
+		rejectBareText(config.mutable, 'ReceiverParameterDeclaration.mutable', 'a boolean')
+	);
+	const _type = admitAliasContent<NonNullable<T.ReceiverParameterDeclaration['_type']>>(
+		rejectBareText(
+			kindIdStorage<NonNullable<T.ReceiverParameterDeclaration['_type']>>(config.type),
+			'ReceiverParameterDeclaration.type',
+			'a built Type'
+		),
+		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+	);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ReceiverParameterDeclaration as const,
+		$source: 2 as const,
+		$named: true as const,
+		_mutable,
+		_type,
+		$with: {
+			mutable: (value?: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['mutable']>) =>
+				rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, mutable: value })),
+			type: (value: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['type']>) =>
+				rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, type: value }))
+		},
+		mutable: () => _mutable,
+		type: () => hydrateStoredSlot(node, '_type'),
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ReceiverParameterDeclaration.Bound;
+}
+
+export function buildAttributedParameterReceiver(
+	config: T.AttributedParameterReceiver.Config
+): T.AttributedParameterReceiver.Bound {
+	const _attribute_item = rejectBareText(
+		config.attributeItem,
+		'AttributedParameterReceiver.attributeItem',
+		'a built AttributeItem'
+	);
+	const _content = rejectBareText(
+		config.content,
+		'AttributedParameterReceiver.content',
+		'a built ReceiverParameterDeclaration / SelfParameter'
+	);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.AttributedParameterReceiver as const,
+		$source: 2 as const,
+		$named: true as const,
+		_attribute_item,
+		_content,
+		$with: {
+			attributeItem: (value?: Admit<T.AttributeItem>) =>
+				rebuilt(node, handle, () => buildAttributedParameterReceiver({ ...config, attributeItem: value })),
+			content: (value: Admit<T.ReceiverParameterDeclaration | T.SelfParameter>) =>
+				rebuilt(node, handle, () => buildAttributedParameterReceiver({ ...config, content: value }))
+		},
+		attributeItem: () => hydrateStoredSlot(node, '_attribute_item'),
+		content: () => hydrateStoredSlot(node, '_content'),
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.AttributedParameterReceiver.Bound;
+}
+
+export function buildParametersElementsReceiver(
+	config: T.ParametersElementsReceiver.Config
+): T.ParametersElementsReceiver.Bound {
+	const _receiver = rejectBareText(
+		config.receiver,
+		'ParametersElementsReceiver.receiver',
+		'a built AttributedParameterReceiver'
+	);
+	const _parameters_elements_receiver_group = rejectBareText(
+		config.parametersElementsReceiverGroup,
+		'ParametersElementsReceiver.parametersElementsReceiverGroup',
+		'a built ParametersElementsReceiverGroup'
+	);
+	const readGroup_receiver = () => _receiver;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ParametersElementsReceiver as const,
+		$source: 2 as const,
+		$named: true as const,
+		_receiver,
+		_parameters_elements_receiver_group,
+		$with: {
+			receiver: (value: Admit<T.AttributedParameterReceiver>) =>
+				rebuilt(node, handle, () => buildParametersElementsReceiver({ ...config, receiver: value })),
+			parametersElementsReceiverGroup: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.ParametersElementsReceiverGroup as const,
+							optional: true,
+							make: buildParametersElementsReceiverGroup,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+						},
+						(value?: Admit<T.ParametersElementsReceiverGroup>) =>
+							buildParametersElementsReceiver({ ...config, parametersElementsReceiverGroup: value })
+					)
+				),
+			attributeItem: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'receiver',
+							stored: '_receiver',
+							kind: TSKindId.AttributedParameterReceiver as const,
+							make: buildAttributedParameterReceiver,
+							keys: [
+								{ name: 'attributeItem', rest: false },
+								{ name: 'content', rest: false, required: true }
+							]
+						},
+						'attributeItem',
+						args,
+						(value: Admit<T.AttributedParameterReceiver>) =>
+							buildParametersElementsReceiver({ ...config, receiver: value }),
+						() => readGroup_receiver.call(node)
+					)
+				),
+			content: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'receiver',
+							stored: '_receiver',
+							kind: TSKindId.AttributedParameterReceiver as const,
+							make: buildAttributedParameterReceiver,
+							keys: [
+								{ name: 'attributeItem', rest: false },
+								{ name: 'content', rest: false, required: true }
+							]
+						},
+						'content',
+						args,
+						(value: Admit<T.AttributedParameterReceiver>) =>
+							buildParametersElementsReceiver({ ...config, receiver: value }),
+						() => readGroup_receiver.call(node)
+					)
+				)
+		},
+		receiver: () => hydrateStoredSlot(node, '_receiver'),
+		parametersElementsReceiverGroup: () => hydrateStoredSlot(node, '_parameters_elements_receiver_group'),
+		attributeItem:
+			_receiver === undefined ? undefined : () => groupField(readGroup_receiver.call(node), 'attributeItem'),
+		content: _receiver === undefined ? undefined : () => groupField(readGroup_receiver.call(node), 'content'),
+		[STORED_SLOT_READERS]: { receiver: readGroup_receiver },
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ParametersElementsReceiver.Bound;
+}
+
+export function buildParametersElementsReceiverGroup(
+	value?: Admit<T.ParametersElements>
+): ReturnType<typeof _buildParametersElementsReceiverGroup>;
+export function buildParametersElementsReceiverGroup(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: NonEmptyArray<
+		Admit<
+			T.AttributedParameter | T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type | T.TypeIdentifier.Types
+		>
+	>
+): ReturnType<typeof _buildParametersElementsReceiverGroup>;
+export function buildParametersElementsReceiverGroup(
+	...elements: NonEmptyArray<
+		Admit<
+			T.AttributedParameter | T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type | T.TypeIdentifier.Types
+		>
+	>
+): ReturnType<typeof _buildParametersElementsReceiverGroup>;
+export function buildParametersElementsReceiverGroup(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
+		return _buildParametersElementsReceiverGroup(
+			args[0] as Parameters<typeof _buildParametersElementsReceiverGroup>[0]
+		);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ParametersElements as const);
+	return prebuilt
+		? _buildParametersElementsReceiverGroup(args[0] as Parameters<typeof _buildParametersElementsReceiverGroup>[0])
+		: _buildParametersElementsReceiverGroup(
+				(buildParametersElements as (...a: unknown[]) => unknown)(...args) as Parameters<
+					typeof _buildParametersElementsReceiverGroup
+				>[0]
+			);
+}
+function _buildParametersElementsReceiverGroup(
+	value?: Admit<T.ParametersElements>
+): T.ParametersElementsReceiverGroup.Bound {
+	const _elements = hydrateStored(
+		rejectBareText(value, 'ParametersElementsReceiverGroup.elements', 'a built ParametersElements')
+	);
+	const listView = ownerView(_elements, '_item');
+	if (listView.stored === undefined) refuseReadStub('_elements');
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ParametersElementsReceiverGroup as const,
+		$source: 2 as const,
+		$named: true as const,
+		_elements,
+		$with: {
+			elements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.ParametersElements as const,
+							optional: true,
+							make: buildParametersElements,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+						},
+						(value?: Admit<T.ParametersElements>) => _buildParametersElementsReceiverGroup(value)
+					)
+				)
+		},
+		elements: () => hydrateStoredSlot(node, '_elements'),
+		length: listView.stored?.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node.elements(), 'items'), {
+				kind: TSKindId.AttributedParameter,
+				content: 'content',
+				decorations: ['_attribute_item']
+			}),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', undefined),
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listView.stored?.length ?? 0);
+	return node as unknown as T.ParametersElementsReceiverGroup.Bound;
+}
+
 export function buildErrorSentinel(text: string): T.ErrorSentinel.Bound {
 	if (text.length === 0) throw new Error(`_error_sentinel: text must be non-empty`);
 	const handle = currentHandle();
@@ -11373,14 +11514,10 @@ export type FluentKindMap = {
 	raw_string_literal_end: T.RawStringLiteralEnd;
 	doc_comment: T.DocComment;
 	_block_comment_content: T.BlockCommentContent;
-	_tight: T.Tight;
-	_space: T.Space;
-	_tab: T.Tab;
-	_newline: T.Newline;
-	_blankline: T.Blankline;
-	_double_blankline: T.DoubleBlankline;
-	_indent: T.Indent;
-	_dedent: T.Dedent;
+	receiver_parameter_declaration: T.ReceiverParameterDeclaration.Bound;
+	attributed_parameter_receiver: T.AttributedParameterReceiver.Bound;
+	parameters_elements_receiver: T.ParametersElementsReceiver.Bound;
+	parameters_elements_receiver_group: T.ParametersElementsReceiverGroup.Bound;
 	_error_sentinel: T.ErrorSentinel;
 	type_identifier: T.TypeIdentifier.Bound;
 	field_identifier: T.FieldIdentifier.Bound;
@@ -11640,14 +11777,10 @@ export const _factoryMap = {
 	raw_string_literal_end: buildRawStringLiteralEnd,
 	doc_comment: buildDocComment,
 	_block_comment_content: buildBlockCommentContent,
-	_tight: buildTight,
-	_space: buildSpace,
-	_tab: buildTab,
-	_newline: buildNewline,
-	_blankline: buildBlankline,
-	_double_blankline: buildDoubleBlankline,
-	_indent: buildIndent,
-	_dedent: buildDedent,
+	receiver_parameter_declaration: buildReceiverParameterDeclaration,
+	attributed_parameter_receiver: buildAttributedParameterReceiver,
+	parameters_elements_receiver: buildParametersElementsReceiver,
+	parameters_elements_receiver_group: buildParametersElementsReceiverGroup,
 	_error_sentinel: buildErrorSentinel,
 	type_identifier: buildTypeIdentifier,
 	field_identifier: buildFieldIdentifier,

@@ -101,7 +101,7 @@ export const scopedUseList = bundle(F.buildScopedUseList, C.coerceToScopedUseLis
 export const useList = bundle(F.buildUseList, C.coerceToUseList);
 export const useAsClause = bundle(F.buildUseAsClause, C.coerceToUseAsClause, { key: 'useAsClause', max: 1 });
 export const useWildcard = bundle(F.buildUseWildcard, C.coerceToUseWildcard, { key: 'useWildcard', max: 1 });
-export const parameters = bundle(F.buildParameters, C.coerceToParameters);
+export const parameters = bundle(F.buildParameters, C.coerceToParameters, { key: 'parameters', max: 1 });
 export const selfParameter = bundle(F.buildSelfParameter, C.coerceToSelfParameter, { key: 'selfParameter', max: 1 });
 export const variadicParameter = bundle(F.buildVariadicParameter, C.coerceToVariadicParameter, {
 	key: 'variadicParameter',
@@ -497,3 +497,13 @@ export const structItemUnit = bundle(F.buildStructItemUnit, C.coerceToStructItem
 	key: 'structItemUnit',
 	max: 1
 });
+export const receiverParameterDeclaration = bundle(
+	F.buildReceiverParameterDeclaration,
+	C.coerceToReceiverParameterDeclaration,
+	{ key: 'receiverParameterDeclaration', max: 1 }
+);
+export const parametersElementsReceiver = bundle(
+	F.buildParametersElementsReceiver,
+	C.coerceToParametersElementsReceiver,
+	{ key: 'parametersElementsReceiver', max: 1 }
+);

@@ -119,7 +119,7 @@ function armPattern(variant: string, [first, second]: readonly [string, string])
 
 function writeCall(format: string) {
 	return engine.build.macroInvocation.strict({
-		macro: id('write'),
+		function: id('write'),
 		arguments: engine.build.delimTokenTree.paren.strict(tok(id('f')), tok(engine.kinds.Comma), tok(str(format))),
 	});
 }
@@ -132,22 +132,26 @@ export function displayImplStrict() {
 				engine.build.statement.function.strict({
 					name: id('fmt'),
 					parameters: engine.build.parameters.strict(
-						engine.build.selfParameter.strict({ reference: true }),
+						engine.build.parametersElementsReceiver.strict({
+							content: engine.build.selfParameter.strict({ reference: true }),
+							parametersElementsReceiverGroup: [engine.build.parametersElements.strict(
 						engine.build.parameter.strict({
 							name: id('f'),
 							type: engine.build.referenceType.strict({
-								mutable: true,
+								exclusive: true,
 								type: engine.build.genericType.strict({
 									type: scopedTy(ns('std', 'fmt'), 'Formatter'),
 									typeArguments: engine.build.typeArguments.strict(engine.build.lifetime('_')),
 								}),
 							}),
 						})
+							) ]
+						})
 					),
 					returnType: scopedTy(ns('std', 'fmt'), 'Result'),
 					body: engine.build.block.strict({
 						trailingExpression: engine.build.matchExpression.strict({
-							value: engine.build.self,
+							subject: engine.build.self,
 							body: engine.build.matchBlock.strict({
 								// A comma-terminated arm carrying a macro invocation: the arm
 								// variant holds the whole arm, its pattern and its value.
@@ -187,14 +191,14 @@ export function applyEditsFnStrict() {
 	return engine.build.statement.function.strict({
 		visibilityModifier: engine.build.visibilityModifier.pub(),
 		name: id('apply_edits'),
-		parameters: engine.build.parameters.strict(
+		parameters: engine.build.parameters.strict(engine.build.parametersElements.strict(
 			engine.build.parameter.strict({ name: id('source'), type: engine.build.referenceType.strict({ type: id('str') }) }),
 			engine.build.parameter.strict({
 				mutable: true,
 				name: id('edits'),
 				type: engine.build.genericType.strict({ type: id('Vec'), typeArguments: engine.build.typeArguments.strict(id('Edit')) }),
 			})
-		),
+		)),
 		returnType: engine.build.genericType.strict({
 			type: id('Result'),
 			typeArguments: engine.build.typeArguments.strict(id('String'), id('SpliceError')),
@@ -202,15 +206,15 @@ export function applyEditsFnStrict() {
 		body: engine.build.block.strict({
 			statements: [
 				engine.build.statement.let.strict({
-					pattern: id('source_len'),
+					name: id('source_len'),
 					value: engine.build.callExpression.strict({
-						function: engine.build.fieldExpression.strict({ value: id('source'), field: id('len') }),
+						function: engine.build.fieldExpression.strict({ object: id('source'), property: id('len') }),
 						arguments: engine.build.arguments.strict(),
 					}),
 				}),
 				engine.build.statement.expression.withSemi(
 					engine.build.callExpression.strict({
-						function: engine.build.fieldExpression.strict({ value: id('edits'), field: id('sort_by') }),
+						function: engine.build.fieldExpression.strict({ object: id('edits'), property: id('sort_by') }),
 						arguments: engine.build.arguments.strict(
 							// A config-merge form: the child block's own `body` key merges
 							// into the closure's config rather than filling a `content` seat.

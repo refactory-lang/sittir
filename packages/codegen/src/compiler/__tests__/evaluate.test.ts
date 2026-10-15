@@ -1,6 +1,6 @@
 import { CHOICE, OPTIONAL, REPEAT, REPEAT1, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -275,6 +275,25 @@ describe('Evaluate — edge cases', () => {
 	});
 
 	describe('desugar-divergence — body-pattern-group fallback', () => {
+		it('preserves the base evaluation diagnostics through a second grammar layer', async () => {
+			const dir = mkdtempSync(resolve(tmpdir(), 'sittir-evaluate-layer-'));
+			const entry = resolve(dir, 'grammar.js');
+			try {
+				const baseSource = readFileSync(fixture('body-pattern-group-divergence-grammar.js'), 'utf8').replace(
+					'module.exports =',
+					'const base ='
+				);
+				writeFileSync(
+					entry,
+					`${baseSource}\nmodule.exports = grammar(base, { name: 'layered_diagnostics', rules: {} });`
+				);
+				const raw = await evaluate(entry, NO_FILE_TYPES);
+				expect(raw.desugarDivergences).toEqual([{ site: 'body-pattern-group', name: '_orphan_group' }]);
+			} finally {
+				rmSync(dir, { recursive: true, force: true });
+			}
+		});
+
 		it('records a divergence event when a groups: entry mints with no wire-side deposit', async () => {
 			const raw = await evaluate(fixture('body-pattern-group-divergence-grammar.js'), NO_FILE_TYPES);
 			// `_orphan_group` is referenced nowhere else in the grammar, so it's
@@ -666,7 +685,7 @@ module.exports = grammar(base, {
 });
 
 describe('evaluateSynthesized', () => {
-	it('names the rules evaluate itself adds: visible externals and render-only rules, not the grammar\'s own', async () => {
+	it("names the rules evaluate itself adds: visible externals and render-only rules, not the grammar's own", async () => {
 		const scm = await evaluatePackage(grammarPackage('scm'));
 		expect([...scm.evaluateSynthesized].filter((kind) => scm.ruleCatalog.rootsByKind.has(kind)).sort()).toEqual([
 			'_blankline',

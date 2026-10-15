@@ -62,12 +62,14 @@ const MODULES = {
 	optionsBlock: '../../codegen/src/dsl/wire/options-block.ts',
 	kindDiscriminant: '../../codegen/src/emitters/kind-discriminant.ts',
 	ruleMetadata: '../../codegen/src/dsl/rule-metadata.ts',
+	rulePatterns: '../../codegen/src/dsl/rule-patterns.ts',
 	types: '../../codegen/src/emitters/types.ts',
 	templates: '../../codegen/src/emitters/templates.ts',
 	from: '../../codegen/src/emitters/from.ts',
 	sitePreferences: '../../codegen/src/compiler/model/site-preferences.ts',
 	bind: '../../codegen/src/dsl/bind.ts',
-	nodeModel: '../../codegen/src/emitters/node-model.ts'
+	nodeModel: '../../codegen/src/emitters/node-model.ts',
+	sourceParser: '../../codegen/src/transpile/source-parser.ts'
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -105,12 +107,14 @@ export interface CodegenSurface {
 	optionsBlock: typeof import('../../codegen/src/dsl/wire/options-block.ts');
 	kindDiscriminant: typeof import('../../codegen/src/emitters/kind-discriminant.ts');
 	ruleMetadata: typeof import('../../codegen/src/dsl/rule-metadata.ts');
+	rulePatterns: typeof import('../../codegen/src/dsl/rule-patterns.ts');
 	types: typeof import('../../codegen/src/emitters/types.ts');
 	templates: typeof import('../../codegen/src/emitters/templates.ts');
 	from: typeof import('../../codegen/src/emitters/from.ts');
 	sitePreferences: typeof import('../../codegen/src/compiler/model/site-preferences.ts');
 	bind: typeof import('../../codegen/src/dsl/bind.ts');
 	nodeModel: typeof import('../../codegen/src/emitters/node-model.ts');
+	sourceParser: typeof import('../../codegen/src/transpile/source-parser.ts');
 }
 
 type AnyFn = (...args: never[]) => unknown;
@@ -165,6 +169,7 @@ export async function load<M extends keyof CodegenSurface>(module: M): Promise<C
 // from the phase signatures so they can never drift from the real pipeline.
 // ---------------------------------------------------------------------------
 export type NodeMap = import('../../codegen/src/compiler/types.ts').NodeMap;
+export type SerializedNodeModel = import('../../codegen/src/emitters/node-model.ts').SerializedNodeModel;
 export type AssembledNode = import('../../codegen/src/compiler/model/node-map.ts').AssembledNode;
 export type RenderBody = import('../../codegen/src/emitters/render-body.ts').Body;
 export type GeneratedIdTables = import('../../codegen/src/dsl/symbol-table.ts').GeneratedIdTables;

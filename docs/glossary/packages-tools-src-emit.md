@@ -635,3 +635,6 @@ On the loose surface a slot whose kind is the owner keeps the owner's call (`Pri
 
 The names a generated file uses for its engine and for the language descriptor it imports. The engine is named after the grammar's first declared file type (`rs`, `ts`, `py`), read from the descriptor's `fileTypes`, the one place that fact is stamped. A grammar that declares none is named after the grammar. When the engine's name is the grammar's name (no file type, or a file type equal to the name, as with `scm`), the descriptor import takes `<grammar>Language` so the two do not collide.
 
+
+
+The factory-source printer spreads a child list only when the canonical `forwardsTo` fact names that exact child and the child has no owned trivia. The former `absorbedKinds` fallback re-derived eligibility from a child's hoisted status and could flatten a list through a direct choice owner after receiver splitting. That alternative derivation is removed; direct choices retain their built list node.

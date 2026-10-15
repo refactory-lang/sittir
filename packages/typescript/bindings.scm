@@ -97,6 +97,7 @@
 (variable_declarator_definite "!" @definite)
 (variable_declarator_plain name: [(array_pattern) (object_pattern)]) @declaration.variable.pattern
 (required_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter
+(required_parameter pattern: (this)) @declaration.parameter.receiver
 (required_parameter (accessibility_modifier "private")) @declaration.parameter.private
 (required_parameter (accessibility_modifier "protected")) @declaration.parameter.protected
 (required_parameter (accessibility_modifier "public")) @declaration.parameter.public
@@ -117,6 +118,32 @@
 (construct_signature) @declaration.signature.construct
 (index_signature) @declaration.signature.index
 (index_signature_mapped_type_clause) @declaration.signature.index.mapped
+
+; Each owner keeps the ordinary list after receiver extraction.
+(abstract_method_signature (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))
+(call_signature (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))
+(construct_signature (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))
+(constructor_type (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))
+(function_declaration (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))
+(function_expression (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))
+(function_signature (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))
+(function_type (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))
+(generator_function (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))
+(generator_function_declaration (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))
+(method_definition (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))
+(method_signature (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))
+(abstract_method_signature (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))
+(call_signature (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))
+((construct_signature (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @dropped))) (#set! reason "a construct signature does not declare a receiver"))
+(constructor_type (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))
+(function_declaration (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))
+(function_expression (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))
+(function_signature (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))
+(function_type (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))
+(generator_function (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))
+(generator_function_declaration (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))
+(method_definition (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))
+(method_signature (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))
 
 ; ── statement ──────────────────────────────────────────────────────────────────
 (statement_block) @statement.block

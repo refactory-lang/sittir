@@ -34,23 +34,23 @@ beforeAll(async () => {
 
 describe('generated from() resolver — silent-failure gaps', () => {
 	it('throws a clear error when a slot receives an unresolvable object (Gap B)', () => {
-		expect(() => assignment({ left: { totally: 'garbage' }, content: { also: 'garbage' } })).toThrow(
+		expect(() => assignment({ name: { totally: 'garbage' }, content: { also: 'garbage' } })).toThrow(
 			/cannot resolve value/
 		);
 	});
 
 	it('names the expected kind(s) tried in the Gap B error message', () => {
-		// `left` resolves through _K3/_K4 — "identifier" is always one of the
+		// `name` resolves through _K3/_K4 — "identifier" is always one of the
 		// tried leaf candidates for python's LeftHandSide.
-		expect(() => assignment({ left: { totally: 'garbage' } })).toThrow(/identifier/);
+		expect(() => assignment({ name: { totally: 'garbage' } })).toThrow(/identifier/);
 	});
 
 	it('embeds the offending value in the Gap B error message', () => {
-		expect(() => assignment({ left: { totally: 'garbage' } })).toThrow(/totally/);
+		expect(() => assignment({ name: { totally: 'garbage' } })).toThrow(/totally/);
 	});
 
 	it('throws a purpose-built "Missing required slot" error when a required slot resolves to undefined (Gap A)', () => {
-		expect(() => assignment({})).toThrow(/Missing required slot 'left' on \w*assignment\w*\.from\(\)/);
+		expect(() => assignment({})).toThrow(/Missing required slot 'name' on \w*assignment\w*\.from\(\)/);
 	});
 
 	it('throws on null input (malformed)', () => {

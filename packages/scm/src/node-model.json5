@@ -76,6 +76,18 @@
       "identifier": "_immediate_identifier"
     }
   },
+  "displayUnions": {
+    "identifier": [
+      {
+        "storage": "_immediate_identifier",
+        "literal": false
+      },
+      {
+        "storage": "identifier",
+        "literal": false
+      }
+    ]
+  },
   "factorySlots": {
     "program": {
       "definitions": {
@@ -1081,6 +1093,10 @@
         "groupExpressionArm"
       ],
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "seated": true,
       "variantOf": "_group_expression",
       "slots": [
         {
@@ -1138,6 +1154,7 @@
           ]
         }
       ],
+      "name": "group_expression_arm",
       "factoryShape": "config",
       "factoryFields": [
         "left",
@@ -1577,6 +1594,10 @@
         "namedNodeExpressionArm"
       ],
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "seated": true,
       "variantOf": "_named_node_expression",
       "slots": [
         {
@@ -1648,6 +1669,7 @@
           ]
         }
       ],
+      "name": "named_node_expression_arm",
       "factoryShape": "config",
       "factoryFields": [
         "left",
@@ -1741,7 +1763,11 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "named_node_expression_arm",
-              "parseKind": "named_node_expression_arm"
+              "parseKind": "named_node_expression_arm",
+              "seat": {
+                "kind": "named_node_expression_arm",
+                "shape": "elements"
+              }
             }
           ]
         },
@@ -1860,7 +1886,11 @@
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "named_node_expression_arm",
-              "parseKind": "named_node_expression_arm"
+              "parseKind": "named_node_expression_arm",
+              "seat": {
+                "kind": "named_node_expression_arm",
+                "shape": "elements"
+              }
             }
           ]
         }

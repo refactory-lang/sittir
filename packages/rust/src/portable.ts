@@ -126,6 +126,7 @@ export interface PortableIds {
 		| TSKindId.RangePatternPrefix
 		| TSKindId.RangePatternWithLeft
 		| TSKindId.RawStringLiteral
+		| TSKindId.ReceiverParameterDeclaration
 		| TSKindId.RefPattern
 		| TSKindId.ReferencePattern
 		| TSKindId.RemainingFieldPattern
@@ -269,6 +270,7 @@ export interface PortableIds {
 		| TSKindId.RangePatternPrefix
 		| TSKindId.RangePatternWithLeft
 		| TSKindId.RawStringLiteral
+		| TSKindId.ReceiverParameterDeclaration
 		| TSKindId.RefPattern
 		| TSKindId.ReferencePattern
 		| TSKindId.RemainingFieldPattern
@@ -282,7 +284,7 @@ export interface PortableIds {
 		| TSKindId.TupleStructPattern
 		| TSKindId.VariadicParameter
 		| TSKindId.WildcardPattern;
-	'declaration.parameter.receiver': TSKindId.SelfParameter;
+	'declaration.parameter.receiver': TSKindId.Parameter | TSKindId.ReceiverParameterDeclaration | TSKindId.SelfParameter;
 	'declaration.parameter.variadic': TSKindId.VariadicParameter;
 	'declaration.struct':
 		| TSKindId.EnumVariant
@@ -2751,6 +2753,7 @@ const table: PortableTable = {
 				TSKindId.RangePatternPrefix,
 				TSKindId.RangePatternWithLeft,
 				TSKindId.RawStringLiteral,
+				TSKindId.ReceiverParameterDeclaration,
 				TSKindId.RefPattern,
 				TSKindId.ReferencePattern,
 				TSKindId.RemainingFieldPattern,
@@ -2935,6 +2938,7 @@ const table: PortableTable = {
 				TSKindId.RangePatternPrefix,
 				TSKindId.RangePatternWithLeft,
 				TSKindId.RawStringLiteral,
+				TSKindId.ReceiverParameterDeclaration,
 				TSKindId.RefPattern,
 				TSKindId.ReferencePattern,
 				TSKindId.RemainingFieldPattern,
@@ -2951,7 +2955,10 @@ const table: PortableTable = {
 			],
 			exact: false
 		},
-		'declaration.parameter.receiver': { ids: [TSKindId.SelfParameter], exact: true },
+		'declaration.parameter.receiver': {
+			ids: [TSKindId.Parameter, TSKindId.ReceiverParameterDeclaration, TSKindId.SelfParameter],
+			exact: false
+		},
 		'declaration.parameter.variadic': { ids: [TSKindId.VariadicParameter], exact: true },
 		'declaration.struct': {
 			ids: [
@@ -5170,54 +5177,6 @@ const table: PortableTable = {
 						via: [
 							{ fields: ['parameters'], kinds: [] },
 							{ fields: ['elements'], kinds: [] },
-							{ fields: ['item'], kinds: [], anchor: 'first' }
-						],
-						plan: {
-							op: 'is',
-							types: [231],
-							fields: [],
-							kinds: [
-								'parameter',
-								'self_parameter',
-								'variadic_parameter',
-								'underscore',
-								'type_identifier',
-								'abstract_type',
-								'reference_type',
-								'metavariable',
-								'pointer_type_const',
-								'pointer_type_mut',
-								'generic_type',
-								'scoped_type_identifier',
-								'tuple_type',
-								'unit_type',
-								'array_type',
-								'function_type',
-								'macro_invocation',
-								'never_type',
-								'dynamic_type',
-								'bounded_type',
-								'removed_trait_bound',
-								'primitive_type'
-							]
-						}
-					},
-					{
-						up: 0,
-						via: [{ fields: ['parameters'], kinds: [] }],
-						plan: { op: 'is', types: [349], fields: ['elements'], kinds: [] }
-					}
-				]
-			},
-			{
-				path: 'declaration.method',
-				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
-				test: [
-					{
-						up: 0,
-						via: [
-							{ fields: ['parameters'], kinds: [] },
-							{ fields: ['elements'], kinds: [] },
 							{ fields: ['item'], kinds: [] }
 						],
 						plan: {
@@ -5228,7 +5187,6 @@ const table: PortableTable = {
 								fields: [],
 								kinds: [
 									'parameter',
-									'self_parameter',
 									'variadic_parameter',
 									'underscore',
 									'type_identifier',
@@ -5252,6 +5210,46 @@ const table: PortableTable = {
 								]
 							}
 						}
+					}
+				]
+			},
+			{
+				path: 'declaration.method',
+				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
+				test: [
+					{
+						up: 0,
+						via: [{ fields: ['parameters'], kinds: [] }],
+						plan: { op: 'is', types: [437], fields: ['elements'], kinds: [] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['parameters'], kinds: [] },
+							{ fields: ['elements'], kinds: [] },
+							{ fields: ['receiver'], kinds: [] }
+						],
+						plan: { op: 'is', types: [231], fields: [], kinds: ['receiver_parameter_declaration', 'self_parameter'] }
+					}
+				]
+			},
+			{
+				path: 'declaration.method',
+				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
+				test: [
+					{
+						up: 0,
+						via: [{ fields: ['parameters'], kinds: [] }],
+						plan: { op: 'is', types: [437], fields: ['elements'], kinds: [] }
+					},
+					{
+						up: 0,
+						via: [
+							{ fields: ['parameters'], kinds: [] },
+							{ fields: ['elements'], kinds: [] },
+							{ fields: ['receiver'], kinds: [] }
+						],
+						plan: { op: 'is', types: [435], fields: [], kinds: ['receiver_parameter_declaration', 'self_parameter'] }
 					}
 				]
 			},
@@ -6235,7 +6233,14 @@ const table: PortableTable = {
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'pattern.or', within: [], test: [] }
 		],
-		[TSKindId.Parameter]: [{ path: 'declaration.parameter', within: [], test: [] }],
+		[TSKindId.Parameter]: [
+			{
+				path: 'declaration.parameter.receiver',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'is', types: [125], fields: ['name'], kinds: [] } }]
+			},
+			{ path: 'declaration.parameter', within: [], test: [] }
+		],
 		[TSKindId.ParenthesizedExpression]: [{ path: 'expression.parenthesized', within: [], test: [] }],
 		[TSKindId.PatKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.PatParamKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
@@ -6378,6 +6383,10 @@ const table: PortableTable = {
 			{ path: 'literal.string.raw', within: [], test: [] }
 		],
 		[TSKindId.RawStringLiteralContent]: [{ path: 'literal.string.text', within: [], test: [] }],
+		[TSKindId.ReceiverParameterDeclaration]: [
+			{ path: 'declaration.parameter', within: [], test: [] },
+			{ path: 'declaration.parameter.receiver', within: [], test: [] }
+		],
 		[TSKindId.RefPattern]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'pattern.reference', within: [], test: [] }

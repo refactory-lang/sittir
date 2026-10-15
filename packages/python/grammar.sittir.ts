@@ -9,6 +9,7 @@
 
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
+import grammarBindings from './grammar.bindings.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import type { AuthoringRule } from '../codegen/src/grammar-shapes/grammar-json.ts';
 import { transform } from '../codegen/src/dsl/transform/transform.ts';
@@ -36,6 +37,7 @@ function tupleElements(element: AuthoringRule) {
 
 export default sittirGrammar(base, {
 	resolutions,
+	bindings: grammarBindings,
 	name: 'python',
 	supertypes: ($, previous) => [...(previous ?? []), $._statement!],
 	externals: ($, prev) => {

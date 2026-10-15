@@ -2069,8 +2069,8 @@ const table: PortableTable = {
 				path: 'declaration.constant',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', fields: ['left'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [1], fields: ['left'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', fields: ['name'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [1], fields: ['name'], kinds: [] } }
 				]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
@@ -2080,8 +2080,8 @@ const table: PortableTable = {
 				path: 'declaration.constant',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', fields: ['left'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [1], fields: ['left'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', fields: ['name'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [1], fields: ['name'], kinds: [] } }
 				]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
@@ -2091,8 +2091,8 @@ const table: PortableTable = {
 				path: 'declaration.constant',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', fields: ['left'], kinds: [] } },
-					{ up: 0, via: [], plan: { op: 'is', types: [1], fields: ['left'], kinds: [] } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', fields: ['name'], kinds: [] } },
+					{ up: 0, via: [], plan: { op: 'is', types: [1], fields: ['name'], kinds: [] } }
 				]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }

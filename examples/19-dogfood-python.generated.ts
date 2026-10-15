@@ -24,17 +24,17 @@ export function rebuildPython4spaceGenerated() {
 			})),
 			returnType: py.build.type.strict(py.kinds.None),
 			body: py.build.suiteBlock.strict(py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignmentEq.strict({
-				left: py.build.attribute.strict({
+				name: py.build.attribute.strict({
 					object: py.build.identifier("self"),
-					attribute: py.build.identifier("user_id"),
+					property: py.build.identifier("user_id"),
 				}),
-				right: py.build.identifier("user_id"),
+				value: py.build.identifier("user_id"),
 			}))), py.build.simpleStatements.strict(py.build.expressionStatement.strict(py.build.assignmentEq.strict({
-				left: py.build.attribute.strict({
+				name: py.build.attribute.strict({
 					object: py.build.identifier("self"),
-					attribute: py.build.identifier("name"),
+					property: py.build.identifier("name"),
 				}),
-				right: py.build.identifier("name"),
+				value: py.build.identifier("name"),
 			})))),
 		}), py.build.functionDefinition.strict({
 			name: py.build.identifier("greet"),
@@ -45,7 +45,7 @@ export function rebuildPython4spaceGenerated() {
 				content: [py.build.stringContent.strict(py.build.stringFragment("Hello, ")), py.build.interpolation.strict({
 					expression: py.build.attribute.strict({
 						object: py.build.identifier("self"),
-						attribute: py.build.identifier("name"),
+						property: py.build.identifier("name"),
 					}),
 				}), py.build.stringContent.strict(py.build.stringFragment("!"))],
 				stringEnd: py.build.stringEnd("\""),
@@ -71,7 +71,7 @@ export function rebuildPython4spaceGenerated() {
 				condition: py.build.comparisonOperator.strict({
 					left: py.build.attribute.strict({
 						object: py.build.identifier("user"),
-						attribute: py.build.identifier("user_id"),
+						property: py.build.identifier("user_id"),
 					}),
 					comparators: [{
 						operators: py.kinds.EqEq,

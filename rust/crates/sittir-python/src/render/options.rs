@@ -560,15 +560,15 @@ pub const SITE_KEYWORD_PATTERN_EQ_AFTER: usize = 551;
 pub const SITE_KEYWORD_PATTERN_KEYWORD_PATTERN_BEFORE: usize = 552;
 pub const SITE_KEYWORD_PATTERN_KEYWORD_PATTERN_AFTER: usize = 553;
 pub const SITE_LAMBDA_COLON_BEFORE: usize = 554;
-pub const SITE_LAMBDA_COLON_AFTER: usize = 555;
-pub const SITE_LAMBDA_LAMBDA_KEYWORD_AFTER: usize = 556;
-pub const SITE_LAMBDA_LAMBDA_BEFORE: usize = 557;
-pub const SITE_LAMBDA_LAMBDA_AFTER: usize = 558;
-pub const SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_BEFORE: usize = 559;
-pub const SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_AFTER: usize = 560;
-pub const SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_KEYWORD_AFTER: usize = 561;
-pub const SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_WITHIN_FOR_IN_CLAUSE_BEFORE: usize = 562;
-pub const SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_WITHIN_FOR_IN_CLAUSE_AFTER: usize = 563;
+pub const SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_BEFORE: usize = 555;
+pub const SITE_LAMBDA_COLON_AFTER: usize = 556;
+pub const SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_AFTER: usize = 557;
+pub const SITE_LAMBDA_LAMBDA_KEYWORD_AFTER: usize = 558;
+pub const SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_KEYWORD_AFTER: usize = 559;
+pub const SITE_LAMBDA_LAMBDA_EXPRESSION_BEFORE: usize = 560;
+pub const SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_EXPRESSION_BEFORE: usize = 561;
+pub const SITE_LAMBDA_LAMBDA_EXPRESSION_AFTER: usize = 562;
+pub const SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_EXPRESSION_AFTER: usize = 563;
 pub const SITE_LIST_LBRACK_AFTER: usize = 564;
 pub const SITE_LIST_RBRACK_BEFORE: usize = 565;
 pub const SITE_LIST_LIST_BEFORE: usize = 566;
@@ -909,8 +909,8 @@ pub const SITE_SUITE_BLOCK_SUITE_BLOCK_BEFORE: usize = 900;
 pub const SITE_SUITE_BLOCK_SUITE_BLOCK_AFTER: usize = 901;
 pub const SITE_SUITE_INLINE_SUITE_INLINE_BEFORE: usize = 902;
 pub const SITE_SUITE_INLINE_SUITE_INLINE_AFTER: usize = 903;
-pub const SITE_TRY_STATEMENT_EXCEPT_CLAUSES_EXCEPT_CLAUSE_AFTER: usize = 904;
-pub const SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE: usize = 905;
+pub const SITE_TRY_STATEMENT_HANDLERS_EXCEPT_CLAUSE_AFTER: usize = 904;
+pub const SITE_TRY_STATEMENT_HANDLERS_SEPARATOR_SPACE: usize = 905;
 pub const SITE_TRY_STATEMENT_COLON_BEFORE: usize = 906;
 pub const SITE_TRY_STATEMENT_COLON_AFTER: usize = 907;
 pub const SITE_TRY_STATEMENT_TRY_KEYWORD_AFTER: usize = 908;
@@ -1120,7 +1120,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("argument_list_elements", "item_false_after", "false_after", &[122, 123, 124, 115, 125, 126]),
     ("argument_list_elements", "item_generator_expression_after", "generator_expression_after", &[122, 123, 124, 115, 125, 126]),
     ("argument_list_elements", "item_keyword_argument_after", "keyword_argument_after", &[122, 123, 124, 115, 125, 126]),
-    ("argument_list_elements", "item_lambda_after", "lambda_after", &[122, 123, 124, 115, 125, 126]),
+    ("argument_list_elements", "item_lambda_expression_after", "lambda_expression_after", &[122, 123, 124, 115, 125, 126]),
     ("argument_list_elements", "item_list_after", "list_after", &[122, 123, 124, 115, 125, 126]),
     ("argument_list_elements", "item_list_comprehension_after", "list_comprehension_after", &[122, 123, 124, 115, 125, 126]),
     ("argument_list_elements", "item_list_splat_after", "list_splat_after", &[122, 123, 124, 115, 125, 126]),
@@ -1157,7 +1157,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("assert_statement", "expression_ellipsis_after", "ellipsis_after", &[122, 123, 124, 115, 125, 126]),
     ("assert_statement", "expression_false_after", "false_after", &[122, 123, 124, 115, 125, 126]),
     ("assert_statement", "expression_generator_expression_after", "generator_expression_after", &[122, 123, 124, 115, 125, 126]),
-    ("assert_statement", "expression_lambda_after", "lambda_after", &[122, 123, 124, 115, 125, 126]),
+    ("assert_statement", "expression_lambda_expression_after", "lambda_expression_after", &[122, 123, 124, 115, 125, 126]),
     ("assert_statement", "expression_list_after", "list_after", &[122, 123, 124, 115, 125, 126]),
     ("assert_statement", "expression_list_comprehension_after", "list_comprehension_after", &[122, 123, 124, 115, 125, 126]),
     ("assert_statement", "expression_list_splat_pattern_after", "list_splat_pattern_after", &[122, 123, 124, 115, 125, 126]),
@@ -1273,7 +1273,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("collection_elements", "item_ellipsis_after", "ellipsis_after", &[122, 123, 124, 115, 125, 126]),
     ("collection_elements", "item_false_after", "false_after", &[122, 123, 124, 115, 125, 126]),
     ("collection_elements", "item_generator_expression_after", "generator_expression_after", &[122, 123, 124, 115, 125, 126]),
-    ("collection_elements", "item_lambda_after", "lambda_after", &[122, 123, 124, 115, 125, 126]),
+    ("collection_elements", "item_lambda_expression_after", "lambda_expression_after", &[122, 123, 124, 115, 125, 126]),
     ("collection_elements", "item_list_after", "list_after", &[122, 123, 124, 115, 125, 126]),
     ("collection_elements", "item_list_comprehension_after", "list_comprehension_after", &[122, 123, 124, 115, 125, 126]),
     ("collection_elements", "item_list_splat_after", "list_splat_after", &[122, 123, 124, 115, 125, 126]),
@@ -1410,7 +1410,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("except_clause_exception_list", "value_ellipsis_after", "ellipsis_after", &[122, 123, 124, 115, 125, 126]),
     ("except_clause_exception_list", "value_false_after", "false_after", &[122, 123, 124, 115, 125, 126]),
     ("except_clause_exception_list", "value_generator_expression_after", "generator_expression_after", &[122, 123, 124, 115, 125, 126]),
-    ("except_clause_exception_list", "value_lambda_after", "lambda_after", &[122, 123, 124, 115, 125, 126]),
+    ("except_clause_exception_list", "value_lambda_expression_after", "lambda_expression_after", &[122, 123, 124, 115, 125, 126]),
     ("except_clause_exception_list", "value_list_after", "list_after", &[122, 123, 124, 115, 125, 126]),
     ("except_clause_exception_list", "value_list_comprehension_after", "list_comprehension_after", &[122, 123, 124, 115, 125, 126]),
     ("except_clause_exception_list", "value_list_splat_pattern_after", "list_splat_pattern_after", &[122, 123, 124, 115, 125, 126]),
@@ -1441,7 +1441,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("exec_statement", "in_clause_ellipsis_after", "ellipsis_after", &[122, 123, 124, 115, 125, 126]),
     ("exec_statement", "in_clause_false_after", "false_after", &[122, 123, 124, 115, 125, 126]),
     ("exec_statement", "in_clause_generator_expression_after", "generator_expression_after", &[122, 123, 124, 115, 125, 126]),
-    ("exec_statement", "in_clause_lambda_after", "lambda_after", &[122, 123, 124, 115, 125, 126]),
+    ("exec_statement", "in_clause_lambda_expression_after", "lambda_expression_after", &[122, 123, 124, 115, 125, 126]),
     ("exec_statement", "in_clause_list_after", "list_after", &[122, 123, 124, 115, 125, 126]),
     ("exec_statement", "in_clause_list_comprehension_after", "list_comprehension_after", &[122, 123, 124, 115, 125, 126]),
     ("exec_statement", "in_clause_list_splat_pattern_after", "list_splat_pattern_after", &[122, 123, 124, 115, 125, 126]),
@@ -1477,7 +1477,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("expression_list", "item_ellipsis_after", "ellipsis_after", &[122, 123, 124, 115, 125, 126]),
     ("expression_list", "item_false_after", "false_after", &[122, 123, 124, 115, 125, 126]),
     ("expression_list", "item_generator_expression_after", "generator_expression_after", &[122, 123, 124, 115, 125, 126]),
-    ("expression_list", "item_lambda_after", "lambda_after", &[122, 123, 124, 115, 125, 126]),
+    ("expression_list", "item_lambda_expression_after", "lambda_expression_after", &[122, 123, 124, 115, 125, 126]),
     ("expression_list", "item_list_after", "list_after", &[122, 123, 124, 115, 125, 126]),
     ("expression_list", "item_list_comprehension_after", "list_comprehension_after", &[122, 123, 124, 115, 125, 126]),
     ("expression_list", "item_list_splat_pattern_after", "list_splat_pattern_after", &[122, 123, 124, 115, 125, 126]),
@@ -1508,7 +1508,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("expression_statement_tuple", "item_ellipsis_after", "ellipsis_after", &[122, 123, 124, 115, 125, 126]),
     ("expression_statement_tuple", "item_false_after", "false_after", &[122, 123, 124, 115, 125, 126]),
     ("expression_statement_tuple", "item_generator_expression_after", "generator_expression_after", &[122, 123, 124, 115, 125, 126]),
-    ("expression_statement_tuple", "item_lambda_after", "lambda_after", &[122, 123, 124, 115, 125, 126]),
+    ("expression_statement_tuple", "item_lambda_expression_after", "lambda_expression_after", &[122, 123, 124, 115, 125, 126]),
     ("expression_statement_tuple", "item_list_after", "list_after", &[122, 123, 124, 115, 125, 126]),
     ("expression_statement_tuple", "item_list_comprehension_after", "list_comprehension_after", &[122, 123, 124, 115, 125, 126]),
     ("expression_statement_tuple", "item_list_splat_pattern_after", "list_splat_pattern_after", &[122, 123, 124, 115, 125, 126]),
@@ -1544,8 +1544,8 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("for_in_clause", "right_ellipsis_after", "ellipsis_after", &[122, 123, 124, 115, 125, 126]),
     ("for_in_clause", "right_false_after", "false_after", &[122, 123, 124, 115, 125, 126]),
     ("for_in_clause", "right_generator_expression_after", "generator_expression_after", &[122, 123, 124, 115, 125, 126]),
-    ("for_in_clause", "right_lambda_after", "lambda_after", &[122, 123, 124, 115, 125, 126]),
-    ("for_in_clause", "right_lambda_within_for_in_clause_after", "lambda_within_for_in_clause_after", &[122, 123, 124, 115, 125, 126]),
+    ("for_in_clause", "right_lambda_expression_after", "lambda_expression_after", &[122, 123, 124, 115, 125, 126]),
+    ("for_in_clause", "right_lambda_expression_after", "lambda_expression_after", &[122, 123, 124, 115, 125, 126]),
     ("for_in_clause", "right_list_after", "list_after", &[122, 123, 124, 115, 125, 126]),
     ("for_in_clause", "right_list_comprehension_after", "list_comprehension_after", &[122, 123, 124, 115, 125, 126]),
     ("for_in_clause", "right_list_splat_pattern_after", "list_splat_pattern_after", &[122, 123, 124, 115, 125, 126]),
@@ -1650,16 +1650,16 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("keyword_pattern", "eq_after", "eq_after", &[122, 123, 124, 115, 125, 126]),
     ("keyword_pattern", "keyword_pattern_before", "keyword_pattern_before", &[122, 123, 124, 115, 125, 126]),
     ("keyword_pattern", "keyword_pattern_after", "keyword_pattern_after", &[122, 123, 124, 115, 125, 126]),
-    ("lambda", "colon_before", "colon_before", &[122, 123, 124, 115, 125, 126]),
-    ("lambda", "colon_after", "colon_after", &[122, 123, 124, 115, 125, 126]),
-    ("lambda", "lambda_keyword_after", "lambda_keyword_after", &[122, 123, 124, 115, 125, 126]),
-    ("lambda", "lambda_before", "lambda_before", &[122, 123, 124, 115, 125, 126]),
-    ("lambda", "lambda_after", "lambda_after", &[122, 123, 124, 115, 125, 126]),
-    ("lambda_within_for_in_clause", "colon_before", "colon_before", &[122, 123, 124, 115, 125, 126]),
-    ("lambda_within_for_in_clause", "colon_after", "colon_after", &[122, 123, 124, 115, 125, 126]),
-    ("lambda_within_for_in_clause", "lambda_keyword_after", "lambda_keyword_after", &[122, 123, 124, 115, 125, 126]),
-    ("lambda_within_for_in_clause", "lambda_within_for_in_clause_before", "lambda_within_for_in_clause_before", &[122, 123, 124, 115, 125, 126]),
-    ("lambda_within_for_in_clause", "lambda_within_for_in_clause_after", "lambda_within_for_in_clause_after", &[122, 123, 124, 115, 125, 126]),
+    ("lambda_expression", "colon_before", "colon_before", &[122, 123, 124, 115, 125, 126]),
+    ("lambda_expression", "colon_before", "colon_before", &[122, 123, 124, 115, 125, 126]),
+    ("lambda_expression", "colon_after", "colon_after", &[122, 123, 124, 115, 125, 126]),
+    ("lambda_expression", "colon_after", "colon_after", &[122, 123, 124, 115, 125, 126]),
+    ("lambda_expression", "lambda_keyword_after", "lambda_keyword_after", &[122, 123, 124, 115, 125, 126]),
+    ("lambda_expression", "lambda_keyword_after", "lambda_keyword_after", &[122, 123, 124, 115, 125, 126]),
+    ("lambda_expression", "lambda_expression_before", "lambda_expression_before", &[122, 123, 124, 115, 125, 126]),
+    ("lambda_expression", "lambda_expression_before", "lambda_expression_before", &[122, 123, 124, 115, 125, 126]),
+    ("lambda_expression", "lambda_expression_after", "lambda_expression_after", &[122, 123, 124, 115, 125, 126]),
+    ("lambda_expression", "lambda_expression_after", "lambda_expression_after", &[122, 123, 124, 115, 125, 126]),
     ("list", "lbrack_after", "lbrack_after", &[122, 123, 124, 115, 125, 126]),
     ("list", "rbrack_before", "rbrack_before", &[122, 123, 124, 115, 125, 126]),
     ("list", "list_before", "list_before", &[122, 123, 124, 115, 125, 126]),
@@ -1778,7 +1778,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("print_arguments", "item_ellipsis_after", "ellipsis_after", &[122, 123, 124, 115, 125, 126]),
     ("print_arguments", "item_false_after", "false_after", &[122, 123, 124, 115, 125, 126]),
     ("print_arguments", "item_generator_expression_after", "generator_expression_after", &[122, 123, 124, 115, 125, 126]),
-    ("print_arguments", "item_lambda_after", "lambda_after", &[122, 123, 124, 115, 125, 126]),
+    ("print_arguments", "item_lambda_expression_after", "lambda_expression_after", &[122, 123, 124, 115, 125, 126]),
     ("print_arguments", "item_list_after", "list_after", &[122, 123, 124, 115, 125, 126]),
     ("print_arguments", "item_list_comprehension_after", "list_comprehension_after", &[122, 123, 124, 115, 125, 126]),
     ("print_arguments", "item_list_splat_pattern_after", "list_splat_pattern_after", &[122, 123, 124, 115, 125, 126]),
@@ -1809,7 +1809,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("print_chevron_arguments", "item_ellipsis_after", "ellipsis_after", &[122, 123, 124, 115, 125, 126]),
     ("print_chevron_arguments", "item_false_after", "false_after", &[122, 123, 124, 115, 125, 126]),
     ("print_chevron_arguments", "item_generator_expression_after", "generator_expression_after", &[122, 123, 124, 115, 125, 126]),
-    ("print_chevron_arguments", "item_lambda_after", "lambda_after", &[122, 123, 124, 115, 125, 126]),
+    ("print_chevron_arguments", "item_lambda_expression_after", "lambda_expression_after", &[122, 123, 124, 115, 125, 126]),
     ("print_chevron_arguments", "item_list_after", "list_after", &[122, 123, 124, 115, 125, 126]),
     ("print_chevron_arguments", "item_list_comprehension_after", "list_comprehension_after", &[122, 123, 124, 115, 125, 126]),
     ("print_chevron_arguments", "item_list_splat_pattern_after", "list_splat_pattern_after", &[122, 123, 124, 115, 125, 126]),
@@ -1883,7 +1883,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("simple_statements_elements", "item_global_statement_after", "global_statement_after", &[122, 123, 124, 115, 125, 126]),
     ("simple_statements_elements", "item_import_from_statement_after", "import_from_statement_after", &[122, 123, 124, 115, 125, 126]),
     ("simple_statements_elements", "item_import_statement_after", "import_statement_after", &[122, 123, 124, 115, 125, 126]),
-    ("simple_statements_elements", "item_lambda_after", "lambda_after", &[122, 123, 124, 115, 125, 126]),
+    ("simple_statements_elements", "item_lambda_expression_after", "lambda_expression_after", &[122, 123, 124, 115, 125, 126]),
     ("simple_statements_elements", "item_list_after", "list_after", &[122, 123, 124, 115, 125, 126]),
     ("simple_statements_elements", "item_list_comprehension_after", "list_comprehension_after", &[122, 123, 124, 115, 125, 126]),
     ("simple_statements_elements", "item_list_splat_pattern_after", "list_splat_pattern_after", &[122, 123, 124, 115, 125, 126]),
@@ -1942,7 +1942,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("subjects", "subject_ellipsis_after", "ellipsis_after", &[122, 123, 124, 115, 125, 126]),
     ("subjects", "subject_false_after", "false_after", &[122, 123, 124, 115, 125, 126]),
     ("subjects", "subject_generator_expression_after", "generator_expression_after", &[122, 123, 124, 115, 125, 126]),
-    ("subjects", "subject_lambda_after", "lambda_after", &[122, 123, 124, 115, 125, 126]),
+    ("subjects", "subject_lambda_expression_after", "lambda_expression_after", &[122, 123, 124, 115, 125, 126]),
     ("subjects", "subject_list_after", "list_after", &[122, 123, 124, 115, 125, 126]),
     ("subjects", "subject_list_comprehension_after", "list_comprehension_after", &[122, 123, 124, 115, 125, 126]),
     ("subjects", "subject_list_splat_pattern_after", "list_splat_pattern_after", &[122, 123, 124, 115, 125, 126]),
@@ -1978,7 +1978,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("subscripts", "subscript_ellipsis_after", "ellipsis_after", &[122, 123, 124, 115, 125, 126]),
     ("subscripts", "subscript_false_after", "false_after", &[122, 123, 124, 115, 125, 126]),
     ("subscripts", "subscript_generator_expression_after", "generator_expression_after", &[122, 123, 124, 115, 125, 126]),
-    ("subscripts", "subscript_lambda_after", "lambda_after", &[122, 123, 124, 115, 125, 126]),
+    ("subscripts", "subscript_lambda_expression_after", "lambda_expression_after", &[122, 123, 124, 115, 125, 126]),
     ("subscripts", "subscript_list_after", "list_after", &[122, 123, 124, 115, 125, 126]),
     ("subscripts", "subscript_list_comprehension_after", "list_comprehension_after", &[122, 123, 124, 115, 125, 126]),
     ("subscripts", "subscript_list_splat_pattern_after", "list_splat_pattern_after", &[122, 123, 124, 115, 125, 126]),
@@ -2000,8 +2000,8 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("suite_block", "suite_block_after", "suite_block_after", &[122, 123, 124, 115, 125, 126]),
     ("suite_inline", "suite_inline_before", "suite_inline_before", &[122, 123, 124, 115, 125, 126]),
     ("suite_inline", "suite_inline_after", "suite_inline_after", &[122, 123, 124, 115, 125, 126]),
-    ("try_statement", "except_clauses_except_clause_after", "except_clause_after", &[122, 123, 124, 115, 125, 126]),
-    ("try_statement", "except_clauses_separator_space", "empty_separator_space", &[122, 123, 124, 115, 125, 126]),
+    ("try_statement", "handlers_except_clause_after", "except_clause_after", &[122, 123, 124, 115, 125, 126]),
+    ("try_statement", "handlers_separator_space", "empty_separator_space", &[122, 123, 124, 115, 125, 126]),
     ("try_statement", "colon_before", "colon_before", &[122, 123, 124, 115, 125, 126]),
     ("try_statement", "colon_after", "colon_after", &[122, 123, 124, 115, 125, 126]),
     ("try_statement", "try_keyword_after", "try_keyword_after", &[122, 123, 124, 115, 125, 126]),
@@ -2025,7 +2025,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("tuple_elements", "item_ellipsis_after", "ellipsis_after", &[122, 123, 124, 115, 125, 126]),
     ("tuple_elements", "item_false_after", "false_after", &[122, 123, 124, 115, 125, 126]),
     ("tuple_elements", "item_generator_expression_after", "generator_expression_after", &[122, 123, 124, 115, 125, 126]),
-    ("tuple_elements", "item_lambda_after", "lambda_after", &[122, 123, 124, 115, 125, 126]),
+    ("tuple_elements", "item_lambda_expression_after", "lambda_expression_after", &[122, 123, 124, 115, 125, 126]),
     ("tuple_elements", "item_list_after", "list_after", &[122, 123, 124, 115, 125, 126]),
     ("tuple_elements", "item_list_comprehension_after", "list_comprehension_after", &[122, 123, 124, 115, 125, 126]),
     ("tuple_elements", "item_list_splat_after", "list_splat_after", &[122, 123, 124, 115, 125, 126]),
@@ -2091,7 +2091,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("types", "item_false_after", "false_after", &[122, 123, 124, 115, 125, 126]),
     ("types", "item_generator_expression_after", "generator_expression_after", &[122, 123, 124, 115, 125, 126]),
     ("types", "item_generic_type_after", "generic_type_after", &[122, 123, 124, 115, 125, 126]),
-    ("types", "item_lambda_after", "lambda_after", &[122, 123, 124, 115, 125, 126]),
+    ("types", "item_lambda_expression_after", "lambda_expression_after", &[122, 123, 124, 115, 125, 126]),
     ("types", "item_list_after", "list_after", &[122, 123, 124, 115, 125, 126]),
     ("types", "item_list_comprehension_after", "list_comprehension_after", &[122, 123, 124, 115, 125, 126]),
     ("types", "item_list_splat_pattern_after", "list_splat_pattern_after", &[122, 123, 124, 115, 125, 126]),
@@ -2224,8 +2224,8 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: 108, after: 109, before_arms: &[], after_arms: &[] },
     ::sittir_core::options::EdgeSite { before: 1019, after: 1020, before_arms: &[::sittir_core::options::ArmSite { arm: 49, site: 1016 }, ::sittir_core::options::ArmSite { arm: 50, site: 1017 }, ::sittir_core::options::ArmSite { arm: 60, site: 1018 }], after_arms: &[] },
     ::sittir_core::options::EdgeSite { before: 199, after: 200, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 557, after: 558, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 562, after: 563, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 560, after: 562, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: 561, after: 563, before_arms: &[], after_arms: &[] },
     ::sittir_core::options::EdgeSite { before: 101, after: 102, before_arms: &[], after_arms: &[] },
     ::sittir_core::options::EdgeSite { before: 1061, after: 1062, before_arms: &[], after_arms: &[] },
     ::sittir_core::options::EdgeSite { before: 97, after: 98, before_arms: &[], after_arms: &[] },
@@ -2946,13 +2946,13 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 122, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 122, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 123, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 122, strength: 2 },
@@ -4011,7 +4011,7 @@ pub static SEATS_SUBSCRIPTS_SUBSCRIPT: &[u16] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_TRY_STATEMENT_EXCEPT_CLAUSES: &[u16] = &[
+pub static SEATS_TRY_STATEMENT_HANDLERS: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
@@ -4216,8 +4216,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Branch { key: "keywordArgument", path: "(argument_list_elements)/item:/(keyword_argument)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ARGUMENT_LIST_ELEMENTS_ITEM_KEYWORD_ARGUMENT_AFTER, path: "(argument_list_elements)/item:/(keyword_argument)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lambda", path: "(argument_list_elements)/item:/(lambda)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ARGUMENT_LIST_ELEMENTS_ITEM_LAMBDA_AFTER, path: "(argument_list_elements)/item:/(lambda)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "lambdaExpression", path: "(argument_list_elements)/item:/(lambda_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ARGUMENT_LIST_ELEMENTS_ITEM_LAMBDA_AFTER, path: "(argument_list_elements)/item:/(lambda_expression)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "list", path: "(argument_list_elements)/item:/(list)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ARGUMENT_LIST_ELEMENTS_ITEM_LIST_AFTER, path: "(argument_list_elements)/item:/(list)/after" }] },
@@ -4332,8 +4332,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Branch { key: "generatorExpression", path: "(assert_statement)/expression:/(generator_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ASSERT_STATEMENT_EXPRESSION_GENERATOR_EXPRESSION_AFTER, path: "(assert_statement)/expression:/(generator_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lambda", path: "(assert_statement)/expression:/(lambda)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ASSERT_STATEMENT_EXPRESSION_LAMBDA_AFTER, path: "(assert_statement)/expression:/(lambda)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "lambdaExpression", path: "(assert_statement)/expression:/(lambda_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ASSERT_STATEMENT_EXPRESSION_LAMBDA_AFTER, path: "(assert_statement)/expression:/(lambda_expression)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "list", path: "(assert_statement)/expression:/(list)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_ASSERT_STATEMENT_EXPRESSION_LIST_AFTER, path: "(assert_statement)/expression:/(list)/after" }] },
@@ -4623,8 +4623,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Branch { key: "generatorExpression", path: "(collection_elements)/item:/(generator_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COLLECTION_ELEMENTS_ITEM_GENERATOR_EXPRESSION_AFTER, path: "(collection_elements)/item:/(generator_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lambda", path: "(collection_elements)/item:/(lambda)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COLLECTION_ELEMENTS_ITEM_LAMBDA_AFTER, path: "(collection_elements)/item:/(lambda)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "lambdaExpression", path: "(collection_elements)/item:/(lambda_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COLLECTION_ELEMENTS_ITEM_LAMBDA_AFTER, path: "(collection_elements)/item:/(lambda_expression)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "list", path: "(collection_elements)/item:/(list)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_COLLECTION_ELEMENTS_ITEM_LIST_AFTER, path: "(collection_elements)/item:/(list)/after" }] },
@@ -4996,8 +4996,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Branch { key: "generatorExpression", path: "(except_clause_exception_list)/value:/(generator_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_GENERATOR_EXPRESSION_AFTER, path: "(except_clause_exception_list)/value:/(generator_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lambda", path: "(except_clause_exception_list)/value:/(lambda)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_LAMBDA_AFTER, path: "(except_clause_exception_list)/value:/(lambda)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "lambdaExpression", path: "(except_clause_exception_list)/value:/(lambda_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_LAMBDA_AFTER, path: "(except_clause_exception_list)/value:/(lambda_expression)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "list", path: "(except_clause_exception_list)/value:/(list)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXCEPT_CLAUSE_EXCEPTION_LIST_VALUE_LIST_AFTER, path: "(except_clause_exception_list)/value:/(list)/after" }] },
@@ -5098,8 +5098,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Branch { key: "generatorExpression", path: "(exec_statement)/in_clause:/(generator_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXEC_STATEMENT_IN_CLAUSE_GENERATOR_EXPRESSION_AFTER, path: "(exec_statement)/in_clause:/(generator_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lambda", path: "(exec_statement)/in_clause:/(lambda)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXEC_STATEMENT_IN_CLAUSE_LAMBDA_AFTER, path: "(exec_statement)/in_clause:/(lambda)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "lambdaExpression", path: "(exec_statement)/in_clause:/(lambda_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXEC_STATEMENT_IN_CLAUSE_LAMBDA_AFTER, path: "(exec_statement)/in_clause:/(lambda_expression)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "list", path: "(exec_statement)/in_clause:/(list)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXEC_STATEMENT_IN_CLAUSE_LIST_AFTER, path: "(exec_statement)/in_clause:/(list)/after" }] },
@@ -5200,8 +5200,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Branch { key: "generatorExpression", path: "(expression_list)/item:/(generator_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_GENERATOR_EXPRESSION_AFTER, path: "(expression_list)/item:/(generator_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lambda", path: "(expression_list)/item:/(lambda)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_LAMBDA_AFTER, path: "(expression_list)/item:/(lambda)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "lambdaExpression", path: "(expression_list)/item:/(lambda_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_LAMBDA_AFTER, path: "(expression_list)/item:/(lambda_expression)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "list", path: "(expression_list)/item:/(list)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_LIST_ITEM_LIST_AFTER, path: "(expression_list)/item:/(list)/after" }] },
@@ -5298,8 +5298,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Branch { key: "generatorExpression", path: "(expression_statement_tuple)/item:/(generator_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_GENERATOR_EXPRESSION_AFTER, path: "(expression_statement_tuple)/item:/(generator_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lambda", path: "(expression_statement_tuple)/item:/(lambda)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_LAMBDA_AFTER, path: "(expression_statement_tuple)/item:/(lambda)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "lambdaExpression", path: "(expression_statement_tuple)/item:/(lambda_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_LAMBDA_AFTER, path: "(expression_statement_tuple)/item:/(lambda_expression)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "list", path: "(expression_statement_tuple)/item:/(list)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_EXPRESSION_STATEMENT_TUPLE_ITEM_LIST_AFTER, path: "(expression_statement_tuple)/item:/(list)/after" }] },
@@ -5422,11 +5422,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Branch { key: "generatorExpression", path: "(for_in_clause)/right:/(generator_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_IN_CLAUSE_RIGHT_GENERATOR_EXPRESSION_AFTER, path: "(for_in_clause)/right:/(generator_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lambda", path: "(for_in_clause)/right:/(lambda)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_IN_CLAUSE_RIGHT_LAMBDA_AFTER, path: "(for_in_clause)/right:/(lambda)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lambdaWithinForInClause", path: "(for_in_clause)/right:/(lambda_within_for_in_clause)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_IN_CLAUSE_RIGHT_LAMBDA_WITHIN_FOR_IN_CLAUSE_AFTER, path: "(for_in_clause)/right:/(lambda_within_for_in_clause)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "lambdaExpression", path: "(for_in_clause)/right:/(lambda_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_IN_CLAUSE_RIGHT_LAMBDA_AFTER, path: "(for_in_clause)/right:/(lambda_expression)/after" }, ::sittir_core::options::SiteRef { site: SITE_FOR_IN_CLAUSE_RIGHT_LAMBDA_WITHIN_FOR_IN_CLAUSE_AFTER, path: "(for_in_clause)/right:/(lambda_expression)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "list", path: "(for_in_clause)/right:/(list)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_FOR_IN_CLAUSE_RIGHT_LIST_AFTER, path: "(for_in_clause)/right:/(list)/after" }] },
@@ -5539,7 +5536,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "gap", path: "gap", children: &[
-        ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE, path: "(block)/statements:/separator" }, ::sittir_core::options::SiteRef { site: SITE_DECORATED_DEFINITION_DECORATOR_SEPARATOR_SPACE, path: "(decorated_definition)/decorator:/separator" }, ::sittir_core::options::SiteRef { site: SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE, path: "(if_statement)/alternative:/separator" }, ::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE, path: "(match_block_block)/alternative:/separator" }, ::sittir_core::options::SiteRef { site: SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE, path: "(try_statement)/except_clauses:/separator" }] },
+        ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE, path: "(block)/statements:/separator" }, ::sittir_core::options::SiteRef { site: SITE_DECORATED_DEFINITION_DECORATOR_SEPARATOR_SPACE, path: "(decorated_definition)/decorator:/separator" }, ::sittir_core::options::SiteRef { site: SITE_IF_STATEMENT_ALTERNATIVE_SEPARATOR_SPACE, path: "(if_statement)/alternative:/separator" }, ::sittir_core::options::SiteRef { site: SITE_MATCH_BLOCK_BLOCK_ALTERNATIVE_SEPARATOR_SPACE, path: "(match_block_block)/alternative:/separator" }, ::sittir_core::options::SiteRef { site: SITE_TRY_STATEMENT_HANDLERS_SEPARATOR_SPACE, path: "(try_statement)/handlers:/separator" }] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "generatorExpression", path: "(generator_expression)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERATOR_EXPRESSION_GENERATOR_EXPRESSION_AFTER, path: "(generator_expression)/after" }] },
@@ -5670,26 +5667,15 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_KEYWORD_PATTERN_EQ_BEFORE, path: "(keyword_pattern)/\"=\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "lambda", path: "(lambda)", children: &[
-        ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LAMBDA_LAMBDA_AFTER, path: "(lambda)/after" }] },
-        ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LAMBDA_LAMBDA_BEFORE, path: "(lambda)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "colon", path: "(lambda)/\":\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LAMBDA_COLON_AFTER, path: "(lambda)/\":\"/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LAMBDA_COLON_BEFORE, path: "(lambda)/\":\"/before" }] },
+    ::sittir_core::options::AddressNode::Branch { key: "lambdaExpression", path: "(lambda_expression)", children: &[
+        ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LAMBDA_LAMBDA_EXPRESSION_AFTER, path: "(lambda_expression)/after" }, ::sittir_core::options::SiteRef { site: SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_EXPRESSION_AFTER, path: "(lambda_expression)/after" }] },
+        ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LAMBDA_LAMBDA_EXPRESSION_BEFORE, path: "(lambda_expression)/before" }, ::sittir_core::options::SiteRef { site: SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_EXPRESSION_BEFORE, path: "(lambda_expression)/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "colon", path: "(lambda_expression)/\":\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LAMBDA_COLON_AFTER, path: "(lambda_expression)/\":\"/after" }, ::sittir_core::options::SiteRef { site: SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_AFTER, path: "(lambda_expression)/\":\"/after" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LAMBDA_COLON_BEFORE, path: "(lambda_expression)/\":\"/before" }, ::sittir_core::options::SiteRef { site: SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_BEFORE, path: "(lambda_expression)/\":\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "lambdaKeyword", path: "(lambda)/\"lambda\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LAMBDA_LAMBDA_KEYWORD_AFTER, path: "(lambda)/\"lambda\"/after" }] },
-        ] },
-    ] },
-    ::sittir_core::options::AddressNode::Branch { key: "lambdaWithinForInClause", path: "(lambda_within_for_in_clause)", children: &[
-        ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_WITHIN_FOR_IN_CLAUSE_AFTER, path: "(lambda_within_for_in_clause)/after" }] },
-        ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_WITHIN_FOR_IN_CLAUSE_BEFORE, path: "(lambda_within_for_in_clause)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "colon", path: "(lambda_within_for_in_clause)/\":\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_AFTER, path: "(lambda_within_for_in_clause)/\":\"/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_BEFORE, path: "(lambda_within_for_in_clause)/\":\"/before" }] },
-        ] },
-        ::sittir_core::options::AddressNode::Branch { key: "lambdaKeyword", path: "(lambda_within_for_in_clause)/\"lambda\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_KEYWORD_AFTER, path: "(lambda_within_for_in_clause)/\"lambda\"/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "lambdaKeyword", path: "(lambda_expression)/\"lambda\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_LAMBDA_LAMBDA_KEYWORD_AFTER, path: "(lambda_expression)/\"lambda\"/after" }, ::sittir_core::options::SiteRef { site: SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_KEYWORD_AFTER, path: "(lambda_expression)/\"lambda\"/after" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "list", path: "(list)", children: &[
@@ -6029,8 +6015,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Branch { key: "generatorExpression", path: "(print_arguments)/item:/(generator_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PRINT_ARGUMENTS_ITEM_GENERATOR_EXPRESSION_AFTER, path: "(print_arguments)/item:/(generator_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lambda", path: "(print_arguments)/item:/(lambda)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PRINT_ARGUMENTS_ITEM_LAMBDA_AFTER, path: "(print_arguments)/item:/(lambda)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "lambdaExpression", path: "(print_arguments)/item:/(lambda_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PRINT_ARGUMENTS_ITEM_LAMBDA_AFTER, path: "(print_arguments)/item:/(lambda_expression)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "list", path: "(print_arguments)/item:/(list)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PRINT_ARGUMENTS_ITEM_LIST_AFTER, path: "(print_arguments)/item:/(list)/after" }] },
@@ -6127,8 +6113,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Branch { key: "generatorExpression", path: "(print_chevron_arguments)/item:/(generator_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PRINT_CHEVRON_ARGUMENTS_ITEM_GENERATOR_EXPRESSION_AFTER, path: "(print_chevron_arguments)/item:/(generator_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lambda", path: "(print_chevron_arguments)/item:/(lambda)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PRINT_CHEVRON_ARGUMENTS_ITEM_LAMBDA_AFTER, path: "(print_chevron_arguments)/item:/(lambda)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "lambdaExpression", path: "(print_chevron_arguments)/item:/(lambda_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PRINT_CHEVRON_ARGUMENTS_ITEM_LAMBDA_AFTER, path: "(print_chevron_arguments)/item:/(lambda_expression)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "list", path: "(print_chevron_arguments)/item:/(list)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PRINT_CHEVRON_ARGUMENTS_ITEM_LIST_AFTER, path: "(print_chevron_arguments)/item:/(list)/after" }] },
@@ -6334,8 +6320,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Branch { key: "importStatement", path: "(simple_statements_elements)/item:/(import_statement)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SIMPLE_STATEMENTS_ELEMENTS_ITEM_IMPORT_STATEMENT_AFTER, path: "(simple_statements_elements)/item:/(import_statement)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lambda", path: "(simple_statements_elements)/item:/(lambda)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SIMPLE_STATEMENTS_ELEMENTS_ITEM_LAMBDA_AFTER, path: "(simple_statements_elements)/item:/(lambda)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "lambdaExpression", path: "(simple_statements_elements)/item:/(lambda_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SIMPLE_STATEMENTS_ELEMENTS_ITEM_LAMBDA_AFTER, path: "(simple_statements_elements)/item:/(lambda_expression)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "list", path: "(simple_statements_elements)/item:/(list)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SIMPLE_STATEMENTS_ELEMENTS_ITEM_LIST_AFTER, path: "(simple_statements_elements)/item:/(list)/after" }] },
@@ -6504,8 +6490,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Branch { key: "generatorExpression", path: "(subjects)/subject:/(generator_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SUBJECTS_SUBJECT_GENERATOR_EXPRESSION_AFTER, path: "(subjects)/subject:/(generator_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lambda", path: "(subjects)/subject:/(lambda)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SUBJECTS_SUBJECT_LAMBDA_AFTER, path: "(subjects)/subject:/(lambda)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "lambdaExpression", path: "(subjects)/subject:/(lambda_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SUBJECTS_SUBJECT_LAMBDA_AFTER, path: "(subjects)/subject:/(lambda_expression)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "list", path: "(subjects)/subject:/(list)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SUBJECTS_SUBJECT_LIST_AFTER, path: "(subjects)/subject:/(list)/after" }] },
@@ -6613,8 +6599,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Branch { key: "generatorExpression", path: "(subscripts)/subscript:/(generator_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SUBSCRIPTS_SUBSCRIPT_GENERATOR_EXPRESSION_AFTER, path: "(subscripts)/subscript:/(generator_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lambda", path: "(subscripts)/subscript:/(lambda)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SUBSCRIPTS_SUBSCRIPT_LAMBDA_AFTER, path: "(subscripts)/subscript:/(lambda)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "lambdaExpression", path: "(subscripts)/subscript:/(lambda_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SUBSCRIPTS_SUBSCRIPT_LAMBDA_AFTER, path: "(subscripts)/subscript:/(lambda_expression)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "list", path: "(subscripts)/subscript:/(list)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SUBSCRIPTS_SUBSCRIPT_LIST_AFTER, path: "(subscripts)/subscript:/(list)/after" }] },
@@ -6684,11 +6670,11 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRY_STATEMENT_COLON_AFTER, path: "(try_statement)/\":\"/after" }] },
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_TRY_STATEMENT_COLON_BEFORE, path: "(try_statement)/\":\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "exceptClauses", path: "(try_statement)/except_clauses:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "exceptClause", path: "(try_statement)/except_clauses:/(except_clause)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRY_STATEMENT_EXCEPT_CLAUSES_EXCEPT_CLAUSE_AFTER, path: "(try_statement)/except_clauses:/(except_clause)/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "handlers", path: "(try_statement)/handlers:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "exceptClause", path: "(try_statement)/handlers:/(except_clause)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRY_STATEMENT_HANDLERS_EXCEPT_CLAUSE_AFTER, path: "(try_statement)/handlers:/(except_clause)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE, path: "(try_statement)/except_clauses:/separator" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_TRY_STATEMENT_HANDLERS_SEPARATOR_SPACE, path: "(try_statement)/handlers:/separator" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "tryKeyword", path: "(try_statement)/\"try\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TRY_STATEMENT_TRY_KEYWORD_AFTER, path: "(try_statement)/\"try\"/after" }] },
@@ -6749,8 +6735,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Branch { key: "generatorExpression", path: "(tuple_elements)/item:/(generator_expression)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ITEM_GENERATOR_EXPRESSION_AFTER, path: "(tuple_elements)/item:/(generator_expression)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lambda", path: "(tuple_elements)/item:/(lambda)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ITEM_LAMBDA_AFTER, path: "(tuple_elements)/item:/(lambda)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "lambdaExpression", path: "(tuple_elements)/item:/(lambda_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ITEM_LAMBDA_AFTER, path: "(tuple_elements)/item:/(lambda_expression)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "list", path: "(tuple_elements)/item:/(list)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TUPLE_ELEMENTS_ITEM_LIST_AFTER, path: "(tuple_elements)/item:/(list)/after" }] },
@@ -6939,8 +6925,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ::sittir_core::options::AddressNode::Branch { key: "genericType", path: "(types)/item:/(generic_type)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_GENERIC_TYPE_AFTER, path: "(types)/item:/(generic_type)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "lambda", path: "(types)/item:/(lambda)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_LAMBDA_AFTER, path: "(types)/item:/(lambda)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "lambdaExpression", path: "(types)/item:/(lambda_expression)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_LAMBDA_AFTER, path: "(types)/item:/(lambda_expression)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "list", path: "(types)/item:/(list)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_TYPES_ITEM_LIST_AFTER, path: "(types)/item:/(list)/after" }] },

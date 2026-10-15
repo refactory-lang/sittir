@@ -11,13 +11,16 @@ describe('a boolean slot compared after a type-guard filter', () => {
 	const count = (view: Iterable<unknown>) => [...view].length;
 
 	it('selects what the ofType query selects, for eq(true) and eq(false)', () => {
-		expect(count(ofType().where((c) => c.type.eq(true)))).toBe(1);
-		expect(count(guarded().where((c) => c.type.eq(true)))).toBe(count(ofType().where((c) => c.type.eq(true))));
-		expect(count(guarded().where((c) => c.type.eq(false)))).toBe(count(ofType().where((c) => c.type.eq(false))));
+		expect(count(ofType().where((c) => c.typeOnly.eq(true)))).toBe(1);
+		expect(count(guarded().where((c) => c.typeOnly.eq(true)))).toBe(count(ofType().where((c) => c.typeOnly.eq(true))));
+		expect(count(guarded().where((c) => c.typeOnly.eq(false)))).toBe(count(ofType().where((c) => c.typeOnly.eq(false))));
 	});
 
 	it('refuses a wrong form when the view runs, naming the kind and the slot', () => {
-		const loose = guarded().where((c) => (c.type as unknown as { eq(t: string): never }).eq('type'));
-		expect(() => [...loose]).toThrow(/export_statement_default_from\.type/);
+		const loose = guarded().where((c) => {
+			// @ts-expect-error the runtime rejects a token string in a boolean comparison
+			return c.typeOnly.eq('type');
+		});
+		expect(() => [...loose]).toThrow(/export_statement_default_from\.typeOnly/);
 	});
 });

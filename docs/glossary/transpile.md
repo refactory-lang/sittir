@@ -555,3 +555,11 @@ The message for a Node version below the floor, or `undefined` when it meets it.
 ### `packages/codegen/src/transpile/tree-sitter-cli.ts::assertGrammarRuntimeFloor`
 
 Throws `nodeFloorViolation`'s message for the `node` on `PATH`, which is what tree-sitter spawns to load `grammar.js`. Checked before a regen generates, because an older Node would otherwise fail inside the grammar with a syntax error.
+
+### `packages/codegen/src/transpile/source-parser.ts::buildSourceParser`
+
+Builds the completed authored grammar layer for source-query validation. A temporary
+parser directory imports the grammar's canonical entry with `UNBOUND_ENV` selected
+only for generation, reusing its settled base conflicts and existing scanner/includes.
+The canonical WASM compiler builds that parser; its bytes are returned and temporary
+files are removed on success or failure. Bound parser artifacts are never rewritten.

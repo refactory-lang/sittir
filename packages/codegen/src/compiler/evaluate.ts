@@ -189,7 +189,39 @@ export interface EvaluateCtx {
 	readonly desugarDivergences: DesugarDivergenceEvent[];
 }
 
-function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: GrammarOptions): { grammar: EvaluatedGrammar } {
+interface LayerCtx<T> {
+	readonly previous: T | undefined;
+}
+
+function inheritedRecord<T>(
+	current: Readonly<Record<string, T>> | undefined,
+	ctx: LayerCtx<Readonly<Record<string, T>>>
+): Record<string, T> | undefined {
+	return ctx.previous === undefined && current === undefined ? undefined : { ...ctx.previous, ...current };
+}
+
+function inheritedMap<K, V>(current: ReadonlyMap<K, V> | undefined, ctx: LayerCtx<ReadonlyMap<K, V>>): Map<K, V> | undefined {
+	return ctx.previous === undefined && current === undefined
+		? undefined
+		: new Map([...(ctx.previous ?? []), ...(current ?? [])]);
+}
+
+function inheritedPatchSites(
+	current: readonly PatchSite[] | undefined,
+	ctx: LayerCtx<readonly PatchSite[]>
+): readonly PatchSite[] | undefined {
+	if (ctx.previous === undefined && current === undefined) return undefined;
+	return [
+		...new Map(
+			[...(ctx.previous ?? []), ...(current ?? [])].map((site) => [`${site.ownerKind}:${site.path}`, site])
+		).values()
+	];
+}
+
+function grammarFn(
+	optionsOrBase: GrammarOptions | GrammarResult,
+	options?: GrammarOptions
+): { grammar: EvaluatedGrammar } {
 	let baseRules: Record<string, Rule<'evaluate'>> = {};
 	let baseGrammar: any = null;
 	let base: GrammarResult | undefined;
@@ -206,8 +238,9 @@ function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: Gram
 		opts = options;
 	}
 
+	const inherited: Partial<EvaluatedGrammar> = baseGrammar ?? {};
 	const rules: Record<string, Rule<'evaluate'>> = { ...baseRules };
-	const evaluateSynthesized = new Set<string>();
+	const evaluateSynthesized = new Set<string>(inherited.evaluateSynthesized);
 
 	const extras: RuleListEntry[] = [];
 	const externals: RuleListEntry[] = [];
@@ -241,8 +274,8 @@ function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: Gram
 		setWord: (w) => {
 			word = w;
 		},
-		bodyPatternZeroMatches: [],
-		desugarDivergences: []
+		bodyPatternZeroMatches: [...(inherited.bodyPatternZeroMatches ?? [])],
+		desugarDivergences: [...(inherited.desugarDivergences ?? [])]
 	};
 
 	const { roles: collectedRoles } = withRoleScope(() => {
@@ -254,23 +287,30 @@ function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: Gram
 	inheritBaseGrammarMetadata(opts, ctx);
 	const wireCtx = getWireContext(opts);
 
-	const refineForms = drainRefineMetadata(opts);
-	const groups = drainGroupsMetadata(opts);
-	const expectDiagnostics = drainExpectDiagnosticsMetadata(opts);
-	const expectTestFailures = drainExpectTestFailuresMetadata(opts);
-	const renderAs = drainRenderAsMetadata(opts, ctx);
-	const visibleExternals = drainVisibleExternalsMetadata(opts, ctx);
-	const optionsBlock = drainOptionsMetadata(opts);
-	const reparseHosts = getWireContext(opts)?.reparseHosts;
-	const { ruleCauses, undeclaredRules } = drainRuleCausesMetadata(opts);
-	const patchSites = drainPatchSitesMetadata(opts);
+	const refineForms = inheritedMap(drainRefineMetadata(opts), { previous: inherited.refineForms });
+	const groups = inheritedRecord(drainGroupsMetadata(opts), { previous: inherited.groups });
+	const expectDiagnostics = inheritedRecord(drainExpectDiagnosticsMetadata(opts), { previous: inherited.expectDiagnostics });
+	const expectTestFailures = inheritedRecord(drainExpectTestFailuresMetadata(opts), { previous: inherited.expectTestFailures });
+	const renderAs = inheritedRecord(drainRenderAsMetadata(opts, ctx), { previous: inherited.renderAs });
+	const visibleExternals = inheritedRecord(drainVisibleExternalsMetadata(opts, ctx), { previous: inherited.visibleExternals });
+	const optionsBlock = inheritedRecord(drainOptionsMetadata(opts), { previous: inherited.options });
+	const reparseHosts = getWireContext(opts)?.reparseHosts ?? inherited.reparseHosts;
+	const declarations = drainRuleCausesMetadata(opts);
+	const ruleCauses = inheritedRecord(declarations.ruleCauses, { previous: inherited.ruleCauses });
+	const undeclaredRules =
+		inherited.undeclaredRules === undefined && declarations.undeclaredRules === undefined
+			? undefined
+			: [...new Set([...(inherited.undeclaredRules ?? []), ...(declarations.undeclaredRules ?? [])])];
+	const patchSites = inheritedPatchSites(drainPatchSitesMetadata(opts), { previous: inherited.patchSites });
 	const stages = base !== undefined && departsFromBase(ctx) ? evaluateStages(base, ctx) : undefined;
 
 	const grammarResult = {
 		name: opts.name,
 		rules,
 		evaluateSynthesized,
-		protectedRuleNames: wireCtx ? [...protectedWireRuleNames(opts), ...supertypes] : undefined,
+		protectedRuleNames: wireCtx
+			? [...new Set([...(inherited.protectedRuleNames ?? []), ...protectedWireRuleNames(opts), ...supertypes])]
+			: inherited.protectedRuleNames,
 		extras,
 		externals,
 		supertypes,
@@ -280,12 +320,14 @@ function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: Gram
 		precedences,
 		word,
 		reserved,
-		externalRoles: collectedRoles.size > 0 ? collectedRoles : undefined,
+		externalRoles: inheritedMap(collectedRoles.size > 0 ? collectedRoles : undefined, { previous: inherited.externalRoles }),
 		refineForms,
 		groups,
 		renderAs,
 		visibleExternals,
-		whitespaceCollisions: wireCtx?.whitespaceCollisions?.length ? wireCtx.whitespaceCollisions : undefined,
+		whitespaceCollisions: wireCtx?.whitespaceCollisions?.length
+			? wireCtx.whitespaceCollisions
+			: inherited.whitespaceCollisions,
 		options: optionsBlock,
 		expectDiagnostics,
 		expectTestFailures,
@@ -293,7 +335,7 @@ function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: Gram
 		ruleCauses,
 		undeclaredRules,
 		patchSites,
-		stages,
+		stages: inherited.stages ?? stages,
 		automaticVariants: wireCtx?.automaticVariants,
 		bodyPatternZeroMatches: ctx.bodyPatternZeroMatches.length > 0 ? [...ctx.bodyPatternZeroMatches] : undefined,
 		desugarDivergences: ctx.desugarDivergences.length > 0 ? [...ctx.desugarDivergences] : undefined
@@ -459,7 +501,6 @@ function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>
 		applyVisibleExternalsRewrite(rules, { wireCtx });
 	}
 }
-
 
 interface PatternCandidate {
 	readonly name: string;

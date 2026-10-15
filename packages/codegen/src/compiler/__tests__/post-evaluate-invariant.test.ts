@@ -145,6 +145,10 @@ describe('post-evaluate invariant', () => {
 				'externalRoles',
 				// Nested-alias polymorph metadata — populated by alias() in transform.
 				'polymorphVariants',
+				// Binding transformations record their minted rules and canonical edits.
+				'splitFrom',
+				'leadFrom',
+				'bindingEffects',
 				// refine() form metadata — populated per ADR-0010 phase 2.
 				'refineForms',
 				// wire() config sidecars — drained from __wireContext__ in evaluate.ts.

@@ -455,7 +455,10 @@ function isSupertypeMember(member: ChoiceShape): boolean {
 }
 
 function flattenChoiceMembers(members: readonly ChoiceShape[]): ChoiceShape[] {
-	return members.flatMap((m) => (isChoiceType(typeOf(m) ?? '') ? flattenChoiceMembers(m.members ?? []) : [m]));
+	return members.flatMap((member) => {
+		const m = unwrapPrec(member) as ChoiceShape;
+		return isChoiceType(typeOf(m) ?? '') ? flattenChoiceMembers(m.members ?? []) : [m];
+	});
 }
 
 export function hiddenChoiceClass(body: unknown, storageBodyOf: (name: string) => unknown, namedArms: boolean): HiddenChoiceClass | undefined {

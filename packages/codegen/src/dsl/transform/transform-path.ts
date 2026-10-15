@@ -527,9 +527,9 @@ export function reconstructPrec(rule: RuntimeRule, newContent: RuntimeRule): Run
 	if (variant) {
 		const fn = prec[variant];
 		if (typeof fn !== 'function') throw new Error(`transform: native prec.${variant} not available`);
-		return fn(value, newContent);
+		return carryOverProperties(rule, fn(value, newContent));
 	}
-	return prec(value, newContent);
+	return carryOverProperties(rule, prec(value, newContent));
 }
 
 export function wrapInPrecStack(

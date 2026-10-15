@@ -37,6 +37,67 @@ describe('bindFacts', () => {
 	};
 	const bound = bindFacts(facts, (kind) => `bound_${kind}`);
 
+	it('binds field selectors against their owning kinds through nested routes', () => {
+		const step = (field: string, kind: string) => ({ field, kind, after: null, anchor: null });
+		const fields: Record<string, Record<string, string>> = {
+			function_item: { name: 'declaration_name', body: 'suite' },
+			block: { name: 'block_name', value: 'expression' },
+			impl_item: { name: 'implementation_name' }
+		};
+		const mapped = bindFacts(
+			{
+				...facts,
+				members: [
+					{ route: 'rename', owner: 'function_item', name: 'name', ...step('name', 'identifier') },
+					{
+						route: 'nested',
+						owner: 'function_item',
+						name: 'body',
+						parent: 'block',
+						multiple: false,
+						via: [step('body', 'block')],
+						...step('value', 'identifier')
+					}
+				],
+				claims: [
+					claim('declaration.function', 'function_item', {
+						within: ['impl_item'],
+						field: 'name',
+						fieldLiterals: { name: 'f' },
+						predicates: [
+							{
+								operator: 'eq',
+								capture: 'v',
+								arguments: [{ text: 'x' }],
+								subject: { up: 0, down: [step('body', 'block'), step('name', 'identifier')] }
+							}
+						]
+					})
+				]
+			},
+			(kind) => kind,
+			(owner: string, field: string) => fields[owner]?.[field] ?? field
+		);
+		expect(mapped.members).toEqual([
+			{ route: 'rename', owner: 'function_item', name: 'name', ...step('declaration_name', 'identifier') },
+			{
+				route: 'nested',
+				owner: 'function_item',
+				name: 'body',
+				parent: 'block',
+				multiple: false,
+				via: [step('suite', 'block')],
+				...step('expression', 'identifier')
+			}
+		]);
+		expect(mapped.claims[0]?.field).toBe('implementation_name');
+		expect(mapped.claims[0]?.fieldLiterals).toEqual({ declaration_name: 'f' });
+		expect(mapped.claims[0]?.predicates[0]?.subject).toEqual({
+			up: 0,
+			down: [step('suite', 'block'), step('block_name', 'identifier')]
+		});
+	});
+
 	it('names every claimed kind and placement by its bound kind, and leaves a wildcard claim as it is', () => {
 		expect(bound.claims.map((c) => [c.kind, c.within])).toEqual([
 			['bound_function_item', ['bound_impl_item']],
@@ -44,7 +105,7 @@ describe('bindFacts', () => {
 		]);
 	});
 
-	it('names the kinds each claim\'s child tests and predicates read, and the steps to them, by their bound kinds', () => {
+	it("names the kinds each claim's child tests and predicates read, and the steps to them, by their bound kinds", () => {
 		const step = { field: null, kind: 'block', after: null, anchor: null };
 		const [claimed] = bindFacts(
 			{
@@ -69,7 +130,7 @@ describe('bindFacts', () => {
 		]);
 	});
 
-	it('names the kinds a claim\'s sibling order and its anchors\' neighbours select by their bound kinds', () => {
+	it("names the kinds a claim's sibling order and its anchors' neighbours select by their bound kinds", () => {
 		const op = { field: null, kind: 'cmp_op', after: null, anchor: null };
 		const [claimed] = bindFacts(
 			{
@@ -88,7 +149,7 @@ describe('bindFacts', () => {
 		]);
 	});
 
-	it('names each member route\'s owner, path and selected kinds by their bound kinds', () => {
+	it("names each member route's owner, path and selected kinds by their bound kinds", () => {
 		expect(bound.members).toEqual([
 			{ route: 'rename', owner: 'bound_function_item', name: 'name', field: 'name', kind: 'bound_identifier', after: { field: null, kind: 'bound_fn', after: null, anchor: null }, anchor: null },
 			{ route: 'presence', owner: 'bound_function_item', name: 'isAsync', token: 'async', via: [{ field: null, kind: 'bound_function_modifiers', after: null, anchor: null }] },
@@ -143,8 +204,9 @@ describe('refineClaims', () => {
 		expect(claims.map((c) => c.refinement)).toEqual([null, 'predicate', 'token', 'child-pattern']);
 	});
 
-	it('refines a form\'s claim by its supertype\'s claim: a claim with a test of its own is a refinement, a plain one names the form', () => {
-		const formsOf = (kind: string): readonly string[] => (kind === '_struct' ? ['_struct', 'struct_named', 'struct_unit'] : [kind]);
+	it("refines a form's claim by its supertype's claim: a claim with a test of its own is a refinement, a plain one names the form", () => {
+		const formsOf = (kind: string): readonly string[] =>
+			kind === '_struct' ? ['_struct', 'struct_named', 'struct_unit'] : [kind];
 		const unit = { subject: { up: 0, down: [] }, kinds: ['unit_marker'], captured: false };
 		const claims = refineClaims(
 			[claim('declaration.struct', '_struct'), claim('declaration.struct.named', 'struct_named'), claim('declaration.struct.unit', 'struct_unit', { children: [unit] })],
@@ -157,7 +219,7 @@ describe('refineClaims', () => {
 		]);
 	});
 
-	it('keeps an unrefined claim\'s own predicate, field literal or token as its refinement kind', () => {
+	it("keeps an unrefined claim's own predicate, field literal or token as its refinement kind", () => {
 		const [claimed] = refineClaims([claim('identifier.receiver', 'identifier', { tokens: ['self'] })], SAME);
 		expect([claimed?.refines, claimed?.refinement]).toEqual([null, 'token']);
 	});

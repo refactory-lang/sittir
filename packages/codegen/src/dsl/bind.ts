@@ -1,4 +1,5 @@
 import { isPreference } from './primitives/preference.ts';
+import { formatPreferencePath, parsePreferencePath } from './primitives/preference-path.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import type { AnyRule, Rule } from '../types/rule.ts';
 import type { RuntimeRule } from '../types/runtime-shapes.ts';
@@ -8,6 +9,10 @@ import { predictedSymbolSourceOf } from './symbol-table.ts';
 import { LABELS_KEY } from './wire/options-block.ts';
 import { REPARSE_HOST_PRIORITY } from './wire/reparse-hosts.ts';
 import type { PatchesConfig } from './wire/wire.ts';
+import { collapseSingletonMintOrdinals, visibleGroupSynthName } from './automatic-groups.ts';
+import { withHoistedAnnotation } from './annotations.ts';
+import { makeRuleMetadata } from './rule-metadata.ts';
+import type { EnrichRuleOrigin } from './enrich-ctx.ts';
 
 export interface Rename {
 	readonly from: string;
@@ -52,6 +57,25 @@ export interface Lead {
 	readonly admits: readonly LeadMatch[];
 }
 
+export function bindMatch(
+	match: LeadMatch,
+	rename: (kind: string) => string,
+	fieldNameOf: (owner: string, field: string) => string = (_owner, field) => field
+): LeadMatch {
+	return {
+		...match,
+		kind: rename(match.kind),
+		...(match.within === undefined
+			? {}
+			: {
+					within: {
+						field: match.within.field === null ? null : fieldNameOf(match.kind, match.within.field),
+						admits: match.within.admits.map((m) => bindMatch(m, rename, fieldNameOf))
+					}
+				})
+	};
+}
+
 export interface Bindings {
 	readonly hash?: string;
 	readonly patches?: PatchesConfig;
@@ -62,7 +86,16 @@ export interface Bindings {
 
 export type BindingEffect =
 	| { readonly kind: 'segment'; readonly owner: string; readonly from: string; readonly to: string }
-	| { readonly kind: 'alias'; readonly from: string; readonly to: string };
+	| { readonly kind: 'alias'; readonly from: string; readonly to: string }
+	| LeadEffect;
+
+export interface LeadEffect extends Lead {
+	readonly kind: 'lead';
+	readonly receiver: string;
+	readonly group: string;
+	readonly restField: string;
+	readonly variants: Readonly<Record<string, string>>;
+}
 
 export const BINDING_SET: unique symbol = Symbol.for('sittir.bindingSet');
 
@@ -196,7 +229,9 @@ export function renameGrammar(grammar: GrammarRecord, renames: Readonly<Record<s
 	const rename = (name: string): string => mappedName(renames, name);
 	const rules = isRecord(grammar.rules) ? grammar.rules : {};
 	const externals = new Set(
-		(Array.isArray(grammar.externals) ? grammar.externals : []).flatMap((e) => (isRecord(e) && typeof e.name === 'string' ? [e.name] : []))
+		(Array.isArray(grammar.externals) ? grammar.externals : []).flatMap((e) =>
+			isRecord(e) && typeof e.name === 'string' ? [e.name] : []
+		)
 	);
 	for (const [from, to] of Object.entries(renames)) {
 		if (!(from in rules) && !externals.has(from)) throw new Error(`bind: '${from}' is no rule or external of the grammar`);
@@ -236,7 +271,6 @@ function replaceSymbols(rule: unknown, replace: (name: string) => string): unkno
 	return out;
 }
 
-
 function fieldNames(rule: unknown, out: Set<string> = new Set()): Set<string> {
 	if (Array.isArray(rule)) for (const r of rule) fieldNames(r, out);
 	else if (isRecord(rule)) {
@@ -247,7 +281,11 @@ function fieldNames(rule: unknown, out: Set<string> = new Set()): Set<string> {
 }
 
 function supertypesOf(grammar: GrammarRecord): ReadonlySet<string> {
-	return new Set((Array.isArray(grammar.supertypes) ? grammar.supertypes : []).flatMap((s) => (typeof s === 'string' ? [s] : isRecord(s) && typeof s.name === 'string' ? [s.name] : [])));
+	return new Set(
+		(Array.isArray(grammar.supertypes) ? grammar.supertypes : []).flatMap((s) =>
+			typeof s === 'string' ? [s] : isRecord(s) && typeof s.name === 'string' ? [s.name] : []
+		)
+	);
 }
 
 function transparentReach(rules: GrammarRecord, from: string, stop: ReadonlySet<string>): Set<string> {
@@ -294,11 +332,47 @@ interface SegmentRewrite {
 	readonly to: string;
 }
 
-function rewriteOwnedSegments(options: unknown, rewrites: readonly SegmentRewrite[]): unknown {
+function boundSegmentOf(
+	rewrites: readonly SegmentRewrite[],
+	grammar?: GrammarRecord
+): (owner: string, segment: string) => string {
+	const rules = isRecord(grammar?.rules) ? grammar.rules : {};
+	const stop = grammar === undefined ? new Set<string>() : supertypesOf(grammar);
+	const reach = new Map<string, ReadonlySet<string>>();
+	return (owner, segment) => {
+		const hosts = reach.get(owner) ?? transparentReach(rules, owner, stop);
+		reach.set(owner, hosts);
+		const destinations = [
+			...new Set(rewrites.filter((r) => hosts.has(r.owner) && r.from === segment).map((r) => r.to))
+		];
+		if (destinations.length > 1)
+			throw new Error(`bind: '${owner}/${segment}' has conflicting field renames: ${destinations.join(', ')}`);
+		return destinations[0] ?? segment;
+	};
+}
+
+export function boundFieldNameOf(
+	rewrites: readonly SegmentRewrite[],
+	grammar?: GrammarRecord
+): (owner: string, field: string) => string {
+	const segmentOf = boundSegmentOf(rewrites, grammar);
+	return (owner, field) => {
+		const segment = parsePreferencePath(
+			segmentOf(owner, formatPreferencePath([{ kind: 'fieldName', name: field }]))
+		)[0];
+		if (segment?.kind !== 'fieldName') throw new Error(`bind: '${owner}.${field}' was not renamed to a field`);
+		return segment.name;
+	};
+}
+
+function rewriteOwnedSegments(options: unknown, rewrites: readonly SegmentRewrite[], grammar?: GrammarRecord): unknown {
 	if (!isRecord(options)) return options;
-	const fieldOf = (owner: string, segment: string): string =>
-		rewrites.find((r) => r.owner === owner && r.from === segment)?.to ?? segment;
-	const ownedPath = (owner: string, path: string): string => path.split('/').map((segment) => fieldOf(owner, segment)).join('/');
+	const fieldOf = boundSegmentOf(rewrites, grammar);
+	const ownedPath = (owner: string, path: string): string =>
+		path
+			.split('/')
+			.map((segment) => fieldOf(owner, segment))
+			.join('/');
 	const ownedRecord = (owner: string, record: unknown): unknown => {
 		if (!isRecord(record) || isPreference(record)) return record;
 		const out: GrammarRecord = {};
@@ -474,7 +548,8 @@ function fieldReferences(rule: unknown, symbol: string, field: string, inField =
 	return out;
 }
 
-const listEntryName = (entry: unknown): string | undefined => (typeof entry === 'string' ? entry : isRecord(entry) && typeof entry.name === 'string' ? entry.name : undefined);
+const listEntryName = (entry: unknown): string | undefined =>
+	typeof entry === 'string' ? entry : isRecord(entry) && typeof entry.name === 'string' ? entry.name : undefined;
 
 interface MintLists {
 	readonly supertypes: unknown[];
@@ -490,6 +565,29 @@ function mintLists(grammar: GrammarRecord): MintLists {
 		for (const list of [supertypes, inline]) if (listed(list, base) && !listed(list, name)) list.push(typeof list[0] === 'string' ? name : { type: 'SYMBOL', name });
 	};
 	return { supertypes, inline, enlist };
+}
+
+function ownerOptions(options: GrammarRecord, owner: string): GrammarRecord {
+	const labels = options[LABELS_KEY];
+	return {
+		...(owner in options ? { [owner]: options[owner] } : {}),
+		...(isRecord(labels) ? { [LABELS_KEY]: Object.fromEntries(Object.entries(labels).filter(([path]) => path.split('/')[0] === owner)) } : {})
+	};
+}
+
+function inheritSplitOptions(grammar: GrammarRecord, splitFrom: Readonly<Record<string, string>>): unknown {
+	if (!isRecord(grammar.options)) return grammar.options;
+	const out = { ...grammar.options };
+	const fields = fieldNames(grammar.rules);
+	for (const [to, from] of Object.entries(splitFrom)) {
+		const projected = renameOptionPaths(ownerOptions(grammar.options, from), (name) => name === from ? to : name, true, fields);
+		if (!isRecord(projected)) continue;
+		for (const [key, value] of Object.entries(projected)) {
+			const existing = out[key];
+			out[key] = isRecord(value) && isRecord(existing) ? { ...value, ...existing } : existing ?? value;
+		}
+	}
+	return out;
 }
 
 export function splitGrammar(grammar: GrammarRecord, splits: readonly Split[]): GrammarRecord {
@@ -552,6 +650,7 @@ export function splitGrammar(grammar: GrammarRecord, splits: readonly Split[]): 
 	const out: GrammarRecord = { ...grammar, rules, supertypes, inline };
 	carryHiddenFacts(grammar, out, (name) => name);
 	out.splitFrom = { ...(isRecord(grammar.splitFrom) ? grammar.splitFrom : {}), ...splitFrom };
+	if ('options' in grammar) out.options = inheritSplitOptions(grammar, splitFrom);
 	return out;
 }
 
@@ -577,6 +676,7 @@ interface LeadEdit {
 	readonly reach: Set<string>;
 	readonly transparent: (name: string) => boolean;
 	readonly mint: (base: string, side: LeadSide, body: unknown) => string;
+	readonly variants: Record<string, string>;
 }
 
 function rewrap(original: unknown, inner: unknown): unknown {
@@ -620,13 +720,20 @@ function narrowRef(edit: LeadEdit, ref: unknown, admits: readonly LeadMatch[], s
 			if (inside !== undefined) throw new LeadRefusal(`'${inside}' sits where the split cannot divide it`);
 			return side.lead ? undefined : ref;
 		}
-		if (admitted.within === undefined) return side.lead ? (admitted.as === undefined ? ref : renamedKind(ref, admitted.as)) : undefined;
+		if (admitted.within === undefined) {
+			if (side.lead && admitted.as !== undefined) edit.variants[kind] = admitted.as;
+			return side.lead ? (admitted.as === undefined ? ref : renamedKind(ref, admitted.as)) : undefined;
+		}
 		const name = refRule(ref);
 		if (name === undefined) throw new LeadRefusal(`'${kind}' has no rule to narrow`);
 		const inPlace = !side.lead && (!isParserHiddenName(name) || exclusiveTo(edit, name, exclusive));
 		edit.reach.add(name);
 		const body = narrowWithin(edit, kind, edit.rules[name], admitted.within, side, inPlace);
-		if (side.lead) return aliasOf(edit.mint(name, side, body), admitted.as ?? `${kind}_${side.suffix}`);
+		if (side.lead) {
+			const visible = admitted.as ?? `${kind}_${side.suffix}`;
+			edit.variants[kind] = visible;
+			return aliasOf(edit.mint(name, side, body), visible);
+		}
 		if (inPlace && !isParserHiddenName(name)) {
 			const count = edit.positions.counts.get(name) ?? 0;
 			const holders = [...(edit.positions.holders.get(name) ?? [])].sort();
@@ -787,7 +894,8 @@ function withReceiverForm(rule: unknown, list: string, receiverForm: GrammarReco
 }
 
 function leadSymbols(grammar: GrammarRecord, rules: GrammarRecord, supertypes: ReadonlySet<string>): SymbolSource {
-	const entries = (key: string): RuleListEntry[] => (Array.isArray(grammar[key]) ? (grammar[key] as RuleListEntry[]) : []);
+	const entries = (key: string): RuleListEntry[] =>
+		Array.isArray(grammar[key]) ? (grammar[key] as RuleListEntry[]) : [];
 	return predictedSymbolSourceOf({
 		rules: rules as Record<string, AnyRule>,
 		extras: entries('extras'),
@@ -854,6 +962,7 @@ export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): Gra
 	const rules: GrammarRecord = { ...(isRecord(grammar.rules) ? grammar.rules : {}) };
 	const { supertypes, inline, enlist } = mintLists(grammar);
 	const leadFrom: Record<string, string> = {};
+	const realized: (() => LeadEffect)[] = [];
 	const mint = (base: string, side: LeadSide, body: unknown): string => {
 		const name = `_${undisplayedKindAddress(base)}_${side.suffix}`;
 		if (name in rules) {
@@ -867,7 +976,20 @@ export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): Gra
 		return name;
 	};
 	const stop = supertypesOf(grammar);
-	const inlined = new Set((Array.isArray(grammar.inline) ? grammar.inline : []).flatMap((entry) => listEntryName(entry) ?? []));
+	const groupRules: Record<string, Rule> = {};
+	const groupOrigins = new Map<string, EnrichRuleOrigin>();
+	const groupContext = {
+		rulesBag: rules as Record<string, Rule>,
+		clauseGroupRules: groupRules,
+		ruleOrigins: groupOrigins,
+		groupDedupeMap: {},
+		authoredGroupBodies: [],
+		sourceSymbols: leadSymbols(grammar, rules, stop),
+		hoist: undefined
+	};
+	const inlined = new Set(
+		(Array.isArray(grammar.inline) ? grammar.inline : []).flatMap((entry) => listEntryName(entry) ?? [])
+	);
 	const transparent = (name: string): boolean => isParserHiddenName(name) || stop.has(name) || inlined.has(name);
 	const heldBy = new Map<string, string>();
 	const edit = ({ list, item, field, admits }: Lead): void => {
@@ -878,10 +1000,43 @@ export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): Gra
 		if (shape.trailing === 'mandatory') throw new LeadRefusal('the list takes a mandatory trailing separator');
 		const element = shape.element as unknown as GrammarRecord;
 		const reach = new Set<string>();
-		const head = narrowRef({ rules, supertypes: stop, sites: new Map(), positions: NO_POSITIONS, heldBy, reach, transparent, mint }, element.content, admits, { lead: true, suffix: field }, false);
+		const variants: Record<string, string> = {};
+		const head = narrowRef(
+			{
+				rules,
+				supertypes: stop,
+				sites: new Map(),
+				positions: NO_POSITIONS,
+				heldBy,
+				reach,
+				transparent,
+				mint,
+				variants
+			},
+			element.content,
+			admits,
+			{ lead: true, suffix: field },
+			false
+		);
 		if (head === undefined) throw new LeadRefusal('it admits no item of the list');
 		const positions = itemPositions(element.content, rules, reach, transparent);
-		const rest = narrowRef({ rules, supertypes: stop, sites: referenceSites(rules, list, [element.content, shape.separatorRule]), positions, heldBy, reach, transparent, mint }, element.content, admits, { lead: false, suffix: item }, true);
+		const rest = narrowRef(
+			{
+				rules,
+				supertypes: stop,
+				sites: referenceSites(rules, list, [element.content, shape.separatorRule]),
+				positions,
+				heldBy,
+				reach,
+				transparent,
+				mint,
+				variants
+			},
+			element.content,
+			admits,
+			{ lead: false, suffix: item },
+			true
+		);
 		if (rest === undefined) throw new LeadRefusal('it leaves the list no item');
 		if (rest !== element.content) rules[list] = replaceItems(rules[list], item, element.content, rest);
 		const owners = Object.keys(rules).filter((name) => name !== list && leadFrom[name] === undefined);
@@ -889,8 +1044,26 @@ export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): Gra
 		const fields = [...new Set(sites.map((site) => site.name as string))].sort();
 		if (fields.length !== 1) throw new LeadRefusal(fields.length === 0 ? 'the list sits in no field of another rule' : `the list sits in fields ${fields.join(', ')}`);
 		const optional = optionalSpelling(rules[list]);
-		const body = { type: 'SEQ', members: [{ ...element, name: field, content: head }, optional({ type: 'SEQ', members: [shape.separatorRule, shape.trailing === undefined ? sites[0] : optional(sites[0])] })] };
+		const restBody = {
+			type: 'SEQ',
+			members: [shape.separatorRule, shape.trailing === undefined ? sites[0] : optional(sites[0])]
+		} as Rule;
+		const groupName = visibleGroupSynthName(restBody, `${list}_${field}`, groupContext, { grp: 0, arm: 0 });
+		if (groupName === null) throw new LeadRefusal('the receiver rest group could not be named');
+		const groupRef = { type: 'SYMBOL', name: groupName, metadata: makeRuleMetadata({ symbolSource: 'group-lift' }) };
+		const body = { type: 'SEQ', members: [{ ...element, name: field, content: head }, optional(groupRef)] };
 		const receiverForm = aliasOf(mint(list, { lead: true, suffix: field }, body), `${list}_${field}`);
+		realized.push(() => ({
+			kind: 'lead',
+			list,
+			item,
+			field,
+			admits,
+			receiver: receiverForm.value as string,
+			group: groupRef.name,
+			restField: fields[0]!,
+			variants
+		}));
 		for (const owner of owners) rules[owner] = withReceiverForm(rules[owner], list, receiverForm);
 		for (const name of positions.counts.keys()) if (!heldBy.has(name)) heldBy.set(name, list);
 	};
@@ -901,9 +1074,15 @@ export function leadGrammar(grammar: GrammarRecord, leads: readonly Lead[]): Gra
 			throw error instanceof LeadRefusal ? new LeadRefusal(error.reason, l) : error;
 		}
 	}
+	for (const [name, body] of Object.entries(groupRules)) rules[name] = withHoistedAnnotation(body);
+	collapseSingletonMintOrdinals(rules as Record<string, Rule>, groupRules, groupOrigins);
 	const out: GrammarRecord = { ...grammar, rules, supertypes, inline };
 	carryHiddenFacts(grammar, out, (name) => name);
 	out.leadFrom = { ...(isRecord(grammar.leadFrom) ? grammar.leadFrom : {}), ...leadFrom };
+	out.bindingEffects = [
+		...(Array.isArray(grammar.bindingEffects) ? grammar.bindingEffects : []),
+		...realized.map((effect) => effect())
+	];
 	return out;
 }
 
@@ -947,20 +1126,49 @@ export function rewriteBindingOptions(grammar: GrammarRecord, effects: readonly 
 	if (!('options' in grammar) || effects.length === 0) return grammar;
 	const segments = effects.flatMap((e) => (e.kind === 'segment' ? [{ owner: e.owner, from: e.from, to: e.to }] : []));
 	const aliases = new Map(effects.flatMap((e) => (e.kind === 'alias' ? [[e.from, e.to] as const] : [])));
-	const out: GrammarRecord = { ...grammar, options: rewriteOwnedSegments(grammar.options, segments) };
+	const out: GrammarRecord = { ...grammar, options: rewriteOwnedSegments(grammar.options, segments, grammar) };
 	if (aliases.size > 0) out.options = renameOptions(out, (name) => aliases.get(name) ?? name, false);
 	carryHiddenFacts(grammar, out, (name) => name);
 	return out;
 }
 
-export function bindGrammar(grammar: GrammarRecord, grammarBindings: Bindings, effects: readonly BindingEffect[] = []): GrammarRecord {
-	const renames = Object.fromEntries((grammarBindings.renames ?? []).map((r) => [r.from, r.to]));
-	const renamed = renameGrammar(rewriteBindingOptions(grammar, effects), renames);
-	const boundName = (name: string): string => mappedName(renames, name);
-	return splitGrammar(
-		renamed,
-		(grammarBindings.splits ?? []).map((s) => ({ ...s, kind: boundName(s.kind), within: s.within.map(boundName) }))
-	);
+function bindingEffectsForOwners(grammar: GrammarRecord, effects: readonly BindingEffect[]): readonly BindingEffect[] {
+	const segments = effects.filter((effect) => effect.kind === 'segment');
+	const segmentOf = boundSegmentOf(segments, grammar);
+	const from = [...new Set(segments.map((effect) => effect.from))];
+	const owners = isRecord(grammar.rules) ? Object.keys(grammar.rules) : [];
+	return [
+		...effects.filter((effect) => effect.kind !== 'segment'),
+		...owners.flatMap((owner) =>
+			from.flatMap((before): BindingEffect[] => {
+				const to = segmentOf(owner, before);
+				return to === before ? [] : [{ kind: 'segment', owner, from: before, to }];
+			})
+		)
+	];
+}
+
+export function bindGrammar(
+	grammar: GrammarRecord,
+	grammarBindings: Bindings,
+	effects: readonly BindingEffect[] = []
+): GrammarRecord {
+	const ownedEffects = bindingEffectsForOwners(grammar, effects);
+	const split = splitGrammar(rewriteBindingOptions(grammar, ownedEffects), grammarBindings.splits ?? []);
+	const fieldNameOf = boundFieldNameOf(ownedEffects.filter((effect) => effect.kind === 'segment'));
+	const leads = (grammarBindings.leads ?? []).map((entry) => ({
+		...entry,
+		item: fieldNameOf(entry.list, entry.item),
+		admits: entry.admits.map((admit) => bindMatch(admit, (kind) => kind, fieldNameOf))
+	}));
+	const bound = leadGrammar(split, leads);
+	bound.bindingEffects = [
+		...ownedEffects,
+		...(Array.isArray(bound.bindingEffects)
+			? bound.bindingEffects.filter((effect: BindingEffect) => effect.kind === 'lead')
+			: [])
+	];
+	return bound;
 }
 
 export function baseNamesOf(
@@ -976,7 +1184,11 @@ export function baseNamesOf(
 	);
 }
 
-export function boundNameOf(renamedFrom: Readonly<Record<string, string>> | undefined): (name: string) => string {
+export function boundNameOf(
+	renamedFrom: Readonly<Record<string, string>> | undefined,
+	aliases: readonly Extract<BindingEffect, { kind: 'alias' }>[] = []
+): (name: string) => string {
 	const bound = new Map(Object.entries(renamedFrom ?? {}).map(([to, from]) => [from, to]));
+	for (const { from, to } of aliases) bound.set(from, to);
 	return (name) => bound.get(name) ?? name;
 }

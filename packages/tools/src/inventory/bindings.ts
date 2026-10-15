@@ -1,5 +1,29 @@
 import { bindingPatterns } from '@sittir/codegen/bindings';
-import { loadLanguageForGrammar } from '../validate/common.ts';
+import { grammarPackage } from '@sittir/codegen/grammars';
+import type { Language } from 'web-tree-sitter';
+import { load } from '../codegen-surface.ts';
+import { loadWebTreeSitter } from '../validate/common.ts';
+
+const sourceLanguages = new Map<string, Promise<Language>>();
+
+async function sourceLanguage(grammar: string): Promise<Language> {
+	const cached = sourceLanguages.get(grammar);
+	if (cached !== undefined) return cached;
+	const pending = loadSourceLanguage(grammar);
+	sourceLanguages.set(grammar, pending);
+	try {
+		return await pending;
+	} catch (error) {
+		sourceLanguages.delete(grammar);
+		throw error;
+	}
+}
+
+async function loadSourceLanguage(grammar: string): Promise<Language> {
+	const { buildSourceParser } = await load('sourceParser');
+	const { Language } = await loadWebTreeSitter();
+	return Language.load(buildSourceParser(grammarPackage(grammar)));
+}
 
 export interface BindingIssue {
 	readonly line: number;
@@ -12,7 +36,7 @@ export interface CompiledQuery {
 }
 
 export async function compileQuery(grammar: string, text: string): Promise<CompiledQuery> {
-	const { lang } = await loadLanguageForGrammar(grammar);
+	const lang = await sourceLanguage(grammar);
 	const { Query } = await import('web-tree-sitter');
 	const query = new Query(lang, text);
 	try {
@@ -23,7 +47,7 @@ export async function compileQuery(grammar: string, text: string): Promise<Compi
 }
 
 export async function bindingIssues(grammar: string, text: string): Promise<BindingIssue[]> {
-	const { lang } = await loadLanguageForGrammar(grammar);
+	const lang = await sourceLanguage(grammar);
 	const { Query } = await import('web-tree-sitter');
 	const issues: BindingIssue[] = [];
 	for (const pattern of await bindingPatterns(text)) {

@@ -17,7 +17,12 @@ import { emitRenderModule, grammarRenderInputs, payloadCeilingAssertions, rustTr
 import { BOXED_PAYLOADS, PAYLOAD_CEILING_BYTES } from '../boxed-payloads.ts';
 import { ENVELOPE_PINS } from '../envelope-claims.ts';
 import { collectCatalogKinds, collectKindEntries, findKindEntry } from '../kind-discriminant.ts';
-import { seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
+import {
+	seamRenderRules,
+	spaceRenderRules,
+	spacingSitesOf,
+	whitespaceTextOf
+} from '../../compiler/model/render-rules.ts';
 import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
@@ -41,7 +46,6 @@ import {
 	transportArgs,
 	type ReadFactsCtx
 } from '../transport-projection.ts';
-
 
 // ---------------------------------------------------------------------------
 // classifySlot — exported helper
@@ -129,6 +133,16 @@ function modelFor(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
 	_models.set(grammar, built);
 	return built;
 }
+
+it('applies a seated alias address to both parser identities that share its display', async () => {
+	const { nodeMap, renderRules } = await modelFor('python');
+	const sites = spacingSitesOf(renderRules, nodeMap).filter(
+		(site) => site.kind === 'for_in_clause' && site.slot === 'right' && site.seat?.display === 'lambda_expression'
+	);
+	expect(sites).toHaveLength(2);
+	expect(new Set(sites.map((site) => nodeMap.nodes.get(site.seat!.kind)?.kindId)).size).toBe(2);
+	await expect(getTransportRsForGrammar('python')).resolves.toContain('Transport');
+});
 
 async function getTransportRsForGrammar(grammar: 'rust' | 'typescript' | 'scm' | 'python'): Promise<string> {
 	const { raw, nodeMap, kindEntries, generatedIdTables, templates, renderRules } = await modelFor(grammar);
@@ -276,9 +290,9 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 
 	it('a presence slot holding a keyword kind crosses as a boolean and renders the kind', async () => {
 		const src = await getRustTemplatesRs();
-		expect(extractStructBody(src, 'ReferenceTypeTransport')).toContain('pub mutable: bool,');
+		expect(extractStructBody(src, 'ReferenceTypeTransport')).toContain('pub exclusive: bool,');
 		expect(extractFnBody(src, 'render_reference_type')).toContain(
-			'let mutable = View::new(::sittir_core::view::Presence::new(node.mutable, MutableSpecifierTransport::MutableSpecifier), "{}");'
+			'let exclusive = View::new(::sittir_core::view::Presence::new(node.exclusive, MutableSpecifierTransport::MutableSpecifier), "{}");'
 		);
 		expect(src).not.toContain('::napi::ValueType::Boolean');
 	});
@@ -602,8 +616,10 @@ describe('transport read facts', () => {
 		);
 	});
 
-	it('gives a list owner its minimum depth and its tokens, and no named inner gap', () => {
-		expect(args('ParametersTransport')).toBe('kind = kind::PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN]');
+	it('gives a parameter branch its tokens and no list forwarding depth or named inner gap', () => {
+		expect(args('ParametersTransport')).toBe(
+			'kind = kind::PARAMETERS, layout = [kind::LPAREN, kind::RPAREN]'
+		);
 	});
 
 	it('marks a separated list, its item slot, its separator and the flank it leaves optional', () => {
@@ -748,8 +764,16 @@ describe('a slot whose only scalar source is an enum of immediate tokens', () =>
 describe('every string a kind writes is stamped', () => {
 	const RENDER_ONLY: ReadonlySet<string> = new Set([INDENT_TEXT, DEDENT_TEXT]);
 	const unstampedStrings = (rule: unknown, found: Set<string> = new Set()): Set<string> => {
-		const r = rule as { type?: string; value?: string; aliasedToId?: number; resolvedKindId?: number; members?: unknown[]; content?: unknown };
-		if (r.type === 'STRING' && r.value !== undefined && r.aliasedToId === undefined && r.resolvedKindId === undefined) found.add(r.value);
+		const r = rule as {
+			type?: string;
+			value?: string;
+			aliasedToId?: number;
+			resolvedKindId?: number;
+			members?: unknown[];
+			content?: unknown;
+		};
+		if (r.type === 'STRING' && r.value !== undefined && r.aliasedToId === undefined && r.resolvedKindId === undefined)
+			found.add(r.value);
 		for (const member of r.members ?? []) unstampedStrings(member, found);
 		if (r.content !== undefined) unstampedStrings(r.content, found);
 		return found;
@@ -846,7 +870,7 @@ describe('the payload ceiling', () => {
 describe('list storage', () => {
 	it('prints a possibly-empty list as a Vec and a repeat1 list as a NonEmptyVec', async () => {
 		const rust = await getTransportRsForGrammar('python');
-		expect(rust).toContain('pub except_clauses: Vec<::sittir_core::SlotValue<ExceptClauseTransport>>');
+		expect(rust).toContain('pub handlers: Vec<::sittir_core::SlotValue<ExceptClauseTransport>>');
 		expect(rust).not.toMatch(/Option<Vec</);
 		expect(rust).toContain('pub decorator: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DecoratorTransport>>');
 	}, 120_000);

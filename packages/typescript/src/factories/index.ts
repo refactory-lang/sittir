@@ -392,6 +392,12 @@ export const forHeaderVarKind: Hoisted<typeof O.forHeaderVarKind> = hoistAs<type
 export const forHeaderLetConstKind: Hoisted<typeof O.forHeaderLetConstKind> = hoistAs<typeof O.forHeaderLetConstKind>(
 	O.forHeaderLetConstKind
 );
+export const receiverParameterDeclaration: Hoisted<typeof O.receiverParameterDeclaration> = hoistAs<
+	typeof O.receiverParameterDeclaration
+>(O.receiverParameterDeclaration);
+export const formalParametersElementsReceiver: Hoisted<typeof O.formalParametersElementsReceiver> = hoistAs<
+	typeof O.formalParametersElementsReceiver
+>(O.formalParametersElementsReceiver);
 export const declaration: Hoisted<typeof O.declaration> = hoistAs<typeof O.declaration>(O.declaration);
 export const importSpecifier: Hoisted<typeof O.importSpecifier> = hoistAs<typeof O.importSpecifier>(O.importSpecifier);
 export const variableDeclarator: Hoisted<typeof O.variableDeclarator> = hoistAs<typeof O.variableDeclarator>(

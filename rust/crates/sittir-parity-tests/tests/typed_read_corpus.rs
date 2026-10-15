@@ -1,7 +1,7 @@
 use sittir_core::read::{read_at, Depth, ReadCtx, ReadError, ReadRoot};
 use sittir_core::SlotValue;
 use sittir_rust::render::kind_ids;
-use sittir_rust::render::transport::{FunctionItemTransport, ParametersTransport, SourceFileTransport, StatementTransport};
+use sittir_rust::render::transport::{ArgumentsTransport, FunctionItemTransport, ParametersElementsTransportSlot, ParametersTransport, SourceFileTransport, StatementTransport};
 use sittir_rust::render::{AnyTransport, RenderRoot};
 
 fn parse(source: &str) -> tree_sitter::Tree {
@@ -74,7 +74,7 @@ fn every_read_transport_names_its_own_node() {
 
 #[test]
 fn a_list_owner_read_at_one_level_brings_its_list() {
-    let source = "fn f(a: u8, b: u8) {}";
+    let source = "fn f() { g(a, b); }";
     let tree = parse(source);
     let ctx = ReadCtx::new(source, 1, <sittir_rust::render::AnyTransport as sittir_core::read::ReadTransport>::shows);
     let index = {
@@ -82,13 +82,27 @@ fn a_list_owner_read_at_one_level_brings_its_list() {
         (0..tree.root_node().descendant_count())
             .find(|&r| {
                 cursor.goto_descendant(r);
-                cursor.node().grammar_id() == sittir_rust::render::kind_ids::PARAMETERS.0
+                cursor.node().grammar_id() == sittir_rust::render::kind_ids::ARGUMENTS.0
             })
             .unwrap() as u32
     };
-    let parameters: ParametersTransport = read_at::<_>(&mut tree.walk(), &ctx, index, Depth::ONE).unwrap();
-    let list = parameters.elements.unwrap();
+    let arguments: ArgumentsTransport = read_at::<_>(&mut tree.walk(), &ctx, index, Depth::ONE).unwrap();
+    let list = arguments.elements.unwrap();
     let list = list.transport().expect("min_depth reads the list");
+    assert_eq!(list.item.len(), 2);
+}
+
+#[test]
+fn a_parameter_branch_reads_its_ordinary_list_variant() {
+    let source = "fn f(a: u8, b: u8) {}";
+    let tree = parse(source);
+    let ctx = ReadCtx::new(source, 1, <sittir_rust::render::AnyTransport as sittir_core::read::ReadTransport>::shows);
+    let index = first_of(&tree, kind_ids::PARAMETERS);
+    let parameters: ParametersTransport = read_at::<_>(&mut tree.walk(), &ctx, index, Depth::All).unwrap();
+    let list = parameters.elements.unwrap();
+    let ParametersElementsTransportSlot::ParametersElements(list) = list.transport().expect("the whole read brings the list").as_ref() else {
+        panic!("expected the ordinary parameter list");
+    };
     assert_eq!(list.item.len(), 2);
 }
 

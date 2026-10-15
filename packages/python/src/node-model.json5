@@ -131,7 +131,7 @@
       }
     },
     "print_statement": {
-      "definedBy": "enrich",
+      "definedBy": "override",
       "childKind": {
         "print_statement_chevron": "chevron",
         "print_statement_plain": "plain"
@@ -228,7 +228,67 @@
     },
     "case_pattern.content": {
       "simple_pattern": "_simple_pattern"
+    },
+    "lambda_within_for_in_clause.body": {
+      "lambda_expression": "lambda_within_for_in_clause"
+    },
+    "for_in_clause.right": {
+      "lambda_expression": "lambda_within_for_in_clause"
     }
+  },
+  "displayUnions": {
+    "newline": [
+      {
+        "storage": "_newline",
+        "literal": false
+      }
+    ],
+    "names": [
+      {
+        "storage": "import_list",
+        "literal": false
+      }
+    ],
+    "dedent": [
+      {
+        "storage": "_dedent",
+        "literal": false
+      }
+    ],
+    "simple_pattern": [
+      {
+        "storage": "_simple_pattern",
+        "literal": false
+      }
+    ],
+    "as_pattern_target": [
+      {
+        "storage": "expression",
+        "literal": false
+      }
+    ],
+    "lambda_expression": [
+      {
+        "storage": "lambda_within_for_in_clause",
+        "literal": false
+      },
+      {
+        "storage": "lambda",
+        "literal": false
+      }
+    ],
+    "format_expression": [
+      {
+        "storage": "interpolation",
+        "literal": false
+      }
+    ],
+    "indent": [
+      {
+        "storage": "_indent",
+        "literal": false
+      }
+    ]
   },
   "factorySlots": {
     "module": {
@@ -361,14 +421,14 @@
       }
     },
     "named_expression": {
-      "name": {
+      "left": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "value": {
+      "right": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -574,21 +634,21 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "except_clauses": {
+      "handlers": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
         "nonEmpty": false
       },
-      "else_clause": {
+      "alternative": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "finally_clause": {
+      "finalizer": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -620,7 +680,7 @@
       }
     },
     "finally_clause": {
-      "block": {
+      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -805,7 +865,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "superclasses": {
+      "bases": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1073,7 +1133,7 @@
       }
     },
     "list_pattern": {
-      "patterns": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1089,7 +1149,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "value": {
+      "default": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1112,7 +1172,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "value": {
+      "default": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1121,7 +1181,7 @@
       }
     },
     "list_splat_pattern": {
-      "target": {
+      "pattern": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1130,7 +1190,7 @@
       }
     },
     "dictionary_splat_pattern": {
-      "target": {
+      "pattern": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1322,7 +1382,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "attribute": {
+      "property": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1331,7 +1391,7 @@
       }
     },
     "subscript": {
-      "value": {
+      "object": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1418,7 +1478,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "name": {
+      "type": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1507,7 +1567,7 @@
       }
     },
     "list": {
-      "collection_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1516,7 +1576,7 @@
       }
     },
     "set": {
-      "collection_elements": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1680,7 +1740,7 @@
       }
     },
     "conditional_expression": {
-      "body": {
+      "consequence": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2268,14 +2328,14 @@
       }
     },
     "assignment_eq": {
-      "left": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "right": {
+      "value": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2284,7 +2344,7 @@
       }
     },
     "assignment_type": {
-      "left": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2300,7 +2360,7 @@
       }
     },
     "assignment_typed": {
-      "left": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2314,7 +2374,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "right": {
+      "value": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3675,9 +3735,9 @@
       "variantOf": "assignment",
       "slots": [
         {
-          "name": "left",
-          "propertyName": "left",
-          "paramName": "left",
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3702,9 +3762,9 @@
           ]
         },
         {
-          "name": "right",
-          "propertyName": "right",
-          "paramName": "right",
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3760,8 +3820,8 @@
       "name": "assignment_eq",
       "factoryShape": "config",
       "factoryFields": [
-        "left",
-        "right"
+        "name",
+        "value"
       ]
     },
     {
@@ -3787,9 +3847,9 @@
       "variantOf": "assignment",
       "slots": [
         {
-          "name": "left",
-          "propertyName": "left",
-          "paramName": "left",
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3837,7 +3897,7 @@
       "name": "assignment_type",
       "factoryShape": "config",
       "factoryFields": [
-        "left",
+        "name",
         "type"
       ]
     },
@@ -3864,9 +3924,9 @@
       "variantOf": "assignment",
       "slots": [
         {
-          "name": "left",
-          "propertyName": "left",
-          "paramName": "left",
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3911,9 +3971,9 @@
           ]
         },
         {
-          "name": "right",
-          "propertyName": "right",
-          "paramName": "right",
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3969,9 +4029,9 @@
       "name": "assignment_typed",
       "factoryShape": "config",
       "factoryFields": [
-        "left",
+        "name",
         "type",
-        "right"
+        "value"
       ]
     },
     {
@@ -4049,9 +4109,9 @@
           ]
         },
         {
-          "name": "attribute",
-          "propertyName": "attribute",
-          "paramName": "attribute",
+          "name": "property",
+          "propertyName": "property",
+          "paramName": "property",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -4072,7 +4132,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "object",
-        "attribute"
+        "property"
       ]
     },
     {
@@ -5386,9 +5446,9 @@
           ]
         },
         {
-          "name": "superclasses",
-          "propertyName": "superclasses",
-          "paramName": "superclasses",
+          "name": "bases",
+          "propertyName": "bases",
+          "paramName": "bases",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -5430,7 +5490,7 @@
       "factoryFields": [
         "name",
         "type_parameters",
-        "superclasses",
+        "bases",
         "body"
       ]
     },
@@ -6132,9 +6192,9 @@
       "variantOf": "expression",
       "slots": [
         {
-          "name": "body",
-          "propertyName": "body",
-          "paramName": "body",
+          "name": "consequence",
+          "propertyName": "consequence",
+          "paramName": "consequence",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6194,7 +6254,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "body",
+        "consequence",
         "condition",
         "alternative"
       ]
@@ -6538,9 +6598,9 @@
           ]
         },
         {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
+          "name": "default",
+          "propertyName": "default",
+          "paramName": "default_",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6561,7 +6621,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "name",
-        "value"
+        "default"
       ]
     },
     {
@@ -7166,9 +7226,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "target",
-          "propertyName": "target",
-          "paramName": "target",
+          "name": "pattern",
+          "propertyName": "pattern",
+          "paramName": "pattern",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -7202,7 +7262,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "target"
+        "pattern"
       ],
       "bareAccepts": [
         "attribute",
@@ -8815,9 +8875,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -8837,7 +8897,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "block"
+        "body"
       ],
       "bareAccepts": [
         "_newline",
@@ -9548,7 +9608,7 @@
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "lambda_within_for_in_clause",
-              "parseKind": "lambda_within_for_in_clause"
+              "parseKind": "lambda_expression"
             }
           ]
         },
@@ -11997,7 +12057,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "lambda_within_for_in_clause",
-              "parseKind": "lambda_within_for_in_clause"
+              "parseKind": "lambda_expression"
             }
           ]
         }
@@ -12107,9 +12167,9 @@
       "variantOf": "primary_expression",
       "slots": [
         {
-          "name": "collection_elements",
-          "propertyName": "collectionElements",
-          "paramName": "collectionElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -12130,7 +12190,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "collection_elements",
       "factoryFields": [
-        "collection_elements"
+        "elements"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -12273,9 +12333,9 @@
       "variantOf": "pattern",
       "slots": [
         {
-          "name": "patterns",
-          "propertyName": "patterns",
-          "paramName": "patterns",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -12296,7 +12356,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "patterns",
       "factoryFields": [
-        "patterns"
+        "elements"
       ],
       "bareAccepts": [
         "attribute",
@@ -12501,9 +12561,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "target",
-          "propertyName": "target",
-          "paramName": "target",
+          "name": "pattern",
+          "propertyName": "pattern",
+          "paramName": "pattern",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -12537,7 +12597,7 @@
       ],
       "factoryShape": "direct",
       "factoryFields": [
-        "target"
+        "pattern"
       ],
       "bareAccepts": [
         "attribute",
@@ -12961,9 +13021,9 @@
       "variantOf": "expression",
       "slots": [
         {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
+          "name": "left",
+          "propertyName": "left",
+          "paramName": "left",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -12981,9 +13041,9 @@
           ]
         },
         {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
+          "name": "right",
+          "propertyName": "right",
+          "paramName": "right",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -13003,8 +13063,8 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "name",
-        "value"
+        "left",
+        "right"
       ]
     },
     {
@@ -14769,9 +14829,9 @@
       "variantOf": "primary_expression",
       "slots": [
         {
-          "name": "collection_elements",
-          "propertyName": "collectionElements",
-          "paramName": "collectionElements",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -14792,7 +14852,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "collection_elements",
       "factoryFields": [
-        "collection_elements"
+        "elements"
       ],
       "bareAccepts": [
         "as_pattern",
@@ -15427,9 +15487,9 @@
           ]
         },
         {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -15450,7 +15510,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "operator",
-        "name"
+        "type"
       ]
     },
     {
@@ -15816,9 +15876,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
+          "name": "object",
+          "propertyName": "object",
+          "paramName": "object",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -15862,7 +15922,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "value",
+        "object",
         "subscripts"
       ]
     },
@@ -16302,9 +16362,9 @@
           ]
         },
         {
-          "name": "except_clauses",
-          "propertyName": "exceptClauses",
-          "paramName": "exceptClauses",
+          "name": "handlers",
+          "propertyName": "handlers",
+          "paramName": "handlers",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -16322,9 +16382,9 @@
           ]
         },
         {
-          "name": "else_clause",
-          "propertyName": "elseClause",
-          "paramName": "elseClause",
+          "name": "alternative",
+          "propertyName": "alternative",
+          "paramName": "alternative",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -16342,9 +16402,9 @@
           ]
         },
         {
-          "name": "finally_clause",
-          "propertyName": "finallyClause",
-          "paramName": "finallyClause",
+          "name": "finalizer",
+          "propertyName": "finalizer",
+          "paramName": "finalizer",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -16365,9 +16425,9 @@
       "factoryShape": "config",
       "factoryFields": [
         "body",
-        "except_clauses",
-        "else_clause",
-        "finally_clause"
+        "handlers",
+        "alternative",
+        "finalizer"
       ]
     },
     {
@@ -17077,9 +17137,9 @@
           ]
         },
         {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
+          "name": "default",
+          "propertyName": "default",
+          "paramName": "default_",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -17101,7 +17161,7 @@
       "factoryFields": [
         "name",
         "type",
-        "value"
+        "default"
       ]
     },
     {
