@@ -14,7 +14,7 @@ pnpm add @sittir/common @sittir/typescript
 import { createEngine } from '@sittir/common';
 import typescript from '@sittir/typescript';
 
-const engine = await createEngine(typescript);
+using engine = await createEngine(typescript);
 
 const iface = engine.build.interfaceDeclaration({
 	name: 'User',
@@ -35,7 +35,7 @@ A node belongs to the engine that built or read it, and renders, edits and takes
 import { createEngine } from '@sittir/common';
 import typescript from '@sittir/typescript';
 
-const engine = await createEngine(typescript);
+using engine = await createEngine(typescript);
 const source = 'let x:   number = 1; // keep me\n';
 
 const program = engine.parse(source);
@@ -50,7 +50,7 @@ program.$render() === source; // true
 import { createEngine } from '@sittir/common';
 import typescript from '@sittir/typescript';
 
-const engine = await createEngine(typescript);
+using engine = await createEngine(typescript);
 
 const iface = engine.build.interfaceDeclaration({
 	name: 'User',
@@ -68,7 +68,7 @@ The guards narrow to this engine's language: a node of another engine of the lan
 import { createEngine } from '@sittir/common';
 import typescript from '@sittir/typescript';
 
-const engine = await createEngine(typescript);
+using engine = await createEngine(typescript);
 const built = engine.build.interfaceDeclaration({
 	name: 'User',
 	body: engine.build.objectType.curly()

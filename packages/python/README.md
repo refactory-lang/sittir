@@ -14,7 +14,7 @@ pnpm add @sittir/common @sittir/python
 import { createEngine } from '@sittir/common';
 import python from '@sittir/python';
 
-const engine = await createEngine(python);
+using engine = await createEngine(python);
 
 const fn = engine.build.functionDefinition({
 	name: 'greet',
@@ -37,7 +37,7 @@ A node belongs to the engine that built or read it, and renders, edits and takes
 import { createEngine } from '@sittir/common';
 import python from '@sittir/python';
 
-const engine = await createEngine(python);
+using engine = await createEngine(python);
 const source = 'def greet(name):\n    # say hello\n    print( name )\n';
 
 const module = engine.parse(source);
@@ -52,7 +52,7 @@ module.$render() === source; // true
 import { createEngine } from '@sittir/common';
 import python from '@sittir/python';
 
-const engine = await createEngine(python);
+using engine = await createEngine(python);
 
 const fn = engine.build.functionDefinition({
 	name: 'greet',
@@ -71,7 +71,7 @@ The guards narrow to this engine's language: a node of another engine of the lan
 import { createEngine } from '@sittir/common';
 import python from '@sittir/python';
 
-const engine = await createEngine(python);
+using engine = await createEngine(python);
 const built = engine.build.functionDefinition({
 	name: 'greet',
 	parameters: engine.build.parameters(),

@@ -12,7 +12,7 @@ The node API follows the grammar's concrete forms. Parsed nodes retain source id
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await createEngine(rust);
 const fn = engine.build.statement.function({
 	visibilityModifier: 'pub',
 	name: 'main',
@@ -21,7 +21,6 @@ const fn = engine.build.statement.function({
 });
 
 fn.$render(); // "pub fn main() {}"
-engine.dispose();
 ```
 
 The ordinary builder resolves ergonomic inputs such as strings in node slots. Its `.strict` entry accepts the explicit grammar-derived construction shape. Both produce the same node family.
@@ -32,7 +31,7 @@ The ordinary builder resolves ergonomic inputs such as strings in node slots. It
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await createEngine(rust);
 const source = 'fn greet( ) { /* retained */ }\n';
 const root = engine.parse(source);
 const statements = root.statements().map((node) =>
@@ -44,7 +43,6 @@ const updated = root.$with.statements(...statements);
 
 root.$render() === source; // true
 updated.$render(); // "fn hello( ) { /* retained */ }\n"
-engine.dispose();
 ```
 
 Accessors and guards are grammar-specific and statically typed. `$with` produces an updated value; it does not mutate the parsed tree or propagate a child replacement into its ancestors. Rebuild the containing slots, as above, to obtain an updated root.

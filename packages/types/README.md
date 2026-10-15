@@ -25,9 +25,8 @@ function identifier(engine: Engine<RustAPI>, name: string) {
 	return engine.build.identifier(name);
 }
 
-const engine = await createEngine(rust);
+using engine = await createEngine(rust);
 identifier(engine, 'value').$render(); // "value"
-engine.dispose();
 ```
 
 These types describe syntax and engine contracts, not the target language's semantic type system. Vocabulary declarations also live here; declarations for a planned portable surface do not imply its runtime implementation is available. See the [usage guide](../../docs/use-cases-and-examples.md) and [architecture](../../docs/architecture.md).

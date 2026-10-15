@@ -12,10 +12,9 @@ pnpm add @sittir/common @sittir/regex
 import { createEngine } from '@sittir/common';
 import regex from '@sittir/regex';
 
-const engine = await createEngine(regex);
+using engine = await createEngine(regex);
 const source = '[a-z]+';
 engine.parse(source, { errors: 'throw' }).$render() === source; // true
-engine.dispose();
 ```
 
 ## Regenerating

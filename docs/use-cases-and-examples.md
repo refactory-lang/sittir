@@ -4,17 +4,16 @@ These examples target `master` and are type-checked and executed by the document
 
 ## Engine and language
 
-A grammar package exports a language descriptor and its generated types. Create an engine from the descriptor, then use its `build`, `is`, `kinds`, `parse`, and `render` surface. A node's rendering and query operations depend on its engine.
+A grammar package exports a language descriptor and its generated types. Create an engine from the descriptor, then use its `build`, `is`, `kinds`, `parse`, and `render` surface. A node's rendering and query operations depend on its engine. A `using` declaration disposes the engine when its scope exits, including when an exception is thrown; keep the node operations inside that scope.
 
 ```ts
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await createEngine(rust);
 const name = engine.build.identifier('value');
 name.$render(); // "value"
 engine.isFactoryNode(name); // true
-engine.dispose();
 ```
 
 ## Construction and coercion
@@ -25,14 +24,13 @@ The ordinary builder resolves ergonomic inputs according to the slot's grammar-d
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await createEngine(rust);
 const fn = engine.build.statement.function.strict({
 	name: engine.build.identifier('main'),
 	parameters: engine.build.parameters.strict(),
 	body: engine.build.block.strict()
 });
 fn.$render(); // "fn main() {}"
-engine.dispose();
 ```
 
 Builders expose the grammar's forms, not a uniform object constructor for every kind. Lists may be variadic; forms may have separate named paths; required slots remain required. Use the generated signature rather than guessing an omitted field or a default arm. Lexical validation does not establish semantic validity of the resulting program.
@@ -45,12 +43,11 @@ Builders expose the grammar's forms, not a uniform object constructor for every 
 import { createEngine } from '@sittir/common';
 import typescript from '@sittir/typescript';
 
-const engine = await createEngine(typescript);
+using engine = await createEngine(typescript);
 const source = 'const answer: number = 42; // retained\n';
 const root = engine.parse(source, { errors: 'throw' });
 root.$errors.length === 0; // true
 root.$render() === source; // true
-engine.dispose();
 ```
 
 Without `errors: 'throw'`, inspect `root.$errors` before assuming a complete parse. `depth` controls eager hydration; increasing it is not a repair for an invalid grammar or source.
@@ -63,7 +60,7 @@ Accessors return their declared slot values. A guard narrows a grammar kind; it 
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await createEngine(rust);
 const root = engine.parse('fn old_name() {}\n');
 const statements = root.statements().map((node) =>
 	engine.is.functionItem(node)
@@ -73,7 +70,6 @@ const statements = root.statements().map((node) =>
 const updated = root.$with.statements(...statements);
 updated.$render(); // "fn new_name() {}\n"
 root.$render(); // "fn old_name() {}\n"
-engine.dispose();
 ```
 
 Rebuilding a child leaves its ancestors unchanged. Return or render the updated root when transforming an entire file. Source-preserving edits retain untouched child bytes; rebuilt syntax follows the grammar's render rules.
@@ -86,14 +82,13 @@ A parsed node's `$query()` exposes typed slot views and structural walks. `ofTyp
 import { createEngine } from '@sittir/common';
 import python from '@sittir/python';
 
-const engine = await createEngine(python);
+using engine = await createEngine(python);
 const root = engine.parse('load(1)\nstore(2)\n');
 const calls = Array.from(
 	root.$query().$descendants.ofType(engine.kinds.Call)
 		.where((call) => call.function.eq('load'))
 );
 calls.length === 1; // true
-engine.dispose();
 ```
 
 Queries require parsed structure. A newly constructed node or draft is not a parsed tree; use the commit/reparse lifecycle before querying an updated value. [Read/query/update examples](../examples/23-read-query-with.ts) show slot views, traversal, and ancestor reconstruction together.
@@ -106,10 +101,9 @@ Queries require parsed structure. A newly constructed node or draft is not a par
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await createEngine(rust);
 const name = engine.build.identifier('value');
 engine.render(name).toString(); // "value"
-engine.dispose();
 ```
 
 Parsed nodes can reuse their source bytes. A fresh build is rendered from its structure. Neither path promises that every grammar construct is covered without exclusions; the native validation baseline records that coverage.
@@ -122,14 +116,13 @@ Use `$trivia` rather than editing raw layout storage. Leading and trailing trivi
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await createEngine(rust);
 const fn = engine.build.statement.function({
 	name: 'main',
 	parameters: engine.build.parameters(),
 	body: engine.build.block()
 });
 fn.$trivia.leading('// entry point').$render(); // "// entry point\nfn main() {}"
-engine.dispose();
 ```
 
 ## Types and engine selection

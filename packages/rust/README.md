@@ -14,7 +14,7 @@ pnpm add @sittir/common @sittir/rust
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await createEngine(rust);
 
 const fn = engine.build.statement.function({
 	visibilityModifier: 'pub',
@@ -37,7 +37,7 @@ A builder called with plain values is the coercing form: strings become leaf nod
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await createEngine(rust);
 
 const strict = engine.build.statement.function.strict({
 	visibilityModifier: engine.build.visibilityModifier.pub(),
@@ -58,7 +58,7 @@ strict.$render(); // "pub fn main() {}"
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await createEngine(rust);
 const source = 'fn main() {\n    // keep me\n    run( 1 );\n}\n';
 
 const file = engine.parse(source);
@@ -78,7 +78,7 @@ Nodes are immutable. `$with` returns a rebuilt node, and only what you rebuild i
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await createEngine(rust);
 
 const fn = engine.build.statement.function({
 	name: 'main',
@@ -97,7 +97,7 @@ fn.$with.name(engine.build.identifier('greet')).$render(); // "fn greet() {}"
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await createEngine(rust);
 
 const fn = engine.build.statement.function({
 	name: 'main',
@@ -116,7 +116,7 @@ An engine's render options come from the descriptor's `Options` type and are che
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust, { render: { layout: { indent: '\t' } } });
+using engine = await createEngine(rust, { render: { layout: { indent: '\t' } } });
 
 const fn = engine.build.statement.function({
 	name: 'f',
@@ -137,7 +137,7 @@ engine.render(fn).toString(); // "fn f() {\n\ta;\n}"
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await createEngine(rust);
 
 const [fn] = engine.parse('fn  a( ) { 1 }\n').statements();
 if (fn !== undefined && engine.is.functionItem(fn)) fn.$with.name(engine.build.identifier('b')).$render(); // "fn b( ) { 1 }"
@@ -151,7 +151,7 @@ The guards narrow to this engine's language: a node of another engine of the lan
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+using engine = await createEngine(rust);
 const built = engine.build.identifier('x');
 const parsed = engine.parse('fn a() {}\n');
 

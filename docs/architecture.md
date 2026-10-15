@@ -54,7 +54,7 @@ An untouched parsed node can render from its original source span. A constructed
 
 `$with` is immutable. Replacing a child does not mutate its parent; reconstruct the ancestor path to obtain an updated root. Queries are views over parsed structure. An updated value needs its documented commit/reparse lifecycle before it can be queried as a new parsed tree.
 
-Dispose engines after their parsed trees and query views are no longer needed. A parsed view's lifetime depends on its engine.
+Use `using` to dispose an engine at scope exit, after its parsed trees and query views are no longer needed. A parsed view's lifetime depends on its engine.
 
 ## Packages and boundaries
 

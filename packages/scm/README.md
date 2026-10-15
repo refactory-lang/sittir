@@ -12,10 +12,9 @@ pnpm add @sittir/common @sittir/scm
 import { createEngine } from '@sittir/common';
 import scm from '@sittir/scm';
 
-const engine = await createEngine(scm);
+using engine = await createEngine(scm);
 const source = '(identifier) @name';
 engine.parse(source, { errors: 'throw' }).$render() === source; // true
-engine.dispose();
 ```
 
 ## Regenerating
