@@ -389,7 +389,7 @@ export function wrapForReparse(
 export async function witnessBaselineWasmPath(grammar: string): Promise<string | undefined> {
 	if (grammar !== 'typescript') return upstreamWasmPath(grammar);
 	const from = grammarRequire(grammar).resolve(`${upstreamPackage(grammar)}/package.json`);
-	return invoke('pinnedUpstreamWasm', 'pinnedTypescriptWasmPath', from);
+	return invoke('pinnedUpstreamWasm', 'pinnedTypescriptWasmPath', from, join(grammarPackageDir(grammar), 'node_modules', '.cache'));
 }
 
 export function upstreamWasmPath(grammar: string): string | undefined {

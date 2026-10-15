@@ -1,6 +1,5 @@
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, renameSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { runTreeSitterCli } from './tree-sitter-cli.ts';
 
@@ -9,18 +8,18 @@ const GENERATION_CONFLICTS = ['[$.primary_expression, $.variable_declarator]', '
 
 const built = new Map<string, string>();
 
-export function pinnedTypescriptWasmPath(from: string): string {
+export function pinnedTypescriptWasmPath(from: string, cacheRoot: string): string {
 	const manifestPath = createRequire(from).resolve('tree-sitter-typescript/package.json');
-	if (!built.has(manifestPath)) built.set(manifestPath, buildPinned(manifestPath));
+	if (!built.has(manifestPath)) built.set(manifestPath, buildPinned(manifestPath, cacheRoot));
 	return built.get(manifestPath)!;
 }
 
-function buildPinned(manifestPath: string): string {
+function buildPinned(manifestPath: string, cacheRoot: string): string {
 	const upstreamRequire = createRequire(manifestPath);
 	const packageDir = dirname(realpathSync(manifestPath));
 	const baseDir = dirname(realpathSync(upstreamRequire.resolve('tree-sitter-javascript/package.json')));
 	const version = (path: string): string => JSON.parse(readFileSync(path, 'utf8')).version;
-	const cache = join(tmpdir(), `sittir-pinned-typescript-${version(manifestPath)}-js${version(join(baseDir, 'package.json'))}`);
+	const cache = join(cacheRoot, `sittir-pinned-typescript-${version(manifestPath)}-js${version(join(baseDir, 'package.json'))}`);
 	const wasm = join(cache, 'tree-sitter-typescript.wasm');
 	if (existsSync(wasm)) return wasm;
 
