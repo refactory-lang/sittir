@@ -4,7 +4,7 @@ import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
 import { is, isMember, membersOf } from './is.js';
-import { portable } from './portable.js';
+import { portable, queryFlags } from './portable.js';
 import {
 	TSKindId,
 	type FixedTextKindId,
@@ -47,5 +47,6 @@ export const hooks: LanguageHooks<PythonAPI> = Object.freeze<LanguageHooks<Pytho
 	createNative: (options) => nativeLanguageEngine<PythonAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ModuleRoot & ParsedRoot, tree as TreeHandle),
 	hydrate: (node, tree) => hydrate(node, tree as TreeHandle),
-	portable
+	portable,
+	queryFlags
 });

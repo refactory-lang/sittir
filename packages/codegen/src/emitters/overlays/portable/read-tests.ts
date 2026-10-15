@@ -102,14 +102,19 @@ function childPredicate(child: ChildTest): PredicateFact | string {
 	return { operator: 'kind-eq', capture: null, arguments: child.kinds.map((text) => ({ text })), subject: child.subject };
 }
 
+export function keywordTestOf(owner: string, slot: string, text: string, routesOf: SlotRoutesOf, presenceOf: PresenceKeywordOf): QueryPlan | string {
+	const routes = routesOf(owner, slot);
+	if (routes === undefined) return `no routes for ${owner}'s slot ${slot}`;
+	const keyword = presenceOf(owner, slot);
+	if (keyword === undefined) return { op: 'eq', text, ...routes };
+	if (text !== keyword) return `${JSON.stringify(text)} in ${owner}'s ${slot}, a boolean slot that holds only the keyword '${keyword}'`;
+	return { op: 'present', ...routes };
+}
+
 export function readTestOf(entry: ReadEntry, model: SlotModel, routesOf: SlotRoutesOf, presenceOf: PresenceKeywordOf, typeOf: TypeOf): PortableCondition[] {
 	const pins = entry.pins.map((pin): PortableCondition | string => {
-		const routes = routesOf(entry.kind, pin.slot);
-		if (routes === undefined) return `no routes for pinned slot ${pin.slot}`;
-		const keyword = presenceOf(entry.kind, pin.slot);
-		if (keyword === undefined) return { up: 0, via: [], plan: { op: 'eq', text: pin.text, ...routes } };
-		if (pin.text !== keyword) return `pin ${JSON.stringify(pin.text)} on ${pin.slot}, a boolean slot that holds only the keyword '${keyword}'`;
-		return { up: 0, via: [], plan: { op: 'present', ...routes } };
+		const plan = keywordTestOf(entry.kind, pin.slot, pin.text, routesOf, presenceOf);
+		return typeof plan === 'string' ? plan : { up: 0, via: [], plan };
 	});
 	const predicates = [...entry.claim.predicates, ...entry.children.map(childPredicate)];
 	const conditions = [...pins, ...predicates.map((p) => (typeof p === 'string' ? p : conditionOf(entry, p, model, routesOf, typeOf)))];

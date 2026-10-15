@@ -6974,7 +6974,8 @@
               "owner": "field_pattern_named",
               "slot": "ref"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -7022,7 +7023,8 @@
               "owner": "field_pattern_shorthand",
               "slot": "ref"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -9516,7 +9518,8 @@
               "owner": "function_modifiers",
               "slot": "modifier"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "const",
@@ -9539,7 +9542,8 @@
               "owner": "function_modifiers",
               "slot": "modifier"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "unsafe",
@@ -9562,7 +9566,8 @@
               "owner": "function_modifiers",
               "slot": "modifier"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "default",
@@ -9585,7 +9590,8 @@
               "owner": "function_modifiers",
               "slot": "modifier"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "extern",
@@ -10785,7 +10791,8 @@
               "owner": "function_modifiers",
               "slot": "modifier"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "extern",
@@ -13790,7 +13797,8 @@
               "owner": "parameter",
               "slot": "mutable"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -13959,6 +13967,14 @@
               "slot": "type"
             }
           ]
+        },
+        {
+          "name": "writable",
+          "route": "kind",
+          "kind": "mutable_specifier",
+          "path": null,
+          "flag": true,
+          "spelled": true
         }
       ],
       "container": {
@@ -14710,6 +14726,14 @@
               "slot": "value"
             }
           ]
+        },
+        {
+          "name": "exclusive",
+          "route": "kind",
+          "kind": "mutable_specifier",
+          "path": null,
+          "flag": true,
+          "spelled": true
         }
       ],
       "container": {
@@ -14748,7 +14772,9 @@
           "route": "presence",
           "via": [],
           "token": "raw",
-          "path": null
+          "path": null,
+          "flag": true,
+          "spelled": true
         }
       ],
       "container": {
@@ -14783,11 +14809,21 @@
           ]
         },
         {
+          "name": "writable",
+          "route": "kind",
+          "kind": "mutable_specifier",
+          "path": null,
+          "flag": true,
+          "spelled": true
+        },
+        {
           "name": "raw",
           "route": "presence",
           "via": [],
           "token": "raw",
-          "path": null
+          "path": null,
+          "flag": true,
+          "spelled": true
         }
       ],
       "container": {
@@ -14839,7 +14875,8 @@
               "owner": "reference_pattern",
               "slot": "mutable"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -14886,7 +14923,8 @@
               "owner": "reference_type",
               "slot": "mutable"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -15185,7 +15223,8 @@
               "owner": "self_parameter",
               "slot": "mutable"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -15765,7 +15804,8 @@
               "owner": "static_item",
               "slot": "ref"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "scope",

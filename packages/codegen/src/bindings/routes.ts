@@ -46,7 +46,7 @@ export interface ReadEntry {
 	readonly members: readonly MemberRoute[];
 }
 
-export type MemberRoute =
+export type MemberRoute = (
 	| {
 			readonly route: 'slot';
 			readonly name: string;
@@ -71,7 +71,8 @@ export type MemberRoute =
 			readonly slot: ModelSlot | undefined;
 			readonly multiple: boolean;
 			readonly path: readonly SlotStep[] | undefined;
-	  };
+	  }
+) & { readonly flag?: true; readonly spelled?: true };
 
 export interface ContainerUnwrap {
 	readonly kinds: readonly string[];
@@ -376,12 +377,15 @@ function deepRouteOf(input: GrammarInput, kind: string, member: DeepMember): Mem
 	const chain = viaPath(input.model, kind, member.via);
 	if (member.route === 'presence') {
 		const leaf = chain?.at.slots.find((s) => s.terminals.includes(member.token));
+		const spelled = member.flag === true && member.via.length === 0 && chain !== undefined && leaf === undefined;
 		return {
 			route: 'presence',
 			name: camel(member.name),
 			via: member.via,
 			token: member.token,
-			path: chain && leaf ? [...chain.steps, stepOf(chain.at.kind, leaf.name, null)] : undefined
+			path: chain && leaf ? [...chain.steps, stepOf(chain.at.kind, leaf.name, null)] : undefined,
+			...flagOf(member),
+			...(spelled ? { spelled: true } : {})
 		};
 	}
 	const parent = modelNode(input.model, member.parent);
@@ -394,7 +398,8 @@ function deepRouteOf(input: GrammarInput, kind: string, member: DeepMember): Mem
 		selector: member,
 		slot,
 		multiple: member.multiple,
-		path: chain && parent && slot ? [...chain.steps, stepOf(parent.kind, slot.name, slotAnchor(input.model, parent.kind, member))] : undefined
+		path: chain && parent && slot ? [...chain.steps, stepOf(parent.kind, slot.name, slotAnchor(input.model, parent.kind, member))] : undefined,
+		...flagOf(member)
 	};
 }
 
@@ -510,9 +515,15 @@ function membersOf(
 		m.route === 'rename' && (m.claims === undefined || m.claims.some((index) => inherited.has(index))) && formsOf(input.model, m.owner).includes(kind) ? [m] : []
 	);
 	const flags = captures.filter((m) => m.flag === true);
+	const spelledFlags: MemberRoute[] = [];
 	const flagSlots = new Map(flags.flatMap((m) => {
 		const slot = slotFor(input.model, node.slots, m);
 		if (slot === undefined && formsOf(input.model, m.owner).every((form) => slotFor(input.model, modelNode(input.model, form)?.slots ?? [], m) === undefined)) {
+			const spelled = m.field === null && modelNode(input.model, m.owner)?.variantOf != null ? spelledFlagRouteOf(m) : undefined;
+			if (spelled !== undefined) {
+				spelledFlags.push(spelled);
+				return [];
+			}
 			const selector = m.field !== null ? `the field ${m.field}` : m.kind !== null ? `a ${m.kind} child` : 'a child by position';
 			throw new Error(`bindings: ${m.owner}'s flag @${m.name} captures ${selector}, which no form of ${m.owner} holds`);
 		}
@@ -563,10 +574,11 @@ function membersOf(
 		);
 	}
 	for (const [member, slot] of flagSlots) routes.push(flagRouteOf(kind, member, slot));
+	routes.push(...spelledFlags);
 	for (const member of deep) {
 		if (member.route === 'kind') {
 			const named = routes.find((r) => r.route === 'slot' && r.name === camel(member.member));
-			routes.push({ route: 'kind', name: camel(member.name), kind: member.kind, path: named?.route === 'slot' ? named.path : undefined });
+			routes.push({ route: 'kind', name: camel(member.name), kind: member.kind, path: named?.route === 'slot' ? named.path : undefined, ...flagOf(member) });
 			continue;
 		}
 		const route = member.route === 'presence' || member.route === 'nested' ? reached.get(member) : undefined;
@@ -578,13 +590,21 @@ function membersOf(
 function flagRouteOf(kind: string, member: Extract<MemberFact, { readonly route: 'rename' }>, slot: ModelSlot): MemberRoute {
 	const name = camel(member.name);
 	const path = [{ owner: kind, slot: slot.name }];
-	if (member.kind !== null && member.kind !== WILDCARD) return { route: 'kind', name, kind: member.kind, path };
+	if (member.kind !== null && member.kind !== WILDCARD) return { route: 'kind', name, kind: member.kind, path, flag: true };
 	const [only, ...more] = slot.terminals;
 	const token = member.token ?? (more.length === 0 ? only : undefined);
 	if (token === undefined)
 		throw new Error(`bindings: ${kind}'s flag ${name} captures its ${slot.name} slot, which holds ${slot.terminals.join(', ')}; capture the one token the flag tests`);
-	return { route: 'presence', name, via: [], token, path };
+	return { route: 'presence', name, via: [], token, path, flag: true };
 }
+
+function spelledFlagRouteOf(member: Extract<MemberFact, { readonly route: 'rename' }>): MemberRoute | undefined {
+	const name = camel(member.name);
+	if (member.kind !== null && member.kind !== WILDCARD) return { route: 'kind', name, kind: member.kind, path: undefined, flag: true, spelled: true };
+	return member.token === undefined ? undefined : { route: 'presence', name, via: [], token: member.token, path: undefined, flag: true, spelled: true };
+}
+
+const flagOf = (member: MemberFact): { readonly flag?: true } => (member.flag === true ? { flag: true } : {});
 
 function refinedParent(kind: string, entries: readonly ReadEntry[]): string | undefined {
 	if (entries.length === 0) return undefined;

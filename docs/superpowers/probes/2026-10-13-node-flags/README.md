@@ -16,6 +16,15 @@ Which shapes a vocabulary flag takes per grammar kind, so the flag table knows w
 - **Leaf:** `present` where the last slot holds only the keyword (58), `eq` where it holds one keyword among others (35), and a kind test where the flag captures a node (20).
 - **No path (8):** rust `reference_expression_raw_const` and `_raw_mut` (`raw`); typescript `abstract_class_declaration` (`abstract`), `call_expression_member` (`optionalChain`), `generator_function` and `generator_function_declaration` (`generator`), `optional_parameter` (`optional`), `variable_declarator_definite` (`definite`). The kind itself carries the flag: its token is spelled inside the kind's own form, so for that kind the flag always holds.
 
+## Spelled flags
+
+A flag captured on a variant form of a claimed supertype was never resolved as a flag: `resolveFlags` matched only claims on the member's owner, and rust claims `reference_expression` while capturing on its forms. Matching claims on any kind whose forms include the owner makes these five flags:
+
+- `reference_expression_raw_const` `raw`, `reference_expression_raw_mut` `raw`: unfielded tokens, which routed as pathless presence members before.
+- `reference_expression_mut` `exclusive`, `reference_expression_raw_mut` `writable`, and `pointer_type_mut` `writable`: captured as `(mutable_specifier)`, a child no slot of the variant holds. They were rename captures of a slot that does not exist, so they were silently dropped.
+
+Each variant's own form spells its token, so on that kind the flag always holds; the route is stamped `spelled`, like the eight pathless presence flags above. A spelled flag is not unbuildable (the build picks the kind), so the portable model carries the mark and the unbuildable-routes ratchet skips it instead of listing it.
+
 ## Claim flags
 
 Two, and both depend on the node's context:

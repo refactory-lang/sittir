@@ -90,7 +90,9 @@
           "route": "presence",
           "via": [],
           "token": "abstract",
-          "path": null
+          "path": null,
+          "flag": true,
+          "spelled": true
         },
         {
           "name": "extends",
@@ -745,7 +747,8 @@
               "owner": "abstract_method_signature",
               "slot": "accessor_kind"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "privateName",
@@ -756,7 +759,8 @@
               "owner": "abstract_method_signature",
               "slot": "name"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "computed",
@@ -767,7 +771,8 @@
               "owner": "abstract_method_signature",
               "slot": "name"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -1189,7 +1194,8 @@
               "owner": "assignment_expression",
               "slot": "using"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -2576,7 +2582,9 @@
           "route": "presence",
           "via": [],
           "token": "?.",
-          "path": null
+          "path": null,
+          "flag": true,
+          "spelled": true
         }
       ]
     },
@@ -3893,7 +3901,8 @@
               "owner": "export_specifier",
               "slot": "export_kind"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -4123,7 +4132,8 @@
               "owner": "export_statement_default_from",
               "slot": "type"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "exportClause",
@@ -4523,7 +4533,8 @@
               "owner": "for_in_statement",
               "slot": "await"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -4963,7 +4974,9 @@
           "route": "presence",
           "via": [],
           "token": "*",
-          "path": null
+          "path": null,
+          "flag": true,
+          "spelled": true
         }
       ]
     },
@@ -5050,7 +5063,9 @@
           "route": "presence",
           "via": [],
           "token": "*",
-          "path": null
+          "path": null,
+          "flag": true,
+          "spelled": true
         }
       ]
     },
@@ -5506,7 +5521,8 @@
               "owner": "import_specifier_as",
               "slot": "import_kind"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -5569,7 +5585,8 @@
               "owner": "import_specifier_name",
               "slot": "import_kind"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -5655,7 +5672,8 @@
               "owner": "import_statement",
               "slot": "import_clause"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "source",
@@ -6422,7 +6440,8 @@
               "owner": "member_expression",
               "slot": "separator"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "privateName",
@@ -6433,7 +6452,8 @@
               "owner": "member_expression",
               "slot": "property"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -7364,7 +7384,8 @@
               "owner": "method_definition",
               "slot": "accessor_kind"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "optional",
@@ -7376,7 +7397,8 @@
               "owner": "method_definition",
               "slot": "optional"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "privateName",
@@ -7387,7 +7409,8 @@
               "owner": "method_definition",
               "slot": "name"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "computed",
@@ -7398,7 +7421,8 @@
               "owner": "method_definition",
               "slot": "name"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -8016,7 +8040,8 @@
               "owner": "method_signature",
               "slot": "accessor_kind"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "privateName",
@@ -8027,7 +8052,8 @@
               "owner": "method_signature",
               "slot": "name"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "computed",
@@ -8038,7 +8064,8 @@
               "owner": "method_signature",
               "slot": "name"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -9306,7 +9333,9 @@
           "route": "presence",
           "via": [],
           "token": "?",
-          "path": null
+          "path": null,
+          "flag": true,
+          "spelled": true
         }
       ]
     },
@@ -9421,7 +9450,8 @@
               "owner": "pair",
               "slot": "key"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -9468,7 +9498,8 @@
               "owner": "pair_pattern",
               "slot": "key"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -9884,7 +9915,8 @@
               "owner": "property_signature",
               "slot": "name"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "computed",
@@ -9895,7 +9927,8 @@
               "owner": "property_signature",
               "slot": "name"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -10173,7 +10206,8 @@
               "owner": "public_field_definition",
               "slot": "optionality"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "definite",
@@ -10185,7 +10219,8 @@
               "owner": "public_field_definition",
               "slot": "optionality"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "privateName",
@@ -10196,7 +10231,8 @@
               "owner": "public_field_definition",
               "slot": "name"
             }
-          ]
+          ],
+          "flag": true
         },
         {
           "name": "computed",
@@ -10207,7 +10243,8 @@
               "owner": "public_field_definition",
               "slot": "name"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -11013,7 +11050,8 @@
               "owner": "subscript_expression",
               "slot": "optional_chain"
             }
-          ]
+          ],
+          "flag": true
         }
       ]
     },
@@ -12330,7 +12368,9 @@
           "route": "presence",
           "via": [],
           "token": "!",
-          "path": null
+          "path": null,
+          "flag": true,
+          "spelled": true
         }
       ]
     },

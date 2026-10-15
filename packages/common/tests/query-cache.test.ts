@@ -28,6 +28,7 @@ function queryContext(querySlots: QuerySlots) {
 	holdTreeOn(node, token);
 	const hooks: QueryHooks = {
 		querySlots,
+		queryFlags: {},
 		membership: { isMember: (kind, type) => kind === type, membersOf: (kind) => [kind] },
 		kindName: (kind) => `kind_${kind}`,
 		wrap: (data) => data

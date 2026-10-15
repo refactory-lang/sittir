@@ -30,7 +30,8 @@ const emit = async (scm: string) =>
 				? []
 				: [{ up: 0, via: [], plan: { op: 'eq', text: '+', fields: ['operator'], kinds: [] } }],
 		kindIdOf: (kind) => `TSKindId.${kind[0]!.toUpperCase()}${kind.slice(1)}`,
-		fixedText: [['TSKindId.Plus', '+']]
+		fixedText: [['TSKindId.Plus', '+']],
+		flags: []
 	});
 
 const SCM = [
@@ -86,7 +87,7 @@ describe('emitPortableSurface', () => {
 			textTokens: new Set(),
 			layoutSlots: []
 		});
-		const text = emitPortableSurface({ routes, readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [] });
+		const text = emitPortableSurface({ routes, readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [], flags: [] });
 		expect(text).toContain('\t"expression.call": TSKindId.Call;');
 		expect(text).toContain('\t\t"expression.call": { ids: [TSKindId.Call], exact: true },');
 		expect(text.match(/\[TSKindId\.Call\]: \[/g)).toHaveLength(1);

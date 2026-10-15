@@ -1,12 +1,12 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import type { ErrorRegion } from '@sittir/types';
+import type { ErrorRegion, StepAnchor } from '@sittir/types';
 import type { LeadMatch } from '../dsl/bind.ts';
 import { allGrammars, grammarPackageDir, PACKAGES_DIR, type GrammarName } from '../grammars.ts';
 
 export const WILDCARD = '_';
 
-export type Anchor = 'first' | 'last' | 'only';
+export type Anchor = StepAnchor;
 
 export interface Adjacent {
 	readonly previous?: SlotSelector;
@@ -69,10 +69,10 @@ export interface UnclaimedFact {
 	readonly reason: string | null;
 }
 
-export type MemberFact = MemberRouteFact & { readonly claims?: readonly number[]; readonly leadMatch?: LeadLeadMatch };
+export type MemberFact = MemberRouteFact & { readonly claims?: readonly number[]; readonly leadMatch?: LeadLeadMatch; readonly flag?: boolean };
 
 type MemberRouteFact =
-	| ({ readonly route: 'rename'; readonly owner: string; readonly name: string; readonly token?: string; readonly flag?: boolean } & SlotSelector)
+	| ({ readonly route: 'rename'; readonly owner: string; readonly name: string; readonly token?: string } & SlotSelector)
 	| ({ readonly route: 'dropped'; readonly owner: string; readonly token?: string } & SlotSelector)
 	| {
 			readonly route: 'presence';

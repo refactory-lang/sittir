@@ -10,6 +10,7 @@ export type {
 	KindMembership,
 	PresenceRef,
 	QueryFacet,
+	QueryFlags,
 	QueryPlan,
 	QuerySlotEntry,
 	QuerySlots,

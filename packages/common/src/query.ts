@@ -3,6 +3,7 @@ import type {
 	Cond,
 	KindMembership,
 	PresenceRef,
+	QueryFlags,
 	QueryPlan,
 	QuerySlots,
 	QuerySubject,
@@ -39,6 +40,7 @@ export interface TreeQuery {
 
 export interface QueryHooks {
 	readonly querySlots: QuerySlots;
+	readonly queryFlags: QueryFlags;
 	readonly membership: KindMembership;
 	readonly kindName: (kind: number) => string | undefined;
 	readonly wrap: (data: unknown, tree: unknown) => unknown;

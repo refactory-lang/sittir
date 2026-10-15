@@ -110,7 +110,7 @@ The options a language's native engine is created with: the render options under
 
 ### `packages/types/src/engine-api.ts::LanguageHooks`
 
-What a language's `load()` resolves to: the builder table, guards, kind ids, trivia facts and the render module hash as data, plus `createNative` to create a native engine and `wrap` to turn a read root and its tree into the language's root node. `membership` is the language's one membership test, shared by its `is.*` guards and a query's `ofType`.
+What a language's `load()` resolves to: the builder table, guards, kind ids, trivia facts and the render module hash as data, plus `createNative` to create a native engine and `wrap` to turn a read root and its tree into the language's root node. `membership` is the language's one membership test, shared by its `is.*` guards and a query's `ofType`. `queryFlags`, present for a grammar with bindings, is each kind's flag plans (`QueryFlags`) for a `where` recorder's `is`.
 
 The optional `hydrate` hook reuses the grammar's `hydrateChild` for a shallow child read from its own tree. Generated languages supply it so factories can consume parsed list stubs without duplicating the grammar's depth or envelope normalization.
 
@@ -353,6 +353,10 @@ The brand on a keyword-presence slot's boolean storage, carrying the keyword's t
 ### `packages/types/src/query.ts::QueryPlan`
 
 The plan language one condition compiles to, which the native walk and `holds` both evaluate. Leaves read the children a slot's routes admit: `eq` and `match` their text, `present` that one exists, and `is` their stamped kind ids. The ids are expanded by membership when the plan is compiled, as `ofType` expands them, so the evaluators compare ids and never names. `child` moves the condition to an admitted child, narrowed by an anchor, so a flag spelled inside a wrapper (rust `function_item (function_modifiers "async")`) is still one plan. `not`, `and` and `or` combine. A constant is `and` or `or` over no plans, never an op of its own: a plan that always holds (a flag the kind's own form spells) is `{ op: 'and', of: [] }`, and one that never holds is `{ op: 'or', of: [] }`.
+
+### `packages/types/src/query.ts::QueryFlags`
+
+Each kind's vocabulary flags by stamped kind id, each the plan that tests the flag on a node of the kind, or `null` when the flag depends on the node's context (its placement, or a test on its parent), which a node-local plan cannot express. Generated from the bindings (`flagPlansOf`); a grammar without bindings has none.
 
 ### `packages/types/src/query.ts::StepAnchor`
 

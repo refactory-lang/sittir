@@ -111,7 +111,7 @@ export async function grammarInput(
 	const model = slotModelOf(record);
 	return {
 		grammar,
-		bindings: resolveFlags(bindFacts(await readBindings(readFileSync(scmPath, 'utf8')), boundNameOf(renamedFromOf(record))), vocabulary ?? (await readVocabulary(VOCABULARY_DIR))),
+		bindings: resolveFlags(bindFacts(await readBindings(readFileSync(scmPath, 'utf8')), boundNameOf(renamedFromOf(record))), vocabulary ?? (await readVocabulary(VOCABULARY_DIR)), model),
 		model,
 		textTokens: new Set(raw.textTokens ?? []),
 		layoutSlots: layoutSlots(raw.options ?? {}, new Set(model.keys()))

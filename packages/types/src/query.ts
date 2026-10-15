@@ -47,6 +47,9 @@ export type QueryPlan<S extends QuerySubject = SlotRoutes> =
 	| { readonly op: 'not'; readonly of: QueryPlan<S> }
 	| { readonly op: 'and' | 'or'; readonly of: readonly QueryPlan<S>[] };
 
+/** Each kind's flags, by stamped kind id: the plan that tests the flag on a node of the kind, or `null` for a flag that depends on the node's context. */
+export type QueryFlags = Readonly<Record<number, Readonly<Record<string, QueryPlan | null>>>>;
+
 declare const CONDITION: unique symbol;
 
 /** A recorded `where` condition, combined with others by `and`, `or` and `not`. Only a recorder makes one. */
