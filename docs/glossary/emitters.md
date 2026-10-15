@@ -3244,7 +3244,8 @@ render.
 
 Emits the render module for a grammar: `transport.rs` (the transport
 types, their `Display` impls and the per-kind render functions), the
-options module, the hash files and `mod.rs`. Takes the emitted bodies —
+options module, the hash files, `mod.rs`, and `records.ts` (`recordsTs`),
+the record layouts the transport structs stamp. Takes the emitted bodies —
 the per-kind bodies are what the render functions and the validators'
 sidecar are both read from — the assembled node map, and the parser's
 kind-id tables. The tables are required: every transport decodes by kind id,
@@ -3516,6 +3517,21 @@ names are set aside — the same variants, ids, aliases, seams and prepare
 fill — share the first one's declaration and name, in node order. A choice
 whose arms write its owner's seam sites differs from another owner's and
 stays its own.
+
+Choices with the same variants that stay their own differ in one of three
+facts:
+
+- **The owner's seam sites** a literal arm writes. The fifteen typescript
+  statement `terminator` choices are one such set: each `;` arm writes its
+  own owner's sites.
+- **The kind ids a variant claims.** Rust `if_expression`'s `condition`
+  claims `_LET_CHAIN` and `LET_CHAIN` for its `LetChain` arm, and
+  `let_chain`'s `left` claims `_LET_CHAIN` only.
+- **The order of the arms**, which is the grammar's: typescript
+  `assignment_expression`'s `left` and `for_header`'s `left` list
+  `_lhs_expression` and the parenthesized expressions in opposite orders.
+  The claims are disjoint, so the order decides nothing, but the generated
+  choice follows the grammar rather than a canonical order.
 
 ### `packages/codegen/src/emitters/render-module.ts::choiceNameOf`
 
@@ -3847,10 +3863,10 @@ besides its slots, keyed `#[wire(key = "$_layout")]` (`wireKeyAttr`). A
 compound declares no text field — its content is its slots, and a node that
 arrives with storage renders from that storage.
 
-### `packages/codegen/src/emitters/render-module.ts::renderLeafTransportPlainFields`
+### `packages/codegen/src/emitters/render-module.ts::renderLeafTextField`
 
-A text leaf's transport fields: the layout field (`renderLayoutField`), then
-`text: String` keyed `$text`, the leaf's own content. The struct's
+A text leaf's `text: String` field, keyed `$text`: the leaf's own content,
+after its layout field (`renderLayoutField`). The struct's
 `#[transport(…, text …)]` (`transportArgs`) has the derive expand the text
 leaf codec: a bare string is its text, a number its fixed text, and an object
 its `$text` and its layout.
@@ -7275,6 +7291,8 @@ restates the default from one that must be spelled.
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::RustRenderModuleEmit`
+
+`recordsTs` is `packages/<lang>/src/records.ts` (`recordsTs`).
 
 ```text
 /**
@@ -13174,6 +13192,15 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderTransportDataStruct`
 
+Emits a kind's transport struct. The struct's record layout
+(`recordLayoutOf`) is computed once from its slots, kept on
+`ReadPrint.records` for `records.ts`, and stamped as `words = …` on
+`#[transport(…)]` and each slot's place on its `#[slot(…)]` (`slotAttr`). A
+leaf's record is its header alone: its text lives in the cell that holds the
+leaf. The fields that are not slots (a list's `delimiter` and
+`separator_kind`, a spacing site's per-node value) are layout and take no
+cell.
+
 #### body
 
 ```text
@@ -15289,7 +15316,7 @@ Whether a presence slot's value is a keyword the site wraps in an alias, read fr
 
 ### `packages/codegen/src/emitters/render-module.ts::ReadPrint`
 
-What the transport printers share while they state the read facts: the facts' context, the template bodies by kind, the kind ids each printed type admits, the choices that carry a blank arm, the payload types the choices hold (`choicePayloads`), which the ceiling assertions check, and the transports printed (`transports`), which `grammarTriviaStatement` lists. One value is threaded through every printer so a type's ids and name are recorded where it is printed and checked after all of them are.
+What the transport printers share while they state the read facts: the facts' context, the template bodies by kind, the kind ids each printed type admits, the choices that carry a blank arm, the payload types the choices hold (`choicePayloads`), which the ceiling assertions check, and the transports printed (`transports`), which `grammarTriviaStatement` lists. One value is threaded through every printer so a type's ids and name are recorded where it is printed and checked after all of them are. The record layout of each struct it prints is kept on `records`, by struct name, for `records.ts`.
 
 ### `packages/codegen/src/emitters/render-module.ts::readPrintOf`
 
@@ -15349,9 +15376,9 @@ The ids a fixed-literal transport takes: its accepted ids, or its own id. The de
 
 The slots a struct has fields for, in order: the slot model's named and unnamed slots in the node's own slot order, then the named slots of each hidden helper node an unnamed slot hoists, all optional. The field order is the order the read writes the transport's keys, so a read transport's keys follow the model's slots. The printer and the check that follows it walk the same list.
 
-### `packages/codegen/src/emitters/render-module.ts::slotReadAttr`
+### `packages/codegen/src/emitters/render-module.ts::slotAttr`
 
-The `#[slot]` attribute of one field: a capture for each slot of a token interior, else the routes, presence keyword, separators and scalar mark `slotArgs` computes. An alias envelope's content has none: it is not a parser field, and the derive's envelope mode names it by `content = …`.
+The `#[slot]` attribute of one slot, its one attribute: its read facts, then its record place (`recordArgs`). The read facts are a capture for each slot of a token interior, else the routes, presence keyword, separators and scalar mark `slotArgs` computes. An alias envelope's content has no read facts, only its place: it is not a parser field but the aliased node itself, which the derive's envelope mode reads as the slot `content = …` names.
 
 ### `packages/codegen/src/emitters/render-module.ts::readsItsSlots`
 
@@ -15388,3 +15415,81 @@ Writes the grammar's `reparseHosts` block as the generated `reparse-hosts.ts`: t
 ### `packages/codegen/src/emitters/__tests__/self-containing-list-types.test.ts::selfContainingList`
 
 Builds an isolated assembled list whose repeated element choice includes the list itself. The emitted modules are compiled with TypeScript 6 and 7 to pin own-kind built and parsed inputs, recursive loose configurations, setters, and namespace argument-row resolution without changing a language grammar.
+
+### `packages/codegen/src/emitters/render-module.ts::recordsTs`
+
+`records.ts` for a grammar: `RECORD_HEADER_WORDS` and `records`, each struct's
+words and its fields' places by Rust field name, the same numbers
+`transport.rs` stamps. JavaScript reads a record through these literal offsets
+and never computes one.
+
+### `packages/codegen/src/emitters/record-layout.ts::RECORD_HEADER_WORDS`
+
+The words every record opens with: word 0 the kind's grammar id, word 1 its
+side record's address (0 for none). The presence words follow, then the cells.
+
+### `packages/codegen/src/emitters/record-layout.ts::PRESENCE_BITS_PER_WORD`
+
+A presence word holds 32 presence bits, one word of the `u32` arena.
+
+### `packages/codegen/src/emitters/record-layout.ts::CELL_WORDS`
+
+The cell widths, one per form a slot holds:
+
+- `node`, 5: anything carried in a `SlotValue`, whose arms may all be units,
+  since `SlotValue::Coord` holds an untouched parsed child (tag, kind, index,
+  byte start and end);
+- `text`, 4: a leaf's text (tag, kind, and a byte span, or a string-table
+  offset and length);
+- `list`, 2: a run's offset and length, its items in cells of their own width.
+
+The derive checks each against the slot's type (`sittir_core::record`).
+
+### `packages/codegen/src/emitters/record-layout.ts::RecordForm`
+
+What a slot needs in its record: a presence `bit`, or a `cell` of `width`
+words, with a `run` of words per item for a list.
+
+### `packages/codegen/src/emitters/record-layout.ts::RecordField`
+
+A slot that holds part of its struct's record, by Rust field name, with its
+form.
+
+### `packages/codegen/src/emitters/record-layout.ts::RecordPlace`
+
+Where a slot sits in its record: a `bit` of presence word `word`, or a cell of
+`width` words at `word` (with its `run`).
+
+### `packages/codegen/src/emitters/record-layout.ts::RecordLayout`
+
+A struct's record: its `words` and each placed slot.
+
+### `packages/codegen/src/emitters/record-layout.ts::slotRecordForm`
+
+A slot's record form, from its stamped `TransportSlotShape` and whether it is
+a list: a presence is a bit, text a text cell, anything else a node cell; a
+list holds a list cell with runs of that width.
+
+### `packages/codegen/src/emitters/record-layout.ts::recordLayoutOf`
+
+The one derivation of a struct's record layout. The presence bits fill words
+from `RECORD_HEADER_WORDS`, 32 to a word, and each cell follows in slot
+order. Codegen is the single source of every word, width and bit: Rust reads
+them from each slot's `#[slot(…)]` and the struct's `#[transport(words = …)]`,
+JavaScript from `records.ts`, and neither computes one. A slot's one
+attribute holds its read facts and its layout together.
+
+A record holds structure, and its side record holds layout. Every record
+cell is a slot: a node, a list, text, a presence bit, and an alias
+envelope's `content`, the envelope's one slot. A field that states how to
+print goes in the side record beside `edges`, `gap` and `flank` and takes no
+cell here: a spacing site's per-node value, and a preference the tree
+records, such as the separator or delimiter a list's occurrence used
+(`delimiter`, `separator_kind`). A leaf holds no cell of its own: its text is
+in the cell that holds it. A field added later lands by the same split.
+
+### `packages/codegen/src/emitters/record-layout.ts::recordArgs`
+
+A slot's place, spelled as the derive reads it inside the slot's `#[slot(…)]`:
+`word` and `width` (and `run`) for a cell, `word` and `bit` for a presence.
+

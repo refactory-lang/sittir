@@ -504,6 +504,12 @@ Each record prototype and measuring tool the arena steps already hold, with its 
   - python: 169 over 159.
 
   That is 11, 37 and 10 duplicates, against the outline's 3, 32 and 3. No two generated bodies are identical once names are normalized, so the duplicates differ in a name or an attribute. Task 7 states which differences are facts (a blank arm, a `display` claim) and which are naming. It declares each content once before stamping a layout.
+- **No duplicate choice folds (Task 7, step 1).** On feat/records, the per-slot choices (`*TransportSlot`) whose variant sets repeat another's number 3 in rust, 25 in typescript and 1 in python, in 12 groups. `shareIdenticalChoices` already declares each identical choice once, so every remaining duplicate differs in a fact:
+  - 10 groups in the owner's seam sites a literal arm writes;
+  - 1 in a variant's claimed ids (rust `if_expression.condition` against `let_chain.left`);
+  - 1 in arm order only (typescript `assignment_expression.left` against `for_header.left`, whose claims are disjoint). Folding it would take a canonical variant order in every choice, a reorder of every generated transport for one declaration, so the grammar's order stays.
+
+  The glossary entry for `shareIdenticalChoices` lists the three facts.
 - **Match-all in the engine is not one call.** `$descendants` returns a JSON batch of coordinates (`engine.descendants`), and each match is then read by its own `engine.read` (`packages/common/src/engine.ts`, `tree.query.descendants` and `readAt`). The probe's "every match in one call" has no engine counterpart on the object wire. Task 8 adds one for both wires (ruling 2).
 - **A transport's `$_layout` is wire too.** `TransportLayout` crosses with every node: `edges`, `gap`, `flank`, `at`, `span`, `sides`, `changed`, `units`, and, on built nodes, `trivia`. The probe had none of it. The record layout must place it, which Task 7 does as a side record.
 - **Built-node trivia today** is written by `setTriviaData` (`packages/common/src/utils.ts`, from `rebuilt` and the trivia writer `write`). It crosses as `TransportLayout::trivia` (`TransportTrivia`, `TriviaEntry`). 3b-ii moves it into records.

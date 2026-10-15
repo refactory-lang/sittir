@@ -702,9 +702,9 @@ describe('transport attributes', () => {
 		const src = await getRustTemplatesRs();
 		expect(src).toContain('use super::{field_ids as field, kind_ids as kind};');
 		expect(src).toMatch(
-			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Transport\)\]\n#\[transport\(kind = kind::FUNCTION_ITEM, layout = \[kind::FN_KEYWORD, kind::DASH_GT\]\)\]\npub struct FunctionItemTransport \{/
+			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Transport\)\]\n#\[transport\(kind = kind::FUNCTION_ITEM, layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 42\)\]\npub struct FunctionItemTransport \{/
 		);
-		expect(extractStructBody(src, 'FunctionItemTransport')).toMatch(/    #\[slot\(field = field::NAME\)\]\n    pub name: /);
+		expect(extractStructBody(src, 'FunctionItemTransport')).toMatch(/    #\[slot\(field = field::NAME, word = 12, width = 5\)\]\n    pub name: /);
 		expect(extractStructBody(src, 'ParametersElementsTransport')).toMatch(/    #\[flank\(trailing = 0\)\]\n    pub delimiter: Option<u8>,/);
 	});
 
@@ -775,7 +775,7 @@ describe('the wire codec facts', () => {
 		expect(src).toContain('use ::sittir_core::VerbatimTransport;');
 		const item = extractStructBody(src, 'FunctionItemTransport');
 		expect(item).toMatch(/    #\[wire\(key = "\$_layout"\)\]\n    pub layout: Option<Box<TransportLayout>>,/);
-		expect(item).toMatch(/    #\[wire\(key = "_name"\)\]\n    #\[slot\(field = field::NAME\)\]\n    pub name: /);
+		expect(item).toMatch(/    #\[wire\(key = "_name"\)\]\n    #\[slot\(field = field::NAME, word = 12, width = 5\)\]\n    pub name: /);
 		expect(extractStructBody(src, 'IdentifierTransport')).toMatch(/    #\[wire\(key = "\$text"\)\]\n    pub text: String,/);
 	});
 
