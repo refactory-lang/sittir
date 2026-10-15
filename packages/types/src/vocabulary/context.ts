@@ -522,6 +522,24 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		readonly 'declaration.parameter.variadic': {
 			readonly pattern: unknown;
 		};
+		readonly 'declaration.property': {
+			readonly name: G['expression'] | G['literal'] | V.Identifier.Property<G> | string;
+			readonly type: G['identifier'] | G['type'];
+			readonly value:
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
+		};
+		readonly 'declaration.property.getter': {
+			readonly returnType: G['identifier'] | G['type'];
+		};
+		readonly 'declaration.property.signature.abstract.getter': {
+			readonly returnType: G['identifier'] | G['type'];
+		};
+		readonly 'declaration.property.signature.getter': {
+			readonly returnType: G['identifier'] | G['type'];
+		};
 		readonly 'declaration.signature.call': {
 			readonly returnType: G['identifier'] | G['type'];
 		};

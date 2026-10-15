@@ -5,6 +5,9 @@ export namespace Declaration {
 		readonly definite?: Flag;
 		// t only
 	}
+	export interface Property<G extends GrammarContext<G>> {
+		readonly definite?: Flag;
+	}
 	export interface Variable<G extends GrammarContext<G>> {
 		readonly definite?: Flag;
 		// t only

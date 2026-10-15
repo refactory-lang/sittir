@@ -3,7 +3,7 @@
 import { bindings, field, lead, match, rename, split } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "a76ebb87534925c0d87eabd5aa936bf1b33f6c84564f1d8bf503f32aa4e936fd",
+	hash: "1fa476ba1a2a0c17d59f65c956bffd5e54a3666fe94659c1a443f3162a3586d3",
 	patches: {
 		attribute_item: { "2": field("content") },
 		const_parameter: { "4/0/1": field("default") },

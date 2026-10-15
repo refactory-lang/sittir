@@ -106,9 +106,9 @@ describe('deriveVocabulary', () => {
 		expect([...(equal?.literals.keys() ?? [])]).toEqual(['operator']);
 	});
 	it('refines by an axis value through its text alone, which no member holds', () => {
-		const getter = d.refinements.get('declaration.method.getter');
-		expect(getter?.parent).toBe('declaration.method');
-		expect([...(getter?.literals.values() ?? [])].flatMap((texts) => [...texts])).toEqual(['get']);
+		const constant = d.refinements.get('declaration.variable.constant');
+		expect(constant?.parent).toBe('declaration.variable');
+		expect([...(constant?.literals.values() ?? [])].flatMap((texts) => [...texts])).toEqual(['const']);
 	});
 	it('lands a container pattern capture only on the kinds its element slot names directly', () => {
 		expect(levelMembers(d, 'declaration.class').get('decorators')?.grammars.has('python')).toBe(true);

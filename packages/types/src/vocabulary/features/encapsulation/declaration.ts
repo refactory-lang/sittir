@@ -9,4 +9,7 @@ export namespace Declaration {
 		readonly privateName?: Flag;
 		// t only
 	}
+	export interface Property<G extends GrammarContext<G>> {
+		readonly privateName?: Flag;
+	}
 }

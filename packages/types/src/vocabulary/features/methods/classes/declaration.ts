@@ -23,4 +23,7 @@ export namespace Declaration {
 			readonly static?: Flag;
 		}
 	}
+	export interface Property<G extends GrammarContext<G>> {
+		readonly static?: Flag;
+	}
 }
