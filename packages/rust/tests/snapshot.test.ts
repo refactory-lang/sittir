@@ -31,7 +31,7 @@ describe('$snapshot()', () => {
 		stmt.$trivia.leading('// new');
 		const snapped = JSON.stringify(root.$snapshot());
 		expect(namesATree(JSON.parse(snapped))).toBe(false);
-		expect(snapped).toContain('"leading":[{"$type":337,"_content":{"$type":156,"$text":" new"}}]');
+		expect(snapped).toContain(`"leading":[{"$type":${engine.kinds.LineComment},"_content":{"$type":${engine.kinds.LineCommentRegular},"$text":" new"}}]`);
 		expect(snapped).toContain('"$text":"// keep"');
 		expect(snapped).toContain('"span":{"start":{"row":1,"column":4},"end":{"row":1,"column":14}}');
 	});

@@ -22,4 +22,9 @@ export namespace Declaration {
 		readonly unsafe?: Flag;
 		// rt only
 	}
+	export namespace Module {
+		export interface Foreign<G extends GrammarContext<G>> {
+			readonly unsafe?: Flag;
+		}
+	}
 }

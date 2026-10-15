@@ -1,6 +1,41 @@
 {
-	"grammarHash": "6080eb1ed15159d5d1d657bc0c69aeaa0775d6c8aaccfb79f66fe3f9ec3c1fc3",
+	"grammarHash": "f069969d9e8abf10d34334b542b436a3ec552bbe4b52b3318c758cdb8839bca6",
 	"resolutions": [
+		{
+			"resolution": {
+				"kind": "AddConflict",
+				"symbols": [
+					"function_modifiers",
+					"foreign_mod_item_semi",
+					"foreign_mod_item_body"
+				]
+			},
+			"step": "upstream-declared",
+			"sourceChains": [
+				[
+					"function_modifiers"
+				],
+				[
+					"foreign_mod_item_semi",
+					"foreign_mod_item"
+				],
+				[
+					"foreign_mod_item_body",
+					"foreign_mod_item"
+				]
+			],
+			"conflict": {
+				"symbolSequence": [
+					"'unsafe'"
+				],
+				"lookahead": "'extern'",
+				"interpretations": [
+					"foreign_mod_item_semi",
+					"foreign_mod_item_body",
+					"function_modifiers_repeat1"
+				]
+			}
+		},
 		{
 			"resolution": {
 				"kind": "AddConflict",
@@ -221,7 +256,7 @@
 		}
 	],
 	"bound": {
-		"grammarHash": "6080eb1ed15159d5d1d657bc0c69aeaa0775d6c8aaccfb79f66fe3f9ec3c1fc3",
+		"grammarHash": "f069969d9e8abf10d34334b542b436a3ec552bbe4b52b3318c758cdb8839bca6",
 		"resolutions": []
 	}
 }

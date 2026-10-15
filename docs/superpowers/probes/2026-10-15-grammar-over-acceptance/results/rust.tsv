@@ -12,6 +12,6 @@ visibility-position	visibility on a trait impl item	clean	clean	error[E0449]: vi
 visibility-position	visibility on an impl	ERROR@2:1	ERROR@2:1	error[E0449]: visibility qualifiers are not permitted here			"pub struct S;\npub impl S {}\n"
 visibility-position	visibility on a field twice	ERROR@2:13	ERROR@2:13	error: expected identifier, found keyword `pub`			"pub struct S {\n    pub pub a: u8,\n}\n"
 parameter-order	C variadic outside an extern block	clean	clean	error: missing pattern for `...` argument | error: missing pattern for `...` argument	early-error	Rust Reference, Functions: FunctionParam admits ...; restricted to extern blocks later	"pub unsafe extern \"C\" fn f(a: u8, ...) {}\n"
-parameter-order	C variadic not last	ERROR@1:19 ERROR@3:1	ERROR@1:19 ERROR@3:1	error: `...` must be the last argument of a C-variadic function			"unsafe extern \"C\" {\n    fn f(..., a: u8);\n}\n"
+parameter-order	C variadic not last	clean	clean	error: `...` must be the last argument of a C-variadic function	early-error	Rust Reference, Functions: FunctionParam admits ...; that it comes last is a later check (rustc: `...` must be the last argument)	"unsafe extern \"C\" {\n    fn f(..., a: u8);\n}\n"
 parameter-order	parameter with a default	ERROR@1:16	ERROR@1:16	error: parameter defaults are not supported			"pub fn f(x: u8 = 1) {}\n"
 context	break outside a loop	clean	clean	error[E0268]: `break` outside of a loop or labeled block	early-error	rustc E0268	"pub fn f() {\n    break;\n}\n"

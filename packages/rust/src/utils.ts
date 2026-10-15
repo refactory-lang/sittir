@@ -730,11 +730,11 @@ export const querySlots: QuerySlots = Object.freeze({
 	393: [['rangeExpressionBare', { fields: [], kinds: ['range_expression_bare'] }]],
 	394: [['expression', { fields: ['expression'], kinds: [] }]],
 	395: [
-		['visibilityModifier', { fields: ['visibility_modifier'], kinds: [] }],
+		['unsafe', { fields: ['unsafe'], kinds: [] }, 'unsafe'],
 		['externModifier', { fields: ['extern_modifier'], kinds: [] }]
 	],
 	396: [
-		['visibilityModifier', { fields: ['visibility_modifier'], kinds: [] }],
+		['unsafe', { fields: ['unsafe'], kinds: [] }, 'unsafe'],
 		['externModifier', { fields: ['extern_modifier'], kinds: [] }],
 		['body', { fields: ['body'], kinds: [] }]
 	],

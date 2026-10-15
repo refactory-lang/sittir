@@ -2,9 +2,12 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { cpSync, existsSync, mkdtempSync, rmSync, statSync } from 'node:fs';
-import { ensureParserWasm } from '../compile-parser.ts';
+import { createRequire } from 'node:module';
+import { Language, Parser } from 'web-tree-sitter';
+import { buildUpstreamWasm, ensureParserWasm } from '../compile-parser.ts';
 
-const realPythonSittir = join(__dirname, '../../../../', 'python', '.sittir');
+const realPythonDir = join(__dirname, '../../../../', 'python');
+const realPythonSittir = join(realPythonDir, '.sittir');
 
 let tmpRoot: string;
 let pythonDir: string;
@@ -27,6 +30,19 @@ describe('ensureParserWasm', () => {
 		expect(wasmPath).toBe(join(pythonDir, '.sittir', 'parser.wasm'));
 		expect(statSync(wasmPath).size).toBeGreaterThan(100_000);
 	}, 120_000);
+
+	it('builds the upstream parser from the grammar the package exports, the same parser its published wasm is', async () => {
+		const built = buildUpstreamWasm(realPythonDir, join(tmpRoot, 'upstream.wasm'));
+		const published = createRequire(join(realPythonDir, 'package.json')).resolve('tree-sitter-python/tree-sitter-python.wasm');
+		await Parser.init();
+		const treeOf = async (wasm: string, source: string): Promise<string> => {
+			const parser = new Parser();
+			parser.setLanguage(await Language.load(wasm));
+			return parser.parse(source)!.rootNode.toString();
+		};
+		for (const source of ['x = 1\n', 'def f(a, /, b, *, c=1, d):\n    return a\n', 'match p:\n    case [x, *_]: pass\n', 'f"{x!r:>{w}}"\n'])
+			expect(await treeOf(built, source)).toBe(await treeOf(published, source));
+	}, 300_000);
 
 	it('leaves a present parser.wasm untouched', () => {
 		const wasmPath = join(pythonDir, '.sittir', 'parser.wasm');

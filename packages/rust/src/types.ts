@@ -307,70 +307,70 @@ export enum TSKindId {
 	Squote = 50,
 	DefaultKeyword = 51,
 	GenKeyword = 52,
-	Lt2 = 53,
-	Amp = 54,
-	ImplKeyword = 55,
-	DynKeyword = 56,
-	MutableSpecifier = 57,
-	U8Keyword = 58,
-	I8Keyword = 59,
-	U16Keyword = 60,
-	I16Keyword = 61,
-	U32Keyword = 62,
-	I32Keyword = 63,
-	U64Keyword = 64,
-	I64Keyword = 65,
-	U128Keyword = 66,
-	I128Keyword = 67,
-	IsizeKeyword = 68,
-	UsizeKeyword = 69,
-	F32Keyword = 70,
-	F64Keyword = 71,
-	BoolKeyword = 72,
-	StrKeyword = 73,
-	CharKeyword = 74,
-	Dash = 75,
-	AmpAmp = 76,
-	PipePipe = 77,
-	Pipe = 78,
-	Caret = 79,
-	EqEq = 80,
-	BangEq = 81,
-	LtEq = 82,
-	GtEq = 83,
-	LtLt = 84,
-	GtGt = 85,
-	Slash = 86,
-	Percent = 87,
-	PlusEq = 88,
-	DashEq = 89,
-	StarEq = 90,
-	SlashEq = 91,
-	PercentEq = 92,
-	AmpEq = 93,
-	PipeEq = 94,
-	CaretEq = 95,
-	LtLtEq = 96,
-	GtGtEq = 97,
-	ReturnKeyword = 98,
-	YieldKeyword = 99,
-	DotDot = 100,
-	IfKeyword = 101,
-	ElseKeyword = 102,
-	MatchKeyword = 103,
-	WhileKeyword = 104,
-	LoopKeyword = 105,
-	InKeyword = 106,
-	BreakKeyword = 107,
-	ContinueKeyword = 108,
-	Dot = 109,
-	AwaitKeyword = 110,
-	UnsafeKeyword = 111,
-	AsyncKeyword = 112,
-	TryKeyword = 113,
-	RefKeyword = 114,
-	At = 115,
-	Dquote = 116,
+	RawKeyword = 53,
+	Lt2 = 54,
+	Amp = 55,
+	ImplKeyword = 56,
+	DynKeyword = 57,
+	MutableSpecifier = 58,
+	U8Keyword = 59,
+	I8Keyword = 60,
+	U16Keyword = 61,
+	I16Keyword = 62,
+	U32Keyword = 63,
+	I32Keyword = 64,
+	U64Keyword = 65,
+	I64Keyword = 66,
+	U128Keyword = 67,
+	I128Keyword = 68,
+	IsizeKeyword = 69,
+	UsizeKeyword = 70,
+	F32Keyword = 71,
+	F64Keyword = 72,
+	BoolKeyword = 73,
+	StrKeyword = 74,
+	CharKeyword = 75,
+	Dash = 76,
+	AmpAmp = 77,
+	PipePipe = 78,
+	Pipe = 79,
+	Caret = 80,
+	EqEq = 81,
+	BangEq = 82,
+	LtEq = 83,
+	GtEq = 84,
+	LtLt = 85,
+	GtGt = 86,
+	Slash = 87,
+	Percent = 88,
+	PlusEq = 89,
+	DashEq = 90,
+	StarEq = 91,
+	SlashEq = 92,
+	PercentEq = 93,
+	AmpEq = 94,
+	PipeEq = 95,
+	CaretEq = 96,
+	LtLtEq = 97,
+	GtGtEq = 98,
+	ReturnKeyword = 99,
+	YieldKeyword = 100,
+	DotDot = 101,
+	IfKeyword = 102,
+	ElseKeyword = 103,
+	MatchKeyword = 104,
+	WhileKeyword = 105,
+	LoopKeyword = 106,
+	InKeyword = 107,
+	BreakKeyword = 108,
+	ContinueKeyword = 109,
+	Dot = 110,
+	AwaitKeyword = 111,
+	UnsafeKeyword = 112,
+	AsyncKeyword = 113,
+	TryKeyword = 114,
+	RefKeyword = 115,
+	At = 116,
 	TrueKeyword = 117,
 	FalseKeyword = 118,
 	SlashSlash = 119,
@@ -409,10 +409,10 @@ export enum TSKindId {
 	EscapeSequenceUnicodeFixed = 152,
 	EscapeSequenceUnicodeBraced = 153,
 	EscapeSequenceHex = 154,
-	RawKeyword = 155,
-	LineCommentRegular = 156,
-	MacroRulesBang = 157,
-	StringContent = 158,
+	LineCommentRegular = 155,
+	MacroRulesBang = 156,
+	StringContent = 157,
+	StringClose = 158,
 	RawStringLiteralStart = 159,
 	RawStringLiteralContent = 160,
 	RawStringLiteralEnd = 161,
@@ -781,70 +781,70 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[50, 'squote'],
 	[51, 'default_keyword'],
 	[52, 'gen_keyword'],
-	[53, 'lt2'],
-	[54, 'amp'],
-	[55, 'impl_keyword'],
-	[56, 'dyn_keyword'],
-	[57, 'mutable_specifier'],
-	[58, 'u8_keyword'],
-	[59, 'i8_keyword'],
-	[60, 'u16_keyword'],
-	[61, 'i16_keyword'],
-	[62, 'u32_keyword'],
-	[63, 'i32_keyword'],
-	[64, 'u64_keyword'],
-	[65, 'i64_keyword'],
-	[66, 'u128_keyword'],
-	[67, 'i128_keyword'],
-	[68, 'isize_keyword'],
-	[69, 'usize_keyword'],
-	[70, 'f32_keyword'],
-	[71, 'f64_keyword'],
-	[72, 'bool_keyword'],
-	[73, 'str_keyword'],
-	[74, 'char_keyword'],
-	[75, 'dash'],
-	[76, 'amp_amp'],
-	[77, 'pipe_pipe'],
-	[78, 'pipe'],
-	[79, 'caret'],
-	[80, 'eq_eq'],
-	[81, 'bang_eq'],
-	[82, 'lt_eq'],
-	[83, 'gt_eq'],
-	[84, 'lt_lt'],
-	[85, 'gt_gt'],
-	[86, 'slash'],
-	[87, 'percent'],
-	[88, 'plus_eq'],
-	[89, 'dash_eq'],
-	[90, 'star_eq'],
-	[91, 'slash_eq'],
-	[92, 'percent_eq'],
-	[93, 'amp_eq'],
-	[94, 'pipe_eq'],
-	[95, 'caret_eq'],
-	[96, 'lt_lt_eq'],
-	[97, 'gt_gt_eq'],
-	[98, 'return_keyword'],
-	[99, 'yield_keyword'],
-	[100, 'dot_dot'],
-	[101, 'if_keyword'],
-	[102, 'else_keyword'],
-	[103, 'match_keyword'],
-	[104, 'while_keyword'],
-	[105, 'loop_keyword'],
-	[106, 'in_keyword'],
-	[107, 'break_keyword'],
-	[108, 'continue_keyword'],
-	[109, 'dot'],
-	[110, 'await_keyword'],
-	[111, 'unsafe_keyword'],
-	[112, 'async_keyword'],
-	[113, 'try_keyword'],
-	[114, 'ref_keyword'],
-	[115, 'at'],
-	[116, 'dquote'],
+	[53, 'raw_keyword'],
+	[54, 'lt2'],
+	[55, 'amp'],
+	[56, 'impl_keyword'],
+	[57, 'dyn_keyword'],
+	[58, 'mutable_specifier'],
+	[59, 'u8_keyword'],
+	[60, 'i8_keyword'],
+	[61, 'u16_keyword'],
+	[62, 'i16_keyword'],
+	[63, 'u32_keyword'],
+	[64, 'i32_keyword'],
+	[65, 'u64_keyword'],
+	[66, 'i64_keyword'],
+	[67, 'u128_keyword'],
+	[68, 'i128_keyword'],
+	[69, 'isize_keyword'],
+	[70, 'usize_keyword'],
+	[71, 'f32_keyword'],
+	[72, 'f64_keyword'],
+	[73, 'bool_keyword'],
+	[74, 'str_keyword'],
+	[75, 'char_keyword'],
+	[76, 'dash'],
+	[77, 'amp_amp'],
+	[78, 'pipe_pipe'],
+	[79, 'pipe'],
+	[80, 'caret'],
+	[81, 'eq_eq'],
+	[82, 'bang_eq'],
+	[83, 'lt_eq'],
+	[84, 'gt_eq'],
+	[85, 'lt_lt'],
+	[86, 'gt_gt'],
+	[87, 'slash'],
+	[88, 'percent'],
+	[89, 'plus_eq'],
+	[90, 'dash_eq'],
+	[91, 'star_eq'],
+	[92, 'slash_eq'],
+	[93, 'percent_eq'],
+	[94, 'amp_eq'],
+	[95, 'pipe_eq'],
+	[96, 'caret_eq'],
+	[97, 'lt_lt_eq'],
+	[98, 'gt_gt_eq'],
+	[99, 'return_keyword'],
+	[100, 'yield_keyword'],
+	[101, 'dot_dot'],
+	[102, 'if_keyword'],
+	[103, 'else_keyword'],
+	[104, 'match_keyword'],
+	[105, 'while_keyword'],
+	[106, 'loop_keyword'],
+	[107, 'in_keyword'],
+	[108, 'break_keyword'],
+	[109, 'continue_keyword'],
+	[110, 'dot'],
+	[111, 'await_keyword'],
+	[112, 'unsafe_keyword'],
+	[113, 'async_keyword'],
+	[114, 'try_keyword'],
+	[115, 'ref_keyword'],
+	[116, 'at'],
 	[117, 'true_keyword'],
 	[118, 'false_keyword'],
 	[119, 'slash_slash'],
@@ -883,10 +883,10 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[152, 'escape_sequence_unicode_fixed'],
 	[153, 'escape_sequence_unicode_braced'],
 	[154, 'escape_sequence_hex'],
-	[155, 'raw_keyword'],
-	[156, 'line_comment_regular'],
-	[157, 'macro_rules_bang'],
-	[158, 'string_content'],
+	[155, 'line_comment_regular'],
+	[156, 'macro_rules_bang'],
+	[157, 'string_content'],
+	[158, 'string_close'],
 	[159, 'raw_string_literal_start'],
 	[160, 'raw_string_literal_content'],
 	[161, 'raw_string_literal_end'],
@@ -1254,70 +1254,70 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[50, "'"],
 	[51, 'default'],
 	[52, 'gen'],
-	[53, '<'],
-	[54, '&'],
-	[55, 'impl'],
-	[56, 'dyn'],
-	[57, 'mutable_specifier'],
-	[58, 'u8'],
-	[59, 'i8'],
-	[60, 'u16'],
-	[61, 'i16'],
-	[62, 'u32'],
-	[63, 'i32'],
-	[64, 'u64'],
-	[65, 'i64'],
-	[66, 'u128'],
-	[67, 'i128'],
-	[68, 'isize'],
-	[69, 'usize'],
-	[70, 'f32'],
-	[71, 'f64'],
-	[72, 'bool'],
-	[73, 'str'],
-	[74, 'char'],
-	[75, '-'],
-	[76, '&&'],
-	[77, '||'],
-	[78, '|'],
-	[79, '^'],
-	[80, '=='],
-	[81, '!='],
-	[82, '<='],
-	[83, '>='],
-	[84, '<<'],
-	[85, '>>'],
-	[86, '/'],
-	[87, '%'],
-	[88, '+='],
-	[89, '-='],
-	[90, '*='],
-	[91, '/='],
-	[92, '%='],
-	[93, '&='],
-	[94, '|='],
-	[95, '^='],
-	[96, '<<='],
-	[97, '>>='],
-	[98, 'return'],
-	[99, 'yield'],
-	[100, '..'],
-	[101, 'if'],
-	[102, 'else'],
-	[103, 'match'],
-	[104, 'while'],
-	[105, 'loop'],
-	[106, 'in'],
-	[107, 'break'],
-	[108, 'continue'],
-	[109, '.'],
-	[110, 'await'],
-	[111, 'unsafe'],
-	[112, 'async'],
-	[113, 'try'],
-	[114, 'ref'],
-	[115, '@'],
-	[116, '"'],
+	[53, 'raw'],
+	[54, '<'],
+	[55, '&'],
+	[56, 'impl'],
+	[57, 'dyn'],
+	[58, 'mutable_specifier'],
+	[59, 'u8'],
+	[60, 'i8'],
+	[61, 'u16'],
+	[62, 'i16'],
+	[63, 'u32'],
+	[64, 'i32'],
+	[65, 'u64'],
+	[66, 'i64'],
+	[67, 'u128'],
+	[68, 'i128'],
+	[69, 'isize'],
+	[70, 'usize'],
+	[71, 'f32'],
+	[72, 'f64'],
+	[73, 'bool'],
+	[74, 'str'],
+	[75, 'char'],
+	[76, '-'],
+	[77, '&&'],
+	[78, '||'],
+	[79, '|'],
+	[80, '^'],
+	[81, '=='],
+	[82, '!='],
+	[83, '<='],
+	[84, '>='],
+	[85, '<<'],
+	[86, '>>'],
+	[87, '/'],
+	[88, '%'],
+	[89, '+='],
+	[90, '-='],
+	[91, '*='],
+	[92, '/='],
+	[93, '%='],
+	[94, '&='],
+	[95, '|='],
+	[96, '^='],
+	[97, '<<='],
+	[98, '>>='],
+	[99, 'return'],
+	[100, 'yield'],
+	[101, '..'],
+	[102, 'if'],
+	[103, 'else'],
+	[104, 'match'],
+	[105, 'while'],
+	[106, 'loop'],
+	[107, 'in'],
+	[108, 'break'],
+	[109, 'continue'],
+	[110, '.'],
+	[111, 'await'],
+	[112, 'unsafe'],
+	[113, 'async'],
+	[114, 'try'],
+	[115, 'ref'],
+	[116, '@'],
 	[117, 'true'],
 	[118, 'false'],
 	[119, '//'],
@@ -1356,10 +1356,10 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[152, 'escape_sequence_unicode_fixed'],
 	[153, 'escape_sequence_unicode_braced'],
 	[154, 'escape_sequence_hex'],
-	[155, 'raw'],
-	[156, 'line_comment_regular'],
-	[157, 'macro_rules!'],
-	[158, 'string_content'],
+	[155, 'line_comment_regular'],
+	[156, 'macro_rules!'],
+	[157, 'string_content'],
+	[158, '"'],
 	[159, 'raw_string_literal_start'],
 	[160, 'string_content'],
 	[161, 'raw_string_literal_end'],
@@ -1782,6 +1782,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DefaultKeyword;
 		case 'gen_keyword':
 			return TSKindId.GenKeyword;
+		case 'raw_keyword':
+			return TSKindId.RawKeyword;
 		case 'lt2':
 			return TSKindId.Lt2;
 		case 'amp':
@@ -1908,8 +1910,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.RefKeyword;
 		case 'at':
 			return TSKindId.At;
-		case 'dquote':
-			return TSKindId.Dquote;
 		case 'true_keyword':
 			return TSKindId.TrueKeyword;
 		case 'false_keyword':
@@ -1986,14 +1986,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.EscapeSequenceUnicodeBraced;
 		case 'escape_sequence_hex':
 			return TSKindId.EscapeSequenceHex;
-		case 'raw_keyword':
-			return TSKindId.RawKeyword;
 		case 'line_comment_regular':
 			return TSKindId.LineCommentRegular;
 		case 'macro_rules_bang':
 			return TSKindId.MacroRulesBang;
 		case 'string_content':
 			return TSKindId.StringContent;
+		case 'string_close':
+			return TSKindId.StringClose;
 		case 'raw_string_literal_start':
 			return TSKindId.RawStringLiteralStart;
 		case 'raw_string_literal_content':
@@ -2712,6 +2712,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DefaultKeyword;
 		case 'gen':
 			return TSKindId.GenKeyword;
+		case 'raw':
+			return TSKindId.RawKeyword;
 		case '&':
 			return TSKindId.Amp;
 		case 'impl':
@@ -2834,8 +2836,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.RefKeyword;
 		case '@':
 			return TSKindId.At;
-		case '"':
-			return TSKindId.Dquote;
 		case 'true':
 			return TSKindId.TrueKeyword;
 		case 'false':
@@ -2862,10 +2862,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PubKeyword;
 		case 'struct':
 			return TSKindId.StructKeyword;
-		case 'raw':
-			return TSKindId.RawKeyword;
 		case 'macro_rules!':
 			return TSKindId.MacroRulesBang;
+		case '"':
+			return TSKindId.StringClose;
 		case 'let_chain':
 			return TSKindId.LetChain;
 		default:
@@ -9152,36 +9152,40 @@ export interface ExpressionStatementWithSemi {
 
 export interface ForeignModItemSemi {
 	readonly $type: TSKindId.ForeignModItemSemi;
-	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _unsafe: boolean;
 	readonly _extern_modifier: ExternModifier;
+	readonly __inputHints__?: {
+		readonly unsafe?: BaseBooleanKeyword<'unsafe'>;
+	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly extern_modifier: ExternModifier | 'extern' | readonly (EscapeSequence | StringContent)[];
 	};
 	readonly __slotHints__?: {
-		readonly visibilityModifier: SlotHint<T.VisibilityModifier, true>;
+		readonly unsafe: SlotHint<NonNullable<T.ForeignModItemSemi.Config>['unsafe'], true>;
 		readonly externModifier: SlotHint<T.ExternModifier>;
 	};
-	visibilityModifier(): VisibilityModifier | undefined;
+	unsafe(): boolean;
 	externModifier(): ExternModifier;
 }
 
 export interface ForeignModItemBody {
 	readonly $type: TSKindId.ForeignModItemBody;
-	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _unsafe: boolean;
 	readonly _extern_modifier: ExternModifier;
 	readonly _body: DeclarationList;
+	readonly __inputHints__?: {
+		readonly unsafe?: BaseBooleanKeyword<'unsafe'>;
+	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly extern_modifier: ExternModifier | 'extern' | readonly (EscapeSequence | StringContent)[];
 		readonly body: readonly DeclarationStatement[];
 	};
 	readonly __slotHints__?: {
-		readonly visibilityModifier: SlotHint<T.VisibilityModifier, true>;
+		readonly unsafe: SlotHint<NonNullable<T.ForeignModItemBody.Config>['unsafe'], true>;
 		readonly externModifier: SlotHint<T.ExternModifier>;
 		readonly body: SlotHint<T.DeclarationList>;
 	};
-	visibilityModifier(): VisibilityModifier | undefined;
+	unsafe(): boolean;
 	externModifier(): ExternModifier;
 	body(): DeclarationList;
 }
@@ -10208,6 +10212,7 @@ export type Blankline = TSKindId.Blankline;
 export type DoubleBlankline = TSKindId.DoubleBlankline;
 export type Indent = TSKindId.Indent;
 export type Dedent = TSKindId.Dedent;
+export type StringClose = Terminal<TSKindId.StringClose, string>;
 export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
 
 // Supertype unions
@@ -12329,7 +12334,11 @@ export namespace NegativeLiteral {
 
 export namespace StringLiteral {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+		readonly __optionsHint__?: {
+			readonly after?: LayoutKindId;
+			readonly before?: LayoutKindId;
+			readonly stringClose?: { readonly before?: LayoutKindId };
+		};
 	}
 }
 
@@ -13103,13 +13112,18 @@ export namespace ForeignModItemSemi {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
 			readonly semi?: { readonly before?: LayoutKindId };
+			readonly unsafeKeyword?: { readonly after?: LayoutKindId };
 		};
 	}
 }
 
 export namespace ForeignModItemBody {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+		readonly __optionsHint__?: {
+			readonly after?: LayoutKindId;
+			readonly before?: LayoutKindId;
+			readonly unsafeKeyword?: { readonly after?: LayoutKindId };
+		};
 	}
 }
 
@@ -16998,6 +17012,7 @@ export interface BlockCommentContentNs extends LeafNs<
 	BlockCommentContent.Bound,
 	TSKindId.BlockCommentContent
 > {}
+export interface StringCloseNs extends LeafNs<StringClose, string, StringClose.Bound, TSKindId.StringClose> {}
 export interface ErrorSentinelNs extends LeafNs<ErrorSentinel, string, ErrorSentinel.Bound, TSKindId.ErrorSentinel> {}
 
 export interface NamespaceMap {
@@ -17265,6 +17280,7 @@ export interface NamespaceMap {
 	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEndNs;
 	[TSKindId.DocComment]: DocCommentNs;
 	[TSKindId.BlockCommentContent]: BlockCommentContentNs;
+	[TSKindId.StringClose]: StringCloseNs;
 	[TSKindId.ErrorSentinel]: ErrorSentinelNs;
 }
 
@@ -17509,6 +17525,7 @@ export interface BoundByKindId {
 	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEnd.Bound;
 	[TSKindId.DocComment]: DocComment.Bound;
 	[TSKindId.BlockCommentContent]: BlockCommentContent.Bound;
+	[TSKindId.StringClose]: StringClose.Bound;
 	[TSKindId.ErrorSentinel]: ErrorSentinel.Bound;
 }
 
@@ -17753,6 +17770,7 @@ export interface ParsedByKindId {
 	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEnd.Parsed;
 	[TSKindId.DocComment]: DocComment.Parsed;
 	[TSKindId.BlockCommentContent]: BlockCommentContent.Parsed;
+	[TSKindId.StringClose]: StringClose.Parsed;
 	[TSKindId.ErrorSentinel]: ErrorSentinel.Parsed;
 }
 
@@ -17877,7 +17895,6 @@ export type FixedTextKindId =
 	| TSKindId.GenKeyword
 	| TSKindId.TryKeyword
 	| TSKindId.At
-	| TSKindId.Dquote
 	| TSKindId.TrueKeyword
 	| TSKindId.FalseKeyword
 	| TSKindId.SlashSlash
@@ -18173,6 +18190,7 @@ export interface TypeKeyOf {
 	[TSKindId.RawStringLiteralEnd]: 'rawStringLiteralEnd';
 	[TSKindId.DocComment]: 'docComment';
 	[TSKindId.BlockCommentContent]: 'blockCommentContent';
+	[TSKindId.StringClose]: 'stringClose';
 	[TSKindId.ErrorSentinel]: 'errorSentinel';
 }
 
@@ -24256,6 +24274,26 @@ export namespace BlockCommentContent {
 	export type BuildArgs = BlockCommentContentNs['BuildArgs'];
 	export type LooseArgs = BlockCommentContentNs['LooseArgs'];
 	export type Kind = TSKindId.BlockCommentContent;
+}
+export namespace StringClose {
+	export type Config = StringCloseNs['Config'];
+	export interface Bound extends NodeMethodsOf {
+		readonly $type: TSKindId.StringClose;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export interface Parsed extends HoldsTree {
+		readonly $type: TSKindId.StringClose;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export type Loose = StringCloseNs['Loose'];
+	export type LooseConfig = StringCloseNs['LooseConfig'];
+	export type BuildArgs = StringCloseNs['BuildArgs'];
+	export type LooseArgs = StringCloseNs['LooseArgs'];
+	export type Kind = TSKindId.StringClose;
 }
 export namespace ErrorSentinel {
 	export type Config = ErrorSentinelNs['Config'];

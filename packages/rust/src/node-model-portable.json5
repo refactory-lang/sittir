@@ -7223,394 +7223,6 @@
       "vocab": "declaration.module.foreign",
       "read": [
         {
-          "vocab": "declaration.module.foreign.private",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "fields": [],
-                "kinds": [
-                  "visibility_modifier_pub_scope"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "visibility_modifier_pub_scope"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  125
-                ],
-                "fields": [],
-                "kinds": [
-                  "self",
-                  "super",
-                  "crate",
-                  "visibility_modifier_pub_scope_in_path"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.module.foreign.public.internal",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "fields": [],
-                "kinds": [
-                  "visibility_modifier_pub_scope"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "visibility_modifier_pub_scope"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  127
-                ],
-                "fields": [],
-                "kinds": [
-                  "self",
-                  "super",
-                  "crate",
-                  "visibility_modifier_pub_scope_in_path"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.module.foreign.public.restricted",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "visibility_modifier_pub_scope"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  126,
-                  379
-                ],
-                "fields": [],
-                "kinds": [
-                  "self",
-                  "super",
-                  "crate",
-                  "visibility_modifier_pub_scope_in_path"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.module.foreign.public",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.module.foreign.public.internal",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  127
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            }
-          ]
-        },
-        {
           "vocab": "declaration.module.foreign",
           "toplevel": true,
           "within": [],
@@ -7619,6 +7231,17 @@
         }
       ],
       "members": [
+        {
+          "name": "unsafe",
+          "route": "slot",
+          "slot": "unsafe",
+          "path": [
+            {
+              "owner": "foreign_mod_item_body",
+              "slot": "unsafe"
+            }
+          ]
+        },
         {
           "name": "extern",
           "route": "slot",
@@ -7642,37 +7265,14 @@
           ]
         },
         {
-          "name": "scope",
-          "route": "nested",
-          "via": [
-            {
-              "field": null,
-              "kind": "visibility_modifier_pub",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "visibility_modifier",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
-          "multiple": false,
+          "name": "unsafe",
+          "route": "presence",
+          "via": [],
+          "token": "unsafe",
           "path": [
             {
               "owner": "foreign_mod_item_body",
-              "slot": "visibility_modifier"
-            },
-            {
-              "owner": "visibility_modifier",
-              "slot": "content"
-            },
-            {
-              "owner": "visibility_modifier_pub",
-              "slot": "visibility_modifier_pub_scope"
+              "slot": "unsafe"
             }
           ]
         }
@@ -7682,394 +7282,6 @@
       "vocab": "declaration.module.foreign",
       "read": [
         {
-          "vocab": "declaration.module.foreign.private",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "fields": [],
-                "kinds": [
-                  "visibility_modifier_pub_scope"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "visibility_modifier_pub_scope"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  125
-                ],
-                "fields": [],
-                "kinds": [
-                  "self",
-                  "super",
-                  "crate",
-                  "visibility_modifier_pub_scope_in_path"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.module.foreign.public.internal",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "fields": [],
-                "kinds": [
-                  "visibility_modifier_pub_scope"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "visibility_modifier_pub_scope"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  127
-                ],
-                "fields": [],
-                "kinds": [
-                  "self",
-                  "super",
-                  "crate",
-                  "visibility_modifier_pub_scope_in_path"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.module.foreign.public.restricted",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "crate",
-                    "visibility_modifier_pub"
-                  ]
-                },
-                {
-                  "fields": [],
-                  "kinds": [
-                    "visibility_modifier_pub_scope"
-                  ]
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  126,
-                  379
-                ],
-                "fields": [],
-                "kinds": [
-                  "self",
-                  "super",
-                  "crate",
-                  "visibility_modifier_pub_scope_in_path"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.module.foreign.public",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.module.foreign.public.internal",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "fields": [
-                  "visibility_modifier"
-                ],
-                "kinds": []
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "fields": [
-                    "visibility_modifier"
-                  ],
-                  "kinds": []
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  127
-                ],
-                "fields": [],
-                "kinds": [
-                  "crate",
-                  "visibility_modifier_pub"
-                ]
-              }
-            }
-          ]
-        },
-        {
           "vocab": "declaration.module.foreign",
           "toplevel": true,
           "within": [],
@@ -8078,6 +7290,17 @@
         }
       ],
       "members": [
+        {
+          "name": "unsafe",
+          "route": "slot",
+          "slot": "unsafe",
+          "path": [
+            {
+              "owner": "foreign_mod_item_semi",
+              "slot": "unsafe"
+            }
+          ]
+        },
         {
           "name": "extern",
           "route": "slot",
@@ -8090,37 +7313,14 @@
           ]
         },
         {
-          "name": "scope",
-          "route": "nested",
-          "via": [
-            {
-              "field": null,
-              "kind": "visibility_modifier_pub",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "visibility_modifier",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
-          "multiple": false,
+          "name": "unsafe",
+          "route": "presence",
+          "via": [],
+          "token": "unsafe",
           "path": [
             {
               "owner": "foreign_mod_item_semi",
-              "slot": "visibility_modifier"
-            },
-            {
-              "owner": "visibility_modifier",
-              "slot": "content"
-            },
-            {
-              "owner": "visibility_modifier_pub",
-              "slot": "visibility_modifier_pub_scope"
+              "slot": "unsafe"
             }
           ]
         }
@@ -21616,15 +20816,15 @@
       },
       {
         "depth": 4,
-        "paths": 91,
-        "kinds": 55,
-        "refinements": 65
+        "paths": 89,
+        "kinds": 53,
+        "refinements": 63
       },
       {
         "depth": 5,
-        "paths": 18,
-        "kinds": 8,
-        "refinements": 18
+        "paths": 16,
+        "kinds": 6,
+        "refinements": 16
       }
     ]
   }

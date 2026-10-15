@@ -135,7 +135,7 @@
     ["visibility-position", "visibility on an impl", "pub struct S;\npub impl S {}\n"],
     ["visibility-position", "visibility on a field twice", "pub struct S {\n    pub pub a: u8,\n}\n"],
     ["parameter-order", "C variadic outside an extern block", "pub unsafe extern \"C\" fn f(a: u8, ...) {}\n", "early-error", "Rust Reference, Functions: FunctionParam admits ...; restricted to extern blocks later"],
-    ["parameter-order", "C variadic not last", "unsafe extern \"C\" {\n    fn f(..., a: u8);\n}\n"],
+    ["parameter-order", "C variadic not last", "unsafe extern \"C\" {\n    fn f(..., a: u8);\n}\n", "early-error", "Rust Reference, Functions: FunctionParam admits ...; that it comes last is a later check (rustc: `...` must be the last argument)"],
     ["parameter-order", "parameter with a default", "pub fn f(x: u8 = 1) {}\n"],
     ["context", "break outside a loop", "pub fn f() {\n    break;\n}\n", "early-error", "rustc E0268"]
   ]
