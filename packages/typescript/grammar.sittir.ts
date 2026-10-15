@@ -555,6 +555,8 @@ export default sittirGrammar(base, {
 		export_statement_namespace_export: { 3: field('name'), 4: field('terminator') },
 		export_statement_equals_export: { 3: field('terminator') },
 
+		for_in_statement: { 2: field('header') },
+
 		_for_header: {
 			'1/0': variant('lhs'),
 			'1/1': variant('var_kind'),

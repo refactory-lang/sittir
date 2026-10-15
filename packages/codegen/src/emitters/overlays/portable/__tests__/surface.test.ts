@@ -50,9 +50,16 @@ describe('emitPortableSurface', () => {
 
 	it('keeps a crossing guard conditional when the kind also reads without its fact', async () => {
 		const text = await emit(
+			'(binary operator: "+") @literal.string.interpolated.raw\n(binary) @literal.string\n(assign) @literal.string.raw'
+		);
+		expect(text).toContain('\t\t"literal.string.raw": { ids: [TSKindId.Assign, TSKindId.Binary], exact: false },');
+	});
+
+	it('ignores a fallback after an unconditional crossing claim for the exact-kind shortcut', async () => {
+		const text = await emit(
 			'(call) @literal.string.interpolated.raw\n(call) @literal.string\n(assign) @literal.string.raw'
 		);
-		expect(text).toContain('\t\t"literal.string.raw": { ids: [TSKindId.Assign, TSKindId.Call], exact: false },');
+		expect(text).toContain('\t\t"literal.string.raw": { ids: [TSKindId.Assign, TSKindId.Call], exact: true },');
 	});
 
 	it('keeps a crossing guard conditional when its fact depends on placement', async () => {
@@ -118,5 +125,11 @@ describe('emitPortableSurface', () => {
 		);
 		expect(text).toContain('\tfixedText: { [TSKindId.Plus]: "+" },');
 		expect(text).toContain('export const portable = portableSurface<PortableKinds, PortableIs>(table, querySlots);');
+	});
+
+	it('decides a path by kind id when every entry a guard can reach is under it, though an entry after an unconditional one is not', async () => {
+		const text = await emit(['(assign) @expression.assignment.add', '(assign) @expression.assignment'].join('\n'));
+		expect(text).toContain('\t\t[TSKindId.Assign]: [{ path: "expression.assignment.add", within: [], test: [] }, { path: "expression.assignment", within: [], test: [] }],');
+		expect(text).toContain('\t\t"expression.assignment.add": { ids: [TSKindId.Assign], exact: true },');
 	});
 });

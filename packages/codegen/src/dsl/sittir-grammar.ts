@@ -1,4 +1,5 @@
-import { attachTextTokens, enrich, getEnrichTextTokens, type EnrichedGrammar, type GrammarResult } from './enrich.ts';
+import { attachTextTokens, enrich, getEnrichTextTokens, stampWiredVariants, withEnrichSidecarsOf, type EnrichedGrammar, type GrammarResult } from './enrich.ts';
+import { baseRulesOf } from './shared.ts';
 import { authoredFieldSites, authoredGroupBodies, wire, wireBindingEffects, type OptionsCheck, type PatchesCheck, type PatchesConfig, type WireConfig, type WiredOpts } from './wire/wire.ts';
 import { blankDeadEnrichMints, getDeadEnrichMints } from './wire/dead-mints.ts';
 import { attachDerivationRecords } from './wire/derivation-records.ts';
@@ -21,6 +22,13 @@ function withBindingPatches(authored: PatchesConfig | undefined, bindingPatches:
 	return out as PatchesConfig;
 }
 
+function assertEnrichFixpoint(wired: GrammarResult, enriched: unknown): void {
+	const before = baseRulesOf<unknown>(wired) ?? {};
+	const after = baseRulesOf<unknown>(enrich(withEnrichSidecarsOf(wired, enriched))) ?? {};
+	const changed = [...new Set([...Object.keys(before), ...Object.keys(after)])].filter((name) => JSON.stringify(before[name]) !== JSON.stringify(after[name]));
+	if (changed.length > 0) throw new Error(`grammar bindings: enrich changes ${changed.sort().join(', ')} in the wired grammar, so the bindings layer's base is not enrich's fixpoint`);
+}
+
 export function sittirGrammar<B extends GrammarJson, const P = PatchesConfig<EnrichedGrammar<B>>, const O = OptionsConfig>(
 	base: B,
 	config: WireConfig<EnrichedGrammar<B>> & {
@@ -39,6 +47,8 @@ export function sittirGrammar<B extends GrammarJson, const P = PatchesConfig<Enr
 	const wiring = bindings?.patches === undefined ? wireConfig : ({ ...wireConfig, patches: withBindingPatches(wireConfig.patches, bindings.patches) } as typeof wireConfig);
 	const opts = wire<EnrichedGrammar<B>, P, O>(wiring, enriched, base);
 	const result = grammar(enriched, opts);
+	const wireContext = opts.__wireContext__;
+	if (wireContext !== undefined) stampWiredVariants(result, enriched, wireContext.automaticVariants, new Set(wireContext.elementSupertypes.keys()));
 	blankDeadEnrichMints(result.grammar, enriched, opts);
 	const dead = getDeadEnrichMints(result.grammar);
 	attachTextTokens(result.grammar, [...getEnrichTextTokens(enriched).keys()].filter((name) => !dead.has(name)));
@@ -49,6 +59,7 @@ export function sittirGrammar<B extends GrammarJson, const P = PatchesConfig<Enr
 	});
 	applyConflictResolutions(result.grammar, resolutions);
 	if (unbound) return result;
+	if (bindings !== undefined) assertEnrichFixpoint(result, enriched);
 	const grammarRecord = result.grammar as unknown as Record<string, unknown>;
 	const bound = bindings === undefined ? grammarRecord : bindGrammar(grammarRecord, bindings, wireBindingEffects(opts));
 	applyBoundConflictResolutions(bound, resolutions);

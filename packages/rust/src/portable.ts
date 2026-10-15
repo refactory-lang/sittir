@@ -675,6 +675,7 @@ export interface PortableIds {
 		| TSKindId.RawStringLiteralContent
 		| TSKindId.StringContent
 		| TSKindId.StringLiteral;
+	'literal.string.bytes': TSKindId.StringLiteral;
 	'literal.string.escape':
 		| TSKindId.EscapeSequence
 		| TSKindId.EscapeSequenceHex
@@ -1619,10 +1620,12 @@ export interface PortableKindsAt {
 	'literal.number.negative': { readonly $ids: readonly PortableIds['literal.number.negative'][] };
 	'literal.string': {
 		readonly $ids: readonly PortableIds['literal.string'][];
+		readonly bytes: PortableKindsAt['literal.string.bytes'];
 		readonly escape: PortableKindsAt['literal.string.escape'];
 		readonly raw: PortableKindsAt['literal.string.raw'];
 		readonly text: PortableKindsAt['literal.string.text'];
 	};
+	'literal.string.bytes': { readonly $ids: readonly PortableIds['literal.string.bytes'][] };
 	'literal.string.escape': { readonly $ids: readonly PortableIds['literal.string.escape'][] };
 	'literal.string.raw': { readonly $ids: readonly PortableIds['literal.string.raw'][] };
 	'literal.string.text': { readonly $ids: readonly PortableIds['literal.string.text'][] };
@@ -2417,10 +2420,12 @@ export interface PortableIsAt {
 	'literal.number.integer.octal': PortableGuard<PortableIds['literal.number.integer.octal']> & {};
 	'literal.number.negative': PortableGuard<PortableIds['literal.number.negative']> & {};
 	'literal.string': PortableGuard<PortableIds['literal.string']> & {
+		readonly bytes: PortableIsAt['literal.string.bytes'];
 		readonly escape: PortableIsAt['literal.string.escape'];
 		readonly raw: PortableIsAt['literal.string.raw'];
 		readonly text: PortableIsAt['literal.string.text'];
 	};
+	'literal.string.bytes': PortableGuard<PortableIds['literal.string.bytes']> & {};
 	'literal.string.escape': PortableGuard<PortableIds['literal.string.escape']> & {};
 	'literal.string.raw': PortableGuard<PortableIds['literal.string.raw']> & {};
 	'literal.string.text': PortableGuard<PortableIds['literal.string.text']> & {};
@@ -3417,6 +3422,7 @@ const table: PortableTable = {
 			],
 			exact: false
 		},
+		'literal.string.bytes': { ids: [TSKindId.StringLiteral], exact: false },
 		'literal.string.escape': {
 			ids: [
 				TSKindId.EscapeSequence,
@@ -3632,7 +3638,10 @@ const table: PortableTable = {
 		[TSKindId.AbstractType]: [{ path: 'type.abstract', within: [], test: [] }],
 		[TSKindId.ArrayExpression]: [{ path: 'expression.collection.list', within: [], test: [] }],
 		[TSKindId.ArrayExpressionList]: [{ path: 'expression.collection.list', within: [], test: [] }],
-		[TSKindId.ArrayExpressionSemi]: [{ path: 'expression.collection.list.repeat', within: [], test: [] }],
+		[TSKindId.ArrayExpressionSemi]: [
+			{ path: 'expression.collection.list.repeat', within: [], test: [] },
+			{ path: 'expression.collection.list', within: [], test: [] }
+		],
 		[TSKindId.ArrayType]: [{ path: 'type.array', within: [], test: [] }],
 		[TSKindId.AssignmentExpression]: [{ path: 'expression.assignment', within: [], test: [] }],
 		[TSKindId.AssociatedType]: [{ path: 'declaration.type_alias.associated', within: [], test: [] }],
@@ -6236,7 +6245,10 @@ const table: PortableTable = {
 		[TSKindId.PointerTypeMut]: [{ path: 'type.pointer', within: [], test: [] }],
 		[TSKindId.QualifiedType]: [{ path: 'type.qualified', within: [], test: [] }],
 		[TSKindId.RangeExpression]: [{ path: 'expression.range', within: [], test: [] }],
-		[TSKindId.RangeExpressionBare]: [{ path: 'expression.range.exclusive', within: [], test: [] }],
+		[TSKindId.RangeExpressionBare]: [
+			{ path: 'expression.range.exclusive', within: [], test: [] },
+			{ path: 'expression.range', within: [], test: [] }
+		],
 		[TSKindId.RangeExpressionBinary]: [
 			{
 				path: 'expression.range.inclusive',
@@ -6255,8 +6267,14 @@ const table: PortableTable = {
 			},
 			{ path: 'expression.range', within: [], test: [] }
 		],
-		[TSKindId.RangeExpressionPostfix]: [{ path: 'expression.range.exclusive', within: [], test: [] }],
-		[TSKindId.RangeExpressionPrefix]: [{ path: 'expression.range.exclusive', within: [], test: [] }],
+		[TSKindId.RangeExpressionPostfix]: [
+			{ path: 'expression.range.exclusive', within: [], test: [] },
+			{ path: 'expression.range', within: [], test: [] }
+		],
+		[TSKindId.RangeExpressionPrefix]: [
+			{ path: 'expression.range.exclusive', within: [], test: [] },
+			{ path: 'expression.range', within: [], test: [] }
+		],
 		[TSKindId.RangePattern]: [{ path: 'pattern.range', within: [], test: [] }],
 		[TSKindId.RangePatternPrefix]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
@@ -6521,6 +6539,11 @@ const table: PortableTable = {
 		[TSKindId.StrKeyword]: [{ path: 'type.primitive', within: [], test: [] }],
 		[TSKindId.StringContent]: [{ path: 'literal.string.text', within: [], test: [] }],
 		[TSKindId.StringLiteral]: [
+			{
+				path: 'literal.string.bytes',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^b"', self: true } }]
+			},
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'literal.string', within: [], test: [] }
 		],
@@ -6766,7 +6789,8 @@ const table: PortableTable = {
 					}
 				]
 			},
-			{ path: 'declaration.struct.tuple', within: [], test: [] }
+			{ path: 'declaration.struct.tuple', within: [], test: [] },
+			{ path: 'declaration.struct', within: [], test: [] }
 		],
 		[TSKindId.StructItemUnit]: [
 			{
@@ -6887,7 +6911,8 @@ const table: PortableTable = {
 					}
 				]
 			},
-			{ path: 'declaration.struct.unit', within: [], test: [] }
+			{ path: 'declaration.struct.unit', within: [], test: [] },
+			{ path: 'declaration.struct', within: [], test: [] }
 		],
 		[TSKindId.StructPattern]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },

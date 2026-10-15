@@ -20,14 +20,13 @@ export function emitPortableSurface({ routes, readTest, kindIdOf, fixedText }: P
 	const braces = (parts: readonly string[]): string => (parts.length === 0 ? '{}' : `{ ${parts.join('; ')} }`);
 	const members = (under: string, at: string): string[] =>
 		[...byPath.get(under)!.children].map(([name, child]) => `readonly ${q(name)}: ${at}[${q(child.path)}]`);
+	const reached = (kind: string): readonly ReadEntry[] | undefined => {
+		const read = routes.readEntries.get(kind) ?? [];
+		const last = read.findIndex((entry) => entry.claim.within.length === 0 && readTest(entry).length === 0);
+		return last < 0 ? undefined : read.slice(0, last + 1);
+	};
 	const exact = (n: NamespaceNode): boolean =>
-		n.kinds.every((kind) => {
-			const read = routes.readEntries.get(kind) ?? [];
-			return (
-				read.every((entry) => portablePathHasFacts(n.path, entry.vocab)) &&
-				read.some((entry) => entry.claim.within.length === 0 && readTest(entry).length === 0)
-			);
-		});
+		n.kinds.every((kind) => reached(kind)?.every((entry) => portablePathHasFacts(n.path, entry.vocab)) ?? false);
 	const entries = [...routes.readEntries].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
 	const entryRecord = (entry: ReadEntry): string => {
 		const within = entry.claim.within.map((kind) => (kind === WILDCARD ? 'null' : kindIdOf(kind)));

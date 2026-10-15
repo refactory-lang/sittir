@@ -1244,8 +1244,15 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "_for_header"
+          "type": "FIELD",
+          "name": "header",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_for_header"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "FIELD",
@@ -5112,7 +5119,11 @@
             },
             {
               "type": "SYMBOL",
-              "name": "call_signature"
+              "name": "call_signature",
+              "annotations": {
+                "variant": "call_signature",
+                "variantOf": "arrow_function"
+              }
             }
           ]
         },
@@ -13890,11 +13901,17 @@
               "members": [
                 {
                   "type": "STRING",
-                  "value": ","
+                  "value": ",",
+                  "annotations": {
+                    "variantOf": "object_type_content"
+                  }
                 },
                 {
                   "type": "STRING",
-                  "value": ";"
+                  "value": ";",
+                  "annotations": {
+                    "variantOf": "object_type_content"
+                  }
                 }
               ]
             },
@@ -13949,11 +13966,17 @@
                 "members": [
                   {
                     "type": "STRING",
-                    "value": ","
+                    "value": ",",
+                    "annotations": {
+                      "variantOf": "object_type_content"
+                    }
                   },
                   {
                     "type": "STRING",
-                    "value": ";"
+                    "value": ";",
+                    "annotations": {
+                      "variantOf": "object_type_content"
+                    }
                   }
                 ]
               },
@@ -14004,11 +14027,17 @@
               "members": [
                 {
                   "type": "STRING",
-                  "value": ","
+                  "value": ",",
+                  "annotations": {
+                    "variantOf": "object_type_content"
+                  }
                 },
                 {
                   "type": "STRING",
-                  "value": ";"
+                  "value": ";",
+                  "annotations": {
+                    "variantOf": "object_type_content"
+                  }
                 }
               ]
             },
@@ -16380,7 +16409,11 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "declaration"
+              "name": "declaration",
+              "annotations": {
+                "variant": "declaration",
+                "variantOf": "export_statement_default_declaration"
+              }
             },
             {
               "type": "SYMBOL",
@@ -16465,7 +16498,11 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "declaration"
+              "name": "declaration",
+              "annotations": {
+                "variant": "declaration",
+                "variantOf": "export_statement_default_declaration_default_kw"
+              }
             },
             {
               "type": "SYMBOL",

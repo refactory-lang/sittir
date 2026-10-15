@@ -213,6 +213,13 @@ describe('portable is: rust', async () => {
 		}
 	});
 
+	it('reads a string literal opening with b" as a byte string, and a plain or C string as none', () => {
+		const SOURCE = 'fn f() { let a = b"ab"; let b = "cd"; let c = c"ef"; }\n';
+		const strings = [0, 1, 2].map((nth) => find(SOURCE, 'string_literal', undefined, nth));
+		expect(strings.map(([node, context]) => at('literal.string.bytes')(node, context))).toEqual([true, false, false]);
+		expect(strings.map(([node, context]) => at('literal.string')(node, context))).toEqual([true, true, true]);
+	});
+
 	it('reads a self parameter and the self it names by the receiver kinds', () => {
 		const SOURCE = 'impl A { fn f(&self) -> u8 { self.x } }\n';
 		const [parameter, parameterContext] = find(SOURCE, 'self_parameter');

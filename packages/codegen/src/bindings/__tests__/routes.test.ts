@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularyMember, derive, readBindings, resolveFlags, resolveRoutes } from '../index.ts';
+import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularyMember, derive, readBindings, resolveFlags, resolveRoutes, unenteredForms } from '../index.ts';
 
 const slot = (name: string, kinds: readonly string[], extra: Partial<ModelSlot> = {}): ModelSlot => ({
 	name,
@@ -143,6 +143,23 @@ const grammar = async (bindings: string): Promise<GrammarInput> => ({
 	model: new Map(MODEL.map((n) => [n.kind, n])),
 	textTokens: new Set(),
 	layoutSlots: [{ kind: null, slot: 'comment' }]
+});
+
+describe('unenteredForms', () => {
+	it('finds no form without its supertype\'s claim in the routes resolveRoutes enters', async () => {
+		const input = await grammar(['(_struct) @declaration.struct', '((struct_named name: (_) @n) @declaration.struct.named (#eq? @n "N"))'].join('\n'));
+		expect(unenteredForms(input, resolveRoutes(input))).toEqual([]);
+	});
+
+	it('reports a form left with no entry for its supertype\'s claim, naming the claim\'s path', async () => {
+		const input = await grammar(['(_struct) @declaration.struct', '((struct_named name: (_) @n) @declaration.struct.named (#eq? @n "N"))'].join('\n'));
+		const routes = resolveRoutes(input);
+		const readEntries = new Map(routes.readEntries);
+		readEntries.set('struct_named', (readEntries.get('struct_named') ?? []).filter((e) => e.claimed !== '_struct'));
+		expect(unenteredForms(input, { ...routes, readEntries })).toEqual([
+			"g: struct_named has no entry for its supertype _struct's claim @declaration.struct, so it reads by no path there when no claim of its own holds"
+		]);
+	});
 });
 
 describe('resolveRoutes', () => {
@@ -379,12 +396,35 @@ describe('resolveRoutes', () => {
 		expect(routes.readEntries.get('false_keyword')?.map((e) => e.vocab)).toEqual(['literal.boolean']);
 	});
 
-	it('enters a claim on a kind on each variant the kind owns, unless the variant has a claim of its own', async () => {
+	it('enters a claim on a kind on each variant the kind owns, and on a variant with claims of its own as its least specific entry', async () => {
 		const routes = resolveRoutes(await grammar(['(_struct) @declaration.struct', '(struct_named) @declaration.struct.named'].join('\n')));
 		expect(routes.readEntries.get('struct_unit')?.map((e) => [e.claimed, e.vocab])).toEqual([['_struct', 'declaration.struct']]);
 		expect(routes.readEntries.get('struct_tuple')?.map((e) => [e.claimed, e.vocab])).toEqual([['_struct', 'declaration.struct']]);
 		expect(routes.members.get('struct_tuple')?.map((r) => r.name)).toEqual(['name', 'fields']);
-		expect(routes.readEntries.get('struct_named')?.map((e) => e.vocab)).toEqual(['declaration.struct.named']);
+		expect(routes.readEntries.get('struct_named')?.map((e) => [e.claimed, e.vocab])).toEqual([
+			['struct_named', 'declaration.struct.named'],
+			['_struct', 'declaration.struct']
+		]);
+		expect(routes.vocabOf.get('struct_named')).toBe('declaration.struct.named');
+	});
+
+	it('keeps a kind\'s claim on a variant whose own claims all refine it, so the variant reads by the kind\'s path when no refinement holds', async () => {
+		const routes = resolveRoutes(await grammar(['(_struct) @declaration.struct', '((struct_named name: (_) @n) @declaration.struct.named (#eq? @n "N"))'].join('\n')));
+		expect(routes.readEntries.get('struct_named')?.map((e) => e.vocab)).toEqual(['declaration.struct.named', 'declaration.struct']);
+		expect(routes.vocabOf.get('struct_named')).toBe('declaration.struct');
+	});
+
+	it('names a variant whose own claims refine paths with no common parent by the kind\'s claim', async () => {
+		const routes = resolveRoutes(
+			await grammar(['(_struct) @declaration.struct', '((struct_named name: (_) @n) @declaration.struct.private (#eq? @n "P"))', '((struct_named name: (_) @n) @declaration.struct.public.internal (#eq? @n "I"))'].join('\n'))
+		);
+		expect(routes.vocabOf.get('struct_named')).toBe('declaration.struct');
+	});
+
+	it('names a variant by its own plain claim, and tries the kind\'s claim after it, wherever the kind\'s claim stands in the file', async () => {
+		const routes = resolveRoutes(await grammar(['(_struct) @declaration.struct', '(struct_named) @declaration.record'].join('\n')));
+		expect(routes.readEntries.get('struct_named')?.map((e) => e.vocab)).toEqual(['declaration.record', 'declaration.struct']);
+		expect(routes.vocabOf.get('struct_named')).toBe('declaration.record');
 	});
 
 	it('enters no claim on a variant of a branch: the variant is a part of its owner, not a form', async () => {
@@ -396,6 +436,11 @@ describe('resolveRoutes', () => {
 		const routes = resolveRoutes(await grammar('(_struct name: (_) @title) @declaration.struct'));
 		expect(routes.members.get('struct_unit')?.map((r) => r.name)).toEqual(['title']);
 		expect(routes.members.get('struct_tuple')?.map((r) => r.name)).toEqual(['title', 'fields']);
+	});
+
+	it('carries a supertype claim\'s field renames to a form with claims of its own', async () => {
+		const routes = resolveRoutes(await grammar(['(_struct name: (_) @title) @declaration.struct', '(struct_named) @declaration.struct.named'].join('\n')));
+		expect(routes.members.get('struct_named')?.map((r) => r.name)).toEqual(['title']);
 	});
 
 	it('enters a claim on every kind the parser shows by the claimed name', async () => {
@@ -812,6 +857,13 @@ describe('derive', () => {
 		const flag = d.members.get('declaration.function')?.get('private');
 		expect([...(flag?.kinds ?? [])]).toEqual(['boolean']);
 		expect(flag?.optional).toBe(true);
+	});
+
+	it('gives a supertype\'s path no member of a form that its own claim names by another path', async () => {
+		const d = derive([await grammar(['(_struct) @declaration.struct', '(struct_tuple) @declaration.struct.tuple'].join('\n'))]);
+		expect([...(d.members.get('declaration.struct')?.keys() ?? [])]).toEqual(['name']);
+		expect(d.members.get('declaration.struct')?.get('name')?.optional).toBe(false);
+		expect([...(d.members.get('declaration.struct.tuple')?.keys() ?? [])].sort()).toEqual(['fields', 'name']);
 	});
 
 	it('types a member optional unless every kind the path is read from carries it', async () => {

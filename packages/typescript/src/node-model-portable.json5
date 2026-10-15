@@ -4494,11 +4494,11 @@
         {
           "name": "header",
           "route": "slot",
-          "slot": "for_header",
+          "slot": "header",
           "path": [
             {
               "owner": "for_in_statement",
-              "slot": "for_header"
+              "slot": "header"
             }
           ]
         },
@@ -5796,6 +5796,13 @@
       "read": [
         {
           "vocab": "declaration.signature.index.mapped",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "declaration.signature.index",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8374,6 +8381,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "literal.number",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -8395,6 +8409,13 @@
       "read": [
         {
           "vocab": "literal.number.integer.big",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "literal.number",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8424,6 +8445,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "literal.number",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -8449,6 +8477,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "literal.number",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -8470,6 +8505,13 @@
       "read": [
         {
           "vocab": "literal.number.integer.binary",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "literal.number",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8510,6 +8552,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "literal.number",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": []
@@ -8519,6 +8568,13 @@
       "read": [
         {
           "vocab": "literal.number.float.leading_point",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "literal.number",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8577,6 +8633,13 @@
       "read": [
         {
           "vocab": "literal.number.float",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "literal.number",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -8650,6 +8713,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "literal.number",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -8708,6 +8778,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "literal.number",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -8753,6 +8830,13 @@
       "read": [
         {
           "vocab": "literal.number.integer.octal",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "literal.number",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12482,13 +12566,13 @@
       {
         "depth": 2,
         "paths": 111,
-        "kinds": 133,
+        "kinds": 144,
         "refinements": 6
       },
       {
         "depth": 3,
         "paths": 96,
-        "kinds": 80,
+        "kinds": 81,
         "refinements": 70
       },
       {

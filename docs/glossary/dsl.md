@@ -162,7 +162,7 @@ The text-token names attached to a grammar; empty when none were attached. Evalu
 
 ### `packages/codegen/src/dsl/enrich.ts::getEnrichMints`
 
-The rules enrich adds: the names in the origin map whose origin is an `EnrichMintKind`, which leaves out `promoted-group`. The set equals the enriched grammar's rule names minus the base grammar's. An upstream rule is never a mint: not one exposed through an alias (`promoted-group`), and not one enrich rewrites in place (a `liftAliasedHiddenRuleBodies` rewrite, a field-wrap pass).
+The rules enrich adds: the names in the origin map whose origin is an `EnrichMintKind`, which leaves out `promoted-group`. The set retains the base's recorded mints and adds the newly introduced rule names, so re-enriching a wired grammar preserves their provenance. An upstream rule is never a mint: not one exposed through an alias (`promoted-group`), and not one enrich rewrites in place (a `liftAliasedHiddenRuleBodies` rewrite, a field-wrap pass).
 
 ### `packages/codegen/src/dsl/enrich.ts::enrichRuleNamesOf`
 
@@ -2872,7 +2872,7 @@ the rule in place. Called once from `enrich`, after
 labelled too. Returns the record, which `enrich` always attaches to its
 result as `ENRICH_AUTOMATIC_VARIANTS_KEY`.
 
-With `into`, the labels go onto an existing record instead of a fresh one, and `owners` limits the run to the rules named. `grammar()` uses both to label what wire created or changed with this same function, so a kind a patch authors after enrich ran carries the labels enrich would have given it. A supertype owner joins `into` only when stamping it added a label.
+With `into`, the labels go onto an existing record instead of a fresh one, and `owners` limits the run to the rules named. `stampWiredVariants` uses both to label what wire created or changed with this same function, so a kind a patch authors after enrich ran carries the labels enrich would have given it. A supertype owner joins `into` only when stamping it added a label.
 
 `enrich` passes a `seedAutomaticVariants` copy of its input's record as `into`, so a grammar that was already enriched keeps the provenance of its earlier labels: stamping an already-labelled arm adds no key, and without the seed the second pass's record would be empty while the labels stay on the rules.
 
@@ -4773,6 +4773,7 @@ with the config's authored group patterns and `extras:` callback, then `wire(con
 base as the raw stage,
 then the ambient `grammar()` (tree-sitter's in the bundled `.sittir/grammar.js`,
 sittir's `grammarFn` under evaluate) over the enriched base and wired options,
+then `stampWiredVariants`, which labels the rules wire created or changed in both pipelines,
 then `blankDeadEnrichMints`, which blanks the rules enrich
 added that the wired grammar never reaches, `attachDerivationRecords`,
 which records the upstream conflicts and each reshaped rule's upstream source
@@ -4780,7 +4781,9 @@ for the conflict loop, and the imported resolutions and whether the config
 authors `conflicts` for the diagnostics, then `applyConflictResolutions`, which sets the
 grammar's conflicts to the base resolutions the config passes as
 `resolutions` (each grammar imports its own `.sittir/resolutions.json`).
-Its grammar bindings (`bindings`) are applied after that (`bindGrammar`), and
+When a bindings layer is configured and the evaluation is bound, the wired
+grammar must then be a base enrich leaves unchanged (`assertEnrichFixpoint`), since the grammar bindings are a layer
+over it. Its grammar bindings (`bindings`) are applied after that (`bindGrammar`), and
 last `applyBoundConflictResolutions` appends the bound section's sets.
 Every `grammar.sittir.ts` and the bootstrap template call it as
 `export default sittirGrammar(base, { … })`.
@@ -6336,6 +6339,10 @@ Appends rule names to one of the grammar's name lists (`supertypes` or `external
 
 The non-enumerable key under which enrich leaves its whitespace sidecar (`EnrichWhitespaceSidecar`) on the enriched grammar, for `wire()` to merge into `visibleExternals` and the wire context.
 
+### `packages/codegen/src/dsl/enrich.ts::stampWiredVariants`
+
+Labels the rules of a wired grammar that wire created or changed against `base` (the layout supertype excepted, which enrich mints after its own labelling) with `stampAutomaticVariants`, into the wire context's record. It is the same stamping enrich applies to a kind it mints, run on the arms a patch or `groups:` entry authored after enrich, so a later enrich pass finds those arms already labelled. It reads the grammar's supertypes, inline names, externals, extras and word the way enrich reads its base, so it works on either pipeline's `grammar()` result. `sittirGrammar` calls it right after `grammar()`, so tree-sitter's `grammar.json` carries the labels the sittir side reads.
+
 ### `packages/codegen/src/dsl/enrich.ts::EnrichWhitespaceSidecar`
 
 The part of `EnrichedWhitespace` wire reads: the members' render `bodies` and the upstream `collisions`.
@@ -7695,3 +7702,11 @@ A `match` restriction from its authored form: an array is an unfielded child; a 
 ### `packages/codegen/src/dsl/bind.ts::match`
 
 Builds a `LeadMatch`: a kind, an optional restriction (`leadWithin`) and an optional variant name. `(required_parameter pattern: (this))` is `match('required_parameter', { pattern: [match('this')] })`.
+
+### `packages/codegen/src/dsl/enrich.ts::withEnrichSidecarsOf`
+
+A shallow copy of a grammar carrying the three sidecars an enrich result holds (whitespace, rule origins, automatic variants), read from `enriched`. `grammar()` does not carry them, so a later enrich over a wired grammar needs them to recognise its own earlier work: without them it re-mints the layout supertype over the body wire decorated and re-aliases visible groups.
+
+### `packages/codegen/src/dsl/sittir-grammar.ts::assertEnrichFixpoint`
+
+The configured grammar bindings layer's gate: enrich over the wired grammar, carrying the sittir layer's enrich sidecars (`withEnrichSidecarsOf`), changes no rule. It throws naming every rule it would change, added or removed. Wire leaves a field, label or alias enrich would add only where an authored entry or wire stamps it first, so a change here means the wired grammar is not yet a base the bindings layer can build on: the fix is on the sittir side (author the field, stamp the label), never in the gate.

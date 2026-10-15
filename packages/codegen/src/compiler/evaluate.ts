@@ -38,9 +38,6 @@ import { getDeadEnrichMints } from '../dsl/wire/dead-mints.ts';
 import { getDerivationRecords } from '../dsl/wire/derivation-records.ts';
 import { UNBOUND_ENV } from '../dsl/sittir-grammar.ts';
 import { getTextTokens } from '../dsl/enrich.ts';
-import { stampAutomaticVariants } from '../dsl/automatic-variants.ts';
-import { predictedSymbolSourceOf } from '../dsl/symbol-table.ts';
-import { LAYOUT_SUPERTYPE } from '../dsl/primitives/spacing.ts';
 import type { GrammarResult } from '../dsl/enrich.ts';
 
 type Input = string | RegExp | Rule<'evaluate'>;
@@ -256,13 +253,6 @@ function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: Gram
 
 	inheritBaseGrammarMetadata(opts, ctx);
 	const wireCtx = getWireContext(opts);
-	if (wireCtx !== undefined) {
-		const supertypeNames = new Set(supertypes);
-		const inlineNames = new Set(inline);
-		const symbols = predictedSymbolSourceOf({ rules, externals, extras, supertypes, inline, word });
-		const authoredHere = new Set(Object.keys(rules).filter((name) => name !== LAYOUT_SUPERTYPE && JSON.stringify(rules[name]) !== JSON.stringify(baseRules[name])));
-		stampAutomaticVariants(rules as Record<string, never>, supertypeNames, inlineNames, new Set(wireCtx.elementSupertypes.keys()), symbols, wireCtx.automaticVariants, authoredHere);
-	}
 
 	const refineForms = drainRefineMetadata(opts);
 	const groups = drainGroupsMetadata(opts);

@@ -611,7 +611,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "suite": {
+      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -8133,9 +8133,9 @@
           ]
         },
         {
-          "name": "suite",
-          "propertyName": "suite",
-          "paramName": "suite",
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -8157,7 +8157,7 @@
       "factoryFields": [
         "group",
         "exception",
-        "suite"
+        "body"
       ]
     },
     {

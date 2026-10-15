@@ -204010,7 +204010,7 @@
                   }
                 }
               },
-              "_suite": {
+              "_body": {
                 "$type": 295,
                 "_block": {
                   "$type": 179,
@@ -204052,7 +204052,7 @@
                   }
                 }
               },
-              "_suite": {
+              "_body": {
                 "$type": 295,
                 "_block": {
                   "$type": 179,
@@ -204096,7 +204096,7 @@
                   ]
                 }
               },
-              "_suite": {
+              "_body": {
                 "$type": 295,
                 "_block": {
                   "$type": 179,
@@ -204124,7 +204124,7 @@
             {
               "$type": 159,
               "_group": false,
-              "_suite": {
+              "_body": {
                 "$type": 295,
                 "_block": {
                   "$type": 179,
@@ -204191,7 +204191,7 @@
                   }
                 }
               },
-              "_suite": {
+              "_body": {
                 "$type": 295,
                 "_block": {
                   "$type": 179,
@@ -204335,7 +204335,7 @@
                   }
                 }
               },
-              "_suite": {
+              "_body": {
                 "$type": 295,
                 "_block": {
                   "$type": 179,
@@ -204377,7 +204377,7 @@
                   }
                 }
               },
-              "_suite": {
+              "_body": {
                 "$type": 295,
                 "_block": {
                   "$type": 179,
@@ -204485,7 +204485,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\ntry:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\n\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\n\ntry:\n  a\nexcept * b:\n  c\nexcept * d as e:\n  f\nelse:\n  g\nfinally:\n  h\n",
-    "expectedReparseTree": "(module statements: (try_statement body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier) alias: (identifier))) (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_list value: (identifier) value: (identifier))) (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) except_clauses: (except_clause (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (try_statement body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) else_clause: (else_clause body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) finally_clause: (finally_clause block: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (try_statement body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier) alias: (identifier))) (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) else_clause: (else_clause body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) finally_clause: (finally_clause block: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))))",
+    "expectedReparseTree": "(module statements: (try_statement body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier) alias: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_list value: (identifier) value: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) except_clauses: (except_clause body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (try_statement body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) else_clause: (else_clause body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) finally_clause: (finally_clause block: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))) statements: (try_statement body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier) alias: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) else_clause: (else_clause body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) finally_clause: (finally_clause block: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))))",
     "wrappedText": "\ntry:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\n\ntry:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\n\ntry:\n  a\nexcept * b:\n  c\nexcept * d as e:\n  f\nelse:\n  g\nfinally:\n  h\n",
     "wrappedOffset": 0
   },
@@ -204533,7 +204533,7 @@
               }
             }
           },
-          "_suite": {
+          "_body": {
             "$type": 295,
             "_block": {
               "$type": 179,
@@ -204575,7 +204575,7 @@
               }
             }
           },
-          "_suite": {
+          "_body": {
             "$type": 295,
             "_block": {
               "$type": 179,
@@ -204619,7 +204619,7 @@
               ]
             }
           },
-          "_suite": {
+          "_body": {
             "$type": 295,
             "_block": {
               "$type": 179,
@@ -204647,7 +204647,7 @@
         {
           "$type": 159,
           "_group": false,
-          "_suite": {
+          "_body": {
             "$type": 295,
             "_block": {
               "$type": 179,
@@ -204691,7 +204691,7 @@
     "pattern": "try_statement",
     "edits": [],
     "expectedSourceOut": "try:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\n",
-    "expectedReparseTree": "(try_statement body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier) alias: (identifier))) (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_list value: (identifier) value: (identifier))) (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) except_clauses: (except_clause (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))))",
+    "expectedReparseTree": "(try_statement body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier) alias: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_list value: (identifier) value: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) except_clauses: (except_clause body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))))",
     "wrappedText": "try:\n  a\nexcept b:\n  c\nexcept d as e:\n  f\nexcept g, h:\n  i\nexcept:\n  j\n",
     "wrappedOffset": 0
   },
@@ -204739,7 +204739,7 @@
               }
             }
           },
-          "_suite": {
+          "_body": {
             "$type": 295,
             "_block": {
               "$type": 179,
@@ -204853,7 +204853,7 @@
     "pattern": "try_statement",
     "edits": [],
     "expectedSourceOut": "try:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\n",
-    "expectedReparseTree": "(try_statement body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) else_clause: (else_clause body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) finally_clause: (finally_clause block: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))))",
+    "expectedReparseTree": "(try_statement body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) else_clause: (else_clause body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) finally_clause: (finally_clause block: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))))",
     "wrappedText": "try:\n  a\nexcept b:\n  c\n  d\nelse:\n  e\nfinally:\n  f\n",
     "wrappedOffset": 0
   },
@@ -204901,7 +204901,7 @@
               }
             }
           },
-          "_suite": {
+          "_body": {
             "$type": 295,
             "_block": {
               "$type": 179,
@@ -204943,7 +204943,7 @@
               }
             }
           },
-          "_suite": {
+          "_body": {
             "$type": 295,
             "_block": {
               "$type": 179,
@@ -205041,7 +205041,7 @@
     "pattern": "try_statement",
     "edits": [],
     "expectedSourceOut": "try:\n  a\nexcept * b:\n  c\nexcept * d as e:\n  f\nelse:\n  g\nfinally:\n  h\n",
-    "expectedReparseTree": "(try_statement body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier) alias: (identifier))) (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) else_clause: (else_clause body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) finally_clause: (finally_clause block: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))))",
+    "expectedReparseTree": "(try_statement body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) except_clauses: (except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier) alias: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) else_clause: (else_clause body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))) finally_clause: (finally_clause block: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent)))))",
     "wrappedText": "try:\n  a\nexcept * b:\n  c\nexcept * d as e:\n  f\nelse:\n  g\nfinally:\n  h\n",
     "wrappedOffset": 0
   },
@@ -208089,7 +208089,7 @@
           }
         }
       },
-      "_suite": {
+      "_body": {
         "$type": 295,
         "_block": {
           "$type": 179,
@@ -208131,7 +208131,7 @@
     "pattern": "except_clause",
     "edits": [],
     "expectedSourceOut": "except b:\n  c\n",
-    "expectedReparseTree": "(except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
+    "expectedReparseTree": "(except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
     "wrappedText": "try:\n  a\nexcept b:\n  c\n\nelse:\n  e\nfinally:\n  f",
     "wrappedOffset": 9
   },
@@ -208156,7 +208156,7 @@
           }
         }
       },
-      "_suite": {
+      "_body": {
         "$type": 295,
         "_block": {
           "$type": 179,
@@ -208198,7 +208198,7 @@
     "pattern": "except_clause",
     "edits": [],
     "expectedSourceOut": "except d as e:\n  f\n",
-    "expectedReparseTree": "(except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier) alias: (identifier))) (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
+    "expectedReparseTree": "(except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier) alias: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
     "wrappedText": "try:\n  a\nexcept d as e:\n  f\n\nelse:\n  e\nfinally:\n  f",
     "wrappedOffset": 9
   },
@@ -208225,7 +208225,7 @@
           ]
         }
       },
-      "_suite": {
+      "_body": {
         "$type": 295,
         "_block": {
           "$type": 179,
@@ -208267,7 +208267,7 @@
     "pattern": "except_clause",
     "edits": [],
     "expectedSourceOut": "except g, h:\n  i\n",
-    "expectedReparseTree": "(except_clause exception: (except_clause_exception (except_clause_exception_list value: (identifier) value: (identifier))) (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
+    "expectedReparseTree": "(except_clause exception: (except_clause_exception (except_clause_exception_list value: (identifier) value: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
     "wrappedText": "try:\n  a\nexcept g, h:\n  i\n\nelse:\n  e\nfinally:\n  f",
     "wrappedOffset": 9
   },
@@ -208278,7 +208278,7 @@
     "input": {
       "$type": 159,
       "_group": false,
-      "_suite": {
+      "_body": {
         "$type": 295,
         "_block": {
           "$type": 179,
@@ -208320,7 +208320,7 @@
     "pattern": "except_clause",
     "edits": [],
     "expectedSourceOut": "except:\n  j\n",
-    "expectedReparseTree": "(except_clause (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
+    "expectedReparseTree": "(except_clause body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
     "wrappedText": "try:\n  a\nexcept:\n  j\n\nelse:\n  e\nfinally:\n  f",
     "wrappedOffset": 9
   },
@@ -208341,7 +208341,7 @@
           }
         }
       },
-      "_suite": {
+      "_body": {
         "$type": 295,
         "_block": {
           "$type": 179,
@@ -208399,7 +208399,7 @@
     "pattern": "except_clause",
     "edits": [],
     "expectedSourceOut": "except b:\n  c\n  d\n",
-    "expectedReparseTree": "(except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
+    "expectedReparseTree": "(except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
     "wrappedText": "try:\n  a\nexcept b:\n  c\n  d\n\nelse:\n  e\nfinally:\n  f",
     "wrappedOffset": 9
   },
@@ -208420,7 +208420,7 @@
           }
         }
       },
-      "_suite": {
+      "_body": {
         "$type": 295,
         "_block": {
           "$type": 179,
@@ -208462,7 +208462,7 @@
     "pattern": "except_clause",
     "edits": [],
     "expectedSourceOut": "except * b:\n  c\n",
-    "expectedReparseTree": "(except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
+    "expectedReparseTree": "(except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
     "wrappedText": "try:\n  a\nexcept * b:\n  c\n\nelse:\n  e\nfinally:\n  f",
     "wrappedOffset": 9
   },
@@ -208487,7 +208487,7 @@
           }
         }
       },
-      "_suite": {
+      "_body": {
         "$type": 295,
         "_block": {
           "$type": 179,
@@ -208529,7 +208529,7 @@
     "pattern": "except_clause",
     "edits": [],
     "expectedSourceOut": "except * d as e:\n  f\n",
-    "expectedReparseTree": "(except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier) alias: (identifier))) (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
+    "expectedReparseTree": "(except_clause exception: (except_clause_exception (except_clause_exception_as value: (identifier) alias: (identifier))) body: (suite_block (indent) (block statements: (simple_statements elements: (simple_statements_elements item: (expression_statement (identifier))) (newline)) (dedent))))",
     "wrappedText": "try:\n  a\nexcept * d as e:\n  f\n\nelse:\n  e\nfinally:\n  f",
     "wrappedOffset": 9
   },

@@ -53,7 +53,6 @@
 (trait_item (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.method.public.internal))
 (trait_item (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.method.public.restricted))
 (struct_item) @declaration.struct
-(struct_item_brace) @declaration.struct
 (struct_item_brace (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.struct.private
 (struct_item_brace (visibility_modifier (visibility_modifier_pub))) @declaration.struct.public
 (struct_item_brace (visibility_modifier (crate))) @declaration.struct.public.internal
@@ -111,26 +110,22 @@
 (associated_type) @declaration.type_alias.associated
 (associated_type bounds: (trait_bounds bounds: (_) @bounds))
 (mod_item) @declaration.module
-(mod_item_external) @declaration.module
 (mod_item_external (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.module.private
 (mod_item_external (visibility_modifier (visibility_modifier_pub))) @declaration.module.public
 (mod_item_external (visibility_modifier (crate))) @declaration.module.public.internal
 (mod_item_external (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.module.public.internal
 (mod_item_external (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.module.public.restricted
-(mod_item_inline) @declaration.module
 (mod_item_inline (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.module.private
 (mod_item_inline (visibility_modifier (visibility_modifier_pub))) @declaration.module.public
 (mod_item_inline (visibility_modifier (crate))) @declaration.module.public.internal
 (mod_item_inline (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.module.public.internal
 (mod_item_inline (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.module.public.restricted
 (foreign_mod_item) @declaration.module.foreign
-(foreign_mod_item_body) @declaration.module.foreign
 (foreign_mod_item_body (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.module.foreign.private
 (foreign_mod_item_body (visibility_modifier (visibility_modifier_pub))) @declaration.module.foreign.public
 (foreign_mod_item_body (visibility_modifier (crate))) @declaration.module.foreign.public.internal
 (foreign_mod_item_body (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.module.foreign.public.internal
 (foreign_mod_item_body (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.module.foreign.public.restricted
-(foreign_mod_item_semi) @declaration.module.foreign
 (foreign_mod_item_semi (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.module.foreign.private
 (foreign_mod_item_semi (visibility_modifier (visibility_modifier_pub))) @declaration.module.foreign.public
 (foreign_mod_item_semi (visibility_modifier (crate))) @declaration.module.foreign.public.internal
@@ -295,7 +290,6 @@
 (await_expression (_)? @expression) @expression.await
 (yield_expression) @expression.yield
 (range_expression) @expression.range
-(range_expression_binary) @expression.range
 (range_expression_binary operator: "..=") @expression.range.inclusive
 (range_expression_binary operator: "...") @expression.range.inclusive
 (range_expression_binary operator: "..") @expression.range.exclusive
@@ -328,10 +322,8 @@
 (slice_pattern (patterns)? @elements) @pattern.list
 (or_pattern) @pattern.or
 (range_pattern) @pattern.range
-(range_pattern_prefix) @pattern.range
 (range_pattern_prefix "..=") @pattern.range.inclusive
 (range_pattern_prefix "..") @pattern.range.exclusive
-(range_pattern_with_left) @pattern.range
 (range_pattern_with_left (range_pattern_with_left_with_right "..=")) @pattern.range.inclusive
 (range_pattern_with_left (range_pattern_with_left_with_right "...")) @pattern.range.inclusive
 (range_pattern_with_left (range_pattern_with_left_with_right "..")) @pattern.range.exclusive
@@ -374,6 +366,7 @@
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string_literal) @literal.string
+((string_literal) @literal.string.bytes (#match? @literal.string.bytes "^b\""))
 (raw_string_literal string_content: (string_content) @content) @literal.string.raw
 (char_literal) @literal.character
 (escape_sequence) @literal.string.escape

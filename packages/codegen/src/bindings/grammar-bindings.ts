@@ -2,8 +2,8 @@ import { childFields, fieldRenameGrammar, fieldRenameIssue, fieldWrapGrammar, fi
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import type { RawGrammar } from '../compiler/types.ts';
-import { type BindingFacts, type MemberFact, type RefinedClaim, WILDCARD, isNamedMember, refineClaims } from './facts.ts';
-import type { MemberRoute } from './routes.ts';
+import { type BindingFacts, type MemberFact, type RefinedClaim, type SlotModel, WILDCARD, isNamedMember, refineClaims } from './facts.ts';
+import { type GrammarRoutes, type MemberRoute, formsOf } from './routes.ts';
 import { boundKindName } from './names.ts';
 import { deriveLeads } from './leads.ts';
 import { isParserHiddenName } from '../dsl/rule-patterns.ts';
@@ -45,7 +45,8 @@ export interface GrammarBindingsInput {
 	readonly facts: BindingFacts;
 	readonly base: RawGrammar;
 	readonly vocabMembers: ReadonlyMap<string, ReadonlySet<string>>;
-	readonly routedMembers: ReadonlyMap<string, readonly MemberRoute[]>;
+	readonly routes: Pick<GrammarRoutes, 'members' | 'vocabOf'>;
+	readonly model: SlotModel;
 }
 
 export const memberFieldName = (member: string): string => member.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
@@ -92,20 +93,20 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	report: GrammarBindingsReport;
 	diagnostics: readonly GrammarDiagnostic[];
 } {
-	const { facts, base, vocabMembers, routedMembers } = input;
+	const { facts, base, vocabMembers, routes } = input;
 	const rules = base.rules as Record<string, unknown>;
 	const ruleNames = new Set(Object.keys(rules));
 	const residue: GrammarBindingsResidue[] = [];
 	const left = (cause: string, row: string): void => {
 		residue.push({ cause, row });
 	};
-	const claims = refineClaims(facts.claims);
+	const claims = refineClaims(facts.claims, (kind) => formsOf(input.model, kind));
 	const placed = (c: RefinedClaim): boolean => c.within.length > 0;
 	const naming = new Map<string, RefinedClaim>();
 	for (const c of claims) if (c.refinement === null && c.kind !== null && c.kind !== WILDCARD && c.toplevel && !placed(c) && !naming.has(c.kind)) naming.set(c.kind, c);
 	const kindsOfPath = new Map<string, Set<string>>();
 	for (const [kind, c] of naming) (kindsOfPath.get(c.vocab) ?? kindsOfPath.set(c.vocab, new Set()).get(c.vocab)!).add(kind);
-	const mergedOfPath = new Map([...kindsOfPath].map(([path, kinds]) => [path, sameShapeAs([...kinds], facts.members, routedMembers)]));
+	const mergedOfPath = new Map([...kindsOfPath].map(([path, kinds]) => [path, sameShapeAs([...kinds], facts.members, routes.members)]));
 
 	const renames: Record<string, string> = {};
 	const aliases: Record<string, string> = {};
@@ -209,13 +210,12 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	});
 
 	const checks = { ...base, rules } as unknown as GrammarRecord;
-	const vocabOf = new Map([...naming].map(([kind, c]) => [kind, c.vocab]));
 	const realizedMembers: string[] = [];
 	const candidates: { row: string; request: FieldRequest }[] = [];
 	const named = facts.members.filter(isNamedMember);
 	for (const m of named) {
 		const row = `${m.owner}.${m.name}`;
-		const vocab = vocabOf.get(m.owner);
+		const vocab = routes.vocabOf.get(m.owner);
 		if (vocab !== undefined && vocabMembers.get(vocab)?.has(m.name) === false) {
 			left('member not in the vocabulary', row);
 			continue;
@@ -289,7 +289,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	const implicitMembers: string[] = [];
 	const implicitRows = new Set<string>();
 	const routed = new Set(named.map((m) => `${m.owner}.${m.name}`));
-	for (const [owner, vocab] of vocabOf) {
+	for (const [owner, vocab] of routes.vocabOf) {
 		for (const member of vocabMembers.get(vocab) ?? []) {
 			const child = memberFieldName(member);
 			const row = `${owner}.${member}`;

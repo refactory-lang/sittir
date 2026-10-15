@@ -3,7 +3,7 @@
 import { bindings, field, rename } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default bindings({
-	hash: "57bbf4ac0048ecdd82da28aa9338dc6d90593f45dc75d82e916781df0e3519ed",
+	hash: "0f112bab67b445add315a51183111365e04067b28303fc9c9eb99a8c26cf140c",
 	patches: {
 		_number: { "1": field("value") },
 		_parameter_name: { "4": field("name") },
@@ -19,7 +19,7 @@ export default bindings({
 		export_statement_default_declaration: { "2/0": field("declaration") },
 		export_statement_default_from: { "1": field("type_only") },
 		export_statement_equals_export: { "2": field("value") },
-		for_in_statement: { "1/0": field("async"), "2": field("header") },
+		for_in_statement: { "1/0": field("async") },
 		generator_function: { "2": field("generator") },
 		generator_function_declaration: { "2": field("generator") },
 		import_specifier_as: { "0/0": field("type_only") },
@@ -31,6 +31,7 @@ export default bindings({
 		method_signature: { "5/0": field("generator") },
 		new_expression: { "1": field("function") },
 		optional_parameter: { "1": field("optional") },
+		parenthesized_expression_typed: { "1/0": field("expression") },
 		satisfies_expression: { "2": field("type") },
 		try_statement: { "2/0": field("handlers") },
 		tuple_type: { "1/0": field("tuple_type_members") },
