@@ -26,9 +26,9 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 	}
 }
 
-const _leafRe_buildIdentifier = /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u;
-const _leafRe_buildImmediateIdentifier = /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u;
-const _leafRe_buildStringContentText = /^(?:(?:[^"\\\n]+))$/u;
+export const _leafRe_buildIdentifier = /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u;
+export const _leafRe_buildImmediateIdentifier = _leafRe_buildIdentifier;
+export const _leafRe_buildStringContentText = /^(?:(?:[^"\\\n]+))$/u;
 export const _slotRe_buildEscapeSequence_content = /^(?:(?:.))$/u;
 export const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
 

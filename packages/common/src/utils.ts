@@ -667,6 +667,7 @@ export { toTransportData, toDetachedTransportData, PLAIN_KINDS, sideOf, sidesOf,
 export { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 export { snapshotOf } from './snapshot.ts';
 export {
+	interiorPattern,
 	projectInterior,
 	lexedConfig,
 	spelledForm,

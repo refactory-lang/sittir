@@ -1,0 +1,50 @@
+grammar	class	refs	title	route	line	sittir	upstream	compiler	observed	note
+typescript	under	typescript#370, typescript#364 (PR), typescript#361 (PR)	variance annotations on type parameters (TS 4.7)	2	production	ERROR@1:23 ERROR@2:19	ERROR@1:23 ERROR@2:19	accepts	under-accepted	
+typescript	under	typescript#348, typescript#358 (PR), typescript#360 (PR)	export type * re-exports (TS 5.0)	2	production	clean	ERROR@1:8	accepts	parses clean	
+typescript	under	typescript#369	a class member named accessor	3	production	ERROR@1:26 ERROR@1:43	ERROR@1:26 ERROR@1:43	accepts	under-accepted	
+typescript	under	typescript#367, typescript#375 (PR)	typeof import() as a call's first type argument	2	production	clean	ERROR@2:40	accepts	parses clean	
+typescript	under	typescript#352, typescript#322, typescript#365 (PR)	members of an import() type, with type arguments	2	production	ERROR@1:8 MISSING ;@2:32	ERROR@1:8 MISSING ;@2:32	accepts	under-accepted	
+typescript	under	typescript#341, typescript#350 (PR), typescript#342 (PR)	type arguments on a tagged template	2	production	clean	clean	accepts	parses clean	
+typescript	under	typescript#335	call signatures separated only by line breaks	3	production	MISSING }@3:6 ERROR@3:6	MISSING }@3:6 ERROR@3:6	accepts	under-accepted	
+typescript	under	typescript#373	no ASI before a member whose name starts with in	3	production	MISSING }@2:12 ERROR@4:1	MISSING }@2:12 ERROR@4:1	accepts	under-accepted	external scanner
+typescript	under	typescript#329	a generic function type with a default, split over lines	3	production	clean	clean	accepts	parses clean	
+typescript	under	typescript#313	type as an exported name	3	production	ERROR@2:10	ERROR@2:10	accepts	under-accepted	
+typescript	under	javascript#377, javascript#378 (PR)	a reserved word as a property after ?.	2	production	clean	clean	accepts	parses clean	
+typescript	misparse	javascript#350	a using declaration reads as an assignment	1	production	clean	clean	accepts	parses clean	tree-sitter-javascript 0.23.1 takes `using` as an anonymous prefix of assignment_expression; 0.25.0 adds the declaration
+typescript	misparse	javascript#355	of as a binding name in for-of reads let as the binding	1	production	clean	clean	accepts	parses clean	`for (let of of [1])` reads as `let` iterating `of[1]`; fixed in tree-sitter-javascript 0.25.0
+typescript	under	javascript#362, javascript#337	an invalid escape in a tagged template	3	production	clean	clean	accepts	parses clean	
+typescript	over	javascript#209	export default of a declaration	3	production	clean	clean	rejects: TS1005 ';' expected.	over-accepted	ECMAScript 16.2.3 ExportDeclaration: export default takes a declaration or an AssignmentExpression
+typescript	over	javascript#204	a reserved word as a binding name	3	production	clean	clean	rejects: TS1389 'enum' is not allowed as a variable declaration name. | TS1003 Identifier expected.	over-accepted	ECMAScript 13.1 BindingIdentifier: Identifier, an IdentifierName but not ReservedWord
+typescript	over	javascript#303	await and yield regardless of context	4	early-error	clean	clean	rejects: TS1163 A 'yield' expression is only allowed in a generator body.	over-accepted	ECMAScript [Await] and [Yield] parameterized productions; out by the no-cloning ruling
+typescript	misparse	typescript#309, typescript#310 (PR)	a method's decorators sit outside method_definition	2	production	clean	clean	accepts	parses clean	
+typescript	misparse	typescript#331	an exported class's decorator attaches to the export	3	production	clean	clean	accepts	parses clean	
+typescript	misparse	typescript#299	the non-null assertion's precedence	3	production	-	-	-	not witnessed	
+typescript	misparse	typescript#282	await of a call with type arguments	3	production	clean	clean	accepts	parses clean	
+typescript	misparse	javascript#323	an anonymous default-exported function is an expression	3	production	clean	clean	accepts	parses clean	
+typescript	misparse	javascript#259	a labelled statement	3	production	-	-	-	not witnessed	
+typescript	misparse	javascript#318	a destructuring assignment	3	production	-	-	-	not witnessed	
+typescript	misparse	javascript#354 (PR)	ASI after an arrow function followed by a parenthesized expression	2	production	-	-	-	not witnessed	
+typescript	misparse		`bigint` is not a predefined type: `let x: bigint` reads it as a type_identifier	3	production	clean	clean	accepts	parses clean	no upstream issue or PR; upstream master's predefined_type lacks bigint too
+rust	under	rust#277, rust#288 (in 0.24.1)	&raw[..] when the identifier is named raw	1	production	ERROR@2:6	ERROR@2:6	accepts	under-accepted	fixed by v0.24.1, a git tag only: npm still publishes 0.24.0 (rust#318)
+rust	misparse	rust#306 (in 0.24.1), rust#307 (in 0.24.2)	string literals with unexpected prefixes, and recovery after repeated string literals	1	production	-	-	-	not witnessed	git tags only (rust#318)
+rust	under	rust#315, rust#316 (PR)	a block comment with multibyte characters	2	production	ERROR@1:1	ERROR@1:1	accepts	under-accepted	
+rust	under	rust#284, rust#312 (PR)	<= after a cast	2	production	ERROR@2:31	ERROR@2:31	accepts	under-accepted	
+rust	under	rust#276	two attributes on a parameter	3	production	ERROR@1:10	ERROR@1:10	accepts	under-accepted	
+rust	under	rust#250, rust#256 (PR)	safe items in an unsafe extern block (edition 2024)	2	production	ERROR@1:1 ERROR@2:9	ERROR@1:1 ERROR@2:9	accepts	under-accepted	
+rust	under	rust#282 (PR)	a trailing comma in closure parameters	2	production	ERROR@2:5 ERROR@2:29	ERROR@2:5 ERROR@2:29	accepts	under-accepted	
+rust	under	rust#271 (PR)	a where clause on a unit struct	2	production	ERROR@2:1	ERROR@2:1	accepts	under-accepted	
+rust	under	rust#319 (PR), rust#301 (PR)	attributes on struct pattern fields	2	production	ERROR@3:5 ERROR@3:32	ERROR@3:5 ERROR@3:32	accepts	under-accepted	
+rust	under	rust#317 (PR)	a tilde in a macro token tree	2	production	ERROR@2:4 ERROR@2:4	ERROR@2:4 ERROR@2:4	accepts	under-accepted	
+rust	misparse	rust#291, rust#305 (PR)	* after .. is a binary operator	2	production	clean	clean	accepts	parses clean	
+rust	misparse	rust#293, rust#304 (PR)	suffixes on integer literals	2	production	-	-	-	not witnessed	
+rust	misparse	rust#244, rust#246, rust#269 (PR)	attributes and doc comments attach to the wrong item	2	production	-	-	-	not witnessed	
+rust	under	rust#229	rustc's own test files that tree-sitter rejects (a list of about 50)	3	production	-	-	-	not witnessed	
+python	under	python#303	a generic class (PEP 695, 3.12)	3	production	clean	clean	accepts	parses clean	
+python	under	python#346	type parameter defaults (PEP 696, 3.13)	3	production	ERROR@1:7	ERROR@1:7	accepts	under-accepted	
+python	misparse	python#321, python#320 (PR)	an assignment through type(...) reads as a type alias	2	production	clean	clean	accepts	parses clean	
+python	misparse	python#334, python#333, python#293	| in an annotation reads as a binary operator	3	production	clean	clean	accepts	parses clean	
+python	misparse	python#314, python#320 (PR)	a list splat in a call	2	production	clean	clean	accepts	parses clean	
+python	misparse	python#309	a comment inside an if body	3	production	clean	clean	accepts	parses clean	
+python	over	python#178	newlines accepted where Python forbids them	3	production	clean	clean	rejects: SyntaxError: invalid syntax	over-accepted	Python PEG grammar: NEWLINE ends a simple statement
+python	under	python#352, python#353 (PR)	unpacking in comprehensions (PEP 798, 3.15)	2	production	ERROR@2:8	ERROR@2:8	rejects: SyntaxError: iterable unpacking cannot be used in comprehension	both reject	3.15 syntax: the 3.14 compiler rejects it too
+python	under	python#335, python#336 (PR)	the lazy soft keyword (3.15)	2	production	ERROR@1:1	ERROR@1:1	rejects: SyntaxError: invalid syntax	both reject	3.15 syntax: the 3.14 compiler rejects it too
