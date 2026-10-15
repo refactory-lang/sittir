@@ -1,0 +1,5 @@
+rust: 1 claim flags
+  function_item declaration.method.static within=[declaration_list impl_item_body] predicates=not-kind-eq up=[0] children=1 fieldLiterals={} tokens=[]
+typescript: 0 claim flags
+python: 1 claim flags
+  function_definition declaration.method.static within=[decorated_definition] predicates=eq up=[1] children=0 fieldLiterals={} tokens=[]
