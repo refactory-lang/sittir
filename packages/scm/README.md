@@ -1,8 +1,10 @@
 # @sittir/scm
 
-Sittir's generated API for tree-sitter query syntax (SCM). This package is included in the workspace's stable grammar and validation sets.
+Typed Scm IR builders generated from the `tree-sitter-scm` grammar by `@sittir/codegen`.
 
-```sh
+## Quick start
+
+```bash
 pnpm add @sittir/common @sittir/scm
 ```
 
@@ -16,4 +18,10 @@ engine.parse(source, { errors: 'throw' }).$render() === source; // true
 engine.dispose();
 ```
 
-This grammar models query syntax, not general Scheme. Parsing a query does not validate its node/field names against another language's grammar. See the [usage guide](../../docs/use-cases-and-examples.md) and [regeneration workflow](../../DEVELOPMENT.md#regeneration).
+## Regenerating
+
+```bash
+pnpm exec tsx packages/cli/src/cli.ts gen --grammar scm --all --output packages/scm/src
+```
+
+This grammar is included in the workspace's stable grammar and validation sets.

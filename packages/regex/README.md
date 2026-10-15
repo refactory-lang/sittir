@@ -1,8 +1,10 @@
 # @sittir/regex
 
-Sittir's generated API for the tree-sitter regex grammar. This package is included in the workspace's stable grammar and validation sets.
+Typed Regex IR builders generated from the `tree-sitter-regex` grammar by `@sittir/codegen`.
 
-```sh
+## Quick start
+
+```bash
 pnpm add @sittir/common @sittir/regex
 ```
 
@@ -16,4 +18,10 @@ engine.parse(source, { errors: 'throw' }).$render() === source; // true
 engine.dispose();
 ```
 
-The grammar describes regex syntax; it is not a regex execution engine or a guarantee of compatibility with every regex dialect. Use its generated types and builders for the admitted syntax. See the [usage guide](../../docs/use-cases-and-examples.md) and [regeneration workflow](../../DEVELOPMENT.md#regeneration).
+## Regenerating
+
+```bash
+pnpm exec tsx packages/cli/src/cli.ts gen --grammar regex --all --output packages/regex/src
+```
+
+This grammar is included in the workspace's stable grammar and validation sets.
