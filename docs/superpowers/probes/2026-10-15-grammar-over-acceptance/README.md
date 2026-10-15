@@ -16,6 +16,7 @@ TypeScript is covered exhaustively over the classes below. Rust and python are a
 pnpm exec tsx docs/superpowers/probes/2026-10-15-grammar-over-acceptance/census.mts
 ```
 
+- `judges.mts`: the three compilers as judges (tsc, CPython's `compile()`, rustc), shared with the builder-contexts probe.
 - `witnesses.json`: the witnesses, as `[class, name, source]` per grammar. Each grammar has one valid control, which every judge accepts.
 - `upstream-rows.json`: the tracker rows, each with its references, class, fix route and, where one can be written, a witness.
 - `upstream/`: the trackers as downloaded: `<repo>-issues.json` (every issue), `<repo>-prs-open.json`, and `bodies.txt` (the first code block of each syntax issue listed in `bodies-cmd.txt`).
