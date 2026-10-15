@@ -88,6 +88,7 @@ The aliases retire the interim placed claim that reads any decorated function in
   ((decorated_definition_class_declaration (decorator (identifier) @static) definition: (method_declaration) @element) (#eq? @static "staticmethod"))
   ```
   A container's captures go to every kind its element slot names, and the clone's `definition` admits `class_declaration` too, which has no `static`. So derivation must give a capture only to the kind the claim's element pattern names. That is the one new mechanism, and it lands with this stage.
+- **Claim-level flags reach the read model.** Today `resolveFlags` resolves a claim whose last segment is a flag, but nothing downstream reads `claim.flag`. Such a flag reaches neither the read entries nor the members, so the portable surface and `c.is` cannot answer it. This stage carries a claim's flag into its read entry and the kind's flag table, as a member capture's flag already is, so both `static` claims above are answered node-locally.
 - **Gate:** every read the placed claims gave classifies the same, except that a typed-`self` method is no longer static. The `is` tests cover both grammars' static and non-static methods, and rust's static trait signature.
 
 Each alias kind gets its own low-level builder beside the aliased kind's (`build.methodDeclaration` beside `build.functionItem`). Today `fieldAliasMap` emits none, so the node-model and factory emit change: an alias of a visible kind at a context-unique site is a kind with a builder, a wrap and a transport (`MethodDeclarationTransport`), not a field-alias row.
