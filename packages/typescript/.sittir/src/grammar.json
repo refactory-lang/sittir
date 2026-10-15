@@ -5570,182 +5570,387 @@
                 {
                   "type": "RESERVED",
                   "content": {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "CHOICE",
-                      "members": [
-                        {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "SYMBOL",
                           "name": "identifier"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "break"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "case"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "catch"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "class"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "const"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "continue"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "debugger"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "default"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "delete"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "do"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "else"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "export"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "extends"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "false"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "finally"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "for"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "function"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "if"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "import"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "in"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "instanceof"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "new"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "null"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "return"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "super"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "switch"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "this"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "throw"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "true"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "try"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "typeof"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "var"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "void"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "while"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "with"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "get"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "set"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "async"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "await"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "static"
                         },
-                        {
+                        "named": true,
+                        "value": "property_identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
                           "type": "STRING",
                           "value": "let"
-                        }
-                      ]
-                    },
-                    "named": true,
-                    "value": "property_identifier"
+                        },
+                        "named": true,
+                        "value": "property_identifier"
+                      }
+                    ]
                   },
                   "context_name": "properties"
                 }

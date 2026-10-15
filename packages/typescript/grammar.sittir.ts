@@ -616,9 +616,10 @@ export default sittirGrammar(base, {
 				kind: 'member_expression'
 			},
 			($, original) => {
+				const keywordProperties = ['break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'export', 'extends', 'false', 'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof', 'new', 'null', 'return', 'super', 'switch', 'this', 'throw', 'true', 'try', 'typeof', 'var', 'void', 'while', 'with', 'get', 'set', 'async', 'await', 'static', 'let'];
 				const widen = (rule: any): any => {
 					if (rule.type === 'ALIAS' && rule.value === 'property_identifier') {
-						return { ...rule, content: choice(rule.content, 'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'export', 'extends', 'false', 'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof', 'new', 'null', 'return', 'super', 'switch', 'this', 'throw', 'true', 'try', 'typeof', 'var', 'void', 'while', 'with', 'get', 'set', 'async', 'await', 'static', 'let') };
+						return choice(rule, ...keywordProperties.map((value) => ({ ...rule, content: { type: 'STRING', value } })));
 					}
 					if (Array.isArray(rule.members)) return { ...rule, members: rule.members.map(widen) };
 					if (rule.content !== undefined) return { ...rule, content: widen(rule.content) };

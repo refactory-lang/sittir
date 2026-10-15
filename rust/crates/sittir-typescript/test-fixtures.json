@@ -2631,6 +2631,267 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "constructor"
+      }
+    },
+    "expectedOutput": "constructor",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "constructor",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "constructor",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.constructor;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "verbose"
+      }
+    },
+    "expectedOutput": "verbose",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "verbose",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "verbose",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.verbose;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "modal"
+      }
+    },
+    "expectedOutput": "modal",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "modal",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "modal",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.modal;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "title"
+      }
+    },
+    "expectedOutput": "title",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "title",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "title",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.title;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "color"
+      }
+    },
+    "expectedOutput": "color",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "color",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "color",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.color;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "constructor"
+      }
+    },
+    "expectedOutput": "constructor",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "constructor",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "constructor",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.constructor;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "greeting"
+      }
+    },
+    "expectedOutput": "greeting",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "greeting",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "greeting",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.greeting;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "showGreeting"
+      }
+    },
+    "expectedOutput": "showGreeting",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "showGreeting",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "showGreeting",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.showGreeting;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "Bar"
+      }
+    },
+    "expectedOutput": "Bar",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "Bar",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "Bar",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.Bar;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "type_annotation",
     "input": {
       "$type": 332,
@@ -8638,6 +8899,122 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "bar"
+      }
+    },
+    "expectedOutput": "bar",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "bar",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "bar",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.bar;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "baz"
+      }
+    },
+    "expectedOutput": "baz",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "baz",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "baz",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.baz;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "bar"
+      }
+    },
+    "expectedOutput": "bar",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "bar",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "bar",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.bar;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "baz"
+      }
+    },
+    "expectedOutput": "baz",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "baz",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "baz",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.baz;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "formal_parameters",
     "input": {
       "$type": 287
@@ -9332,6 +9709,64 @@
     "expectedReparseTree": "(ambient_declaration_module name: (property_identifier) type: (object_type members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))",
     "wrappedText": "declare module.exports: {\n  foo: string;\n}\n",
     "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "exports"
+      }
+    },
+    "expectedOutput": "exports",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "exports",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "exports",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.exports;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "foo"
+      }
+    },
+    "expectedOutput": "foo",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "foo",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "foo",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.foo;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -11897,6 +12332,49 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "findConfiguration"
+      },
+      "$_layout": {
+        "trivia": {
+          "leading": [
+            181
+          ]
+        },
+        "changed": {
+          "leading": true,
+          "trailing": true
+        }
+      }
+    },
+    "expectedOutput": "findConfiguration",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "findConfiguration",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "findConfiguration",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.findConfiguration;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "type_annotation",
     "input": {
       "$type": 332,
@@ -12224,6 +12702,35 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "N"
+      }
+    },
+    "expectedOutput": "N",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "N",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "N",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.N;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "program",
     "input": {
       "$type": 188,
@@ -12470,6 +12977,35 @@
     "expectedReparseTree": "(nested_identifier object: (identifier) property: (property_identifier))",
     "wrappedText": "import r = X.N;",
     "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "N"
+      }
+    },
+    "expectedOutput": "N",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "N",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "N",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.N;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -13756,6 +14292,77 @@
     "expectedReparseTree": "(property_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))))",
     "wrappedText": "interface _I { public readonly users: ReadonlyArray<User> }",
     "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "users"
+      }
+    },
+    "expectedOutput": "users",
+    "options": {
+      "program": {
+        "after": 184,
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "users",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "users",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.users;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "id"
+      },
+      "$_layout": {
+        "trivia": {
+          "leading": [
+            181
+          ]
+        },
+        "changed": {
+          "leading": true,
+          "trailing": true
+        }
+      }
+    },
+    "expectedOutput": "id",
+    "options": {
+      "program": {
+        "after": 184,
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "id",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "id",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.id;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -17170,7 +17777,10 @@
                   "$type": 292,
                   "_key": {
                     "$type": 470,
-                    "_content": 35
+                    "_content": {
+                      "$type": 1,
+                      "$text": "private"
+                    }
                   },
                   "_value": {
                     "$type": 1,
@@ -17240,7 +17850,10 @@
               "$type": 292,
               "_key": {
                 "$type": 470,
-                "_content": 35
+                "_content": {
+                  "$type": 1,
+                  "$text": "private"
+                }
               },
               "_value": {
                 "$type": 1,
@@ -17305,7 +17918,10 @@
             "$type": 292,
             "_key": {
               "$type": 470,
-              "_content": 35
+              "_content": {
+                "$type": 1,
+                "$text": "private"
+              }
             },
             "_value": {
               "$type": 1,
@@ -17387,7 +18003,10 @@
           "$type": 292,
           "_key": {
             "$type": 470,
-            "_content": 35
+            "_content": {
+              "$type": 1,
+              "$text": "private"
+            }
           },
           "_value": {
             "$type": 1,
@@ -17480,7 +18099,10 @@
       "$type": 292,
       "_key": {
         "$type": 470,
-        "_content": 35
+        "_content": {
+          "$type": 1,
+          "$text": "private"
+        }
       },
       "_value": {
         "$type": 1,
@@ -17503,6 +18125,35 @@
     "expectedSourceOut": "private: private_",
     "expectedReparseTree": "(pair key: (property_identifier) value: (identifier))",
     "wrappedText": "let _ = { private: private_ };",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "private"
+      }
+    },
+    "expectedOutput": "private",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "private",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "private",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.private;",
     "wrappedOffset": 10
   },
   {
@@ -22507,6 +23158,93 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "Blaz"
+      }
+    },
+    "expectedOutput": "Blaz",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "Blaz",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "Blaz",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.Blaz;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "Bloz"
+      }
+    },
+    "expectedOutput": "Bloz",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "Bloz",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "Bloz",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.Bloz;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "Bleez"
+      }
+    },
+    "expectedOutput": "Bleez",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "Bleez",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "Bleez",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.Bleez;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "program",
     "input": {
       "$type": 188,
@@ -23469,7 +24207,10 @@
                   "_async": false,
                   "_name": {
                     "$type": 470,
-                    "_content": 50
+                    "_content": {
+                      "$type": 1,
+                      "$text": "async"
+                    }
                   },
                   "_optional": false,
                   "_parameters": {
@@ -23494,7 +24235,10 @@
                   "_async": false,
                   "_name": {
                     "$type": 470,
-                    "_content": 48
+                    "_content": {
+                      "$type": 1,
+                      "$text": "get"
+                    }
                   },
                   "_optional": false,
                   "_parameters": {
@@ -23530,7 +24274,10 @@
                   "_async": false,
                   "_name": {
                     "$type": 470,
-                    "_content": 49
+                    "_content": {
+                      "$type": 1,
+                      "$text": "set"
+                    }
                   },
                   "_optional": false,
                   "_parameters": {
@@ -23617,7 +24364,10 @@
               "_async": false,
               "_name": {
                 "$type": 470,
-                "_content": 50
+                "_content": {
+                  "$type": 1,
+                  "$text": "async"
+                }
               },
               "_optional": false,
               "_parameters": {
@@ -23642,7 +24392,10 @@
               "_async": false,
               "_name": {
                 "$type": 470,
-                "_content": 48
+                "_content": {
+                  "$type": 1,
+                  "$text": "get"
+                }
               },
               "_optional": false,
               "_parameters": {
@@ -23678,7 +24431,10 @@
               "_async": false,
               "_name": {
                 "$type": 470,
-                "_content": 49
+                "_content": {
+                  "$type": 1,
+                  "$text": "set"
+                }
               },
               "_optional": false,
               "_parameters": {
@@ -23810,7 +24566,10 @@
             "_async": false,
             "_name": {
               "$type": 470,
-              "_content": 50
+              "_content": {
+                "$type": 1,
+                "$text": "async"
+              }
             },
             "_optional": false,
             "_parameters": {
@@ -23835,7 +24594,10 @@
             "_async": false,
             "_name": {
               "$type": 470,
-              "_content": 48
+              "_content": {
+                "$type": 1,
+                "$text": "get"
+              }
             },
             "_optional": false,
             "_parameters": {
@@ -23871,7 +24633,10 @@
             "_async": false,
             "_name": {
               "$type": 470,
-              "_content": 49
+              "_content": {
+                "$type": 1,
+                "$text": "set"
+              }
             },
             "_optional": false,
             "_parameters": {
@@ -23940,7 +24705,10 @@
         "_async": false,
         "_name": {
           "$type": 470,
-          "_content": 50
+          "_content": {
+            "$type": 1,
+            "$text": "async"
+          }
         },
         "_optional": false,
         "_parameters": {
@@ -23987,7 +24755,10 @@
         "_async": false,
         "_name": {
           "$type": 470,
-          "_content": 48
+          "_content": {
+            "$type": 1,
+            "$text": "get"
+          }
         },
         "_optional": false,
         "_parameters": {
@@ -24045,7 +24816,10 @@
         "_async": false,
         "_name": {
           "$type": 470,
-          "_content": 49
+          "_content": {
+            "$type": 1,
+            "$text": "set"
+          }
         },
         "_optional": false,
         "_parameters": {
@@ -24109,7 +24883,10 @@
       "_async": false,
       "_name": {
         "$type": 470,
-        "_content": 50
+        "_content": {
+          "$type": 1,
+          "$text": "async"
+        }
       },
       "_optional": false,
       "_parameters": {
@@ -24151,7 +24928,10 @@
       "_async": false,
       "_name": {
         "$type": 470,
-        "_content": 48
+        "_content": {
+          "$type": 1,
+          "$text": "get"
+        }
       },
       "_optional": false,
       "_parameters": {
@@ -24204,7 +24984,10 @@
       "_async": false,
       "_name": {
         "$type": 470,
-        "_content": 49
+        "_content": {
+          "$type": 1,
+          "$text": "set"
+        }
       },
       "_optional": false,
       "_parameters": {
@@ -24252,6 +25035,93 @@
     "expectedReparseTree": "(method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier))))) body: (statement_block terminator: (automatic_semicolon)))",
     "wrappedText": "class _C {\n  private set(plugin) {}\n}",
     "wrappedOffset": 13
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "async"
+      }
+    },
+    "expectedOutput": "async",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "async",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "async",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.async;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "get"
+      }
+    },
+    "expectedOutput": "get",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "get",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "get",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.get;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "set"
+      }
+    },
+    "expectedOutput": "set",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "set",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "set",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.set;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -26965,6 +27835,133 @@
     "expectedReparseTree": "(method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))",
     "wrappedText": "class _C {\n  private static async bar(): T;\n}",
     "wrappedOffset": 13
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "waitFor"
+      }
+    },
+    "expectedOutput": "waitFor",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "waitFor",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "waitFor",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.waitFor;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "bar"
+      },
+      "$_layout": {
+        "trivia": {
+          "trailing": [
+            180
+          ]
+        },
+        "changed": {
+          "leading": true,
+          "trailing": true
+        }
+      }
+    },
+    "expectedOutput": "bar",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "bar",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "bar",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.bar;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "bar"
+      }
+    },
+    "expectedOutput": "bar",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "bar",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "bar",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.bar;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "bar"
+      }
+    },
+    "expectedOutput": "bar",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "bar",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "bar",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.bar;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -31871,6 +32868,35 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "method"
+      }
+    },
+    "expectedOutput": "method",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "method",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "method",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.method;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "formal_parameters",
     "input": {
       "$type": 287
@@ -33955,6 +34981,64 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "buzz"
+      }
+    },
+    "expectedOutput": "buzz",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "buzz",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "buzz",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.buzz;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "fooBar"
+      }
+    },
+    "expectedOutput": "fooBar",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "fooBar",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "fooBar",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.fooBar;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "arguments",
     "input": {
       "$type": 282,
@@ -36015,6 +37099,122 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "bar"
+      }
+    },
+    "expectedOutput": "bar",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "bar",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "bar",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.bar;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "one"
+      }
+    },
+    "expectedOutput": "one",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "one",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "one",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.one;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "two"
+      }
+    },
+    "expectedOutput": "two",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "two",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "two",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.two;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "three"
+      }
+    },
+    "expectedOutput": "three",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "three",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "three",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.three;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "class_body_member_method",
     "input": {
       "$type": 405,
@@ -37269,8 +38469,11 @@
                           "_object": 277,
                           "_separator": 62,
                           "_property": {
-                            "$type": 1,
-                            "$text": "baz"
+                            "$type": 470,
+                            "_content": {
+                              "$type": 1,
+                              "$text": "baz"
+                            }
                           }
                         },
                         "_arguments": {
@@ -37375,8 +38578,11 @@
                       "_object": 277,
                       "_separator": 62,
                       "_property": {
-                        "$type": 1,
-                        "$text": "baz"
+                        "$type": 470,
+                        "_content": {
+                          "$type": 1,
+                          "$text": "baz"
+                        }
                       }
                     },
                     "_arguments": {
@@ -37497,8 +38703,11 @@
                     "_object": 277,
                     "_separator": 62,
                     "_property": {
-                      "$type": 1,
-                      "$text": "baz"
+                      "$type": 470,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "baz"
+                      }
                     }
                   },
                   "_arguments": {
@@ -37607,8 +38816,11 @@
                 "_object": 277,
                 "_separator": 62,
                 "_property": {
-                  "$type": 1,
-                  "$text": "baz"
+                  "$type": 470,
+                  "_content": {
+                    "$type": 1,
+                    "$text": "baz"
+                  }
                 }
               },
               "_arguments": {
@@ -37708,8 +38920,11 @@
               "_object": 277,
               "_separator": 62,
               "_property": {
-                "$type": 1,
-                "$text": "baz"
+                "$type": 470,
+                "_content": {
+                  "$type": 1,
+                  "$text": "baz"
+                }
               }
             },
             "_arguments": {
@@ -37799,8 +39014,11 @@
           "_object": 277,
           "_separator": 62,
           "_property": {
-            "$type": 1,
-            "$text": "baz"
+            "$type": 470,
+            "_content": {
+              "$type": 1,
+              "$text": "baz"
+            }
           }
         },
         "_arguments": {
@@ -37944,8 +39162,11 @@
       "_object": 277,
       "_separator": 62,
       "_property": {
-        "$type": 1,
-        "$text": "baz"
+        "$type": 470,
+        "_content": {
+          "$type": 1,
+          "$text": "baz"
+        }
       }
     },
     "expectedOutput": "this.baz",
@@ -38029,8 +39250,11 @@
         "_object": 277,
         "_separator": 62,
         "_property": {
-          "$type": 1,
-          "$text": "baz"
+          "$type": 470,
+          "_content": {
+            "$type": 1,
+            "$text": "baz"
+          }
         }
       },
       "_arguments": {
@@ -38055,6 +39279,35 @@
     "expectedReparseTree": "(call_expression_call function: (member_expression object: (this) property: (property_identifier)) arguments: (arguments))",
     "wrappedText": "let _ = this.baz();",
     "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "baz"
+      }
+    },
+    "expectedOutput": "baz",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "baz",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "baz",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.baz;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -38467,8 +39720,11 @@
                             },
                             "_separator": 62,
                             "_property": {
-                              "$type": 1,
-                              "$text": "log"
+                              "$type": 470,
+                              "_content": {
+                                "$type": 1,
+                                "$text": "log"
+                              }
                             }
                           },
                           "_arguments": {
@@ -38797,8 +40053,11 @@
                         },
                         "_separator": 62,
                         "_property": {
-                          "$type": 1,
-                          "$text": "log"
+                          "$type": 470,
+                          "_content": {
+                            "$type": 1,
+                            "$text": "log"
+                          }
                         }
                       },
                       "_arguments": {
@@ -39228,8 +40487,11 @@
                       },
                       "_separator": 62,
                       "_property": {
-                        "$type": 1,
-                        "$text": "log"
+                        "$type": 470,
+                        "_content": {
+                          "$type": 1,
+                          "$text": "log"
+                        }
                       }
                     },
                     "_arguments": {
@@ -39692,6 +40954,263 @@
     "expectedReparseTree": "(public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))",
     "wrappedText": "class _C {\n  requiredProp!: string\n}",
     "wrappedOffset": 13
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "prop"
+      },
+      "$_layout": {
+        "trivia": {
+          "leading": [
+            181
+          ]
+        },
+        "changed": {
+          "leading": true,
+          "trailing": true
+        }
+      }
+    },
+    "expectedOutput": "prop",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "prop",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "prop",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.prop;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "requiredProp"
+      },
+      "$_layout": {
+        "trivia": {
+          "trailing": [
+            180
+          ]
+        },
+        "changed": {
+          "leading": true,
+          "trailing": true
+        }
+      }
+    },
+    "expectedOutput": "requiredProp",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "requiredProp",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "requiredProp",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.requiredProp;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "makeSound"
+      }
+    },
+    "expectedOutput": "makeSound",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "makeSound",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "makeSound",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.makeSound;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "readonlyProp"
+      }
+    },
+    "expectedOutput": "readonlyProp",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "readonlyProp",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "readonlyProp",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.readonlyProp;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "readonlyProp"
+      },
+      "$_layout": {
+        "trivia": {
+          "trailing": [
+            180
+          ]
+        },
+        "changed": {
+          "leading": true,
+          "trailing": true
+        }
+      }
+    },
+    "expectedOutput": "readonlyProp",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "readonlyProp",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "readonlyProp",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.readonlyProp;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "move"
+      }
+    },
+    "expectedOutput": "move",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "move",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "move",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.move;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "log"
+      }
+    },
+    "expectedOutput": "log",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "log",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "log",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.log;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -40163,8 +41682,11 @@
                   },
                   "_separator": 62,
                   "_property": {
-                    "$type": 1,
-                    "$text": "log"
+                    "$type": 470,
+                    "_content": {
+                      "$type": 1,
+                      "$text": "log"
+                    }
                   }
                 },
                 "_arguments": {
@@ -40251,8 +41773,11 @@
                 },
                 "_separator": 62,
                 "_property": {
-                  "$type": 1,
-                  "$text": "log"
+                  "$type": 470,
+                  "_content": {
+                    "$type": 1,
+                    "$text": "log"
+                  }
                 }
               },
               "_arguments": {
@@ -40316,8 +41841,11 @@
               },
               "_separator": 62,
               "_property": {
-                "$type": 1,
-                "$text": "log"
+                "$type": 470,
+                "_content": {
+                  "$type": 1,
+                  "$text": "log"
+                }
               }
             },
             "_arguments": {
@@ -40377,8 +41905,11 @@
           },
           "_separator": 62,
           "_property": {
-            "$type": 1,
-            "$text": "log"
+            "$type": 470,
+            "_content": {
+              "$type": 1,
+              "$text": "log"
+            }
           }
         },
         "_arguments": {
@@ -40433,8 +41964,11 @@
         },
         "_separator": 62,
         "_property": {
-          "$type": 1,
-          "$text": "log"
+          "$type": 470,
+          "_content": {
+            "$type": 1,
+            "$text": "log"
+          }
         }
       },
       "_arguments": {
@@ -40485,8 +42019,11 @@
       },
       "_separator": 62,
       "_property": {
-        "$type": 1,
-        "$text": "log"
+        "$type": 470,
+        "_content": {
+          "$type": 1,
+          "$text": "log"
+        }
       }
     },
     "expectedOutput": "console.log",
@@ -41120,6 +42657,70 @@
     "expectedReparseTree": "(decorator_member_expression object: (super) property: (property_identifier))",
     "wrappedText": "@super.decorate\nclass _W {}",
     "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "decorate"
+      }
+    },
+    "expectedOutput": "decorate",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "decorate",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "decorate",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.decorate;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "method2"
+      }
+    },
+    "expectedOutput": "method2",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "method2",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "method2",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.method2;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -49582,6 +51183,35 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "bar"
+      }
+    },
+    "expectedOutput": "bar",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "bar",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "bar",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.bar;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "formal_parameters",
     "input": {
       "$type": 287
@@ -50081,6 +51711,64 @@
     "expectedReparseTree": "(abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))",
     "wrappedText": "class _C {\n  abstract baz(): void;\n}",
     "wrappedOffset": 13
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "baz"
+      }
+    },
+    "expectedOutput": "baz",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "baz",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "baz",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.baz;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "baz"
+      }
+    },
+    "expectedOutput": "baz",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "baz",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "baz",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.baz;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -54342,8 +56030,11 @@
                   },
                   "_separator": 62,
                   "_property": {
-                    "$type": 1,
-                    "$text": "exports"
+                    "$type": 470,
+                    "_content": {
+                      "$type": 1,
+                      "$text": "exports"
+                    }
                   }
                 }
               },
@@ -54483,8 +56174,11 @@
               },
               "_separator": 62,
               "_property": {
-                "$type": 1,
-                "$text": "exports"
+                "$type": 470,
+                "_content": {
+                  "$type": 1,
+                  "$text": "exports"
+                }
               }
             }
           },
@@ -54608,8 +56302,11 @@
             },
             "_separator": 62,
             "_property": {
-              "$type": 1,
-              "$text": "exports"
+              "$type": 470,
+              "_content": {
+                "$type": 1,
+                "$text": "exports"
+              }
             }
           }
         },
@@ -54703,8 +56400,11 @@
           },
           "_separator": 62,
           "_property": {
-            "$type": 1,
-            "$text": "exports"
+            "$type": 470,
+            "_content": {
+              "$type": 1,
+              "$text": "exports"
+            }
           }
         }
       },
@@ -54816,8 +56516,11 @@
         },
         "_separator": 62,
         "_property": {
-          "$type": 1,
-          "$text": "exports"
+          "$type": 470,
+          "_content": {
+            "$type": 1,
+            "$text": "exports"
+          }
         }
       }
     },
@@ -55000,8 +56703,11 @@
       },
       "_separator": 62,
       "_property": {
-        "$type": 1,
-        "$text": "exports"
+        "$type": 470,
+        "_content": {
+          "$type": 1,
+          "$text": "exports"
+        }
       }
     },
     "expectedOutput": "module.exports",
@@ -55021,6 +56727,35 @@
     "expectedReparseTree": "(member_expression object: (identifier) property: (property_identifier))",
     "wrappedText": "let _ = module.exports;",
     "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "exports"
+      }
+    },
+    "expectedOutput": "exports",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "exports",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "exports",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.exports;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -55615,8 +57350,11 @@
               },
               "_separator": 62,
               "_property": {
-                "$type": 1,
-                "$text": "length"
+                "$type": 470,
+                "_content": {
+                  "$type": 1,
+                  "$text": "length"
+                }
               }
             }
           },
@@ -55639,8 +57377,11 @@
               },
               "_separator": 62,
               "_property": {
-                "$type": 1,
-                "$text": "length"
+                "$type": 470,
+                "_content": {
+                  "$type": 1,
+                  "$text": "length"
+                }
               }
             }
           },
@@ -55663,8 +57404,11 @@
               },
               "_separator": 62,
               "_property": {
-                "$type": 1,
-                "$text": "length"
+                "$type": 470,
+                "_content": {
+                  "$type": 1,
+                  "$text": "length"
+                }
               }
             }
           },
@@ -55712,8 +57456,11 @@
           },
           "_separator": 62,
           "_property": {
-            "$type": 1,
-            "$text": "length"
+            "$type": 470,
+            "_content": {
+              "$type": 1,
+              "$text": "length"
+            }
           }
         }
       },
@@ -55758,8 +57505,11 @@
           },
           "_separator": 62,
           "_property": {
-            "$type": 1,
-            "$text": "length"
+            "$type": 470,
+            "_content": {
+              "$type": 1,
+              "$text": "length"
+            }
           }
         }
       },
@@ -55804,8 +57554,11 @@
           },
           "_separator": 62,
           "_property": {
-            "$type": 1,
-            "$text": "length"
+            "$type": 470,
+            "_content": {
+              "$type": 1,
+              "$text": "length"
+            }
           }
         }
       },
@@ -55848,8 +57601,11 @@
         },
         "_separator": 62,
         "_property": {
-          "$type": 1,
-          "$text": "length"
+          "$type": 470,
+          "_content": {
+            "$type": 1,
+            "$text": "length"
+          }
         }
       }
     },
@@ -55890,8 +57646,11 @@
         },
         "_separator": 62,
         "_property": {
-          "$type": 1,
-          "$text": "length"
+          "$type": 470,
+          "_content": {
+            "$type": 1,
+            "$text": "length"
+          }
         }
       }
     },
@@ -55932,8 +57691,11 @@
         },
         "_separator": 62,
         "_property": {
-          "$type": 1,
-          "$text": "length"
+          "$type": 470,
+          "_content": {
+            "$type": 1,
+            "$text": "length"
+          }
         }
       }
     },
@@ -55967,8 +57729,11 @@
       },
       "_separator": 62,
       "_property": {
-        "$type": 1,
-        "$text": "length"
+        "$type": 470,
+        "_content": {
+          "$type": 1,
+          "$text": "length"
+        }
       }
     },
     "expectedOutput": "foo.length",
@@ -56001,8 +57766,11 @@
       },
       "_separator": 62,
       "_property": {
-        "$type": 1,
-        "$text": "length"
+        "$type": 470,
+        "_content": {
+          "$type": 1,
+          "$text": "length"
+        }
       }
     },
     "expectedOutput": "type.length",
@@ -56035,8 +57803,11 @@
       },
       "_separator": 62,
       "_property": {
-        "$type": 1,
-        "$text": "length"
+        "$type": 470,
+        "_content": {
+          "$type": 1,
+          "$text": "length"
+        }
       }
     },
     "expectedOutput": "string.length",
@@ -56056,6 +57827,93 @@
     "expectedReparseTree": "(member_expression object: (identifier) property: (property_identifier))",
     "wrappedText": "let _ = string.length;",
     "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "length"
+      }
+    },
+    "expectedOutput": "length",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "length",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "length",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.length;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "length"
+      }
+    },
+    "expectedOutput": "length",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "length",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "length",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.length;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "length"
+      }
+    },
+    "expectedOutput": "length",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "length",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "length",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.length;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -56116,8 +57974,11 @@
                     },
                     "_separator": 62,
                     "_property": {
-                      "$type": 1,
-                      "$text": "apply"
+                      "$type": 470,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "apply"
+                      }
                     }
                   },
                   "_arguments": {
@@ -56211,8 +58072,11 @@
                 },
                 "_separator": 62,
                 "_property": {
-                  "$type": 1,
-                  "$text": "apply"
+                  "$type": 470,
+                  "_content": {
+                    "$type": 1,
+                    "$text": "apply"
+                  }
                 }
               },
               "_arguments": {
@@ -56326,8 +58190,11 @@
               },
               "_separator": 62,
               "_property": {
-                "$type": 1,
-                "$text": "apply"
+                "$type": 470,
+                "_content": {
+                  "$type": 1,
+                  "$text": "apply"
+                }
               }
             },
             "_arguments": {
@@ -56395,8 +58262,11 @@
           },
           "_separator": 62,
           "_property": {
-            "$type": 1,
-            "$text": "apply"
+            "$type": 470,
+            "_content": {
+              "$type": 1,
+              "$text": "apply"
+            }
           }
         },
         "_arguments": {
@@ -56459,8 +58329,11 @@
         },
         "_separator": 62,
         "_property": {
-          "$type": 1,
-          "$text": "apply"
+          "$type": 470,
+          "_content": {
+            "$type": 1,
+            "$text": "apply"
+          }
         }
       },
       "_arguments": {
@@ -56519,8 +58392,11 @@
       },
       "_separator": 62,
       "_property": {
-        "$type": 1,
-        "$text": "apply"
+        "$type": 470,
+        "_content": {
+          "$type": 1,
+          "$text": "apply"
+        }
       }
     },
     "expectedOutput": "set[ 1 ].apply",
@@ -56594,6 +58470,38 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "apply"
+      }
+    },
+    "expectedOutput": "apply",
+    "options": {
+      "layout": {
+        "indent": "\t"
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "apply",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "apply",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.apply;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "arguments",
     "input": {
       "$type": 282,
@@ -56636,7 +58544,10 @@
                 "$type": 292,
                 "_key": {
                   "$type": 470,
-                  "_content": 34
+                  "_content": {
+                    "$type": 1,
+                    "$text": "public"
+                  }
                 },
                 "_value": 279,
                 "$_layout": {
@@ -56652,7 +58563,10 @@
                 "$type": 292,
                 "_key": {
                   "$type": 470,
-                  "_content": 35
+                  "_content": {
+                    "$type": 1,
+                    "$text": "private"
+                  }
                 },
                 "_value": 279
               },
@@ -56660,7 +58574,10 @@
                 "$type": 292,
                 "_key": {
                   "$type": 470,
-                  "_content": 38
+                  "_content": {
+                    "$type": 1,
+                    "$text": "readonly"
+                  }
                 },
                 "_value": 279,
                 "$_layout": {
@@ -56693,7 +58610,10 @@
                 "$type": 292,
                 "_key": {
                   "$type": 470,
-                  "_content": 38
+                  "_content": {
+                    "$type": 1,
+                    "$text": "readonly"
+                  }
                 },
                 "_value": {
                   "$type": 158,
@@ -56726,7 +58646,10 @@
                 "$type": 292,
                 "_key": {
                   "$type": 470,
-                  "_content": 52
+                  "_content": {
+                    "$type": 1,
+                    "$text": "static"
+                  }
                 },
                 "_value": {
                   "$type": 158,
@@ -56794,7 +58717,10 @@
             "$type": 292,
             "_key": {
               "$type": 470,
-              "_content": 34
+              "_content": {
+                "$type": 1,
+                "$text": "public"
+              }
             },
             "_value": 279,
             "$_layout": {
@@ -56810,7 +58736,10 @@
             "$type": 292,
             "_key": {
               "$type": 470,
-              "_content": 35
+              "_content": {
+                "$type": 1,
+                "$text": "private"
+              }
             },
             "_value": 279
           },
@@ -56818,7 +58747,10 @@
             "$type": 292,
             "_key": {
               "$type": 470,
-              "_content": 38
+              "_content": {
+                "$type": 1,
+                "$text": "readonly"
+              }
             },
             "_value": 279,
             "$_layout": {
@@ -56873,7 +58805,10 @@
             "$type": 292,
             "_key": {
               "$type": 470,
-              "_content": 38
+              "_content": {
+                "$type": 1,
+                "$text": "readonly"
+              }
             },
             "_value": {
               "$type": 158,
@@ -56906,7 +58841,10 @@
             "$type": 292,
             "_key": {
               "$type": 470,
-              "_content": 52
+              "_content": {
+                "$type": 1,
+                "$text": "static"
+              }
             },
             "_value": {
               "$type": 158,
@@ -56962,7 +58900,10 @@
           "$type": 292,
           "_key": {
             "$type": 470,
-            "_content": 34
+            "_content": {
+              "$type": 1,
+              "$text": "public"
+            }
           },
           "_value": 279,
           "$_layout": {
@@ -56978,7 +58919,10 @@
           "$type": 292,
           "_key": {
             "$type": 470,
-            "_content": 35
+            "_content": {
+              "$type": 1,
+              "$text": "private"
+            }
           },
           "_value": 279
         },
@@ -56986,7 +58930,10 @@
           "$type": 292,
           "_key": {
             "$type": 470,
-            "_content": 38
+            "_content": {
+              "$type": 1,
+              "$text": "readonly"
+            }
           },
           "_value": 279,
           "$_layout": {
@@ -57037,7 +58984,10 @@
           "$type": 292,
           "_key": {
             "$type": 470,
-            "_content": 38
+            "_content": {
+              "$type": 1,
+              "$text": "readonly"
+            }
           },
           "_value": {
             "$type": 158,
@@ -57070,7 +59020,10 @@
           "$type": 292,
           "_key": {
             "$type": 470,
-            "_content": 52
+            "_content": {
+              "$type": 1,
+              "$text": "static"
+            }
           },
           "_value": {
             "$type": 158,
@@ -57121,7 +59074,10 @@
       "$type": 292,
       "_key": {
         "$type": 470,
-        "_content": 34
+        "_content": {
+          "$type": 1,
+          "$text": "public"
+        }
       },
       "_value": 279
     },
@@ -57151,7 +59107,10 @@
       "$type": 292,
       "_key": {
         "$type": 470,
-        "_content": 35
+        "_content": {
+          "$type": 1,
+          "$text": "private"
+        }
       },
       "_value": 279
     },
@@ -57181,7 +59140,10 @@
       "$type": 292,
       "_key": {
         "$type": 470,
-        "_content": 38
+        "_content": {
+          "$type": 1,
+          "$text": "readonly"
+        }
       },
       "_value": 279
     },
@@ -57211,7 +59173,10 @@
       "$type": 292,
       "_key": {
         "$type": 470,
-        "_content": 38
+        "_content": {
+          "$type": 1,
+          "$text": "readonly"
+        }
       },
       "_value": {
         "$type": 158,
@@ -57280,7 +59245,10 @@
       "$type": 292,
       "_key": {
         "$type": 470,
-        "_content": 52
+        "_content": {
+          "$type": 1,
+          "$text": "static"
+        }
       },
       "_value": {
         "$type": 158,
@@ -57303,6 +59271,180 @@
     "expectedSourceOut": "static: 1",
     "expectedReparseTree": "(pair key: (property_identifier) value: (number_decimal))",
     "wrappedText": "let _ = { static: 1 };",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "public"
+      }
+    },
+    "expectedOutput": "public",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "public",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "public",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.public;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "private"
+      }
+    },
+    "expectedOutput": "private",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "private",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "private",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.private;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "readonly"
+      }
+    },
+    "expectedOutput": "readonly",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "readonly",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "readonly",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.readonly;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "readonly"
+      }
+    },
+    "expectedOutput": "readonly",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "readonly",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "readonly",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.readonly;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "abstract"
+      }
+    },
+    "expectedOutput": "abstract",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "abstract",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "abstract",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.abstract;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "static"
+      }
+    },
+    "expectedOutput": "static",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "static",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "static",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.static;",
     "wrappedOffset": 10
   },
   {
@@ -59429,8 +61571,11 @@
               },
               "_separator": 62,
               "_property": {
-                "$type": 1,
-                "$text": "f"
+                "$type": 470,
+                "_content": {
+                  "$type": 1,
+                  "$text": "f"
+                }
               },
               "$_layout": {
                 "trivia": {
@@ -59571,8 +61716,11 @@
           },
           "_separator": 62,
           "_property": {
-            "$type": 1,
-            "$text": "f"
+            "$type": 470,
+            "_content": {
+              "$type": 1,
+              "$text": "f"
+            }
           },
           "$_layout": {
             "trivia": {
@@ -59704,8 +61852,11 @@
         },
         "_separator": 62,
         "_property": {
-          "$type": 1,
-          "$text": "f"
+          "$type": 470,
+          "_content": {
+            "$type": 1,
+            "$text": "f"
+          }
         },
         "$_layout": {
           "trivia": {
@@ -60138,8 +62289,11 @@
       },
       "_separator": 62,
       "_property": {
-        "$type": 1,
-        "$text": "f"
+        "$type": 470,
+        "_content": {
+          "$type": 1,
+          "$text": "f"
+        }
       }
     },
     "expectedOutput": "e.f",
@@ -60159,6 +62313,35 @@
     "expectedReparseTree": "(member_expression object: (identifier) property: (property_identifier))",
     "wrappedText": "let _ = e.f;",
     "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "f"
+      }
+    },
+    "expectedOutput": "f",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "f",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "f",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.f;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -65583,8 +67766,11 @@
               },
               "_separator": 62,
               "_property": {
-                "$type": 1,
-                "$text": "b"
+                "$type": 470,
+                "_content": {
+                  "$type": 1,
+                  "$text": "b"
+                }
               }
             },
             "_type_arguments": {
@@ -65697,8 +67883,11 @@
           },
           "_separator": 62,
           "_property": {
-            "$type": 1,
-            "$text": "b"
+            "$type": 470,
+            "_content": {
+              "$type": 1,
+              "$text": "b"
+            }
           }
         },
         "_type_arguments": {
@@ -65828,8 +68017,11 @@
         },
         "_separator": 62,
         "_property": {
-          "$type": 1,
-          "$text": "b"
+          "$type": 470,
+          "_content": {
+            "$type": 1,
+            "$text": "b"
+          }
         }
       },
       "_type_arguments": {
@@ -65951,8 +68143,11 @@
       },
       "_separator": 62,
       "_property": {
-        "$type": 1,
-        "$text": "b"
+        "$type": 470,
+        "_content": {
+          "$type": 1,
+          "$text": "b"
+        }
       }
     },
     "expectedOutput": "a.b",
@@ -65972,6 +68167,35 @@
     "expectedReparseTree": "(member_expression object: (identifier) property: (property_identifier))",
     "wrappedText": "let _ = a.b;",
     "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "b"
+      }
+    },
+    "expectedOutput": "b",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "b",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "b",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.b;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -69665,8 +71889,11 @@
                                 "_object": 278,
                                 "_separator": 62,
                                 "_property": {
-                                  "$type": 1,
-                                  "$text": "toString"
+                                  "$type": 470,
+                                  "_content": {
+                                    "$type": 1,
+                                    "$text": "toString"
+                                  }
                                 }
                               },
                               "_arguments": {
@@ -69691,8 +71918,11 @@
                             "_object": 277,
                             "_separator": 62,
                             "_property": {
-                              "$type": 1,
-                              "$text": "y"
+                              "$type": 470,
+                              "_content": {
+                                "$type": 1,
+                                "$text": "y"
+                              }
                             }
                           }
                         },
@@ -69890,8 +72120,11 @@
                             "_object": 278,
                             "_separator": 62,
                             "_property": {
-                              "$type": 1,
-                              "$text": "toString"
+                              "$type": 470,
+                              "_content": {
+                                "$type": 1,
+                                "$text": "toString"
+                              }
                             }
                           },
                           "_arguments": {
@@ -69916,8 +72149,11 @@
                         "_object": 277,
                         "_separator": 62,
                         "_property": {
-                          "$type": 1,
-                          "$text": "y"
+                          "$type": 470,
+                          "_content": {
+                            "$type": 1,
+                            "$text": "y"
+                          }
                         }
                       }
                     },
@@ -70268,8 +72504,11 @@
                           "_object": 278,
                           "_separator": 62,
                           "_property": {
-                            "$type": 1,
-                            "$text": "toString"
+                            "$type": 470,
+                            "_content": {
+                              "$type": 1,
+                              "$text": "toString"
+                            }
                           }
                         },
                         "_arguments": {
@@ -70294,8 +72533,11 @@
                       "_object": 277,
                       "_separator": 62,
                       "_property": {
-                        "$type": 1,
-                        "$text": "y"
+                        "$type": 470,
+                        "_content": {
+                          "$type": 1,
+                          "$text": "y"
+                        }
                       }
                     }
                   },
@@ -70482,8 +72724,11 @@
                       "_object": 278,
                       "_separator": 62,
                       "_property": {
-                        "$type": 1,
-                        "$text": "toString"
+                        "$type": 470,
+                        "_content": {
+                          "$type": 1,
+                          "$text": "toString"
+                        }
                       }
                     },
                     "_arguments": {
@@ -70508,8 +72753,11 @@
                   "_object": 277,
                   "_separator": 62,
                   "_property": {
-                    "$type": 1,
-                    "$text": "y"
+                    "$type": 470,
+                    "_content": {
+                      "$type": 1,
+                      "$text": "y"
+                    }
                   }
                 }
               },
@@ -70686,8 +72934,11 @@
                     "_object": 278,
                     "_separator": 62,
                     "_property": {
-                      "$type": 1,
-                      "$text": "toString"
+                      "$type": 470,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "toString"
+                      }
                     }
                   },
                   "_arguments": {
@@ -70712,8 +72963,11 @@
                 "_object": 277,
                 "_separator": 62,
                 "_property": {
-                  "$type": 1,
-                  "$text": "y"
+                  "$type": 470,
+                  "_content": {
+                    "$type": 1,
+                    "$text": "y"
+                  }
                 }
               }
             },
@@ -70743,6 +72997,134 @@
     "expectedReparseTree": "(method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement expression: (binary_expression left: (binary_expression left: (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments)) right: (string_double elements: (string_fragment))) right: (member_expression object: (this) property: (property_identifier)))) terminator: (automatic_semicolon)))",
     "wrappedText": "class _C {\n  public toString() {\n      return super.toString() + \" y=\" + this.y;\n  }\n  \n}",
     "wrappedOffset": 13
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "constructor"
+      }
+    },
+    "expectedOutput": "constructor",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "constructor",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "constructor",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.constructor;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "toString"
+      }
+    },
+    "expectedOutput": "toString",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "toString",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "toString",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.toString;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "toString"
+      }
+    },
+    "expectedOutput": "toString",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "toString",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "toString",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.toString;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "y"
+      }
+    },
+    "expectedOutput": "y",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "y",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "y",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.y;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -71179,8 +73561,11 @@
                   "_object": 278,
                   "_separator": 62,
                   "_property": {
-                    "$type": 1,
-                    "$text": "toString"
+                    "$type": 470,
+                    "_content": {
+                      "$type": 1,
+                      "$text": "toString"
+                    }
                   }
                 },
                 "_arguments": {
@@ -71205,8 +73590,11 @@
               "_object": 277,
               "_separator": 62,
               "_property": {
-                "$type": 1,
-                "$text": "y"
+                "$type": 470,
+                "_content": {
+                  "$type": 1,
+                  "$text": "y"
+                }
               }
             }
           },
@@ -71327,8 +73715,11 @@
         "_object": 278,
         "_separator": 62,
         "_property": {
-          "$type": 1,
-          "$text": "toString"
+          "$type": 470,
+          "_content": {
+            "$type": 1,
+            "$text": "toString"
+          }
         }
       },
       "_arguments": {
@@ -71437,8 +73828,11 @@
               "_object": 278,
               "_separator": 62,
               "_property": {
-                "$type": 1,
-                "$text": "toString"
+                "$type": 470,
+                "_content": {
+                  "$type": 1,
+                  "$text": "toString"
+                }
               }
             },
             "_arguments": {
@@ -71463,8 +73857,11 @@
           "_object": 277,
           "_separator": 62,
           "_property": {
-            "$type": 1,
-            "$text": "y"
+            "$type": 470,
+            "_content": {
+              "$type": 1,
+              "$text": "y"
+            }
           }
         }
       },
@@ -71506,8 +73903,11 @@
             "_object": 278,
             "_separator": 62,
             "_property": {
-              "$type": 1,
-              "$text": "toString"
+              "$type": 470,
+              "_content": {
+                "$type": 1,
+                "$text": "toString"
+              }
             }
           },
           "_arguments": {
@@ -71532,8 +73932,11 @@
         "_object": 277,
         "_separator": 62,
         "_property": {
-          "$type": 1,
-          "$text": "y"
+          "$type": 470,
+          "_content": {
+            "$type": 1,
+            "$text": "y"
+          }
         }
       }
     },
@@ -71571,8 +73974,11 @@
           "_object": 278,
           "_separator": 62,
           "_property": {
-            "$type": 1,
-            "$text": "toString"
+            "$type": 470,
+            "_content": {
+              "$type": 1,
+              "$text": "toString"
+            }
           }
         },
         "_arguments": {
@@ -71621,8 +74027,11 @@
       "_object": 278,
       "_separator": 62,
       "_property": {
-        "$type": 1,
-        "$text": "toString"
+        "$type": 470,
+        "_content": {
+          "$type": 1,
+          "$text": "toString"
+        }
       }
     },
     "expectedOutput": "super.toString",
@@ -71655,8 +74064,11 @@
       "_object": 277,
       "_separator": 62,
       "_property": {
-        "$type": 1,
-        "$text": "y"
+        "$type": 470,
+        "_content": {
+          "$type": 1,
+          "$text": "y"
+        }
       }
     },
     "expectedOutput": "this.y",
@@ -75709,6 +78121,35 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "a"
+      }
+    },
+    "expectedOutput": "a",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "a",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "a",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.a;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "program",
     "input": {
       "$type": 188,
@@ -77397,6 +79838,64 @@
     "expectedReparseTree": "(property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))",
     "wrappedText": "interface _I { age: number }",
     "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "name"
+      }
+    },
+    "expectedOutput": "name",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "name",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "name",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.name;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "age"
+      }
+    },
+    "expectedOutput": "age",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "age",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "age",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.age;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -79261,6 +81760,35 @@
     "expectedReparseTree": "(property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))",
     "wrappedText": "interface _I { length: number }",
     "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "length"
+      }
+    },
+    "expectedOutput": "length",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "length",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "length",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.length;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -84115,7 +86643,13 @@
                     "$text": "Symbol"
                   },
                   "_separator": 62,
-                  "_property": 20
+                  "_property": {
+                    "$type": 470,
+                    "_content": {
+                      "$type": 1,
+                      "$text": "for"
+                    }
+                  }
                 },
                 "_arguments": {
                   "$type": 282,
@@ -84245,7 +86779,13 @@
                 "$text": "Symbol"
               },
               "_separator": 62,
-              "_property": 20
+              "_property": {
+                "$type": 470,
+                "_content": {
+                  "$type": 1,
+                  "$text": "for"
+                }
+              }
             },
             "_arguments": {
               "$type": 282,
@@ -84361,7 +86901,13 @@
             "$text": "Symbol"
           },
           "_separator": 62,
-          "_property": 20
+          "_property": {
+            "$type": 470,
+            "_content": {
+              "$type": 1,
+              "$text": "for"
+            }
+          }
         },
         "_arguments": {
           "$type": 282,
@@ -84505,7 +87051,13 @@
           "$text": "Symbol"
         },
         "_separator": 62,
-        "_property": 20
+        "_property": {
+          "$type": 470,
+          "_content": {
+            "$type": 1,
+            "$text": "for"
+          }
+        }
       },
       "_arguments": {
         "$type": 282,
@@ -84685,7 +87237,13 @@
         "$text": "Symbol"
       },
       "_separator": 62,
-      "_property": 20
+      "_property": {
+        "$type": 470,
+        "_content": {
+          "$type": 1,
+          "$text": "for"
+        }
+      }
     },
     "expectedOutput": "Symbol.for",
     "options": {
@@ -84704,6 +87262,35 @@
     "expectedReparseTree": "(member_expression object: (identifier) property: (property_identifier))",
     "wrappedText": "let _ = Symbol.for;",
     "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "for"
+      }
+    },
+    "expectedOutput": "for",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "for",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "for",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.for;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -84741,14 +87328,20 @@
                     },
                     "_separator": 62,
                     "_property": {
-                      "$type": 1,
-                      "$text": "selection"
+                      "$type": 470,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "selection"
+                      }
                     }
                   },
                   "_separator": 62,
                   "_property": {
-                    "$type": 1,
-                    "$text": "createRange"
+                    "$type": 470,
+                    "_content": {
+                      "$type": 1,
+                      "$text": "createRange"
+                    }
                   }
                 },
                 "_arguments": {
@@ -84814,14 +87407,20 @@
                 },
                 "_separator": 62,
                 "_property": {
-                  "$type": 1,
-                  "$text": "selection"
+                  "$type": 470,
+                  "_content": {
+                    "$type": 1,
+                    "$text": "selection"
+                  }
                 }
               },
               "_separator": 62,
               "_property": {
-                "$type": 1,
-                "$text": "createRange"
+                "$type": 470,
+                "_content": {
+                  "$type": 1,
+                  "$text": "createRange"
+                }
               }
             },
             "_arguments": {
@@ -84880,14 +87479,20 @@
             },
             "_separator": 62,
             "_property": {
-              "$type": 1,
-              "$text": "selection"
+              "$type": 470,
+              "_content": {
+                "$type": 1,
+                "$text": "selection"
+              }
             }
           },
           "_separator": 62,
           "_property": {
-            "$type": 1,
-            "$text": "createRange"
+            "$type": 470,
+            "_content": {
+              "$type": 1,
+              "$text": "createRange"
+            }
           }
         },
         "_arguments": {
@@ -84937,14 +87542,20 @@
           },
           "_separator": 62,
           "_property": {
-            "$type": 1,
-            "$text": "selection"
+            "$type": 470,
+            "_content": {
+              "$type": 1,
+              "$text": "selection"
+            }
           }
         },
         "_separator": 62,
         "_property": {
-          "$type": 1,
-          "$text": "createRange"
+          "$type": 470,
+          "_content": {
+            "$type": 1,
+            "$text": "createRange"
+          }
         }
       },
       "_arguments": {
@@ -84991,14 +87602,20 @@
         },
         "_separator": 62,
         "_property": {
-          "$type": 1,
-          "$text": "selection"
+          "$type": 470,
+          "_content": {
+            "$type": 1,
+            "$text": "selection"
+          }
         }
       },
       "_separator": 62,
       "_property": {
-        "$type": 1,
-        "$text": "createRange"
+        "$type": 470,
+        "_content": {
+          "$type": 1,
+          "$text": "createRange"
+        }
       }
     },
     "expectedOutput": "(document: any).selection.createRange",
@@ -85038,8 +87655,11 @@
       },
       "_separator": 62,
       "_property": {
-        "$type": 1,
-        "$text": "selection"
+        "$type": 470,
+        "_content": {
+          "$type": 1,
+          "$text": "selection"
+        }
       }
     },
     "expectedOutput": "(document: any).selection",
@@ -85118,6 +87738,64 @@
     "expectedReparseTree": "(type_annotation type: (predefined_type))",
     "wrappedText": "let _: any;",
     "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "selection"
+      }
+    },
+    "expectedOutput": "selection",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "selection",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "selection",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.selection;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "createRange"
+      }
+    },
+    "expectedOutput": "createRange",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "createRange",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "createRange",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.createRange;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -93991,6 +96669,209 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "document"
+      }
+    },
+    "expectedOutput": "document",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "document",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "document",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.document;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "headDocument"
+      }
+    },
+    "expectedOutput": "headDocument",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "headDocument",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "headDocument",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.headDocument;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "baseDocument"
+      }
+    },
+    "expectedOutput": "baseDocument",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "baseDocument",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "baseDocument",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.baseDocument;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "conflicts"
+      }
+    },
+    "expectedOutput": "conflicts",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "conflicts",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "conflicts",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.conflicts;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "start"
+      }
+    },
+    "expectedOutput": "start",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "start",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "start",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.start;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "middle"
+      }
+    },
+    "expectedOutput": "middle",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "middle",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "middle",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.middle;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "end"
+      }
+    },
+    "expectedOutput": "end",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "end",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "end",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.end;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "type_annotation",
     "input": {
       "$type": 332,
@@ -94309,8 +97190,11 @@
                       },
                       "_separator": 62,
                       "_property": {
-                        "$type": 1,
-                        "$text": "floor"
+                        "$type": 470,
+                        "_content": {
+                          "$type": 1,
+                          "$text": "floor"
+                        }
                       }
                     },
                     "_arguments": {
@@ -94328,8 +97212,11 @@
                               },
                               "_separator": 62,
                               "_property": {
-                                "$type": 1,
-                                "$text": "random"
+                                "$type": 470,
+                                "_content": {
+                                  "$type": 1,
+                                  "$text": "random"
+                                }
                               }
                             },
                             "_arguments": {
@@ -94576,8 +97463,11 @@
                   },
                   "_separator": 62,
                   "_property": {
-                    "$type": 1,
-                    "$text": "floor"
+                    "$type": 470,
+                    "_content": {
+                      "$type": 1,
+                      "$text": "floor"
+                    }
                   }
                 },
                 "_arguments": {
@@ -94595,8 +97485,11 @@
                           },
                           "_separator": 62,
                           "_property": {
-                            "$type": 1,
-                            "$text": "random"
+                            "$type": 470,
+                            "_content": {
+                              "$type": 1,
+                              "$text": "random"
+                            }
                           }
                         },
                         "_arguments": {
@@ -94858,8 +97751,11 @@
                 },
                 "_separator": 62,
                 "_property": {
-                  "$type": 1,
-                  "$text": "floor"
+                  "$type": 470,
+                  "_content": {
+                    "$type": 1,
+                    "$text": "floor"
+                  }
                 }
               },
               "_arguments": {
@@ -94877,8 +97773,11 @@
                         },
                         "_separator": 62,
                         "_property": {
-                          "$type": 1,
-                          "$text": "random"
+                          "$type": 470,
+                          "_content": {
+                            "$type": 1,
+                            "$text": "random"
+                          }
                         }
                       },
                       "_arguments": {
@@ -95129,8 +98028,11 @@
               },
               "_separator": 62,
               "_property": {
-                "$type": 1,
-                "$text": "floor"
+                "$type": 470,
+                "_content": {
+                  "$type": 1,
+                  "$text": "floor"
+                }
               }
             },
             "_arguments": {
@@ -95148,8 +98050,11 @@
                       },
                       "_separator": 62,
                       "_property": {
-                        "$type": 1,
-                        "$text": "random"
+                        "$type": 470,
+                        "_content": {
+                          "$type": 1,
+                          "$text": "random"
+                        }
                       }
                     },
                     "_arguments": {
@@ -95456,6 +98361,358 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "A"
+      }
+    },
+    "expectedOutput": "A",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "A",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "A",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.A;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "floor"
+      }
+    },
+    "expectedOutput": "floor",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "floor",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "floor",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.floor;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "random"
+      }
+    },
+    "expectedOutput": "random",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "random",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "random",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.random;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "D"
+      }
+    },
+    "expectedOutput": "D",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "D",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "D",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.D;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "E"
+      }
+    },
+    "expectedOutput": "E",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "E",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "E",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.E;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "None"
+      }
+    },
+    "expectedOutput": "None",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "None",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "None",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.None;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "Bold"
+      }
+    },
+    "expectedOutput": "Bold",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "Bold",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "Bold",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.Bold;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "Italic"
+      }
+    },
+    "expectedOutput": "Italic",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "Italic",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "Italic",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.Italic;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "Underline"
+      }
+    },
+    "expectedOutput": "Underline",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "Underline",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "Underline",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.Underline;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "Emphasis"
+      }
+    },
+    "expectedOutput": "Emphasis",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "Emphasis",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "Emphasis",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.Emphasis;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "Hyperlink"
+      }
+    },
+    "expectedOutput": "Hyperlink",
+    "options": {
+      "layout": {
+        "indent": "    "
+      },
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "Hyperlink",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "Hyperlink",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.Hyperlink;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "string_single",
     "input": {
       "$type": 421,
@@ -95546,8 +98803,11 @@
           },
           "_separator": 62,
           "_property": {
-            "$type": 1,
-            "$text": "floor"
+            "$type": 470,
+            "_content": {
+              "$type": 1,
+              "$text": "floor"
+            }
           }
         },
         "_arguments": {
@@ -95565,8 +98825,11 @@
                   },
                   "_separator": 62,
                   "_property": {
-                    "$type": 1,
-                    "$text": "random"
+                    "$type": 470,
+                    "_content": {
+                      "$type": 1,
+                      "$text": "random"
+                    }
                   }
                 },
                 "_arguments": {
@@ -95908,8 +99171,11 @@
         },
         "_separator": 62,
         "_property": {
-          "$type": 1,
-          "$text": "floor"
+          "$type": 470,
+          "_content": {
+            "$type": 1,
+            "$text": "floor"
+          }
         }
       },
       "_arguments": {
@@ -95927,8 +99193,11 @@
                 },
                 "_separator": 62,
                 "_property": {
-                  "$type": 1,
-                  "$text": "random"
+                  "$type": 470,
+                  "_content": {
+                    "$type": 1,
+                    "$text": "random"
+                  }
                 }
               },
               "_arguments": {
@@ -95980,8 +99249,11 @@
         },
         "_separator": 62,
         "_property": {
-          "$type": 1,
-          "$text": "random"
+          "$type": 470,
+          "_content": {
+            "$type": 1,
+            "$text": "random"
+          }
         }
       },
       "_arguments": {
@@ -96022,8 +99294,11 @@
       },
       "_separator": 62,
       "_property": {
-        "$type": 1,
-        "$text": "floor"
+        "$type": 470,
+        "_content": {
+          "$type": 1,
+          "$text": "floor"
+        }
       }
     },
     "expectedOutput": "Math.floor",
@@ -96059,8 +99334,11 @@
       },
       "_separator": 62,
       "_property": {
-        "$type": 1,
-        "$text": "random"
+        "$type": 470,
+        "_content": {
+          "$type": 1,
+          "$text": "random"
+        }
       }
     },
     "expectedOutput": "Math.random",
@@ -96103,8 +99381,11 @@
               },
               "_separator": 62,
               "_property": {
-                "$type": 1,
-                "$text": "random"
+                "$type": 470,
+                "_content": {
+                  "$type": 1,
+                  "$text": "random"
+                }
               }
             },
             "_arguments": {
@@ -96186,8 +99467,11 @@
           },
           "_separator": 62,
           "_property": {
-            "$type": 1,
-            "$text": "random"
+            "$type": 470,
+            "_content": {
+              "$type": 1,
+              "$text": "random"
+            }
           }
         },
         "_arguments": {
@@ -100465,6 +103749,64 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "url"
+      }
+    },
+    "expectedOutput": "url",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "url",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "url",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.url;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "ms"
+      }
+    },
+    "expectedOutput": "ms",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "ms",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "ms",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.ms;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "type_annotation",
     "input": {
       "$type": 332,
@@ -103057,6 +106399,35 @@
     "expectedReparseTree": "(method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))))))",
     "wrappedText": "class _C {\n  x(): Promise<Array<Foo>>;\n}",
     "wrappedOffset": 13
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "x"
+      }
+    },
+    "expectedOutput": "x",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "x",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "x",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.x;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -107868,6 +111239,35 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "P"
+      }
+    },
+    "expectedOutput": "P",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "P",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "P",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.P;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "type_query_call_expression",
     "input": {
       "$type": 354,
@@ -112019,6 +115419,35 @@
     "expectedReparseTree": "(method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_predicate_annotation (type_predicate name: (this) type: (type_identifier))) body: (statement_block terminator: (automatic_semicolon)))",
     "wrappedText": "class _C {\n  test(): this is T {}\n  \n}",
     "wrappedOffset": 13
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "test"
+      }
+    },
+    "expectedOutput": "test",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "test",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "test",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.test;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -126261,6 +129690,64 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "x"
+      }
+    },
+    "expectedOutput": "x",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "x",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "x",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.x;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "x"
+      }
+    },
+    "expectedOutput": "x",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "x",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "x",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.x;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "program",
     "input": {
       "$type": 188,
@@ -136654,6 +140141,35 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "baz"
+      }
+    },
+    "expectedOutput": "baz",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "baz",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "baz",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.baz;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "lookup_type",
     "input": {
       "$type": 358,
@@ -140568,8 +144084,11 @@
                       "_object": 277,
                       "_separator": 62,
                       "_property": {
-                        "$type": 1,
-                        "$text": "colors"
+                        "$type": 470,
+                        "_content": {
+                          "$type": 1,
+                          "$text": "colors"
+                        }
                       }
                     },
                     "_optional_chain": false,
@@ -140802,8 +144321,11 @@
                   "_object": 277,
                   "_separator": 62,
                   "_property": {
-                    "$type": 1,
-                    "$text": "colors"
+                    "$type": 470,
+                    "_content": {
+                      "$type": 1,
+                      "$text": "colors"
+                    }
                   }
                 },
                 "_optional_chain": false,
@@ -141052,8 +144574,11 @@
                 "_object": 277,
                 "_separator": 62,
                 "_property": {
-                  "$type": 1,
-                  "$text": "colors"
+                  "$type": 470,
+                  "_content": {
+                    "$type": 1,
+                    "$text": "colors"
+                  }
                 }
               },
               "_optional_chain": false,
@@ -141290,8 +144815,11 @@
             "_object": 277,
             "_separator": 62,
             "_property": {
-              "$type": 1,
-              "$text": "colors"
+              "$type": 470,
+              "_content": {
+                "$type": 1,
+                "$text": "colors"
+              }
             }
           },
           "_optional_chain": false,
@@ -141520,8 +145048,11 @@
           "_object": 277,
           "_separator": 62,
           "_property": {
-            "$type": 1,
-            "$text": "colors"
+            "$type": 470,
+            "_content": {
+              "$type": 1,
+              "$text": "colors"
+            }
           }
         },
         "_optional_chain": false,
@@ -141548,6 +145079,180 @@
     "expectedReparseTree": "(public_field_definition name: (property_identifier) type: (type_annotation type: (lookup_type type: (parenthesized_type type: (type_query expression: (type_query_member_expression object: (this) property: (property_identifier)))) index_type: (predefined_type))) value: (subscript_expression object: (member_expression object: (this) property: (property_identifier)) index: (number_decimal)))",
     "wrappedText": "class _C {\n  color: (typeof this.colors)[number] = this.colors[0]\n}",
     "wrappedOffset": 13
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "colors"
+      }
+    },
+    "expectedOutput": "colors",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "colors",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "colors",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.colors;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "color"
+      }
+    },
+    "expectedOutput": "color",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "color",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "color",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.color;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "code"
+      }
+    },
+    "expectedOutput": "code",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "code",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "code",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.code;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "color"
+      }
+    },
+    "expectedOutput": "color",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "color",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "color",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.color;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "colors"
+      }
+    },
+    "expectedOutput": "colors",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "colors",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "colors",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.colors;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "colors"
+      }
+    },
+    "expectedOutput": "colors",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "colors",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "colors",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.colors;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -142642,8 +146347,11 @@
         "_object": 277,
         "_separator": 62,
         "_property": {
-          "$type": 1,
-          "$text": "colors"
+          "$type": 470,
+          "_content": {
+            "$type": 1,
+            "$text": "colors"
+          }
         }
       },
       "_optional_chain": false,
@@ -142679,8 +146387,11 @@
       "_object": 277,
       "_separator": 62,
       "_property": {
-        "$type": 1,
-        "$text": "colors"
+        "$type": 470,
+        "_content": {
+          "$type": 1,
+          "$text": "colors"
+        }
       }
     },
     "expectedOutput": "this.colors",
@@ -143164,6 +146875,64 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "ReadStream"
+      }
+    },
+    "expectedOutput": "ReadStream",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "ReadStream",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "ReadStream",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.ReadStream;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "bar"
+      }
+    },
+    "expectedOutput": "bar",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "bar",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "bar",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.bar;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "object_type",
     "input": {
       "$type": 367,
@@ -143364,7 +147133,10 @@
                   "$type": 292,
                   "_key": {
                     "$type": 470,
-                    "_content": 7
+                    "_content": {
+                      "$type": 1,
+                      "$text": "type"
+                    }
                   },
                   "_value": {
                     "$type": 421,
@@ -143440,7 +147212,10 @@
               "$type": 292,
               "_key": {
                 "$type": 470,
-                "_content": 7
+                "_content": {
+                  "$type": 1,
+                  "$text": "type"
+                }
               },
               "_value": {
                 "$type": 421,
@@ -143656,7 +147431,10 @@
             "$type": 292,
             "_key": {
               "$type": 470,
-              "_content": 7
+              "_content": {
+                "$type": 1,
+                "$text": "type"
+              }
             },
             "_value": {
               "$type": 421,
@@ -143700,7 +147478,10 @@
           "$type": 292,
           "_key": {
             "$type": 470,
-            "_content": 7
+            "_content": {
+              "$type": 1,
+              "$text": "type"
+            }
           },
           "_value": {
             "$type": 421,
@@ -143740,7 +147521,10 @@
       "$type": 292,
       "_key": {
         "$type": 470,
-        "_content": 7
+        "_content": {
+          "$type": 1,
+          "$text": "type"
+        }
       },
       "_value": {
         "$type": 421,
@@ -143768,6 +147552,35 @@
     "expectedSourceOut": "type: 'css'",
     "expectedReparseTree": "(pair key: (property_identifier) value: (string_single elements: (string_fragment)))",
     "wrappedText": "let _ = { type: 'css' };",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "type"
+      }
+    },
+    "expectedOutput": "type",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "type",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "type",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.type;",
     "wrappedOffset": 10
   },
   {
@@ -144112,6 +147925,64 @@
     "expectedReparseTree": "(enum_body_element_name name: (property_identifier))",
     "wrappedText": "enum T { B, B, }",
     "wrappedOffset": 9
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "A"
+      }
+    },
+    "expectedOutput": "A",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "A",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "A",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.A;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "B"
+      }
+    },
+    "expectedOutput": "B",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "B",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "B",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.B;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -147734,6 +151605,267 @@
     "expectedReparseTree": "(public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))",
     "wrappedText": "class _C {\n  greeting: string\n}",
     "wrappedOffset": 13
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "constructor"
+      }
+    },
+    "expectedOutput": "constructor",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "constructor",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "constructor",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.constructor;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "verbose"
+      }
+    },
+    "expectedOutput": "verbose",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "verbose",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "verbose",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.verbose;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "modal"
+      }
+    },
+    "expectedOutput": "modal",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "modal",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "modal",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.modal;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "title"
+      }
+    },
+    "expectedOutput": "title",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "title",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "title",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.title;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "color"
+      }
+    },
+    "expectedOutput": "color",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "color",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "color",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.color;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "constructor"
+      }
+    },
+    "expectedOutput": "constructor",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "constructor",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "constructor",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.constructor;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "greeting"
+      }
+    },
+    "expectedOutput": "greeting",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "greeting",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "greeting",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.greeting;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "showGreeting"
+      }
+    },
+    "expectedOutput": "showGreeting",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "showGreeting",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "showGreeting",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.showGreeting;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "property_identifier",
+    "input": {
+      "$type": 470,
+      "_content": {
+        "$type": 1,
+        "$text": "Bar"
+      }
+    },
+    "expectedOutput": "Bar",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "Bar",
+    "pattern": "property_identifier",
+    "edits": [],
+    "expectedSourceOut": "Bar",
+    "expectedReparseTree": "(property_identifier)",
+    "wrappedText": "let _ = e.Bar;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",

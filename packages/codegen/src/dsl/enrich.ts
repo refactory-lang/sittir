@@ -156,7 +156,7 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 		if (!rule) continue;
 		enrichedRules[name] = flattenedListBody(rule, ctx.sourceSymbols);
 	}
-	const literalAliasStorage = mintInlineLiteralAliasStorage(enrichedRules);
+	const literalAliasStorage = mintInlineLiteralAliasStorage(enrichedRules, { word: ctx.word ?? undefined });
 	Object.assign(enrichedRules, literalAliasStorage.rules);
 	for (const name of literalAliasStorage.storageNames) ruleOrigins.set(name, { kind: 'literal-alias-storage' });
 	Object.assign(enrichedRules, liftAliasedHiddenRuleBodies(enrichedRules));

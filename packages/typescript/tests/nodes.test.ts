@@ -1702,7 +1702,13 @@ describe('member_expression', () => {
 		const node = ir.memberExpression({
 			object: { $type: TSKindId.Import, $text: 'import', $source: 2, $named: true } as any,
 			separator: '.',
-			property: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			property: {
+				$type: TSKindId.PrivatePropertyIdentifier,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: 'test'
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.MemberExpression);
 		expect(node.$source).toBe(2);
@@ -1711,7 +1717,13 @@ describe('member_expression', () => {
 		const node = ir.memberExpression({
 			object: { $type: TSKindId.Import, $text: 'import', $source: 2, $named: true } as any,
 			separator: '.',
-			property: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			property: {
+				$type: TSKindId.PrivatePropertyIdentifier,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: 'test'
+			} as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -2196,7 +2208,13 @@ describe('rest_pattern sub-factories', () => {
 		const node = ir.restPattern.memberExpression({
 			object: { $type: TSKindId.Import, $text: 'import', $source: 2, $named: true } as any,
 			separator: '.',
-			property: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			property: {
+				$type: TSKindId.PrivatePropertyIdentifier,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: 'test'
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.RestPattern);
 		expect((node as any).lhsExpression()).toBeDefined();

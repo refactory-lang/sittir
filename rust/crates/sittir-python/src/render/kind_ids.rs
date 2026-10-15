@@ -365,6 +365,9 @@ pub const ROOT_KINDS: &[KindId] = &[KindId(127)];
 /// The keyword tokens the grammar aliases to its word rule: a node of one of them, displayed as the word rule, reads as the word rule.
 pub const RELAXED_KEYWORDS: &[KindId] = &[KindId(39), KindId(67), KindId(38), KindId(68), KindId(69), KindId(22)];
 
+/// The display ids that stand for the word rule (an alias of it) and the keyword tokens aliased to each.
+pub const RELAXED_DISPLAYS: &[(KindId, &[KindId])] = &[];
+
 /// Whether a node with this grammar id and display id is a relaxed keyword (`ReadCtx::relaxes`).
 pub fn relaxes(grammar: KindId, display: KindId) -> bool {
     display.0 == 1 && RELAXED_KEYWORDS.contains(&grammar)

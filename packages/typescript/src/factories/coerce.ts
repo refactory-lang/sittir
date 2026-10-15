@@ -1970,7 +1970,7 @@ const _K24: readonly string[] = [
 	'meta_property_import_meta',
 	'import'
 ];
-const _K25: readonly string[] = ['private_property_identifier'];
+const _K25: readonly string[] = ['private_property_identifier', 'property_identifier'];
 const _K26: readonly string[] = [
 	'member_expression',
 	'subscript_expression',
@@ -2077,12 +2077,11 @@ const _K46: readonly string[] = [
 	'type_query_member_expression_in_type_annotation',
 	'type_query_call_expression_in_type_annotation'
 ];
-const _K47: readonly string[] = ['private_property_identifier', 'property_identifier'];
-const _K48: readonly string[] = ['type_query_member_expression_in_type_annotation'];
-const _K49: readonly string[] = ['identifier', 'this'];
-const _K50: readonly string[] = ['type_predicate'];
-const _K51: readonly string[] = ['rest_pattern'];
-const _K52: readonly string[] = [
+const _K47: readonly string[] = ['type_query_member_expression_in_type_annotation'];
+const _K48: readonly string[] = ['identifier', 'this'];
+const _K49: readonly string[] = ['type_predicate'];
+const _K50: readonly string[] = ['rest_pattern'];
+const _K51: readonly string[] = [
 	'parenthesized_type',
 	'type_identifier',
 	'nested_type_identifier',
@@ -2101,16 +2100,16 @@ const _K52: readonly string[] = [
 	'union_type',
 	'infer_type'
 ];
-const _K53: readonly string[] = ['template_type'];
-const _K54: readonly string[] = ['type_identifier', 'nested_type_identifier'];
-const _K55: readonly string[] = ['identifier', 'this', 'predefined_type'];
-const _K56: readonly string[] = [
+const _K52: readonly string[] = ['template_type'];
+const _K53: readonly string[] = ['type_identifier', 'nested_type_identifier'];
+const _K54: readonly string[] = ['identifier', 'this', 'predefined_type'];
+const _K55: readonly string[] = [
 	'type_query_subscript_expression',
 	'type_query_member_expression',
 	'type_query_call_expression'
 ];
-const _K57: readonly string[] = ['predefined_type', 'number_decimal'];
-const _K58: readonly string[] = [
+const _K56: readonly string[] = ['predefined_type', 'number_decimal'];
+const _K57: readonly string[] = [
 	'string_double',
 	'string_single',
 	'number_hex',
@@ -2124,15 +2123,15 @@ const _K58: readonly string[] = [
 	'number_bigint_octal',
 	'number_bigint_decimal'
 ];
-const _K59: readonly string[] = ['import', 'identifier'];
-const _K60: readonly string[] = ['type_query_member_expression', 'type_query_subscript_expression'];
-const _K61: readonly string[] = [
+const _K58: readonly string[] = ['import', 'identifier'];
+const _K59: readonly string[] = ['type_query_member_expression', 'type_query_subscript_expression'];
+const _K60: readonly string[] = [
 	'type_query_subscript_expression',
 	'type_query_member_expression',
 	'type_query_call_expression',
 	'type_query_instantiation_expression'
 ];
-const _K62: readonly string[] = [
+const _K61: readonly string[] = [
 	'parenthesized_type',
 	'type_identifier',
 	'nested_type_identifier',
@@ -2150,8 +2149,8 @@ const _K62: readonly string[] = [
 	'intersection_type',
 	'union_type'
 ];
-const _K63: readonly string[] = ['number_decimal', 'true', 'false', 'null', 'undefined'];
-const _K64: readonly string[] = [
+const _K62: readonly string[] = ['number_decimal', 'true', 'false', 'null', 'undefined'];
+const _K63: readonly string[] = [
 	'literal_type_negative_number',
 	'number_hex',
 	'number_float_point',
@@ -2166,7 +2165,7 @@ const _K64: readonly string[] = [
 	'string_double',
 	'string_single'
 ];
-const _K65: readonly string[] = [
+const _K64: readonly string[] = [
 	'parenthesized_type',
 	'type_identifier',
 	'nested_type_identifier',
@@ -2192,7 +2191,7 @@ const _K65: readonly string[] = [
 	'asserts',
 	'type_predicate'
 ];
-const _K66: readonly string[] = [
+const _K65: readonly string[] = [
 	'tuple_parameter',
 	'optional_tuple_parameter',
 	'optional_type',
@@ -2220,8 +2219,8 @@ const _K66: readonly string[] = [
 	'type_query_member_expression_in_type_annotation',
 	'type_query_call_expression_in_type_annotation'
 ];
-const _K67: readonly string[] = ['namespace_import', 'named_imports'];
-const _K68: readonly string[] = [
+const _K66: readonly string[] = ['namespace_import', 'named_imports'];
+const _K67: readonly string[] = [
 	'export_statement_default_from',
 	'export_statement_default_declaration',
 	'export_statement_equals_export',
@@ -2233,7 +2232,7 @@ const _K68: readonly string[] = [
 	'index_signature_mapped_type_clause',
 	'method_signature'
 ];
-const _K69: readonly string[] = [
+const _K68: readonly string[] = [
 	'number_hex',
 	'number_float_point',
 	'number_float_leading_point',
@@ -2245,7 +2244,7 @@ const _K69: readonly string[] = [
 	'number_bigint_octal',
 	'number_bigint_decimal'
 ];
-const _K70: readonly string[] = [
+const _K69: readonly string[] = [
 	'as_expression',
 	'satisfies_expression',
 	'instantiation_expression',
@@ -2291,20 +2290,20 @@ const _K70: readonly string[] = [
 	'yield_expression',
 	'private_property_identifier'
 ];
-const _K71: readonly string[] = [
+const _K70: readonly string[] = [
 	'abstract_method_signature',
 	'index_signature_colon',
 	'index_signature_mapped_type_clause',
 	'method_signature',
 	'public_field_definition'
 ];
-const _K72: readonly string[] = [
+const _K71: readonly string[] = [
 	'type_annotation',
 	'omitting_type_annotation',
 	'adding_type_annotation',
 	'opting_type_annotation'
 ];
-const _K73: readonly string[] = [
+const _K72: readonly string[] = [
 	'subscript_expression',
 	'member_expression',
 	'parenthesized_expression_typed',
@@ -2335,15 +2334,15 @@ const _K73: readonly string[] = [
 	'non_null_expression',
 	'new_expression'
 ];
-const _K74: readonly string[] = ['unescaped_double_string_fragment'];
-const _K75: readonly string[] = ['escape_sequence'];
-const _K76: readonly string[] = ['unescaped_single_string_fragment'];
-const _K77: readonly string[] = [
+const _K73: readonly string[] = ['unescaped_double_string_fragment'];
+const _K74: readonly string[] = ['escape_sequence'];
+const _K75: readonly string[] = ['unescaped_single_string_fragment'];
+const _K76: readonly string[] = [
 	'export_statement_default_from_star_from',
 	'export_statement_default_from_ns_from',
 	'export_statement_default_from_clause_from'
 ];
-const _K78: readonly string[] = [
+const _K77: readonly string[] = [
 	'function_declaration',
 	'generator_function_declaration',
 	'class_declaration',
@@ -2361,7 +2360,7 @@ const _K78: readonly string[] = [
 	'ambient_declaration',
 	'export_statement_default_declaration_default_kw'
 ];
-const _K79: readonly string[] = [
+const _K78: readonly string[] = [
 	'function_declaration',
 	'generator_function_declaration',
 	'class_declaration',
@@ -2379,7 +2378,7 @@ const _K79: readonly string[] = [
 	'ambient_declaration',
 	'export_statement_default_declaration_default_kw_value'
 ];
-const _K80: readonly string[] = [
+const _K79: readonly string[] = [
 	'_lhs_expression',
 	'parenthesized_expression_typed',
 	'parenthesized_expression_sequence'
@@ -3279,114 +3278,7 @@ export function coerceToEmptyStatement(_input?: T.EmptyStatement.Loose): typeof 
 export function resolveLabeledStatement_label(
 	value: T.LabeledStatement.LooseConfig['label']
 ): Admit<T.LabeledStatement['_label']> {
-	return _keywordOr(
-		value,
-		[
-			['declare', TSKindId.DeclareKeyword] as const,
-			['namespace', TSKindId.NamespaceKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['public', TSKindId.PublicKeyword] as const,
-			['private', TSKindId.PrivateKeyword] as const,
-			['protected', TSKindId.ProtectedKeyword] as const,
-			['override', TSKindId.OverrideKeyword] as const,
-			['readonly', TSKindId.ReadonlyKeyword] as const,
-			['module', TSKindId.ModuleKeyword] as const,
-			['any', TSKindId.AnyKeyword] as const,
-			['number', TSKindId.NumberKeyword] as const,
-			['boolean', TSKindId.BooleanKeyword] as const,
-			['string', TSKindId.StringKeyword] as const,
-			['symbol', TSKindId.SymbolKeyword] as const,
-			['export', TSKindId.ExportKeyword] as const,
-			['object', TSKindId.ObjectKeyword] as const,
-			['new', TSKindId.NewKeyword] as const,
-			['get', TSKindId.GetKeyword] as const,
-			['set', TSKindId.SetKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['static', TSKindId.StaticKeyword] as const,
-			['let', TSKindId.LetKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () =>
-					_resolveOneBranch<
-						| T.StatementIdentifier
-						| 'declare'
-						| 'namespace'
-						| 'type'
-						| 'public'
-						| 'private'
-						| 'protected'
-						| 'override'
-						| 'readonly'
-						| 'module'
-						| 'any'
-						| 'number'
-						| 'boolean'
-						| 'string'
-						| 'symbol'
-						| 'export'
-						| 'object'
-						| 'new'
-						| 'get'
-						| 'set'
-						| 'async'
-						| 'await'
-						| 'static'
-						| 'let'
-					>(value, 'statement_identifier', [
-						TSKindId.DeclareKeyword,
-						TSKindId.NamespaceKeyword,
-						TSKindId.TypeKeyword,
-						TSKindId.PublicKeyword,
-						TSKindId.PrivateKeyword,
-						TSKindId.ProtectedKeyword,
-						TSKindId.OverrideKeyword,
-						TSKindId.ReadonlyKeyword,
-						TSKindId.ModuleKeyword,
-						TSKindId.AnyKeyword,
-						TSKindId.NumberKeyword,
-						TSKindId.BooleanKeyword,
-						TSKindId.StringKeyword,
-						TSKindId.SymbolKeyword,
-						TSKindId.ExportKeyword,
-						TSKindId.ObjectKeyword,
-						TSKindId.NewKeyword,
-						TSKindId.GetKeyword,
-						TSKindId.SetKeyword,
-						TSKindId.AsyncKeyword,
-						TSKindId.AwaitKeyword,
-						TSKindId.StaticKeyword,
-						TSKindId.LetKeyword
-					])
-				),
-				[
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				]
-			)
-	);
+	return _resolveOneBranch<T.StatementIdentifier>(value, 'statement_identifier');
 }
 
 export function resolveLabeledStatement_body(
@@ -3562,94 +3454,11 @@ export function coerceToObject(...input: T.Object.LooseArgs): ReturnType<typeof 
 		const stored = (data as unknown as { _properties?: unknown })._properties;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildObject(
-			...((children == null ? [] : Array.isArray(children) ? children : [children])
-				.map(
-					(_e: _LooseFieldInput) =>
-						_keywordOf(_e, [
-							['declare', TSKindId.DeclareKeyword] as const,
-							['namespace', TSKindId.NamespaceKeyword] as const,
-							['type', TSKindId.TypeKeyword] as const,
-							['public', TSKindId.PublicKeyword] as const,
-							['private', TSKindId.PrivateKeyword] as const,
-							['protected', TSKindId.ProtectedKeyword] as const,
-							['override', TSKindId.OverrideKeyword] as const,
-							['readonly', TSKindId.ReadonlyKeyword] as const,
-							['module', TSKindId.ModuleKeyword] as const,
-							['any', TSKindId.AnyKeyword] as const,
-							['number', TSKindId.NumberKeyword] as const,
-							['boolean', TSKindId.BooleanKeyword] as const,
-							['string', TSKindId.StringKeyword] as const,
-							['symbol', TSKindId.SymbolKeyword] as const,
-							['export', TSKindId.ExportKeyword] as const,
-							['object', TSKindId.ObjectKeyword] as const,
-							['new', TSKindId.NewKeyword] as const,
-							['get', TSKindId.GetKeyword] as const,
-							['set', TSKindId.SetKeyword] as const,
-							['async', TSKindId.AsyncKeyword] as const,
-							['await', TSKindId.AwaitKeyword] as const,
-							['static', TSKindId.StaticKeyword] as const,
-							['let', TSKindId.LetKeyword] as const
-						]) ??
-						coerceMixedEnumStorage(
-							_resolveKindEnum(_e, () =>
-								_resolveOne<
-									| T.Pair
-									| T.SpreadElement
-									| T.MethodDefinition
-									| T.ShorthandPropertyIdentifier
-									| 'declare'
-									| 'namespace'
-									| 'type'
-									| 'public'
-									| 'private'
-									| 'protected'
-									| 'override'
-									| 'readonly'
-									| 'module'
-									| 'any'
-									| 'number'
-									| 'boolean'
-									| 'string'
-									| 'symbol'
-									| 'export'
-									| 'object'
-									| 'new'
-									| 'get'
-									| 'set'
-									| 'async'
-									| 'await'
-									| 'static'
-									| 'let'
-								>(_e, _K2, _K12)
-							),
-							[
-								['declare', TSKindId.DeclareKeyword] as const,
-								['namespace', TSKindId.NamespaceKeyword] as const,
-								['type', TSKindId.TypeKeyword] as const,
-								['public', TSKindId.PublicKeyword] as const,
-								['private', TSKindId.PrivateKeyword] as const,
-								['protected', TSKindId.ProtectedKeyword] as const,
-								['override', TSKindId.OverrideKeyword] as const,
-								['readonly', TSKindId.ReadonlyKeyword] as const,
-								['module', TSKindId.ModuleKeyword] as const,
-								['any', TSKindId.AnyKeyword] as const,
-								['number', TSKindId.NumberKeyword] as const,
-								['boolean', TSKindId.BooleanKeyword] as const,
-								['string', TSKindId.StringKeyword] as const,
-								['symbol', TSKindId.SymbolKeyword] as const,
-								['export', TSKindId.ExportKeyword] as const,
-								['object', TSKindId.ObjectKeyword] as const,
-								['new', TSKindId.NewKeyword] as const,
-								['get', TSKindId.GetKeyword] as const,
-								['set', TSKindId.SetKeyword] as const,
-								['async', TSKindId.AsyncKeyword] as const,
-								['await', TSKindId.AwaitKeyword] as const,
-								['static', TSKindId.StaticKeyword] as const,
-								['let', TSKindId.LetKeyword] as const
-							]
-						)
-				)
-				.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildObject>)
+			...(_resolveMany<T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier>(
+				children,
+				_K2,
+				_K12
+			) as unknown as Parameters<typeof F.buildObject>)
 		);
 	}
 	const _elems: readonly unknown[] = (() => {
@@ -3661,94 +3470,11 @@ export function coerceToObject(...input: T.Object.LooseArgs): ReturnType<typeof 
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildObject(
-		...((_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems])
-			.map(
-				(_e: _LooseFieldInput) =>
-					_keywordOf(_e, [
-						['declare', TSKindId.DeclareKeyword] as const,
-						['namespace', TSKindId.NamespaceKeyword] as const,
-						['type', TSKindId.TypeKeyword] as const,
-						['public', TSKindId.PublicKeyword] as const,
-						['private', TSKindId.PrivateKeyword] as const,
-						['protected', TSKindId.ProtectedKeyword] as const,
-						['override', TSKindId.OverrideKeyword] as const,
-						['readonly', TSKindId.ReadonlyKeyword] as const,
-						['module', TSKindId.ModuleKeyword] as const,
-						['any', TSKindId.AnyKeyword] as const,
-						['number', TSKindId.NumberKeyword] as const,
-						['boolean', TSKindId.BooleanKeyword] as const,
-						['string', TSKindId.StringKeyword] as const,
-						['symbol', TSKindId.SymbolKeyword] as const,
-						['export', TSKindId.ExportKeyword] as const,
-						['object', TSKindId.ObjectKeyword] as const,
-						['new', TSKindId.NewKeyword] as const,
-						['get', TSKindId.GetKeyword] as const,
-						['set', TSKindId.SetKeyword] as const,
-						['async', TSKindId.AsyncKeyword] as const,
-						['await', TSKindId.AwaitKeyword] as const,
-						['static', TSKindId.StaticKeyword] as const,
-						['let', TSKindId.LetKeyword] as const
-					]) ??
-					coerceMixedEnumStorage(
-						_resolveKindEnum(_e, () =>
-							_resolveOne<
-								| T.Pair
-								| T.SpreadElement
-								| T.MethodDefinition
-								| T.ShorthandPropertyIdentifier
-								| 'declare'
-								| 'namespace'
-								| 'type'
-								| 'public'
-								| 'private'
-								| 'protected'
-								| 'override'
-								| 'readonly'
-								| 'module'
-								| 'any'
-								| 'number'
-								| 'boolean'
-								| 'string'
-								| 'symbol'
-								| 'export'
-								| 'object'
-								| 'new'
-								| 'get'
-								| 'set'
-								| 'async'
-								| 'await'
-								| 'static'
-								| 'let'
-							>(_e, _K2, _K12)
-						),
-						[
-							['declare', TSKindId.DeclareKeyword] as const,
-							['namespace', TSKindId.NamespaceKeyword] as const,
-							['type', TSKindId.TypeKeyword] as const,
-							['public', TSKindId.PublicKeyword] as const,
-							['private', TSKindId.PrivateKeyword] as const,
-							['protected', TSKindId.ProtectedKeyword] as const,
-							['override', TSKindId.OverrideKeyword] as const,
-							['readonly', TSKindId.ReadonlyKeyword] as const,
-							['module', TSKindId.ModuleKeyword] as const,
-							['any', TSKindId.AnyKeyword] as const,
-							['number', TSKindId.NumberKeyword] as const,
-							['boolean', TSKindId.BooleanKeyword] as const,
-							['string', TSKindId.StringKeyword] as const,
-							['symbol', TSKindId.SymbolKeyword] as const,
-							['export', TSKindId.ExportKeyword] as const,
-							['object', TSKindId.ObjectKeyword] as const,
-							['new', TSKindId.NewKeyword] as const,
-							['get', TSKindId.GetKeyword] as const,
-							['set', TSKindId.SetKeyword] as const,
-							['async', TSKindId.AsyncKeyword] as const,
-							['await', TSKindId.AwaitKeyword] as const,
-							['static', TSKindId.StaticKeyword] as const,
-							['let', TSKindId.LetKeyword] as const
-						]
-					)
-			)
-			.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildObject>)
+		...(_resolveMany<T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier>(
+			_elems,
+			_K2,
+			_K12
+		) as unknown as Parameters<typeof F.buildObject>)
 	);
 }
 
@@ -3760,94 +3486,9 @@ export function coerceToObjectPattern(...input: T.ObjectPattern.LooseArgs): Retu
 		const stored = (data as unknown as { _properties?: unknown })._properties;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildObjectPattern(
-			...((children == null ? [] : Array.isArray(children) ? children : [children])
-				.map(
-					(_e: _LooseFieldInput) =>
-						_keywordOf(_e, [
-							['declare', TSKindId.DeclareKeyword] as const,
-							['namespace', TSKindId.NamespaceKeyword] as const,
-							['type', TSKindId.TypeKeyword] as const,
-							['public', TSKindId.PublicKeyword] as const,
-							['private', TSKindId.PrivateKeyword] as const,
-							['protected', TSKindId.ProtectedKeyword] as const,
-							['override', TSKindId.OverrideKeyword] as const,
-							['readonly', TSKindId.ReadonlyKeyword] as const,
-							['module', TSKindId.ModuleKeyword] as const,
-							['any', TSKindId.AnyKeyword] as const,
-							['number', TSKindId.NumberKeyword] as const,
-							['boolean', TSKindId.BooleanKeyword] as const,
-							['string', TSKindId.StringKeyword] as const,
-							['symbol', TSKindId.SymbolKeyword] as const,
-							['export', TSKindId.ExportKeyword] as const,
-							['object', TSKindId.ObjectKeyword] as const,
-							['new', TSKindId.NewKeyword] as const,
-							['get', TSKindId.GetKeyword] as const,
-							['set', TSKindId.SetKeyword] as const,
-							['async', TSKindId.AsyncKeyword] as const,
-							['await', TSKindId.AwaitKeyword] as const,
-							['static', TSKindId.StaticKeyword] as const,
-							['let', TSKindId.LetKeyword] as const
-						]) ??
-						coerceMixedEnumStorage(
-							_resolveKindEnum(_e, () =>
-								_resolveOne<
-									| T.PairPattern
-									| T.RestPattern
-									| T.ObjectAssignmentPattern
-									| T.ShorthandPropertyIdentifierPattern
-									| 'declare'
-									| 'namespace'
-									| 'type'
-									| 'public'
-									| 'private'
-									| 'protected'
-									| 'override'
-									| 'readonly'
-									| 'module'
-									| 'any'
-									| 'number'
-									| 'boolean'
-									| 'string'
-									| 'symbol'
-									| 'export'
-									| 'object'
-									| 'new'
-									| 'get'
-									| 'set'
-									| 'async'
-									| 'await'
-									| 'static'
-									| 'let'
-								>(_e, _K2, _K13)
-							),
-							[
-								['declare', TSKindId.DeclareKeyword] as const,
-								['namespace', TSKindId.NamespaceKeyword] as const,
-								['type', TSKindId.TypeKeyword] as const,
-								['public', TSKindId.PublicKeyword] as const,
-								['private', TSKindId.PrivateKeyword] as const,
-								['protected', TSKindId.ProtectedKeyword] as const,
-								['override', TSKindId.OverrideKeyword] as const,
-								['readonly', TSKindId.ReadonlyKeyword] as const,
-								['module', TSKindId.ModuleKeyword] as const,
-								['any', TSKindId.AnyKeyword] as const,
-								['number', TSKindId.NumberKeyword] as const,
-								['boolean', TSKindId.BooleanKeyword] as const,
-								['string', TSKindId.StringKeyword] as const,
-								['symbol', TSKindId.SymbolKeyword] as const,
-								['export', TSKindId.ExportKeyword] as const,
-								['object', TSKindId.ObjectKeyword] as const,
-								['new', TSKindId.NewKeyword] as const,
-								['get', TSKindId.GetKeyword] as const,
-								['set', TSKindId.SetKeyword] as const,
-								['async', TSKindId.AsyncKeyword] as const,
-								['await', TSKindId.AwaitKeyword] as const,
-								['static', TSKindId.StaticKeyword] as const,
-								['let', TSKindId.LetKeyword] as const
-							]
-						)
-				)
-				.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildObjectPattern>)
+			...(_resolveMany<
+				T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern
+			>(children, _K2, _K13) as unknown as Parameters<typeof F.buildObjectPattern>)
 		);
 	}
 	const _elems: readonly unknown[] = (() => {
@@ -3859,94 +3500,11 @@ export function coerceToObjectPattern(...input: T.ObjectPattern.LooseArgs): Retu
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildObjectPattern(
-		...((_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems])
-			.map(
-				(_e: _LooseFieldInput) =>
-					_keywordOf(_e, [
-						['declare', TSKindId.DeclareKeyword] as const,
-						['namespace', TSKindId.NamespaceKeyword] as const,
-						['type', TSKindId.TypeKeyword] as const,
-						['public', TSKindId.PublicKeyword] as const,
-						['private', TSKindId.PrivateKeyword] as const,
-						['protected', TSKindId.ProtectedKeyword] as const,
-						['override', TSKindId.OverrideKeyword] as const,
-						['readonly', TSKindId.ReadonlyKeyword] as const,
-						['module', TSKindId.ModuleKeyword] as const,
-						['any', TSKindId.AnyKeyword] as const,
-						['number', TSKindId.NumberKeyword] as const,
-						['boolean', TSKindId.BooleanKeyword] as const,
-						['string', TSKindId.StringKeyword] as const,
-						['symbol', TSKindId.SymbolKeyword] as const,
-						['export', TSKindId.ExportKeyword] as const,
-						['object', TSKindId.ObjectKeyword] as const,
-						['new', TSKindId.NewKeyword] as const,
-						['get', TSKindId.GetKeyword] as const,
-						['set', TSKindId.SetKeyword] as const,
-						['async', TSKindId.AsyncKeyword] as const,
-						['await', TSKindId.AwaitKeyword] as const,
-						['static', TSKindId.StaticKeyword] as const,
-						['let', TSKindId.LetKeyword] as const
-					]) ??
-					coerceMixedEnumStorage(
-						_resolveKindEnum(_e, () =>
-							_resolveOne<
-								| T.PairPattern
-								| T.RestPattern
-								| T.ObjectAssignmentPattern
-								| T.ShorthandPropertyIdentifierPattern
-								| 'declare'
-								| 'namespace'
-								| 'type'
-								| 'public'
-								| 'private'
-								| 'protected'
-								| 'override'
-								| 'readonly'
-								| 'module'
-								| 'any'
-								| 'number'
-								| 'boolean'
-								| 'string'
-								| 'symbol'
-								| 'export'
-								| 'object'
-								| 'new'
-								| 'get'
-								| 'set'
-								| 'async'
-								| 'await'
-								| 'static'
-								| 'let'
-							>(_e, _K2, _K13)
-						),
-						[
-							['declare', TSKindId.DeclareKeyword] as const,
-							['namespace', TSKindId.NamespaceKeyword] as const,
-							['type', TSKindId.TypeKeyword] as const,
-							['public', TSKindId.PublicKeyword] as const,
-							['private', TSKindId.PrivateKeyword] as const,
-							['protected', TSKindId.ProtectedKeyword] as const,
-							['override', TSKindId.OverrideKeyword] as const,
-							['readonly', TSKindId.ReadonlyKeyword] as const,
-							['module', TSKindId.ModuleKeyword] as const,
-							['any', TSKindId.AnyKeyword] as const,
-							['number', TSKindId.NumberKeyword] as const,
-							['boolean', TSKindId.BooleanKeyword] as const,
-							['string', TSKindId.StringKeyword] as const,
-							['symbol', TSKindId.SymbolKeyword] as const,
-							['export', TSKindId.ExportKeyword] as const,
-							['object', TSKindId.ObjectKeyword] as const,
-							['new', TSKindId.NewKeyword] as const,
-							['get', TSKindId.GetKeyword] as const,
-							['set', TSKindId.SetKeyword] as const,
-							['async', TSKindId.AsyncKeyword] as const,
-							['await', TSKindId.AwaitKeyword] as const,
-							['static', TSKindId.StaticKeyword] as const,
-							['let', TSKindId.LetKeyword] as const
-						]
-					)
-			)
-			.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildObjectPattern>)
+		...(_resolveMany<T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern>(
+			_elems,
+			_K2,
+			_K13
+		) as unknown as Parameters<typeof F.buildObjectPattern>)
 	);
 }
 
@@ -3979,92 +3537,7 @@ export function coerceToAssignmentPattern(
 export function resolveObjectAssignmentPattern_left(
 	value: T.ObjectAssignmentPattern.LooseConfig['left']
 ): Admit<T.ObjectAssignmentPattern['_left']> {
-	return _keywordOr(
-		value,
-		[
-			['declare', TSKindId.DeclareKeyword] as const,
-			['namespace', TSKindId.NamespaceKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['public', TSKindId.PublicKeyword] as const,
-			['private', TSKindId.PrivateKeyword] as const,
-			['protected', TSKindId.ProtectedKeyword] as const,
-			['override', TSKindId.OverrideKeyword] as const,
-			['readonly', TSKindId.ReadonlyKeyword] as const,
-			['module', TSKindId.ModuleKeyword] as const,
-			['any', TSKindId.AnyKeyword] as const,
-			['number', TSKindId.NumberKeyword] as const,
-			['boolean', TSKindId.BooleanKeyword] as const,
-			['string', TSKindId.StringKeyword] as const,
-			['symbol', TSKindId.SymbolKeyword] as const,
-			['export', TSKindId.ExportKeyword] as const,
-			['object', TSKindId.ObjectKeyword] as const,
-			['new', TSKindId.NewKeyword] as const,
-			['get', TSKindId.GetKeyword] as const,
-			['set', TSKindId.SetKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['static', TSKindId.StaticKeyword] as const,
-			['let', TSKindId.LetKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () =>
-					_resolveOne<
-						| 'declare'
-						| 'namespace'
-						| 'type'
-						| 'public'
-						| 'private'
-						| 'protected'
-						| 'override'
-						| 'readonly'
-						| 'module'
-						| 'any'
-						| 'number'
-						| 'boolean'
-						| 'string'
-						| 'symbol'
-						| 'export'
-						| 'object'
-						| 'new'
-						| 'get'
-						| 'set'
-						| 'async'
-						| 'await'
-						| 'static'
-						| 'let'
-						| T.ShorthandPropertyIdentifierPattern
-						| T.ObjectPattern
-						| T.ArrayPattern
-					>(value, _K2, _K15)
-				),
-				[
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				]
-			)
-	);
+	return _resolveOne<T.ShorthandPropertyIdentifierPattern | T.ObjectPattern | T.ArrayPattern>(value, _K2, _K15);
 }
 
 export function resolveObjectAssignmentPattern_right(
@@ -4595,145 +4068,7 @@ export function resolveMemberExpression_separator(
 export function resolveMemberExpression_property(
 	value: T.MemberExpression.LooseConfig['property']
 ): Admit<T.MemberExpression['_property']> {
-	return _keywordOr(
-		value,
-		[
-			['break', TSKindId.BreakKeyword] as const,
-			['case', TSKindId.CaseKeyword] as const,
-			['catch', TSKindId.CatchKeyword] as const,
-			['class', TSKindId.ClassKeyword] as const,
-			['const', TSKindId.ConstKeyword] as const,
-			['continue', TSKindId.ContinueKeyword] as const,
-			['debugger', TSKindId.DebuggerKeyword] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['delete', TSKindId.DeleteKeyword] as const,
-			['do', TSKindId.DoKeyword] as const,
-			['else', TSKindId.ElseKeyword] as const,
-			['export', TSKindId.ExportKeyword] as const,
-			['extends', TSKindId.ExtendsKeyword] as const,
-			['false', TSKindId.FalseKeyword] as const,
-			['finally', TSKindId.FinallyKeyword] as const,
-			['for', TSKindId.ForKeyword] as const,
-			['function', TSKindId.FunctionKeyword] as const,
-			['if', TSKindId.IfKeyword] as const,
-			['import', TSKindId.ImportKeyword] as const,
-			['in', TSKindId.InKeyword] as const,
-			['instanceof', TSKindId.InstanceofKeyword] as const,
-			['new', TSKindId.NewKeyword] as const,
-			['null', TSKindId.NullKeyword] as const,
-			['return', TSKindId.ReturnKeyword] as const,
-			['super', TSKindId.SuperKeyword] as const,
-			['switch', TSKindId.SwitchKeyword] as const,
-			['this', TSKindId.ThisKeyword] as const,
-			['throw', TSKindId.ThrowKeyword] as const,
-			['true', TSKindId.TrueKeyword] as const,
-			['try', TSKindId.TryKeyword] as const,
-			['typeof', TSKindId.TypeofKeyword] as const,
-			['var', TSKindId.VarKeyword] as const,
-			['void', TSKindId.VoidKeyword] as const,
-			['while', TSKindId.WhileKeyword] as const,
-			['with', TSKindId.WithKeyword] as const,
-			['get', TSKindId.GetKeyword] as const,
-			['set', TSKindId.SetKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['static', TSKindId.StaticKeyword] as const,
-			['let', TSKindId.LetKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () =>
-					_resolveOne<
-						| T.PrivatePropertyIdentifier
-						| T.Identifier
-						| 'break'
-						| 'case'
-						| 'catch'
-						| 'class'
-						| 'const'
-						| 'continue'
-						| 'debugger'
-						| 'default'
-						| 'delete'
-						| 'do'
-						| 'else'
-						| 'export'
-						| 'extends'
-						| 'false'
-						| 'finally'
-						| 'for'
-						| 'function'
-						| 'if'
-						| 'import'
-						| 'in'
-						| 'instanceof'
-						| 'new'
-						| 'null'
-						| 'return'
-						| 'super'
-						| 'switch'
-						| 'this'
-						| 'throw'
-						| 'true'
-						| 'try'
-						| 'typeof'
-						| 'var'
-						| 'void'
-						| 'while'
-						| 'with'
-						| 'get'
-						| 'set'
-						| 'async'
-						| 'await'
-						| 'static'
-						| 'let'
-					>(value, _K3, _K25)
-				),
-				[
-					['break', TSKindId.BreakKeyword] as const,
-					['case', TSKindId.CaseKeyword] as const,
-					['catch', TSKindId.CatchKeyword] as const,
-					['class', TSKindId.ClassKeyword] as const,
-					['const', TSKindId.ConstKeyword] as const,
-					['continue', TSKindId.ContinueKeyword] as const,
-					['debugger', TSKindId.DebuggerKeyword] as const,
-					['default', TSKindId.DefaultKeyword] as const,
-					['delete', TSKindId.DeleteKeyword] as const,
-					['do', TSKindId.DoKeyword] as const,
-					['else', TSKindId.ElseKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['extends', TSKindId.ExtendsKeyword] as const,
-					['false', TSKindId.FalseKeyword] as const,
-					['finally', TSKindId.FinallyKeyword] as const,
-					['for', TSKindId.ForKeyword] as const,
-					['function', TSKindId.FunctionKeyword] as const,
-					['if', TSKindId.IfKeyword] as const,
-					['import', TSKindId.ImportKeyword] as const,
-					['in', TSKindId.InKeyword] as const,
-					['instanceof', TSKindId.InstanceofKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['null', TSKindId.NullKeyword] as const,
-					['return', TSKindId.ReturnKeyword] as const,
-					['super', TSKindId.SuperKeyword] as const,
-					['switch', TSKindId.SwitchKeyword] as const,
-					['this', TSKindId.ThisKeyword] as const,
-					['throw', TSKindId.ThrowKeyword] as const,
-					['true', TSKindId.TrueKeyword] as const,
-					['try', TSKindId.TryKeyword] as const,
-					['typeof', TSKindId.TypeofKeyword] as const,
-					['var', TSKindId.VarKeyword] as const,
-					['void', TSKindId.VoidKeyword] as const,
-					['while', TSKindId.WhileKeyword] as const,
-					['with', TSKindId.WithKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				]
-			)
-	);
+	return _resolveOne<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(value, _K2, _K25);
 }
 
 export function coerceToMemberExpression(input: T.MemberExpression.Loose): ReturnType<typeof F.buildMemberExpression> {
@@ -5679,93 +5014,11 @@ export function resolveMethodDefinition_accessorKind(
 export function resolveMethodDefinition_name(
 	value: T.MethodDefinition.LooseConfig['name']
 ): Admit<T.MethodDefinition['_name']> {
-	return _keywordOr(
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		value,
-		[
-			['declare', TSKindId.DeclareKeyword] as const,
-			['namespace', TSKindId.NamespaceKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['public', TSKindId.PublicKeyword] as const,
-			['private', TSKindId.PrivateKeyword] as const,
-			['protected', TSKindId.ProtectedKeyword] as const,
-			['override', TSKindId.OverrideKeyword] as const,
-			['readonly', TSKindId.ReadonlyKeyword] as const,
-			['module', TSKindId.ModuleKeyword] as const,
-			['any', TSKindId.AnyKeyword] as const,
-			['number', TSKindId.NumberKeyword] as const,
-			['boolean', TSKindId.BooleanKeyword] as const,
-			['string', TSKindId.StringKeyword] as const,
-			['symbol', TSKindId.SymbolKeyword] as const,
-			['export', TSKindId.ExportKeyword] as const,
-			['object', TSKindId.ObjectKeyword] as const,
-			['new', TSKindId.NewKeyword] as const,
-			['get', TSKindId.GetKeyword] as const,
-			['set', TSKindId.SetKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['static', TSKindId.StaticKeyword] as const,
-			['let', TSKindId.LetKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () =>
-					_resolveOne<
-						| T.PropertyIdentifier
-						| 'declare'
-						| 'namespace'
-						| 'type'
-						| 'public'
-						| 'private'
-						| 'protected'
-						| 'override'
-						| 'readonly'
-						| 'module'
-						| 'any'
-						| 'number'
-						| 'boolean'
-						| 'string'
-						| 'symbol'
-						| 'export'
-						| 'object'
-						| 'new'
-						| 'get'
-						| 'set'
-						| 'async'
-						| 'await'
-						| 'static'
-						| 'let'
-						| T.PrivatePropertyIdentifier
-						| T.String
-						| T.Number
-						| T.ComputedPropertyName
-					>(value, _K36, _K37, 'string_double')
-				),
-				[
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				]
-			)
+		_K36,
+		_K37,
+		'string_double'
 	);
 }
 
@@ -5819,93 +5072,11 @@ export function coerceToMethodDefinition(input: T.MethodDefinition.Loose): Retur
 }
 
 export function resolvePair_key(value: T.Pair.LooseConfig['key']): Admit<T.Pair['_key']> {
-	return _keywordOr(
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		value,
-		[
-			['declare', TSKindId.DeclareKeyword] as const,
-			['namespace', TSKindId.NamespaceKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['public', TSKindId.PublicKeyword] as const,
-			['private', TSKindId.PrivateKeyword] as const,
-			['protected', TSKindId.ProtectedKeyword] as const,
-			['override', TSKindId.OverrideKeyword] as const,
-			['readonly', TSKindId.ReadonlyKeyword] as const,
-			['module', TSKindId.ModuleKeyword] as const,
-			['any', TSKindId.AnyKeyword] as const,
-			['number', TSKindId.NumberKeyword] as const,
-			['boolean', TSKindId.BooleanKeyword] as const,
-			['string', TSKindId.StringKeyword] as const,
-			['symbol', TSKindId.SymbolKeyword] as const,
-			['export', TSKindId.ExportKeyword] as const,
-			['object', TSKindId.ObjectKeyword] as const,
-			['new', TSKindId.NewKeyword] as const,
-			['get', TSKindId.GetKeyword] as const,
-			['set', TSKindId.SetKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['static', TSKindId.StaticKeyword] as const,
-			['let', TSKindId.LetKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () =>
-					_resolveOne<
-						| T.PropertyIdentifier
-						| 'declare'
-						| 'namespace'
-						| 'type'
-						| 'public'
-						| 'private'
-						| 'protected'
-						| 'override'
-						| 'readonly'
-						| 'module'
-						| 'any'
-						| 'number'
-						| 'boolean'
-						| 'string'
-						| 'symbol'
-						| 'export'
-						| 'object'
-						| 'new'
-						| 'get'
-						| 'set'
-						| 'async'
-						| 'await'
-						| 'static'
-						| 'let'
-						| T.PrivatePropertyIdentifier
-						| T.String
-						| T.Number
-						| T.ComputedPropertyName
-					>(value, _K36, _K37, 'string_double')
-				),
-				[
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				]
-			)
+		_K36,
+		_K37,
+		'string_double'
 	);
 }
 
@@ -5925,93 +5096,11 @@ export function coerceToPair(input: T.Pair.Loose): ReturnType<typeof F.buildPair
 }
 
 export function resolvePairPattern_key(value: T.PairPattern.LooseConfig['key']): Admit<T.PairPattern['_key']> {
-	return _keywordOr(
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		value,
-		[
-			['declare', TSKindId.DeclareKeyword] as const,
-			['namespace', TSKindId.NamespaceKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['public', TSKindId.PublicKeyword] as const,
-			['private', TSKindId.PrivateKeyword] as const,
-			['protected', TSKindId.ProtectedKeyword] as const,
-			['override', TSKindId.OverrideKeyword] as const,
-			['readonly', TSKindId.ReadonlyKeyword] as const,
-			['module', TSKindId.ModuleKeyword] as const,
-			['any', TSKindId.AnyKeyword] as const,
-			['number', TSKindId.NumberKeyword] as const,
-			['boolean', TSKindId.BooleanKeyword] as const,
-			['string', TSKindId.StringKeyword] as const,
-			['symbol', TSKindId.SymbolKeyword] as const,
-			['export', TSKindId.ExportKeyword] as const,
-			['object', TSKindId.ObjectKeyword] as const,
-			['new', TSKindId.NewKeyword] as const,
-			['get', TSKindId.GetKeyword] as const,
-			['set', TSKindId.SetKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['static', TSKindId.StaticKeyword] as const,
-			['let', TSKindId.LetKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () =>
-					_resolveOne<
-						| T.PropertyIdentifier
-						| 'declare'
-						| 'namespace'
-						| 'type'
-						| 'public'
-						| 'private'
-						| 'protected'
-						| 'override'
-						| 'readonly'
-						| 'module'
-						| 'any'
-						| 'number'
-						| 'boolean'
-						| 'string'
-						| 'symbol'
-						| 'export'
-						| 'object'
-						| 'new'
-						| 'get'
-						| 'set'
-						| 'async'
-						| 'await'
-						| 'static'
-						| 'let'
-						| T.PrivatePropertyIdentifier
-						| T.String
-						| T.Number
-						| T.ComputedPropertyName
-					>(value, _K36, _K37, 'string_double')
-				),
-				[
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				]
-			)
+		_K36,
+		_K37,
+		'string_double'
 	);
 }
 
@@ -6122,93 +5211,11 @@ export function resolvePublicFieldDefinition_accessor(
 export function resolvePublicFieldDefinition_name(
 	value: T.PublicFieldDefinition.LooseConfig['name']
 ): Admit<T.PublicFieldDefinition['_name']> {
-	return _keywordOr(
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		value,
-		[
-			['declare', TSKindId.DeclareKeyword] as const,
-			['namespace', TSKindId.NamespaceKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['public', TSKindId.PublicKeyword] as const,
-			['private', TSKindId.PrivateKeyword] as const,
-			['protected', TSKindId.ProtectedKeyword] as const,
-			['override', TSKindId.OverrideKeyword] as const,
-			['readonly', TSKindId.ReadonlyKeyword] as const,
-			['module', TSKindId.ModuleKeyword] as const,
-			['any', TSKindId.AnyKeyword] as const,
-			['number', TSKindId.NumberKeyword] as const,
-			['boolean', TSKindId.BooleanKeyword] as const,
-			['string', TSKindId.StringKeyword] as const,
-			['symbol', TSKindId.SymbolKeyword] as const,
-			['export', TSKindId.ExportKeyword] as const,
-			['object', TSKindId.ObjectKeyword] as const,
-			['new', TSKindId.NewKeyword] as const,
-			['get', TSKindId.GetKeyword] as const,
-			['set', TSKindId.SetKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['static', TSKindId.StaticKeyword] as const,
-			['let', TSKindId.LetKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () =>
-					_resolveOne<
-						| T.PropertyIdentifier
-						| 'declare'
-						| 'namespace'
-						| 'type'
-						| 'public'
-						| 'private'
-						| 'protected'
-						| 'override'
-						| 'readonly'
-						| 'module'
-						| 'any'
-						| 'number'
-						| 'boolean'
-						| 'string'
-						| 'symbol'
-						| 'export'
-						| 'object'
-						| 'new'
-						| 'get'
-						| 'set'
-						| 'async'
-						| 'await'
-						| 'static'
-						| 'let'
-						| T.PrivatePropertyIdentifier
-						| T.String
-						| T.Number
-						| T.ComputedPropertyName
-					>(value, _K36, _K37, 'string_double')
-				),
-				[
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				]
-			)
+		_K36,
+		_K37,
+		'string_double'
 	);
 }
 
@@ -6340,93 +5347,11 @@ export function resolveMethodSignature_accessorKind(
 export function resolveMethodSignature_name(
 	value: T.MethodSignature.LooseConfig['name']
 ): Admit<T.MethodSignature['_name']> {
-	return _keywordOr(
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		value,
-		[
-			['declare', TSKindId.DeclareKeyword] as const,
-			['namespace', TSKindId.NamespaceKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['public', TSKindId.PublicKeyword] as const,
-			['private', TSKindId.PrivateKeyword] as const,
-			['protected', TSKindId.ProtectedKeyword] as const,
-			['override', TSKindId.OverrideKeyword] as const,
-			['readonly', TSKindId.ReadonlyKeyword] as const,
-			['module', TSKindId.ModuleKeyword] as const,
-			['any', TSKindId.AnyKeyword] as const,
-			['number', TSKindId.NumberKeyword] as const,
-			['boolean', TSKindId.BooleanKeyword] as const,
-			['string', TSKindId.StringKeyword] as const,
-			['symbol', TSKindId.SymbolKeyword] as const,
-			['export', TSKindId.ExportKeyword] as const,
-			['object', TSKindId.ObjectKeyword] as const,
-			['new', TSKindId.NewKeyword] as const,
-			['get', TSKindId.GetKeyword] as const,
-			['set', TSKindId.SetKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['static', TSKindId.StaticKeyword] as const,
-			['let', TSKindId.LetKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () =>
-					_resolveOne<
-						| T.PropertyIdentifier
-						| 'declare'
-						| 'namespace'
-						| 'type'
-						| 'public'
-						| 'private'
-						| 'protected'
-						| 'override'
-						| 'readonly'
-						| 'module'
-						| 'any'
-						| 'number'
-						| 'boolean'
-						| 'string'
-						| 'symbol'
-						| 'export'
-						| 'object'
-						| 'new'
-						| 'get'
-						| 'set'
-						| 'async'
-						| 'await'
-						| 'static'
-						| 'let'
-						| T.PrivatePropertyIdentifier
-						| T.String
-						| T.Number
-						| T.ComputedPropertyName
-					>(value, _K36, _K37, 'string_double')
-				),
-				[
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				]
-			)
+		_K36,
+		_K37,
+		'string_double'
 	);
 }
 
@@ -6505,93 +5430,11 @@ export function resolveAbstractMethodSignature_accessorKind(
 export function resolveAbstractMethodSignature_name(
 	value: T.AbstractMethodSignature.LooseConfig['name']
 ): Admit<T.AbstractMethodSignature['_name']> {
-	return _keywordOr(
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		value,
-		[
-			['declare', TSKindId.DeclareKeyword] as const,
-			['namespace', TSKindId.NamespaceKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['public', TSKindId.PublicKeyword] as const,
-			['private', TSKindId.PrivateKeyword] as const,
-			['protected', TSKindId.ProtectedKeyword] as const,
-			['override', TSKindId.OverrideKeyword] as const,
-			['readonly', TSKindId.ReadonlyKeyword] as const,
-			['module', TSKindId.ModuleKeyword] as const,
-			['any', TSKindId.AnyKeyword] as const,
-			['number', TSKindId.NumberKeyword] as const,
-			['boolean', TSKindId.BooleanKeyword] as const,
-			['string', TSKindId.StringKeyword] as const,
-			['symbol', TSKindId.SymbolKeyword] as const,
-			['export', TSKindId.ExportKeyword] as const,
-			['object', TSKindId.ObjectKeyword] as const,
-			['new', TSKindId.NewKeyword] as const,
-			['get', TSKindId.GetKeyword] as const,
-			['set', TSKindId.SetKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['static', TSKindId.StaticKeyword] as const,
-			['let', TSKindId.LetKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () =>
-					_resolveOne<
-						| T.PropertyIdentifier
-						| 'declare'
-						| 'namespace'
-						| 'type'
-						| 'public'
-						| 'private'
-						| 'protected'
-						| 'override'
-						| 'readonly'
-						| 'module'
-						| 'any'
-						| 'number'
-						| 'boolean'
-						| 'string'
-						| 'symbol'
-						| 'export'
-						| 'object'
-						| 'new'
-						| 'get'
-						| 'set'
-						| 'async'
-						| 'await'
-						| 'static'
-						| 'let'
-						| T.PrivatePropertyIdentifier
-						| T.String
-						| T.Number
-						| T.ComputedPropertyName
-					>(value, _K36, _K37, 'string_double')
-				),
-				[
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				]
-			)
+		_K36,
+		_K37,
+		'string_double'
 	);
 }
 
@@ -7217,93 +6060,11 @@ export function coerceToEnumBody(...args: unknown[]): ReturnType<typeof F.buildE
 export function resolveEnumAssignment_name(
 	value: T.EnumAssignment.LooseConfig['name']
 ): Admit<T.EnumAssignment['_name']> {
-	return _keywordOr(
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		value,
-		[
-			['declare', TSKindId.DeclareKeyword] as const,
-			['namespace', TSKindId.NamespaceKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['public', TSKindId.PublicKeyword] as const,
-			['private', TSKindId.PrivateKeyword] as const,
-			['protected', TSKindId.ProtectedKeyword] as const,
-			['override', TSKindId.OverrideKeyword] as const,
-			['readonly', TSKindId.ReadonlyKeyword] as const,
-			['module', TSKindId.ModuleKeyword] as const,
-			['any', TSKindId.AnyKeyword] as const,
-			['number', TSKindId.NumberKeyword] as const,
-			['boolean', TSKindId.BooleanKeyword] as const,
-			['string', TSKindId.StringKeyword] as const,
-			['symbol', TSKindId.SymbolKeyword] as const,
-			['export', TSKindId.ExportKeyword] as const,
-			['object', TSKindId.ObjectKeyword] as const,
-			['new', TSKindId.NewKeyword] as const,
-			['get', TSKindId.GetKeyword] as const,
-			['set', TSKindId.SetKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['static', TSKindId.StaticKeyword] as const,
-			['let', TSKindId.LetKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () =>
-					_resolveOne<
-						| T.PropertyIdentifier
-						| 'declare'
-						| 'namespace'
-						| 'type'
-						| 'public'
-						| 'private'
-						| 'protected'
-						| 'override'
-						| 'readonly'
-						| 'module'
-						| 'any'
-						| 'number'
-						| 'boolean'
-						| 'string'
-						| 'symbol'
-						| 'export'
-						| 'object'
-						| 'new'
-						| 'get'
-						| 'set'
-						| 'async'
-						| 'await'
-						| 'static'
-						| 'let'
-						| T.PrivatePropertyIdentifier
-						| T.String
-						| T.Number
-						| T.ComputedPropertyName
-					>(value, _K36, _K37, 'string_double')
-				),
-				[
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				]
-			)
+		_K36,
+		_K37,
+		'string_double'
 	);
 }
 
@@ -7669,7 +6430,7 @@ export function resolveTypeQueryMemberExpressionInTypeAnnotation_object(
 export function resolveTypeQueryMemberExpressionInTypeAnnotation_property(
 	value: T.TypeQueryMemberExpressionInTypeAnnotation.LooseConfig['property']
 ): Admit<T.TypeQueryMemberExpressionInTypeAnnotation['_property']> {
-	return _resolveOne<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(value, _K2, _K47);
+	return _resolveOne<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(value, _K2, _K25);
 }
 
 export function coerceToTypeQueryMemberExpressionInTypeAnnotation(
@@ -7697,7 +6458,7 @@ export function resolveTypeQueryCallExpressionInTypeAnnotation_function(
 	return _keywordOr(value, [['import', TSKindId.Import] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, () =>
-				_resolveOne<'import' | T.TypeQueryMemberExpressionInTypeAnnotation>(value, _K45, _K48)
+				_resolveOne<'import' | T.TypeQueryMemberExpressionInTypeAnnotation>(value, _K45, _K47)
 			),
 			[['import', TSKindId.Import] as const]
 		)
@@ -7728,7 +6489,7 @@ export function coerceToTypeQueryCallExpressionInTypeAnnotation(
 export function resolveAsserts_value(value: T.Asserts.LooseConfig['value']): Admit<T.Asserts['_value']> {
 	return _keywordOr(value, [['this', TSKindId.This] as const], () =>
 		coerceMixedEnumStorage(
-			_resolveKindEnum(value, () => _resolveOne<T.TypePredicate | T.Identifier | 'this'>(value, _K49, _K50)),
+			_resolveKindEnum(value, () => _resolveOne<T.TypePredicate | T.Identifier | 'this'>(value, _K48, _K49)),
 			[['this', TSKindId.This] as const]
 		)
 	);
@@ -7750,8 +6511,8 @@ export function coerceToAsserts(input: T.Asserts.Loose): ReturnType<typeof F.bui
 							() =>
 								_resolveOne<T.TypePredicate | T.Identifier | 'this'>(
 									configFieldOr(input, 'value', () => input),
-									_K49,
-									_K50
+									_K48,
+									_K49
 								)
 						),
 						[['this', TSKindId.This] as const]
@@ -7787,7 +6548,7 @@ export function coerceToAssertsAnnotation(
 export function resolveTupleParameter_name(
 	value: T.TupleParameter.LooseConfig['name']
 ): Admit<T.TupleParameter['_name']> {
-	return _resolveOne<T.Identifier | T.RestPattern>(value, _K3, _K51);
+	return _resolveOne<T.Identifier | T.RestPattern>(value, _K3, _K50);
 }
 
 export function resolveTupleParameter_type(
@@ -7926,7 +6687,7 @@ export function coerceToConstructorType(input: T.ConstructorType.Loose): ReturnT
 
 export function resolveTemplateType_type(value: T.TemplateType.LooseConfig['type']): Admit<T.TemplateType['_type']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.PrimaryType | T.InferType>(value, _K39, _K52)),
+		_resolveKindEnum(value, () => _resolveOne<T.PrimaryType | T.InferType>(value, _K39, _K51)),
 		[]
 	);
 }
@@ -7944,7 +6705,7 @@ export function coerceToTemplateType(input: T.TemplateType.Loose): ReturnType<ty
 						_resolveOne<T.PrimaryType | T.InferType>(
 							configFieldOr(input, 'type', () => input),
 							_K39,
-							_K52
+							_K51
 						)
 				),
 				[]
@@ -7961,7 +6722,7 @@ export function coerceToTemplateLiteralType(
 		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildTemplateLiteralType(
-			...(_resolveMany<T.TemplateChars | T.TemplateType>(children, _K29, _K53) as unknown as Parameters<
+			...(_resolveMany<T.TemplateChars | T.TemplateType>(children, _K29, _K52) as unknown as Parameters<
 				typeof F.buildTemplateLiteralType
 			>)
 		);
@@ -7975,7 +6736,7 @@ export function coerceToTemplateLiteralType(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildTemplateLiteralType(
-		...(_resolveMany<T.TemplateChars | T.TemplateType>(_elems, _K29, _K53) as unknown as Parameters<
+		...(_resolveMany<T.TemplateChars | T.TemplateType>(_elems, _K29, _K52) as unknown as Parameters<
 			typeof F.buildTemplateLiteralType
 		>)
 	);
@@ -8052,7 +6813,7 @@ export function coerceToConditionalType(input: T.ConditionalType.Loose): ReturnT
 }
 
 export function resolveGenericType_name(value: T.GenericType.LooseConfig['name']): Admit<T.GenericType['_name']> {
-	return _resolveOne<T.TypeIdentifier | T.NestedTypeIdentifier>(value, _K2, _K54);
+	return _resolveOne<T.TypeIdentifier | T.NestedTypeIdentifier>(value, _K2, _K53);
 }
 
 export function resolveGenericType_typeArguments(
@@ -8101,7 +6862,7 @@ export function resolveTypePredicate_name(value: T.TypePredicate.LooseConfig['na
 						| 'unknown'
 						| 'never'
 						| 'object'
-					>(value, _K55, _K2)
+					>(value, _K54, _K2)
 				),
 				[
 					['this', TSKindId.This] as const,
@@ -8171,7 +6932,7 @@ export function resolveTypeQueryMemberExpression_object(
 					| T.TypeQuerySubscriptExpression
 					| T.TypeQueryMemberExpression
 					| T.TypeQueryCallExpression
-				>(value, _K49, _K56)
+				>(value, _K48, _K55)
 			),
 			[['this', TSKindId.This] as const]
 		)
@@ -8190,7 +6951,7 @@ export function resolveTypeQueryMemberExpression_content(
 export function resolveTypeQueryMemberExpression_property(
 	value: T.TypeQueryMemberExpression.LooseConfig['property']
 ): Admit<T.TypeQueryMemberExpression['_property']> {
-	return _resolveOne<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(value, _K2, _K47);
+	return _resolveOne<T.PrivatePropertyIdentifier | T.PropertyIdentifier>(value, _K2, _K25);
 }
 
 export function coerceToTypeQueryMemberExpression(
@@ -8229,7 +6990,7 @@ export function resolveTypeQuerySubscriptExpression_object(
 					| T.TypeQuerySubscriptExpression
 					| T.TypeQueryMemberExpression
 					| T.TypeQueryCallExpression
-				>(value, _K49, _K56)
+				>(value, _K48, _K55)
 			),
 			[['this', TSKindId.This] as const]
 		)
@@ -8274,7 +7035,7 @@ export function resolveTypeQuerySubscriptExpression_index(
 						| 'object'
 						| T.String
 						| T.Number
-					>(value, _K57, _K58, 'string_double')
+					>(value, _K56, _K57, 'string_double')
 				),
 				[
 					['any', TSKindId.AnyKeyword] as const,
@@ -8320,8 +7081,8 @@ export function resolveTypeQueryCallExpression_function(
 			_resolveKindEnum(value, () =>
 				_resolveOne<'import' | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(
 					value,
-					_K59,
-					_K60
+					_K58,
+					_K59
 				)
 			),
 			[['import', TSKindId.Import] as const]
@@ -8358,8 +7119,8 @@ export function resolveTypeQueryInstantiationExpression_function(
 			_resolveKindEnum(value, () =>
 				_resolveOne<'import' | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(
 					value,
-					_K59,
-					_K60
+					_K58,
+					_K59
 				)
 			),
 			[['import', TSKindId.Import] as const]
@@ -8405,7 +7166,7 @@ export function resolveTypeQuery_expression(
 					| T.TypeQueryInstantiationExpression
 					| T.Identifier
 					| 'this'
-				>(value, _K49, _K61)
+				>(value, _K48, _K60)
 			),
 			[['this', TSKindId.This] as const]
 		)
@@ -8435,8 +7196,8 @@ export function coerceToTypeQuery(input: T.TypeQuery.Loose): ReturnType<typeof F
 									| 'this'
 								>(
 									configFieldOr(input, 'expression', () => input),
-									_K49,
-									_K61
+									_K48,
+									_K60
 								)
 						),
 						[['this', TSKindId.This] as const]
@@ -8450,7 +7211,7 @@ export function resolveIndexTypeQuery_type(
 	value: T.IndexTypeQuery.LooseConfig['type']
 ): Admit<T.IndexTypeQuery['_type']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.PrimaryType>(value, _K39, _K62)),
+		_resolveKindEnum(value, () => _resolveOne<T.PrimaryType>(value, _K39, _K61)),
 		[]
 	);
 }
@@ -8467,7 +7228,7 @@ export function coerceToIndexTypeQuery(input: T.IndexTypeQuery.Loose): ReturnTyp
 						_resolveOne<T.PrimaryType>(
 							configFieldOr(input, 'type', () => input),
 							_K39,
-							_K62
+							_K61
 						)
 				),
 				[]
@@ -8478,7 +7239,7 @@ export function coerceToIndexTypeQuery(input: T.IndexTypeQuery.Loose): ReturnTyp
 
 export function resolveLookupType_type(value: T.LookupType.LooseConfig['type']): Admit<T.LookupType['_type']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.PrimaryType>(value, _K39, _K62)),
+		_resolveKindEnum(value, () => _resolveOne<T.PrimaryType>(value, _K39, _K61)),
 		[]
 	);
 }
@@ -8550,8 +7311,8 @@ export function resolveLiteralType_content(
 				_resolveKindEnum(value, () =>
 					_resolveOne<T.LiteralTypeNegativeNumber | T.Number | T.String | 'true' | 'false' | 'null' | 'undefined'>(
 						value,
+						_K62,
 						_K63,
-						_K64,
 						'string_double'
 					)
 				),
@@ -8588,8 +7349,8 @@ export function coerceToLiteralType(input: T.LiteralType.Loose): ReturnType<type
 									T.LiteralTypeNegativeNumber | T.Number | T.String | 'true' | 'false' | 'null' | 'undefined'
 								>(
 									configFieldOr(input, 'content', () => input),
+									_K62,
 									_K63,
-									_K64,
 									'string_double'
 								)
 						),
@@ -8611,7 +7372,7 @@ export function coerceToExistentialType(_input?: T.ExistentialType.Loose): typeo
 
 export function resolveFlowMaybeType_type(value: T.FlowMaybeType.LooseConfig['type']): Admit<T.FlowMaybeType['_type']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.PrimaryType>(value, _K39, _K62)),
+		_resolveKindEnum(value, () => _resolveOne<T.PrimaryType>(value, _K39, _K61)),
 		[]
 	);
 }
@@ -8628,7 +7389,7 @@ export function coerceToFlowMaybeType(input: T.FlowMaybeType.Loose): ReturnType<
 						_resolveOne<T.PrimaryType>(
 							configFieldOr(input, 'type', () => input),
 							_K39,
-							_K62
+							_K61
 						)
 				),
 				[]
@@ -8784,93 +7545,11 @@ export function resolvePropertySignature_readonly(
 export function resolvePropertySignature_name(
 	value: T.PropertySignature.LooseConfig['name']
 ): Admit<T.PropertySignature['_name']> {
-	return _keywordOr(
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		value,
-		[
-			['declare', TSKindId.DeclareKeyword] as const,
-			['namespace', TSKindId.NamespaceKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['public', TSKindId.PublicKeyword] as const,
-			['private', TSKindId.PrivateKeyword] as const,
-			['protected', TSKindId.ProtectedKeyword] as const,
-			['override', TSKindId.OverrideKeyword] as const,
-			['readonly', TSKindId.ReadonlyKeyword] as const,
-			['module', TSKindId.ModuleKeyword] as const,
-			['any', TSKindId.AnyKeyword] as const,
-			['number', TSKindId.NumberKeyword] as const,
-			['boolean', TSKindId.BooleanKeyword] as const,
-			['string', TSKindId.StringKeyword] as const,
-			['symbol', TSKindId.SymbolKeyword] as const,
-			['export', TSKindId.ExportKeyword] as const,
-			['object', TSKindId.ObjectKeyword] as const,
-			['new', TSKindId.NewKeyword] as const,
-			['get', TSKindId.GetKeyword] as const,
-			['set', TSKindId.SetKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['static', TSKindId.StaticKeyword] as const,
-			['let', TSKindId.LetKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () =>
-					_resolveOne<
-						| T.PropertyIdentifier
-						| 'declare'
-						| 'namespace'
-						| 'type'
-						| 'public'
-						| 'private'
-						| 'protected'
-						| 'override'
-						| 'readonly'
-						| 'module'
-						| 'any'
-						| 'number'
-						| 'boolean'
-						| 'string'
-						| 'symbol'
-						| 'export'
-						| 'object'
-						| 'new'
-						| 'get'
-						| 'set'
-						| 'async'
-						| 'await'
-						| 'static'
-						| 'let'
-						| T.PrivatePropertyIdentifier
-						| T.String
-						| T.Number
-						| T.ComputedPropertyName
-					>(value, _K36, _K37, 'string_double')
-				),
-				[
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				]
-			)
+		_K36,
+		_K37,
+		'string_double'
 	);
 }
 
@@ -9054,7 +7733,7 @@ export function coerceToConstructSignature(
 
 export function resolveArrayType_type(value: T.ArrayType.LooseConfig['type']): Admit<T.ArrayType['_type']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.PrimaryType>(value, _K39, _K62)),
+		_resolveKindEnum(value, () => _resolveOne<T.PrimaryType>(value, _K39, _K61)),
 		[]
 	);
 }
@@ -9071,7 +7750,7 @@ export function coerceToArrayType(input: T.ArrayType.Loose): ReturnType<typeof F
 						_resolveOne<T.PrimaryType>(
 							configFieldOr(input, 'type', () => input),
 							_K39,
-							_K62
+							_K61
 						)
 				),
 				[]
@@ -9196,7 +7875,7 @@ export function resolveFunctionType_returnType(
 	value: T.FunctionType.LooseConfig['returnType']
 ): Admit<T.FunctionType['_return_type']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type | T.Asserts | T.TypePredicate>(value, _K39, _K65)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type | T.Asserts | T.TypePredicate>(value, _K39, _K64)),
 		[]
 	);
 }
@@ -9301,93 +7980,11 @@ export function coerceToFormalParametersElements(
 export function resolveEnumBodyElementName_name(
 	value: T.EnumBodyElementName.LooseConfig['name']
 ): Admit<T.EnumBodyElementName['_name']> {
-	return _keywordOr(
+	return _resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 		value,
-		[
-			['declare', TSKindId.DeclareKeyword] as const,
-			['namespace', TSKindId.NamespaceKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['public', TSKindId.PublicKeyword] as const,
-			['private', TSKindId.PrivateKeyword] as const,
-			['protected', TSKindId.ProtectedKeyword] as const,
-			['override', TSKindId.OverrideKeyword] as const,
-			['readonly', TSKindId.ReadonlyKeyword] as const,
-			['module', TSKindId.ModuleKeyword] as const,
-			['any', TSKindId.AnyKeyword] as const,
-			['number', TSKindId.NumberKeyword] as const,
-			['boolean', TSKindId.BooleanKeyword] as const,
-			['string', TSKindId.StringKeyword] as const,
-			['symbol', TSKindId.SymbolKeyword] as const,
-			['export', TSKindId.ExportKeyword] as const,
-			['object', TSKindId.ObjectKeyword] as const,
-			['new', TSKindId.NewKeyword] as const,
-			['get', TSKindId.GetKeyword] as const,
-			['set', TSKindId.SetKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['static', TSKindId.StaticKeyword] as const,
-			['let', TSKindId.LetKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () =>
-					_resolveOne<
-						| T.PropertyIdentifier
-						| 'declare'
-						| 'namespace'
-						| 'type'
-						| 'public'
-						| 'private'
-						| 'protected'
-						| 'override'
-						| 'readonly'
-						| 'module'
-						| 'any'
-						| 'number'
-						| 'boolean'
-						| 'string'
-						| 'symbol'
-						| 'export'
-						| 'object'
-						| 'new'
-						| 'get'
-						| 'set'
-						| 'async'
-						| 'await'
-						| 'static'
-						| 'let'
-						| T.PrivatePropertyIdentifier
-						| T.String
-						| T.Number
-						| T.ComputedPropertyName
-					>(value, _K36, _K37, 'string_double')
-				),
-				[
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				]
-			)
+		_K36,
+		_K37,
+		'string_double'
 	);
 }
 
@@ -9400,100 +7997,11 @@ export function coerceToEnumBodyElementName(
 		_requireField(
 			'enum_body_element_name',
 			'name',
-			_keywordOr(
+			_resolveOne<T.PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName>(
 				configFieldOr(input, 'name', () => input),
-				[
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				],
-				() =>
-					coerceMixedEnumStorage(
-						_resolveKindEnum(
-							configFieldOr(input, 'name', () => input),
-							() =>
-								_resolveOne<
-									| T.PropertyIdentifier
-									| 'declare'
-									| 'namespace'
-									| 'type'
-									| 'public'
-									| 'private'
-									| 'protected'
-									| 'override'
-									| 'readonly'
-									| 'module'
-									| 'any'
-									| 'number'
-									| 'boolean'
-									| 'string'
-									| 'symbol'
-									| 'export'
-									| 'object'
-									| 'new'
-									| 'get'
-									| 'set'
-									| 'async'
-									| 'await'
-									| 'static'
-									| 'let'
-									| T.PrivatePropertyIdentifier
-									| T.String
-									| T.Number
-									| T.ComputedPropertyName
-								>(
-									configFieldOr(input, 'name', () => input),
-									_K36,
-									_K37,
-									'string_double'
-								)
-						),
-						[
-							['declare', TSKindId.DeclareKeyword] as const,
-							['namespace', TSKindId.NamespaceKeyword] as const,
-							['type', TSKindId.TypeKeyword] as const,
-							['public', TSKindId.PublicKeyword] as const,
-							['private', TSKindId.PrivateKeyword] as const,
-							['protected', TSKindId.ProtectedKeyword] as const,
-							['override', TSKindId.OverrideKeyword] as const,
-							['readonly', TSKindId.ReadonlyKeyword] as const,
-							['module', TSKindId.ModuleKeyword] as const,
-							['any', TSKindId.AnyKeyword] as const,
-							['number', TSKindId.NumberKeyword] as const,
-							['boolean', TSKindId.BooleanKeyword] as const,
-							['string', TSKindId.StringKeyword] as const,
-							['symbol', TSKindId.SymbolKeyword] as const,
-							['export', TSKindId.ExportKeyword] as const,
-							['object', TSKindId.ObjectKeyword] as const,
-							['new', TSKindId.NewKeyword] as const,
-							['get', TSKindId.GetKeyword] as const,
-							['set', TSKindId.SetKeyword] as const,
-							['async', TSKindId.AsyncKeyword] as const,
-							['await', TSKindId.AwaitKeyword] as const,
-							['static', TSKindId.StaticKeyword] as const,
-							['let', TSKindId.LetKeyword] as const
-						]
-					)
+				_K36,
+				_K37,
+				'string_double'
 			)
 		)
 	);
@@ -9648,7 +8156,7 @@ export function coerceToTupleTypeMembers(
 							| T.RestType
 							| T.Type
 							| T.TypeIdentifier.Types
-						>(els, _K39, _K66)
+						>(els, _K39, _K65)
 					),
 					[]
 				),
@@ -9692,7 +8200,7 @@ export function coerceToTupleTypeMembers(
 export function resolveImportClauseGroup_content(
 	value: T.ImportClauseGroup.LooseConfig['content']
 ): Admit<T.ImportClauseGroup['_content']> {
-	return _resolveOne<T.NamespaceImport | T.NamedImports>(value, _K2, _K67);
+	return _resolveOne<T.NamespaceImport | T.NamedImports>(value, _K2, _K66);
 }
 
 export function coerceToImportClauseGroup(
@@ -9707,7 +8215,7 @@ export function coerceToImportClauseGroup(
 			_resolveOne<T.NamespaceImport | T.NamedImports>(
 				configFieldOr(input, 'content', () => input),
 				_K2,
-				_K67
+				_K66
 			)
 		)
 	);
@@ -9840,7 +8348,7 @@ export function coerceToObjectTypeContent(
 					| T.ConstructSignature
 					| T.IndexSignature
 					| T.MethodSignature
-				>(els, _K2, _K68),
+				>(els, _K2, _K67),
 			[
 				'export_statement_default_from',
 				'export_statement_default_declaration',
@@ -9985,7 +8493,7 @@ export function resolveLiteralTypeNegativeNumber_operator(
 export function resolveLiteralTypeNegativeNumber_argument(
 	value: T.LiteralTypeNegativeNumber.LooseConfig['argument']
 ): Admit<T.LiteralTypeNegativeNumber['_argument']> {
-	return _resolveOne<T.Number>(value, _K36, _K69);
+	return _resolveOne<T.Number>(value, _K36, _K68);
 }
 
 export function coerceToLiteralTypeNegativeNumber(
@@ -10401,7 +8909,7 @@ export function resolveBinaryExpressionIn_left(
 	value: T.BinaryExpressionIn.LooseConfig['left']
 ): Admit<T.BinaryExpressionIn['_left']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.PrivatePropertyIdentifier>(value, _K6, _K70)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.PrivatePropertyIdentifier>(value, _K6, _K69)),
 		[]
 	);
 }
@@ -10501,7 +9009,7 @@ export function resolveClassBodyMemberDeclaration_member(
 	return _resolveOne<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition>(
 		value,
 		_K2,
-		_K71
+		_K70
 	);
 }
 
@@ -10518,7 +9026,7 @@ export function coerceToClassBodyMemberDeclaration(
 			_resolveOne<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition>(
 				configFieldOr(input, 'member', () => input),
 				_K2,
-				_K71
+				_K70
 			)
 		),
 		options
@@ -10561,7 +9069,7 @@ export function resolveIndexSignatureColon_type(
 	return _resolveOne<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(
 		value,
 		_K2,
-		_K72
+		_K71
 	);
 }
 
@@ -10610,7 +9118,7 @@ export function resolveIndexSignatureMappedTypeClause_type(
 	return _resolveOne<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(
 		value,
 		_K2,
-		_K72
+		_K71
 	);
 }
 
@@ -10871,7 +9379,7 @@ export function resolveCallExpressionTemplateCall_function(
 	value: T.CallExpressionTemplateCall.LooseConfig['function']
 ): Admit<T.CallExpressionTemplateCall['_function']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression | T.NewExpression>(value, _K6, _K73)),
+		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression | T.NewExpression>(value, _K6, _K72)),
 		[]
 	);
 }
@@ -10938,8 +9446,8 @@ export function coerceToStringDouble(...input: T.StringDouble.LooseArgs): Return
 		return F.buildStringDouble(
 			...(_resolveMany<T.UnescapedDoubleStringFragment | T.EscapeSequence>(
 				children,
-				_K74,
-				_K75
+				_K73,
+				_K74
 			) as unknown as Parameters<typeof F.buildStringDouble>)
 		);
 	}
@@ -10952,7 +9460,7 @@ export function coerceToStringDouble(...input: T.StringDouble.LooseArgs): Return
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildStringDouble(
-		...(_resolveMany<T.UnescapedDoubleStringFragment | T.EscapeSequence>(_elems, _K74, _K75) as unknown as Parameters<
+		...(_resolveMany<T.UnescapedDoubleStringFragment | T.EscapeSequence>(_elems, _K73, _K74) as unknown as Parameters<
 			typeof F.buildStringDouble
 		>)
 	);
@@ -10966,8 +9474,8 @@ export function coerceToStringSingle(...input: T.StringSingle.LooseArgs): Return
 		return F.buildStringSingle(
 			...(_resolveMany<T.UnescapedSingleStringFragment | T.EscapeSequence>(
 				children,
-				_K76,
-				_K75
+				_K75,
+				_K74
 			) as unknown as Parameters<typeof F.buildStringSingle>)
 		);
 	}
@@ -10980,7 +9488,7 @@ export function coerceToStringSingle(...input: T.StringSingle.LooseArgs): Return
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildStringSingle(
-		...(_resolveMany<T.UnescapedSingleStringFragment | T.EscapeSequence>(_elems, _K76, _K75) as unknown as Parameters<
+		...(_resolveMany<T.UnescapedSingleStringFragment | T.EscapeSequence>(_elems, _K75, _K74) as unknown as Parameters<
 			typeof F.buildStringSingle
 		>)
 	);
@@ -11148,7 +9656,7 @@ export function resolveExportStatementDefaultFrom_content(
 ): Admit<T.ExportStatementDefaultFrom['_content']> {
 	return _resolveOne<
 		T.ExportStatementDefaultFromStarFrom | T.ExportStatementDefaultFromNsFrom | T.ExportStatementDefaultFromClauseFrom
-	>(value, _K2, _K77);
+	>(value, _K2, _K76);
 }
 
 export function coerceToExportStatementDefaultFrom(
@@ -11179,7 +9687,7 @@ export function resolveExportStatementDefaultDeclaration_decorators(
 export function resolveExportStatementDefaultDeclaration_content(
 	value: T.ExportStatementDefaultDeclaration.LooseConfig['content']
 ): Admit<T.ExportStatementDefaultDeclaration['_content']> {
-	return _resolveOne<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>(value, _K2, _K78);
+	return _resolveOne<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKw>(value, _K2, _K77);
 }
 
 export function coerceToExportStatementDefaultDeclaration(
@@ -11280,7 +9788,7 @@ export function coerceToExportStatementDefaultFromClauseFrom(
 export function resolveExportStatementDefaultDeclarationDefaultKw_content(
 	value: T.ExportStatementDefaultDeclarationDefaultKw.LooseConfig['content']
 ): Admit<T.ExportStatementDefaultDeclarationDefaultKw['_content']> {
-	return _resolveOne<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>(value, _K2, _K79);
+	return _resolveOne<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>(value, _K2, _K78);
 }
 
 export function coerceToExportStatementDefaultDeclarationDefaultKw(
@@ -11295,7 +9803,7 @@ export function coerceToExportStatementDefaultDeclarationDefaultKw(
 			_resolveOne<T.Declaration | T.ExportStatementDefaultDeclarationDefaultKwValue>(
 				configFieldOr(input, 'content', () => input),
 				_K2,
-				_K79
+				_K78
 			)
 		)
 	);
@@ -11406,7 +9914,7 @@ export function coerceToMetaPropertyImportMeta(
 }
 
 export function resolveForHeaderLhs_left(value: T.ForHeaderLhs.LooseConfig['left']): Admit<T.ForHeaderLhs['_left']> {
-	return _resolveOne<T.LhsExpression | T.ParenthesizedExpression>(value, _K2, _K80);
+	return _resolveOne<T.LhsExpression | T.ParenthesizedExpression>(value, _K2, _K79);
 }
 
 export function resolveForHeaderLhs_operator(
@@ -11646,90 +10154,7 @@ export function coerceToDedent(_input?: T.Dedent.Loose): typeof F.buildDedent {
 export function resolveStatementIdentifier_content(
 	value: T.StatementIdentifier.LooseConfig['content']
 ): Admit<T.StatementIdentifier['_content']> {
-	return _keywordOr(
-		value,
-		[
-			['declare', TSKindId.DeclareKeyword] as const,
-			['namespace', TSKindId.NamespaceKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['public', TSKindId.PublicKeyword] as const,
-			['private', TSKindId.PrivateKeyword] as const,
-			['protected', TSKindId.ProtectedKeyword] as const,
-			['override', TSKindId.OverrideKeyword] as const,
-			['readonly', TSKindId.ReadonlyKeyword] as const,
-			['module', TSKindId.ModuleKeyword] as const,
-			['any', TSKindId.AnyKeyword] as const,
-			['number', TSKindId.NumberKeyword] as const,
-			['boolean', TSKindId.BooleanKeyword] as const,
-			['string', TSKindId.StringKeyword] as const,
-			['symbol', TSKindId.SymbolKeyword] as const,
-			['export', TSKindId.ExportKeyword] as const,
-			['object', TSKindId.ObjectKeyword] as const,
-			['new', TSKindId.NewKeyword] as const,
-			['get', TSKindId.GetKeyword] as const,
-			['set', TSKindId.SetKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['static', TSKindId.StaticKeyword] as const,
-			['let', TSKindId.LetKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () =>
-					_resolveOneLeaf<
-						| T.Identifier
-						| 'declare'
-						| 'namespace'
-						| 'type'
-						| 'public'
-						| 'private'
-						| 'protected'
-						| 'override'
-						| 'readonly'
-						| 'module'
-						| 'any'
-						| 'number'
-						| 'boolean'
-						| 'string'
-						| 'symbol'
-						| 'export'
-						| 'object'
-						| 'new'
-						| 'get'
-						| 'set'
-						| 'async'
-						| 'await'
-						| 'static'
-						| 'let'
-					>(value, 'identifier')
-				),
-				[
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				]
-			)
-	);
+	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
 export function coerceToStatementIdentifier(
@@ -11741,94 +10166,9 @@ export function coerceToStatementIdentifier(
 		_requireField(
 			'statement_identifier',
 			'content',
-			_keywordOr(
+			_resolveOneLeaf<T.Identifier>(
 				configFieldOr(input, 'content', () => input),
-				[
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				],
-				() =>
-					coerceMixedEnumStorage(
-						_resolveKindEnum(
-							configFieldOr(input, 'content', () => input),
-							() =>
-								_resolveOneLeaf<
-									| T.Identifier
-									| 'declare'
-									| 'namespace'
-									| 'type'
-									| 'public'
-									| 'private'
-									| 'protected'
-									| 'override'
-									| 'readonly'
-									| 'module'
-									| 'any'
-									| 'number'
-									| 'boolean'
-									| 'string'
-									| 'symbol'
-									| 'export'
-									| 'object'
-									| 'new'
-									| 'get'
-									| 'set'
-									| 'async'
-									| 'await'
-									| 'static'
-									| 'let'
-								>(
-									configFieldOr(input, 'content', () => input),
-									'identifier'
-								)
-						),
-						[
-							['declare', TSKindId.DeclareKeyword] as const,
-							['namespace', TSKindId.NamespaceKeyword] as const,
-							['type', TSKindId.TypeKeyword] as const,
-							['public', TSKindId.PublicKeyword] as const,
-							['private', TSKindId.PrivateKeyword] as const,
-							['protected', TSKindId.ProtectedKeyword] as const,
-							['override', TSKindId.OverrideKeyword] as const,
-							['readonly', TSKindId.ReadonlyKeyword] as const,
-							['module', TSKindId.ModuleKeyword] as const,
-							['any', TSKindId.AnyKeyword] as const,
-							['number', TSKindId.NumberKeyword] as const,
-							['boolean', TSKindId.BooleanKeyword] as const,
-							['string', TSKindId.StringKeyword] as const,
-							['symbol', TSKindId.SymbolKeyword] as const,
-							['export', TSKindId.ExportKeyword] as const,
-							['object', TSKindId.ObjectKeyword] as const,
-							['new', TSKindId.NewKeyword] as const,
-							['get', TSKindId.GetKeyword] as const,
-							['set', TSKindId.SetKeyword] as const,
-							['async', TSKindId.AsyncKeyword] as const,
-							['await', TSKindId.AwaitKeyword] as const,
-							['static', TSKindId.StaticKeyword] as const,
-							['let', TSKindId.LetKeyword] as const
-						]
-					)
+				'identifier'
 			)
 		)
 	);
@@ -11837,90 +10177,7 @@ export function coerceToStatementIdentifier(
 export function resolveShorthandPropertyIdentifier_content(
 	value: T.ShorthandPropertyIdentifier.LooseConfig['content']
 ): Admit<T.ShorthandPropertyIdentifier['_content']> {
-	return _keywordOr(
-		value,
-		[
-			['declare', TSKindId.DeclareKeyword] as const,
-			['namespace', TSKindId.NamespaceKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['public', TSKindId.PublicKeyword] as const,
-			['private', TSKindId.PrivateKeyword] as const,
-			['protected', TSKindId.ProtectedKeyword] as const,
-			['override', TSKindId.OverrideKeyword] as const,
-			['readonly', TSKindId.ReadonlyKeyword] as const,
-			['module', TSKindId.ModuleKeyword] as const,
-			['any', TSKindId.AnyKeyword] as const,
-			['number', TSKindId.NumberKeyword] as const,
-			['boolean', TSKindId.BooleanKeyword] as const,
-			['string', TSKindId.StringKeyword] as const,
-			['symbol', TSKindId.SymbolKeyword] as const,
-			['export', TSKindId.ExportKeyword] as const,
-			['object', TSKindId.ObjectKeyword] as const,
-			['new', TSKindId.NewKeyword] as const,
-			['get', TSKindId.GetKeyword] as const,
-			['set', TSKindId.SetKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['static', TSKindId.StaticKeyword] as const,
-			['let', TSKindId.LetKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () =>
-					_resolveOneLeaf<
-						| T.Identifier
-						| 'declare'
-						| 'namespace'
-						| 'type'
-						| 'public'
-						| 'private'
-						| 'protected'
-						| 'override'
-						| 'readonly'
-						| 'module'
-						| 'any'
-						| 'number'
-						| 'boolean'
-						| 'string'
-						| 'symbol'
-						| 'export'
-						| 'object'
-						| 'new'
-						| 'get'
-						| 'set'
-						| 'async'
-						| 'await'
-						| 'static'
-						| 'let'
-					>(value, 'identifier')
-				),
-				[
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				]
-			)
-	);
+	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
 export function coerceToShorthandPropertyIdentifier(
@@ -11932,94 +10189,9 @@ export function coerceToShorthandPropertyIdentifier(
 		_requireField(
 			'shorthand_property_identifier',
 			'content',
-			_keywordOr(
+			_resolveOneLeaf<T.Identifier>(
 				configFieldOr(input, 'content', () => input),
-				[
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				],
-				() =>
-					coerceMixedEnumStorage(
-						_resolveKindEnum(
-							configFieldOr(input, 'content', () => input),
-							() =>
-								_resolveOneLeaf<
-									| T.Identifier
-									| 'declare'
-									| 'namespace'
-									| 'type'
-									| 'public'
-									| 'private'
-									| 'protected'
-									| 'override'
-									| 'readonly'
-									| 'module'
-									| 'any'
-									| 'number'
-									| 'boolean'
-									| 'string'
-									| 'symbol'
-									| 'export'
-									| 'object'
-									| 'new'
-									| 'get'
-									| 'set'
-									| 'async'
-									| 'await'
-									| 'static'
-									| 'let'
-								>(
-									configFieldOr(input, 'content', () => input),
-									'identifier'
-								)
-						),
-						[
-							['declare', TSKindId.DeclareKeyword] as const,
-							['namespace', TSKindId.NamespaceKeyword] as const,
-							['type', TSKindId.TypeKeyword] as const,
-							['public', TSKindId.PublicKeyword] as const,
-							['private', TSKindId.PrivateKeyword] as const,
-							['protected', TSKindId.ProtectedKeyword] as const,
-							['override', TSKindId.OverrideKeyword] as const,
-							['readonly', TSKindId.ReadonlyKeyword] as const,
-							['module', TSKindId.ModuleKeyword] as const,
-							['any', TSKindId.AnyKeyword] as const,
-							['number', TSKindId.NumberKeyword] as const,
-							['boolean', TSKindId.BooleanKeyword] as const,
-							['string', TSKindId.StringKeyword] as const,
-							['symbol', TSKindId.SymbolKeyword] as const,
-							['export', TSKindId.ExportKeyword] as const,
-							['object', TSKindId.ObjectKeyword] as const,
-							['new', TSKindId.NewKeyword] as const,
-							['get', TSKindId.GetKeyword] as const,
-							['set', TSKindId.SetKeyword] as const,
-							['async', TSKindId.AsyncKeyword] as const,
-							['await', TSKindId.AwaitKeyword] as const,
-							['static', TSKindId.StaticKeyword] as const,
-							['let', TSKindId.LetKeyword] as const
-						]
-					)
+				'identifier'
 			)
 		)
 	);
@@ -12028,90 +10200,7 @@ export function coerceToShorthandPropertyIdentifier(
 export function resolveShorthandPropertyIdentifierPattern_content(
 	value: T.ShorthandPropertyIdentifierPattern.LooseConfig['content']
 ): Admit<T.ShorthandPropertyIdentifierPattern['_content']> {
-	return _keywordOr(
-		value,
-		[
-			['declare', TSKindId.DeclareKeyword] as const,
-			['namespace', TSKindId.NamespaceKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['public', TSKindId.PublicKeyword] as const,
-			['private', TSKindId.PrivateKeyword] as const,
-			['protected', TSKindId.ProtectedKeyword] as const,
-			['override', TSKindId.OverrideKeyword] as const,
-			['readonly', TSKindId.ReadonlyKeyword] as const,
-			['module', TSKindId.ModuleKeyword] as const,
-			['any', TSKindId.AnyKeyword] as const,
-			['number', TSKindId.NumberKeyword] as const,
-			['boolean', TSKindId.BooleanKeyword] as const,
-			['string', TSKindId.StringKeyword] as const,
-			['symbol', TSKindId.SymbolKeyword] as const,
-			['export', TSKindId.ExportKeyword] as const,
-			['object', TSKindId.ObjectKeyword] as const,
-			['new', TSKindId.NewKeyword] as const,
-			['get', TSKindId.GetKeyword] as const,
-			['set', TSKindId.SetKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['static', TSKindId.StaticKeyword] as const,
-			['let', TSKindId.LetKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () =>
-					_resolveOneLeaf<
-						| T.Identifier
-						| 'declare'
-						| 'namespace'
-						| 'type'
-						| 'public'
-						| 'private'
-						| 'protected'
-						| 'override'
-						| 'readonly'
-						| 'module'
-						| 'any'
-						| 'number'
-						| 'boolean'
-						| 'string'
-						| 'symbol'
-						| 'export'
-						| 'object'
-						| 'new'
-						| 'get'
-						| 'set'
-						| 'async'
-						| 'await'
-						| 'static'
-						| 'let'
-					>(value, 'identifier')
-				),
-				[
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				]
-			)
-	);
+	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
 export function coerceToShorthandPropertyIdentifierPattern(
@@ -12123,94 +10212,9 @@ export function coerceToShorthandPropertyIdentifierPattern(
 		_requireField(
 			'shorthand_property_identifier_pattern',
 			'content',
-			_keywordOr(
+			_resolveOneLeaf<T.Identifier>(
 				configFieldOr(input, 'content', () => input),
-				[
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const
-				],
-				() =>
-					coerceMixedEnumStorage(
-						_resolveKindEnum(
-							configFieldOr(input, 'content', () => input),
-							() =>
-								_resolveOneLeaf<
-									| T.Identifier
-									| 'declare'
-									| 'namespace'
-									| 'type'
-									| 'public'
-									| 'private'
-									| 'protected'
-									| 'override'
-									| 'readonly'
-									| 'module'
-									| 'any'
-									| 'number'
-									| 'boolean'
-									| 'string'
-									| 'symbol'
-									| 'export'
-									| 'object'
-									| 'new'
-									| 'get'
-									| 'set'
-									| 'async'
-									| 'await'
-									| 'static'
-									| 'let'
-								>(
-									configFieldOr(input, 'content', () => input),
-									'identifier'
-								)
-						),
-						[
-							['declare', TSKindId.DeclareKeyword] as const,
-							['namespace', TSKindId.NamespaceKeyword] as const,
-							['type', TSKindId.TypeKeyword] as const,
-							['public', TSKindId.PublicKeyword] as const,
-							['private', TSKindId.PrivateKeyword] as const,
-							['protected', TSKindId.ProtectedKeyword] as const,
-							['override', TSKindId.OverrideKeyword] as const,
-							['readonly', TSKindId.ReadonlyKeyword] as const,
-							['module', TSKindId.ModuleKeyword] as const,
-							['any', TSKindId.AnyKeyword] as const,
-							['number', TSKindId.NumberKeyword] as const,
-							['boolean', TSKindId.BooleanKeyword] as const,
-							['string', TSKindId.StringKeyword] as const,
-							['symbol', TSKindId.SymbolKeyword] as const,
-							['export', TSKindId.ExportKeyword] as const,
-							['object', TSKindId.ObjectKeyword] as const,
-							['new', TSKindId.NewKeyword] as const,
-							['get', TSKindId.GetKeyword] as const,
-							['set', TSKindId.SetKeyword] as const,
-							['async', TSKindId.AsyncKeyword] as const,
-							['await', TSKindId.AwaitKeyword] as const,
-							['static', TSKindId.StaticKeyword] as const,
-							['let', TSKindId.LetKeyword] as const
-						]
-					)
+				'identifier'
 			)
 		)
 	);
@@ -12219,189 +10223,7 @@ export function coerceToShorthandPropertyIdentifierPattern(
 export function resolvePropertyIdentifier_content(
 	value: T.PropertyIdentifier.LooseConfig['content']
 ): Admit<T.PropertyIdentifier['_content']> {
-	return _keywordOr(
-		value,
-		[
-			['break', TSKindId.BreakKeyword] as const,
-			['case', TSKindId.CaseKeyword] as const,
-			['catch', TSKindId.CatchKeyword] as const,
-			['class', TSKindId.ClassKeyword] as const,
-			['const', TSKindId.ConstKeyword] as const,
-			['continue', TSKindId.ContinueKeyword] as const,
-			['debugger', TSKindId.DebuggerKeyword] as const,
-			['default', TSKindId.DefaultKeyword] as const,
-			['delete', TSKindId.DeleteKeyword] as const,
-			['do', TSKindId.DoKeyword] as const,
-			['else', TSKindId.ElseKeyword] as const,
-			['export', TSKindId.ExportKeyword] as const,
-			['extends', TSKindId.ExtendsKeyword] as const,
-			['false', TSKindId.FalseKeyword] as const,
-			['finally', TSKindId.FinallyKeyword] as const,
-			['for', TSKindId.ForKeyword] as const,
-			['function', TSKindId.FunctionKeyword] as const,
-			['if', TSKindId.IfKeyword] as const,
-			['import', TSKindId.ImportKeyword] as const,
-			['in', TSKindId.InKeyword] as const,
-			['instanceof', TSKindId.InstanceofKeyword] as const,
-			['new', TSKindId.NewKeyword] as const,
-			['null', TSKindId.NullKeyword] as const,
-			['return', TSKindId.ReturnKeyword] as const,
-			['super', TSKindId.SuperKeyword] as const,
-			['switch', TSKindId.SwitchKeyword] as const,
-			['this', TSKindId.ThisKeyword] as const,
-			['throw', TSKindId.ThrowKeyword] as const,
-			['true', TSKindId.TrueKeyword] as const,
-			['try', TSKindId.TryKeyword] as const,
-			['typeof', TSKindId.TypeofKeyword] as const,
-			['var', TSKindId.VarKeyword] as const,
-			['void', TSKindId.VoidKeyword] as const,
-			['while', TSKindId.WhileKeyword] as const,
-			['with', TSKindId.WithKeyword] as const,
-			['get', TSKindId.GetKeyword] as const,
-			['set', TSKindId.SetKeyword] as const,
-			['async', TSKindId.AsyncKeyword] as const,
-			['await', TSKindId.AwaitKeyword] as const,
-			['static', TSKindId.StaticKeyword] as const,
-			['let', TSKindId.LetKeyword] as const,
-			['declare', TSKindId.DeclareKeyword] as const,
-			['namespace', TSKindId.NamespaceKeyword] as const,
-			['type', TSKindId.TypeKeyword] as const,
-			['public', TSKindId.PublicKeyword] as const,
-			['private', TSKindId.PrivateKeyword] as const,
-			['protected', TSKindId.ProtectedKeyword] as const,
-			['override', TSKindId.OverrideKeyword] as const,
-			['readonly', TSKindId.ReadonlyKeyword] as const,
-			['module', TSKindId.ModuleKeyword] as const,
-			['any', TSKindId.AnyKeyword] as const,
-			['number', TSKindId.NumberKeyword] as const,
-			['boolean', TSKindId.BooleanKeyword] as const,
-			['string', TSKindId.StringKeyword] as const,
-			['symbol', TSKindId.SymbolKeyword] as const,
-			['object', TSKindId.ObjectKeyword] as const
-		],
-		() =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(value, () =>
-					_resolveOneLeaf<
-						| T.Identifier
-						| 'break'
-						| 'case'
-						| 'catch'
-						| 'class'
-						| 'const'
-						| 'continue'
-						| 'debugger'
-						| 'default'
-						| 'delete'
-						| 'do'
-						| 'else'
-						| 'export'
-						| 'extends'
-						| 'false'
-						| 'finally'
-						| 'for'
-						| 'function'
-						| 'if'
-						| 'import'
-						| 'in'
-						| 'instanceof'
-						| 'new'
-						| 'null'
-						| 'return'
-						| 'super'
-						| 'switch'
-						| 'this'
-						| 'throw'
-						| 'true'
-						| 'try'
-						| 'typeof'
-						| 'var'
-						| 'void'
-						| 'while'
-						| 'with'
-						| 'get'
-						| 'set'
-						| 'async'
-						| 'await'
-						| 'static'
-						| 'let'
-						| 'declare'
-						| 'namespace'
-						| 'type'
-						| 'public'
-						| 'private'
-						| 'protected'
-						| 'override'
-						| 'readonly'
-						| 'module'
-						| 'any'
-						| 'number'
-						| 'boolean'
-						| 'string'
-						| 'symbol'
-						| 'object'
-					>(value, 'identifier')
-				),
-				[
-					['break', TSKindId.BreakKeyword] as const,
-					['case', TSKindId.CaseKeyword] as const,
-					['catch', TSKindId.CatchKeyword] as const,
-					['class', TSKindId.ClassKeyword] as const,
-					['const', TSKindId.ConstKeyword] as const,
-					['continue', TSKindId.ContinueKeyword] as const,
-					['debugger', TSKindId.DebuggerKeyword] as const,
-					['default', TSKindId.DefaultKeyword] as const,
-					['delete', TSKindId.DeleteKeyword] as const,
-					['do', TSKindId.DoKeyword] as const,
-					['else', TSKindId.ElseKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['extends', TSKindId.ExtendsKeyword] as const,
-					['false', TSKindId.FalseKeyword] as const,
-					['finally', TSKindId.FinallyKeyword] as const,
-					['for', TSKindId.ForKeyword] as const,
-					['function', TSKindId.FunctionKeyword] as const,
-					['if', TSKindId.IfKeyword] as const,
-					['import', TSKindId.ImportKeyword] as const,
-					['in', TSKindId.InKeyword] as const,
-					['instanceof', TSKindId.InstanceofKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['null', TSKindId.NullKeyword] as const,
-					['return', TSKindId.ReturnKeyword] as const,
-					['super', TSKindId.SuperKeyword] as const,
-					['switch', TSKindId.SwitchKeyword] as const,
-					['this', TSKindId.ThisKeyword] as const,
-					['throw', TSKindId.ThrowKeyword] as const,
-					['true', TSKindId.TrueKeyword] as const,
-					['try', TSKindId.TryKeyword] as const,
-					['typeof', TSKindId.TypeofKeyword] as const,
-					['var', TSKindId.VarKeyword] as const,
-					['void', TSKindId.VoidKeyword] as const,
-					['while', TSKindId.WhileKeyword] as const,
-					['with', TSKindId.WithKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const,
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const
-				]
-			)
-	);
+	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
 export function coerceToPropertyIdentifier(
@@ -12413,193 +10235,9 @@ export function coerceToPropertyIdentifier(
 		_requireField(
 			'property_identifier',
 			'content',
-			_keywordOr(
+			_resolveOneLeaf<T.Identifier>(
 				configFieldOr(input, 'content', () => input),
-				[
-					['break', TSKindId.BreakKeyword] as const,
-					['case', TSKindId.CaseKeyword] as const,
-					['catch', TSKindId.CatchKeyword] as const,
-					['class', TSKindId.ClassKeyword] as const,
-					['const', TSKindId.ConstKeyword] as const,
-					['continue', TSKindId.ContinueKeyword] as const,
-					['debugger', TSKindId.DebuggerKeyword] as const,
-					['default', TSKindId.DefaultKeyword] as const,
-					['delete', TSKindId.DeleteKeyword] as const,
-					['do', TSKindId.DoKeyword] as const,
-					['else', TSKindId.ElseKeyword] as const,
-					['export', TSKindId.ExportKeyword] as const,
-					['extends', TSKindId.ExtendsKeyword] as const,
-					['false', TSKindId.FalseKeyword] as const,
-					['finally', TSKindId.FinallyKeyword] as const,
-					['for', TSKindId.ForKeyword] as const,
-					['function', TSKindId.FunctionKeyword] as const,
-					['if', TSKindId.IfKeyword] as const,
-					['import', TSKindId.ImportKeyword] as const,
-					['in', TSKindId.InKeyword] as const,
-					['instanceof', TSKindId.InstanceofKeyword] as const,
-					['new', TSKindId.NewKeyword] as const,
-					['null', TSKindId.NullKeyword] as const,
-					['return', TSKindId.ReturnKeyword] as const,
-					['super', TSKindId.SuperKeyword] as const,
-					['switch', TSKindId.SwitchKeyword] as const,
-					['this', TSKindId.ThisKeyword] as const,
-					['throw', TSKindId.ThrowKeyword] as const,
-					['true', TSKindId.TrueKeyword] as const,
-					['try', TSKindId.TryKeyword] as const,
-					['typeof', TSKindId.TypeofKeyword] as const,
-					['var', TSKindId.VarKeyword] as const,
-					['void', TSKindId.VoidKeyword] as const,
-					['while', TSKindId.WhileKeyword] as const,
-					['with', TSKindId.WithKeyword] as const,
-					['get', TSKindId.GetKeyword] as const,
-					['set', TSKindId.SetKeyword] as const,
-					['async', TSKindId.AsyncKeyword] as const,
-					['await', TSKindId.AwaitKeyword] as const,
-					['static', TSKindId.StaticKeyword] as const,
-					['let', TSKindId.LetKeyword] as const,
-					['declare', TSKindId.DeclareKeyword] as const,
-					['namespace', TSKindId.NamespaceKeyword] as const,
-					['type', TSKindId.TypeKeyword] as const,
-					['public', TSKindId.PublicKeyword] as const,
-					['private', TSKindId.PrivateKeyword] as const,
-					['protected', TSKindId.ProtectedKeyword] as const,
-					['override', TSKindId.OverrideKeyword] as const,
-					['readonly', TSKindId.ReadonlyKeyword] as const,
-					['module', TSKindId.ModuleKeyword] as const,
-					['any', TSKindId.AnyKeyword] as const,
-					['number', TSKindId.NumberKeyword] as const,
-					['boolean', TSKindId.BooleanKeyword] as const,
-					['string', TSKindId.StringKeyword] as const,
-					['symbol', TSKindId.SymbolKeyword] as const,
-					['object', TSKindId.ObjectKeyword] as const
-				],
-				() =>
-					coerceMixedEnumStorage(
-						_resolveKindEnum(
-							configFieldOr(input, 'content', () => input),
-							() =>
-								_resolveOneLeaf<
-									| T.Identifier
-									| 'break'
-									| 'case'
-									| 'catch'
-									| 'class'
-									| 'const'
-									| 'continue'
-									| 'debugger'
-									| 'default'
-									| 'delete'
-									| 'do'
-									| 'else'
-									| 'export'
-									| 'extends'
-									| 'false'
-									| 'finally'
-									| 'for'
-									| 'function'
-									| 'if'
-									| 'import'
-									| 'in'
-									| 'instanceof'
-									| 'new'
-									| 'null'
-									| 'return'
-									| 'super'
-									| 'switch'
-									| 'this'
-									| 'throw'
-									| 'true'
-									| 'try'
-									| 'typeof'
-									| 'var'
-									| 'void'
-									| 'while'
-									| 'with'
-									| 'get'
-									| 'set'
-									| 'async'
-									| 'await'
-									| 'static'
-									| 'let'
-									| 'declare'
-									| 'namespace'
-									| 'type'
-									| 'public'
-									| 'private'
-									| 'protected'
-									| 'override'
-									| 'readonly'
-									| 'module'
-									| 'any'
-									| 'number'
-									| 'boolean'
-									| 'string'
-									| 'symbol'
-									| 'object'
-								>(
-									configFieldOr(input, 'content', () => input),
-									'identifier'
-								)
-						),
-						[
-							['break', TSKindId.BreakKeyword] as const,
-							['case', TSKindId.CaseKeyword] as const,
-							['catch', TSKindId.CatchKeyword] as const,
-							['class', TSKindId.ClassKeyword] as const,
-							['const', TSKindId.ConstKeyword] as const,
-							['continue', TSKindId.ContinueKeyword] as const,
-							['debugger', TSKindId.DebuggerKeyword] as const,
-							['default', TSKindId.DefaultKeyword] as const,
-							['delete', TSKindId.DeleteKeyword] as const,
-							['do', TSKindId.DoKeyword] as const,
-							['else', TSKindId.ElseKeyword] as const,
-							['export', TSKindId.ExportKeyword] as const,
-							['extends', TSKindId.ExtendsKeyword] as const,
-							['false', TSKindId.FalseKeyword] as const,
-							['finally', TSKindId.FinallyKeyword] as const,
-							['for', TSKindId.ForKeyword] as const,
-							['function', TSKindId.FunctionKeyword] as const,
-							['if', TSKindId.IfKeyword] as const,
-							['import', TSKindId.ImportKeyword] as const,
-							['in', TSKindId.InKeyword] as const,
-							['instanceof', TSKindId.InstanceofKeyword] as const,
-							['new', TSKindId.NewKeyword] as const,
-							['null', TSKindId.NullKeyword] as const,
-							['return', TSKindId.ReturnKeyword] as const,
-							['super', TSKindId.SuperKeyword] as const,
-							['switch', TSKindId.SwitchKeyword] as const,
-							['this', TSKindId.ThisKeyword] as const,
-							['throw', TSKindId.ThrowKeyword] as const,
-							['true', TSKindId.TrueKeyword] as const,
-							['try', TSKindId.TryKeyword] as const,
-							['typeof', TSKindId.TypeofKeyword] as const,
-							['var', TSKindId.VarKeyword] as const,
-							['void', TSKindId.VoidKeyword] as const,
-							['while', TSKindId.WhileKeyword] as const,
-							['with', TSKindId.WithKeyword] as const,
-							['get', TSKindId.GetKeyword] as const,
-							['set', TSKindId.SetKeyword] as const,
-							['async', TSKindId.AsyncKeyword] as const,
-							['await', TSKindId.AwaitKeyword] as const,
-							['static', TSKindId.StaticKeyword] as const,
-							['let', TSKindId.LetKeyword] as const,
-							['declare', TSKindId.DeclareKeyword] as const,
-							['namespace', TSKindId.NamespaceKeyword] as const,
-							['type', TSKindId.TypeKeyword] as const,
-							['public', TSKindId.PublicKeyword] as const,
-							['private', TSKindId.PrivateKeyword] as const,
-							['protected', TSKindId.ProtectedKeyword] as const,
-							['override', TSKindId.OverrideKeyword] as const,
-							['readonly', TSKindId.ReadonlyKeyword] as const,
-							['module', TSKindId.ModuleKeyword] as const,
-							['any', TSKindId.AnyKeyword] as const,
-							['number', TSKindId.NumberKeyword] as const,
-							['boolean', TSKindId.BooleanKeyword] as const,
-							['string', TSKindId.StringKeyword] as const,
-							['symbol', TSKindId.SymbolKeyword] as const,
-							['object', TSKindId.ObjectKeyword] as const
-						]
-					)
+				'identifier'
 			)
 		)
 	);

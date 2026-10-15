@@ -163,7 +163,7 @@ pub enum AnyTransport {
     RegexPattern(RegexPatternTransport),
     #[kind(kind::REGEX_FLAGS)]
     RegexFlags(RegexFlagsTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::PRIVATE_PROPERTY_IDENTIFIER)]
     PrivatePropertyIdentifier(PrivatePropertyIdentifierTransport),
@@ -616,46 +616,6 @@ pub enum AnyTransport {
     ReturnKeyword,
     #[kind(kind::THROW_KEYWORD)]
     ThrowKeyword,
-    #[kind(kind::DECLARE_KEYWORD)]
-    DeclareKeyword,
-    #[kind(kind::NAMESPACE_KEYWORD)]
-    NamespaceKeyword,
-    #[kind(kind::PUBLIC_KEYWORD)]
-    PublicKeyword,
-    #[kind(kind::PRIVATE_KEYWORD)]
-    PrivateKeyword,
-    #[kind(kind::PROTECTED_KEYWORD)]
-    ProtectedKeyword,
-    #[kind(kind::OVERRIDE_KEYWORD)]
-    OverrideKeyword,
-    #[kind(kind::READONLY_KEYWORD)]
-    ReadonlyKeyword,
-    #[kind(kind::MODULE_KEYWORD)]
-    ModuleKeyword,
-    #[kind(kind::ANY_KEYWORD)]
-    AnyKeyword,
-    #[kind(kind::NUMBER_KEYWORD)]
-    NumberKeyword,
-    #[kind(kind::BOOLEAN_KEYWORD)]
-    BooleanKeyword,
-    #[kind(kind::STRING_KEYWORD)]
-    StringKeyword,
-    #[kind(kind::SYMBOL_KEYWORD)]
-    SymbolKeyword,
-    #[kind(kind::EXPORT_KEYWORD)]
-    ExportKeyword,
-    #[kind(kind::OBJECT_KEYWORD)]
-    ObjectKeyword,
-    #[kind(kind::NEW_KEYWORD)]
-    NewKeyword,
-    #[kind(kind::GET_KEYWORD)]
-    GetKeyword,
-    #[kind(kind::SET_KEYWORD)]
-    SetKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::STATIC_KEYWORD)]
-    StaticKeyword,
     #[kind(kind::COLON)]
     Colon,
     #[kind(kind::CASE_KEYWORD)]
@@ -676,32 +636,16 @@ pub enum AnyTransport {
     Dot,
     #[kind(kind::CLASS_KEYWORD)]
     ClassKeyword,
+    #[kind(kind::ASYNC_KEYWORD)]
+    AsyncKeyword,
     #[kind(kind::FUNCTION_KEYWORD)]
     FunctionKeyword,
     #[kind(kind::EQ_GT)]
     EqGt,
     #[kind(kind::QMARK_DOT)]
     QmarkDot,
-    #[kind(kind::DELETE_KEYWORD)]
-    DeleteKeyword,
-    #[kind(kind::EXTENDS_KEYWORD)]
-    ExtendsKeyword,
-    #[kind(kind::FALSE_KEYWORD)]
-    FalseKeyword,
-    #[kind(kind::IN_KEYWORD)]
-    InKeyword,
-    #[kind(kind::INSTANCEOF_KEYWORD)]
-    InstanceofKeyword,
-    #[kind(kind::NULL_KEYWORD)]
-    NullKeyword,
-    #[kind(kind::SUPER_KEYWORD)]
-    SuperKeyword,
-    #[kind(kind::THIS_KEYWORD)]
-    ThisKeyword,
-    #[kind(kind::TRUE_KEYWORD)]
-    TrueKeyword,
-    #[kind(kind::VOID_KEYWORD)]
-    VoidKeyword,
+    #[kind(kind::NEW_KEYWORD)]
+    NewKeyword,
     #[kind(kind::PLUS_EQ)]
     PlusEq,
     #[kind(kind::DASH_EQ)]
@@ -780,16 +724,42 @@ pub enum AnyTransport {
     Gt,
     #[kind(kind::QMARK_QMARK)]
     QmarkQmark,
+    #[kind(kind::INSTANCEOF_KEYWORD)]
+    InstanceofKeyword,
     #[kind(kind::BANG)]
     Bang,
     #[kind(kind::TILDE)]
     Tilde,
+    #[kind(kind::VOID_KEYWORD)]
+    VoidKeyword,
+    #[kind(kind::DELETE_KEYWORD)]
+    DeleteKeyword,
     #[kind(kind::BQUOTE, folded(kind::BQUOTE2))]
     Bquote,
     #[kind(kind::DOLLAR_LBRACE)]
     DollarLbrace,
+    #[kind(kind::THIS_KEYWORD)]
+    ThisKeyword,
+    #[kind(kind::SUPER_KEYWORD)]
+    SuperKeyword,
+    #[kind(kind::TRUE_KEYWORD)]
+    TrueKeyword,
+    #[kind(kind::FALSE_KEYWORD)]
+    FalseKeyword,
+    #[kind(kind::NULL_KEYWORD)]
+    NullKeyword,
     #[kind(kind::AT)]
     At,
+    #[kind(kind::STATIC_KEYWORD)]
+    StaticKeyword,
+    #[kind(kind::READONLY_KEYWORD)]
+    ReadonlyKeyword,
+    #[kind(kind::GET_KEYWORD)]
+    GetKeyword,
+    #[kind(kind::SET_KEYWORD)]
+    SetKeyword,
+    #[kind(kind::DECLARE_KEYWORD)]
+    DeclareKeyword,
     #[kind(kind::ABSTRACT_KEYWORD)]
     AbstractKeyword,
     #[kind(kind::ACCESSOR_KEYWORD)]
@@ -798,12 +768,26 @@ pub enum AnyTransport {
     SatisfiesKeyword,
     #[kind(kind::REQUIRE_KEYWORD)]
     RequireKeyword,
+    #[kind(kind::EXTENDS_KEYWORD)]
+    ExtendsKeyword,
     #[kind(kind::IMPLEMENTS_KEYWORD)]
     ImplementsKeyword,
+    #[kind(kind::MODULE_KEYWORD)]
+    ModuleKeyword,
+    #[kind(kind::NAMESPACE_KEYWORD)]
+    NamespaceKeyword,
     #[kind(kind::INTERFACE_KEYWORD)]
     InterfaceKeyword,
     #[kind(kind::ENUM_KEYWORD)]
     EnumKeyword,
+    #[kind(kind::PUBLIC_KEYWORD)]
+    PublicKeyword,
+    #[kind(kind::PRIVATE_KEYWORD)]
+    PrivateKeyword,
+    #[kind(kind::PROTECTED_KEYWORD)]
+    ProtectedKeyword,
+    #[kind(kind::OVERRIDE_KEYWORD)]
+    OverrideKeyword,
     #[kind(kind::DASH_QMARK_COLON)]
     DashQmarkColon,
     #[kind(kind::PLUS_QMARK_COLON)]
@@ -818,12 +802,26 @@ pub enum AnyTransport {
     IsKeyword,
     #[kind(kind::KEYOF_KEYWORD)]
     KeyofKeyword,
+    #[kind(kind::IN_KEYWORD)]
+    InKeyword,
+    #[kind(kind::ANY_KEYWORD)]
+    AnyKeyword,
+    #[kind(kind::NUMBER_KEYWORD)]
+    NumberKeyword,
+    #[kind(kind::BOOLEAN_KEYWORD)]
+    BooleanKeyword,
+    #[kind(kind::STRING_KEYWORD)]
+    StringKeyword,
+    #[kind(kind::SYMBOL_KEYWORD)]
+    SymbolKeyword,
     #[kind(kind::UNIQUE)]
     Unique,
     #[kind(kind::UNKNOWN_KEYWORD)]
     UnknownKeyword,
     #[kind(kind::NEVER_KEYWORD)]
     NeverKeyword,
+    #[kind(kind::OBJECT_KEYWORD)]
+    ObjectKeyword,
     #[kind(kind::LBRACE_PIPE)]
     LbracePipe,
     #[kind(kind::PIPE_RBRACE)]
@@ -832,6 +830,8 @@ pub enum AnyTransport {
     Comma,
     #[kind(kind::GLOBAL_KEYWORD)]
     GlobalKeyword,
+    #[kind(kind::EXPORT_KEYWORD)]
+    ExportKeyword,
     #[kind(kind::FROM_KEYWORD)]
     FromKeyword,
     #[kind(kind::DQUOTE, folded(kind::DQUOTE2))]
@@ -1147,26 +1147,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::DebuggerKeyword => Ok(()),
             AnyTransport::ReturnKeyword => Ok(()),
             AnyTransport::ThrowKeyword => Ok(()),
-            AnyTransport::DeclareKeyword => Ok(()),
-            AnyTransport::NamespaceKeyword => Ok(()),
-            AnyTransport::PublicKeyword => Ok(()),
-            AnyTransport::PrivateKeyword => Ok(()),
-            AnyTransport::ProtectedKeyword => Ok(()),
-            AnyTransport::OverrideKeyword => Ok(()),
-            AnyTransport::ReadonlyKeyword => Ok(()),
-            AnyTransport::ModuleKeyword => Ok(()),
-            AnyTransport::AnyKeyword => Ok(()),
-            AnyTransport::NumberKeyword => Ok(()),
-            AnyTransport::BooleanKeyword => Ok(()),
-            AnyTransport::StringKeyword => Ok(()),
-            AnyTransport::SymbolKeyword => Ok(()),
-            AnyTransport::ExportKeyword => Ok(()),
-            AnyTransport::ObjectKeyword => Ok(()),
-            AnyTransport::NewKeyword => Ok(()),
-            AnyTransport::GetKeyword => Ok(()),
-            AnyTransport::SetKeyword => Ok(()),
-            AnyTransport::AsyncKeyword => Ok(()),
-            AnyTransport::StaticKeyword => Ok(()),
             AnyTransport::Colon => Ok(()),
             AnyTransport::CaseKeyword => Ok(()),
             AnyTransport::CatchKeyword => Ok(()),
@@ -1177,19 +1157,11 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Rbrack => Ok(()),
             AnyTransport::Dot => Ok(()),
             AnyTransport::ClassKeyword => Ok(()),
+            AnyTransport::AsyncKeyword => Ok(()),
             AnyTransport::FunctionKeyword => Ok(()),
             AnyTransport::EqGt => Ok(()),
             AnyTransport::QmarkDot => Ok(()),
-            AnyTransport::DeleteKeyword => Ok(()),
-            AnyTransport::ExtendsKeyword => Ok(()),
-            AnyTransport::FalseKeyword => Ok(()),
-            AnyTransport::InKeyword => Ok(()),
-            AnyTransport::InstanceofKeyword => Ok(()),
-            AnyTransport::NullKeyword => Ok(()),
-            AnyTransport::SuperKeyword => Ok(()),
-            AnyTransport::ThisKeyword => Ok(()),
-            AnyTransport::TrueKeyword => Ok(()),
-            AnyTransport::VoidKeyword => Ok(()),
+            AnyTransport::NewKeyword => Ok(()),
             AnyTransport::PlusEq => Ok(()),
             AnyTransport::DashEq => Ok(()),
             AnyTransport::StarEq => Ok(()),
@@ -1229,18 +1201,38 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::GtEq => Ok(()),
             AnyTransport::Gt => Ok(()),
             AnyTransport::QmarkQmark => Ok(()),
+            AnyTransport::InstanceofKeyword => Ok(()),
             AnyTransport::Bang => Ok(()),
             AnyTransport::Tilde => Ok(()),
+            AnyTransport::VoidKeyword => Ok(()),
+            AnyTransport::DeleteKeyword => Ok(()),
             AnyTransport::Bquote => Ok(()),
             AnyTransport::DollarLbrace => Ok(()),
+            AnyTransport::ThisKeyword => Ok(()),
+            AnyTransport::SuperKeyword => Ok(()),
+            AnyTransport::TrueKeyword => Ok(()),
+            AnyTransport::FalseKeyword => Ok(()),
+            AnyTransport::NullKeyword => Ok(()),
             AnyTransport::At => Ok(()),
+            AnyTransport::StaticKeyword => Ok(()),
+            AnyTransport::ReadonlyKeyword => Ok(()),
+            AnyTransport::GetKeyword => Ok(()),
+            AnyTransport::SetKeyword => Ok(()),
+            AnyTransport::DeclareKeyword => Ok(()),
             AnyTransport::AbstractKeyword => Ok(()),
             AnyTransport::AccessorKeyword => Ok(()),
             AnyTransport::SatisfiesKeyword => Ok(()),
             AnyTransport::RequireKeyword => Ok(()),
+            AnyTransport::ExtendsKeyword => Ok(()),
             AnyTransport::ImplementsKeyword => Ok(()),
+            AnyTransport::ModuleKeyword => Ok(()),
+            AnyTransport::NamespaceKeyword => Ok(()),
             AnyTransport::InterfaceKeyword => Ok(()),
             AnyTransport::EnumKeyword => Ok(()),
+            AnyTransport::PublicKeyword => Ok(()),
+            AnyTransport::PrivateKeyword => Ok(()),
+            AnyTransport::ProtectedKeyword => Ok(()),
+            AnyTransport::OverrideKeyword => Ok(()),
             AnyTransport::DashQmarkColon => Ok(()),
             AnyTransport::PlusQmarkColon => Ok(()),
             AnyTransport::QmarkColon => Ok(()),
@@ -1248,13 +1240,21 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::InferKeyword => Ok(()),
             AnyTransport::IsKeyword => Ok(()),
             AnyTransport::KeyofKeyword => Ok(()),
+            AnyTransport::InKeyword => Ok(()),
+            AnyTransport::AnyKeyword => Ok(()),
+            AnyTransport::NumberKeyword => Ok(()),
+            AnyTransport::BooleanKeyword => Ok(()),
+            AnyTransport::StringKeyword => Ok(()),
+            AnyTransport::SymbolKeyword => Ok(()),
             AnyTransport::Unique => Ok(()),
             AnyTransport::UnknownKeyword => Ok(()),
             AnyTransport::NeverKeyword => Ok(()),
+            AnyTransport::ObjectKeyword => Ok(()),
             AnyTransport::LbracePipe => Ok(()),
             AnyTransport::PipeRbrace => Ok(()),
             AnyTransport::Comma => Ok(()),
             AnyTransport::GlobalKeyword => Ok(()),
+            AnyTransport::ExportKeyword => Ok(()),
             AnyTransport::FromKeyword => Ok(()),
             AnyTransport::Dquote => Ok(()),
             AnyTransport::Squote => Ok(()),
@@ -1560,26 +1560,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::DebuggerKeyword => None,
             AnyTransport::ReturnKeyword => None,
             AnyTransport::ThrowKeyword => None,
-            AnyTransport::DeclareKeyword => None,
-            AnyTransport::NamespaceKeyword => None,
-            AnyTransport::PublicKeyword => None,
-            AnyTransport::PrivateKeyword => None,
-            AnyTransport::ProtectedKeyword => None,
-            AnyTransport::OverrideKeyword => None,
-            AnyTransport::ReadonlyKeyword => None,
-            AnyTransport::ModuleKeyword => None,
-            AnyTransport::AnyKeyword => None,
-            AnyTransport::NumberKeyword => None,
-            AnyTransport::BooleanKeyword => None,
-            AnyTransport::StringKeyword => None,
-            AnyTransport::SymbolKeyword => None,
-            AnyTransport::ExportKeyword => None,
-            AnyTransport::ObjectKeyword => None,
-            AnyTransport::NewKeyword => None,
-            AnyTransport::GetKeyword => None,
-            AnyTransport::SetKeyword => None,
-            AnyTransport::AsyncKeyword => None,
-            AnyTransport::StaticKeyword => None,
             AnyTransport::Colon => None,
             AnyTransport::CaseKeyword => None,
             AnyTransport::CatchKeyword => None,
@@ -1590,19 +1570,11 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Rbrack => None,
             AnyTransport::Dot => None,
             AnyTransport::ClassKeyword => None,
+            AnyTransport::AsyncKeyword => None,
             AnyTransport::FunctionKeyword => None,
             AnyTransport::EqGt => None,
             AnyTransport::QmarkDot => None,
-            AnyTransport::DeleteKeyword => None,
-            AnyTransport::ExtendsKeyword => None,
-            AnyTransport::FalseKeyword => None,
-            AnyTransport::InKeyword => None,
-            AnyTransport::InstanceofKeyword => None,
-            AnyTransport::NullKeyword => None,
-            AnyTransport::SuperKeyword => None,
-            AnyTransport::ThisKeyword => None,
-            AnyTransport::TrueKeyword => None,
-            AnyTransport::VoidKeyword => None,
+            AnyTransport::NewKeyword => None,
             AnyTransport::PlusEq => None,
             AnyTransport::DashEq => None,
             AnyTransport::StarEq => None,
@@ -1642,18 +1614,38 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::GtEq => None,
             AnyTransport::Gt => None,
             AnyTransport::QmarkQmark => None,
+            AnyTransport::InstanceofKeyword => None,
             AnyTransport::Bang => None,
             AnyTransport::Tilde => None,
+            AnyTransport::VoidKeyword => None,
+            AnyTransport::DeleteKeyword => None,
             AnyTransport::Bquote => None,
             AnyTransport::DollarLbrace => None,
+            AnyTransport::ThisKeyword => None,
+            AnyTransport::SuperKeyword => None,
+            AnyTransport::TrueKeyword => None,
+            AnyTransport::FalseKeyword => None,
+            AnyTransport::NullKeyword => None,
             AnyTransport::At => None,
+            AnyTransport::StaticKeyword => None,
+            AnyTransport::ReadonlyKeyword => None,
+            AnyTransport::GetKeyword => None,
+            AnyTransport::SetKeyword => None,
+            AnyTransport::DeclareKeyword => None,
             AnyTransport::AbstractKeyword => None,
             AnyTransport::AccessorKeyword => None,
             AnyTransport::SatisfiesKeyword => None,
             AnyTransport::RequireKeyword => None,
+            AnyTransport::ExtendsKeyword => None,
             AnyTransport::ImplementsKeyword => None,
+            AnyTransport::ModuleKeyword => None,
+            AnyTransport::NamespaceKeyword => None,
             AnyTransport::InterfaceKeyword => None,
             AnyTransport::EnumKeyword => None,
+            AnyTransport::PublicKeyword => None,
+            AnyTransport::PrivateKeyword => None,
+            AnyTransport::ProtectedKeyword => None,
+            AnyTransport::OverrideKeyword => None,
             AnyTransport::DashQmarkColon => None,
             AnyTransport::PlusQmarkColon => None,
             AnyTransport::QmarkColon => None,
@@ -1661,13 +1653,21 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::InferKeyword => None,
             AnyTransport::IsKeyword => None,
             AnyTransport::KeyofKeyword => None,
+            AnyTransport::InKeyword => None,
+            AnyTransport::AnyKeyword => None,
+            AnyTransport::NumberKeyword => None,
+            AnyTransport::BooleanKeyword => None,
+            AnyTransport::StringKeyword => None,
+            AnyTransport::SymbolKeyword => None,
             AnyTransport::Unique => None,
             AnyTransport::UnknownKeyword => None,
             AnyTransport::NeverKeyword => None,
+            AnyTransport::ObjectKeyword => None,
             AnyTransport::LbracePipe => None,
             AnyTransport::PipeRbrace => None,
             AnyTransport::Comma => None,
             AnyTransport::GlobalKeyword => None,
+            AnyTransport::ExportKeyword => None,
             AnyTransport::FromKeyword => None,
             AnyTransport::Dquote => None,
             AnyTransport::Squote => None,
@@ -1973,26 +1973,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::DebuggerKeyword => None,
             AnyTransport::ReturnKeyword => None,
             AnyTransport::ThrowKeyword => None,
-            AnyTransport::DeclareKeyword => None,
-            AnyTransport::NamespaceKeyword => None,
-            AnyTransport::PublicKeyword => None,
-            AnyTransport::PrivateKeyword => None,
-            AnyTransport::ProtectedKeyword => None,
-            AnyTransport::OverrideKeyword => None,
-            AnyTransport::ReadonlyKeyword => None,
-            AnyTransport::ModuleKeyword => None,
-            AnyTransport::AnyKeyword => None,
-            AnyTransport::NumberKeyword => None,
-            AnyTransport::BooleanKeyword => None,
-            AnyTransport::StringKeyword => None,
-            AnyTransport::SymbolKeyword => None,
-            AnyTransport::ExportKeyword => None,
-            AnyTransport::ObjectKeyword => None,
-            AnyTransport::NewKeyword => None,
-            AnyTransport::GetKeyword => None,
-            AnyTransport::SetKeyword => None,
-            AnyTransport::AsyncKeyword => None,
-            AnyTransport::StaticKeyword => None,
             AnyTransport::Colon => None,
             AnyTransport::CaseKeyword => None,
             AnyTransport::CatchKeyword => None,
@@ -2003,19 +1983,11 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Rbrack => None,
             AnyTransport::Dot => None,
             AnyTransport::ClassKeyword => None,
+            AnyTransport::AsyncKeyword => None,
             AnyTransport::FunctionKeyword => None,
             AnyTransport::EqGt => None,
             AnyTransport::QmarkDot => None,
-            AnyTransport::DeleteKeyword => None,
-            AnyTransport::ExtendsKeyword => None,
-            AnyTransport::FalseKeyword => None,
-            AnyTransport::InKeyword => None,
-            AnyTransport::InstanceofKeyword => None,
-            AnyTransport::NullKeyword => None,
-            AnyTransport::SuperKeyword => None,
-            AnyTransport::ThisKeyword => None,
-            AnyTransport::TrueKeyword => None,
-            AnyTransport::VoidKeyword => None,
+            AnyTransport::NewKeyword => None,
             AnyTransport::PlusEq => None,
             AnyTransport::DashEq => None,
             AnyTransport::StarEq => None,
@@ -2055,18 +2027,38 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::GtEq => None,
             AnyTransport::Gt => None,
             AnyTransport::QmarkQmark => None,
+            AnyTransport::InstanceofKeyword => None,
             AnyTransport::Bang => None,
             AnyTransport::Tilde => None,
+            AnyTransport::VoidKeyword => None,
+            AnyTransport::DeleteKeyword => None,
             AnyTransport::Bquote => None,
             AnyTransport::DollarLbrace => None,
+            AnyTransport::ThisKeyword => None,
+            AnyTransport::SuperKeyword => None,
+            AnyTransport::TrueKeyword => None,
+            AnyTransport::FalseKeyword => None,
+            AnyTransport::NullKeyword => None,
             AnyTransport::At => None,
+            AnyTransport::StaticKeyword => None,
+            AnyTransport::ReadonlyKeyword => None,
+            AnyTransport::GetKeyword => None,
+            AnyTransport::SetKeyword => None,
+            AnyTransport::DeclareKeyword => None,
             AnyTransport::AbstractKeyword => None,
             AnyTransport::AccessorKeyword => None,
             AnyTransport::SatisfiesKeyword => None,
             AnyTransport::RequireKeyword => None,
+            AnyTransport::ExtendsKeyword => None,
             AnyTransport::ImplementsKeyword => None,
+            AnyTransport::ModuleKeyword => None,
+            AnyTransport::NamespaceKeyword => None,
             AnyTransport::InterfaceKeyword => None,
             AnyTransport::EnumKeyword => None,
+            AnyTransport::PublicKeyword => None,
+            AnyTransport::PrivateKeyword => None,
+            AnyTransport::ProtectedKeyword => None,
+            AnyTransport::OverrideKeyword => None,
             AnyTransport::DashQmarkColon => None,
             AnyTransport::PlusQmarkColon => None,
             AnyTransport::QmarkColon => None,
@@ -2074,13 +2066,21 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::InferKeyword => None,
             AnyTransport::IsKeyword => None,
             AnyTransport::KeyofKeyword => None,
+            AnyTransport::InKeyword => None,
+            AnyTransport::AnyKeyword => None,
+            AnyTransport::NumberKeyword => None,
+            AnyTransport::BooleanKeyword => None,
+            AnyTransport::StringKeyword => None,
+            AnyTransport::SymbolKeyword => None,
             AnyTransport::Unique => None,
             AnyTransport::UnknownKeyword => None,
             AnyTransport::NeverKeyword => None,
+            AnyTransport::ObjectKeyword => None,
             AnyTransport::LbracePipe => None,
             AnyTransport::PipeRbrace => None,
             AnyTransport::Comma => None,
             AnyTransport::GlobalKeyword => None,
+            AnyTransport::ExportKeyword => None,
             AnyTransport::FromKeyword => None,
             AnyTransport::Dquote => None,
             AnyTransport::Squote => None,
@@ -2386,26 +2386,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::DebuggerKeyword => None,
             AnyTransport::ReturnKeyword => None,
             AnyTransport::ThrowKeyword => None,
-            AnyTransport::DeclareKeyword => None,
-            AnyTransport::NamespaceKeyword => None,
-            AnyTransport::PublicKeyword => None,
-            AnyTransport::PrivateKeyword => None,
-            AnyTransport::ProtectedKeyword => None,
-            AnyTransport::OverrideKeyword => None,
-            AnyTransport::ReadonlyKeyword => None,
-            AnyTransport::ModuleKeyword => None,
-            AnyTransport::AnyKeyword => None,
-            AnyTransport::NumberKeyword => None,
-            AnyTransport::BooleanKeyword => None,
-            AnyTransport::StringKeyword => None,
-            AnyTransport::SymbolKeyword => None,
-            AnyTransport::ExportKeyword => None,
-            AnyTransport::ObjectKeyword => None,
-            AnyTransport::NewKeyword => None,
-            AnyTransport::GetKeyword => None,
-            AnyTransport::SetKeyword => None,
-            AnyTransport::AsyncKeyword => None,
-            AnyTransport::StaticKeyword => None,
             AnyTransport::Colon => None,
             AnyTransport::CaseKeyword => None,
             AnyTransport::CatchKeyword => None,
@@ -2416,19 +2396,11 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Rbrack => None,
             AnyTransport::Dot => None,
             AnyTransport::ClassKeyword => None,
+            AnyTransport::AsyncKeyword => None,
             AnyTransport::FunctionKeyword => None,
             AnyTransport::EqGt => None,
             AnyTransport::QmarkDot => None,
-            AnyTransport::DeleteKeyword => None,
-            AnyTransport::ExtendsKeyword => None,
-            AnyTransport::FalseKeyword => None,
-            AnyTransport::InKeyword => None,
-            AnyTransport::InstanceofKeyword => None,
-            AnyTransport::NullKeyword => None,
-            AnyTransport::SuperKeyword => None,
-            AnyTransport::ThisKeyword => None,
-            AnyTransport::TrueKeyword => None,
-            AnyTransport::VoidKeyword => None,
+            AnyTransport::NewKeyword => None,
             AnyTransport::PlusEq => None,
             AnyTransport::DashEq => None,
             AnyTransport::StarEq => None,
@@ -2468,18 +2440,38 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::GtEq => None,
             AnyTransport::Gt => None,
             AnyTransport::QmarkQmark => None,
+            AnyTransport::InstanceofKeyword => None,
             AnyTransport::Bang => None,
             AnyTransport::Tilde => None,
+            AnyTransport::VoidKeyword => None,
+            AnyTransport::DeleteKeyword => None,
             AnyTransport::Bquote => None,
             AnyTransport::DollarLbrace => None,
+            AnyTransport::ThisKeyword => None,
+            AnyTransport::SuperKeyword => None,
+            AnyTransport::TrueKeyword => None,
+            AnyTransport::FalseKeyword => None,
+            AnyTransport::NullKeyword => None,
             AnyTransport::At => None,
+            AnyTransport::StaticKeyword => None,
+            AnyTransport::ReadonlyKeyword => None,
+            AnyTransport::GetKeyword => None,
+            AnyTransport::SetKeyword => None,
+            AnyTransport::DeclareKeyword => None,
             AnyTransport::AbstractKeyword => None,
             AnyTransport::AccessorKeyword => None,
             AnyTransport::SatisfiesKeyword => None,
             AnyTransport::RequireKeyword => None,
+            AnyTransport::ExtendsKeyword => None,
             AnyTransport::ImplementsKeyword => None,
+            AnyTransport::ModuleKeyword => None,
+            AnyTransport::NamespaceKeyword => None,
             AnyTransport::InterfaceKeyword => None,
             AnyTransport::EnumKeyword => None,
+            AnyTransport::PublicKeyword => None,
+            AnyTransport::PrivateKeyword => None,
+            AnyTransport::ProtectedKeyword => None,
+            AnyTransport::OverrideKeyword => None,
             AnyTransport::DashQmarkColon => None,
             AnyTransport::PlusQmarkColon => None,
             AnyTransport::QmarkColon => None,
@@ -2487,13 +2479,21 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::InferKeyword => None,
             AnyTransport::IsKeyword => None,
             AnyTransport::KeyofKeyword => None,
+            AnyTransport::InKeyword => None,
+            AnyTransport::AnyKeyword => None,
+            AnyTransport::NumberKeyword => None,
+            AnyTransport::BooleanKeyword => None,
+            AnyTransport::StringKeyword => None,
+            AnyTransport::SymbolKeyword => None,
             AnyTransport::Unique => None,
             AnyTransport::UnknownKeyword => None,
             AnyTransport::NeverKeyword => None,
+            AnyTransport::ObjectKeyword => None,
             AnyTransport::LbracePipe => None,
             AnyTransport::PipeRbrace => None,
             AnyTransport::Comma => None,
             AnyTransport::GlobalKeyword => None,
+            AnyTransport::ExportKeyword => None,
             AnyTransport::FromKeyword => None,
             AnyTransport::Dquote => None,
             AnyTransport::Squote => None,
@@ -3350,7 +3350,7 @@ pub enum ExpressionTransport {
     InternalModule(InternalModuleTransport),
     #[kind(kind::TYPE_ASSERTION)]
     TypeAssertion(TypeAssertionTransport),
-    #[kind(kind::SUBSCRIPT_EXPRESSION, kind::MEMBER_EXPRESSION, kind::PARENTHESIZED_EXPRESSION_TYPED, kind::PARENTHESIZED_EXPRESSION_SEQUENCE, kind::UNDEFINED, kind::IDENTIFIER, kind::THIS, kind::SUPER, kind::NUMBER_HEX, kind::NUMBER_FLOAT_POINT, kind::NUMBER_FLOAT_LEADING_POINT, kind::NUMBER_FLOAT_SCIENTIFIC, kind::NUMBER_DECIMAL, kind::NUMBER_BINARY, kind::NUMBER_OCTAL, kind::NUMBER_BIGINT_HEX, kind::NUMBER_BIGINT_BINARY, kind::NUMBER_BIGINT_OCTAL, kind::NUMBER_BIGINT_DECIMAL, kind::STRING_DOUBLE, kind::STRING_SINGLE, kind::TEMPLATE_STRING, kind::REGEX, kind::TRUE, kind::FALSE, kind::NULL, kind::OBJECT, kind::ARRAY, kind::FUNCTION_EXPRESSION, kind::ARROW_FUNCTION, kind::GENERATOR_FUNCTION, kind::CLASS, kind::META_PROPERTY_NEW_TARGET, kind::META_PROPERTY_IMPORT_META, kind::CALL_EXPRESSION_CALL, kind::CALL_EXPRESSION_TEMPLATE_CALL, kind::CALL_EXPRESSION_MEMBER, kind::NON_NULL_EXPRESSION, kind::PRIMARY_EXPRESSION, kind::PARENTHESIZED_EXPRESSION, kind::NUMBER, kind::STRING, kind::META_PROPERTY, kind::CALL_EXPRESSION, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::SUBSCRIPT_EXPRESSION, kind::MEMBER_EXPRESSION, kind::PARENTHESIZED_EXPRESSION_TYPED, kind::PARENTHESIZED_EXPRESSION_SEQUENCE, kind::UNDEFINED, kind::IDENTIFIER, kind::THIS, kind::SUPER, kind::NUMBER_HEX, kind::NUMBER_FLOAT_POINT, kind::NUMBER_FLOAT_LEADING_POINT, kind::NUMBER_FLOAT_SCIENTIFIC, kind::NUMBER_DECIMAL, kind::NUMBER_BINARY, kind::NUMBER_OCTAL, kind::NUMBER_BIGINT_HEX, kind::NUMBER_BIGINT_BINARY, kind::NUMBER_BIGINT_OCTAL, kind::NUMBER_BIGINT_DECIMAL, kind::STRING_DOUBLE, kind::STRING_SINGLE, kind::TEMPLATE_STRING, kind::REGEX, kind::TRUE, kind::FALSE, kind::NULL, kind::OBJECT, kind::ARRAY, kind::FUNCTION_EXPRESSION, kind::ARROW_FUNCTION, kind::GENERATOR_FUNCTION, kind::CLASS, kind::META_PROPERTY_NEW_TARGET, kind::META_PROPERTY_IMPORT_META, kind::CALL_EXPRESSION_CALL, kind::CALL_EXPRESSION_TEMPLATE_CALL, kind::CALL_EXPRESSION_MEMBER, kind::NON_NULL_EXPRESSION, kind::PRIMARY_EXPRESSION, kind::PARENTHESIZED_EXPRESSION, kind::NUMBER, kind::STRING, kind::META_PROPERTY, kind::CALL_EXPRESSION, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     PrimaryExpression(PrimaryExpressionTransport),
     #[kind(kind::ASSIGNMENT_EXPRESSION)]
     AssignmentExpression(AssignmentExpressionTransport),
@@ -3501,7 +3501,7 @@ pub enum PrimaryExpressionTransport {
     #[kind(kind::UNDEFINED)]
     #[transport(edged)]
     Undefined(::sittir_core::options::Edges),
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::THIS)]
     #[transport(edged)]
@@ -4717,7 +4717,7 @@ impl ::sittir_core::render::Render for NumberBigintTransport {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum NamespaceExportModuleExportNameTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
@@ -4852,7 +4852,7 @@ impl ::sittir_core::render::Render for ExportSpecifierExportKindTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum ExportSpecifierNameTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
@@ -5239,7 +5239,7 @@ pub enum ExpressionStatementExpressionTransportSlot {
     ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
@@ -6040,7 +6040,7 @@ pub enum ForStatementInitializerTransportSlot {
     ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
@@ -6556,7 +6556,7 @@ pub enum ForStatementConditionTransportSlot {
     ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
@@ -7310,239 +7310,6 @@ impl ::sittir_core::render::Render for ThrowStatementTerminatorTransportSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum LabeledStatementLabelTransportSlot {
-    #[kind(kind::_STATEMENT_IDENTIFIER, display)]
-    StatementIdentifier(StatementIdentifierTransport),
-    #[kind(kind::DECLARE_KEYWORD)]
-    DeclareKeyword,
-    #[kind(kind::NAMESPACE_KEYWORD)]
-    NamespaceKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::PUBLIC_KEYWORD)]
-    PublicKeyword,
-    #[kind(kind::PRIVATE_KEYWORD)]
-    PrivateKeyword,
-    #[kind(kind::PROTECTED_KEYWORD)]
-    ProtectedKeyword,
-    #[kind(kind::OVERRIDE_KEYWORD)]
-    OverrideKeyword,
-    #[kind(kind::READONLY_KEYWORD)]
-    ReadonlyKeyword,
-    #[kind(kind::MODULE_KEYWORD)]
-    ModuleKeyword,
-    #[kind(kind::ANY_KEYWORD)]
-    AnyKeyword,
-    #[kind(kind::NUMBER_KEYWORD)]
-    NumberKeyword,
-    #[kind(kind::BOOLEAN_KEYWORD)]
-    BooleanKeyword,
-    #[kind(kind::STRING_KEYWORD)]
-    StringKeyword,
-    #[kind(kind::SYMBOL_KEYWORD)]
-    SymbolKeyword,
-    #[kind(kind::EXPORT_KEYWORD)]
-    ExportKeyword,
-    #[kind(kind::OBJECT_KEYWORD)]
-    ObjectKeyword,
-    #[kind(kind::NEW_KEYWORD)]
-    NewKeyword,
-    #[kind(kind::GET_KEYWORD)]
-    GetKeyword,
-    #[kind(kind::SET_KEYWORD)]
-    SetKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::STATIC_KEYWORD)]
-    StaticKeyword,
-    #[kind(kind::LET_KEYWORD)]
-    LetKeyword,
-}
-
-impl ::sittir_core::prepare::Prepare for LabeledStatementLabelTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            LabeledStatementLabelTransportSlot::StatementIdentifier(t) => t.prepare(ctx),
-            LabeledStatementLabelTransportSlot::DeclareKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::NamespaceKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::TypeKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::PublicKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::PrivateKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::ProtectedKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::OverrideKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::ReadonlyKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::ModuleKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::AnyKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::NumberKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::BooleanKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::StringKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::SymbolKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::ExportKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::ObjectKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::NewKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::GetKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::SetKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::AsyncKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::AwaitKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::StaticKeyword => Ok(()),
-            LabeledStatementLabelTransportSlot::LetKeyword => Ok(()),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            LabeledStatementLabelTransportSlot::StatementIdentifier(t) => t.gap_edges(),
-            LabeledStatementLabelTransportSlot::DeclareKeyword => None,
-            LabeledStatementLabelTransportSlot::NamespaceKeyword => None,
-            LabeledStatementLabelTransportSlot::TypeKeyword => None,
-            LabeledStatementLabelTransportSlot::PublicKeyword => None,
-            LabeledStatementLabelTransportSlot::PrivateKeyword => None,
-            LabeledStatementLabelTransportSlot::ProtectedKeyword => None,
-            LabeledStatementLabelTransportSlot::OverrideKeyword => None,
-            LabeledStatementLabelTransportSlot::ReadonlyKeyword => None,
-            LabeledStatementLabelTransportSlot::ModuleKeyword => None,
-            LabeledStatementLabelTransportSlot::AnyKeyword => None,
-            LabeledStatementLabelTransportSlot::NumberKeyword => None,
-            LabeledStatementLabelTransportSlot::BooleanKeyword => None,
-            LabeledStatementLabelTransportSlot::StringKeyword => None,
-            LabeledStatementLabelTransportSlot::SymbolKeyword => None,
-            LabeledStatementLabelTransportSlot::ExportKeyword => None,
-            LabeledStatementLabelTransportSlot::ObjectKeyword => None,
-            LabeledStatementLabelTransportSlot::NewKeyword => None,
-            LabeledStatementLabelTransportSlot::GetKeyword => None,
-            LabeledStatementLabelTransportSlot::SetKeyword => None,
-            LabeledStatementLabelTransportSlot::AsyncKeyword => None,
-            LabeledStatementLabelTransportSlot::AwaitKeyword => None,
-            LabeledStatementLabelTransportSlot::StaticKeyword => None,
-            LabeledStatementLabelTransportSlot::LetKeyword => None,
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            LabeledStatementLabelTransportSlot::StatementIdentifier(t) => t.snapshot_edge(),
-            LabeledStatementLabelTransportSlot::DeclareKeyword => None,
-            LabeledStatementLabelTransportSlot::NamespaceKeyword => None,
-            LabeledStatementLabelTransportSlot::TypeKeyword => None,
-            LabeledStatementLabelTransportSlot::PublicKeyword => None,
-            LabeledStatementLabelTransportSlot::PrivateKeyword => None,
-            LabeledStatementLabelTransportSlot::ProtectedKeyword => None,
-            LabeledStatementLabelTransportSlot::OverrideKeyword => None,
-            LabeledStatementLabelTransportSlot::ReadonlyKeyword => None,
-            LabeledStatementLabelTransportSlot::ModuleKeyword => None,
-            LabeledStatementLabelTransportSlot::AnyKeyword => None,
-            LabeledStatementLabelTransportSlot::NumberKeyword => None,
-            LabeledStatementLabelTransportSlot::BooleanKeyword => None,
-            LabeledStatementLabelTransportSlot::StringKeyword => None,
-            LabeledStatementLabelTransportSlot::SymbolKeyword => None,
-            LabeledStatementLabelTransportSlot::ExportKeyword => None,
-            LabeledStatementLabelTransportSlot::ObjectKeyword => None,
-            LabeledStatementLabelTransportSlot::NewKeyword => None,
-            LabeledStatementLabelTransportSlot::GetKeyword => None,
-            LabeledStatementLabelTransportSlot::SetKeyword => None,
-            LabeledStatementLabelTransportSlot::AsyncKeyword => None,
-            LabeledStatementLabelTransportSlot::AwaitKeyword => None,
-            LabeledStatementLabelTransportSlot::StaticKeyword => None,
-            LabeledStatementLabelTransportSlot::LetKeyword => None,
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
-        match self {
-            LabeledStatementLabelTransportSlot::StatementIdentifier(t) => t.source_separator(ctx),
-            LabeledStatementLabelTransportSlot::DeclareKeyword => None,
-            LabeledStatementLabelTransportSlot::NamespaceKeyword => None,
-            LabeledStatementLabelTransportSlot::TypeKeyword => None,
-            LabeledStatementLabelTransportSlot::PublicKeyword => None,
-            LabeledStatementLabelTransportSlot::PrivateKeyword => None,
-            LabeledStatementLabelTransportSlot::ProtectedKeyword => None,
-            LabeledStatementLabelTransportSlot::OverrideKeyword => None,
-            LabeledStatementLabelTransportSlot::ReadonlyKeyword => None,
-            LabeledStatementLabelTransportSlot::ModuleKeyword => None,
-            LabeledStatementLabelTransportSlot::AnyKeyword => None,
-            LabeledStatementLabelTransportSlot::NumberKeyword => None,
-            LabeledStatementLabelTransportSlot::BooleanKeyword => None,
-            LabeledStatementLabelTransportSlot::StringKeyword => None,
-            LabeledStatementLabelTransportSlot::SymbolKeyword => None,
-            LabeledStatementLabelTransportSlot::ExportKeyword => None,
-            LabeledStatementLabelTransportSlot::ObjectKeyword => None,
-            LabeledStatementLabelTransportSlot::NewKeyword => None,
-            LabeledStatementLabelTransportSlot::GetKeyword => None,
-            LabeledStatementLabelTransportSlot::SetKeyword => None,
-            LabeledStatementLabelTransportSlot::AsyncKeyword => None,
-            LabeledStatementLabelTransportSlot::AwaitKeyword => None,
-            LabeledStatementLabelTransportSlot::StaticKeyword => None,
-            LabeledStatementLabelTransportSlot::LetKeyword => None,
-        }
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::view::KindOf for LabeledStatementLabelTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::StatementIdentifier(inner) => inner.kind_in(kinds),
-            Self::DeclareKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::NamespaceKeyword => [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
-            Self::PublicKeyword => [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k)),
-            Self::PrivateKeyword => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
-            Self::ProtectedKeyword => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
-            Self::OverrideKeyword => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
-            Self::ReadonlyKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::ModuleKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::AnyKeyword => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
-            Self::NumberKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
-            Self::BooleanKeyword => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
-            Self::StringKeyword => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
-            Self::SymbolKeyword => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
-            Self::ExportKeyword => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
-            Self::ObjectKeyword => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
-            Self::NewKeyword => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
-            Self::GetKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
-            Self::SetKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::StaticKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
-            Self::LetKeyword => [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for LabeledStatementLabelTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            LabeledStatementLabelTransportSlot::StatementIdentifier(inner) => inner.render(w),
-            LabeledStatementLabelTransportSlot::DeclareKeyword => render_declare_keyword(w),
-            LabeledStatementLabelTransportSlot::NamespaceKeyword => render_namespace_keyword(w),
-            LabeledStatementLabelTransportSlot::TypeKeyword => render_type_keyword(w),
-            LabeledStatementLabelTransportSlot::PublicKeyword => render_public_keyword(w),
-            LabeledStatementLabelTransportSlot::PrivateKeyword => render_private_keyword(w),
-            LabeledStatementLabelTransportSlot::ProtectedKeyword => render_protected_keyword(w),
-            LabeledStatementLabelTransportSlot::OverrideKeyword => render_override_keyword(w),
-            LabeledStatementLabelTransportSlot::ReadonlyKeyword => render_readonly_keyword(w),
-            LabeledStatementLabelTransportSlot::ModuleKeyword => render_module_keyword(w),
-            LabeledStatementLabelTransportSlot::AnyKeyword => render_any_keyword(w),
-            LabeledStatementLabelTransportSlot::NumberKeyword => render_number_keyword(w),
-            LabeledStatementLabelTransportSlot::BooleanKeyword => render_boolean_keyword(w),
-            LabeledStatementLabelTransportSlot::StringKeyword => render_string_keyword(w),
-            LabeledStatementLabelTransportSlot::SymbolKeyword => render_symbol_keyword(w),
-            LabeledStatementLabelTransportSlot::ExportKeyword => render_export_keyword(w),
-            LabeledStatementLabelTransportSlot::ObjectKeyword => render_object_keyword(w),
-            LabeledStatementLabelTransportSlot::NewKeyword => render_new_keyword(w),
-            LabeledStatementLabelTransportSlot::GetKeyword => render_get_keyword(w),
-            LabeledStatementLabelTransportSlot::SetKeyword => render_set_keyword(w),
-            LabeledStatementLabelTransportSlot::AsyncKeyword => render_async_keyword(w),
-            LabeledStatementLabelTransportSlot::AwaitKeyword => render_await_keyword(w),
-            LabeledStatementLabelTransportSlot::StaticKeyword => render_static_keyword(w),
-            LabeledStatementLabelTransportSlot::LetKeyword => render_let_keyword(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
 pub enum SwitchBodyCasesTransportSlot {
     #[kind(kind::SWITCH_CASE)]
     SwitchCase(SwitchCaseTransport),
@@ -7621,7 +7388,7 @@ pub enum YieldExpressionExpressionTransportSlot {
     ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
@@ -8098,52 +7865,6 @@ pub enum ObjectPropertiesTransportSlot {
     MethodDefinition(Box<MethodDefinitionTransport>),
     #[kind(kind::_SHORTHAND_PROPERTY_IDENTIFIER, display)]
     ShorthandPropertyIdentifier(ShorthandPropertyIdentifierTransport),
-    #[kind(kind::DECLARE_KEYWORD)]
-    DeclareKeyword,
-    #[kind(kind::NAMESPACE_KEYWORD)]
-    NamespaceKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::PUBLIC_KEYWORD)]
-    PublicKeyword,
-    #[kind(kind::PRIVATE_KEYWORD)]
-    PrivateKeyword,
-    #[kind(kind::PROTECTED_KEYWORD)]
-    ProtectedKeyword,
-    #[kind(kind::OVERRIDE_KEYWORD)]
-    OverrideKeyword,
-    #[kind(kind::READONLY_KEYWORD)]
-    ReadonlyKeyword,
-    #[kind(kind::MODULE_KEYWORD)]
-    ModuleKeyword,
-    #[kind(kind::ANY_KEYWORD)]
-    AnyKeyword,
-    #[kind(kind::NUMBER_KEYWORD)]
-    NumberKeyword,
-    #[kind(kind::BOOLEAN_KEYWORD)]
-    BooleanKeyword,
-    #[kind(kind::STRING_KEYWORD)]
-    StringKeyword,
-    #[kind(kind::SYMBOL_KEYWORD)]
-    SymbolKeyword,
-    #[kind(kind::EXPORT_KEYWORD)]
-    ExportKeyword,
-    #[kind(kind::OBJECT_KEYWORD)]
-    ObjectKeyword,
-    #[kind(kind::NEW_KEYWORD)]
-    NewKeyword,
-    #[kind(kind::GET_KEYWORD)]
-    GetKeyword,
-    #[kind(kind::SET_KEYWORD)]
-    SetKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::STATIC_KEYWORD)]
-    StaticKeyword,
-    #[kind(kind::LET_KEYWORD)]
-    LetKeyword,
 }
 
 impl ::sittir_core::prepare::Prepare for ObjectPropertiesTransportSlot {
@@ -8153,29 +7874,6 @@ impl ::sittir_core::prepare::Prepare for ObjectPropertiesTransportSlot {
             ObjectPropertiesTransportSlot::SpreadElement(t) => t.prepare(ctx),
             ObjectPropertiesTransportSlot::MethodDefinition(t) => t.prepare(ctx),
             ObjectPropertiesTransportSlot::ShorthandPropertyIdentifier(t) => t.prepare(ctx),
-            ObjectPropertiesTransportSlot::DeclareKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::NamespaceKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::TypeKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::PublicKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::PrivateKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::ProtectedKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::OverrideKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::ReadonlyKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::ModuleKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::AnyKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::NumberKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::BooleanKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::StringKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::SymbolKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::ExportKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::ObjectKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::NewKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::GetKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::SetKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::AsyncKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::AwaitKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::StaticKeyword => Ok(()),
-            ObjectPropertiesTransportSlot::LetKeyword => Ok(()),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -8184,29 +7882,6 @@ impl ::sittir_core::prepare::Prepare for ObjectPropertiesTransportSlot {
             ObjectPropertiesTransportSlot::SpreadElement(t) => t.gap_edges(),
             ObjectPropertiesTransportSlot::MethodDefinition(t) => t.gap_edges(),
             ObjectPropertiesTransportSlot::ShorthandPropertyIdentifier(t) => t.gap_edges(),
-            ObjectPropertiesTransportSlot::DeclareKeyword => None,
-            ObjectPropertiesTransportSlot::NamespaceKeyword => None,
-            ObjectPropertiesTransportSlot::TypeKeyword => None,
-            ObjectPropertiesTransportSlot::PublicKeyword => None,
-            ObjectPropertiesTransportSlot::PrivateKeyword => None,
-            ObjectPropertiesTransportSlot::ProtectedKeyword => None,
-            ObjectPropertiesTransportSlot::OverrideKeyword => None,
-            ObjectPropertiesTransportSlot::ReadonlyKeyword => None,
-            ObjectPropertiesTransportSlot::ModuleKeyword => None,
-            ObjectPropertiesTransportSlot::AnyKeyword => None,
-            ObjectPropertiesTransportSlot::NumberKeyword => None,
-            ObjectPropertiesTransportSlot::BooleanKeyword => None,
-            ObjectPropertiesTransportSlot::StringKeyword => None,
-            ObjectPropertiesTransportSlot::SymbolKeyword => None,
-            ObjectPropertiesTransportSlot::ExportKeyword => None,
-            ObjectPropertiesTransportSlot::ObjectKeyword => None,
-            ObjectPropertiesTransportSlot::NewKeyword => None,
-            ObjectPropertiesTransportSlot::GetKeyword => None,
-            ObjectPropertiesTransportSlot::SetKeyword => None,
-            ObjectPropertiesTransportSlot::AsyncKeyword => None,
-            ObjectPropertiesTransportSlot::AwaitKeyword => None,
-            ObjectPropertiesTransportSlot::StaticKeyword => None,
-            ObjectPropertiesTransportSlot::LetKeyword => None,
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -8215,29 +7890,6 @@ impl ::sittir_core::prepare::Prepare for ObjectPropertiesTransportSlot {
             ObjectPropertiesTransportSlot::SpreadElement(t) => t.snapshot_edge(),
             ObjectPropertiesTransportSlot::MethodDefinition(t) => t.snapshot_edge(),
             ObjectPropertiesTransportSlot::ShorthandPropertyIdentifier(t) => t.snapshot_edge(),
-            ObjectPropertiesTransportSlot::DeclareKeyword => None,
-            ObjectPropertiesTransportSlot::NamespaceKeyword => None,
-            ObjectPropertiesTransportSlot::TypeKeyword => None,
-            ObjectPropertiesTransportSlot::PublicKeyword => None,
-            ObjectPropertiesTransportSlot::PrivateKeyword => None,
-            ObjectPropertiesTransportSlot::ProtectedKeyword => None,
-            ObjectPropertiesTransportSlot::OverrideKeyword => None,
-            ObjectPropertiesTransportSlot::ReadonlyKeyword => None,
-            ObjectPropertiesTransportSlot::ModuleKeyword => None,
-            ObjectPropertiesTransportSlot::AnyKeyword => None,
-            ObjectPropertiesTransportSlot::NumberKeyword => None,
-            ObjectPropertiesTransportSlot::BooleanKeyword => None,
-            ObjectPropertiesTransportSlot::StringKeyword => None,
-            ObjectPropertiesTransportSlot::SymbolKeyword => None,
-            ObjectPropertiesTransportSlot::ExportKeyword => None,
-            ObjectPropertiesTransportSlot::ObjectKeyword => None,
-            ObjectPropertiesTransportSlot::NewKeyword => None,
-            ObjectPropertiesTransportSlot::GetKeyword => None,
-            ObjectPropertiesTransportSlot::SetKeyword => None,
-            ObjectPropertiesTransportSlot::AsyncKeyword => None,
-            ObjectPropertiesTransportSlot::AwaitKeyword => None,
-            ObjectPropertiesTransportSlot::StaticKeyword => None,
-            ObjectPropertiesTransportSlot::LetKeyword => None,
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
@@ -8246,29 +7898,6 @@ impl ::sittir_core::prepare::Prepare for ObjectPropertiesTransportSlot {
             ObjectPropertiesTransportSlot::SpreadElement(t) => t.source_separator(ctx),
             ObjectPropertiesTransportSlot::MethodDefinition(t) => t.source_separator(ctx),
             ObjectPropertiesTransportSlot::ShorthandPropertyIdentifier(t) => t.source_separator(ctx),
-            ObjectPropertiesTransportSlot::DeclareKeyword => None,
-            ObjectPropertiesTransportSlot::NamespaceKeyword => None,
-            ObjectPropertiesTransportSlot::TypeKeyword => None,
-            ObjectPropertiesTransportSlot::PublicKeyword => None,
-            ObjectPropertiesTransportSlot::PrivateKeyword => None,
-            ObjectPropertiesTransportSlot::ProtectedKeyword => None,
-            ObjectPropertiesTransportSlot::OverrideKeyword => None,
-            ObjectPropertiesTransportSlot::ReadonlyKeyword => None,
-            ObjectPropertiesTransportSlot::ModuleKeyword => None,
-            ObjectPropertiesTransportSlot::AnyKeyword => None,
-            ObjectPropertiesTransportSlot::NumberKeyword => None,
-            ObjectPropertiesTransportSlot::BooleanKeyword => None,
-            ObjectPropertiesTransportSlot::StringKeyword => None,
-            ObjectPropertiesTransportSlot::SymbolKeyword => None,
-            ObjectPropertiesTransportSlot::ExportKeyword => None,
-            ObjectPropertiesTransportSlot::ObjectKeyword => None,
-            ObjectPropertiesTransportSlot::NewKeyword => None,
-            ObjectPropertiesTransportSlot::GetKeyword => None,
-            ObjectPropertiesTransportSlot::SetKeyword => None,
-            ObjectPropertiesTransportSlot::AsyncKeyword => None,
-            ObjectPropertiesTransportSlot::AwaitKeyword => None,
-            ObjectPropertiesTransportSlot::StaticKeyword => None,
-            ObjectPropertiesTransportSlot::LetKeyword => None,
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -8283,29 +7912,6 @@ impl ::sittir_core::view::KindOf for ObjectPropertiesTransportSlot {
             Self::SpreadElement(inner) => inner.kind_in(kinds),
             Self::MethodDefinition(inner) => inner.kind_in(kinds),
             Self::ShorthandPropertyIdentifier(inner) => inner.kind_in(kinds),
-            Self::DeclareKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::NamespaceKeyword => [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
-            Self::PublicKeyword => [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k)),
-            Self::PrivateKeyword => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
-            Self::ProtectedKeyword => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
-            Self::OverrideKeyword => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
-            Self::ReadonlyKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::ModuleKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::AnyKeyword => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
-            Self::NumberKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
-            Self::BooleanKeyword => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
-            Self::StringKeyword => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
-            Self::SymbolKeyword => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
-            Self::ExportKeyword => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
-            Self::ObjectKeyword => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
-            Self::NewKeyword => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
-            Self::GetKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
-            Self::SetKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::StaticKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
-            Self::LetKeyword => [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -8317,29 +7923,6 @@ impl ::sittir_core::render::Render for ObjectPropertiesTransportSlot {
             ObjectPropertiesTransportSlot::SpreadElement(inner) => inner.render(w),
             ObjectPropertiesTransportSlot::MethodDefinition(inner) => inner.as_ref().render(w),
             ObjectPropertiesTransportSlot::ShorthandPropertyIdentifier(inner) => inner.render(w),
-            ObjectPropertiesTransportSlot::DeclareKeyword => render_declare_keyword(w),
-            ObjectPropertiesTransportSlot::NamespaceKeyword => render_namespace_keyword(w),
-            ObjectPropertiesTransportSlot::TypeKeyword => render_type_keyword(w),
-            ObjectPropertiesTransportSlot::PublicKeyword => render_public_keyword(w),
-            ObjectPropertiesTransportSlot::PrivateKeyword => render_private_keyword(w),
-            ObjectPropertiesTransportSlot::ProtectedKeyword => render_protected_keyword(w),
-            ObjectPropertiesTransportSlot::OverrideKeyword => render_override_keyword(w),
-            ObjectPropertiesTransportSlot::ReadonlyKeyword => render_readonly_keyword(w),
-            ObjectPropertiesTransportSlot::ModuleKeyword => render_module_keyword(w),
-            ObjectPropertiesTransportSlot::AnyKeyword => render_any_keyword(w),
-            ObjectPropertiesTransportSlot::NumberKeyword => render_number_keyword(w),
-            ObjectPropertiesTransportSlot::BooleanKeyword => render_boolean_keyword(w),
-            ObjectPropertiesTransportSlot::StringKeyword => render_string_keyword(w),
-            ObjectPropertiesTransportSlot::SymbolKeyword => render_symbol_keyword(w),
-            ObjectPropertiesTransportSlot::ExportKeyword => render_export_keyword(w),
-            ObjectPropertiesTransportSlot::ObjectKeyword => render_object_keyword(w),
-            ObjectPropertiesTransportSlot::NewKeyword => render_new_keyword(w),
-            ObjectPropertiesTransportSlot::GetKeyword => render_get_keyword(w),
-            ObjectPropertiesTransportSlot::SetKeyword => render_set_keyword(w),
-            ObjectPropertiesTransportSlot::AsyncKeyword => render_async_keyword(w),
-            ObjectPropertiesTransportSlot::AwaitKeyword => render_await_keyword(w),
-            ObjectPropertiesTransportSlot::StaticKeyword => render_static_keyword(w),
-            ObjectPropertiesTransportSlot::LetKeyword => render_let_keyword(w),
         }
     }
 }
@@ -8355,52 +7938,6 @@ pub enum ObjectPatternPropertiesTransportSlot {
     ObjectAssignmentPattern(ObjectAssignmentPatternTransport),
     #[kind(kind::_SHORTHAND_PROPERTY_IDENTIFIER_PATTERN, display)]
     ShorthandPropertyIdentifierPattern(ShorthandPropertyIdentifierPatternTransport),
-    #[kind(kind::DECLARE_KEYWORD)]
-    DeclareKeyword,
-    #[kind(kind::NAMESPACE_KEYWORD)]
-    NamespaceKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::PUBLIC_KEYWORD)]
-    PublicKeyword,
-    #[kind(kind::PRIVATE_KEYWORD)]
-    PrivateKeyword,
-    #[kind(kind::PROTECTED_KEYWORD)]
-    ProtectedKeyword,
-    #[kind(kind::OVERRIDE_KEYWORD)]
-    OverrideKeyword,
-    #[kind(kind::READONLY_KEYWORD)]
-    ReadonlyKeyword,
-    #[kind(kind::MODULE_KEYWORD)]
-    ModuleKeyword,
-    #[kind(kind::ANY_KEYWORD)]
-    AnyKeyword,
-    #[kind(kind::NUMBER_KEYWORD)]
-    NumberKeyword,
-    #[kind(kind::BOOLEAN_KEYWORD)]
-    BooleanKeyword,
-    #[kind(kind::STRING_KEYWORD)]
-    StringKeyword,
-    #[kind(kind::SYMBOL_KEYWORD)]
-    SymbolKeyword,
-    #[kind(kind::EXPORT_KEYWORD)]
-    ExportKeyword,
-    #[kind(kind::OBJECT_KEYWORD)]
-    ObjectKeyword,
-    #[kind(kind::NEW_KEYWORD)]
-    NewKeyword,
-    #[kind(kind::GET_KEYWORD)]
-    GetKeyword,
-    #[kind(kind::SET_KEYWORD)]
-    SetKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::STATIC_KEYWORD)]
-    StaticKeyword,
-    #[kind(kind::LET_KEYWORD)]
-    LetKeyword,
 }
 
 impl ::sittir_core::prepare::Prepare for ObjectPatternPropertiesTransportSlot {
@@ -8410,29 +7947,6 @@ impl ::sittir_core::prepare::Prepare for ObjectPatternPropertiesTransportSlot {
             ObjectPatternPropertiesTransportSlot::RestPattern(t) => t.prepare(ctx),
             ObjectPatternPropertiesTransportSlot::ObjectAssignmentPattern(t) => t.prepare(ctx),
             ObjectPatternPropertiesTransportSlot::ShorthandPropertyIdentifierPattern(t) => t.prepare(ctx),
-            ObjectPatternPropertiesTransportSlot::DeclareKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::NamespaceKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::TypeKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::PublicKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::PrivateKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::ProtectedKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::OverrideKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::ReadonlyKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::ModuleKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::AnyKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::NumberKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::BooleanKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::StringKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::SymbolKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::ExportKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::ObjectKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::NewKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::GetKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::SetKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::AsyncKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::AwaitKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::StaticKeyword => Ok(()),
-            ObjectPatternPropertiesTransportSlot::LetKeyword => Ok(()),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -8441,29 +7955,6 @@ impl ::sittir_core::prepare::Prepare for ObjectPatternPropertiesTransportSlot {
             ObjectPatternPropertiesTransportSlot::RestPattern(t) => t.gap_edges(),
             ObjectPatternPropertiesTransportSlot::ObjectAssignmentPattern(t) => t.gap_edges(),
             ObjectPatternPropertiesTransportSlot::ShorthandPropertyIdentifierPattern(t) => t.gap_edges(),
-            ObjectPatternPropertiesTransportSlot::DeclareKeyword => None,
-            ObjectPatternPropertiesTransportSlot::NamespaceKeyword => None,
-            ObjectPatternPropertiesTransportSlot::TypeKeyword => None,
-            ObjectPatternPropertiesTransportSlot::PublicKeyword => None,
-            ObjectPatternPropertiesTransportSlot::PrivateKeyword => None,
-            ObjectPatternPropertiesTransportSlot::ProtectedKeyword => None,
-            ObjectPatternPropertiesTransportSlot::OverrideKeyword => None,
-            ObjectPatternPropertiesTransportSlot::ReadonlyKeyword => None,
-            ObjectPatternPropertiesTransportSlot::ModuleKeyword => None,
-            ObjectPatternPropertiesTransportSlot::AnyKeyword => None,
-            ObjectPatternPropertiesTransportSlot::NumberKeyword => None,
-            ObjectPatternPropertiesTransportSlot::BooleanKeyword => None,
-            ObjectPatternPropertiesTransportSlot::StringKeyword => None,
-            ObjectPatternPropertiesTransportSlot::SymbolKeyword => None,
-            ObjectPatternPropertiesTransportSlot::ExportKeyword => None,
-            ObjectPatternPropertiesTransportSlot::ObjectKeyword => None,
-            ObjectPatternPropertiesTransportSlot::NewKeyword => None,
-            ObjectPatternPropertiesTransportSlot::GetKeyword => None,
-            ObjectPatternPropertiesTransportSlot::SetKeyword => None,
-            ObjectPatternPropertiesTransportSlot::AsyncKeyword => None,
-            ObjectPatternPropertiesTransportSlot::AwaitKeyword => None,
-            ObjectPatternPropertiesTransportSlot::StaticKeyword => None,
-            ObjectPatternPropertiesTransportSlot::LetKeyword => None,
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -8472,29 +7963,6 @@ impl ::sittir_core::prepare::Prepare for ObjectPatternPropertiesTransportSlot {
             ObjectPatternPropertiesTransportSlot::RestPattern(t) => t.snapshot_edge(),
             ObjectPatternPropertiesTransportSlot::ObjectAssignmentPattern(t) => t.snapshot_edge(),
             ObjectPatternPropertiesTransportSlot::ShorthandPropertyIdentifierPattern(t) => t.snapshot_edge(),
-            ObjectPatternPropertiesTransportSlot::DeclareKeyword => None,
-            ObjectPatternPropertiesTransportSlot::NamespaceKeyword => None,
-            ObjectPatternPropertiesTransportSlot::TypeKeyword => None,
-            ObjectPatternPropertiesTransportSlot::PublicKeyword => None,
-            ObjectPatternPropertiesTransportSlot::PrivateKeyword => None,
-            ObjectPatternPropertiesTransportSlot::ProtectedKeyword => None,
-            ObjectPatternPropertiesTransportSlot::OverrideKeyword => None,
-            ObjectPatternPropertiesTransportSlot::ReadonlyKeyword => None,
-            ObjectPatternPropertiesTransportSlot::ModuleKeyword => None,
-            ObjectPatternPropertiesTransportSlot::AnyKeyword => None,
-            ObjectPatternPropertiesTransportSlot::NumberKeyword => None,
-            ObjectPatternPropertiesTransportSlot::BooleanKeyword => None,
-            ObjectPatternPropertiesTransportSlot::StringKeyword => None,
-            ObjectPatternPropertiesTransportSlot::SymbolKeyword => None,
-            ObjectPatternPropertiesTransportSlot::ExportKeyword => None,
-            ObjectPatternPropertiesTransportSlot::ObjectKeyword => None,
-            ObjectPatternPropertiesTransportSlot::NewKeyword => None,
-            ObjectPatternPropertiesTransportSlot::GetKeyword => None,
-            ObjectPatternPropertiesTransportSlot::SetKeyword => None,
-            ObjectPatternPropertiesTransportSlot::AsyncKeyword => None,
-            ObjectPatternPropertiesTransportSlot::AwaitKeyword => None,
-            ObjectPatternPropertiesTransportSlot::StaticKeyword => None,
-            ObjectPatternPropertiesTransportSlot::LetKeyword => None,
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
@@ -8503,29 +7971,6 @@ impl ::sittir_core::prepare::Prepare for ObjectPatternPropertiesTransportSlot {
             ObjectPatternPropertiesTransportSlot::RestPattern(t) => t.source_separator(ctx),
             ObjectPatternPropertiesTransportSlot::ObjectAssignmentPattern(t) => t.source_separator(ctx),
             ObjectPatternPropertiesTransportSlot::ShorthandPropertyIdentifierPattern(t) => t.source_separator(ctx),
-            ObjectPatternPropertiesTransportSlot::DeclareKeyword => None,
-            ObjectPatternPropertiesTransportSlot::NamespaceKeyword => None,
-            ObjectPatternPropertiesTransportSlot::TypeKeyword => None,
-            ObjectPatternPropertiesTransportSlot::PublicKeyword => None,
-            ObjectPatternPropertiesTransportSlot::PrivateKeyword => None,
-            ObjectPatternPropertiesTransportSlot::ProtectedKeyword => None,
-            ObjectPatternPropertiesTransportSlot::OverrideKeyword => None,
-            ObjectPatternPropertiesTransportSlot::ReadonlyKeyword => None,
-            ObjectPatternPropertiesTransportSlot::ModuleKeyword => None,
-            ObjectPatternPropertiesTransportSlot::AnyKeyword => None,
-            ObjectPatternPropertiesTransportSlot::NumberKeyword => None,
-            ObjectPatternPropertiesTransportSlot::BooleanKeyword => None,
-            ObjectPatternPropertiesTransportSlot::StringKeyword => None,
-            ObjectPatternPropertiesTransportSlot::SymbolKeyword => None,
-            ObjectPatternPropertiesTransportSlot::ExportKeyword => None,
-            ObjectPatternPropertiesTransportSlot::ObjectKeyword => None,
-            ObjectPatternPropertiesTransportSlot::NewKeyword => None,
-            ObjectPatternPropertiesTransportSlot::GetKeyword => None,
-            ObjectPatternPropertiesTransportSlot::SetKeyword => None,
-            ObjectPatternPropertiesTransportSlot::AsyncKeyword => None,
-            ObjectPatternPropertiesTransportSlot::AwaitKeyword => None,
-            ObjectPatternPropertiesTransportSlot::StaticKeyword => None,
-            ObjectPatternPropertiesTransportSlot::LetKeyword => None,
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -8540,29 +7985,6 @@ impl ::sittir_core::view::KindOf for ObjectPatternPropertiesTransportSlot {
             Self::RestPattern(inner) => inner.kind_in(kinds),
             Self::ObjectAssignmentPattern(inner) => inner.kind_in(kinds),
             Self::ShorthandPropertyIdentifierPattern(inner) => inner.kind_in(kinds),
-            Self::DeclareKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::NamespaceKeyword => [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
-            Self::PublicKeyword => [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k)),
-            Self::PrivateKeyword => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
-            Self::ProtectedKeyword => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
-            Self::OverrideKeyword => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
-            Self::ReadonlyKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::ModuleKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::AnyKeyword => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
-            Self::NumberKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
-            Self::BooleanKeyword => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
-            Self::StringKeyword => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
-            Self::SymbolKeyword => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
-            Self::ExportKeyword => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
-            Self::ObjectKeyword => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
-            Self::NewKeyword => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
-            Self::GetKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
-            Self::SetKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::StaticKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
-            Self::LetKeyword => [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -8574,29 +7996,6 @@ impl ::sittir_core::render::Render for ObjectPatternPropertiesTransportSlot {
             ObjectPatternPropertiesTransportSlot::RestPattern(inner) => inner.render(w),
             ObjectPatternPropertiesTransportSlot::ObjectAssignmentPattern(inner) => inner.render(w),
             ObjectPatternPropertiesTransportSlot::ShorthandPropertyIdentifierPattern(inner) => inner.render(w),
-            ObjectPatternPropertiesTransportSlot::DeclareKeyword => render_declare_keyword(w),
-            ObjectPatternPropertiesTransportSlot::NamespaceKeyword => render_namespace_keyword(w),
-            ObjectPatternPropertiesTransportSlot::TypeKeyword => render_type_keyword(w),
-            ObjectPatternPropertiesTransportSlot::PublicKeyword => render_public_keyword(w),
-            ObjectPatternPropertiesTransportSlot::PrivateKeyword => render_private_keyword(w),
-            ObjectPatternPropertiesTransportSlot::ProtectedKeyword => render_protected_keyword(w),
-            ObjectPatternPropertiesTransportSlot::OverrideKeyword => render_override_keyword(w),
-            ObjectPatternPropertiesTransportSlot::ReadonlyKeyword => render_readonly_keyword(w),
-            ObjectPatternPropertiesTransportSlot::ModuleKeyword => render_module_keyword(w),
-            ObjectPatternPropertiesTransportSlot::AnyKeyword => render_any_keyword(w),
-            ObjectPatternPropertiesTransportSlot::NumberKeyword => render_number_keyword(w),
-            ObjectPatternPropertiesTransportSlot::BooleanKeyword => render_boolean_keyword(w),
-            ObjectPatternPropertiesTransportSlot::StringKeyword => render_string_keyword(w),
-            ObjectPatternPropertiesTransportSlot::SymbolKeyword => render_symbol_keyword(w),
-            ObjectPatternPropertiesTransportSlot::ExportKeyword => render_export_keyword(w),
-            ObjectPatternPropertiesTransportSlot::ObjectKeyword => render_object_keyword(w),
-            ObjectPatternPropertiesTransportSlot::NewKeyword => render_new_keyword(w),
-            ObjectPatternPropertiesTransportSlot::GetKeyword => render_get_keyword(w),
-            ObjectPatternPropertiesTransportSlot::SetKeyword => render_set_keyword(w),
-            ObjectPatternPropertiesTransportSlot::AsyncKeyword => render_async_keyword(w),
-            ObjectPatternPropertiesTransportSlot::AwaitKeyword => render_await_keyword(w),
-            ObjectPatternPropertiesTransportSlot::StaticKeyword => render_static_keyword(w),
-            ObjectPatternPropertiesTransportSlot::LetKeyword => render_let_keyword(w),
         }
     }
 }
@@ -8610,52 +8009,6 @@ pub enum ObjectAssignmentPatternLeftTransportSlot {
     ObjectPattern(ObjectPatternTransport),
     #[kind(kind::ARRAY_PATTERN)]
     ArrayPattern(ArrayPatternTransport),
-    #[kind(kind::DECLARE_KEYWORD)]
-    DeclareKeyword,
-    #[kind(kind::NAMESPACE_KEYWORD)]
-    NamespaceKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::PUBLIC_KEYWORD)]
-    PublicKeyword,
-    #[kind(kind::PRIVATE_KEYWORD)]
-    PrivateKeyword,
-    #[kind(kind::PROTECTED_KEYWORD)]
-    ProtectedKeyword,
-    #[kind(kind::OVERRIDE_KEYWORD)]
-    OverrideKeyword,
-    #[kind(kind::READONLY_KEYWORD)]
-    ReadonlyKeyword,
-    #[kind(kind::MODULE_KEYWORD)]
-    ModuleKeyword,
-    #[kind(kind::ANY_KEYWORD)]
-    AnyKeyword,
-    #[kind(kind::NUMBER_KEYWORD)]
-    NumberKeyword,
-    #[kind(kind::BOOLEAN_KEYWORD)]
-    BooleanKeyword,
-    #[kind(kind::STRING_KEYWORD)]
-    StringKeyword,
-    #[kind(kind::SYMBOL_KEYWORD)]
-    SymbolKeyword,
-    #[kind(kind::EXPORT_KEYWORD)]
-    ExportKeyword,
-    #[kind(kind::OBJECT_KEYWORD)]
-    ObjectKeyword,
-    #[kind(kind::NEW_KEYWORD)]
-    NewKeyword,
-    #[kind(kind::GET_KEYWORD)]
-    GetKeyword,
-    #[kind(kind::SET_KEYWORD)]
-    SetKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::STATIC_KEYWORD)]
-    StaticKeyword,
-    #[kind(kind::LET_KEYWORD)]
-    LetKeyword,
 }
 
 impl ::sittir_core::prepare::Prepare for ObjectAssignmentPatternLeftTransportSlot {
@@ -8664,29 +8017,6 @@ impl ::sittir_core::prepare::Prepare for ObjectAssignmentPatternLeftTransportSlo
             ObjectAssignmentPatternLeftTransportSlot::ShorthandPropertyIdentifierPattern(t) => t.prepare(ctx),
             ObjectAssignmentPatternLeftTransportSlot::ObjectPattern(t) => t.prepare(ctx),
             ObjectAssignmentPatternLeftTransportSlot::ArrayPattern(t) => t.prepare(ctx),
-            ObjectAssignmentPatternLeftTransportSlot::DeclareKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::NamespaceKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::TypeKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::PublicKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::PrivateKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::ProtectedKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::OverrideKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::ReadonlyKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::ModuleKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::AnyKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::NumberKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::BooleanKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::StringKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::SymbolKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::ExportKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::ObjectKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::NewKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::GetKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::SetKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::AsyncKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::AwaitKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::StaticKeyword => Ok(()),
-            ObjectAssignmentPatternLeftTransportSlot::LetKeyword => Ok(()),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -8694,29 +8024,6 @@ impl ::sittir_core::prepare::Prepare for ObjectAssignmentPatternLeftTransportSlo
             ObjectAssignmentPatternLeftTransportSlot::ShorthandPropertyIdentifierPattern(t) => t.gap_edges(),
             ObjectAssignmentPatternLeftTransportSlot::ObjectPattern(t) => t.gap_edges(),
             ObjectAssignmentPatternLeftTransportSlot::ArrayPattern(t) => t.gap_edges(),
-            ObjectAssignmentPatternLeftTransportSlot::DeclareKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::NamespaceKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::TypeKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::PublicKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::PrivateKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::ProtectedKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::OverrideKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::ReadonlyKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::ModuleKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::AnyKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::NumberKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::BooleanKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::StringKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::SymbolKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::ExportKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::ObjectKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::NewKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::GetKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::SetKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::AsyncKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::AwaitKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::StaticKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::LetKeyword => None,
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -8724,29 +8031,6 @@ impl ::sittir_core::prepare::Prepare for ObjectAssignmentPatternLeftTransportSlo
             ObjectAssignmentPatternLeftTransportSlot::ShorthandPropertyIdentifierPattern(t) => t.snapshot_edge(),
             ObjectAssignmentPatternLeftTransportSlot::ObjectPattern(t) => t.snapshot_edge(),
             ObjectAssignmentPatternLeftTransportSlot::ArrayPattern(t) => t.snapshot_edge(),
-            ObjectAssignmentPatternLeftTransportSlot::DeclareKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::NamespaceKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::TypeKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::PublicKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::PrivateKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::ProtectedKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::OverrideKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::ReadonlyKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::ModuleKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::AnyKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::NumberKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::BooleanKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::StringKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::SymbolKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::ExportKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::ObjectKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::NewKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::GetKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::SetKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::AsyncKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::AwaitKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::StaticKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::LetKeyword => None,
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
@@ -8754,29 +8038,6 @@ impl ::sittir_core::prepare::Prepare for ObjectAssignmentPatternLeftTransportSlo
             ObjectAssignmentPatternLeftTransportSlot::ShorthandPropertyIdentifierPattern(t) => t.source_separator(ctx),
             ObjectAssignmentPatternLeftTransportSlot::ObjectPattern(t) => t.source_separator(ctx),
             ObjectAssignmentPatternLeftTransportSlot::ArrayPattern(t) => t.source_separator(ctx),
-            ObjectAssignmentPatternLeftTransportSlot::DeclareKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::NamespaceKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::TypeKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::PublicKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::PrivateKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::ProtectedKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::OverrideKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::ReadonlyKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::ModuleKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::AnyKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::NumberKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::BooleanKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::StringKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::SymbolKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::ExportKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::ObjectKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::NewKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::GetKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::SetKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::AsyncKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::AwaitKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::StaticKeyword => None,
-            ObjectAssignmentPatternLeftTransportSlot::LetKeyword => None,
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -8790,29 +8051,6 @@ impl ::sittir_core::view::KindOf for ObjectAssignmentPatternLeftTransportSlot {
             Self::ShorthandPropertyIdentifierPattern(inner) => inner.kind_in(kinds),
             Self::ObjectPattern(inner) => inner.kind_in(kinds),
             Self::ArrayPattern(inner) => inner.kind_in(kinds),
-            Self::DeclareKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::NamespaceKeyword => [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
-            Self::PublicKeyword => [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k)),
-            Self::PrivateKeyword => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
-            Self::ProtectedKeyword => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
-            Self::OverrideKeyword => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
-            Self::ReadonlyKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::ModuleKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::AnyKeyword => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
-            Self::NumberKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
-            Self::BooleanKeyword => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
-            Self::StringKeyword => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
-            Self::SymbolKeyword => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
-            Self::ExportKeyword => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
-            Self::ObjectKeyword => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
-            Self::NewKeyword => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
-            Self::GetKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
-            Self::SetKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::StaticKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
-            Self::LetKeyword => [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -8823,29 +8061,6 @@ impl ::sittir_core::render::Render for ObjectAssignmentPatternLeftTransportSlot 
             ObjectAssignmentPatternLeftTransportSlot::ShorthandPropertyIdentifierPattern(inner) => inner.render(w),
             ObjectAssignmentPatternLeftTransportSlot::ObjectPattern(inner) => inner.render(w),
             ObjectAssignmentPatternLeftTransportSlot::ArrayPattern(inner) => inner.render(w),
-            ObjectAssignmentPatternLeftTransportSlot::DeclareKeyword => render_declare_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::NamespaceKeyword => render_namespace_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::TypeKeyword => render_type_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::PublicKeyword => render_public_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::PrivateKeyword => render_private_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::ProtectedKeyword => render_protected_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::OverrideKeyword => render_override_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::ReadonlyKeyword => render_readonly_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::ModuleKeyword => render_module_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::AnyKeyword => render_any_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::NumberKeyword => render_number_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::BooleanKeyword => render_boolean_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::StringKeyword => render_string_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::SymbolKeyword => render_symbol_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::ExportKeyword => render_export_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::ObjectKeyword => render_object_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::NewKeyword => render_new_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::GetKeyword => render_get_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::SetKeyword => render_set_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::AsyncKeyword => render_async_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::AwaitKeyword => render_await_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::StaticKeyword => render_static_keyword(w),
-            ObjectAssignmentPatternLeftTransportSlot::LetKeyword => render_let_keyword(w),
         }
     }
 }
@@ -8871,7 +8086,7 @@ pub enum ArrayElementsTransportSlot {
     ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
@@ -9407,7 +8622,7 @@ impl ::sittir_core::render::Render for ArrayPatternElementsTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum NestedIdentifierObjectTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::NESTED_IDENTIFIER)]
     NestedIdentifier(NestedIdentifierTransport),
@@ -9612,7 +8827,7 @@ pub enum ArrowFunctionBodyTransportSlot {
     ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
@@ -10158,7 +9373,7 @@ pub enum MemberExpressionObjectTransportSlot {
     ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
@@ -10620,12 +9835,7 @@ impl ::sittir_core::render::Render for MemberExpressionObjectTransportSlot {
             MemberExpressionObjectTransportSlot::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_null),
             MemberExpressionObjectTransportSlot::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(436), edges, w, render_meta_property_new_target),
             MemberExpressionObjectTransportSlot::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(437), edges, w, render_meta_property_import_meta),
-            MemberExpressionObjectTransportSlot::Import => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_IMPORT_KEYWORD_BEFORE);
-                let written = render_import(w);
-                written?;
-                Ok(())
-            }
+            MemberExpressionObjectTransportSlot::Import => render_import(w),
             MemberExpressionObjectTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -10687,285 +9897,33 @@ impl ::sittir_core::render::Render for MemberExpressionSeparatorTransportSlot {
 pub enum MemberExpressionPropertyTransportSlot {
     #[kind(kind::PRIVATE_PROPERTY_IDENTIFIER)]
     PrivatePropertyIdentifier(PrivatePropertyIdentifierTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
-    Identifier(IdentifierTransport),
-    #[kind(kind::BREAK_KEYWORD)]
-    BreakKeyword,
-    #[kind(kind::CASE_KEYWORD)]
-    CaseKeyword,
-    #[kind(kind::CATCH_KEYWORD)]
-    CatchKeyword,
-    #[kind(kind::CLASS_KEYWORD)]
-    ClassKeyword,
-    #[kind(kind::CONST_KEYWORD)]
-    ConstKeyword,
-    #[kind(kind::CONTINUE_KEYWORD)]
-    ContinueKeyword,
-    #[kind(kind::DEBUGGER_KEYWORD)]
-    DebuggerKeyword,
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::DELETE_KEYWORD)]
-    DeleteKeyword,
-    #[kind(kind::DO_KEYWORD)]
-    DoKeyword,
-    #[kind(kind::ELSE_KEYWORD)]
-    ElseKeyword,
-    #[kind(kind::EXPORT_KEYWORD)]
-    ExportKeyword,
-    #[kind(kind::EXTENDS_KEYWORD)]
-    ExtendsKeyword,
-    #[kind(kind::FALSE_KEYWORD)]
-    FalseKeyword,
-    #[kind(kind::FINALLY_KEYWORD)]
-    FinallyKeyword,
-    #[kind(kind::FOR_KEYWORD)]
-    ForKeyword,
-    #[kind(kind::FUNCTION_KEYWORD)]
-    FunctionKeyword,
-    #[kind(kind::IF_KEYWORD)]
-    IfKeyword,
-    #[kind(kind::IMPORT_KEYWORD)]
-    ImportKeyword,
-    #[kind(kind::IN_KEYWORD)]
-    InKeyword,
-    #[kind(kind::INSTANCEOF_KEYWORD)]
-    InstanceofKeyword,
-    #[kind(kind::NEW_KEYWORD)]
-    NewKeyword,
-    #[kind(kind::NULL_KEYWORD)]
-    NullKeyword,
-    #[kind(kind::RETURN_KEYWORD)]
-    ReturnKeyword,
-    #[kind(kind::SUPER_KEYWORD)]
-    SuperKeyword,
-    #[kind(kind::SWITCH_KEYWORD)]
-    SwitchKeyword,
-    #[kind(kind::THIS_KEYWORD)]
-    ThisKeyword,
-    #[kind(kind::THROW_KEYWORD)]
-    ThrowKeyword,
-    #[kind(kind::TRUE_KEYWORD)]
-    TrueKeyword,
-    #[kind(kind::TRY_KEYWORD)]
-    TryKeyword,
-    #[kind(kind::TYPEOF_KEYWORD)]
-    TypeofKeyword,
-    #[kind(kind::VAR_KEYWORD)]
-    VarKeyword,
-    #[kind(kind::VOID_KEYWORD)]
-    VoidKeyword,
-    #[kind(kind::WHILE_KEYWORD)]
-    WhileKeyword,
-    #[kind(kind::WITH_KEYWORD)]
-    WithKeyword,
-    #[kind(kind::GET_KEYWORD)]
-    GetKeyword,
-    #[kind(kind::SET_KEYWORD)]
-    SetKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::STATIC_KEYWORD)]
-    StaticKeyword,
-    #[kind(kind::LET_KEYWORD)]
-    LetKeyword,
-    #[transport(verbatim)]
-    Verbatim(VerbatimTransport),
+    #[kind(kind::_PROPERTY_IDENTIFIER, display)]
+    PropertyIdentifier(PropertyIdentifierTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for MemberExpressionPropertyTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             MemberExpressionPropertyTransportSlot::PrivatePropertyIdentifier(t) => t.prepare(ctx),
-            MemberExpressionPropertyTransportSlot::Identifier(t) => t.prepare(ctx),
-            MemberExpressionPropertyTransportSlot::BreakKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::CaseKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::CatchKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::ClassKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::ConstKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::ContinueKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::DebuggerKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::DefaultKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::DeleteKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::DoKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::ElseKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::ExportKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::ExtendsKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::FalseKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::FinallyKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::ForKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::FunctionKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::IfKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::ImportKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::InKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::InstanceofKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::NewKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::NullKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::ReturnKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::SuperKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::SwitchKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::ThisKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::ThrowKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::TrueKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::TryKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::TypeofKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::VarKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::VoidKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::WhileKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::WithKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::GetKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::SetKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::AsyncKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::AwaitKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::StaticKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::LetKeyword => Ok(()),
-            MemberExpressionPropertyTransportSlot::Verbatim(t) => t.prepare(ctx),
+            MemberExpressionPropertyTransportSlot::PropertyIdentifier(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             MemberExpressionPropertyTransportSlot::PrivatePropertyIdentifier(t) => t.gap_edges(),
-            MemberExpressionPropertyTransportSlot::Identifier(t) => t.gap_edges(),
-            MemberExpressionPropertyTransportSlot::BreakKeyword => None,
-            MemberExpressionPropertyTransportSlot::CaseKeyword => None,
-            MemberExpressionPropertyTransportSlot::CatchKeyword => None,
-            MemberExpressionPropertyTransportSlot::ClassKeyword => None,
-            MemberExpressionPropertyTransportSlot::ConstKeyword => None,
-            MemberExpressionPropertyTransportSlot::ContinueKeyword => None,
-            MemberExpressionPropertyTransportSlot::DebuggerKeyword => None,
-            MemberExpressionPropertyTransportSlot::DefaultKeyword => None,
-            MemberExpressionPropertyTransportSlot::DeleteKeyword => None,
-            MemberExpressionPropertyTransportSlot::DoKeyword => None,
-            MemberExpressionPropertyTransportSlot::ElseKeyword => None,
-            MemberExpressionPropertyTransportSlot::ExportKeyword => None,
-            MemberExpressionPropertyTransportSlot::ExtendsKeyword => None,
-            MemberExpressionPropertyTransportSlot::FalseKeyword => None,
-            MemberExpressionPropertyTransportSlot::FinallyKeyword => None,
-            MemberExpressionPropertyTransportSlot::ForKeyword => None,
-            MemberExpressionPropertyTransportSlot::FunctionKeyword => None,
-            MemberExpressionPropertyTransportSlot::IfKeyword => None,
-            MemberExpressionPropertyTransportSlot::ImportKeyword => None,
-            MemberExpressionPropertyTransportSlot::InKeyword => None,
-            MemberExpressionPropertyTransportSlot::InstanceofKeyword => None,
-            MemberExpressionPropertyTransportSlot::NewKeyword => None,
-            MemberExpressionPropertyTransportSlot::NullKeyword => None,
-            MemberExpressionPropertyTransportSlot::ReturnKeyword => None,
-            MemberExpressionPropertyTransportSlot::SuperKeyword => None,
-            MemberExpressionPropertyTransportSlot::SwitchKeyword => None,
-            MemberExpressionPropertyTransportSlot::ThisKeyword => None,
-            MemberExpressionPropertyTransportSlot::ThrowKeyword => None,
-            MemberExpressionPropertyTransportSlot::TrueKeyword => None,
-            MemberExpressionPropertyTransportSlot::TryKeyword => None,
-            MemberExpressionPropertyTransportSlot::TypeofKeyword => None,
-            MemberExpressionPropertyTransportSlot::VarKeyword => None,
-            MemberExpressionPropertyTransportSlot::VoidKeyword => None,
-            MemberExpressionPropertyTransportSlot::WhileKeyword => None,
-            MemberExpressionPropertyTransportSlot::WithKeyword => None,
-            MemberExpressionPropertyTransportSlot::GetKeyword => None,
-            MemberExpressionPropertyTransportSlot::SetKeyword => None,
-            MemberExpressionPropertyTransportSlot::AsyncKeyword => None,
-            MemberExpressionPropertyTransportSlot::AwaitKeyword => None,
-            MemberExpressionPropertyTransportSlot::StaticKeyword => None,
-            MemberExpressionPropertyTransportSlot::LetKeyword => None,
-            MemberExpressionPropertyTransportSlot::Verbatim(t) => t.gap_edges(),
+            MemberExpressionPropertyTransportSlot::PropertyIdentifier(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
             MemberExpressionPropertyTransportSlot::PrivatePropertyIdentifier(t) => t.snapshot_edge(),
-            MemberExpressionPropertyTransportSlot::Identifier(t) => t.snapshot_edge(),
-            MemberExpressionPropertyTransportSlot::BreakKeyword => None,
-            MemberExpressionPropertyTransportSlot::CaseKeyword => None,
-            MemberExpressionPropertyTransportSlot::CatchKeyword => None,
-            MemberExpressionPropertyTransportSlot::ClassKeyword => None,
-            MemberExpressionPropertyTransportSlot::ConstKeyword => None,
-            MemberExpressionPropertyTransportSlot::ContinueKeyword => None,
-            MemberExpressionPropertyTransportSlot::DebuggerKeyword => None,
-            MemberExpressionPropertyTransportSlot::DefaultKeyword => None,
-            MemberExpressionPropertyTransportSlot::DeleteKeyword => None,
-            MemberExpressionPropertyTransportSlot::DoKeyword => None,
-            MemberExpressionPropertyTransportSlot::ElseKeyword => None,
-            MemberExpressionPropertyTransportSlot::ExportKeyword => None,
-            MemberExpressionPropertyTransportSlot::ExtendsKeyword => None,
-            MemberExpressionPropertyTransportSlot::FalseKeyword => None,
-            MemberExpressionPropertyTransportSlot::FinallyKeyword => None,
-            MemberExpressionPropertyTransportSlot::ForKeyword => None,
-            MemberExpressionPropertyTransportSlot::FunctionKeyword => None,
-            MemberExpressionPropertyTransportSlot::IfKeyword => None,
-            MemberExpressionPropertyTransportSlot::ImportKeyword => None,
-            MemberExpressionPropertyTransportSlot::InKeyword => None,
-            MemberExpressionPropertyTransportSlot::InstanceofKeyword => None,
-            MemberExpressionPropertyTransportSlot::NewKeyword => None,
-            MemberExpressionPropertyTransportSlot::NullKeyword => None,
-            MemberExpressionPropertyTransportSlot::ReturnKeyword => None,
-            MemberExpressionPropertyTransportSlot::SuperKeyword => None,
-            MemberExpressionPropertyTransportSlot::SwitchKeyword => None,
-            MemberExpressionPropertyTransportSlot::ThisKeyword => None,
-            MemberExpressionPropertyTransportSlot::ThrowKeyword => None,
-            MemberExpressionPropertyTransportSlot::TrueKeyword => None,
-            MemberExpressionPropertyTransportSlot::TryKeyword => None,
-            MemberExpressionPropertyTransportSlot::TypeofKeyword => None,
-            MemberExpressionPropertyTransportSlot::VarKeyword => None,
-            MemberExpressionPropertyTransportSlot::VoidKeyword => None,
-            MemberExpressionPropertyTransportSlot::WhileKeyword => None,
-            MemberExpressionPropertyTransportSlot::WithKeyword => None,
-            MemberExpressionPropertyTransportSlot::GetKeyword => None,
-            MemberExpressionPropertyTransportSlot::SetKeyword => None,
-            MemberExpressionPropertyTransportSlot::AsyncKeyword => None,
-            MemberExpressionPropertyTransportSlot::AwaitKeyword => None,
-            MemberExpressionPropertyTransportSlot::StaticKeyword => None,
-            MemberExpressionPropertyTransportSlot::LetKeyword => None,
-            MemberExpressionPropertyTransportSlot::Verbatim(t) => t.snapshot_edge(),
+            MemberExpressionPropertyTransportSlot::PropertyIdentifier(t) => t.snapshot_edge(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
         match self {
             MemberExpressionPropertyTransportSlot::PrivatePropertyIdentifier(t) => t.source_separator(ctx),
-            MemberExpressionPropertyTransportSlot::Identifier(t) => t.source_separator(ctx),
-            MemberExpressionPropertyTransportSlot::BreakKeyword => None,
-            MemberExpressionPropertyTransportSlot::CaseKeyword => None,
-            MemberExpressionPropertyTransportSlot::CatchKeyword => None,
-            MemberExpressionPropertyTransportSlot::ClassKeyword => None,
-            MemberExpressionPropertyTransportSlot::ConstKeyword => None,
-            MemberExpressionPropertyTransportSlot::ContinueKeyword => None,
-            MemberExpressionPropertyTransportSlot::DebuggerKeyword => None,
-            MemberExpressionPropertyTransportSlot::DefaultKeyword => None,
-            MemberExpressionPropertyTransportSlot::DeleteKeyword => None,
-            MemberExpressionPropertyTransportSlot::DoKeyword => None,
-            MemberExpressionPropertyTransportSlot::ElseKeyword => None,
-            MemberExpressionPropertyTransportSlot::ExportKeyword => None,
-            MemberExpressionPropertyTransportSlot::ExtendsKeyword => None,
-            MemberExpressionPropertyTransportSlot::FalseKeyword => None,
-            MemberExpressionPropertyTransportSlot::FinallyKeyword => None,
-            MemberExpressionPropertyTransportSlot::ForKeyword => None,
-            MemberExpressionPropertyTransportSlot::FunctionKeyword => None,
-            MemberExpressionPropertyTransportSlot::IfKeyword => None,
-            MemberExpressionPropertyTransportSlot::ImportKeyword => None,
-            MemberExpressionPropertyTransportSlot::InKeyword => None,
-            MemberExpressionPropertyTransportSlot::InstanceofKeyword => None,
-            MemberExpressionPropertyTransportSlot::NewKeyword => None,
-            MemberExpressionPropertyTransportSlot::NullKeyword => None,
-            MemberExpressionPropertyTransportSlot::ReturnKeyword => None,
-            MemberExpressionPropertyTransportSlot::SuperKeyword => None,
-            MemberExpressionPropertyTransportSlot::SwitchKeyword => None,
-            MemberExpressionPropertyTransportSlot::ThisKeyword => None,
-            MemberExpressionPropertyTransportSlot::ThrowKeyword => None,
-            MemberExpressionPropertyTransportSlot::TrueKeyword => None,
-            MemberExpressionPropertyTransportSlot::TryKeyword => None,
-            MemberExpressionPropertyTransportSlot::TypeofKeyword => None,
-            MemberExpressionPropertyTransportSlot::VarKeyword => None,
-            MemberExpressionPropertyTransportSlot::VoidKeyword => None,
-            MemberExpressionPropertyTransportSlot::WhileKeyword => None,
-            MemberExpressionPropertyTransportSlot::WithKeyword => None,
-            MemberExpressionPropertyTransportSlot::GetKeyword => None,
-            MemberExpressionPropertyTransportSlot::SetKeyword => None,
-            MemberExpressionPropertyTransportSlot::AsyncKeyword => None,
-            MemberExpressionPropertyTransportSlot::AwaitKeyword => None,
-            MemberExpressionPropertyTransportSlot::StaticKeyword => None,
-            MemberExpressionPropertyTransportSlot::LetKeyword => None,
-            MemberExpressionPropertyTransportSlot::Verbatim(t) => t.source_separator(ctx),
+            MemberExpressionPropertyTransportSlot::PropertyIdentifier(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -10977,49 +9935,7 @@ impl ::sittir_core::view::KindOf for MemberExpressionPropertyTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::PrivatePropertyIdentifier(inner) => inner.kind_in(kinds),
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::BreakKeyword => [::sittir_core::types::KindId(27)].iter().any(|k| kinds.contains(k)),
-            Self::CaseKeyword => [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k)),
-            Self::CatchKeyword => [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k)),
-            Self::ClassKeyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::ConstKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ContinueKeyword => [::sittir_core::types::KindId(28)].iter().any(|k| kinds.contains(k)),
-            Self::DebuggerKeyword => [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
-            Self::DeleteKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::DoKeyword => [::sittir_core::types::KindId(25)].iter().any(|k| kinds.contains(k)),
-            Self::ElseKeyword => [::sittir_core::types::KindId(17)].iter().any(|k| kinds.contains(k)),
-            Self::ExportKeyword => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
-            Self::ExtendsKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::FalseKeyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::FinallyKeyword => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
-            Self::ForKeyword => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
-            Self::FunctionKeyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::IfKeyword => [::sittir_core::types::KindId(18)].iter().any(|k| kinds.contains(k)),
-            Self::ImportKeyword => [::sittir_core::types::KindId(10)].iter().any(|k| kinds.contains(k)),
-            Self::InKeyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::InstanceofKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::NewKeyword => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
-            Self::NullKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::ReturnKeyword => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
-            Self::SuperKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
-            Self::SwitchKeyword => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
-            Self::ThisKeyword => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
-            Self::ThrowKeyword => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
-            Self::TrueKeyword => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
-            Self::TryKeyword => [::sittir_core::types::KindId(26)].iter().any(|k| kinds.contains(k)),
-            Self::TypeofKeyword => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
-            Self::VarKeyword => [::sittir_core::types::KindId(14)].iter().any(|k| kinds.contains(k)),
-            Self::VoidKeyword => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
-            Self::WhileKeyword => [::sittir_core::types::KindId(24)].iter().any(|k| kinds.contains(k)),
-            Self::WithKeyword => [::sittir_core::types::KindId(12)].iter().any(|k| kinds.contains(k)),
-            Self::GetKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
-            Self::SetKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::StaticKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
-            Self::LetKeyword => [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
+            Self::PropertyIdentifier(inner) => inner.kind_in(kinds),
         }
     }
 }
@@ -11028,254 +9944,7 @@ impl ::sittir_core::render::Render for MemberExpressionPropertyTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             MemberExpressionPropertyTransportSlot::PrivatePropertyIdentifier(inner) => inner.render(w),
-            MemberExpressionPropertyTransportSlot::Identifier(inner) => inner.render(w),
-            MemberExpressionPropertyTransportSlot::BreakKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_BREAK_KEYWORD_BEFORE);
-                let written = render_break_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::CaseKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_CASE_KEYWORD_BEFORE);
-                let written = render_case_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::CatchKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_CATCH_KEYWORD_BEFORE);
-                let written = render_catch_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::ClassKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_CLASS_KEYWORD_BEFORE);
-                let written = render_class_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::ConstKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_CONST_KEYWORD_BEFORE);
-                let written = render_const_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::ContinueKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_CONTINUE_KEYWORD_BEFORE);
-                let written = render_continue_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::DebuggerKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_DEBUGGER_KEYWORD_BEFORE);
-                let written = render_debugger_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::DefaultKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_DEFAULT_KEYWORD_BEFORE);
-                let written = render_default_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::DeleteKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_DELETE_KEYWORD_BEFORE);
-                let written = render_delete_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::DoKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_DO_KEYWORD_BEFORE);
-                let written = render_do_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::ElseKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_ELSE_KEYWORD_BEFORE);
-                let written = render_else_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::ExportKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_EXPORT_KEYWORD_BEFORE);
-                let written = render_export_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::ExtendsKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_EXTENDS_KEYWORD_BEFORE);
-                let written = render_extends_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::FalseKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_FALSE_KEYWORD_BEFORE);
-                let written = render_false_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::FinallyKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_FINALLY_KEYWORD_BEFORE);
-                let written = render_finally_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::ForKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_FOR_KEYWORD_BEFORE);
-                let written = render_for_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::FunctionKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_FUNCTION_KEYWORD_BEFORE);
-                let written = render_function_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::IfKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_IF_KEYWORD_BEFORE);
-                let written = render_if_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::ImportKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_IMPORT_KEYWORD_BEFORE);
-                let written = render_import_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::InKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_IN_KEYWORD_BEFORE);
-                let written = render_in_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::InstanceofKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_INSTANCEOF_KEYWORD_BEFORE);
-                let written = render_instanceof_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::NewKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_NEW_KEYWORD_BEFORE);
-                let written = render_new_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::NullKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_NULL_KEYWORD_BEFORE);
-                let written = render_null_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::ReturnKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_RETURN_KEYWORD_BEFORE);
-                let written = render_return_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::SuperKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_SUPER_KEYWORD_BEFORE);
-                let written = render_super_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::SwitchKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_SWITCH_KEYWORD_BEFORE);
-                let written = render_switch_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::ThisKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_THIS_KEYWORD_BEFORE);
-                let written = render_this_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::ThrowKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_THROW_KEYWORD_BEFORE);
-                let written = render_throw_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::TrueKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_TRUE_KEYWORD_BEFORE);
-                let written = render_true_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::TryKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_TRY_KEYWORD_BEFORE);
-                let written = render_try_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::TypeofKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_TYPEOF_KEYWORD_BEFORE);
-                let written = render_typeof_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::VarKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_VAR_KEYWORD_BEFORE);
-                let written = render_var_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::VoidKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_VOID_KEYWORD_BEFORE);
-                let written = render_void_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::WhileKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_WHILE_KEYWORD_BEFORE);
-                let written = render_while_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::WithKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_WITH_KEYWORD_BEFORE);
-                let written = render_with_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::GetKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_GET_KEYWORD_BEFORE);
-                let written = render_get_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::SetKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_SET_KEYWORD_BEFORE);
-                let written = render_set_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::AsyncKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_ASYNC_KEYWORD_BEFORE);
-                let written = render_async_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::AwaitKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_AWAIT_KEYWORD_BEFORE);
-                let written = render_await_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::StaticKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_STATIC_KEYWORD_BEFORE);
-                let written = render_static_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::LetKeyword => {
-                w.site_at(options::SITE_MEMBER_EXPRESSION_LET_KEYWORD_BEFORE);
-                let written = render_let_keyword(w);
-                written?;
-                Ok(())
-            }
-            MemberExpressionPropertyTransportSlot::Verbatim(inner) => inner.render(w),
+            MemberExpressionPropertyTransportSlot::PropertyIdentifier(inner) => inner.render(w),
         }
     }
 }
@@ -11301,7 +9970,7 @@ pub enum SubscriptExpressionObjectTransportSlot {
     ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
@@ -11768,7 +10437,7 @@ pub enum LhsExpressionContentTransportSlot {
     MemberExpression(MemberExpressionTransport),
     #[kind(kind::SUBSCRIPT_EXPRESSION)]
     SubscriptExpression(SubscriptExpressionTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::OBJECT_PATTERN)]
     ObjectPattern(ObjectPatternTransport),
@@ -11939,7 +10608,7 @@ pub enum AugmentedAssignmentExpressionLeftTransportSlot {
     MemberExpression(MemberExpressionTransport),
     #[kind(kind::SUBSCRIPT_EXPRESSION)]
     SubscriptExpression(SubscriptExpressionTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
     ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
@@ -12457,7 +11126,7 @@ impl ::sittir_core::render::Render for TemplateStringElementsTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum DecoratorExpressionTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::DECORATOR_MEMBER_EXPRESSION)]
     DecoratorMemberExpression(DecoratorMemberExpressionTransport),
@@ -12538,7 +11207,7 @@ impl ::sittir_core::render::Render for DecoratorExpressionTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum DecoratorMemberExpressionObjectTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::DECORATOR_MEMBER_EXPRESSION, kind::MEMBER_EXPRESSION)]
     DecoratorMemberExpression(DecoratorMemberExpressionTransport),
@@ -12612,7 +11281,7 @@ impl ::sittir_core::render::Render for DecoratorMemberExpressionObjectTransportS
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum DecoratorCallExpressionFunctionTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::DECORATOR_MEMBER_EXPRESSION)]
     DecoratorMemberExpression(DecoratorMemberExpressionTransport),
@@ -12753,52 +11422,6 @@ pub enum MethodDefinitionNameTransportSlot {
     NumberBigintDecimal(NumberBigintDecimalTransport),
     #[kind(kind::COMPUTED_PROPERTY_NAME)]
     ComputedPropertyName(ComputedPropertyNameTransport),
-    #[kind(kind::DECLARE_KEYWORD)]
-    DeclareKeyword,
-    #[kind(kind::NAMESPACE_KEYWORD)]
-    NamespaceKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::PUBLIC_KEYWORD)]
-    PublicKeyword,
-    #[kind(kind::PRIVATE_KEYWORD)]
-    PrivateKeyword,
-    #[kind(kind::PROTECTED_KEYWORD)]
-    ProtectedKeyword,
-    #[kind(kind::OVERRIDE_KEYWORD)]
-    OverrideKeyword,
-    #[kind(kind::READONLY_KEYWORD)]
-    ReadonlyKeyword,
-    #[kind(kind::MODULE_KEYWORD)]
-    ModuleKeyword,
-    #[kind(kind::ANY_KEYWORD)]
-    AnyKeyword,
-    #[kind(kind::NUMBER_KEYWORD)]
-    NumberKeyword,
-    #[kind(kind::BOOLEAN_KEYWORD)]
-    BooleanKeyword,
-    #[kind(kind::STRING_KEYWORD)]
-    StringKeyword,
-    #[kind(kind::SYMBOL_KEYWORD)]
-    SymbolKeyword,
-    #[kind(kind::EXPORT_KEYWORD)]
-    ExportKeyword,
-    #[kind(kind::OBJECT_KEYWORD)]
-    ObjectKeyword,
-    #[kind(kind::NEW_KEYWORD)]
-    NewKeyword,
-    #[kind(kind::GET_KEYWORD)]
-    GetKeyword,
-    #[kind(kind::SET_KEYWORD)]
-    SetKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::STATIC_KEYWORD)]
-    StaticKeyword,
-    #[kind(kind::LET_KEYWORD)]
-    LetKeyword,
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
 }
@@ -12822,29 +11445,6 @@ impl ::sittir_core::prepare::Prepare for MethodDefinitionNameTransportSlot {
             MethodDefinitionNameTransportSlot::NumberBigintOctal(t) => t.prepare(ctx),
             MethodDefinitionNameTransportSlot::NumberBigintDecimal(t) => t.prepare(ctx),
             MethodDefinitionNameTransportSlot::ComputedPropertyName(t) => t.prepare(ctx),
-            MethodDefinitionNameTransportSlot::DeclareKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::NamespaceKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::TypeKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::PublicKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::PrivateKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::ProtectedKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::OverrideKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::ReadonlyKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::ModuleKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::AnyKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::NumberKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::BooleanKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::StringKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::SymbolKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::ExportKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::ObjectKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::NewKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::GetKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::SetKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::AsyncKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::AwaitKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::StaticKeyword => Ok(()),
-            MethodDefinitionNameTransportSlot::LetKeyword => Ok(()),
             MethodDefinitionNameTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -12866,29 +11466,6 @@ impl ::sittir_core::prepare::Prepare for MethodDefinitionNameTransportSlot {
             MethodDefinitionNameTransportSlot::NumberBigintOctal(t) => t.gap_edges(),
             MethodDefinitionNameTransportSlot::NumberBigintDecimal(t) => t.gap_edges(),
             MethodDefinitionNameTransportSlot::ComputedPropertyName(t) => t.gap_edges(),
-            MethodDefinitionNameTransportSlot::DeclareKeyword => None,
-            MethodDefinitionNameTransportSlot::NamespaceKeyword => None,
-            MethodDefinitionNameTransportSlot::TypeKeyword => None,
-            MethodDefinitionNameTransportSlot::PublicKeyword => None,
-            MethodDefinitionNameTransportSlot::PrivateKeyword => None,
-            MethodDefinitionNameTransportSlot::ProtectedKeyword => None,
-            MethodDefinitionNameTransportSlot::OverrideKeyword => None,
-            MethodDefinitionNameTransportSlot::ReadonlyKeyword => None,
-            MethodDefinitionNameTransportSlot::ModuleKeyword => None,
-            MethodDefinitionNameTransportSlot::AnyKeyword => None,
-            MethodDefinitionNameTransportSlot::NumberKeyword => None,
-            MethodDefinitionNameTransportSlot::BooleanKeyword => None,
-            MethodDefinitionNameTransportSlot::StringKeyword => None,
-            MethodDefinitionNameTransportSlot::SymbolKeyword => None,
-            MethodDefinitionNameTransportSlot::ExportKeyword => None,
-            MethodDefinitionNameTransportSlot::ObjectKeyword => None,
-            MethodDefinitionNameTransportSlot::NewKeyword => None,
-            MethodDefinitionNameTransportSlot::GetKeyword => None,
-            MethodDefinitionNameTransportSlot::SetKeyword => None,
-            MethodDefinitionNameTransportSlot::AsyncKeyword => None,
-            MethodDefinitionNameTransportSlot::AwaitKeyword => None,
-            MethodDefinitionNameTransportSlot::StaticKeyword => None,
-            MethodDefinitionNameTransportSlot::LetKeyword => None,
             MethodDefinitionNameTransportSlot::Verbatim(t) => t.gap_edges(),
         }
     }
@@ -12910,29 +11487,6 @@ impl ::sittir_core::prepare::Prepare for MethodDefinitionNameTransportSlot {
             MethodDefinitionNameTransportSlot::NumberBigintOctal(t) => t.snapshot_edge(),
             MethodDefinitionNameTransportSlot::NumberBigintDecimal(t) => t.snapshot_edge(),
             MethodDefinitionNameTransportSlot::ComputedPropertyName(t) => t.snapshot_edge(),
-            MethodDefinitionNameTransportSlot::DeclareKeyword => None,
-            MethodDefinitionNameTransportSlot::NamespaceKeyword => None,
-            MethodDefinitionNameTransportSlot::TypeKeyword => None,
-            MethodDefinitionNameTransportSlot::PublicKeyword => None,
-            MethodDefinitionNameTransportSlot::PrivateKeyword => None,
-            MethodDefinitionNameTransportSlot::ProtectedKeyword => None,
-            MethodDefinitionNameTransportSlot::OverrideKeyword => None,
-            MethodDefinitionNameTransportSlot::ReadonlyKeyword => None,
-            MethodDefinitionNameTransportSlot::ModuleKeyword => None,
-            MethodDefinitionNameTransportSlot::AnyKeyword => None,
-            MethodDefinitionNameTransportSlot::NumberKeyword => None,
-            MethodDefinitionNameTransportSlot::BooleanKeyword => None,
-            MethodDefinitionNameTransportSlot::StringKeyword => None,
-            MethodDefinitionNameTransportSlot::SymbolKeyword => None,
-            MethodDefinitionNameTransportSlot::ExportKeyword => None,
-            MethodDefinitionNameTransportSlot::ObjectKeyword => None,
-            MethodDefinitionNameTransportSlot::NewKeyword => None,
-            MethodDefinitionNameTransportSlot::GetKeyword => None,
-            MethodDefinitionNameTransportSlot::SetKeyword => None,
-            MethodDefinitionNameTransportSlot::AsyncKeyword => None,
-            MethodDefinitionNameTransportSlot::AwaitKeyword => None,
-            MethodDefinitionNameTransportSlot::StaticKeyword => None,
-            MethodDefinitionNameTransportSlot::LetKeyword => None,
             MethodDefinitionNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
@@ -12954,29 +11508,6 @@ impl ::sittir_core::prepare::Prepare for MethodDefinitionNameTransportSlot {
             MethodDefinitionNameTransportSlot::NumberBigintOctal(t) => t.source_separator(ctx),
             MethodDefinitionNameTransportSlot::NumberBigintDecimal(t) => t.source_separator(ctx),
             MethodDefinitionNameTransportSlot::ComputedPropertyName(t) => t.source_separator(ctx),
-            MethodDefinitionNameTransportSlot::DeclareKeyword => None,
-            MethodDefinitionNameTransportSlot::NamespaceKeyword => None,
-            MethodDefinitionNameTransportSlot::TypeKeyword => None,
-            MethodDefinitionNameTransportSlot::PublicKeyword => None,
-            MethodDefinitionNameTransportSlot::PrivateKeyword => None,
-            MethodDefinitionNameTransportSlot::ProtectedKeyword => None,
-            MethodDefinitionNameTransportSlot::OverrideKeyword => None,
-            MethodDefinitionNameTransportSlot::ReadonlyKeyword => None,
-            MethodDefinitionNameTransportSlot::ModuleKeyword => None,
-            MethodDefinitionNameTransportSlot::AnyKeyword => None,
-            MethodDefinitionNameTransportSlot::NumberKeyword => None,
-            MethodDefinitionNameTransportSlot::BooleanKeyword => None,
-            MethodDefinitionNameTransportSlot::StringKeyword => None,
-            MethodDefinitionNameTransportSlot::SymbolKeyword => None,
-            MethodDefinitionNameTransportSlot::ExportKeyword => None,
-            MethodDefinitionNameTransportSlot::ObjectKeyword => None,
-            MethodDefinitionNameTransportSlot::NewKeyword => None,
-            MethodDefinitionNameTransportSlot::GetKeyword => None,
-            MethodDefinitionNameTransportSlot::SetKeyword => None,
-            MethodDefinitionNameTransportSlot::AsyncKeyword => None,
-            MethodDefinitionNameTransportSlot::AwaitKeyword => None,
-            MethodDefinitionNameTransportSlot::StaticKeyword => None,
-            MethodDefinitionNameTransportSlot::LetKeyword => None,
             MethodDefinitionNameTransportSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
@@ -13004,29 +11535,6 @@ impl ::sittir_core::view::KindOf for MethodDefinitionNameTransportSlot {
             Self::NumberBigintOctal(inner) => inner.kind_in(kinds),
             Self::NumberBigintDecimal(inner) => inner.kind_in(kinds),
             Self::ComputedPropertyName(inner) => inner.kind_in(kinds),
-            Self::DeclareKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::NamespaceKeyword => [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
-            Self::PublicKeyword => [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k)),
-            Self::PrivateKeyword => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
-            Self::ProtectedKeyword => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
-            Self::OverrideKeyword => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
-            Self::ReadonlyKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::ModuleKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::AnyKeyword => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
-            Self::NumberKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
-            Self::BooleanKeyword => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
-            Self::StringKeyword => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
-            Self::SymbolKeyword => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
-            Self::ExportKeyword => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
-            Self::ObjectKeyword => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
-            Self::NewKeyword => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
-            Self::GetKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
-            Self::SetKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::StaticKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
-            Self::LetKeyword => [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -13051,29 +11559,6 @@ impl ::sittir_core::render::Render for MethodDefinitionNameTransportSlot {
             MethodDefinitionNameTransportSlot::NumberBigintOctal(inner) => inner.render(w),
             MethodDefinitionNameTransportSlot::NumberBigintDecimal(inner) => inner.render(w),
             MethodDefinitionNameTransportSlot::ComputedPropertyName(inner) => inner.render(w),
-            MethodDefinitionNameTransportSlot::DeclareKeyword => render_declare_keyword(w),
-            MethodDefinitionNameTransportSlot::NamespaceKeyword => render_namespace_keyword(w),
-            MethodDefinitionNameTransportSlot::TypeKeyword => render_type_keyword(w),
-            MethodDefinitionNameTransportSlot::PublicKeyword => render_public_keyword(w),
-            MethodDefinitionNameTransportSlot::PrivateKeyword => render_private_keyword(w),
-            MethodDefinitionNameTransportSlot::ProtectedKeyword => render_protected_keyword(w),
-            MethodDefinitionNameTransportSlot::OverrideKeyword => render_override_keyword(w),
-            MethodDefinitionNameTransportSlot::ReadonlyKeyword => render_readonly_keyword(w),
-            MethodDefinitionNameTransportSlot::ModuleKeyword => render_module_keyword(w),
-            MethodDefinitionNameTransportSlot::AnyKeyword => render_any_keyword(w),
-            MethodDefinitionNameTransportSlot::NumberKeyword => render_number_keyword(w),
-            MethodDefinitionNameTransportSlot::BooleanKeyword => render_boolean_keyword(w),
-            MethodDefinitionNameTransportSlot::StringKeyword => render_string_keyword(w),
-            MethodDefinitionNameTransportSlot::SymbolKeyword => render_symbol_keyword(w),
-            MethodDefinitionNameTransportSlot::ExportKeyword => render_export_keyword(w),
-            MethodDefinitionNameTransportSlot::ObjectKeyword => render_object_keyword(w),
-            MethodDefinitionNameTransportSlot::NewKeyword => render_new_keyword(w),
-            MethodDefinitionNameTransportSlot::GetKeyword => render_get_keyword(w),
-            MethodDefinitionNameTransportSlot::SetKeyword => render_set_keyword(w),
-            MethodDefinitionNameTransportSlot::AsyncKeyword => render_async_keyword(w),
-            MethodDefinitionNameTransportSlot::AwaitKeyword => render_await_keyword(w),
-            MethodDefinitionNameTransportSlot::StaticKeyword => render_static_keyword(w),
-            MethodDefinitionNameTransportSlot::LetKeyword => render_let_keyword(w),
             MethodDefinitionNameTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -13170,7 +11655,7 @@ impl ::sittir_core::render::Render for FunctionSignatureTerminatorTransportSlot 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum DecoratorParenthesizedExpressionExpressionTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::DECORATOR_MEMBER_EXPRESSION)]
     DecoratorMemberExpression(DecoratorMemberExpressionTransport),
@@ -13680,7 +12165,7 @@ pub enum ModuleNameTransportSlot {
     StringDouble(StringDoubleTransport),
     #[kind(kind::STRING_SINGLE)]
     StringSingle(StringSingleTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::NESTED_IDENTIFIER)]
     NestedIdentifier(NestedIdentifierTransport),
@@ -14040,63 +12525,6 @@ impl ::sittir_core::render::Render for TypeQueryMemberExpressionInTypeAnnotation
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot {
-    #[kind(kind::PRIVATE_PROPERTY_IDENTIFIER)]
-    PrivatePropertyIdentifier(PrivatePropertyIdentifierTransport),
-    #[kind(kind::_PROPERTY_IDENTIFIER, display, decodes(kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD))]
-    PropertyIdentifier(PropertyIdentifierTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot::PrivatePropertyIdentifier(t) => t.prepare(ctx),
-            TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot::PropertyIdentifier(t) => t.prepare(ctx),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot::PrivatePropertyIdentifier(t) => t.gap_edges(),
-            TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot::PropertyIdentifier(t) => t.gap_edges(),
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot::PrivatePropertyIdentifier(t) => t.snapshot_edge(),
-            TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot::PropertyIdentifier(t) => t.snapshot_edge(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
-        match self {
-            TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot::PrivatePropertyIdentifier(t) => t.source_separator(ctx),
-            TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot::PropertyIdentifier(t) => t.source_separator(ctx),
-        }
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::view::KindOf for TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::PrivatePropertyIdentifier(inner) => inner.kind_in(kinds),
-            Self::PropertyIdentifier(inner) => inner.kind_in(kinds),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot::PrivatePropertyIdentifier(inner) => inner.render(w),
-            TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot::PropertyIdentifier(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
 pub enum TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot {
     #[kind(kind::_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryMemberExpressionInTypeAnnotation(TypeQueryMemberExpressionInTypeAnnotationTransport),
@@ -14157,7 +12585,7 @@ impl ::sittir_core::render::Render for TypeQueryCallExpressionInTypeAnnotationFu
 pub enum AssertsValueTransportSlot {
     #[kind(kind::TYPE_PREDICATE)]
     TypePredicate(TypePredicateTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::THIS, kind::THIS_KEYWORD)]
     #[transport(edged)]
@@ -14229,7 +12657,7 @@ impl ::sittir_core::render::Render for AssertsValueTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum TupleParameterNameTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::REST_PATTERN)]
     RestPattern(RestPatternTransport),
@@ -14619,7 +13047,7 @@ impl ::sittir_core::render::Render for GenericTypeNameTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum TypePredicateNameTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::PREDEFINED_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD)]
     PredefinedType(PredefinedTypeEnum),
@@ -14693,7 +13121,7 @@ impl ::sittir_core::render::Render for TypePredicateNameTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum TypeQueryMemberExpressionObjectTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::_TYPE_QUERY_SUBSCRIPT_EXPRESSION)]
     TypeQuerySubscriptExpression(TypeQuerySubscriptExpressionTransport),
@@ -14995,7 +13423,7 @@ impl ::sittir_core::render::Render for TypeQuerySubscriptExpressionIndexTranspor
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum TypeQueryCallExpressionFunctionTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::_TYPE_QUERY_MEMBER_EXPRESSION)]
     TypeQueryMemberExpression(TypeQueryMemberExpressionTransport),
@@ -15084,7 +13512,7 @@ pub enum TypeQueryExpressionTransportSlot {
     TypeQueryCallExpression(TypeQueryCallExpressionTransport),
     #[kind(kind::_TYPE_QUERY_INSTANTIATION_EXPRESSION)]
     TypeQueryInstantiationExpression(TypeQueryInstantiationExpressionTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::THIS, kind::THIS_KEYWORD)]
     #[transport(edged)]
@@ -16168,7 +14596,7 @@ impl ::sittir_core::render::Render for ImportClauseGroupContentTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum CatchClauseGroupParameterTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::OBJECT_PATTERN)]
     ObjectPattern(ObjectPatternTransport),
@@ -16566,7 +14994,7 @@ pub enum BinaryExpressionInLeftTransportSlot {
     ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
@@ -17475,7 +15903,7 @@ impl ::sittir_core::render::Render for ImportSpecifierAsImportKindTransportSlot 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum ImportSpecifierAsNameTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleTransport),
@@ -17561,495 +15989,6 @@ impl ::sittir_core::render::Render for ImportSpecifierAsNameTransportSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum CallExpressionCallFunctionTransportSlot {
-    #[kind(kind::AS_EXPRESSION)]
-    AsExpression(Box<AsExpressionTransport>),
-    #[kind(kind::SATISFIES_EXPRESSION)]
-    SatisfiesExpression(Box<SatisfiesExpressionTransport>),
-    #[kind(kind::INSTANTIATION_EXPRESSION)]
-    InstantiationExpression(InstantiationExpressionTransport),
-    #[kind(kind::INTERNAL_MODULE)]
-    InternalModule(InternalModuleTransport),
-    #[kind(kind::TYPE_ASSERTION)]
-    TypeAssertion(TypeAssertionTransport),
-    #[kind(kind::SUBSCRIPT_EXPRESSION)]
-    SubscriptExpression(SubscriptExpressionTransport),
-    #[kind(kind::MEMBER_EXPRESSION)]
-    MemberExpression(MemberExpressionTransport),
-    #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
-    ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
-    #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
-    ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
-    Identifier(IdentifierTransport),
-    #[kind(kind::NUMBER_HEX)]
-    NumberHex(NumberHexTransport),
-    #[kind(kind::NUMBER_FLOAT_POINT)]
-    NumberFloatPoint(NumberFloatPointTransport),
-    #[kind(kind::NUMBER_FLOAT_LEADING_POINT)]
-    NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    #[kind(kind::NUMBER_FLOAT_SCIENTIFIC)]
-    NumberFloatScientific(NumberFloatScientificTransport),
-    #[kind(kind::NUMBER_DECIMAL)]
-    NumberDecimal(NumberDecimalTransport),
-    #[kind(kind::NUMBER_BINARY)]
-    NumberBinary(NumberBinaryTransport),
-    #[kind(kind::NUMBER_OCTAL)]
-    NumberOctal(NumberOctalTransport),
-    #[kind(kind::NUMBER_BIGINT_HEX)]
-    NumberBigintHex(NumberBigintHexTransport),
-    #[kind(kind::NUMBER_BIGINT_BINARY)]
-    NumberBigintBinary(NumberBigintBinaryTransport),
-    #[kind(kind::NUMBER_BIGINT_OCTAL)]
-    NumberBigintOctal(NumberBigintOctalTransport),
-    #[kind(kind::NUMBER_BIGINT_DECIMAL)]
-    NumberBigintDecimal(NumberBigintDecimalTransport),
-    #[kind(kind::STRING_DOUBLE)]
-    StringDouble(StringDoubleTransport),
-    #[kind(kind::STRING_SINGLE)]
-    StringSingle(StringSingleTransport),
-    #[kind(kind::TEMPLATE_STRING)]
-    TemplateString(TemplateStringTransport),
-    #[kind(kind::REGEX)]
-    Regex(RegexTransport),
-    #[kind(kind::OBJECT)]
-    Object(ObjectTransport),
-    #[kind(kind::ARRAY)]
-    Array(ArrayTransport),
-    #[kind(kind::FUNCTION_EXPRESSION)]
-    FunctionExpression(Box<FunctionExpressionTransport>),
-    #[kind(kind::ARROW_FUNCTION)]
-    ArrowFunction(Box<ArrowFunctionTransport>),
-    #[kind(kind::GENERATOR_FUNCTION)]
-    GeneratorFunction(Box<GeneratorFunctionTransport>),
-    #[kind(kind::CLASS)]
-    Class(Box<ClassTransport>),
-    #[kind(kind::CALL_EXPRESSION_CALL)]
-    CallExpressionCall(CallExpressionCallTransport),
-    #[kind(kind::CALL_EXPRESSION_TEMPLATE_CALL)]
-    CallExpressionTemplateCall(CallExpressionTemplateCallTransport),
-    #[kind(kind::CALL_EXPRESSION_MEMBER)]
-    CallExpressionMember(CallExpressionMemberTransport),
-    #[kind(kind::NON_NULL_EXPRESSION)]
-    NonNullExpression(NonNullExpressionTransport),
-    #[kind(kind::ASSIGNMENT_EXPRESSION)]
-    AssignmentExpression(AssignmentExpressionTransport),
-    #[kind(kind::AUGMENTED_ASSIGNMENT_EXPRESSION)]
-    AugmentedAssignmentExpression(AugmentedAssignmentExpressionTransport),
-    #[kind(kind::AWAIT_EXPRESSION)]
-    AwaitExpression(AwaitExpressionTransport),
-    #[kind(kind::UNARY_EXPRESSION)]
-    UnaryExpression(UnaryExpressionTransport),
-    #[kind(kind::BINARY_EXPRESSION)]
-    BinaryExpression(BinaryExpressionTransport),
-    #[kind(kind::TERNARY_EXPRESSION)]
-    TernaryExpression(TernaryExpressionTransport),
-    #[kind(kind::UPDATE_EXPRESSION_POSTFIX)]
-    UpdateExpressionPostfix(UpdateExpressionPostfixTransport),
-    #[kind(kind::UPDATE_EXPRESSION_PREFIX)]
-    UpdateExpressionPrefix(UpdateExpressionPrefixTransport),
-    #[kind(kind::NEW_EXPRESSION)]
-    NewExpression(NewExpressionTransport),
-    #[kind(kind::YIELD_EXPRESSION)]
-    YieldExpression(YieldExpressionTransport),
-    #[kind(kind::UNDEFINED)]
-    #[transport(edged)]
-    Undefined(::sittir_core::options::Edges),
-    #[kind(kind::THIS)]
-    #[transport(edged)]
-    This(::sittir_core::options::Edges),
-    #[kind(kind::SUPER)]
-    #[transport(edged)]
-    Super(::sittir_core::options::Edges),
-    #[kind(kind::TRUE)]
-    #[transport(edged)]
-    True(::sittir_core::options::Edges),
-    #[kind(kind::FALSE)]
-    #[transport(edged)]
-    False(::sittir_core::options::Edges),
-    #[kind(kind::NULL)]
-    #[transport(edged)]
-    Null(::sittir_core::options::Edges),
-    #[kind(kind::META_PROPERTY_NEW_TARGET)]
-    #[transport(edged)]
-    MetaPropertyNewTarget(::sittir_core::options::Edges),
-    #[kind(kind::META_PROPERTY_IMPORT_META)]
-    #[transport(edged)]
-    MetaPropertyImportMeta(::sittir_core::options::Edges),
-    #[kind(kind::IMPORT, kind::IMPORT_KEYWORD)]
-    Import,
-    #[transport(verbatim)]
-    Verbatim(VerbatimTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for CallExpressionCallFunctionTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            CallExpressionCallFunctionTransportSlot::AsExpression(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::SatisfiesExpression(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::InstantiationExpression(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::InternalModule(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::TypeAssertion(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::SubscriptExpression(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::MemberExpression(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::ParenthesizedExpressionTyped(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::ParenthesizedExpressionSequence(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::Identifier(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberHex(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberDecimal(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberBinary(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberOctal(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberBigintHex(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberBigintBinary(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberBigintOctal(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberBigintDecimal(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::StringDouble(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::StringSingle(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::TemplateString(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::Regex(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::Object(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::Array(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::FunctionExpression(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::ArrowFunction(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::GeneratorFunction(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::Class(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::CallExpressionCall(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::CallExpressionTemplateCall(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::CallExpressionMember(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::NonNullExpression(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::AssignmentExpression(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::AugmentedAssignmentExpression(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::AwaitExpression(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::UnaryExpression(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::BinaryExpression(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::TernaryExpression(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::UpdateExpressionPostfix(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::UpdateExpressionPrefix(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::NewExpression(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::YieldExpression(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::Undefined(_) => Ok(()),
-            CallExpressionCallFunctionTransportSlot::This(_) => Ok(()),
-            CallExpressionCallFunctionTransportSlot::Super(_) => Ok(()),
-            CallExpressionCallFunctionTransportSlot::True(_) => Ok(()),
-            CallExpressionCallFunctionTransportSlot::False(_) => Ok(()),
-            CallExpressionCallFunctionTransportSlot::Null(_) => Ok(()),
-            CallExpressionCallFunctionTransportSlot::MetaPropertyNewTarget(_) => Ok(()),
-            CallExpressionCallFunctionTransportSlot::MetaPropertyImportMeta(_) => Ok(()),
-            CallExpressionCallFunctionTransportSlot::Import => Ok(()),
-            CallExpressionCallFunctionTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            CallExpressionCallFunctionTransportSlot::AsExpression(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::SatisfiesExpression(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::InstantiationExpression(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::InternalModule(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::TypeAssertion(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::SubscriptExpression(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::MemberExpression(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::ParenthesizedExpressionTyped(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::ParenthesizedExpressionSequence(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::Identifier(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::NumberHex(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::NumberFloatPoint(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::NumberFloatLeadingPoint(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::NumberFloatScientific(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::NumberDecimal(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::NumberBinary(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::NumberOctal(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::NumberBigintHex(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::NumberBigintBinary(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::NumberBigintOctal(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::NumberBigintDecimal(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::StringDouble(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::StringSingle(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::TemplateString(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::Regex(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::Object(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::Array(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::FunctionExpression(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::ArrowFunction(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::GeneratorFunction(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::Class(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::CallExpressionCall(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::CallExpressionTemplateCall(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::CallExpressionMember(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::NonNullExpression(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::AssignmentExpression(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::AugmentedAssignmentExpression(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::AwaitExpression(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::UnaryExpression(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::BinaryExpression(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::TernaryExpression(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::UpdateExpressionPostfix(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::UpdateExpressionPrefix(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::NewExpression(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::YieldExpression(t) => t.gap_edges(),
-            CallExpressionCallFunctionTransportSlot::Undefined(edges) => Some(edges),
-            CallExpressionCallFunctionTransportSlot::This(edges) => Some(edges),
-            CallExpressionCallFunctionTransportSlot::Super(edges) => Some(edges),
-            CallExpressionCallFunctionTransportSlot::True(edges) => Some(edges),
-            CallExpressionCallFunctionTransportSlot::False(edges) => Some(edges),
-            CallExpressionCallFunctionTransportSlot::Null(edges) => Some(edges),
-            CallExpressionCallFunctionTransportSlot::MetaPropertyNewTarget(edges) => Some(edges),
-            CallExpressionCallFunctionTransportSlot::MetaPropertyImportMeta(edges) => Some(edges),
-            CallExpressionCallFunctionTransportSlot::Import => None,
-            CallExpressionCallFunctionTransportSlot::Verbatim(t) => t.gap_edges(),
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            CallExpressionCallFunctionTransportSlot::AsExpression(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::SatisfiesExpression(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::InstantiationExpression(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::InternalModule(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::TypeAssertion(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::SubscriptExpression(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::MemberExpression(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::ParenthesizedExpressionTyped(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::ParenthesizedExpressionSequence(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::Identifier(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::NumberHex(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::NumberFloatPoint(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::NumberFloatLeadingPoint(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::NumberFloatScientific(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::NumberDecimal(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::NumberBinary(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::NumberOctal(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::NumberBigintHex(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::NumberBigintBinary(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::NumberBigintOctal(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::NumberBigintDecimal(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::StringDouble(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::StringSingle(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::TemplateString(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::Regex(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::Object(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::Array(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::FunctionExpression(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::ArrowFunction(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::GeneratorFunction(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::Class(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::CallExpressionCall(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::CallExpressionTemplateCall(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::CallExpressionMember(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::NonNullExpression(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::AssignmentExpression(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::AugmentedAssignmentExpression(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::AwaitExpression(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::UnaryExpression(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::BinaryExpression(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::TernaryExpression(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::UpdateExpressionPostfix(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::UpdateExpressionPrefix(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::NewExpression(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::YieldExpression(t) => t.snapshot_edge(),
-            CallExpressionCallFunctionTransportSlot::Undefined(_) => None,
-            CallExpressionCallFunctionTransportSlot::This(_) => None,
-            CallExpressionCallFunctionTransportSlot::Super(_) => None,
-            CallExpressionCallFunctionTransportSlot::True(_) => None,
-            CallExpressionCallFunctionTransportSlot::False(_) => None,
-            CallExpressionCallFunctionTransportSlot::Null(_) => None,
-            CallExpressionCallFunctionTransportSlot::MetaPropertyNewTarget(_) => None,
-            CallExpressionCallFunctionTransportSlot::MetaPropertyImportMeta(_) => None,
-            CallExpressionCallFunctionTransportSlot::Import => None,
-            CallExpressionCallFunctionTransportSlot::Verbatim(t) => t.snapshot_edge(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
-        match self {
-            CallExpressionCallFunctionTransportSlot::AsExpression(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::SatisfiesExpression(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::InstantiationExpression(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::InternalModule(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::TypeAssertion(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::SubscriptExpression(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::MemberExpression(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::ParenthesizedExpressionTyped(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::ParenthesizedExpressionSequence(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::Identifier(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberHex(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberFloatPoint(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberFloatLeadingPoint(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberFloatScientific(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberDecimal(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberBinary(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberOctal(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberBigintHex(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberBigintBinary(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberBigintOctal(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberBigintDecimal(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::StringDouble(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::StringSingle(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::TemplateString(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::Regex(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::Object(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::Array(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::FunctionExpression(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::ArrowFunction(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::GeneratorFunction(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::Class(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::CallExpressionCall(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::CallExpressionTemplateCall(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::CallExpressionMember(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::NonNullExpression(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::AssignmentExpression(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::AugmentedAssignmentExpression(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::AwaitExpression(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::UnaryExpression(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::BinaryExpression(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::TernaryExpression(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::UpdateExpressionPostfix(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::UpdateExpressionPrefix(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::NewExpression(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::YieldExpression(t) => t.source_separator(ctx),
-            CallExpressionCallFunctionTransportSlot::Undefined(_) => None,
-            CallExpressionCallFunctionTransportSlot::This(_) => None,
-            CallExpressionCallFunctionTransportSlot::Super(_) => None,
-            CallExpressionCallFunctionTransportSlot::True(_) => None,
-            CallExpressionCallFunctionTransportSlot::False(_) => None,
-            CallExpressionCallFunctionTransportSlot::Null(_) => None,
-            CallExpressionCallFunctionTransportSlot::MetaPropertyNewTarget(_) => None,
-            CallExpressionCallFunctionTransportSlot::MetaPropertyImportMeta(_) => None,
-            CallExpressionCallFunctionTransportSlot::Import => None,
-            CallExpressionCallFunctionTransportSlot::Verbatim(t) => t.source_separator(ctx),
-        }
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::view::KindOf for CallExpressionCallFunctionTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::AsExpression(inner) => inner.kind_in(kinds),
-            Self::SatisfiesExpression(inner) => inner.kind_in(kinds),
-            Self::InstantiationExpression(inner) => inner.kind_in(kinds),
-            Self::InternalModule(inner) => inner.kind_in(kinds),
-            Self::TypeAssertion(inner) => inner.kind_in(kinds),
-            Self::SubscriptExpression(inner) => inner.kind_in(kinds),
-            Self::MemberExpression(inner) => inner.kind_in(kinds),
-            Self::ParenthesizedExpressionTyped(inner) => inner.kind_in(kinds),
-            Self::ParenthesizedExpressionSequence(inner) => inner.kind_in(kinds),
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::NumberHex(inner) => inner.kind_in(kinds),
-            Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
-            Self::NumberDecimal(inner) => inner.kind_in(kinds),
-            Self::NumberBinary(inner) => inner.kind_in(kinds),
-            Self::NumberOctal(inner) => inner.kind_in(kinds),
-            Self::NumberBigintHex(inner) => inner.kind_in(kinds),
-            Self::NumberBigintBinary(inner) => inner.kind_in(kinds),
-            Self::NumberBigintOctal(inner) => inner.kind_in(kinds),
-            Self::NumberBigintDecimal(inner) => inner.kind_in(kinds),
-            Self::StringDouble(inner) => inner.kind_in(kinds),
-            Self::StringSingle(inner) => inner.kind_in(kinds),
-            Self::TemplateString(inner) => inner.kind_in(kinds),
-            Self::Regex(inner) => inner.kind_in(kinds),
-            Self::Object(inner) => inner.kind_in(kinds),
-            Self::Array(inner) => inner.kind_in(kinds),
-            Self::FunctionExpression(inner) => inner.kind_in(kinds),
-            Self::ArrowFunction(inner) => inner.kind_in(kinds),
-            Self::GeneratorFunction(inner) => inner.kind_in(kinds),
-            Self::Class(inner) => inner.kind_in(kinds),
-            Self::CallExpressionCall(inner) => inner.kind_in(kinds),
-            Self::CallExpressionTemplateCall(inner) => inner.kind_in(kinds),
-            Self::CallExpressionMember(inner) => inner.kind_in(kinds),
-            Self::NonNullExpression(inner) => inner.kind_in(kinds),
-            Self::AssignmentExpression(inner) => inner.kind_in(kinds),
-            Self::AugmentedAssignmentExpression(inner) => inner.kind_in(kinds),
-            Self::AwaitExpression(inner) => inner.kind_in(kinds),
-            Self::UnaryExpression(inner) => inner.kind_in(kinds),
-            Self::BinaryExpression(inner) => inner.kind_in(kinds),
-            Self::TernaryExpression(inner) => inner.kind_in(kinds),
-            Self::UpdateExpressionPostfix(inner) => inner.kind_in(kinds),
-            Self::UpdateExpressionPrefix(inner) => inner.kind_in(kinds),
-            Self::NewExpression(inner) => inner.kind_in(kinds),
-            Self::YieldExpression(inner) => inner.kind_in(kinds),
-            Self::Undefined(_) => [::sittir_core::types::KindId(128)].iter().any(|k| kinds.contains(k)),
-            Self::This(_) => [::sittir_core::types::KindId(277)].iter().any(|k| kinds.contains(k)),
-            Self::Super(_) => [::sittir_core::types::KindId(278)].iter().any(|k| kinds.contains(k)),
-            Self::True(_) => [::sittir_core::types::KindId(279)].iter().any(|k| kinds.contains(k)),
-            Self::False(_) => [::sittir_core::types::KindId(280)].iter().any(|k| kinds.contains(k)),
-            Self::Null(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyNewTarget(_) => [::sittir_core::types::KindId(436)].iter().any(|k| kinds.contains(k)),
-            Self::MetaPropertyImportMeta(_) => [::sittir_core::types::KindId(437)].iter().any(|k| kinds.contains(k)),
-            Self::Import => [::sittir_core::types::KindId(195)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for CallExpressionCallFunctionTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            CallExpressionCallFunctionTransportSlot::AsExpression(inner) => inner.as_ref().render(w),
-            CallExpressionCallFunctionTransportSlot::SatisfiesExpression(inner) => inner.as_ref().render(w),
-            CallExpressionCallFunctionTransportSlot::InstantiationExpression(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::InternalModule(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::TypeAssertion(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::SubscriptExpression(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::MemberExpression(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::ParenthesizedExpressionTyped(inner) => inner.as_ref().render(w),
-            CallExpressionCallFunctionTransportSlot::ParenthesizedExpressionSequence(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::Identifier(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::NumberHex(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::NumberFloatPoint(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::NumberFloatScientific(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::NumberDecimal(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::NumberBinary(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::NumberOctal(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::NumberBigintHex(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::NumberBigintBinary(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::NumberBigintOctal(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::NumberBigintDecimal(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::StringDouble(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::StringSingle(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::TemplateString(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::Regex(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::Object(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::Array(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::FunctionExpression(inner) => inner.as_ref().render(w),
-            CallExpressionCallFunctionTransportSlot::ArrowFunction(inner) => inner.as_ref().render(w),
-            CallExpressionCallFunctionTransportSlot::GeneratorFunction(inner) => inner.as_ref().render(w),
-            CallExpressionCallFunctionTransportSlot::Class(inner) => inner.as_ref().render(w),
-            CallExpressionCallFunctionTransportSlot::CallExpressionCall(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::CallExpressionTemplateCall(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::CallExpressionMember(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::NonNullExpression(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::AssignmentExpression(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::AugmentedAssignmentExpression(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::AwaitExpression(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::UnaryExpression(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::BinaryExpression(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::TernaryExpression(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::UpdateExpressionPostfix(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::UpdateExpressionPrefix(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::NewExpression(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::YieldExpression(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::Undefined(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(128), edges, w, render_undefined),
-            CallExpressionCallFunctionTransportSlot::This(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(277), edges, w, render_this),
-            CallExpressionCallFunctionTransportSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(278), edges, w, render_super),
-            CallExpressionCallFunctionTransportSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(279), edges, w, render_true),
-            CallExpressionCallFunctionTransportSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(280), edges, w, render_false),
-            CallExpressionCallFunctionTransportSlot::Null(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_null),
-            CallExpressionCallFunctionTransportSlot::MetaPropertyNewTarget(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(436), edges, w, render_meta_property_new_target),
-            CallExpressionCallFunctionTransportSlot::MetaPropertyImportMeta(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(437), edges, w, render_meta_property_import_meta),
-            CallExpressionCallFunctionTransportSlot::Import => render_import(w),
-            CallExpressionCallFunctionTransportSlot::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
 pub enum CallExpressionTemplateCallFunctionTransportSlot {
     #[kind(kind::SUBSCRIPT_EXPRESSION)]
     SubscriptExpression(SubscriptExpressionTransport),
@@ -18059,7 +15998,7 @@ pub enum CallExpressionTemplateCallFunctionTransportSlot {
     ParenthesizedExpressionTyped(Box<ParenthesizedExpressionTypedTransport>),
     #[kind(kind::PARENTHESIZED_EXPRESSION_SEQUENCE)]
     ParenthesizedExpressionSequence(ParenthesizedExpressionSequenceTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexTransport),
@@ -19320,752 +17259,6 @@ impl ::sittir_core::render::Render for ForHeaderUsingKindKindTransportSlot {
                 Ok(())
             }
             ForHeaderUsingKindKindTransportSlot::UsingDeclarationArm => render_using_declaration_arm(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum StatementIdentifierContentTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
-    Identifier(IdentifierTransport),
-    #[kind(kind::DECLARE_KEYWORD)]
-    DeclareKeyword,
-    #[kind(kind::NAMESPACE_KEYWORD)]
-    NamespaceKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::PUBLIC_KEYWORD)]
-    PublicKeyword,
-    #[kind(kind::PRIVATE_KEYWORD)]
-    PrivateKeyword,
-    #[kind(kind::PROTECTED_KEYWORD)]
-    ProtectedKeyword,
-    #[kind(kind::OVERRIDE_KEYWORD)]
-    OverrideKeyword,
-    #[kind(kind::READONLY_KEYWORD)]
-    ReadonlyKeyword,
-    #[kind(kind::MODULE_KEYWORD)]
-    ModuleKeyword,
-    #[kind(kind::ANY_KEYWORD)]
-    AnyKeyword,
-    #[kind(kind::NUMBER_KEYWORD)]
-    NumberKeyword,
-    #[kind(kind::BOOLEAN_KEYWORD)]
-    BooleanKeyword,
-    #[kind(kind::STRING_KEYWORD)]
-    StringKeyword,
-    #[kind(kind::SYMBOL_KEYWORD)]
-    SymbolKeyword,
-    #[kind(kind::EXPORT_KEYWORD)]
-    ExportKeyword,
-    #[kind(kind::OBJECT_KEYWORD)]
-    ObjectKeyword,
-    #[kind(kind::NEW_KEYWORD)]
-    NewKeyword,
-    #[kind(kind::GET_KEYWORD)]
-    GetKeyword,
-    #[kind(kind::SET_KEYWORD)]
-    SetKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::STATIC_KEYWORD)]
-    StaticKeyword,
-    #[kind(kind::LET_KEYWORD)]
-    LetKeyword,
-    #[transport(verbatim)]
-    Verbatim(VerbatimTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for StatementIdentifierContentTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            StatementIdentifierContentTransportSlot::Identifier(t) => t.prepare(ctx),
-            StatementIdentifierContentTransportSlot::DeclareKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::NamespaceKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::TypeKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::PublicKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::PrivateKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::ProtectedKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::OverrideKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::ReadonlyKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::ModuleKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::AnyKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::NumberKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::BooleanKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::StringKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::SymbolKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::ExportKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::ObjectKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::NewKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::GetKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::SetKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::AsyncKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::AwaitKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::StaticKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::LetKeyword => Ok(()),
-            StatementIdentifierContentTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            StatementIdentifierContentTransportSlot::Identifier(t) => t.gap_edges(),
-            StatementIdentifierContentTransportSlot::DeclareKeyword => None,
-            StatementIdentifierContentTransportSlot::NamespaceKeyword => None,
-            StatementIdentifierContentTransportSlot::TypeKeyword => None,
-            StatementIdentifierContentTransportSlot::PublicKeyword => None,
-            StatementIdentifierContentTransportSlot::PrivateKeyword => None,
-            StatementIdentifierContentTransportSlot::ProtectedKeyword => None,
-            StatementIdentifierContentTransportSlot::OverrideKeyword => None,
-            StatementIdentifierContentTransportSlot::ReadonlyKeyword => None,
-            StatementIdentifierContentTransportSlot::ModuleKeyword => None,
-            StatementIdentifierContentTransportSlot::AnyKeyword => None,
-            StatementIdentifierContentTransportSlot::NumberKeyword => None,
-            StatementIdentifierContentTransportSlot::BooleanKeyword => None,
-            StatementIdentifierContentTransportSlot::StringKeyword => None,
-            StatementIdentifierContentTransportSlot::SymbolKeyword => None,
-            StatementIdentifierContentTransportSlot::ExportKeyword => None,
-            StatementIdentifierContentTransportSlot::ObjectKeyword => None,
-            StatementIdentifierContentTransportSlot::NewKeyword => None,
-            StatementIdentifierContentTransportSlot::GetKeyword => None,
-            StatementIdentifierContentTransportSlot::SetKeyword => None,
-            StatementIdentifierContentTransportSlot::AsyncKeyword => None,
-            StatementIdentifierContentTransportSlot::AwaitKeyword => None,
-            StatementIdentifierContentTransportSlot::StaticKeyword => None,
-            StatementIdentifierContentTransportSlot::LetKeyword => None,
-            StatementIdentifierContentTransportSlot::Verbatim(t) => t.gap_edges(),
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            StatementIdentifierContentTransportSlot::Identifier(t) => t.snapshot_edge(),
-            StatementIdentifierContentTransportSlot::DeclareKeyword => None,
-            StatementIdentifierContentTransportSlot::NamespaceKeyword => None,
-            StatementIdentifierContentTransportSlot::TypeKeyword => None,
-            StatementIdentifierContentTransportSlot::PublicKeyword => None,
-            StatementIdentifierContentTransportSlot::PrivateKeyword => None,
-            StatementIdentifierContentTransportSlot::ProtectedKeyword => None,
-            StatementIdentifierContentTransportSlot::OverrideKeyword => None,
-            StatementIdentifierContentTransportSlot::ReadonlyKeyword => None,
-            StatementIdentifierContentTransportSlot::ModuleKeyword => None,
-            StatementIdentifierContentTransportSlot::AnyKeyword => None,
-            StatementIdentifierContentTransportSlot::NumberKeyword => None,
-            StatementIdentifierContentTransportSlot::BooleanKeyword => None,
-            StatementIdentifierContentTransportSlot::StringKeyword => None,
-            StatementIdentifierContentTransportSlot::SymbolKeyword => None,
-            StatementIdentifierContentTransportSlot::ExportKeyword => None,
-            StatementIdentifierContentTransportSlot::ObjectKeyword => None,
-            StatementIdentifierContentTransportSlot::NewKeyword => None,
-            StatementIdentifierContentTransportSlot::GetKeyword => None,
-            StatementIdentifierContentTransportSlot::SetKeyword => None,
-            StatementIdentifierContentTransportSlot::AsyncKeyword => None,
-            StatementIdentifierContentTransportSlot::AwaitKeyword => None,
-            StatementIdentifierContentTransportSlot::StaticKeyword => None,
-            StatementIdentifierContentTransportSlot::LetKeyword => None,
-            StatementIdentifierContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
-        match self {
-            StatementIdentifierContentTransportSlot::Identifier(t) => t.source_separator(ctx),
-            StatementIdentifierContentTransportSlot::DeclareKeyword => None,
-            StatementIdentifierContentTransportSlot::NamespaceKeyword => None,
-            StatementIdentifierContentTransportSlot::TypeKeyword => None,
-            StatementIdentifierContentTransportSlot::PublicKeyword => None,
-            StatementIdentifierContentTransportSlot::PrivateKeyword => None,
-            StatementIdentifierContentTransportSlot::ProtectedKeyword => None,
-            StatementIdentifierContentTransportSlot::OverrideKeyword => None,
-            StatementIdentifierContentTransportSlot::ReadonlyKeyword => None,
-            StatementIdentifierContentTransportSlot::ModuleKeyword => None,
-            StatementIdentifierContentTransportSlot::AnyKeyword => None,
-            StatementIdentifierContentTransportSlot::NumberKeyword => None,
-            StatementIdentifierContentTransportSlot::BooleanKeyword => None,
-            StatementIdentifierContentTransportSlot::StringKeyword => None,
-            StatementIdentifierContentTransportSlot::SymbolKeyword => None,
-            StatementIdentifierContentTransportSlot::ExportKeyword => None,
-            StatementIdentifierContentTransportSlot::ObjectKeyword => None,
-            StatementIdentifierContentTransportSlot::NewKeyword => None,
-            StatementIdentifierContentTransportSlot::GetKeyword => None,
-            StatementIdentifierContentTransportSlot::SetKeyword => None,
-            StatementIdentifierContentTransportSlot::AsyncKeyword => None,
-            StatementIdentifierContentTransportSlot::AwaitKeyword => None,
-            StatementIdentifierContentTransportSlot::StaticKeyword => None,
-            StatementIdentifierContentTransportSlot::LetKeyword => None,
-            StatementIdentifierContentTransportSlot::Verbatim(t) => t.source_separator(ctx),
-        }
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::view::KindOf for StatementIdentifierContentTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::DeclareKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::NamespaceKeyword => [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
-            Self::PublicKeyword => [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k)),
-            Self::PrivateKeyword => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
-            Self::ProtectedKeyword => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
-            Self::OverrideKeyword => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
-            Self::ReadonlyKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::ModuleKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::AnyKeyword => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
-            Self::NumberKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
-            Self::BooleanKeyword => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
-            Self::StringKeyword => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
-            Self::SymbolKeyword => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
-            Self::ExportKeyword => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
-            Self::ObjectKeyword => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
-            Self::NewKeyword => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
-            Self::GetKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
-            Self::SetKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::StaticKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
-            Self::LetKeyword => [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for StatementIdentifierContentTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            StatementIdentifierContentTransportSlot::Identifier(inner) => inner.render(w),
-            StatementIdentifierContentTransportSlot::DeclareKeyword => render_declare_keyword(w),
-            StatementIdentifierContentTransportSlot::NamespaceKeyword => render_namespace_keyword(w),
-            StatementIdentifierContentTransportSlot::TypeKeyword => render_type_keyword(w),
-            StatementIdentifierContentTransportSlot::PublicKeyword => render_public_keyword(w),
-            StatementIdentifierContentTransportSlot::PrivateKeyword => render_private_keyword(w),
-            StatementIdentifierContentTransportSlot::ProtectedKeyword => render_protected_keyword(w),
-            StatementIdentifierContentTransportSlot::OverrideKeyword => render_override_keyword(w),
-            StatementIdentifierContentTransportSlot::ReadonlyKeyword => render_readonly_keyword(w),
-            StatementIdentifierContentTransportSlot::ModuleKeyword => render_module_keyword(w),
-            StatementIdentifierContentTransportSlot::AnyKeyword => render_any_keyword(w),
-            StatementIdentifierContentTransportSlot::NumberKeyword => render_number_keyword(w),
-            StatementIdentifierContentTransportSlot::BooleanKeyword => render_boolean_keyword(w),
-            StatementIdentifierContentTransportSlot::StringKeyword => render_string_keyword(w),
-            StatementIdentifierContentTransportSlot::SymbolKeyword => render_symbol_keyword(w),
-            StatementIdentifierContentTransportSlot::ExportKeyword => render_export_keyword(w),
-            StatementIdentifierContentTransportSlot::ObjectKeyword => render_object_keyword(w),
-            StatementIdentifierContentTransportSlot::NewKeyword => render_new_keyword(w),
-            StatementIdentifierContentTransportSlot::GetKeyword => render_get_keyword(w),
-            StatementIdentifierContentTransportSlot::SetKeyword => render_set_keyword(w),
-            StatementIdentifierContentTransportSlot::AsyncKeyword => render_async_keyword(w),
-            StatementIdentifierContentTransportSlot::AwaitKeyword => render_await_keyword(w),
-            StatementIdentifierContentTransportSlot::StaticKeyword => render_static_keyword(w),
-            StatementIdentifierContentTransportSlot::LetKeyword => render_let_keyword(w),
-            StatementIdentifierContentTransportSlot::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum PropertyIdentifierContentTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD))]
-    Identifier(IdentifierTransport),
-    #[kind(kind::BREAK_KEYWORD)]
-    BreakKeyword,
-    #[kind(kind::CASE_KEYWORD)]
-    CaseKeyword,
-    #[kind(kind::CATCH_KEYWORD)]
-    CatchKeyword,
-    #[kind(kind::CLASS_KEYWORD)]
-    ClassKeyword,
-    #[kind(kind::CONST_KEYWORD)]
-    ConstKeyword,
-    #[kind(kind::CONTINUE_KEYWORD)]
-    ContinueKeyword,
-    #[kind(kind::DEBUGGER_KEYWORD)]
-    DebuggerKeyword,
-    #[kind(kind::DEFAULT_KEYWORD)]
-    DefaultKeyword,
-    #[kind(kind::DELETE_KEYWORD)]
-    DeleteKeyword,
-    #[kind(kind::DO_KEYWORD)]
-    DoKeyword,
-    #[kind(kind::ELSE_KEYWORD)]
-    ElseKeyword,
-    #[kind(kind::EXPORT_KEYWORD)]
-    ExportKeyword,
-    #[kind(kind::EXTENDS_KEYWORD)]
-    ExtendsKeyword,
-    #[kind(kind::FALSE_KEYWORD)]
-    FalseKeyword,
-    #[kind(kind::FINALLY_KEYWORD)]
-    FinallyKeyword,
-    #[kind(kind::FOR_KEYWORD)]
-    ForKeyword,
-    #[kind(kind::FUNCTION_KEYWORD)]
-    FunctionKeyword,
-    #[kind(kind::IF_KEYWORD)]
-    IfKeyword,
-    #[kind(kind::IMPORT_KEYWORD)]
-    ImportKeyword,
-    #[kind(kind::IN_KEYWORD)]
-    InKeyword,
-    #[kind(kind::INSTANCEOF_KEYWORD)]
-    InstanceofKeyword,
-    #[kind(kind::NEW_KEYWORD)]
-    NewKeyword,
-    #[kind(kind::NULL_KEYWORD)]
-    NullKeyword,
-    #[kind(kind::RETURN_KEYWORD)]
-    ReturnKeyword,
-    #[kind(kind::SUPER_KEYWORD)]
-    SuperKeyword,
-    #[kind(kind::SWITCH_KEYWORD)]
-    SwitchKeyword,
-    #[kind(kind::THIS_KEYWORD)]
-    ThisKeyword,
-    #[kind(kind::THROW_KEYWORD)]
-    ThrowKeyword,
-    #[kind(kind::TRUE_KEYWORD)]
-    TrueKeyword,
-    #[kind(kind::TRY_KEYWORD)]
-    TryKeyword,
-    #[kind(kind::TYPEOF_KEYWORD)]
-    TypeofKeyword,
-    #[kind(kind::VAR_KEYWORD)]
-    VarKeyword,
-    #[kind(kind::VOID_KEYWORD)]
-    VoidKeyword,
-    #[kind(kind::WHILE_KEYWORD)]
-    WhileKeyword,
-    #[kind(kind::WITH_KEYWORD)]
-    WithKeyword,
-    #[kind(kind::GET_KEYWORD)]
-    GetKeyword,
-    #[kind(kind::SET_KEYWORD)]
-    SetKeyword,
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-    #[kind(kind::AWAIT_KEYWORD)]
-    AwaitKeyword,
-    #[kind(kind::STATIC_KEYWORD)]
-    StaticKeyword,
-    #[kind(kind::LET_KEYWORD)]
-    LetKeyword,
-    #[kind(kind::DECLARE_KEYWORD)]
-    DeclareKeyword,
-    #[kind(kind::NAMESPACE_KEYWORD)]
-    NamespaceKeyword,
-    #[kind(kind::TYPE_KEYWORD)]
-    TypeKeyword,
-    #[kind(kind::PUBLIC_KEYWORD)]
-    PublicKeyword,
-    #[kind(kind::PRIVATE_KEYWORD)]
-    PrivateKeyword,
-    #[kind(kind::PROTECTED_KEYWORD)]
-    ProtectedKeyword,
-    #[kind(kind::OVERRIDE_KEYWORD)]
-    OverrideKeyword,
-    #[kind(kind::READONLY_KEYWORD)]
-    ReadonlyKeyword,
-    #[kind(kind::MODULE_KEYWORD)]
-    ModuleKeyword,
-    #[kind(kind::ANY_KEYWORD)]
-    AnyKeyword,
-    #[kind(kind::NUMBER_KEYWORD)]
-    NumberKeyword,
-    #[kind(kind::BOOLEAN_KEYWORD)]
-    BooleanKeyword,
-    #[kind(kind::STRING_KEYWORD)]
-    StringKeyword,
-    #[kind(kind::SYMBOL_KEYWORD)]
-    SymbolKeyword,
-    #[kind(kind::OBJECT_KEYWORD)]
-    ObjectKeyword,
-    #[transport(verbatim)]
-    Verbatim(VerbatimTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for PropertyIdentifierContentTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            PropertyIdentifierContentTransportSlot::Identifier(t) => t.prepare(ctx),
-            PropertyIdentifierContentTransportSlot::BreakKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::CaseKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::CatchKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::ClassKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::ConstKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::ContinueKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::DebuggerKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::DefaultKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::DeleteKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::DoKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::ElseKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::ExportKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::ExtendsKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::FalseKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::FinallyKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::ForKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::FunctionKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::IfKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::ImportKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::InKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::InstanceofKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::NewKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::NullKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::ReturnKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::SuperKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::SwitchKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::ThisKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::ThrowKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::TrueKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::TryKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::TypeofKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::VarKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::VoidKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::WhileKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::WithKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::GetKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::SetKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::AsyncKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::AwaitKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::StaticKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::LetKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::DeclareKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::NamespaceKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::TypeKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::PublicKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::PrivateKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::ProtectedKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::OverrideKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::ReadonlyKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::ModuleKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::AnyKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::NumberKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::BooleanKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::StringKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::SymbolKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::ObjectKeyword => Ok(()),
-            PropertyIdentifierContentTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            PropertyIdentifierContentTransportSlot::Identifier(t) => t.gap_edges(),
-            PropertyIdentifierContentTransportSlot::BreakKeyword => None,
-            PropertyIdentifierContentTransportSlot::CaseKeyword => None,
-            PropertyIdentifierContentTransportSlot::CatchKeyword => None,
-            PropertyIdentifierContentTransportSlot::ClassKeyword => None,
-            PropertyIdentifierContentTransportSlot::ConstKeyword => None,
-            PropertyIdentifierContentTransportSlot::ContinueKeyword => None,
-            PropertyIdentifierContentTransportSlot::DebuggerKeyword => None,
-            PropertyIdentifierContentTransportSlot::DefaultKeyword => None,
-            PropertyIdentifierContentTransportSlot::DeleteKeyword => None,
-            PropertyIdentifierContentTransportSlot::DoKeyword => None,
-            PropertyIdentifierContentTransportSlot::ElseKeyword => None,
-            PropertyIdentifierContentTransportSlot::ExportKeyword => None,
-            PropertyIdentifierContentTransportSlot::ExtendsKeyword => None,
-            PropertyIdentifierContentTransportSlot::FalseKeyword => None,
-            PropertyIdentifierContentTransportSlot::FinallyKeyword => None,
-            PropertyIdentifierContentTransportSlot::ForKeyword => None,
-            PropertyIdentifierContentTransportSlot::FunctionKeyword => None,
-            PropertyIdentifierContentTransportSlot::IfKeyword => None,
-            PropertyIdentifierContentTransportSlot::ImportKeyword => None,
-            PropertyIdentifierContentTransportSlot::InKeyword => None,
-            PropertyIdentifierContentTransportSlot::InstanceofKeyword => None,
-            PropertyIdentifierContentTransportSlot::NewKeyword => None,
-            PropertyIdentifierContentTransportSlot::NullKeyword => None,
-            PropertyIdentifierContentTransportSlot::ReturnKeyword => None,
-            PropertyIdentifierContentTransportSlot::SuperKeyword => None,
-            PropertyIdentifierContentTransportSlot::SwitchKeyword => None,
-            PropertyIdentifierContentTransportSlot::ThisKeyword => None,
-            PropertyIdentifierContentTransportSlot::ThrowKeyword => None,
-            PropertyIdentifierContentTransportSlot::TrueKeyword => None,
-            PropertyIdentifierContentTransportSlot::TryKeyword => None,
-            PropertyIdentifierContentTransportSlot::TypeofKeyword => None,
-            PropertyIdentifierContentTransportSlot::VarKeyword => None,
-            PropertyIdentifierContentTransportSlot::VoidKeyword => None,
-            PropertyIdentifierContentTransportSlot::WhileKeyword => None,
-            PropertyIdentifierContentTransportSlot::WithKeyword => None,
-            PropertyIdentifierContentTransportSlot::GetKeyword => None,
-            PropertyIdentifierContentTransportSlot::SetKeyword => None,
-            PropertyIdentifierContentTransportSlot::AsyncKeyword => None,
-            PropertyIdentifierContentTransportSlot::AwaitKeyword => None,
-            PropertyIdentifierContentTransportSlot::StaticKeyword => None,
-            PropertyIdentifierContentTransportSlot::LetKeyword => None,
-            PropertyIdentifierContentTransportSlot::DeclareKeyword => None,
-            PropertyIdentifierContentTransportSlot::NamespaceKeyword => None,
-            PropertyIdentifierContentTransportSlot::TypeKeyword => None,
-            PropertyIdentifierContentTransportSlot::PublicKeyword => None,
-            PropertyIdentifierContentTransportSlot::PrivateKeyword => None,
-            PropertyIdentifierContentTransportSlot::ProtectedKeyword => None,
-            PropertyIdentifierContentTransportSlot::OverrideKeyword => None,
-            PropertyIdentifierContentTransportSlot::ReadonlyKeyword => None,
-            PropertyIdentifierContentTransportSlot::ModuleKeyword => None,
-            PropertyIdentifierContentTransportSlot::AnyKeyword => None,
-            PropertyIdentifierContentTransportSlot::NumberKeyword => None,
-            PropertyIdentifierContentTransportSlot::BooleanKeyword => None,
-            PropertyIdentifierContentTransportSlot::StringKeyword => None,
-            PropertyIdentifierContentTransportSlot::SymbolKeyword => None,
-            PropertyIdentifierContentTransportSlot::ObjectKeyword => None,
-            PropertyIdentifierContentTransportSlot::Verbatim(t) => t.gap_edges(),
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            PropertyIdentifierContentTransportSlot::Identifier(t) => t.snapshot_edge(),
-            PropertyIdentifierContentTransportSlot::BreakKeyword => None,
-            PropertyIdentifierContentTransportSlot::CaseKeyword => None,
-            PropertyIdentifierContentTransportSlot::CatchKeyword => None,
-            PropertyIdentifierContentTransportSlot::ClassKeyword => None,
-            PropertyIdentifierContentTransportSlot::ConstKeyword => None,
-            PropertyIdentifierContentTransportSlot::ContinueKeyword => None,
-            PropertyIdentifierContentTransportSlot::DebuggerKeyword => None,
-            PropertyIdentifierContentTransportSlot::DefaultKeyword => None,
-            PropertyIdentifierContentTransportSlot::DeleteKeyword => None,
-            PropertyIdentifierContentTransportSlot::DoKeyword => None,
-            PropertyIdentifierContentTransportSlot::ElseKeyword => None,
-            PropertyIdentifierContentTransportSlot::ExportKeyword => None,
-            PropertyIdentifierContentTransportSlot::ExtendsKeyword => None,
-            PropertyIdentifierContentTransportSlot::FalseKeyword => None,
-            PropertyIdentifierContentTransportSlot::FinallyKeyword => None,
-            PropertyIdentifierContentTransportSlot::ForKeyword => None,
-            PropertyIdentifierContentTransportSlot::FunctionKeyword => None,
-            PropertyIdentifierContentTransportSlot::IfKeyword => None,
-            PropertyIdentifierContentTransportSlot::ImportKeyword => None,
-            PropertyIdentifierContentTransportSlot::InKeyword => None,
-            PropertyIdentifierContentTransportSlot::InstanceofKeyword => None,
-            PropertyIdentifierContentTransportSlot::NewKeyword => None,
-            PropertyIdentifierContentTransportSlot::NullKeyword => None,
-            PropertyIdentifierContentTransportSlot::ReturnKeyword => None,
-            PropertyIdentifierContentTransportSlot::SuperKeyword => None,
-            PropertyIdentifierContentTransportSlot::SwitchKeyword => None,
-            PropertyIdentifierContentTransportSlot::ThisKeyword => None,
-            PropertyIdentifierContentTransportSlot::ThrowKeyword => None,
-            PropertyIdentifierContentTransportSlot::TrueKeyword => None,
-            PropertyIdentifierContentTransportSlot::TryKeyword => None,
-            PropertyIdentifierContentTransportSlot::TypeofKeyword => None,
-            PropertyIdentifierContentTransportSlot::VarKeyword => None,
-            PropertyIdentifierContentTransportSlot::VoidKeyword => None,
-            PropertyIdentifierContentTransportSlot::WhileKeyword => None,
-            PropertyIdentifierContentTransportSlot::WithKeyword => None,
-            PropertyIdentifierContentTransportSlot::GetKeyword => None,
-            PropertyIdentifierContentTransportSlot::SetKeyword => None,
-            PropertyIdentifierContentTransportSlot::AsyncKeyword => None,
-            PropertyIdentifierContentTransportSlot::AwaitKeyword => None,
-            PropertyIdentifierContentTransportSlot::StaticKeyword => None,
-            PropertyIdentifierContentTransportSlot::LetKeyword => None,
-            PropertyIdentifierContentTransportSlot::DeclareKeyword => None,
-            PropertyIdentifierContentTransportSlot::NamespaceKeyword => None,
-            PropertyIdentifierContentTransportSlot::TypeKeyword => None,
-            PropertyIdentifierContentTransportSlot::PublicKeyword => None,
-            PropertyIdentifierContentTransportSlot::PrivateKeyword => None,
-            PropertyIdentifierContentTransportSlot::ProtectedKeyword => None,
-            PropertyIdentifierContentTransportSlot::OverrideKeyword => None,
-            PropertyIdentifierContentTransportSlot::ReadonlyKeyword => None,
-            PropertyIdentifierContentTransportSlot::ModuleKeyword => None,
-            PropertyIdentifierContentTransportSlot::AnyKeyword => None,
-            PropertyIdentifierContentTransportSlot::NumberKeyword => None,
-            PropertyIdentifierContentTransportSlot::BooleanKeyword => None,
-            PropertyIdentifierContentTransportSlot::StringKeyword => None,
-            PropertyIdentifierContentTransportSlot::SymbolKeyword => None,
-            PropertyIdentifierContentTransportSlot::ObjectKeyword => None,
-            PropertyIdentifierContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
-        match self {
-            PropertyIdentifierContentTransportSlot::Identifier(t) => t.source_separator(ctx),
-            PropertyIdentifierContentTransportSlot::BreakKeyword => None,
-            PropertyIdentifierContentTransportSlot::CaseKeyword => None,
-            PropertyIdentifierContentTransportSlot::CatchKeyword => None,
-            PropertyIdentifierContentTransportSlot::ClassKeyword => None,
-            PropertyIdentifierContentTransportSlot::ConstKeyword => None,
-            PropertyIdentifierContentTransportSlot::ContinueKeyword => None,
-            PropertyIdentifierContentTransportSlot::DebuggerKeyword => None,
-            PropertyIdentifierContentTransportSlot::DefaultKeyword => None,
-            PropertyIdentifierContentTransportSlot::DeleteKeyword => None,
-            PropertyIdentifierContentTransportSlot::DoKeyword => None,
-            PropertyIdentifierContentTransportSlot::ElseKeyword => None,
-            PropertyIdentifierContentTransportSlot::ExportKeyword => None,
-            PropertyIdentifierContentTransportSlot::ExtendsKeyword => None,
-            PropertyIdentifierContentTransportSlot::FalseKeyword => None,
-            PropertyIdentifierContentTransportSlot::FinallyKeyword => None,
-            PropertyIdentifierContentTransportSlot::ForKeyword => None,
-            PropertyIdentifierContentTransportSlot::FunctionKeyword => None,
-            PropertyIdentifierContentTransportSlot::IfKeyword => None,
-            PropertyIdentifierContentTransportSlot::ImportKeyword => None,
-            PropertyIdentifierContentTransportSlot::InKeyword => None,
-            PropertyIdentifierContentTransportSlot::InstanceofKeyword => None,
-            PropertyIdentifierContentTransportSlot::NewKeyword => None,
-            PropertyIdentifierContentTransportSlot::NullKeyword => None,
-            PropertyIdentifierContentTransportSlot::ReturnKeyword => None,
-            PropertyIdentifierContentTransportSlot::SuperKeyword => None,
-            PropertyIdentifierContentTransportSlot::SwitchKeyword => None,
-            PropertyIdentifierContentTransportSlot::ThisKeyword => None,
-            PropertyIdentifierContentTransportSlot::ThrowKeyword => None,
-            PropertyIdentifierContentTransportSlot::TrueKeyword => None,
-            PropertyIdentifierContentTransportSlot::TryKeyword => None,
-            PropertyIdentifierContentTransportSlot::TypeofKeyword => None,
-            PropertyIdentifierContentTransportSlot::VarKeyword => None,
-            PropertyIdentifierContentTransportSlot::VoidKeyword => None,
-            PropertyIdentifierContentTransportSlot::WhileKeyword => None,
-            PropertyIdentifierContentTransportSlot::WithKeyword => None,
-            PropertyIdentifierContentTransportSlot::GetKeyword => None,
-            PropertyIdentifierContentTransportSlot::SetKeyword => None,
-            PropertyIdentifierContentTransportSlot::AsyncKeyword => None,
-            PropertyIdentifierContentTransportSlot::AwaitKeyword => None,
-            PropertyIdentifierContentTransportSlot::StaticKeyword => None,
-            PropertyIdentifierContentTransportSlot::LetKeyword => None,
-            PropertyIdentifierContentTransportSlot::DeclareKeyword => None,
-            PropertyIdentifierContentTransportSlot::NamespaceKeyword => None,
-            PropertyIdentifierContentTransportSlot::TypeKeyword => None,
-            PropertyIdentifierContentTransportSlot::PublicKeyword => None,
-            PropertyIdentifierContentTransportSlot::PrivateKeyword => None,
-            PropertyIdentifierContentTransportSlot::ProtectedKeyword => None,
-            PropertyIdentifierContentTransportSlot::OverrideKeyword => None,
-            PropertyIdentifierContentTransportSlot::ReadonlyKeyword => None,
-            PropertyIdentifierContentTransportSlot::ModuleKeyword => None,
-            PropertyIdentifierContentTransportSlot::AnyKeyword => None,
-            PropertyIdentifierContentTransportSlot::NumberKeyword => None,
-            PropertyIdentifierContentTransportSlot::BooleanKeyword => None,
-            PropertyIdentifierContentTransportSlot::StringKeyword => None,
-            PropertyIdentifierContentTransportSlot::SymbolKeyword => None,
-            PropertyIdentifierContentTransportSlot::ObjectKeyword => None,
-            PropertyIdentifierContentTransportSlot::Verbatim(t) => t.source_separator(ctx),
-        }
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::view::KindOf for PropertyIdentifierContentTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::BreakKeyword => [::sittir_core::types::KindId(27)].iter().any(|k| kinds.contains(k)),
-            Self::CaseKeyword => [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k)),
-            Self::CatchKeyword => [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k)),
-            Self::ClassKeyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::ConstKeyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::ContinueKeyword => [::sittir_core::types::KindId(28)].iter().any(|k| kinds.contains(k)),
-            Self::DebuggerKeyword => [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
-            Self::DeleteKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::DoKeyword => [::sittir_core::types::KindId(25)].iter().any(|k| kinds.contains(k)),
-            Self::ElseKeyword => [::sittir_core::types::KindId(17)].iter().any(|k| kinds.contains(k)),
-            Self::ExportKeyword => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
-            Self::ExtendsKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::FalseKeyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::FinallyKeyword => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
-            Self::ForKeyword => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
-            Self::FunctionKeyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::IfKeyword => [::sittir_core::types::KindId(18)].iter().any(|k| kinds.contains(k)),
-            Self::ImportKeyword => [::sittir_core::types::KindId(10)].iter().any(|k| kinds.contains(k)),
-            Self::InKeyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::InstanceofKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::NewKeyword => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
-            Self::NullKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::ReturnKeyword => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
-            Self::SuperKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
-            Self::SwitchKeyword => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
-            Self::ThisKeyword => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
-            Self::ThrowKeyword => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
-            Self::TrueKeyword => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
-            Self::TryKeyword => [::sittir_core::types::KindId(26)].iter().any(|k| kinds.contains(k)),
-            Self::TypeofKeyword => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
-            Self::VarKeyword => [::sittir_core::types::KindId(14)].iter().any(|k| kinds.contains(k)),
-            Self::VoidKeyword => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
-            Self::WhileKeyword => [::sittir_core::types::KindId(24)].iter().any(|k| kinds.contains(k)),
-            Self::WithKeyword => [::sittir_core::types::KindId(12)].iter().any(|k| kinds.contains(k)),
-            Self::GetKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
-            Self::SetKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::StaticKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
-            Self::LetKeyword => [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k)),
-            Self::DeclareKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::NamespaceKeyword => [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
-            Self::PublicKeyword => [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k)),
-            Self::PrivateKeyword => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
-            Self::ProtectedKeyword => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
-            Self::OverrideKeyword => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
-            Self::ReadonlyKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::ModuleKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::AnyKeyword => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
-            Self::NumberKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
-            Self::BooleanKeyword => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
-            Self::StringKeyword => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
-            Self::SymbolKeyword => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
-            Self::ObjectKeyword => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for PropertyIdentifierContentTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            PropertyIdentifierContentTransportSlot::Identifier(inner) => inner.render(w),
-            PropertyIdentifierContentTransportSlot::BreakKeyword => render_break_keyword(w),
-            PropertyIdentifierContentTransportSlot::CaseKeyword => render_case_keyword(w),
-            PropertyIdentifierContentTransportSlot::CatchKeyword => render_catch_keyword(w),
-            PropertyIdentifierContentTransportSlot::ClassKeyword => render_class_keyword(w),
-            PropertyIdentifierContentTransportSlot::ConstKeyword => render_const_keyword(w),
-            PropertyIdentifierContentTransportSlot::ContinueKeyword => render_continue_keyword(w),
-            PropertyIdentifierContentTransportSlot::DebuggerKeyword => render_debugger_keyword(w),
-            PropertyIdentifierContentTransportSlot::DefaultKeyword => render_default_keyword(w),
-            PropertyIdentifierContentTransportSlot::DeleteKeyword => render_delete_keyword(w),
-            PropertyIdentifierContentTransportSlot::DoKeyword => render_do_keyword(w),
-            PropertyIdentifierContentTransportSlot::ElseKeyword => render_else_keyword(w),
-            PropertyIdentifierContentTransportSlot::ExportKeyword => render_export_keyword(w),
-            PropertyIdentifierContentTransportSlot::ExtendsKeyword => render_extends_keyword(w),
-            PropertyIdentifierContentTransportSlot::FalseKeyword => render_false_keyword(w),
-            PropertyIdentifierContentTransportSlot::FinallyKeyword => render_finally_keyword(w),
-            PropertyIdentifierContentTransportSlot::ForKeyword => render_for_keyword(w),
-            PropertyIdentifierContentTransportSlot::FunctionKeyword => render_function_keyword(w),
-            PropertyIdentifierContentTransportSlot::IfKeyword => render_if_keyword(w),
-            PropertyIdentifierContentTransportSlot::ImportKeyword => render_import_keyword(w),
-            PropertyIdentifierContentTransportSlot::InKeyword => render_in_keyword(w),
-            PropertyIdentifierContentTransportSlot::InstanceofKeyword => render_instanceof_keyword(w),
-            PropertyIdentifierContentTransportSlot::NewKeyword => render_new_keyword(w),
-            PropertyIdentifierContentTransportSlot::NullKeyword => render_null_keyword(w),
-            PropertyIdentifierContentTransportSlot::ReturnKeyword => render_return_keyword(w),
-            PropertyIdentifierContentTransportSlot::SuperKeyword => render_super_keyword(w),
-            PropertyIdentifierContentTransportSlot::SwitchKeyword => render_switch_keyword(w),
-            PropertyIdentifierContentTransportSlot::ThisKeyword => render_this_keyword(w),
-            PropertyIdentifierContentTransportSlot::ThrowKeyword => render_throw_keyword(w),
-            PropertyIdentifierContentTransportSlot::TrueKeyword => render_true_keyword(w),
-            PropertyIdentifierContentTransportSlot::TryKeyword => render_try_keyword(w),
-            PropertyIdentifierContentTransportSlot::TypeofKeyword => render_typeof_keyword(w),
-            PropertyIdentifierContentTransportSlot::VarKeyword => render_var_keyword(w),
-            PropertyIdentifierContentTransportSlot::VoidKeyword => render_void_keyword(w),
-            PropertyIdentifierContentTransportSlot::WhileKeyword => render_while_keyword(w),
-            PropertyIdentifierContentTransportSlot::WithKeyword => render_with_keyword(w),
-            PropertyIdentifierContentTransportSlot::GetKeyword => render_get_keyword(w),
-            PropertyIdentifierContentTransportSlot::SetKeyword => render_set_keyword(w),
-            PropertyIdentifierContentTransportSlot::AsyncKeyword => render_async_keyword(w),
-            PropertyIdentifierContentTransportSlot::AwaitKeyword => render_await_keyword(w),
-            PropertyIdentifierContentTransportSlot::StaticKeyword => render_static_keyword(w),
-            PropertyIdentifierContentTransportSlot::LetKeyword => render_let_keyword(w),
-            PropertyIdentifierContentTransportSlot::DeclareKeyword => render_declare_keyword(w),
-            PropertyIdentifierContentTransportSlot::NamespaceKeyword => render_namespace_keyword(w),
-            PropertyIdentifierContentTransportSlot::TypeKeyword => render_type_keyword(w),
-            PropertyIdentifierContentTransportSlot::PublicKeyword => render_public_keyword(w),
-            PropertyIdentifierContentTransportSlot::PrivateKeyword => render_private_keyword(w),
-            PropertyIdentifierContentTransportSlot::ProtectedKeyword => render_protected_keyword(w),
-            PropertyIdentifierContentTransportSlot::OverrideKeyword => render_override_keyword(w),
-            PropertyIdentifierContentTransportSlot::ReadonlyKeyword => render_readonly_keyword(w),
-            PropertyIdentifierContentTransportSlot::ModuleKeyword => render_module_keyword(w),
-            PropertyIdentifierContentTransportSlot::AnyKeyword => render_any_keyword(w),
-            PropertyIdentifierContentTransportSlot::NumberKeyword => render_number_keyword(w),
-            PropertyIdentifierContentTransportSlot::BooleanKeyword => render_boolean_keyword(w),
-            PropertyIdentifierContentTransportSlot::StringKeyword => render_string_keyword(w),
-            PropertyIdentifierContentTransportSlot::SymbolKeyword => render_symbol_keyword(w),
-            PropertyIdentifierContentTransportSlot::ObjectKeyword => render_object_keyword(w),
-            PropertyIdentifierContentTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -21760,7 +18953,7 @@ pub struct LabeledStatementTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_label")]
     #[slot(field = field::LABEL, word = 2, width = 5)]
-    pub label: ::sittir_core::SlotValue<LabeledStatementLabelTransportSlot>,
+    pub label: ::sittir_core::SlotValue<StatementIdentifierTransport>,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 7, width = 5)]
     pub body: ::sittir_core::SlotValue<Box<StatementTransport>>,
@@ -24121,7 +21314,7 @@ impl ::sittir_core::prepare::Prepare for RegexFlagsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::IDENTIFIER, folded = [kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD, kind::OF_KEYWORD], text, words = 2)]
+#[transport(kind = kind::IDENTIFIER, folded = [kind::DECLARE_KEYWORD, kind::NAMESPACE_KEYWORD, kind::TYPE_KEYWORD, kind::PUBLIC_KEYWORD, kind::PRIVATE_KEYWORD, kind::PROTECTED_KEYWORD, kind::OVERRIDE_KEYWORD, kind::READONLY_KEYWORD, kind::MODULE_KEYWORD, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::EXPORT_KEYWORD, kind::OBJECT_KEYWORD, kind::NEW_KEYWORD, kind::GET_KEYWORD, kind::SET_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::STATIC_KEYWORD, kind::LET_KEYWORD, kind::OF_KEYWORD, kind::BREAK_KEYWORD, kind::CASE_KEYWORD, kind::CATCH_KEYWORD, kind::CLASS_KEYWORD, kind::CONST_KEYWORD, kind::CONTINUE_KEYWORD, kind::DEBUGGER_KEYWORD, kind::DEFAULT_KEYWORD, kind::DELETE_KEYWORD, kind::DO_KEYWORD, kind::ELSE_KEYWORD, kind::EXTENDS_KEYWORD, kind::FALSE_KEYWORD, kind::FINALLY_KEYWORD, kind::FOR_KEYWORD, kind::FUNCTION_KEYWORD, kind::IF_KEYWORD, kind::IMPORT_KEYWORD, kind::IN_KEYWORD, kind::INSTANCEOF_KEYWORD, kind::NULL_KEYWORD, kind::RETURN_KEYWORD, kind::SUPER_KEYWORD, kind::SWITCH_KEYWORD, kind::THIS_KEYWORD, kind::THROW_KEYWORD, kind::TRUE_KEYWORD, kind::TRY_KEYWORD, kind::TYPEOF_KEYWORD, kind::VAR_KEYWORD, kind::VOID_KEYWORD, kind::WHILE_KEYWORD, kind::WITH_KEYWORD], text, words = 2)]
 pub struct IdentifierTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -27141,7 +24334,7 @@ pub struct TypeQueryMemberExpressionInTypeAnnotationTransport {
     pub object: ::sittir_core::SlotValue<Box<TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot>>,
     #[wire(key = "_property")]
     #[slot(field = field::PROPERTY, word = 7, width = 5)]
-    pub property: ::sittir_core::SlotValue<TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot>,
+    pub property: ::sittir_core::SlotValue<MemberExpressionPropertyTransportSlot>,
 }
 
 impl ::sittir_core::view::KindOf for TypeQueryMemberExpressionInTypeAnnotationTransport {
@@ -27981,7 +25174,7 @@ pub struct TypeQueryMemberExpressionTransport {
     pub content: ::sittir_core::SlotValue<TypeQueryMemberExpressionContentTransportSlot>,
     #[wire(key = "_property")]
     #[slot(field = field::PROPERTY, word = 12, width = 5)]
-    pub property: ::sittir_core::SlotValue<TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot>,
+    pub property: ::sittir_core::SlotValue<MemberExpressionPropertyTransportSlot>,
 }
 
 impl ::sittir_core::view::KindOf for TypeQueryMemberExpressionTransport {
@@ -31851,7 +29044,7 @@ pub struct CallExpressionCallTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_function")]
     #[slot(field = field::FUNCTION, word = 2, width = 5)]
-    pub function: ::sittir_core::SlotValue<Box<CallExpressionCallFunctionTransportSlot>>,
+    pub function: ::sittir_core::SlotValue<Box<MemberExpressionObjectTransportSlot>>,
     #[wire(key = "_type_arguments")]
     #[slot(field = field::TYPE_ARGUMENTS, word = 7, width = 5)]
     pub type_arguments: Option<::sittir_core::SlotValue<TypeArgumentsTransport>>,
@@ -33718,7 +30911,7 @@ pub struct StatementIdentifierTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 5)]
-    pub content: ::sittir_core::SlotValue<StatementIdentifierContentTransportSlot>,
+    pub content: ::sittir_core::SlotValue<IdentifierTransport>,
 }
 
 impl ::sittir_core::view::KindOf for StatementIdentifierTransport {
@@ -33766,7 +30959,7 @@ pub struct ShorthandPropertyIdentifierTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 5)]
-    pub content: ::sittir_core::SlotValue<StatementIdentifierContentTransportSlot>,
+    pub content: ::sittir_core::SlotValue<IdentifierTransport>,
 }
 
 impl ::sittir_core::view::KindOf for ShorthandPropertyIdentifierTransport {
@@ -33814,7 +31007,7 @@ pub struct ShorthandPropertyIdentifierPatternTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 5)]
-    pub content: ::sittir_core::SlotValue<StatementIdentifierContentTransportSlot>,
+    pub content: ::sittir_core::SlotValue<IdentifierTransport>,
 }
 
 impl ::sittir_core::view::KindOf for ShorthandPropertyIdentifierPatternTransport {
@@ -33862,7 +31055,7 @@ pub struct PropertyIdentifierTransport {
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 5)]
-    pub content: ::sittir_core::SlotValue<PropertyIdentifierContentTransportSlot>,
+    pub content: ::sittir_core::SlotValue<IdentifierTransport>,
 }
 
 impl ::sittir_core::view::KindOf for PropertyIdentifierTransport {
@@ -34841,566 +32034,6 @@ impl ::sittir_core::render::Render for ThrowKeywordTransport {
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum DeclareKeywordTransport {
-    #[kind(kind::DECLARE_KEYWORD)]
-    DeclareKeyword,
-}
-
-impl ::sittir_core::view::KindOf for DeclareKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for DeclareKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for DeclareKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_declare_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum NamespaceKeywordTransport {
-    #[kind(kind::NAMESPACE_KEYWORD)]
-    NamespaceKeyword,
-}
-
-impl ::sittir_core::view::KindOf for NamespaceKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for NamespaceKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for NamespaceKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_namespace_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum PublicKeywordTransport {
-    #[kind(kind::PUBLIC_KEYWORD)]
-    PublicKeyword,
-}
-
-impl ::sittir_core::view::KindOf for PublicKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for PublicKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for PublicKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_public_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum PrivateKeywordTransport {
-    #[kind(kind::PRIVATE_KEYWORD)]
-    PrivateKeyword,
-}
-
-impl ::sittir_core::view::KindOf for PrivateKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for PrivateKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for PrivateKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_private_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum ProtectedKeywordTransport {
-    #[kind(kind::PROTECTED_KEYWORD)]
-    ProtectedKeyword,
-}
-
-impl ::sittir_core::view::KindOf for ProtectedKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for ProtectedKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for ProtectedKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_protected_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum OverrideKeywordTransport {
-    #[kind(kind::OVERRIDE_KEYWORD)]
-    OverrideKeyword,
-}
-
-impl ::sittir_core::view::KindOf for OverrideKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for OverrideKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for OverrideKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_override_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum ReadonlyKeywordTransport {
-    #[kind(kind::READONLY_KEYWORD)]
-    ReadonlyKeyword,
-}
-
-impl ::sittir_core::view::KindOf for ReadonlyKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for ReadonlyKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for ReadonlyKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_readonly_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum ModuleKeywordTransport {
-    #[kind(kind::MODULE_KEYWORD)]
-    ModuleKeyword,
-}
-
-impl ::sittir_core::view::KindOf for ModuleKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for ModuleKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for ModuleKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_module_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum AnyKeywordTransport {
-    #[kind(kind::ANY_KEYWORD)]
-    AnyKeyword,
-}
-
-impl ::sittir_core::view::KindOf for AnyKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for AnyKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for AnyKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_any_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum NumberKeywordTransport {
-    #[kind(kind::NUMBER_KEYWORD)]
-    NumberKeyword,
-}
-
-impl ::sittir_core::view::KindOf for NumberKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for NumberKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for NumberKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_number_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum BooleanKeywordTransport {
-    #[kind(kind::BOOLEAN_KEYWORD)]
-    BooleanKeyword,
-}
-
-impl ::sittir_core::view::KindOf for BooleanKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for BooleanKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for BooleanKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_boolean_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum StringKeywordTransport {
-    #[kind(kind::STRING_KEYWORD)]
-    StringKeyword,
-}
-
-impl ::sittir_core::view::KindOf for StringKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for StringKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for StringKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_string_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum SymbolKeywordTransport {
-    #[kind(kind::SYMBOL_KEYWORD)]
-    SymbolKeyword,
-}
-
-impl ::sittir_core::view::KindOf for SymbolKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for SymbolKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for SymbolKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_symbol_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum ExportKeywordTransport {
-    #[kind(kind::EXPORT_KEYWORD)]
-    ExportKeyword,
-}
-
-impl ::sittir_core::view::KindOf for ExportKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for ExportKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for ExportKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_export_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum ObjectKeywordTransport {
-    #[kind(kind::OBJECT_KEYWORD)]
-    ObjectKeyword,
-}
-
-impl ::sittir_core::view::KindOf for ObjectKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for ObjectKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for ObjectKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_object_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum NewKeywordTransport {
-    #[kind(kind::NEW_KEYWORD)]
-    NewKeyword,
-}
-
-impl ::sittir_core::view::KindOf for NewKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for NewKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for NewKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_new_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum GetKeywordTransport {
-    #[kind(kind::GET_KEYWORD)]
-    GetKeyword,
-}
-
-impl ::sittir_core::view::KindOf for GetKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for GetKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for GetKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_get_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum SetKeywordTransport {
-    #[kind(kind::SET_KEYWORD)]
-    SetKeyword,
-}
-
-impl ::sittir_core::view::KindOf for SetKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for SetKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for SetKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_set_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum AsyncKeywordTransport {
-    #[kind(kind::ASYNC_KEYWORD)]
-    AsyncKeyword,
-}
-
-impl ::sittir_core::view::KindOf for AsyncKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for AsyncKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for AsyncKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_async_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum StaticKeywordTransport {
-    #[kind(kind::STATIC_KEYWORD)]
-    StaticKeyword,
-}
-
-impl ::sittir_core::view::KindOf for StaticKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for StaticKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for StaticKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_static_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
 pub enum ColonTransport {
     #[kind(kind::COLON)]
     Colon,
@@ -35681,6 +32314,34 @@ impl ::sittir_core::render::Render for ClassKeywordTransport {
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
+pub enum AsyncKeywordTransport {
+    #[kind(kind::ASYNC_KEYWORD)]
+    AsyncKeyword,
+}
+
+impl ::sittir_core::view::KindOf for AsyncKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for AsyncKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for AsyncKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_async_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum FunctionKeywordTransport {
     #[kind(kind::FUNCTION_KEYWORD)]
     FunctionKeyword,
@@ -35765,18 +32426,18 @@ impl ::sittir_core::render::Render for QmarkDotTransport {
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
-pub enum DeleteKeywordTransport {
-    #[kind(kind::DELETE_KEYWORD)]
-    DeleteKeyword,
+pub enum NewKeywordTransport {
+    #[kind(kind::NEW_KEYWORD)]
+    NewKeyword,
 }
 
-impl ::sittir_core::view::KindOf for DeleteKeywordTransport {
+impl ::sittir_core::view::KindOf for NewKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for DeleteKeywordTransport {
+impl ::sittir_core::prepare::Prepare for NewKeywordTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
@@ -35785,261 +32446,9 @@ impl ::sittir_core::prepare::Prepare for DeleteKeywordTransport {
     }
 }
 
-impl ::sittir_core::render::Render for DeleteKeywordTransport {
+impl ::sittir_core::render::Render for NewKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_delete_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum ExtendsKeywordTransport {
-    #[kind(kind::EXTENDS_KEYWORD)]
-    ExtendsKeyword,
-}
-
-impl ::sittir_core::view::KindOf for ExtendsKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for ExtendsKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for ExtendsKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_extends_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum FalseKeywordTransport {
-    #[kind(kind::FALSE_KEYWORD)]
-    FalseKeyword,
-}
-
-impl ::sittir_core::view::KindOf for FalseKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for FalseKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for FalseKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_false_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum InKeywordTransport {
-    #[kind(kind::IN_KEYWORD)]
-    InKeyword,
-}
-
-impl ::sittir_core::view::KindOf for InKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for InKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for InKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_in_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum InstanceofKeywordTransport {
-    #[kind(kind::INSTANCEOF_KEYWORD)]
-    InstanceofKeyword,
-}
-
-impl ::sittir_core::view::KindOf for InstanceofKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for InstanceofKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for InstanceofKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_instanceof_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum NullKeywordTransport {
-    #[kind(kind::NULL_KEYWORD)]
-    NullKeyword,
-}
-
-impl ::sittir_core::view::KindOf for NullKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for NullKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for NullKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_null_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum SuperKeywordTransport {
-    #[kind(kind::SUPER_KEYWORD)]
-    SuperKeyword,
-}
-
-impl ::sittir_core::view::KindOf for SuperKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for SuperKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for SuperKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_super_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum ThisKeywordTransport {
-    #[kind(kind::THIS_KEYWORD)]
-    ThisKeyword,
-}
-
-impl ::sittir_core::view::KindOf for ThisKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for ThisKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for ThisKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_this_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum TrueKeywordTransport {
-    #[kind(kind::TRUE_KEYWORD)]
-    TrueKeyword,
-}
-
-impl ::sittir_core::view::KindOf for TrueKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for TrueKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for TrueKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_true_keyword(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum VoidKeywordTransport {
-    #[kind(kind::VOID_KEYWORD)]
-    VoidKeyword,
-}
-
-impl ::sittir_core::view::KindOf for VoidKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for VoidKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for VoidKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_void_keyword(w)
+        render_new_keyword(w)
     }
 }
 
@@ -37137,6 +33546,34 @@ impl ::sittir_core::render::Render for QmarkQmarkTransport {
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
+pub enum InstanceofKeywordTransport {
+    #[kind(kind::INSTANCEOF_KEYWORD)]
+    InstanceofKeyword,
+}
+
+impl ::sittir_core::view::KindOf for InstanceofKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for InstanceofKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for InstanceofKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_instanceof_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum BangTransport {
     #[kind(kind::BANG)]
     Bang,
@@ -37188,6 +33625,62 @@ impl ::sittir_core::prepare::Prepare for TildeTransport {
 impl ::sittir_core::render::Render for TildeTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_tilde(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum VoidKeywordTransport {
+    #[kind(kind::VOID_KEYWORD)]
+    VoidKeyword,
+}
+
+impl ::sittir_core::view::KindOf for VoidKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for VoidKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for VoidKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_void_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum DeleteKeywordTransport {
+    #[kind(kind::DELETE_KEYWORD)]
+    DeleteKeyword,
+}
+
+impl ::sittir_core::view::KindOf for DeleteKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for DeleteKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for DeleteKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_delete_keyword(w)
     }
 }
 
@@ -37249,6 +33742,146 @@ impl ::sittir_core::render::Render for DollarLbraceTransport {
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
+pub enum ThisKeywordTransport {
+    #[kind(kind::THIS_KEYWORD)]
+    ThisKeyword,
+}
+
+impl ::sittir_core::view::KindOf for ThisKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for ThisKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for ThisKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_this_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum SuperKeywordTransport {
+    #[kind(kind::SUPER_KEYWORD)]
+    SuperKeyword,
+}
+
+impl ::sittir_core::view::KindOf for SuperKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for SuperKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for SuperKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_super_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum TrueKeywordTransport {
+    #[kind(kind::TRUE_KEYWORD)]
+    TrueKeyword,
+}
+
+impl ::sittir_core::view::KindOf for TrueKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for TrueKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for TrueKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_true_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum FalseKeywordTransport {
+    #[kind(kind::FALSE_KEYWORD)]
+    FalseKeyword,
+}
+
+impl ::sittir_core::view::KindOf for FalseKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for FalseKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for FalseKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_false_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum NullKeywordTransport {
+    #[kind(kind::NULL_KEYWORD)]
+    NullKeyword,
+}
+
+impl ::sittir_core::view::KindOf for NullKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for NullKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for NullKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_null_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum AtTransport {
     #[kind(kind::AT)]
     At,
@@ -37272,6 +33905,146 @@ impl ::sittir_core::prepare::Prepare for AtTransport {
 impl ::sittir_core::render::Render for AtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_at(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum StaticKeywordTransport {
+    #[kind(kind::STATIC_KEYWORD)]
+    StaticKeyword,
+}
+
+impl ::sittir_core::view::KindOf for StaticKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for StaticKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for StaticKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_static_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum ReadonlyKeywordTransport {
+    #[kind(kind::READONLY_KEYWORD)]
+    ReadonlyKeyword,
+}
+
+impl ::sittir_core::view::KindOf for ReadonlyKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for ReadonlyKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for ReadonlyKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_readonly_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum GetKeywordTransport {
+    #[kind(kind::GET_KEYWORD)]
+    GetKeyword,
+}
+
+impl ::sittir_core::view::KindOf for GetKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for GetKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for GetKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_get_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum SetKeywordTransport {
+    #[kind(kind::SET_KEYWORD)]
+    SetKeyword,
+}
+
+impl ::sittir_core::view::KindOf for SetKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for SetKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for SetKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_set_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum DeclareKeywordTransport {
+    #[kind(kind::DECLARE_KEYWORD)]
+    DeclareKeyword,
+}
+
+impl ::sittir_core::view::KindOf for DeclareKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for DeclareKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for DeclareKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_declare_keyword(w)
     }
 }
 
@@ -37389,6 +34162,34 @@ impl ::sittir_core::render::Render for RequireKeywordTransport {
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
+pub enum ExtendsKeywordTransport {
+    #[kind(kind::EXTENDS_KEYWORD)]
+    ExtendsKeyword,
+}
+
+impl ::sittir_core::view::KindOf for ExtendsKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for ExtendsKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for ExtendsKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_extends_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum ImplementsKeywordTransport {
     #[kind(kind::IMPLEMENTS_KEYWORD)]
     ImplementsKeyword,
@@ -37412,6 +34213,62 @@ impl ::sittir_core::prepare::Prepare for ImplementsKeywordTransport {
 impl ::sittir_core::render::Render for ImplementsKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_implements_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum ModuleKeywordTransport {
+    #[kind(kind::MODULE_KEYWORD)]
+    ModuleKeyword,
+}
+
+impl ::sittir_core::view::KindOf for ModuleKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for ModuleKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for ModuleKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_module_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum NamespaceKeywordTransport {
+    #[kind(kind::NAMESPACE_KEYWORD)]
+    NamespaceKeyword,
+}
+
+impl ::sittir_core::view::KindOf for NamespaceKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for NamespaceKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for NamespaceKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_namespace_keyword(w)
     }
 }
 
@@ -37468,6 +34325,118 @@ impl ::sittir_core::prepare::Prepare for EnumKeywordTransport {
 impl ::sittir_core::render::Render for EnumKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_enum_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum PublicKeywordTransport {
+    #[kind(kind::PUBLIC_KEYWORD)]
+    PublicKeyword,
+}
+
+impl ::sittir_core::view::KindOf for PublicKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for PublicKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for PublicKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_public_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum PrivateKeywordTransport {
+    #[kind(kind::PRIVATE_KEYWORD)]
+    PrivateKeyword,
+}
+
+impl ::sittir_core::view::KindOf for PrivateKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for PrivateKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for PrivateKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_private_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum ProtectedKeywordTransport {
+    #[kind(kind::PROTECTED_KEYWORD)]
+    ProtectedKeyword,
+}
+
+impl ::sittir_core::view::KindOf for ProtectedKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for ProtectedKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for ProtectedKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_protected_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum OverrideKeywordTransport {
+    #[kind(kind::OVERRIDE_KEYWORD)]
+    OverrideKeyword,
+}
+
+impl ::sittir_core::view::KindOf for OverrideKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for OverrideKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for OverrideKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_override_keyword(w)
     }
 }
 
@@ -37669,6 +34638,174 @@ impl ::sittir_core::render::Render for KeyofKeywordTransport {
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
+pub enum InKeywordTransport {
+    #[kind(kind::IN_KEYWORD)]
+    InKeyword,
+}
+
+impl ::sittir_core::view::KindOf for InKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for InKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for InKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_in_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum AnyKeywordTransport {
+    #[kind(kind::ANY_KEYWORD)]
+    AnyKeyword,
+}
+
+impl ::sittir_core::view::KindOf for AnyKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for AnyKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for AnyKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_any_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum NumberKeywordTransport {
+    #[kind(kind::NUMBER_KEYWORD)]
+    NumberKeyword,
+}
+
+impl ::sittir_core::view::KindOf for NumberKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for NumberKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for NumberKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_number_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum BooleanKeywordTransport {
+    #[kind(kind::BOOLEAN_KEYWORD)]
+    BooleanKeyword,
+}
+
+impl ::sittir_core::view::KindOf for BooleanKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for BooleanKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for BooleanKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_boolean_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum StringKeywordTransport {
+    #[kind(kind::STRING_KEYWORD)]
+    StringKeyword,
+}
+
+impl ::sittir_core::view::KindOf for StringKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for StringKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for StringKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_string_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum SymbolKeywordTransport {
+    #[kind(kind::SYMBOL_KEYWORD)]
+    SymbolKeyword,
+}
+
+impl ::sittir_core::view::KindOf for SymbolKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for SymbolKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for SymbolKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_symbol_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
 pub enum UniqueTransport {
     #[kind(kind::UNIQUE)]
     Unique,
@@ -37748,6 +34885,34 @@ impl ::sittir_core::prepare::Prepare for NeverKeywordTransport {
 impl ::sittir_core::render::Render for NeverKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_never_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum ObjectKeywordTransport {
+    #[kind(kind::OBJECT_KEYWORD)]
+    ObjectKeyword,
+}
+
+impl ::sittir_core::view::KindOf for ObjectKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for ObjectKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for ObjectKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_object_keyword(w)
     }
 }
 
@@ -37860,6 +35025,34 @@ impl ::sittir_core::prepare::Prepare for GlobalKeywordTransport {
 impl ::sittir_core::render::Render for GlobalKeywordTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_global_keyword(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
+#[transport(choice)]
+pub enum ExportKeywordTransport {
+    #[kind(kind::EXPORT_KEYWORD)]
+    ExportKeyword,
+}
+
+impl ::sittir_core::view::KindOf for ExportKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for ExportKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for ExportKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_export_keyword(w)
     }
 }
 
@@ -40562,55 +37755,6 @@ impl ::sittir_core::prepare::SeatTarget for ImportSpecifierAsNameTransportSlot {
         match self {
             Self::StringDouble(t) => t.seat_target(table, ctx),
             Self::StringSingle(t) => t.seat_target(table, ctx),
-            #[allow(unreachable_patterns)]
-            _ => None,
-        }
-    }
-}
-
-impl ::sittir_core::prepare::SeatTarget for CallExpressionCallFunctionTransportSlot {
-    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
-        match self {
-            Self::AsExpression(t) => t.seat_target(table, ctx),
-            Self::SatisfiesExpression(t) => t.seat_target(table, ctx),
-            Self::InstantiationExpression(t) => t.seat_target(table, ctx),
-            Self::InternalModule(t) => t.seat_target(table, ctx),
-            Self::TypeAssertion(t) => t.seat_target(table, ctx),
-            Self::SubscriptExpression(t) => t.seat_target(table, ctx),
-            Self::MemberExpression(t) => t.seat_target(table, ctx),
-            Self::ParenthesizedExpressionTyped(t) => t.seat_target(table, ctx),
-            Self::ParenthesizedExpressionSequence(t) => t.seat_target(table, ctx),
-            Self::Undefined(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(128)).map(|site| (edges, site)),
-            Self::This(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(277)).map(|site| (edges, site)),
-            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(278)).map(|site| (edges, site)),
-            Self::StringDouble(t) => t.seat_target(table, ctx),
-            Self::StringSingle(t) => t.seat_target(table, ctx),
-            Self::TemplateString(t) => t.seat_target(table, ctx),
-            Self::Regex(t) => t.seat_target(table, ctx),
-            Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(279)).map(|site| (edges, site)),
-            Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(280)).map(|site| (edges, site)),
-            Self::Null(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(281)).map(|site| (edges, site)),
-            Self::Object(t) => t.seat_target(table, ctx),
-            Self::Array(t) => t.seat_target(table, ctx),
-            Self::FunctionExpression(t) => t.seat_target(table, ctx),
-            Self::ArrowFunction(t) => t.seat_target(table, ctx),
-            Self::GeneratorFunction(t) => t.seat_target(table, ctx),
-            Self::Class(t) => t.seat_target(table, ctx),
-            Self::MetaPropertyNewTarget(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(436)).map(|site| (edges, site)),
-            Self::MetaPropertyImportMeta(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(437)).map(|site| (edges, site)),
-            Self::CallExpressionCall(t) => t.seat_target(table, ctx),
-            Self::CallExpressionTemplateCall(t) => t.seat_target(table, ctx),
-            Self::CallExpressionMember(t) => t.seat_target(table, ctx),
-            Self::NonNullExpression(t) => t.seat_target(table, ctx),
-            Self::AssignmentExpression(t) => t.seat_target(table, ctx),
-            Self::AugmentedAssignmentExpression(t) => t.seat_target(table, ctx),
-            Self::AwaitExpression(t) => t.seat_target(table, ctx),
-            Self::UnaryExpression(t) => t.seat_target(table, ctx),
-            Self::TernaryExpression(t) => t.seat_target(table, ctx),
-            Self::UpdateExpressionPostfix(t) => t.seat_target(table, ctx),
-            Self::UpdateExpressionPrefix(t) => t.seat_target(table, ctx),
-            Self::NewExpression(t) => t.seat_target(table, ctx),
-            Self::YieldExpression(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]
             _ => None,
         }
@@ -44744,86 +41888,6 @@ fn render_throw_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sitt
     TransportLayout::render(None, Some(::sittir_core::types::KindId(31)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("throw"))
 }
 
-fn render_declare_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(32)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("declare"))
-}
-
-fn render_namespace_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(33)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("namespace"))
-}
-
-fn render_public_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(34)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("public"))
-}
-
-fn render_private_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(35)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("private"))
-}
-
-fn render_protected_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(36)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("protected"))
-}
-
-fn render_override_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(37)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("override"))
-}
-
-fn render_readonly_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(38)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("readonly"))
-}
-
-fn render_module_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(39)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("module"))
-}
-
-fn render_any_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(40)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("any"))
-}
-
-fn render_number_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(41)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("number"))
-}
-
-fn render_boolean_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(42)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("boolean"))
-}
-
-fn render_string_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(43)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("string"))
-}
-
-fn render_symbol_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(44)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("symbol"))
-}
-
-fn render_export_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(45)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("export"))
-}
-
-fn render_object_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(46)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("object"))
-}
-
-fn render_new_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(47)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("new"))
-}
-
-fn render_get_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(48)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("get"))
-}
-
-fn render_set_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(49)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("set"))
-}
-
-fn render_async_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(50)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("async"))
-}
-
-fn render_static_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(52)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("static"))
-}
-
 fn render_colon(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(54)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(":"))
 }
@@ -44864,6 +41928,10 @@ fn render_class_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sitt
     TransportLayout::render(None, Some(::sittir_core::types::KindId(63)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("class"))
 }
 
+fn render_async_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(50)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("async"))
+}
+
 fn render_function_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(64)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("function"))
 }
@@ -44876,44 +41944,8 @@ fn render_qmark_dot(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_c
     TransportLayout::render(None, Some(::sittir_core::types::KindId(66)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("?."))
 }
 
-fn render_delete_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(68)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("delete"))
-}
-
-fn render_extends_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(69)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("extends"))
-}
-
-fn render_false_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(70)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("false"))
-}
-
-fn render_in_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(71)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("in"))
-}
-
-fn render_instanceof_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(72)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("instanceof"))
-}
-
-fn render_null_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(73)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("null"))
-}
-
-fn render_super_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(74)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("super"))
-}
-
-fn render_this_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(75)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("this"))
-}
-
-fn render_true_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(76)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("true"))
-}
-
-fn render_void_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(77)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("void"))
+fn render_new_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(47)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("new"))
 }
 
 fn render_plus_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -45072,12 +42104,24 @@ fn render_qmark_qmark(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir
     TransportLayout::render(None, Some(::sittir_core::types::KindId(115)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("??"))
 }
 
+fn render_instanceof_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(72)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("instanceof"))
+}
+
 fn render_bang(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(116)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("!"))
 }
 
 fn render_tilde(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(117)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("~"))
+}
+
+fn render_void_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(77)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("void"))
+}
+
+fn render_delete_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(68)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("delete"))
 }
 
 fn render_bquote(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -45088,8 +42132,48 @@ fn render_dollar_lbrace(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sitt
     TransportLayout::render(None, Some(::sittir_core::types::KindId(123)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("${"))
 }
 
+fn render_this_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(75)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("this"))
+}
+
+fn render_super_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(74)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("super"))
+}
+
+fn render_true_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(76)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("true"))
+}
+
+fn render_false_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(70)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("false"))
+}
+
+fn render_null_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(73)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("null"))
+}
+
 fn render_at(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(129)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("@"))
+}
+
+fn render_static_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(52)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("static"))
+}
+
+fn render_readonly_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(38)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("readonly"))
+}
+
+fn render_get_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(48)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("get"))
+}
+
+fn render_set_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(49)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("set"))
+}
+
+fn render_declare_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(32)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("declare"))
 }
 
 fn render_abstract_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -45108,8 +42192,20 @@ fn render_require_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::si
     TransportLayout::render(None, Some(::sittir_core::types::KindId(133)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("require"))
 }
 
+fn render_extends_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(69)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("extends"))
+}
+
 fn render_implements_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(134)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("implements"))
+}
+
+fn render_module_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(39)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("module"))
+}
+
+fn render_namespace_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(33)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("namespace"))
 }
 
 fn render_interface_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -45118,6 +42214,22 @@ fn render_interface_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::
 
 fn render_enum_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(136)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("enum"))
+}
+
+fn render_public_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(34)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("public"))
+}
+
+fn render_private_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(35)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("private"))
+}
+
+fn render_protected_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(36)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("protected"))
+}
+
+fn render_override_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(37)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("override"))
 }
 
 fn render_dash_qmark_colon(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -45148,6 +42260,30 @@ fn render_keyof_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sitt
     TransportLayout::render(None, Some(::sittir_core::types::KindId(143)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("keyof"))
 }
 
+fn render_in_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(71)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("in"))
+}
+
+fn render_any_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(40)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("any"))
+}
+
+fn render_number_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(41)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("number"))
+}
+
+fn render_boolean_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(42)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("boolean"))
+}
+
+fn render_string_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(43)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("string"))
+}
+
+fn render_symbol_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(44)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("symbol"))
+}
+
 fn render_unique(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(144)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("unique symbol"))
 }
@@ -45158,6 +42294,10 @@ fn render_unknown_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::si
 
 fn render_never_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(146)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("never"))
+}
+
+fn render_object_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(46)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("object"))
 }
 
 fn render_lbrace_pipe(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -45174,6 +42314,10 @@ fn render_comma(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core:
 
 fn render_global_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     TransportLayout::render(None, Some(::sittir_core::types::KindId(151)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("global"))
+}
+
+fn render_export_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(45)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("export"))
 }
 
 fn render_from_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -45777,26 +42921,6 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::DebuggerKeyword => [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k)),
             Self::ReturnKeyword => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
             Self::ThrowKeyword => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
-            Self::DeclareKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::NamespaceKeyword => [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k)),
-            Self::PublicKeyword => [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k)),
-            Self::PrivateKeyword => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
-            Self::ProtectedKeyword => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
-            Self::OverrideKeyword => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
-            Self::ReadonlyKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::ModuleKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::AnyKeyword => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
-            Self::NumberKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
-            Self::BooleanKeyword => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
-            Self::StringKeyword => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
-            Self::SymbolKeyword => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
-            Self::ExportKeyword => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
-            Self::ObjectKeyword => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
-            Self::NewKeyword => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
-            Self::GetKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
-            Self::SetKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::StaticKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::Colon => [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k)),
             Self::CaseKeyword => [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k)),
             Self::CatchKeyword => [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k)),
@@ -45807,19 +42931,11 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::Rbrack => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
             Self::Dot => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
             Self::ClassKeyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
+            Self::AsyncKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
             Self::FunctionKeyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
             Self::EqGt => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
             Self::QmarkDot => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::DeleteKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::ExtendsKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::FalseKeyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::InKeyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::InstanceofKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::NullKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::SuperKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
-            Self::ThisKeyword => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
-            Self::TrueKeyword => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
-            Self::VoidKeyword => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
+            Self::NewKeyword => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
             Self::PlusEq => [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k)),
             Self::DashEq => [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k)),
             Self::StarEq => [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k)),
@@ -45859,18 +42975,38 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::GtEq => [::sittir_core::types::KindId(113)].iter().any(|k| kinds.contains(k)),
             Self::Gt => [::sittir_core::types::KindId(114)].iter().any(|k| kinds.contains(k)),
             Self::QmarkQmark => [::sittir_core::types::KindId(115)].iter().any(|k| kinds.contains(k)),
+            Self::InstanceofKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
             Self::Bang => [::sittir_core::types::KindId(116)].iter().any(|k| kinds.contains(k)),
             Self::Tilde => [::sittir_core::types::KindId(117)].iter().any(|k| kinds.contains(k)),
+            Self::VoidKeyword => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
+            Self::DeleteKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
             Self::Bquote => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
             Self::DollarLbrace => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
+            Self::ThisKeyword => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
+            Self::SuperKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
+            Self::TrueKeyword => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
+            Self::FalseKeyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
+            Self::NullKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
             Self::At => [::sittir_core::types::KindId(129)].iter().any(|k| kinds.contains(k)),
+            Self::StaticKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
+            Self::ReadonlyKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
+            Self::GetKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
+            Self::SetKeyword => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
+            Self::DeclareKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
             Self::AbstractKeyword => [::sittir_core::types::KindId(131)].iter().any(|k| kinds.contains(k)),
             Self::AccessorKeyword => [::sittir_core::types::KindId(149)].iter().any(|k| kinds.contains(k)),
             Self::SatisfiesKeyword => [::sittir_core::types::KindId(132)].iter().any(|k| kinds.contains(k)),
             Self::RequireKeyword => [::sittir_core::types::KindId(133)].iter().any(|k| kinds.contains(k)),
+            Self::ExtendsKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
             Self::ImplementsKeyword => [::sittir_core::types::KindId(134)].iter().any(|k| kinds.contains(k)),
+            Self::ModuleKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
+            Self::NamespaceKeyword => [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k)),
             Self::InterfaceKeyword => [::sittir_core::types::KindId(135)].iter().any(|k| kinds.contains(k)),
             Self::EnumKeyword => [::sittir_core::types::KindId(136)].iter().any(|k| kinds.contains(k)),
+            Self::PublicKeyword => [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k)),
+            Self::PrivateKeyword => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
+            Self::ProtectedKeyword => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
+            Self::OverrideKeyword => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
             Self::DashQmarkColon => [::sittir_core::types::KindId(137)].iter().any(|k| kinds.contains(k)),
             Self::PlusQmarkColon => [::sittir_core::types::KindId(138)].iter().any(|k| kinds.contains(k)),
             Self::QmarkColon => [::sittir_core::types::KindId(139)].iter().any(|k| kinds.contains(k)),
@@ -45878,13 +43014,21 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::InferKeyword => [::sittir_core::types::KindId(141)].iter().any(|k| kinds.contains(k)),
             Self::IsKeyword => [::sittir_core::types::KindId(142)].iter().any(|k| kinds.contains(k)),
             Self::KeyofKeyword => [::sittir_core::types::KindId(143)].iter().any(|k| kinds.contains(k)),
+            Self::InKeyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
+            Self::AnyKeyword => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
+            Self::NumberKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
+            Self::BooleanKeyword => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
+            Self::StringKeyword => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
+            Self::SymbolKeyword => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
             Self::Unique => [::sittir_core::types::KindId(144)].iter().any(|k| kinds.contains(k)),
             Self::UnknownKeyword => [::sittir_core::types::KindId(145)].iter().any(|k| kinds.contains(k)),
             Self::NeverKeyword => [::sittir_core::types::KindId(146)].iter().any(|k| kinds.contains(k)),
+            Self::ObjectKeyword => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
             Self::LbracePipe => [::sittir_core::types::KindId(147)].iter().any(|k| kinds.contains(k)),
             Self::PipeRbrace => [::sittir_core::types::KindId(148)].iter().any(|k| kinds.contains(k)),
             Self::Comma => [::sittir_core::types::KindId(15)].iter().any(|k| kinds.contains(k)),
             Self::GlobalKeyword => [::sittir_core::types::KindId(151)].iter().any(|k| kinds.contains(k)),
+            Self::ExportKeyword => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
             Self::FromKeyword => [::sittir_core::types::KindId(11)].iter().any(|k| kinds.contains(k)),
             Self::Dquote => [::sittir_core::types::KindId(165)].iter().any(|k| kinds.contains(k)),
             Self::Squote => [::sittir_core::types::KindId(167)].iter().any(|k| kinds.contains(k)),
@@ -46193,26 +43337,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::DebuggerKeyword => render_debugger_keyword(w),
             AnyTransport::ReturnKeyword => render_return_keyword(w),
             AnyTransport::ThrowKeyword => render_throw_keyword(w),
-            AnyTransport::DeclareKeyword => render_declare_keyword(w),
-            AnyTransport::NamespaceKeyword => render_namespace_keyword(w),
-            AnyTransport::PublicKeyword => render_public_keyword(w),
-            AnyTransport::PrivateKeyword => render_private_keyword(w),
-            AnyTransport::ProtectedKeyword => render_protected_keyword(w),
-            AnyTransport::OverrideKeyword => render_override_keyword(w),
-            AnyTransport::ReadonlyKeyword => render_readonly_keyword(w),
-            AnyTransport::ModuleKeyword => render_module_keyword(w),
-            AnyTransport::AnyKeyword => render_any_keyword(w),
-            AnyTransport::NumberKeyword => render_number_keyword(w),
-            AnyTransport::BooleanKeyword => render_boolean_keyword(w),
-            AnyTransport::StringKeyword => render_string_keyword(w),
-            AnyTransport::SymbolKeyword => render_symbol_keyword(w),
-            AnyTransport::ExportKeyword => render_export_keyword(w),
-            AnyTransport::ObjectKeyword => render_object_keyword(w),
-            AnyTransport::NewKeyword => render_new_keyword(w),
-            AnyTransport::GetKeyword => render_get_keyword(w),
-            AnyTransport::SetKeyword => render_set_keyword(w),
-            AnyTransport::AsyncKeyword => render_async_keyword(w),
-            AnyTransport::StaticKeyword => render_static_keyword(w),
             AnyTransport::Colon => render_colon(w),
             AnyTransport::CaseKeyword => render_case_keyword(w),
             AnyTransport::CatchKeyword => render_catch_keyword(w),
@@ -46223,19 +43347,11 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Rbrack => render_rbrack(w),
             AnyTransport::Dot => render_dot(w),
             AnyTransport::ClassKeyword => render_class_keyword(w),
+            AnyTransport::AsyncKeyword => render_async_keyword(w),
             AnyTransport::FunctionKeyword => render_function_keyword(w),
             AnyTransport::EqGt => render_eq_gt(w),
             AnyTransport::QmarkDot => render_qmark_dot(w),
-            AnyTransport::DeleteKeyword => render_delete_keyword(w),
-            AnyTransport::ExtendsKeyword => render_extends_keyword(w),
-            AnyTransport::FalseKeyword => render_false_keyword(w),
-            AnyTransport::InKeyword => render_in_keyword(w),
-            AnyTransport::InstanceofKeyword => render_instanceof_keyword(w),
-            AnyTransport::NullKeyword => render_null_keyword(w),
-            AnyTransport::SuperKeyword => render_super_keyword(w),
-            AnyTransport::ThisKeyword => render_this_keyword(w),
-            AnyTransport::TrueKeyword => render_true_keyword(w),
-            AnyTransport::VoidKeyword => render_void_keyword(w),
+            AnyTransport::NewKeyword => render_new_keyword(w),
             AnyTransport::PlusEq => render_plus_eq(w),
             AnyTransport::DashEq => render_dash_eq(w),
             AnyTransport::StarEq => render_star_eq(w),
@@ -46275,18 +43391,38 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::GtEq => render_gt_eq(w),
             AnyTransport::Gt => render_gt(w),
             AnyTransport::QmarkQmark => render_qmark_qmark(w),
+            AnyTransport::InstanceofKeyword => render_instanceof_keyword(w),
             AnyTransport::Bang => render_bang(w),
             AnyTransport::Tilde => render_tilde(w),
+            AnyTransport::VoidKeyword => render_void_keyword(w),
+            AnyTransport::DeleteKeyword => render_delete_keyword(w),
             AnyTransport::Bquote => render_bquote(w),
             AnyTransport::DollarLbrace => render_dollar_lbrace(w),
+            AnyTransport::ThisKeyword => render_this_keyword(w),
+            AnyTransport::SuperKeyword => render_super_keyword(w),
+            AnyTransport::TrueKeyword => render_true_keyword(w),
+            AnyTransport::FalseKeyword => render_false_keyword(w),
+            AnyTransport::NullKeyword => render_null_keyword(w),
             AnyTransport::At => render_at(w),
+            AnyTransport::StaticKeyword => render_static_keyword(w),
+            AnyTransport::ReadonlyKeyword => render_readonly_keyword(w),
+            AnyTransport::GetKeyword => render_get_keyword(w),
+            AnyTransport::SetKeyword => render_set_keyword(w),
+            AnyTransport::DeclareKeyword => render_declare_keyword(w),
             AnyTransport::AbstractKeyword => render_abstract_keyword(w),
             AnyTransport::AccessorKeyword => render_accessor_keyword(w),
             AnyTransport::SatisfiesKeyword => render_satisfies_keyword(w),
             AnyTransport::RequireKeyword => render_require_keyword(w),
+            AnyTransport::ExtendsKeyword => render_extends_keyword(w),
             AnyTransport::ImplementsKeyword => render_implements_keyword(w),
+            AnyTransport::ModuleKeyword => render_module_keyword(w),
+            AnyTransport::NamespaceKeyword => render_namespace_keyword(w),
             AnyTransport::InterfaceKeyword => render_interface_keyword(w),
             AnyTransport::EnumKeyword => render_enum_keyword(w),
+            AnyTransport::PublicKeyword => render_public_keyword(w),
+            AnyTransport::PrivateKeyword => render_private_keyword(w),
+            AnyTransport::ProtectedKeyword => render_protected_keyword(w),
+            AnyTransport::OverrideKeyword => render_override_keyword(w),
             AnyTransport::DashQmarkColon => render_dash_qmark_colon(w),
             AnyTransport::PlusQmarkColon => render_plus_qmark_colon(w),
             AnyTransport::QmarkColon => render_qmark_colon(w),
@@ -46294,13 +43430,21 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::InferKeyword => render_infer_keyword(w),
             AnyTransport::IsKeyword => render_is_keyword(w),
             AnyTransport::KeyofKeyword => render_keyof_keyword(w),
+            AnyTransport::InKeyword => render_in_keyword(w),
+            AnyTransport::AnyKeyword => render_any_keyword(w),
+            AnyTransport::NumberKeyword => render_number_keyword(w),
+            AnyTransport::BooleanKeyword => render_boolean_keyword(w),
+            AnyTransport::StringKeyword => render_string_keyword(w),
+            AnyTransport::SymbolKeyword => render_symbol_keyword(w),
             AnyTransport::Unique => render_unique(w),
             AnyTransport::UnknownKeyword => render_unknown_keyword(w),
             AnyTransport::NeverKeyword => render_never_keyword(w),
+            AnyTransport::ObjectKeyword => render_object_keyword(w),
             AnyTransport::LbracePipe => render_lbrace_pipe(w),
             AnyTransport::PipeRbrace => render_pipe_rbrace(w),
             AnyTransport::Comma => render_comma(w),
             AnyTransport::GlobalKeyword => render_global_keyword(w),
+            AnyTransport::ExportKeyword => render_export_keyword(w),
             AnyTransport::FromKeyword => render_from_keyword(w),
             AnyTransport::Dquote => render_dquote(w),
             AnyTransport::Squote => render_squote(w),
@@ -46580,4 +43724,4 @@ const _: () = assert!(::core::mem::size_of::<WithStatementTransport>() <= 256, "
 const _: () = assert!(::core::mem::size_of::<YieldExpressionDelegateTransport>() <= 256, "YieldExpressionDelegateTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionTransport>() <= 256, "YieldExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 
-::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, ExportStatementTransport, DeclarationTransport, ImportSpecifierTransport, StatementTransport, VariableDeclaratorTransport, ForHeaderTransport, ParenthesizedExpressionTransport, ExpressionTransport, PrimaryExpressionTransport, CallExpressionTransport, UpdateExpressionTransport, StringTransport, NumberTransport, MetaPropertyTransport, PatternTransport, TypeTransport, PrimaryTypeTransport, ClassBodyMemberTransport, EnumBodyElementTransport, ExportStatementDefaultTransport, NumberBigintTransport, NamespaceExportModuleExportNameTransportSlot, ExportSpecifierExportKindTransportSlot, ExportSpecifierNameTransportSlot, ImportStatementImportClauseTransportSlot, ImportStatementFromClauseTransportSlot, ImportStatementTerminatorTransportSlot, ImportClauseContentTransportSlot, ImportAttributeAttributeKindTransportSlot, ExpressionStatementExpressionTransportSlot, ExpressionStatementTerminatorTransportSlot, VariableDeclarationTerminatorTransportSlot, LexicalDeclarationKindTransportSlot, LexicalDeclarationTerminatorTransportSlot, UsingDeclarationKindTransportSlot, UsingDeclarationAutomaticSemicolonTransportSlot, StatementBlockTerminatorTransportSlot, ForStatementInitializerTransportSlot, ForStatementConditionTransportSlot, DoStatementTerminatorTransportSlot, BreakStatementTerminatorTransportSlot, ContinueStatementTerminatorTransportSlot, DebuggerStatementTerminatorTransportSlot, ReturnStatementTerminatorTransportSlot, ThrowStatementTerminatorTransportSlot, LabeledStatementLabelTransportSlot, SwitchBodyCasesTransportSlot, YieldExpressionExpressionTransportSlot, ObjectPropertiesTransportSlot, ObjectPatternPropertiesTransportSlot, ObjectAssignmentPatternLeftTransportSlot, ArrayElementsTransportSlot, ArrayPatternElementsTransportSlot, NestedIdentifierObjectTransportSlot, ClassHeritageContentTransportSlot, FunctionExpressionReturnTypeTransportSlot, ArrowFunctionBodyTransportSlot, ArrowFunctionContentTransportSlot, MemberExpressionObjectTransportSlot, MemberExpressionSeparatorTransportSlot, MemberExpressionPropertyTransportSlot, SubscriptExpressionObjectTransportSlot, LhsExpressionContentTransportSlot, AssignmentExpressionLeftTransportSlot, AugmentedAssignmentExpressionLeftTransportSlot, AugmentedAssignmentExpressionOperatorTransportSlot, BinaryExpressionOperatorTransportSlot, UnaryExpressionOperatorTransportSlot, TemplateStringElementsTransportSlot, DecoratorExpressionTransportSlot, DecoratorMemberExpressionObjectTransportSlot, DecoratorCallExpressionFunctionTransportSlot, MethodDefinitionAccessorKindTransportSlot, MethodDefinitionNameTransportSlot, PublicFieldDefinitionOptionalityTransportSlot, FunctionSignatureTerminatorTransportSlot, DecoratorParenthesizedExpressionExpressionTransportSlot, AsExpressionTypeAnnotationTransportSlot, AmbientDeclarationContentTransportSlot, ModuleNameTransportSlot, ImportAliasTerminatorTransportSlot, ExtendsTypeClauseTypeTransportSlot, TypeAliasDeclarationTerminatorTransportSlot, RequiredParameterPatternTransportSlot, TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot, TypeQueryMemberExpressionInTypeAnnotationPropertyTransportSlot, TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot, AssertsValueTransportSlot, TupleParameterNameTransportSlot, TemplateTypeTypeTransportSlot, TemplateLiteralTypeElementsTransportSlot, GenericTypeNameTransportSlot, TypePredicateNameTransportSlot, TypeQueryMemberExpressionObjectTransportSlot, TypeQueryMemberExpressionContentTransportSlot, TypeQuerySubscriptExpressionIndexTransportSlot, TypeQueryCallExpressionFunctionTransportSlot, TypeQueryExpressionTransportSlot, LiteralTypeContentTransportSlot, ObjectTypeOpeningTransportSlot, ObjectTypeClosingTransportSlot, ConstraintContentTransportSlot, FunctionTypeReturnTypeTransportSlot, FormalParametersElementsItemTransportSlot, TupleTypeMembersItemTransportSlot, ImportClauseGroupContentTransportSlot, CatchClauseGroupParameterTransportSlot, AmbientDeclarationModuleTerminatorTransportSlot, ObjectTypeContentItemTransportSlot, ExportStatementNamespaceExportTerminatorTransportSlot, ExportStatementEqualsExportTerminatorTransportSlot, LiteralTypeNegativeNumberOperatorTransportSlot, BinaryExpressionInLeftTransportSlot, ClassBodyMemberMethodTerminatorTransportSlot, ClassBodyMemberMethodSigTerminatorTransportSlot, ClassBodyMemberDeclarationMemberTransportSlot, ClassBodyMemberDeclarationTerminatorTransportSlot, IndexSignatureColonSignTransportSlot, IndexSignatureColonTypeTransportSlot, ImportSpecifierNameImportKindTransportSlot, ImportSpecifierAsImportKindTransportSlot, ImportSpecifierAsNameTransportSlot, CallExpressionCallFunctionTransportSlot, CallExpressionTemplateCallFunctionTransportSlot, StringDoubleElementsTransportSlot, StringSingleElementsTransportSlot, UpdateExpressionPostfixOperatorTransportSlot, UpdateExpressionPrefixOperatorTransportSlot, ExportStatementDefaultFromTerminatorTransportSlot, ExportStatementDefaultFromContentTransportSlot, ExportStatementDefaultDeclarationContentTransportSlot, ExportStatementDefaultDeclarationDefaultKwContentTransportSlot, ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot, ForHeaderLhsLeftTransportSlot, ForHeaderLhsOperatorTransportSlot, ForHeaderLetConstKindKindTransportSlot, ForHeaderUsingKindKindTransportSlot, StatementIdentifierContentTransportSlot, PropertyIdentifierContentTransportSlot, ProgramTransport, HashBangLineTransport, NamespaceExportTransport, ExportClauseTransport, ExportSpecifierTransport, ImportTransport, ImportStatementTransport, ImportClauseTransport, NamespaceImportTransport, NamedImportsTransport, ImportAttributeTransport, ExpressionStatementTransport, VariableDeclarationTransport, LexicalDeclarationTransport, UsingDeclarationTransport, StatementBlockTransport, ElseClauseTransport, IfStatementTransport, SwitchStatementTransport, ForStatementTransport, ForInStatementTransport, WhileStatementTransport, DoStatementTransport, TryStatementTransport, WithStatementTransport, BreakStatementTransport, ContinueStatementTransport, DebuggerStatementTransport, ReturnStatementTransport, ThrowStatementTransport, EmptyStatementTransport, LabeledStatementTransport, SwitchBodyTransport, SwitchCaseTransport, SwitchDefaultTransport, CatchClauseTransport, FinallyClauseTransport, YieldExpressionTransport, ObjectTransport, ObjectPatternTransport, AssignmentPatternTransport, ObjectAssignmentPatternTransport, ArrayTransport, ArrayPatternTransport, NestedIdentifierTransport, ClassTransport, ClassDeclarationTransport, ClassHeritageTransport, FunctionExpressionTransport, FunctionDeclarationTransport, GeneratorFunctionTransport, GeneratorFunctionDeclarationTransport, ArrowFunctionTransport, OptionalChainTransport, NewExpressionTransport, AwaitExpressionTransport, MemberExpressionTransport, SubscriptExpressionTransport, LhsExpressionTransport, AssignmentExpressionTransport, AugmentedAssignmentExpressionTransport, SpreadElementTransport, TernaryExpressionTransport, BinaryExpressionTransport, UnaryExpressionTransport, SequenceExpressionTransport, UnescapedDoubleStringFragmentTransport, UnescapedSingleStringFragmentTransport, EscapeSequenceTransport, TemplateStringTransport, TemplateSubstitutionTransport, RegexTransport, RegexPatternTransport, RegexFlagsTransport, IdentifierTransport, PrivatePropertyIdentifierTransport, ThisTransport, SuperTransport, TrueTransport, FalseTransport, NullTransport, UndefinedTransport, ArgumentsTransport, DecoratorTransport, DecoratorMemberExpressionTransport, DecoratorCallExpressionTransport, ClassBodyTransport, FormalParametersTransport, ClassStaticBlockTransport, RestPatternTransport, MethodDefinitionTransport, PairTransport, PairPatternTransport, ComputedPropertyNameTransport, PublicFieldDefinitionTransport, NonNullExpressionTransport, MethodSignatureTransport, AbstractMethodSignatureTransport, FunctionSignatureTransport, DecoratorParenthesizedExpressionTransport, TypeAssertionTransport, AsExpressionTransport, SatisfiesExpressionTransport, InstantiationExpressionTransport, ImportRequireClauseTransport, ExtendsClauseTransport, ExtendsClauseSingleTransport, ImplementsClauseTransport, AmbientDeclarationTransport, AbstractClassDeclarationTransport, ModuleTransport, InternalModuleTransport, ImportAliasTransport, NestedTypeIdentifierTransport, InterfaceDeclarationTransport, ExtendsTypeClauseTransport, EnumDeclarationTransport, EnumBodyTransport, EnumAssignmentTransport, TypeAliasDeclarationTransport, AccessibilityModifierEnum, OverrideModifierTransport, RequiredParameterTransport, OptionalParameterTransport, OmittingTypeAnnotationTransport, AddingTypeAnnotationTransport, OptingTypeAnnotationTransport, TypeAnnotationTransport, TypeQueryMemberExpressionInTypeAnnotationTransport, TypeQueryCallExpressionInTypeAnnotationTransport, AssertsTransport, AssertsAnnotationTransport, TupleParameterTransport, OptionalTupleParameterTransport, OptionalTypeTransport, RestTypeTransport, ConstructorTypeTransport, TemplateTypeTransport, TemplateLiteralTypeTransport, InferTypeTransport, ConditionalTypeTransport, GenericTypeTransport, TypePredicateTransport, TypePredicateAnnotationTransport, TypeQueryMemberExpressionTransport, TypeQuerySubscriptExpressionTransport, TypeQueryCallExpressionTransport, TypeQueryInstantiationExpressionTransport, TypeQueryTransport, IndexTypeQueryTransport, LookupTypeTransport, MappedTypeClauseTransport, LiteralTypeTransport, ExistentialTypeTransport, FlowMaybeTypeTransport, ParenthesizedTypeTransport, PredefinedTypeEnum, TypeArgumentsTransport, ObjectTypeTransport, CallSignatureTransport, PropertySignatureTransport, TypeParametersTransport, TypeParameterTransport, DefaultTypeTransport, ConstraintTransport, ConstructSignatureTransport, ArrayTypeTransport, TupleTypeTransport, ReadonlyTypeTransport, UnionTypeTransport, IntersectionTypeTransport, FunctionTypeTransport, ExportSpecifiersTransport, ImportSpecifiersTransport, FormalParametersElementsTransport, EnumBodyElementNameTransport, EnumBodyElementsTransport, TypesTransport, TypeParametersElementsTransport, TupleTypeMembersTransport, ImportClauseGroupTransport, UsingDeclarationArmTransport, CatchClauseGroupTransport, AmbientDeclarationGlobalTransport, AmbientDeclarationModuleTransport, ObjectTypeContentTransport, ExportStatementNamespaceExportTransport, ExportStatementEqualsExportTransport, CommentLineTransport, CommentBlockTransport, LiteralTypeNegativeNumberTransport, NumberHexTransport, NumberFloatPointTransport, NumberFloatLeadingPointTransport, NumberFloatScientificTransport, NumberDecimalTransport, NumberBinaryTransport, NumberOctalTransport, NumberBigintHexTransport, NumberBigintBinaryTransport, NumberBigintOctalTransport, NumberBigintDecimalTransport, BinaryExpressionInTransport, EmptyMemberTransport, ClassBodyMemberMethodTransport, ClassBodyMemberMethodSigTransport, ClassBodyMemberDeclarationTransport, IndexSignatureColonTransport, IndexSignatureMappedTypeClauseTransport, ImportStatementClauseFromTransport, YieldExpressionDelegateTransport, OptionalChainMarkerTransport, ImportSpecifierNameTransport, ImportSpecifierAsTransport, ParenthesizedExpressionTypedTransport, ParenthesizedExpressionSequenceTransport, CallExpressionCallTransport, CallExpressionTemplateCallTransport, CallExpressionMemberTransport, StringDoubleTransport, StringSingleTransport, UpdateExpressionPostfixTransport, UpdateExpressionPrefixTransport, ArrowFunctionParameterTransport, ClassHeritageExtendsClauseTransport, ImportClauseDefaultImportTransport, ExportStatementDefaultFromTransport, ExportStatementDefaultDeclarationTransport, ExportStatementDefaultFromStarFromTransport, ExportStatementDefaultFromNsFromTransport, ExportStatementDefaultFromClauseFromTransport, ExportStatementDefaultDeclarationDefaultKwTransport, ExportStatementDefaultDeclarationDefaultKwValueTransport, VariableDeclaratorPlainTransport, VariableDeclaratorDefiniteTransport, MetaPropertyNewTargetTransport, MetaPropertyImportMetaTransport, ForHeaderLhsTransport, ForHeaderVarKindTransport, ForHeaderLetConstKindTransport, ForHeaderUsingKindTransport, HtmlCommentTransport, JsxTextTransport, TemplateCharsTransport, AutomaticSemicolonTransport, FunctionSignatureAutomaticSemicolonTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, IndentTransport, DedentTransport, TernaryQmarkTransport, ErrorRecoveryTransport, StatementIdentifierTransport, ShorthandPropertyIdentifierTransport, ShorthandPropertyIdentifierPatternTransport, PropertyIdentifierTransport, TypeIdentifierTransport, InterfaceBodyTransport, StarTransport, AsKeywordTransport, DefaultKeywordTransport, LbraceTransport, RbraceTransport, TypeKeywordTransport, TypeofKeywordTransport, ImportKeywordTransport, SemiTransport, WithKeywordTransport, AssertKeywordTransport, VarKeywordTransport, LetKeywordTransport, ConstKeywordTransport, UsingKeywordTransport, ElseKeywordTransport, IfKeywordTransport, SwitchKeywordTransport, ForKeywordTransport, LparenTransport, RparenTransport, AwaitKeywordTransport, WhileKeywordTransport, DoKeywordTransport, TryKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, DebuggerKeywordTransport, ReturnKeywordTransport, ThrowKeywordTransport, DeclareKeywordTransport, NamespaceKeywordTransport, PublicKeywordTransport, PrivateKeywordTransport, ProtectedKeywordTransport, OverrideKeywordTransport, ReadonlyKeywordTransport, ModuleKeywordTransport, AnyKeywordTransport, NumberKeywordTransport, BooleanKeywordTransport, StringKeywordTransport, SymbolKeywordTransport, ExportKeywordTransport, ObjectKeywordTransport, NewKeywordTransport, GetKeywordTransport, SetKeywordTransport, AsyncKeywordTransport, StaticKeywordTransport, ColonTransport, CaseKeywordTransport, CatchKeywordTransport, FinallyKeywordTransport, YieldKeywordTransport, EqTransport, LbrackTransport, RbrackTransport, DotTransport, ClassKeywordTransport, FunctionKeywordTransport, EqGtTransport, QmarkDotTransport, DeleteKeywordTransport, ExtendsKeywordTransport, FalseKeywordTransport, InKeywordTransport, InstanceofKeywordTransport, NullKeywordTransport, SuperKeywordTransport, ThisKeywordTransport, TrueKeywordTransport, VoidKeywordTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, PercentEqTransport, CaretEqTransport, AmpEqTransport, PipeEqTransport, GtGtEqTransport, GtGtGtEqTransport, LtLtEqTransport, StarStarEqTransport, AmpAmpEqTransport, PipePipeEqTransport, QmarkQmarkEqTransport, DotDotDotTransport, QmarkTransport, AmpAmpTransport, PipePipeTransport, GtGtTransport, GtGtGtTransport, LtLtTransport, AmpTransport, CaretTransport, PipeTransport, PlusTransport, DashTransport, SlashTransport, PercentTransport, StarStarTransport, LtTransport, LtEqTransport, EqEqTransport, EqEqEqTransport, BangEqTransport, BangEqEqTransport, GtEqTransport, GtTransport, QmarkQmarkTransport, BangTransport, TildeTransport, BquoteTransport, DollarLbraceTransport, AtTransport, AbstractKeywordTransport, AccessorKeywordTransport, SatisfiesKeywordTransport, RequireKeywordTransport, ImplementsKeywordTransport, InterfaceKeywordTransport, EnumKeywordTransport, DashQmarkColonTransport, PlusQmarkColonTransport, QmarkColonTransport, AssertsKeywordTransport, InferKeywordTransport, IsKeywordTransport, KeyofKeywordTransport, UniqueTransport, UnknownKeywordTransport, NeverKeywordTransport, LbracePipeTransport, PipeRbraceTransport, CommaTransport, GlobalKeywordTransport, FromKeywordTransport, DquoteTransport, SquoteTransport, PlusPlusTransport, DashDashTransport, TargetKeywordTransport, MetaKeywordTransport, OfKeywordTransport, TriviaTransport);
+::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, ExportStatementTransport, DeclarationTransport, ImportSpecifierTransport, StatementTransport, VariableDeclaratorTransport, ForHeaderTransport, ParenthesizedExpressionTransport, ExpressionTransport, PrimaryExpressionTransport, CallExpressionTransport, UpdateExpressionTransport, StringTransport, NumberTransport, MetaPropertyTransport, PatternTransport, TypeTransport, PrimaryTypeTransport, ClassBodyMemberTransport, EnumBodyElementTransport, ExportStatementDefaultTransport, NumberBigintTransport, NamespaceExportModuleExportNameTransportSlot, ExportSpecifierExportKindTransportSlot, ExportSpecifierNameTransportSlot, ImportStatementImportClauseTransportSlot, ImportStatementFromClauseTransportSlot, ImportStatementTerminatorTransportSlot, ImportClauseContentTransportSlot, ImportAttributeAttributeKindTransportSlot, ExpressionStatementExpressionTransportSlot, ExpressionStatementTerminatorTransportSlot, VariableDeclarationTerminatorTransportSlot, LexicalDeclarationKindTransportSlot, LexicalDeclarationTerminatorTransportSlot, UsingDeclarationKindTransportSlot, UsingDeclarationAutomaticSemicolonTransportSlot, StatementBlockTerminatorTransportSlot, ForStatementInitializerTransportSlot, ForStatementConditionTransportSlot, DoStatementTerminatorTransportSlot, BreakStatementTerminatorTransportSlot, ContinueStatementTerminatorTransportSlot, DebuggerStatementTerminatorTransportSlot, ReturnStatementTerminatorTransportSlot, ThrowStatementTerminatorTransportSlot, SwitchBodyCasesTransportSlot, YieldExpressionExpressionTransportSlot, ObjectPropertiesTransportSlot, ObjectPatternPropertiesTransportSlot, ObjectAssignmentPatternLeftTransportSlot, ArrayElementsTransportSlot, ArrayPatternElementsTransportSlot, NestedIdentifierObjectTransportSlot, ClassHeritageContentTransportSlot, FunctionExpressionReturnTypeTransportSlot, ArrowFunctionBodyTransportSlot, ArrowFunctionContentTransportSlot, MemberExpressionObjectTransportSlot, MemberExpressionSeparatorTransportSlot, MemberExpressionPropertyTransportSlot, SubscriptExpressionObjectTransportSlot, LhsExpressionContentTransportSlot, AssignmentExpressionLeftTransportSlot, AugmentedAssignmentExpressionLeftTransportSlot, AugmentedAssignmentExpressionOperatorTransportSlot, BinaryExpressionOperatorTransportSlot, UnaryExpressionOperatorTransportSlot, TemplateStringElementsTransportSlot, DecoratorExpressionTransportSlot, DecoratorMemberExpressionObjectTransportSlot, DecoratorCallExpressionFunctionTransportSlot, MethodDefinitionAccessorKindTransportSlot, MethodDefinitionNameTransportSlot, PublicFieldDefinitionOptionalityTransportSlot, FunctionSignatureTerminatorTransportSlot, DecoratorParenthesizedExpressionExpressionTransportSlot, AsExpressionTypeAnnotationTransportSlot, AmbientDeclarationContentTransportSlot, ModuleNameTransportSlot, ImportAliasTerminatorTransportSlot, ExtendsTypeClauseTypeTransportSlot, TypeAliasDeclarationTerminatorTransportSlot, RequiredParameterPatternTransportSlot, TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot, TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot, AssertsValueTransportSlot, TupleParameterNameTransportSlot, TemplateTypeTypeTransportSlot, TemplateLiteralTypeElementsTransportSlot, GenericTypeNameTransportSlot, TypePredicateNameTransportSlot, TypeQueryMemberExpressionObjectTransportSlot, TypeQueryMemberExpressionContentTransportSlot, TypeQuerySubscriptExpressionIndexTransportSlot, TypeQueryCallExpressionFunctionTransportSlot, TypeQueryExpressionTransportSlot, LiteralTypeContentTransportSlot, ObjectTypeOpeningTransportSlot, ObjectTypeClosingTransportSlot, ConstraintContentTransportSlot, FunctionTypeReturnTypeTransportSlot, FormalParametersElementsItemTransportSlot, TupleTypeMembersItemTransportSlot, ImportClauseGroupContentTransportSlot, CatchClauseGroupParameterTransportSlot, AmbientDeclarationModuleTerminatorTransportSlot, ObjectTypeContentItemTransportSlot, ExportStatementNamespaceExportTerminatorTransportSlot, ExportStatementEqualsExportTerminatorTransportSlot, LiteralTypeNegativeNumberOperatorTransportSlot, BinaryExpressionInLeftTransportSlot, ClassBodyMemberMethodTerminatorTransportSlot, ClassBodyMemberMethodSigTerminatorTransportSlot, ClassBodyMemberDeclarationMemberTransportSlot, ClassBodyMemberDeclarationTerminatorTransportSlot, IndexSignatureColonSignTransportSlot, IndexSignatureColonTypeTransportSlot, ImportSpecifierNameImportKindTransportSlot, ImportSpecifierAsImportKindTransportSlot, ImportSpecifierAsNameTransportSlot, CallExpressionTemplateCallFunctionTransportSlot, StringDoubleElementsTransportSlot, StringSingleElementsTransportSlot, UpdateExpressionPostfixOperatorTransportSlot, UpdateExpressionPrefixOperatorTransportSlot, ExportStatementDefaultFromTerminatorTransportSlot, ExportStatementDefaultFromContentTransportSlot, ExportStatementDefaultDeclarationContentTransportSlot, ExportStatementDefaultDeclarationDefaultKwContentTransportSlot, ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonTransportSlot, ForHeaderLhsLeftTransportSlot, ForHeaderLhsOperatorTransportSlot, ForHeaderLetConstKindKindTransportSlot, ForHeaderUsingKindKindTransportSlot, ProgramTransport, HashBangLineTransport, NamespaceExportTransport, ExportClauseTransport, ExportSpecifierTransport, ImportTransport, ImportStatementTransport, ImportClauseTransport, NamespaceImportTransport, NamedImportsTransport, ImportAttributeTransport, ExpressionStatementTransport, VariableDeclarationTransport, LexicalDeclarationTransport, UsingDeclarationTransport, StatementBlockTransport, ElseClauseTransport, IfStatementTransport, SwitchStatementTransport, ForStatementTransport, ForInStatementTransport, WhileStatementTransport, DoStatementTransport, TryStatementTransport, WithStatementTransport, BreakStatementTransport, ContinueStatementTransport, DebuggerStatementTransport, ReturnStatementTransport, ThrowStatementTransport, EmptyStatementTransport, LabeledStatementTransport, SwitchBodyTransport, SwitchCaseTransport, SwitchDefaultTransport, CatchClauseTransport, FinallyClauseTransport, YieldExpressionTransport, ObjectTransport, ObjectPatternTransport, AssignmentPatternTransport, ObjectAssignmentPatternTransport, ArrayTransport, ArrayPatternTransport, NestedIdentifierTransport, ClassTransport, ClassDeclarationTransport, ClassHeritageTransport, FunctionExpressionTransport, FunctionDeclarationTransport, GeneratorFunctionTransport, GeneratorFunctionDeclarationTransport, ArrowFunctionTransport, OptionalChainTransport, NewExpressionTransport, AwaitExpressionTransport, MemberExpressionTransport, SubscriptExpressionTransport, LhsExpressionTransport, AssignmentExpressionTransport, AugmentedAssignmentExpressionTransport, SpreadElementTransport, TernaryExpressionTransport, BinaryExpressionTransport, UnaryExpressionTransport, SequenceExpressionTransport, UnescapedDoubleStringFragmentTransport, UnescapedSingleStringFragmentTransport, EscapeSequenceTransport, TemplateStringTransport, TemplateSubstitutionTransport, RegexTransport, RegexPatternTransport, RegexFlagsTransport, IdentifierTransport, PrivatePropertyIdentifierTransport, ThisTransport, SuperTransport, TrueTransport, FalseTransport, NullTransport, UndefinedTransport, ArgumentsTransport, DecoratorTransport, DecoratorMemberExpressionTransport, DecoratorCallExpressionTransport, ClassBodyTransport, FormalParametersTransport, ClassStaticBlockTransport, RestPatternTransport, MethodDefinitionTransport, PairTransport, PairPatternTransport, ComputedPropertyNameTransport, PublicFieldDefinitionTransport, NonNullExpressionTransport, MethodSignatureTransport, AbstractMethodSignatureTransport, FunctionSignatureTransport, DecoratorParenthesizedExpressionTransport, TypeAssertionTransport, AsExpressionTransport, SatisfiesExpressionTransport, InstantiationExpressionTransport, ImportRequireClauseTransport, ExtendsClauseTransport, ExtendsClauseSingleTransport, ImplementsClauseTransport, AmbientDeclarationTransport, AbstractClassDeclarationTransport, ModuleTransport, InternalModuleTransport, ImportAliasTransport, NestedTypeIdentifierTransport, InterfaceDeclarationTransport, ExtendsTypeClauseTransport, EnumDeclarationTransport, EnumBodyTransport, EnumAssignmentTransport, TypeAliasDeclarationTransport, AccessibilityModifierEnum, OverrideModifierTransport, RequiredParameterTransport, OptionalParameterTransport, OmittingTypeAnnotationTransport, AddingTypeAnnotationTransport, OptingTypeAnnotationTransport, TypeAnnotationTransport, TypeQueryMemberExpressionInTypeAnnotationTransport, TypeQueryCallExpressionInTypeAnnotationTransport, AssertsTransport, AssertsAnnotationTransport, TupleParameterTransport, OptionalTupleParameterTransport, OptionalTypeTransport, RestTypeTransport, ConstructorTypeTransport, TemplateTypeTransport, TemplateLiteralTypeTransport, InferTypeTransport, ConditionalTypeTransport, GenericTypeTransport, TypePredicateTransport, TypePredicateAnnotationTransport, TypeQueryMemberExpressionTransport, TypeQuerySubscriptExpressionTransport, TypeQueryCallExpressionTransport, TypeQueryInstantiationExpressionTransport, TypeQueryTransport, IndexTypeQueryTransport, LookupTypeTransport, MappedTypeClauseTransport, LiteralTypeTransport, ExistentialTypeTransport, FlowMaybeTypeTransport, ParenthesizedTypeTransport, PredefinedTypeEnum, TypeArgumentsTransport, ObjectTypeTransport, CallSignatureTransport, PropertySignatureTransport, TypeParametersTransport, TypeParameterTransport, DefaultTypeTransport, ConstraintTransport, ConstructSignatureTransport, ArrayTypeTransport, TupleTypeTransport, ReadonlyTypeTransport, UnionTypeTransport, IntersectionTypeTransport, FunctionTypeTransport, ExportSpecifiersTransport, ImportSpecifiersTransport, FormalParametersElementsTransport, EnumBodyElementNameTransport, EnumBodyElementsTransport, TypesTransport, TypeParametersElementsTransport, TupleTypeMembersTransport, ImportClauseGroupTransport, UsingDeclarationArmTransport, CatchClauseGroupTransport, AmbientDeclarationGlobalTransport, AmbientDeclarationModuleTransport, ObjectTypeContentTransport, ExportStatementNamespaceExportTransport, ExportStatementEqualsExportTransport, CommentLineTransport, CommentBlockTransport, LiteralTypeNegativeNumberTransport, NumberHexTransport, NumberFloatPointTransport, NumberFloatLeadingPointTransport, NumberFloatScientificTransport, NumberDecimalTransport, NumberBinaryTransport, NumberOctalTransport, NumberBigintHexTransport, NumberBigintBinaryTransport, NumberBigintOctalTransport, NumberBigintDecimalTransport, BinaryExpressionInTransport, EmptyMemberTransport, ClassBodyMemberMethodTransport, ClassBodyMemberMethodSigTransport, ClassBodyMemberDeclarationTransport, IndexSignatureColonTransport, IndexSignatureMappedTypeClauseTransport, ImportStatementClauseFromTransport, YieldExpressionDelegateTransport, OptionalChainMarkerTransport, ImportSpecifierNameTransport, ImportSpecifierAsTransport, ParenthesizedExpressionTypedTransport, ParenthesizedExpressionSequenceTransport, CallExpressionCallTransport, CallExpressionTemplateCallTransport, CallExpressionMemberTransport, StringDoubleTransport, StringSingleTransport, UpdateExpressionPostfixTransport, UpdateExpressionPrefixTransport, ArrowFunctionParameterTransport, ClassHeritageExtendsClauseTransport, ImportClauseDefaultImportTransport, ExportStatementDefaultFromTransport, ExportStatementDefaultDeclarationTransport, ExportStatementDefaultFromStarFromTransport, ExportStatementDefaultFromNsFromTransport, ExportStatementDefaultFromClauseFromTransport, ExportStatementDefaultDeclarationDefaultKwTransport, ExportStatementDefaultDeclarationDefaultKwValueTransport, VariableDeclaratorPlainTransport, VariableDeclaratorDefiniteTransport, MetaPropertyNewTargetTransport, MetaPropertyImportMetaTransport, ForHeaderLhsTransport, ForHeaderVarKindTransport, ForHeaderLetConstKindTransport, ForHeaderUsingKindTransport, HtmlCommentTransport, JsxTextTransport, TemplateCharsTransport, AutomaticSemicolonTransport, FunctionSignatureAutomaticSemicolonTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, IndentTransport, DedentTransport, TernaryQmarkTransport, ErrorRecoveryTransport, StatementIdentifierTransport, ShorthandPropertyIdentifierTransport, ShorthandPropertyIdentifierPatternTransport, PropertyIdentifierTransport, TypeIdentifierTransport, InterfaceBodyTransport, StarTransport, AsKeywordTransport, DefaultKeywordTransport, LbraceTransport, RbraceTransport, TypeKeywordTransport, TypeofKeywordTransport, ImportKeywordTransport, SemiTransport, WithKeywordTransport, AssertKeywordTransport, VarKeywordTransport, LetKeywordTransport, ConstKeywordTransport, UsingKeywordTransport, ElseKeywordTransport, IfKeywordTransport, SwitchKeywordTransport, ForKeywordTransport, LparenTransport, RparenTransport, AwaitKeywordTransport, WhileKeywordTransport, DoKeywordTransport, TryKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, DebuggerKeywordTransport, ReturnKeywordTransport, ThrowKeywordTransport, ColonTransport, CaseKeywordTransport, CatchKeywordTransport, FinallyKeywordTransport, YieldKeywordTransport, EqTransport, LbrackTransport, RbrackTransport, DotTransport, ClassKeywordTransport, AsyncKeywordTransport, FunctionKeywordTransport, EqGtTransport, QmarkDotTransport, NewKeywordTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, PercentEqTransport, CaretEqTransport, AmpEqTransport, PipeEqTransport, GtGtEqTransport, GtGtGtEqTransport, LtLtEqTransport, StarStarEqTransport, AmpAmpEqTransport, PipePipeEqTransport, QmarkQmarkEqTransport, DotDotDotTransport, QmarkTransport, AmpAmpTransport, PipePipeTransport, GtGtTransport, GtGtGtTransport, LtLtTransport, AmpTransport, CaretTransport, PipeTransport, PlusTransport, DashTransport, SlashTransport, PercentTransport, StarStarTransport, LtTransport, LtEqTransport, EqEqTransport, EqEqEqTransport, BangEqTransport, BangEqEqTransport, GtEqTransport, GtTransport, QmarkQmarkTransport, InstanceofKeywordTransport, BangTransport, TildeTransport, VoidKeywordTransport, DeleteKeywordTransport, BquoteTransport, DollarLbraceTransport, ThisKeywordTransport, SuperKeywordTransport, TrueKeywordTransport, FalseKeywordTransport, NullKeywordTransport, AtTransport, StaticKeywordTransport, ReadonlyKeywordTransport, GetKeywordTransport, SetKeywordTransport, DeclareKeywordTransport, AbstractKeywordTransport, AccessorKeywordTransport, SatisfiesKeywordTransport, RequireKeywordTransport, ExtendsKeywordTransport, ImplementsKeywordTransport, ModuleKeywordTransport, NamespaceKeywordTransport, InterfaceKeywordTransport, EnumKeywordTransport, PublicKeywordTransport, PrivateKeywordTransport, ProtectedKeywordTransport, OverrideKeywordTransport, DashQmarkColonTransport, PlusQmarkColonTransport, QmarkColonTransport, AssertsKeywordTransport, InferKeywordTransport, IsKeywordTransport, KeyofKeywordTransport, InKeywordTransport, AnyKeywordTransport, NumberKeywordTransport, BooleanKeywordTransport, StringKeywordTransport, SymbolKeywordTransport, UniqueTransport, UnknownKeywordTransport, NeverKeywordTransport, ObjectKeywordTransport, LbracePipeTransport, PipeRbraceTransport, CommaTransport, GlobalKeywordTransport, ExportKeywordTransport, FromKeywordTransport, DquoteTransport, SquoteTransport, PlusPlusTransport, DashDashTransport, TargetKeywordTransport, MetaKeywordTransport, OfKeywordTransport, TriviaTransport);

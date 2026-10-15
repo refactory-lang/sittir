@@ -317,6 +317,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		wordMatcher: wordMatcherRegex,
 		reserved: raw.reserved,
 		relaxedLiterals: raw.relaxedLiterals,
+		relaxedDisplayLiterals: raw.relaxedDisplayLiterals,
 		fileTypes: raw.fileTypes,
 		references,
 		derivations,
@@ -908,6 +909,17 @@ function spliceTextLeaves(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
 	return { ...raw, rules };
 }
 
+function wordDisplaysOf(raw: RawGrammar): ReadonlySet<string> {
+	const displays = new Set<string>();
+	if (raw.word === undefined) return displays;
+	const collect = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
+		if (rule.type === ALIAS && rule.named && rule.content.type === SYMBOL && rule.content.name === raw.word) displays.add(rule.value);
+		return rule;
+	};
+	for (const rule of Object.values(raw.rules)) visibilityWalker.map(rule, collect);
+	return displays;
+}
+
 function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
 	const inlineCtx: InlineAtReferenceCtx = {
 		symbols: catalogSymbolSource({ ...symbolFactsOf(raw), kindEntries: ctx.kindEntries }),
@@ -916,16 +928,27 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 	};
 	const wordMatcher = compileWordMatcher(raw.word, raw.rules);
 	const relaxedLiterals = new Set<string>();
-	const relaxedWord = (rule: Rule<'evaluate'>): SymbolRule<'evaluate'> | undefined => {
-		if (rule.type !== ALIAS || !rule.named || raw.word === undefined || rule.value !== raw.word || rule.content.type !== STRING) return undefined;
+	const relaxedDisplayLiterals = new Map<string, Set<string>>();
+	const wordDisplays = wordDisplaysOf(raw);
+	const relaxedWord = (rule: Rule<'evaluate'>): Rule<'evaluate'> | undefined => {
+		if (rule.type !== ALIAS || !rule.named || raw.word === undefined || rule.content.type !== STRING) return undefined;
+		const stands = rule.value === raw.word || wordDisplays.has(rule.value);
+		if (!stands) return undefined;
 		const literal = rule.content.value;
 		if (!matchesWordShape(literal, wordMatcher) || findEntryForLiteralText(ctx.kindEntries, literal) === undefined) return undefined;
-		relaxedLiterals.add(literal);
-		return { type: SYMBOL, name: raw.word, inline: false } as SymbolRule<'evaluate'>;
+		const word = { type: SYMBOL, name: raw.word, inline: false } as SymbolRule<'evaluate'>;
+		if (rule.value === raw.word) {
+			relaxedLiterals.add(literal);
+			return word;
+		}
+		relaxedDisplayLiterals.set(rule.value, (relaxedDisplayLiterals.get(rule.value) ?? new Set<string>()).add(literal));
+		return { ...rule, content: word };
 	};
 	const dedupeWordArms = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
 		if (rule.type !== CHOICE) return rule;
-		const isWordArm = (member: Rule<'evaluate'>): boolean => member.type === SYMBOL && member.name === raw.word && member.literal === undefined;
+		const isWordArm = (member: Rule<'evaluate'>): boolean =>
+			(member.type === SYMBOL && member.name === raw.word && member.literal === undefined) ||
+			(member.type === ALIAS && member.named && member.value !== raw.word && wordDisplays.has(member.value) && member.content.type === SYMBOL && member.content.name === raw.word);
 		const arms = rule.members.filter(isWordArm);
 		if (arms.length < 2) return rule;
 		const kept = arms.find((arm) => arm.annotations?.variant === raw.word) ?? arms.find((arm) => arm.annotations !== undefined) ?? arms[0]!;
@@ -956,7 +979,8 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 			hidden: isSurfaceHiddenKind(name, ctx.kindEntries)
 		};
 	}
-	if (relaxedLiterals.size === 0 || raw.word === null) return { ...raw, rules };
+	const displayLiterals = Object.fromEntries([...relaxedDisplayLiterals].map(([display, literals]) => [display, [...literals]]));
+	if ((relaxedLiterals.size === 0 && relaxedDisplayLiterals.size === 0) || raw.word === null) return { ...raw, rules };
 	const isWordOnly = (name: string): boolean => {
 		const body = rules[name];
 		return name !== raw.word && (body?.hidden === true || raw.inline.includes(name)) && body?.type === SYMBOL && body.name === raw.word;
@@ -972,7 +996,8 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 		...raw,
 		rules: kept,
 		inline: raw.inline.filter((name) => !dissolved.has(name)),
-		relaxedLiterals: [...relaxedLiterals]
+		relaxedLiterals: [...relaxedLiterals],
+		relaxedDisplayLiterals: displayLiterals
 	};
 }
 
