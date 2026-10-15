@@ -340,6 +340,11 @@ impl<'s> ReadCtx<'s> {
         if display != grammar && ((self.shows)(display) || (self.relaxes)(grammar, display)) { display } else { grammar }
     }
 
+    /// [`Self::stamped_kind`] of a parsed node.
+    pub fn node_kind(&self, node: &tree_sitter::Node<'_>) -> KindId {
+        self.stamped_kind(KindId(node.grammar_id()), display_id(node))
+    }
+
     /// Where the node the cursor is on came from: each transport's own
     /// (`TransportLayout::at`, or `::span` in a snapshot).
     pub fn at_of(&self, cursor: &TreeCursor<'_>) -> Origin {
@@ -377,7 +382,7 @@ impl<'s> ReadCtx<'s> {
             Span { start: range.start as u32, end: range.end as u32 }
         };
         NodeCoordinate {
-            kind: Some(self.stamped_kind(KindId(node.grammar_id()), display_id(node))),
+            kind: Some(self.node_kind(node)),
             ..NodeCoordinate::new(self.tree_id, index, index + node.descendant_count() as u32, span)
         }
     }
@@ -409,6 +414,25 @@ pub struct Child {
     /// The child's descendant count: its subtree is the indexes
     /// `[index, index + descendants)`.
     pub descendants: u32,
+}
+
+impl Child {
+    /// The child the cursor is on, its index numbered from the cursor's
+    /// root.
+    pub fn at(cursor: &TreeCursor<'_>) -> Child {
+        let node = cursor.node();
+        Child {
+            index: index_of(cursor),
+            grammar: KindId(node.grammar_id()),
+            display: display_id(&node),
+            field: cursor.field_id().map(|field| FieldId(field.get())),
+            named: node.is_named(),
+            trivia: node.is_extra() || node.is_error(),
+            descendants: node.descendant_count() as u32,
+            start: node.start_byte() as u32,
+            end: node.end_byte() as u32,
+        }
+    }
 }
 
 impl Child {
@@ -450,18 +474,7 @@ pub fn survey(cursor: &mut TreeCursor<'_>) -> Vec<Child> {
     let mut children = Vec::new();
     if cursor.goto_first_child() {
         loop {
-            let node = cursor.node();
-            children.push(Child {
-                index: index_of(cursor),
-                grammar: KindId(node.grammar_id()),
-                display: display_id(&node),
-                field: cursor.field_id().map(|field| FieldId(field.get())),
-                named: node.is_named(),
-                trivia: node.is_extra() || node.is_error(),
-                descendants: node.descendant_count() as u32,
-                start: node.start_byte() as u32,
-                end: node.end_byte() as u32,
-            });
+            children.push(Child::at(cursor));
             if !cursor.goto_next_sibling() {
                 break;
             }
@@ -590,6 +603,31 @@ pub trait ReadTransport: Sized {
         let _ = cursor;
         None
     }
+    /// How a node with these ids finds its slots (`Router`); `None` for a
+    /// node this transport does not admit, or one with no slots.
+    fn router(grammar: KindId, display: KindId) -> Option<Router> {
+        let _ = (grammar, display);
+        None
+    }
+}
+
+/// The route a kind's read gives one child (`Route`), or the refusal of a
+/// child it has no route for.
+pub type ChildRoute = fn(&Child) -> Result<Route, ReadError>;
+
+/// How a kind finds its slots on a node, each slot by its number: the
+/// position of its field among the transport's slot fields.
+#[derive(Clone, Copy)]
+pub enum Router {
+    /// Each child is routed by the kind's read, one child at a time; the
+    /// function `routes` maps over the children.
+    Children(ChildRoute),
+    /// The node is one token, and each slot is a named group of its text,
+    /// the names in slot order.
+    Interior(&'static Interior, &'static [&'static str]),
+    /// The one slot is the node itself, or its one child that is not trivia
+    /// when the envelope wraps a hidden node.
+    Envelope { wraps_hidden: bool },
 }
 
 /// A node's children as its read routes them: each child (`survey`), the
@@ -626,6 +664,9 @@ impl<T: ReadTransport> ReadTransport for Box<T> {
     }
     fn routes(cursor: &mut TreeCursor<'_>) -> Option<Routed> {
         T::routes(cursor)
+    }
+    fn router(grammar: KindId, display: KindId) -> Option<Router> {
+        T::router(grammar, display)
     }
 }
 

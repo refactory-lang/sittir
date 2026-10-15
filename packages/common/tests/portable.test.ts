@@ -16,15 +16,17 @@ const FALSE = 11;
 const FIELD = 12;
 
 const SLOTS: QuerySlots = {
-	[FUNCTION]: [['name', { fields: ['name'], kinds: [] }]],
+	[FUNCTION]: [['name', 0]],
 	[DECORATED]: [
-		['decorators', { fields: [], kinds: ['decorator'] }],
-		['definition', { fields: ['definition'], kinds: [] }]
+		['decorators', 0],
+		['definition', 1]
 	],
-	[DECORATOR]: [['expression', { fields: [], kinds: ['identifier'] }]],
-	[BINARY]: [['operator', { fields: ['operator'], kinds: [] }]],
-	[FIELD]: [['accessor', { fields: ['accessor'], kinds: [] }, 'accessor']]
+	[DECORATOR]: [['expression', 0]],
+	[BINARY]: [['operator', 1]],
+	[FIELD]: [['accessor', 0, 'accessor']]
 };
+
+const subject = (kind: number, row: number) => ({ slots: { [kind]: SLOTS[kind]![row]![1] } });
 
 const TABLE: PortableTable = {
 	paths: {
@@ -49,9 +51,9 @@ const TABLE: PortableTable = {
 			{
 				path: 'declaration.method.static',
 				within: [DECORATED],
-				test: [{ up: 1, via: [SLOTS[DECORATED]![0]![1]], plan: { op: 'eq', text: 'staticmethod', ...SLOTS[DECORATOR]![0]![1] } }]
+				test: [{ up: 1, via: [subject(DECORATED, 0)], plan: { op: 'eq', text: 'staticmethod', ...subject(DECORATOR, 0) } }]
 			},
-			{ path: 'declaration.constructor', within: [], test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', ...SLOTS[FUNCTION]![0]![1] } }] },
+			{ path: 'declaration.constructor', within: [], test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', ...subject(FUNCTION, 0) } }] },
 			{ path: 'declaration.method', within: [BLOCK, CLASS], test: [] },
 			{ path: 'declaration.function', within: [], test: [] }
 		],
@@ -62,8 +64,8 @@ const TABLE: PortableTable = {
 		[IDENTIFIER]: [{ path: 'expression.call', within: [], test: [] }],
 		[TRUE]: [{ path: 'literal.keyword.true', within: [], test: [] }],
 		[FALSE]: [{ path: 'literal.keyword', within: [], test: [{ up: 0, via: [], plan: { op: 'eq', text: 'false', self: true } }] }],
-		[BINARY]: [{ path: 'expression.add', within: [], test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', ...SLOTS[BINARY]![0]![1] } }] }],
-		[FIELD]: [{ path: 'declaration.property', within: [], test: [{ up: 0, via: [], plan: { op: 'present', ...SLOTS[FIELD]![0]![1] } }] }]
+		[BINARY]: [{ path: 'expression.add', within: [], test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', ...subject(BINARY, 0) } }] }],
+		[FIELD]: [{ path: 'declaration.property', within: [], test: [{ up: 0, via: [], plan: { op: 'present', ...subject(FIELD, 0) } }] }]
 	}
 };
 
@@ -170,14 +172,14 @@ describe('portableSurface conditions through a list', () => {
 	const PARAM = 22;
 	const SELF = 23;
 	const PLAIN = 24;
-	const ITEMS = { fields: [], kinds: ['param'] };
-	const ELEMENT = { fields: [], kinds: ['self', 'plain'] };
+	const ITEMS = { slots: { [PARAMS]: 0 } };
+	const ELEMENT = { slots: { [PARAM]: 0 } };
 	const SLOTS: QuerySlots = {
-		[METHOD]: [['params', { fields: ['params'], kinds: [] }]],
-		[PARAMS]: [['items', ITEMS]],
-		[PARAM]: [['element', ELEMENT]]
+		[METHOD]: [['params', 0]],
+		[PARAMS]: [['items', 0]],
+		[PARAM]: [['element', 0]]
 	};
-	const PARAMS_STEP = SLOTS[METHOD]![0]![1];
+	const PARAMS_STEP = { slots: { [METHOD]: 0 } };
 	const { is } = portableSurface(
 		{
 			paths: {

@@ -26,7 +26,7 @@ describe('emitPortableNodeModel', () => {
 	it('writes each kind\'s routes in kind order: its default vocabulary kind, read entries, members with their build paths, and its unwrap', async () => {
 		const text = emitPortableNodeModel(
 			resolveRoutes(await input(['(alpha operator: "+") @expression.add', '(alpha left: (_) @lhs) @expression.binary', '(zeta) @expression.z'].join('\n'))),
-			(entry) => (entry.pins.length === 0 ? [] : [{ up: 0, via: [], plan: { op: 'eq', text: entry.pins[0]!.text, fields: ['operator'], kinds: [] } }])
+			(entry) => (entry.pins.length === 0 ? [] : [{ up: 0, via: [], plan: { op: 'eq', text: entry.pins[0]!.text, slots: { 1: 0 } } }])
 		);
 		const model = JSON.parse(text);
 		expect(Object.keys(model.kinds)).toEqual(['alpha', 'wrapper', 'zeta']);
@@ -38,7 +38,7 @@ describe('emitPortableNodeModel', () => {
 					toplevel: true,
 					within: [],
 					pins: [{ member: 'operator', slot: 'operator', text: '+' }],
-					test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', fields: ['operator'], kinds: [] } }]
+					test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { 1: 0 } } }]
 				},
 				{ vocab: 'expression.binary', toplevel: true, within: [], pins: [], test: [] }
 			],

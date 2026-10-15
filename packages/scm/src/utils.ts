@@ -30,89 +30,73 @@ export const triviaFacts = Object.freeze({
 } satisfies TriviaFacts);
 
 export const querySlots: QuerySlots = Object.freeze({
-	1: [['content', { fields: ['content'], kinds: [] }]],
-	11: [['content', { fields: ['content'], kinds: [] }]],
-	33: [['definitions', { fields: ['definitions'], kinds: [] }]],
-	39: [['name', { fields: ['name'], kinds: [] }]],
-	40: [['stringContent', { fields: ['string_content'], kinds: [] }]],
-	41: [['stringContent', { fields: [], kinds: ['string_content'] }]],
-	42: [['contents', { fields: [], kinds: ['string_content_text', 'escape_sequence'] }]],
-	43: [['elements', { fields: ['elements'], kinds: [] }]],
+	1: [['content', 0]],
+	11: [['content', 0]],
+	33: [['definitions', 0]],
+	39: [['name', 0]],
+	40: [['stringContent', 0]],
+	41: [['stringContent', 0]],
+	42: [['contents', 0]],
+	43: [['elements', 0]],
 	44: [
-		['definitions', { fields: ['definitions'], kinds: [] }],
-		['elements', { fields: ['elements'], kinds: [] }]
+		['definitions', 0],
+		['elements', 1]
 	],
 	45: [
-		['groupingGroups', { fields: [], kinds: ['grouping_group'] }],
-		['elements', { fields: ['elements'], kinds: [] }]
+		['groupingGroups', 0],
+		['elements', 1]
 	],
 	46: [
-		['name', { fields: ['name'], kinds: [] }],
-		['elements', { fields: ['elements'], kinds: [] }]
+		['name', 0],
+		['elements', 1]
 	],
 	47: [
-		['name', { fields: ['name'], kinds: [] }],
-		['elements', { fields: ['elements'], kinds: [] }]
+		['name', 0],
+		['elements', 1]
 	],
 	50: [
-		['name', { fields: ['name'], kinds: [] }],
-		['definition', { fields: ['definition'], kinds: [] }]
+		['name', 0],
+		['definition', 1]
 	],
-	51: [['identifier', { fields: ['identifier'], kinds: [] }]],
+	51: [['identifier', 0]],
 	52: [
-		['prefix', { fields: ['prefix'], kinds: [] }],
-		['name', { fields: ['name'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }],
-		['parameters', { fields: ['parameters'], kinds: [] }]
+		['prefix', 0],
+		['name', 1],
+		['type', 2],
+		['parameters', 3]
 	],
-	54: [['quantifier', { fields: ['quantifier'], kinds: [] }]],
+	54: [['quantifier', 0]],
 	56: [
-		['left', { fields: ['left'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
+		['left', 0],
+		['right', 1]
 	],
 	57: [
-		['left', { fields: ['left'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
+		['left', 0],
+		['right', 1]
 	],
 	58: [
-		[
-			'groupExpression',
-			{
-				fields: [],
-				kinds: [
-					'named_node_plain',
-					'named_node_supertyped',
-					'anonymous_node',
-					'missing_node',
-					'grouping',
-					'predicate',
-					'list',
-					'field_definition',
-					'group_expression_arm'
-				]
-			}
-		],
-		['anchor', { fields: [], kinds: ['anchor'] }, '.']
+		['groupExpression', 0],
+		['anchor', 1, '.']
 	],
 	61: [
-		['name', { fields: ['name'], kinds: [] }],
-		['namedNodeGroup', { fields: [], kinds: ['named_node_group_children', 'named_node_group_anchored_last'] }],
-		['elements', { fields: ['elements'], kinds: [] }]
+		['name', 0],
+		['namedNodeGroup', 1],
+		['elements', 2]
 	],
 	62: [
-		['supertype', { fields: ['supertype'], kinds: [] }],
-		['name', { fields: ['name'], kinds: [] }],
-		['namedNodeGroup', { fields: [], kinds: ['named_node_group_children', 'named_node_group_anchored_last'] }],
-		['elements', { fields: ['elements'], kinds: [] }]
+		['supertype', 0],
+		['name', 1],
+		['namedNodeGroup', 2],
+		['elements', 3]
 	],
 	63: [
-		['anchor', { fields: [], kinds: ['anchor'] }, '.'],
-		['namedNodeExpressions', { fields: ['named_node_expressions'], kinds: [] }]
+		['anchor', 0, '.'],
+		['namedNodeExpressions', 1]
 	],
 	64: [
-		['anchor', { fields: [], kinds: ['anchor'] }, '.'],
-		['namedNodeExpressions', { fields: ['named_node_expressions'], kinds: [] }],
-		['last', { fields: ['last'], kinds: [] }]
+		['anchor', 0, '.'],
+		['namedNodeExpressions', 1],
+		['last', 2]
 	]
 });
 

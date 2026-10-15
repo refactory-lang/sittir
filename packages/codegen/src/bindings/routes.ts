@@ -1,4 +1,4 @@
-import { WILDCARD, isFixedText, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type EnumMember, type MemberFact, type ModelNode, type ModelSlot, type Sibling, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
+import { WILDCARD, isFixedText, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type EnumMember, type MemberFact, type ModelNode, type ModelSlot, type PredicateFact, type Sibling, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
 import { camel, snake } from './names.ts';
 
 export interface LayoutSlot {
@@ -44,9 +44,10 @@ export interface ReadEntry {
 	readonly children: readonly ChildTest[];
 	readonly template: TemplateFact | undefined;
 	readonly members: readonly MemberRoute[];
+	readonly spelled?: true;
 }
 
-export type MemberRoute =
+export type MemberRoute = (
 	| {
 			readonly route: 'slot';
 			readonly name: string;
@@ -71,7 +72,8 @@ export type MemberRoute =
 			readonly slot: ModelSlot | undefined;
 			readonly multiple: boolean;
 			readonly path: readonly SlotStep[] | undefined;
-	  };
+	  }
+) & { readonly flag?: true; readonly spelled?: true };
 
 export interface ContainerUnwrap {
 	readonly kinds: readonly string[];
@@ -376,12 +378,15 @@ function deepRouteOf(input: GrammarInput, kind: string, member: DeepMember): Mem
 	const chain = viaPath(input.model, kind, member.via);
 	if (member.route === 'presence') {
 		const leaf = chain?.at.slots.find((s) => s.terminals.includes(member.token));
+		const spelled = member.flag === true && member.via.length === 0 && chain !== undefined && leaf === undefined;
 		return {
 			route: 'presence',
 			name: camel(member.name),
 			via: member.via,
 			token: member.token,
-			path: chain && leaf ? [...chain.steps, stepOf(chain.at.kind, leaf.name, null)] : undefined
+			path: chain && leaf ? [...chain.steps, stepOf(chain.at.kind, leaf.name, null)] : undefined,
+			...flagOf(member),
+			...(spelled ? { spelled: true } : {})
 		};
 	}
 	const parent = modelNode(input.model, member.parent);
@@ -394,7 +399,8 @@ function deepRouteOf(input: GrammarInput, kind: string, member: DeepMember): Mem
 		selector: member,
 		slot,
 		multiple: member.multiple,
-		path: chain && parent && slot ? [...chain.steps, stepOf(parent.kind, slot.name, slotAnchor(input.model, parent.kind, member))] : undefined
+		path: chain && parent && slot ? [...chain.steps, stepOf(parent.kind, slot.name, slotAnchor(input.model, parent.kind, member))] : undefined,
+		...flagOf(member)
 	};
 }
 
@@ -510,9 +516,15 @@ function membersOf(
 		m.route === 'rename' && (m.claims === undefined || m.claims.some((index) => inherited.has(index))) && formsOf(input.model, m.owner).includes(kind) ? [m] : []
 	);
 	const flags = captures.filter((m) => m.flag === true);
+	const spelledFlags: MemberRoute[] = [];
 	const flagSlots = new Map(flags.flatMap((m) => {
 		const slot = slotFor(input.model, node.slots, m);
 		if (slot === undefined && formsOf(input.model, m.owner).every((form) => slotFor(input.model, modelNode(input.model, form)?.slots ?? [], m) === undefined)) {
+			const spelled = m.field === null && modelNode(input.model, m.owner)?.variantOf != null ? spelledFlagRouteOf(m) : undefined;
+			if (spelled !== undefined) {
+				spelledFlags.push(spelled);
+				return [];
+			}
 			const selector = m.field !== null ? `the field ${m.field}` : m.kind !== null ? `a ${m.kind} child` : 'a child by position';
 			throw new Error(`bindings: ${m.owner}'s flag @${m.name} captures ${selector}, which no form of ${m.owner} holds`);
 		}
@@ -556,17 +568,19 @@ function membersOf(
 		}
 		const name = memberNameOf(names, slot.name, slot.propertyName);
 		const path = [{ owner: kind, slot: slot.name }];
+		const flag = entries.some((entry) => input.bindings.flagsByPath?.get(entry.vocab)?.has(name) === true) ? { flag: true as const } : {};
 		routes.push(
 			except.length === 0
-				? { route: 'slot', name, slot, path }
-				: { route: 'slot', name, slot: { ...slot, kinds: slot.kinds.filter((k) => !via.has(k)) }, except, path }
+				? { route: 'slot', name, slot, path, ...flag }
+				: { route: 'slot', name, slot: { ...slot, kinds: slot.kinds.filter((k) => !via.has(k)) }, except, path, ...flag }
 		);
 	}
 	for (const [member, slot] of flagSlots) routes.push(flagRouteOf(kind, member, slot));
+	routes.push(...spelledFlags);
 	for (const member of deep) {
 		if (member.route === 'kind') {
 			const named = routes.find((r) => r.route === 'slot' && r.name === camel(member.member));
-			routes.push({ route: 'kind', name: camel(member.name), kind: member.kind, path: named?.route === 'slot' ? named.path : undefined });
+			routes.push({ route: 'kind', name: camel(member.name), kind: member.kind, path: named?.route === 'slot' ? named.path : undefined, ...flagOf(member) });
 			continue;
 		}
 		const route = member.route === 'presence' || member.route === 'nested' ? reached.get(member) : undefined;
@@ -578,13 +592,21 @@ function membersOf(
 function flagRouteOf(kind: string, member: Extract<MemberFact, { readonly route: 'rename' }>, slot: ModelSlot): MemberRoute {
 	const name = camel(member.name);
 	const path = [{ owner: kind, slot: slot.name }];
-	if (member.kind !== null && member.kind !== WILDCARD) return { route: 'kind', name, kind: member.kind, path };
+	if (member.kind !== null && member.kind !== WILDCARD) return { route: 'kind', name, kind: member.kind, path, flag: true };
 	const [only, ...more] = slot.terminals;
 	const token = member.token ?? (more.length === 0 ? only : undefined);
 	if (token === undefined)
 		throw new Error(`bindings: ${kind}'s flag ${name} captures its ${slot.name} slot, which holds ${slot.terminals.join(', ')}; capture the one token the flag tests`);
-	return { route: 'presence', name, via: [], token, path };
+	return { route: 'presence', name, via: [], token, path, flag: true };
 }
+
+function spelledFlagRouteOf(member: Extract<MemberFact, { readonly route: 'rename' }>): MemberRoute | undefined {
+	const name = camel(member.name);
+	if (member.kind !== null && member.kind !== WILDCARD) return { route: 'kind', name, kind: member.kind, path: undefined, flag: true, spelled: true };
+	return member.token === undefined ? undefined : { route: 'presence', name, via: [], token: member.token, path: undefined, flag: true, spelled: true };
+}
+
+const flagOf = (member: MemberFact): { readonly flag?: true } => (member.flag === true ? { flag: true } : {});
 
 function refinedParent(kind: string, entries: readonly ReadEntry[]): string | undefined {
 	if (entries.length === 0) return undefined;
@@ -620,15 +642,20 @@ function admittedKinds(model: SlotModel, claim: ClaimFact): string[] {
 	return concreteKinds(model, admitted);
 }
 
-function ownTextEquals(claim: ClaimFact): readonly string[] {
-	return [
-		...claim.tokens,
-		...claim.predicates.flatMap((p) => {
-			const [argument, ...rest] = p.arguments;
-			const own = p.subject !== null && p.subject.up === 0 && p.subject.down.length === 0;
-			return own && p.operator === 'eq' && argument !== undefined && 'text' in argument && rest.length === 0 ? [argument.text] : [];
+export function comparesOwnText(predicate: PredicateFact): boolean {
+	const [argument, ...rest] = predicate.arguments;
+	const own = predicate.subject !== null && predicate.subject.up === 0 && predicate.subject.down.length === 0;
+	return own && (predicate.operator === 'eq' || predicate.operator === 'match') && argument !== undefined && 'text' in argument && rest.length === 0;
+}
+
+function ownTextAdmits(claim: ClaimFact, text: string): boolean {
+	return (
+		claim.tokens.every((token) => token === text) &&
+		claim.predicates.filter(comparesOwnText).every((p) => {
+			const [argument] = p.arguments as [{ readonly text: string }];
+			return p.operator === 'eq' ? argument.text === text : new RegExp(argument.text).test(text);
 		})
-	];
+	);
 }
 
 export function formsOf(model: SlotModel, kind: string): readonly string[] {
@@ -636,12 +663,17 @@ export function formsOf(model: SlotModel, kind: string): readonly string[] {
 	return [kind, ...[...model.values()].filter((node) => node.variantOf === kind).flatMap((node) => formsOf(model, node.kind))];
 }
 
-function readKinds(model: SlotModel, kind: string, claim: ClaimFact): readonly string[] {
-	const [, ...shown] = shownKinds(model, kind);
+interface ReadKind {
+	readonly kind: string;
+	readonly spelled: boolean;
+}
+
+function readKinds(model: SlotModel, kind: string, claim: ClaimFact): readonly ReadKind[] {
+	const [, ...shown] = shownKinds(model, kind).map((k) => ({ kind: k, spelled: false }));
 	const members = modelNode(model, kind)?.enumMembers ?? [];
-	if (members.length === 0) return [kind, ...shown];
-	const texts = ownTextEquals(claim);
-	return [...members.filter((member: EnumMember) => texts.every((text) => text === member.text)).map((member) => member.kind), ...shown];
+	if (members.length === 0) return [{ kind, spelled: false }, ...shown];
+	const decides = claim.tokens.length > 0 || claim.predicates.some(comparesOwnText);
+	return [...members.filter((member: EnumMember) => ownTextAdmits(claim, member.text)).map((member) => ({ kind: member.kind, spelled: decides })), ...shown];
 }
 
 export function resolveRoutes(input: GrammarInput): GrammarRoutes {
@@ -669,7 +701,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 			owner === WILDCARD
 				? admittedKinds(input.model, claim).filter((kind) => !claimsOwn.has(`${kind} ${claim.vocab}`))
 				: formsOf(input.model, owner);
-		for (const [form, kind] of forms.flatMap((form) => readKinds(input.model, form, claim).map((read) => [form, read] as const))) {
+		for (const [form, { kind, spelled }] of forms.flatMap((form) => readKinds(input.model, form, claim).map((read) => [form, read] as const))) {
 			const claimed = owner === WILDCARD ? form : owner;
 			const entry: ReadEntry = {
 				kind,
@@ -680,7 +712,8 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 				pins: pinsOf(input.model, modelNode(input.model, kind), claim, slotNamesOf(kind)),
 				children: modelNode(input.model, kind)?.modelType === 'supertype' ? [] : claim.children.flatMap((child) => childTestsOf(input.model, kind, child, claim.children)),
 				template: input.bindings.templates.find((t) => t.vocabs.includes(claim.vocab)),
-				members: []
+				members: [],
+				...(spelled ? { spelled: true as const } : {})
 			};
 			if (form !== claimed) inherited.add(entry);
 			(readEntries.get(kind) ?? readEntries.set(kind, []).get(kind))?.push(entry);
@@ -730,7 +763,7 @@ export function unenteredForms(input: GrammarInput, routes: GrammarRoutes): stri
 		if (owner === null || owner === WILDCARD) return [];
 		return formsOf(input.model, owner)
 			.filter((form) => form !== owner)
-			.flatMap((form) => readKinds(input.model, form, claim).filter((kind) => !(routes.readEntries.get(kind) ?? []).some((e) => e.index === index)))
+			.flatMap((form) => readKinds(input.model, form, claim).flatMap(({ kind }) => ((routes.readEntries.get(kind) ?? []).some((e) => e.index === index) ? [] : [kind])))
 			.map((kind) => `${input.grammar}: ${kind} has no entry for its supertype ${owner}'s claim @${claim.vocab}, so it reads by no path there when no claim of its own holds`);
 	});
 }

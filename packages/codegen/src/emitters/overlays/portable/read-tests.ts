@@ -1,21 +1,23 @@
-import type { PortableCondition, PortableStep, QueryPlan, QuerySubject, SlotRoutes } from '@sittir/types';
+import type { PortableCondition, PortableStep, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
 import { WILDCARD, type CaptureSite, type PredicateFact, type SlotModel } from '../../../bindings/facts.ts';
-import { slotAnchor, slotFor, type ChildTest, type ReadEntry } from '../../../bindings/routes.ts';
+import { comparesOwnText, slotAnchor, slotFor, type ChildTest, type ReadEntry } from '../../../bindings/routes.ts';
 import type { NodeMap } from '../../../compiler/types.ts';
-import { queryRoutesOf } from '../../client-utils.ts';
+import { transportSlotNumbers } from '../../render-module.ts';
 import { keywordPresenceValue } from '../../shared.ts';
 
-export type SlotRoutesOf = (kind: string, slot: string) => SlotRoutes | undefined;
+export type SlotSubjectOf = (kind: string, slot: string) => SlotSubject | undefined;
 
 export type PresenceKeywordOf = (kind: string, slot: string) => string | undefined;
 
 export type TypeOf = (kind: string) => number | undefined;
 
-export const slotRoutesOf =
-	(nodeMap: NodeMap): SlotRoutesOf =>
+export const slotSubjectOf =
+	(nodeMap: NodeMap): SlotSubjectOf =>
 	(kind, name) => {
-		const slot = nodeMap.nodes.get(kind)?.slots.find((s) => s.name === name);
-		return slot === undefined ? undefined : queryRoutesOf(slot, nodeMap);
+		const node = nodeMap.nodes.get(kind);
+		const slot = node?.slots.find((s) => s.name === name);
+		const number = node === undefined || slot === undefined ? undefined : transportSlotNumbers(node, nodeMap).get(slot.storageName);
+		return node?.kindId === undefined || number === undefined ? undefined : { slots: { [node.kindId]: number } };
 	};
 
 export const presenceKeywordOf =
@@ -30,27 +32,27 @@ interface Steps {
 	readonly kind: string | undefined;
 }
 
-function stepsOf(entry: ReadEntry, site: CaptureSite, model: SlotModel, routesOf: SlotRoutesOf): Steps | string {
+function stepsOf(entry: ReadEntry, site: CaptureSite, model: SlotModel, subjectOf: SlotSubjectOf): Steps | string {
 	let holder = site.up === 0 ? entry.kind : entry.claim.within[site.up - 1];
 	const steps: PortableStep[] = [];
 	for (const selector of site.down) {
 		if (holder === undefined || holder === WILDCARD) return 'its capture sits under a wildcard';
 		const slot = slotFor(model, model.get(holder)?.slots ?? [], selector);
-		const routes = slot === undefined ? undefined : routesOf(holder, slot.name);
-		if (routes === undefined) return `no slot of ${holder} holds ${JSON.stringify(selector)}`;
+		const subject = slot === undefined ? undefined : subjectOf(holder, slot.name);
+		if (subject === undefined) return `no slot of ${holder} holds ${JSON.stringify(selector)}`;
 		const anchor = slotAnchor(model, holder, selector);
-		steps.push(anchor === null ? routes : { ...routes, anchor });
+		steps.push(anchor === null ? subject : { ...subject, anchor });
 		holder = selector.kind ?? undefined;
 	}
 	return { steps, kind: holder };
 }
 
-function aliasContent(model: SlotModel, kind: string | undefined, routesOf: SlotRoutesOf): { readonly routes: SlotRoutes; readonly kind: string | undefined } | undefined {
+function aliasContent(model: SlotModel, kind: string | undefined, subjectOf: SlotSubjectOf): { readonly subject: SlotSubject; readonly kind: string | undefined } | undefined {
 	const node = kind === undefined ? undefined : model.get(kind);
 	const [content, ...rest] = node?.modelType === 'alias' ? node.slots : [];
 	if (content === undefined || rest.length > 0 || kind === undefined) return undefined;
-	const routes = routesOf(kind, content.name);
-	return routes === undefined ? undefined : { routes, kind: content.kinds.length === 1 ? content.kinds[0] : undefined };
+	const subject = subjectOf(kind, content.name);
+	return subject === undefined ? undefined : { subject, kind: content.kinds.length === 1 ? content.kinds[0] : undefined };
 }
 
 type PlanOn = (subject: QuerySubject) => QueryPlan<QuerySubject>;
@@ -77,16 +79,16 @@ function comparisonOf(predicate: PredicateFact, model: SlotModel, typeOf: TypeOf
 	return operator === 'kind-eq' ? is : (subject) => ({ op: 'not', of: is(subject) });
 }
 
-function conditionOf(entry: ReadEntry, predicate: PredicateFact, model: SlotModel, routesOf: SlotRoutesOf, typeOf: TypeOf): PortableCondition | string {
+function conditionOf(entry: ReadEntry, predicate: PredicateFact, model: SlotModel, subjectOf: SlotSubjectOf, typeOf: TypeOf): PortableCondition | string {
 	const planOn = comparisonOf(predicate, model, typeOf);
 	if (typeof planOn === 'string' || predicate.subject === null) return planOn as string;
-	const reached = stepsOf(entry, predicate.subject, model, routesOf);
+	const reached = stepsOf(entry, predicate.subject, model, subjectOf);
 	if (typeof reached === 'string') return reached;
 	const steps = [...reached.steps];
 	let kind = reached.kind;
 	let wrapped = false;
-	for (let content = comparesText(predicate) ? aliasContent(model, kind, routesOf) : undefined; content !== undefined; content = aliasContent(model, kind, routesOf)) {
-		steps.push(content.routes);
+	for (let content = comparesText(predicate) ? aliasContent(model, kind, subjectOf) : undefined; content !== undefined; content = aliasContent(model, kind, subjectOf)) {
+		steps.push(content.subject);
 		kind = content.kind;
 		wrapped = true;
 	}
@@ -102,17 +104,22 @@ function childPredicate(child: ChildTest): PredicateFact | string {
 	return { operator: 'kind-eq', capture: null, arguments: child.kinds.map((text) => ({ text })), subject: child.subject };
 }
 
-export function readTestOf(entry: ReadEntry, model: SlotModel, routesOf: SlotRoutesOf, presenceOf: PresenceKeywordOf, typeOf: TypeOf): PortableCondition[] {
+export function keywordTestOf(owner: string, slot: string, text: string, subjectOf: SlotSubjectOf, presenceOf: PresenceKeywordOf): QueryPlan | string {
+	const subject = subjectOf(owner, slot);
+	if (subject === undefined) return `no number for ${owner}'s slot ${slot}`;
+	const keyword = presenceOf(owner, slot);
+	if (keyword === undefined) return { op: 'eq', text, ...subject };
+	if (text !== keyword) return `${JSON.stringify(text)} in ${owner}'s ${slot}, a boolean slot that holds only the keyword '${keyword}'`;
+	return { op: 'present', ...subject };
+}
+
+export function readTestOf(entry: ReadEntry, model: SlotModel, subjectOf: SlotSubjectOf, presenceOf: PresenceKeywordOf, typeOf: TypeOf): PortableCondition[] {
 	const pins = entry.pins.map((pin): PortableCondition | string => {
-		const routes = routesOf(entry.kind, pin.slot);
-		if (routes === undefined) return `no routes for pinned slot ${pin.slot}`;
-		const keyword = presenceOf(entry.kind, pin.slot);
-		if (keyword === undefined) return { up: 0, via: [], plan: { op: 'eq', text: pin.text, ...routes } };
-		if (pin.text !== keyword) return `pin ${JSON.stringify(pin.text)} on ${pin.slot}, a boolean slot that holds only the keyword '${keyword}'`;
-		return { up: 0, via: [], plan: { op: 'present', ...routes } };
+		const plan = keywordTestOf(entry.kind, pin.slot, pin.text, subjectOf, presenceOf);
+		return typeof plan === 'string' ? plan : { up: 0, via: [], plan };
 	});
-	const predicates = [...entry.claim.predicates, ...entry.children.map(childPredicate)];
-	const conditions = [...pins, ...predicates.map((p) => (typeof p === 'string' ? p : conditionOf(entry, p, model, routesOf, typeOf)))];
+	const predicates = [...entry.claim.predicates.filter((p) => entry.spelled !== true || !comparesOwnText(p)), ...entry.children.map(childPredicate)];
+	const conditions = [...pins, ...predicates.map((p) => (typeof p === 'string' ? p : conditionOf(entry, p, model, subjectOf, typeOf)))];
 	const refused = conditions.filter((c) => typeof c === 'string');
 	if (refused.length > 0) throw new Error(`portable: cannot test ${entry.kind} as ${entry.vocab}: ${refused.join('; ')}`);
 	const unique = new Map((conditions as PortableCondition[]).map((condition) => [JSON.stringify(condition), condition]));

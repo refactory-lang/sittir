@@ -1,7 +1,7 @@
 import type { AnyUntypedNode, ErrorNode, ErrorRegion, GrammarTriviaEntry, TriviaItem, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
 import type { Admit, Snapshot } from './node-surface.ts';
-import type { KindMembership, QueryFacet, QuerySlots } from './query.ts';
+import type { KindMembership, QueryFacet, QueryFlags, QuerySlots } from './query.ts';
 import type { PortableSurface } from './portable.ts';
 
 export interface TriviaFacts {
@@ -138,6 +138,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	readonly kinds: API['kinds'];
 	readonly trivia: TriviaFacts;
 	readonly querySlots: QuerySlots;
+	readonly queryFlags?: QueryFlags;
 	readonly membership: KindMembership;
 	createNative(options?: NativeEngineOptions<API['options']>): NativeLanguageEngine<API>;
 	wrap(root: unknown, tree: unknown): API['root'];

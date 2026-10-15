@@ -63,6 +63,13 @@ const MODEL = [
 		]
 	}),
 	node('true_keyword', [], { modelType: 'keyword', text: 'true' }),
+	node('predefined', [], {
+		modelType: 'enum',
+		enumMembers: [
+			{ kind: 'unique_symbol', text: 'unique symbol' },
+			{ kind: 'symbol_kw', text: 'symbol' }
+		]
+	}),
 	node('_struct', [], { modelType: 'supertype', subtypes: ['struct_unit', 'struct_tuple', 'struct_named'] }),
 	node('struct_unit', [slot('name', ['identifier'])], { variantOf: '_struct' }),
 	node('struct_tuple', [slot('name', ['identifier']), slot('fields', ['identifier'], { multiple: true })], { variantOf: '_struct' }),
@@ -396,6 +403,24 @@ describe('resolveRoutes', () => {
 		expect(routes.readEntries.get('false_keyword')?.map((e) => e.vocab)).toEqual(['literal.boolean']);
 	});
 
+	it('decides a match on an enum kind\'s own text by each member\'s fixed text, as tree-sitter\'s unanchored match reads it, and stamps the members it keeps', async () => {
+		const routes = resolveRoutes(
+			await grammar(['(predefined) @type.primitive.symbol', '((predefined) @type.primitive.symbol.unique (#match? @type.primitive.symbol.unique "^unique"))'].join('\n'))
+		);
+		expect(routes.readEntries.get('unique_symbol')?.map((e) => [e.vocab, e.spelled])).toEqual([
+			['type.primitive.symbol.unique', true],
+			['type.primitive.symbol', undefined]
+		]);
+		expect(routes.readEntries.get('symbol_kw')?.map((e) => e.vocab)).toEqual(['type.primitive.symbol']);
+	});
+
+	it('stamps a member an equality on its own text keeps, and no member of a claim that tests no own text', async () => {
+		const routes = resolveRoutes(
+			await grammar(['(bool) @literal.boolean', '((bool) @literal.boolean.true (#eq? @literal.boolean.true "true"))'].join('\n'))
+		);
+		expect(routes.readEntries.get('true_keyword')?.map((e) => e.spelled)).toEqual([true, undefined]);
+	});
+
 	it('enters a claim on a kind on each variant the kind owns, and on a variant with claims of its own as its least specific entry', async () => {
 		const routes = resolveRoutes(await grammar(['(_struct) @declaration.struct', '(struct_named) @declaration.struct.named'].join('\n')));
 		expect(routes.readEntries.get('struct_unit')?.map((e) => [e.claimed, e.vocab])).toEqual([['_struct', 'declaration.struct']]);
@@ -459,9 +484,9 @@ describe('resolveRoutes', () => {
 		expect(routes.readEntries.get('true_keyword')?.map((e) => e.vocab)).toEqual(['literal.boolean']);
 	});
 
-	it('leaves a pattern test on a kind the reader stores as its member\'s kind id to every member, for the read to decide', async () => {
+	it('enters a pattern test on a kind the reader stores as its member\'s kind id only on the members whose fixed text it matches', async () => {
 		const routes = resolveRoutes(await grammar('((bool) @literal.boolean.true (#match? @literal.boolean.true "^t"))'));
-		expect([...routes.readEntries.keys()].filter((k) => k.endsWith('_keyword')).sort()).toEqual(['false_keyword', 'true_keyword']);
+		expect([...routes.readEntries.keys()].filter((k) => k.endsWith('_keyword')).sort()).toEqual(['true_keyword']);
 	});
 
 	it('enters a claim on the forms of a form that is itself a supertype', async () => {
@@ -776,7 +801,13 @@ describe('flag captures', () => {
 		node('param', [slot('pattern', ['identifier']), slot('mutable_specifier', ['mutable_specifier'], { required: false })]),
 		node('mutable_specifier', [], { modelType: 'keyword', text: 'mut' }),
 		node('for_in', [slot('await', [], { required: false, terminals: ['await'] }), slot('body', ['block'])]),
-		node('static_item', [slot('ref', [], { required: false, terminals: ['ref', 'mut'] }), slot('name', ['identifier'])])
+		node('static_item', [slot('ref', [], { required: false, terminals: ['ref', 'mut'] }), slot('name', ['identifier'])]),
+		node('fn_item', [slot('mods', ['mods'], { required: false }), slot('name', ['identifier'])]),
+		node('mods', [slot('modifier', [], { multiple: true, terminals: ['async', 'const'] })]),
+		node('ref_expr', [], { modelType: 'supertype' }),
+		node('ref_expr_raw', [slot('value', ['identifier'])], { variantOf: 'ref_expr' }),
+		node('ref_expr_mut', [slot('value', ['identifier'])], { variantOf: 'ref_expr' }),
+		node('def', [slot('async', [], { required: false, storage: 'boolean', terminals: ['async'] }), slot('name', ['identifier'])])
 	];
 	const member = (flag: boolean): VocabularyMember => ({ optional: true, flag });
 	const vocabulary = (own: Readonly<Record<string, Readonly<Record<string, boolean>>>>): Vocabulary => {
@@ -788,12 +819,15 @@ describe('flag captures', () => {
 		'declaration.method.getter': {},
 		'declaration.parameter': { mutable: true },
 		'statement.loop.for_each': { async: true },
-		'declaration.variable': { byReference: true }
+		'declaration.variable': { byReference: true },
+		'declaration.function': { async: true },
+		'expression.reference': { raw: true, exclusive: true }
 	});
+	const FLAGGED_MODEL = new Map([...MODEL, ...FLAGGED].map((n) => [n.kind, n]));
 	const flagged = async (bindings: string): Promise<GrammarInput> => ({
 		grammar: 'g',
-		bindings: resolveFlags(await readBindings(bindings), VOCABULARY),
-		model: new Map([...MODEL, ...FLAGGED].map((n) => [n.kind, n])),
+		bindings: resolveFlags(await readBindings(bindings), VOCABULARY, FLAGGED_MODEL),
+		model: FLAGGED_MODEL,
 		textTokens: new Set(),
 		layoutSlots: []
 	});
@@ -802,21 +836,54 @@ describe('flag captures', () => {
 	it('routes a flag captured on a token in a slot to that token\'s presence, not to the slot', async () => {
 		expect(await membersOf(['(method) @declaration.method', '(method accessor_kind: "*" @generator)'].join('\n'), 'method')).toEqual([
 			{ route: 'slot', name: 'name', slot: expect.objectContaining({ name: 'name' }), path: [{ owner: 'method', slot: 'name' }] },
-			{ route: 'presence', name: 'generator', via: [], token: '*', path: [{ owner: 'method', slot: 'accessor_kind' }] }
+			{ route: 'presence', name: 'generator', via: [], token: '*', path: [{ owner: 'method', slot: 'accessor_kind' }], flag: true }
 		]);
 	});
 
 	it('routes a flag captured on a node to the presence of its kind, and the slot is no member', async () => {
 		expect(await membersOf(['(param) @declaration.parameter', '(param (mutable_specifier) @mutable)'].join('\n'), 'param')).toEqual([
 			{ route: 'slot', name: 'pattern', slot: expect.objectContaining({ name: 'pattern' }), path: [{ owner: 'param', slot: 'pattern' }] },
-			{ route: 'kind', name: 'mutable', kind: 'mutable_specifier', path: [{ owner: 'param', slot: 'mutable_specifier' }] }
+			{ route: 'kind', name: 'mutable', kind: 'mutable_specifier', path: [{ owner: 'param', slot: 'mutable_specifier' }], flag: true }
 		]);
 	});
 
 	it('routes a flag captured on a keyword slot to the presence of the one token the slot holds', async () => {
 		expect((await membersOf(['(for_in) @statement.loop.for_each', '(for_in await: _ @async)'].join('\n'), 'for_in'))?.filter((r) => r.name === 'async')).toEqual([
-			{ route: 'presence', name: 'async', via: [], token: 'await', path: [{ owner: 'for_in', slot: 'await' }] }
+			{ route: 'presence', name: 'async', via: [], token: 'await', path: [{ owner: 'for_in', slot: 'await' }], flag: true }
 		]);
+	});
+
+	it('marks a flag reached through a wrapper child, and leaves a data member unmarked', async () => {
+		const members = await membersOf(['(fn_item) @declaration.function', '(fn_item (mods "async" @async))'].join('\n'), 'fn_item');
+		expect(members?.find((r) => r.name === 'async')).toEqual({
+			route: 'presence',
+			name: 'async',
+			via: [{ field: null, kind: 'mods', after: null, anchor: null }],
+			token: 'async',
+			path: [{ owner: 'fn_item', slot: 'mods' }, { owner: 'mods', slot: 'modifier' }],
+			flag: true
+		});
+		expect(members?.find((r) => r.name === 'name')).not.toHaveProperty('flag');
+	});
+
+	it('marks a flag captured on a form of a claimed supertype as the supertype\'s flag', async () => {
+		const members = await membersOf(['(ref_expr) @expression.reference', '(ref_expr_raw "raw" @raw)'].join('\n'), 'ref_expr_raw');
+		expect(members?.find((r) => r.name === 'raw')).toEqual({ route: 'presence', name: 'raw', via: [], token: 'raw', path: undefined, flag: true, spelled: true });
+	});
+
+	it('marks a flag a variant form spells, captured as a node no slot of the form holds', async () => {
+		const members = await membersOf(['(ref_expr) @expression.reference', '(ref_expr_mut (mutable_specifier) @exclusive)'].join('\n'), 'ref_expr_mut');
+		expect(members?.find((r) => r.name === 'exclusive')).toEqual({ route: 'kind', name: 'exclusive', kind: 'mutable_specifier', path: undefined, flag: true, spelled: true });
+	});
+
+	it('marks a slot member whose name is a flag of the claimed path, though no capture names it', async () => {
+		const members = await membersOf('(def) @declaration.function', 'def');
+		expect(members?.find((r) => r.name === 'async')).toMatchObject({ route: 'slot', name: 'async', flag: true });
+		expect(members?.find((r) => r.name === 'name')).not.toHaveProperty('flag');
+	});
+
+	it('refuses a node flag no slot holds on an owner that is no variant form', async () => {
+		await expect(membersOf(['(fn_item) @declaration.function', '(fn_item (mutable_specifier) @async)'].join('\n'), 'fn_item')).rejects.toThrow(/fn_item's flag @async.*mutable_specifier/);
 	});
 
 	it('refuses a flag captured on a slot that holds more than one token', async () => {
@@ -839,7 +906,7 @@ describe('flag captures', () => {
 	});
 
 	it('refuses a name that is a flag on one claimed path and data on another', async () => {
-		const input = async () => resolveFlags(await readBindings(['(param) @declaration.parameter', '(param) @statement.loop.for_each', '(param (mutable_specifier) @async)'].join('\n')), vocabulary({ 'declaration.parameter': { async: false }, 'statement.loop.for_each': { async: true } }));
+		const input = async () => resolveFlags(await readBindings(['(param) @declaration.parameter', '(param) @statement.loop.for_each', '(param (mutable_specifier) @async)'].join('\n')), vocabulary({ 'declaration.parameter': { async: false }, 'statement.loop.for_each': { async: true } }), FLAGGED_MODEL);
 		await expect(input()).rejects.toThrow(/async.*flag.*data|one name/);
 	});
 });

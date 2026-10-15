@@ -14,6 +14,10 @@ const readEntryRecord = (entry: ReadEntry, test: readonly PortableCondition[]) =
 });
 
 function memberRecord(route: MemberRoute) {
+	return { ...routeRecord(route), ...(route.flag === true ? { flag: true } : {}), ...(route.spelled === true ? { spelled: true } : {}) };
+}
+
+function routeRecord(route: MemberRoute) {
 	switch (route.route) {
 		case 'slot':
 			return { name: route.name, route: route.route, slot: route.slot.name, ...(route.except === undefined ? {} : { except: route.except }), path: route.path };
