@@ -320,7 +320,16 @@
 
 ; ── type ───────────────────────────────────────────────────────────────────────
 (predefined_type) @type.primitive
+((predefined_type) @type.primitive.unchecked (#eq? @type.primitive.unchecked "any"))
+((predefined_type) @type.primitive.floating.float64 (#eq? @type.primitive.floating.float64 "number"))
+((predefined_type) @type.primitive.boolean (#eq? @type.primitive.boolean "boolean"))
+((predefined_type) @type.primitive.string (#eq? @type.primitive.string "string"))
+((predefined_type) @type.primitive.symbol (#eq? @type.primitive.symbol "symbol"))
+((predefined_type) @type.primitive.symbol.unique (#match? @type.primitive.symbol.unique "^unique"))
+((predefined_type) @type.primitive.void (#eq? @type.primitive.void "void"))
+((predefined_type) @type.primitive.unknown (#eq? @type.primitive.unknown "unknown"))
 ((predefined_type) @type.primitive.never (#eq? @type.primitive.never "never"))
+((predefined_type) @type.primitive.object (#eq? @type.primitive.object "object"))
 (generic_type) @type.generic
 (union_type) @type.union
 (intersection_type) @type.intersection
