@@ -19,114 +19,80 @@ export const triviaFacts = Object.freeze({
 } satisfies TriviaFacts);
 
 export const querySlots: QuerySlots = Object.freeze({
-	37: [['content', { fields: ['content'], kinds: [] }]],
-	51: [['content', { fields: [], kinds: ['alternation', 'term'] }]],
-	52: [['terms', { fields: ['terms'], kinds: [] }]],
-	53: [['termGroups', { fields: [], kinds: ['term_group'] }]],
-	55: [['content', { fields: [], kinds: ['lookahead_assertion', 'lookbehind_assertion'] }]],
+	37: [['content', 0]],
+	51: [['content', 0]],
+	52: [['terms', 0]],
+	53: [['termGroups', 0]],
+	55: [['content', 0]],
 	56: [
-		['content', { fields: [], kinds: ['eq', 'bang'] }],
-		['pattern', { fields: [], kinds: ['pattern'] }]
+		['content', 0],
+		['pattern', 1]
 	],
 	57: [
-		['content', { fields: [], kinds: ['eq', 'bang'] }],
-		['pattern', { fields: [], kinds: ['pattern'] }]
+		['content', 0],
+		['pattern', 1]
 	],
 	58: [
-		['negation', { fields: [], kinds: ['negation'] }, '^'],
-		['leading', { fields: ['leading'], kinds: [] }, '-'],
-		['classAtoms', { fields: ['class_atoms'], kinds: [] }],
-		['trailing', { fields: ['trailing'], kinds: [] }, '-']
+		['negation', 0, '^'],
+		['leading', 1, '-'],
+		['classAtoms', 2],
+		['trailing', 3, '-']
 	],
-	59: [['posixClassName', { fields: ['posix_class_name'], kinds: [] }]],
+	59: [['posixClassName', 0]],
 	61: [
-		['start', { fields: ['start'], kinds: [] }],
-		['end', { fields: ['end'], kinds: [] }]
+		['start', 0],
+		['end', 1]
 	],
-	62: [['pattern', { fields: ['pattern'], kinds: [] }]],
+	62: [['pattern', 0]],
 	63: [
-		['content', { fields: [], kinds: ['lparen_qmark_lt', 'lparen_qmarkP_lt'] }],
-		['groupName', { fields: ['group_name'], kinds: [] }],
-		['pattern', { fields: ['pattern'], kinds: [] }]
+		['content', 0],
+		['groupName', 1],
+		['pattern', 2]
 	],
-	64: [['pattern', { fields: ['pattern'], kinds: [] }]],
-	67: [['lazy', { fields: [], kinds: ['lazy'] }, '?']],
-	68: [['lazy', { fields: [], kinds: ['lazy'] }, '?']],
-	69: [['lazy', { fields: [], kinds: ['lazy'] }, '?']],
+	64: [['pattern', 0]],
+	67: [['lazy', 0, '?']],
+	68: [['lazy', 0, '?']],
+	69: [['lazy', 0, '?']],
 	70: [
-		['content', { fields: [], kinds: ['count_quantifier_arm', 'decimal_digits'] }],
-		['lazy', { fields: [], kinds: ['lazy'] }, '?']
+		['content', 0],
+		['lazy', 1, '?']
 	],
-	71: [['groupName', { fields: ['group_name'], kinds: [] }]],
-	72: [['groupName', { fields: ['group_name'], kinds: [] }]],
-	73: [
-		[
-			'content',
-			{ fields: [], kinds: ['character_class_escape_text1', 'character_class_escape_arm', 'unicode_character_escape'] }
-		]
-	],
+	71: [['groupName', 0]],
+	72: [['groupName', 0]],
+	73: [['content', 0]],
 	75: [
-		['unicodePropertyValueExpressionGroup', { fields: [], kinds: ['unicode_property_value_expression_group'] }],
-		['unicodePropertyValue', { fields: [], kinds: ['unicode_property_value'] }]
+		['unicodePropertyValueExpressionGroup', 0],
+		['unicodePropertyValue', 1]
 	],
 	77: [
-		[
-			'content',
-			{
-				fields: [],
-				kinds: [
-					'start_assertion',
-					'end_assertion',
-					'boundary_assertion',
-					'non_boundary_assertion',
-					'lookaround_assertion',
-					'pattern_character',
-					'character_class',
-					'posix_character_class',
-					'any_character',
-					'decimal_escape',
-					'character_class_escape',
-					'control_escape',
-					'control_letter_escape',
-					'identity_escape',
-					'backreference_escape',
-					'named_group_backreference',
-					'anonymous_capturing_group',
-					'named_capturing_group',
-					'non_capturing_group',
-					'inline_flags_group_enable',
-					'inline_flags_group_toggle',
-					'inline_flags_group_disable'
-				]
-			}
-		],
-		['quantifier', { fields: ['quantifier'], kinds: [] }]
+		['content', 0],
+		['quantifier', 1]
 	],
-	78: [['decimalDigits', { fields: [], kinds: ['decimal_digits'] }]],
+	78: [['decimalDigits', 0]],
 	79: [
-		['decimalDigits', { fields: [], kinds: ['decimal_digits'] }],
-		['countQuantifierGroup', { fields: [], kinds: ['count_quantifier_group'] }]
+		['decimalDigits', 0],
+		['countQuantifierGroup', 1]
 	],
 	80: [
-		['characterClassEscapeText2', { fields: [], kinds: ['character_class_escape_text2'] }],
-		['unicodePropertyValueExpression', { fields: ['unicode_property_value_expression'], kinds: [] }]
+		['characterClassEscapeText2', 0],
+		['unicodePropertyValueExpression', 1]
 	],
-	81: [['unicodePropertyName', { fields: [], kinds: ['unicode_property_name'] }]],
+	81: [['unicodePropertyName', 0]],
 	83: [
-		['enabled', { fields: ['enabled'], kinds: [] }],
-		['pattern', { fields: ['pattern'], kinds: [] }]
+		['enabled', 0],
+		['pattern', 1]
 	],
 	84: [
-		['enabled', { fields: ['enabled'], kinds: [] }],
-		['disabled', { fields: ['disabled'], kinds: [] }],
-		['pattern', { fields: ['pattern'], kinds: [] }]
+		['enabled', 0],
+		['disabled', 1],
+		['pattern', 2]
 	],
 	85: [
-		['disabled', { fields: ['disabled'], kinds: [] }],
-		['pattern', { fields: ['pattern'], kinds: [] }]
+		['disabled', 0],
+		['pattern', 1]
 	],
-	89: [['content', { fields: ['content'], kinds: [] }]],
-	90: [['content', { fields: ['content'], kinds: [] }]]
+	89: [['content', 0]],
+	90: [['content', 0]]
 });
 
 export const { isNode } = bindRuntime<RegexTypeMap>();

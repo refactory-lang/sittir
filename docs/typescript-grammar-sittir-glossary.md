@@ -833,6 +833,13 @@ The sign of a negative-number literal type binds tight to its number
 upstream `_number` rule is hidden and spliced into the variant, so its
 operator field is addressed there.
 
+### `patches` — `_number` (`packages/typescript/grammar.sittir.ts`)
+
+TypeScript admits no `+` literal type: a numeric literal type takes only a
+`-` sign (`-1`). The patch narrows the operator of the upstream `_number`
+rule to `-`, so the negative-number literal type has one fixed sign, and
+`+1` in a type position is an `ERROR`.
+
 ### `options` — `unary_expression`
 
 `operator:/after` is tight, so a factory-built `unary_expression` renders

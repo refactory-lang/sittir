@@ -38,873 +38,412 @@ export const triviaFacts = Object.freeze({
 } satisfies TriviaFacts);
 
 export const querySlots: QuerySlots = Object.freeze({
-	73: [['content', { fields: ['content'], kinds: [] }]],
+	73: [['content', 0]],
 	90: [
-		['prefix', { fields: ['prefix'], kinds: [] }],
-		['content', { fields: ['content'], kinds: [] }]
+		['prefix', 0],
+		['content', 1]
 	],
 	91: [
-		['prefix', { fields: ['prefix'], kinds: [] }],
-		['content', { fields: ['content'], kinds: [] }]
+		['prefix', 0],
+		['content', 1]
 	],
 	92: [
-		['prefix', { fields: ['prefix'], kinds: [] }],
-		['content', { fields: ['content'], kinds: [] }]
+		['prefix', 0],
+		['content', 1]
 	],
 	96: [
-		['integer', { fields: ['integer'], kinds: [] }],
-		['fraction', { fields: ['fraction'], kinds: [] }],
-		['marker', { fields: ['marker'], kinds: [] }],
-		['exponent', { fields: ['exponent'], kinds: [] }],
-		['imaginary', { fields: ['imaginary'], kinds: [] }]
+		['integer', 0],
+		['fraction', 1],
+		['marker', 2],
+		['exponent', 3],
+		['imaginary', 4]
 	],
 	97: [
-		['integer', { fields: ['integer'], kinds: [] }],
-		['fraction', { fields: ['fraction'], kinds: [] }],
-		['marker', { fields: ['marker'], kinds: [] }],
-		['exponent', { fields: ['exponent'], kinds: [] }],
-		['imaginary', { fields: ['imaginary'], kinds: [] }]
+		['integer', 0],
+		['fraction', 1],
+		['marker', 2],
+		['exponent', 3],
+		['imaginary', 4]
 	],
 	98: [
-		['integer', { fields: ['integer'], kinds: [] }],
-		['marker', { fields: ['marker'], kinds: [] }],
-		['exponent', { fields: ['exponent'], kinds: [] }],
-		['imaginary', { fields: ['imaginary'], kinds: [] }]
+		['integer', 0],
+		['marker', 1],
+		['exponent', 2],
+		['imaginary', 3]
 	],
-	99: [['content', { fields: ['content'], kinds: [] }]],
-	100: [['content', { fields: ['content'], kinds: [] }]],
-	101: [['content', { fields: ['content'], kinds: [] }]],
-	102: [['content', { fields: ['content'], kinds: [] }]],
-	103: [['content', { fields: ['content'], kinds: [] }]],
-	104: [['content', { fields: ['content'], kinds: [] }]],
-	105: [['content', { fields: ['content'], kinds: [] }]],
-	127: [['statements', { fields: ['statements'], kinds: [] }]],
-	129: [['elements', { fields: ['elements'], kinds: [] }]],
-	130: [['names', { fields: [], kinds: ['names'] }]],
+	99: [['content', 0]],
+	100: [['content', 0]],
+	101: [['content', 0]],
+	102: [['content', 0]],
+	103: [['content', 0]],
+	104: [['content', 0]],
+	105: [['content', 0]],
+	127: [['statements', 0]],
+	129: [['elements', 0]],
+	130: [['names', 0]],
 	132: [
-		['prefix', { fields: ['prefix'], kinds: [] }],
-		['name', { fields: ['name'], kinds: [] }]
+		['prefix', 0],
+		['name', 1]
 	],
-	133: [['content', { fields: [], kinds: ['import_list', 'parenthesized_import_list'] }]],
+	133: [['content', 0]],
 	134: [
-		['moduleName', { fields: ['module_name'], kinds: [] }],
-		['content', { fields: [], kinds: ['wildcard_import', 'import_list', 'parenthesized_import_list'] }]
+		['moduleName', 0],
+		['content', 1]
 	],
-	135: [['names', { fields: ['name'], kinds: [] }]],
+	135: [['names', 0]],
 	136: [
-		['name', { fields: ['name'], kinds: [] }],
-		['alias', { fields: ['alias'], kinds: [] }]
+		['name', 0],
+		['alias', 1]
 	],
-	138: [['content', { fields: [], kinds: ['print_statement_chevron', 'print_statement_plain'] }]],
-	139: [['expression', { fields: ['expression'], kinds: [] }]],
-	140: [['expressions', { fields: ['expression'], kinds: [] }]],
-	141: [
-		[
-			'content',
-			{
-				fields: [],
-				kinds: [
-					'comparison_operator',
-					'not_operator',
-					'boolean_operator',
-					'lambda',
-					'await',
-					'binary_operator',
-					'identifier',
-					'string',
-					'concatenated_string',
-					'integer_hex',
-					'integer_octal',
-					'integer_binary',
-					'integer_decimal_long',
-					'integer_decimal_imaginary',
-					'integer_decimal_plain',
-					'float_point',
-					'float_leading_point',
-					'float_scientific',
-					'true',
-					'false',
-					'none',
-					'unary_operator',
-					'attribute',
-					'subscript',
-					'call',
-					'list',
-					'list_comprehension',
-					'dictionary',
-					'dictionary_comprehension',
-					'set',
-					'set_comprehension',
-					'tuple',
-					'parenthesized_expression',
-					'generator_expression',
-					'ellipsis',
-					'list_splat_pattern',
-					'conditional_expression',
-					'named_expression',
-					'as_pattern',
-					'expression_statement_tuple',
-					'assignment_eq',
-					'assignment_type',
-					'assignment_typed',
-					'augmented_assignment',
-					'yield'
-				]
-			}
-		]
-	],
+	138: [['content', 0]],
+	139: [['expression', 0]],
+	140: [['expressions', 0]],
+	141: [['content', 0]],
 	142: [
-		['name', { fields: ['name'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }]
+		['name', 0],
+		['value', 1]
 	],
-	143: [['identifier', { fields: [], kinds: ['identifier'] }]],
-	144: [
-		[
-			'expressions',
-			{
-				fields: [],
-				kinds: [
-					'comparison_operator',
-					'not_operator',
-					'boolean_operator',
-					'lambda',
-					'await',
-					'binary_operator',
-					'identifier',
-					'string',
-					'concatenated_string',
-					'integer_hex',
-					'integer_octal',
-					'integer_binary',
-					'integer_decimal_long',
-					'integer_decimal_imaginary',
-					'integer_decimal_plain',
-					'float_point',
-					'float_leading_point',
-					'float_scientific',
-					'true',
-					'false',
-					'none',
-					'unary_operator',
-					'attribute',
-					'subscript',
-					'call',
-					'list',
-					'list_comprehension',
-					'dictionary',
-					'dictionary_comprehension',
-					'set',
-					'set_comprehension',
-					'tuple',
-					'parenthesized_expression',
-					'generator_expression',
-					'ellipsis',
-					'list_splat_pattern',
-					'conditional_expression',
-					'named_expression',
-					'as_pattern',
-					'expression_list'
-				]
-			}
-		]
-	],
-	145: [
-		[
-			'expressions',
-			{
-				fields: [],
-				kinds: [
-					'comparison_operator',
-					'not_operator',
-					'boolean_operator',
-					'lambda',
-					'await',
-					'binary_operator',
-					'identifier',
-					'string',
-					'concatenated_string',
-					'integer_hex',
-					'integer_octal',
-					'integer_binary',
-					'integer_decimal_long',
-					'integer_decimal_imaginary',
-					'integer_decimal_plain',
-					'float_point',
-					'float_leading_point',
-					'float_scientific',
-					'true',
-					'false',
-					'none',
-					'unary_operator',
-					'attribute',
-					'subscript',
-					'call',
-					'list',
-					'list_comprehension',
-					'dictionary',
-					'dictionary_comprehension',
-					'set',
-					'set_comprehension',
-					'tuple',
-					'parenthesized_expression',
-					'generator_expression',
-					'ellipsis',
-					'list_splat_pattern',
-					'conditional_expression',
-					'named_expression',
-					'as_pattern',
-					'expression_list'
-				]
-			}
-		]
-	],
+	143: [['identifier', 0]],
+	144: [['expressions', 0]],
+	145: [['expressions', 0]],
 	146: [
-		[
-			'expressions',
-			{
-				fields: [],
-				kinds: [
-					'comparison_operator',
-					'not_operator',
-					'boolean_operator',
-					'lambda',
-					'await',
-					'binary_operator',
-					'identifier',
-					'string',
-					'concatenated_string',
-					'integer_hex',
-					'integer_octal',
-					'integer_binary',
-					'integer_decimal_long',
-					'integer_decimal_imaginary',
-					'integer_decimal_plain',
-					'float_point',
-					'float_leading_point',
-					'float_scientific',
-					'true',
-					'false',
-					'none',
-					'unary_operator',
-					'attribute',
-					'subscript',
-					'call',
-					'list',
-					'list_comprehension',
-					'dictionary',
-					'dictionary_comprehension',
-					'set',
-					'set_comprehension',
-					'tuple',
-					'parenthesized_expression',
-					'generator_expression',
-					'ellipsis',
-					'list_splat_pattern',
-					'conditional_expression',
-					'named_expression',
-					'as_pattern',
-					'expression_list'
-				]
-			}
-		],
-		['cause', { fields: ['cause'], kinds: [] }]
+		['expressions', 0],
+		['cause', 1]
 	],
 	150: [
-		['condition', { fields: ['condition'], kinds: [] }],
-		['consequence', { fields: ['consequence'], kinds: [] }],
-		['alternatives', { fields: ['alternative'], kinds: [] }]
+		['condition', 0],
+		['consequence', 1],
+		['alternatives', 2]
 	],
 	151: [
-		['condition', { fields: ['condition'], kinds: [] }],
-		['consequence', { fields: ['consequence'], kinds: [] }]
+		['condition', 0],
+		['consequence', 1]
 	],
-	152: [['body', { fields: ['body'], kinds: [] }]],
+	152: [['body', 0]],
 	153: [
-		['subjects', { fields: [], kinds: ['subjects'] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['subjects', 0],
+		['body', 1]
 	],
-	154: [['content', { fields: [], kinds: ['match_block_block', 'match_block_empty'] }]],
+	154: [['content', 0]],
 	155: [
-		['casePatterns', { fields: [], kinds: ['case_patterns'] }],
-		['guard', { fields: ['guard'], kinds: [] }],
-		['consequence', { fields: ['consequence'], kinds: [] }]
+		['casePatterns', 0],
+		['guard', 1],
+		['consequence', 2]
 	],
 	156: [
-		['async', { fields: ['async'], kinds: [] }, 'async'],
-		['left', { fields: ['left'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }],
-		['alternative', { fields: ['alternative'], kinds: [] }]
+		['async', 0, 'async'],
+		['left', 1],
+		['right', 2],
+		['body', 3],
+		['alternative', 4]
 	],
 	157: [
-		['condition', { fields: ['condition'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }],
-		['alternative', { fields: ['alternative'], kinds: [] }]
+		['condition', 0],
+		['body', 1],
+		['alternative', 2]
 	],
 	158: [
-		['body', { fields: ['body'], kinds: [] }],
-		['exceptClauses', { fields: ['except_clauses'], kinds: [] }],
-		['elseClause', { fields: ['else_clause'], kinds: [] }],
-		['finallyClause', { fields: ['finally_clause'], kinds: [] }]
+		['body', 0],
+		['exceptClauses', 1],
+		['elseClause', 2],
+		['finallyClause', 3]
 	],
 	159: [
-		['group', { fields: ['group'], kinds: [] }, '*'],
-		['exception', { fields: ['exception'], kinds: [] }],
-		['suite', { fields: [], kinds: ['suite_inline', 'suite_block', 'suite_empty'] }]
+		['group', 0, '*'],
+		['exception', 1],
+		['body', 2]
 	],
-	160: [['block', { fields: ['block'], kinds: [] }]],
+	160: [['block', 0]],
 	161: [
-		['async', { fields: ['async'], kinds: [] }, 'async'],
-		['withClause', { fields: ['with_clause'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['async', 0, 'async'],
+		['withClause', 1],
+		['body', 2]
 	],
-	163: [['value', { fields: ['value'], kinds: [] }]],
+	163: [['value', 0]],
 	164: [
-		['async', { fields: ['async'], kinds: [] }, 'async'],
-		['name', { fields: ['name'], kinds: [] }],
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['parameters', { fields: ['parameters'], kinds: [] }],
-		['returnType', { fields: ['return_type'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['async', 0, 'async'],
+		['name', 1],
+		['typeParameters', 2],
+		['parameters', 3],
+		['returnType', 4],
+		['body', 5]
 	],
-	165: [['elements', { fields: ['elements'], kinds: [] }]],
-	166: [['parametersElements', { fields: [], kinds: ['parameters_elements'] }]],
-	167: [['expression', { fields: ['expression'], kinds: [] }]],
-	168: [['expression', { fields: ['expression'], kinds: [] }]],
-	169: [['names', { fields: ['names'], kinds: [] }]],
-	170: [['names', { fields: ['names'], kinds: [] }]],
+	165: [['elements', 0]],
+	166: [['parametersElements', 0]],
+	167: [['expression', 0]],
+	168: [['expression', 0]],
+	169: [['names', 0]],
+	170: [['names', 0]],
 	171: [
-		['code', { fields: ['code'], kinds: [] }],
-		['inClauses', { fields: ['in_clause'], kinds: [] }]
+		['code', 0],
+		['inClauses', 1]
 	],
 	172: [
-		['left', { fields: ['left'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
+		['left', 0],
+		['right', 1]
 	],
 	173: [
-		['name', { fields: ['name'], kinds: [] }],
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['superclasses', { fields: ['superclasses'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['name', 0],
+		['typeParameters', 1],
+		['superclasses', 2],
+		['body', 3]
 	],
-	174: [['types', { fields: [], kinds: ['types'] }]],
-	175: [['content', { fields: ['content'], kinds: [] }]],
-	176: [['arguments', { fields: ['arguments'], kinds: [] }]],
+	174: [['types', 0]],
+	175: [['content', 0]],
+	176: [['arguments', 0]],
 	177: [
-		['decorators', { fields: [], kinds: ['decorator'] }],
-		['definition', { fields: ['definition'], kinds: [] }]
+		['decorators', 0],
+		['definition', 1]
 	],
-	178: [['expression', { fields: ['expression'], kinds: [] }]],
-	179: [['statements', { fields: ['statements'], kinds: [] }]],
-	180: [['items', { fields: ['item'], kinds: [] }]],
-	181: [['names', { fields: ['names'], kinds: [] }]],
-	182: [['content', { fields: [], kinds: ['case_as_pattern', 'keyword_pattern', 'simple_pattern'] }]],
-	183: [
-		[
-			'content',
-			{
-				fields: [],
-				kinds: [
-					'class_pattern',
-					'splat_pattern',
-					'union_pattern',
-					'case_list_pattern',
-					'case_tuple_pattern',
-					'dict_pattern',
-					'string',
-					'concatenated_string',
-					'true',
-					'false',
-					'none',
-					'simple_pattern_negative',
-					'complex_pattern',
-					'dotted_name',
-					'wildcard_pattern'
-				]
-			}
-		]
-	],
+	178: [['expression', 0]],
+	179: [['statements', 0]],
+	180: [['items', 0]],
+	181: [['names', 0]],
+	182: [['content', 0]],
+	183: [['content', 0]],
 	184: [
-		['casePattern', { fields: [], kinds: ['case_pattern'] }],
-		['identifier', { fields: [], kinds: ['identifier'] }]
+		['casePattern', 0],
+		['identifier', 1]
 	],
-	185: [['patterns', { fields: ['patterns'], kinds: [] }]],
-	186: [['elements', { fields: ['elements'], kinds: [] }]],
+	185: [['patterns', 0]],
+	186: [['elements', 0]],
 	187: [
-		['key', { fields: ['key'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }]
+		['key', 0],
+		['value', 1]
 	],
 	188: [
-		['name', { fields: ['name'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }]
+		['name', 0],
+		['value', 1]
 	],
 	189: [
-		['operator', { fields: ['operator'], kinds: [] }],
-		['name', { fields: ['name'], kinds: [] }]
+		['operator', 0],
+		['name', 1]
 	],
 	190: [
-		['name', { fields: ['name'], kinds: [] }],
-		['arguments', { fields: ['arguments'], kinds: [] }]
+		['name', 0],
+		['arguments', 1]
 	],
 	191: [
-		['sign', { fields: ['sign'], kinds: [] }, '-'],
-		['real', { fields: ['real'], kinds: [] }],
-		['operator', { fields: ['operator'], kinds: [] }],
-		['imaginary', { fields: ['imaginary'], kinds: [] }]
+		['sign', 0, '-'],
+		['real', 1],
+		['operator', 2],
+		['imaginary', 3]
 	],
-	192: [['items', { fields: ['item'], kinds: [] }]],
-	193: [['items', { fields: ['item'], kinds: [] }]],
-	196: [['elements', { fields: ['elements'], kinds: [] }]],
-	197: [['patterns', { fields: [], kinds: ['patterns'] }]],
+	192: [['items', 0]],
+	193: [['items', 0]],
+	196: [['elements', 0]],
+	197: [['patterns', 0]],
 	198: [
-		['name', { fields: ['name'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }]
+		['name', 0],
+		['value', 1]
 	],
 	199: [
-		['name', { fields: ['name'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }]
+		['name', 0],
+		['type', 1],
+		['value', 2]
 	],
-	200: [['target', { fields: ['target'], kinds: [] }]],
-	201: [['target', { fields: ['target'], kinds: [] }]],
+	200: [['target', 0]],
+	201: [['target', 0]],
 	202: [
-		['expression', { fields: ['expression'], kinds: [] }],
-		['alias', { fields: ['alias'], kinds: [] }]
+		['expression', 0],
+		['alias', 1]
 	],
-	206: [['argument', { fields: ['argument'], kinds: [] }]],
+	206: [['argument', 0]],
 	207: [
-		['left', { fields: ['left'], kinds: [] }],
-		['operator', { fields: ['operator'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
+		['left', 0],
+		['operator', 1],
+		['right', 2]
 	],
 	208: [
-		['left', { fields: ['left'], kinds: [] }],
-		['operator', { fields: ['operator'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
+		['left', 0],
+		['operator', 1],
+		['right', 2]
 	],
 	209: [
-		['operator', { fields: ['operator'], kinds: [] }],
-		['argument', { fields: ['argument'], kinds: [] }]
+		['operator', 0],
+		['argument', 1]
 	],
 	212: [
-		['left', { fields: ['left'], kinds: [] }],
-		['comparators', { fields: ['comparators'], kinds: [] }]
+		['left', 0],
+		['comparators', 1]
 	],
 	213: [
-		['parameters', { fields: ['parameters'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['parameters', 0],
+		['body', 1]
 	],
 	214: [
-		['parameters', { fields: ['parameters'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['parameters', 0],
+		['body', 1]
 	],
 	216: [
-		['left', { fields: ['left'], kinds: [] }],
-		['operator', { fields: ['operator'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
+		['left', 0],
+		['operator', 1],
+		['right', 2]
 	],
-	217: [['items', { fields: ['item'], kinds: [] }]],
-	219: [
-		[
-			'content',
-			{
-				fields: [],
-				kinds: [
-					'yield_from_clause',
-					'comparison_operator',
-					'not_operator',
-					'boolean_operator',
-					'lambda',
-					'await',
-					'binary_operator',
-					'identifier',
-					'string',
-					'concatenated_string',
-					'integer_hex',
-					'integer_octal',
-					'integer_binary',
-					'integer_decimal_long',
-					'integer_decimal_imaginary',
-					'integer_decimal_plain',
-					'float_point',
-					'float_leading_point',
-					'float_scientific',
-					'true',
-					'false',
-					'none',
-					'unary_operator',
-					'attribute',
-					'subscript',
-					'call',
-					'list',
-					'list_comprehension',
-					'dictionary',
-					'dictionary_comprehension',
-					'set',
-					'set_comprehension',
-					'tuple',
-					'parenthesized_expression',
-					'generator_expression',
-					'ellipsis',
-					'list_splat_pattern',
-					'conditional_expression',
-					'named_expression',
-					'as_pattern',
-					'expression_list'
-				]
-			}
-		]
-	],
+	217: [['items', 0]],
+	219: [['content', 0]],
 	220: [
-		['object', { fields: ['object'], kinds: [] }],
-		['attribute', { fields: ['attribute'], kinds: [] }]
+		['object', 0],
+		['attribute', 1]
 	],
 	221: [
-		['value', { fields: ['value'], kinds: [] }],
-		['subscripts', { fields: [], kinds: ['subscripts'] }]
+		['value', 0],
+		['subscripts', 1]
 	],
 	222: [
-		['start', { fields: ['start'], kinds: [] }],
-		['stop', { fields: ['stop'], kinds: [] }],
-		['step', { fields: ['step'], kinds: [] }]
+		['start', 0],
+		['stop', 1],
+		['step', 2]
 	],
 	223: [
-		['function', { fields: ['function'], kinds: [] }],
-		['arguments', { fields: ['arguments'], kinds: [] }]
+		['function', 0],
+		['arguments', 1]
 	],
 	224: [
-		['name', { fields: ['name'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }]
+		['name', 0],
+		['type', 1]
 	],
-	225: [
-		[
-			'content',
-			{
-				fields: [],
-				kinds: [
-					'comparison_operator',
-					'not_operator',
-					'boolean_operator',
-					'lambda',
-					'await',
-					'binary_operator',
-					'identifier',
-					'string',
-					'concatenated_string',
-					'integer_hex',
-					'integer_octal',
-					'integer_binary',
-					'integer_decimal_long',
-					'integer_decimal_imaginary',
-					'integer_decimal_plain',
-					'float_point',
-					'float_leading_point',
-					'float_scientific',
-					'true',
-					'false',
-					'none',
-					'unary_operator',
-					'attribute',
-					'subscript',
-					'call',
-					'list',
-					'list_comprehension',
-					'dictionary',
-					'dictionary_comprehension',
-					'set',
-					'set_comprehension',
-					'tuple',
-					'parenthesized_expression',
-					'generator_expression',
-					'ellipsis',
-					'list_splat_pattern',
-					'conditional_expression',
-					'named_expression',
-					'as_pattern',
-					'splat_type',
-					'generic_type',
-					'union_type',
-					'constrained_type',
-					'member_type'
-				]
-			}
-		]
-	],
+	225: [['content', 0]],
 	226: [
-		['operator', { fields: ['operator'], kinds: [] }],
-		['name', { fields: ['name'], kinds: [] }]
+		['operator', 0],
+		['name', 1]
 	],
 	227: [
-		['name', { fields: ['name'], kinds: [] }],
-		['typeParameter', { fields: ['type_parameter'], kinds: [] }]
+		['name', 0],
+		['typeParameter', 1]
 	],
 	228: [
-		['left', { fields: ['left'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
+		['left', 0],
+		['right', 1]
 	],
 	229: [
-		['baseType', { fields: ['base_type'], kinds: [] }],
-		['constraint', { fields: ['constraint'], kinds: [] }]
+		['baseType', 0],
+		['constraint', 1]
 	],
 	230: [
-		['baseType', { fields: ['base_type'], kinds: [] }],
-		['name', { fields: ['name'], kinds: [] }]
+		['baseType', 0],
+		['name', 1]
 	],
 	231: [
-		['name', { fields: ['name'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }]
+		['name', 0],
+		['value', 1]
 	],
-	232: [['collectionElements', { fields: [], kinds: ['collection_elements'] }]],
-	233: [['collectionElements', { fields: [], kinds: ['collection_elements'] }]],
-	234: [['elements', { fields: ['elements'], kinds: [] }]],
-	235: [['elements', { fields: ['elements'], kinds: [] }]],
+	232: [['collectionElements', 0]],
+	233: [['collectionElements', 0]],
+	234: [['elements', 0]],
+	235: [['elements', 0]],
 	236: [
-		['key', { fields: ['key'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }]
+		['key', 0],
+		['value', 1]
 	],
 	237: [
-		['body', { fields: ['body'], kinds: [] }],
-		['clauses', { fields: ['clauses'], kinds: [] }]
+		['body', 0],
+		['clauses', 1]
 	],
 	238: [
-		['body', { fields: ['body'], kinds: [] }],
-		['clauses', { fields: ['clauses'], kinds: [] }]
+		['body', 0],
+		['clauses', 1]
 	],
 	239: [
-		['body', { fields: ['body'], kinds: [] }],
-		['clauses', { fields: ['clauses'], kinds: [] }]
+		['body', 0],
+		['clauses', 1]
 	],
 	240: [
-		['body', { fields: ['body'], kinds: [] }],
-		['clauses', { fields: ['clauses'], kinds: [] }]
+		['body', 0],
+		['clauses', 1]
 	],
-	241: [['expression', { fields: ['expression'], kinds: [] }]],
-	242: [['items', { fields: ['item'], kinds: [] }]],
+	241: [['expression', 0]],
+	242: [['items', 0]],
 	243: [
-		['async', { fields: ['async'], kinds: [] }, 'async'],
-		['left', { fields: ['left'], kinds: [] }],
-		['rights', { fields: ['right'], kinds: [] }],
-		['comma', { fields: ['comma'], kinds: [] }, ',']
+		['async', 0, 'async'],
+		['left', 1],
+		['rights', 2],
+		['comma', 3, ',']
 	],
-	244: [['condition', { fields: ['condition'], kinds: [] }]],
+	244: [['condition', 0]],
 	245: [
-		['body', { fields: ['body'], kinds: [] }],
-		['condition', { fields: ['condition'], kinds: [] }],
-		['alternative', { fields: ['alternative'], kinds: [] }]
+		['body', 0],
+		['condition', 1],
+		['alternative', 2]
 	],
-	246: [['strings', { fields: [], kinds: ['string'] }]],
+	246: [['strings', 0]],
 	247: [
-		['stringStart', { fields: ['string_start'], kinds: [] }],
-		['contents', { fields: ['content'], kinds: [] }],
-		['stringEnd', { fields: ['string_end'], kinds: [] }]
+		['stringStart', 0],
+		['contents', 1],
+		['stringEnd', 2]
 	],
-	248: [['elements', { fields: ['elements'], kinds: [] }]],
+	248: [['elements', 0]],
 	249: [
-		['expression', { fields: ['expression'], kinds: [] }],
-		['debug', { fields: ['debug'], kinds: [] }, '='],
-		['typeConversion', { fields: ['type_conversion'], kinds: [] }],
-		['formatSpecifier', { fields: ['format_specifier'], kinds: [] }]
+		['expression', 0],
+		['debug', 1, '='],
+		['typeConversion', 2],
+		['formatSpecifier', 3]
 	],
-	253: [['elements', { fields: ['elements'], kinds: [] }]],
-	256: [['expression', { fields: ['expression'], kinds: [] }]],
-	259: [['items', { fields: ['item'], kinds: [] }]],
-	260: [['subjects', { fields: ['subject'], kinds: [] }]],
-	261: [['items', { fields: ['item'], kinds: [] }]],
-	262: [['items', { fields: ['item'], kinds: [] }]],
-	263: [['items', { fields: ['item'], kinds: [] }]],
-	264: [['items', { fields: ['item'], kinds: [] }]],
-	265: [['items', { fields: ['item'], kinds: [] }]],
-	266: [['items', { fields: ['item'], kinds: [] }]],
-	267: [['subscripts', { fields: ['subscript'], kinds: [] }]],
-	268: [['items', { fields: ['item'], kinds: [] }]],
-	269: [
-		[
-			'expression',
-			{
-				fields: [],
-				kinds: [
-					'comparison_operator',
-					'not_operator',
-					'boolean_operator',
-					'lambda',
-					'await',
-					'binary_operator',
-					'identifier',
-					'string',
-					'concatenated_string',
-					'integer_hex',
-					'integer_octal',
-					'integer_binary',
-					'integer_decimal_long',
-					'integer_decimal_imaginary',
-					'integer_decimal_plain',
-					'float_point',
-					'float_leading_point',
-					'float_scientific',
-					'true',
-					'false',
-					'none',
-					'unary_operator',
-					'attribute',
-					'subscript',
-					'call',
-					'list',
-					'list_comprehension',
-					'dictionary',
-					'dictionary_comprehension',
-					'set',
-					'set_comprehension',
-					'tuple',
-					'parenthesized_expression',
-					'generator_expression',
-					'ellipsis',
-					'list_splat_pattern',
-					'conditional_expression',
-					'named_expression',
-					'as_pattern'
-				]
-			}
-		]
-	],
-	270: [['items', { fields: ['item'], kinds: [] }]],
-	271: [['items', { fields: ['item'], kinds: [] }]],
+	253: [['elements', 0]],
+	256: [['expression', 0]],
+	259: [['items', 0]],
+	260: [['subjects', 0]],
+	261: [['items', 0]],
+	262: [['items', 0]],
+	263: [['items', 0]],
+	264: [['items', 0]],
+	265: [['items', 0]],
+	266: [['items', 0]],
+	267: [['subscripts', 0]],
+	268: [['items', 0]],
+	269: [['expression', 0]],
+	270: [['items', 0]],
+	271: [['items', 0]],
 	272: [
-		['value', { fields: ['value'], kinds: [] }],
-		['alias', { fields: ['alias'], kinds: [] }]
+		['value', 0],
+		['alias', 1]
 	],
-	273: [['elements', { fields: ['elements'], kinds: [] }]],
-	274: [['elements', { fields: ['elements'], kinds: [] }]],
-	275: [['items', { fields: ['item'], kinds: [] }]],
-	276: [['items', { fields: ['item'], kinds: [] }]],
+	273: [['elements', 0]],
+	274: [['elements', 0]],
+	275: [['items', 0]],
+	276: [['items', 0]],
 	277: [
-		['chevron', { fields: ['chevron'], kinds: [] }],
-		['printChevronArguments', { fields: [], kinds: ['print_chevron_arguments', 'comma'] }]
+		['chevron', 0],
+		['printChevronArguments', 1]
 	],
-	278: [['printArguments', { fields: [], kinds: ['print_arguments'] }]],
-	280: [['importList', { fields: [], kinds: ['import_list'] }]],
-	281: [['contents', { fields: ['content'], kinds: [] }]],
+	278: [['printArguments', 0]],
+	280: [['importList', 0]],
+	281: [['contents', 0]],
 	283: [
-		['sign', { fields: ['sign'], kinds: [] }, '-'],
-		['value', { fields: ['value'], kinds: [] }]
+		['sign', 0, '-'],
+		['value', 1]
 	],
-	284: [['values', { fields: ['value'], kinds: [] }]],
-	285: [['content', { fields: [], kinds: ['except_clause_exception_as', 'except_clause_exception_list'] }]],
+	284: [['values', 0]],
+	285: [['content', 0]],
 	286: [
-		['left', { fields: ['left'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
+		['left', 0],
+		['right', 1]
 	],
 	287: [
-		['left', { fields: ['left'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }]
+		['left', 0],
+		['type', 1]
 	],
 	288: [
-		['left', { fields: ['left'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
+		['left', 0],
+		['type', 1],
+		['right', 2]
 	],
-	289: [['items', { fields: ['item'], kinds: [] }]],
-	290: [['items', { fields: ['item'], kinds: [] }]],
-	291: [['withItems', { fields: ['with_items'], kinds: [] }]],
-	292: [['alternatives', { fields: ['alternative'], kinds: [] }]],
-	293: [['newline', { fields: [], kinds: ['newline'] }]],
-	294: [['elements', { fields: ['elements'], kinds: [] }]],
-	295: [['block', { fields: [], kinds: ['block'] }]],
-	296: [['newline', { fields: [], kinds: ['newline'] }]],
+	289: [['items', 0]],
+	290: [['items', 0]],
+	291: [['withItems', 0]],
+	292: [['alternatives', 0]],
+	293: [['newline', 0]],
+	294: [['elements', 0]],
+	295: [['block', 0]],
+	296: [['newline', 0]],
 	297: [
-		['operators', { fields: ['operators'], kinds: [] }],
-		[
-			'primaryExpression',
-			{
-				fields: [],
-				kinds: [
-					'await',
-					'binary_operator',
-					'identifier',
-					'string',
-					'concatenated_string',
-					'integer_hex',
-					'integer_octal',
-					'integer_binary',
-					'integer_decimal_long',
-					'integer_decimal_imaginary',
-					'integer_decimal_plain',
-					'float_point',
-					'float_leading_point',
-					'float_scientific',
-					'true',
-					'false',
-					'none',
-					'unary_operator',
-					'attribute',
-					'subscript',
-					'call',
-					'list',
-					'list_comprehension',
-					'dictionary',
-					'dictionary_comprehension',
-					'set',
-					'set_comprehension',
-					'tuple',
-					'parenthesized_expression',
-					'generator_expression',
-					'ellipsis',
-					'list_splat_pattern'
-				]
-			}
-		]
+		['operators', 0],
+		['primaryExpression', 1]
 	],
-	298: [
-		[
-			'expression',
-			{
-				fields: [],
-				kinds: [
-					'comparison_operator',
-					'not_operator',
-					'boolean_operator',
-					'lambda',
-					'await',
-					'binary_operator',
-					'identifier',
-					'string',
-					'concatenated_string',
-					'integer_hex',
-					'integer_octal',
-					'integer_binary',
-					'integer_decimal_long',
-					'integer_decimal_imaginary',
-					'integer_decimal_plain',
-					'float_point',
-					'float_leading_point',
-					'float_scientific',
-					'true',
-					'false',
-					'none',
-					'unary_operator',
-					'attribute',
-					'subscript',
-					'call',
-					'list',
-					'list_comprehension',
-					'dictionary',
-					'dictionary_comprehension',
-					'set',
-					'set_comprehension',
-					'tuple',
-					'parenthesized_expression',
-					'generator_expression',
-					'ellipsis',
-					'list_splat_pattern',
-					'conditional_expression',
-					'named_expression',
-					'as_pattern'
-				]
-			}
-		]
-	],
-	334: [['content', { fields: ['content'], kinds: [] }]],
-	335: [['content', { fields: ['content'], kinds: [] }]],
-	336: [['content', { fields: ['content'], kinds: [] }]]
+	298: [['expression', 0]],
+	334: [['content', 0]],
+	335: [['content', 0]],
+	336: [['content', 0]]
 });
 
 export const { isNode } = bindRuntime<PythonTypeMap>();

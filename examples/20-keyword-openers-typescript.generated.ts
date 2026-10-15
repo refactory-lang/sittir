@@ -88,7 +88,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 					terminator: ts.kinds.AutomaticSemicolon,
 				}, ts.build.continueStatement.strict()),
 			}), ts.build.forInStatement.strict({
-				forHeader: ts.build.forHeaderLetConstKind.strict({
+				header: ts.build.forHeaderLetConstKind.strict({
 					kind: ts.kinds.ConstKeyword,
 					left: ts.build.identifier("i"),
 					operator: ts.kinds.OfKeyword,

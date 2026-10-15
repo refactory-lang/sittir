@@ -13,6 +13,7 @@ import {
 } from '../conflict-resolutions-file.ts';
 
 const derived: ConflictResolutionsFile = {
+	...EMPTY_CONFLICT_RESOLUTIONS,
 	grammarHash: 'abc',
 	resolutions: [
 		{

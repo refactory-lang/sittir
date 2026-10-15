@@ -96,10 +96,9 @@ import {
 	hasCatalogEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
-import { pascalCase, toScreamingSnakeCase } from '../compiler/model/casing.ts';
+import { pascalCase } from '../compiler/model/casing.ts';
 import {
 	carriesPerNodeValue,
-	edgeKindId,
 	seatTableName,
 	seatedTableNames,
 	edgeSitesOf,
@@ -112,7 +111,7 @@ import {
 	type SpacingSite,
 	type DelimiterSite
 } from './render-options-rs.ts';
-import { displayNameOf, displayedKinds } from '../compiler/model/display-name.ts';
+import { displayedKinds } from '../compiler/model/display-name.ts';
 import { BLANK_KIND_ID, collectSitePreferences, hasBlankArm, type SitePreference } from '../compiler/model/site-preferences.ts';
 import { readOptionsBlock, type OptionsConfig } from '../dsl/wire/options-block.ts';
 import { addressTablesFor, EMPTY_ADDRESSES, type AddressTables } from './options.ts';
@@ -619,7 +618,7 @@ function renderTypedDispatch(
 	const lines: string[] = [];
 
 	for (const node of payloadNodes) {
-		lines.push(...renderTypedKindFn(node, structsByKind, meta, nodeMap, kindIdByKind, plan, kindEntries));
+		lines.push(...renderTypedKindFn(node, structsByKind, meta, nodeMap, kindIdByKind, plan));
 	}
 	for (const literal of fixed.values()) lines.push(...renderFixedLiteralFn(literal));
 
@@ -712,8 +711,7 @@ function renderTypedKindFn(
 	meta: MetaData,
 	nodeMap: NodeMap,
 	kindIdByKind: ReadonlyMap<string, number>,
-	plan: RenderPlan,
-	kindEntries: readonly KindEntryLike[]
+	plan: RenderPlan
 ): string[] {
 	switch (node.modelType) {
 		case 'branch':
@@ -723,7 +721,7 @@ function renderTypedKindFn(
 			if (struct === undefined) {
 				return renderTypedBranchFallbackFn(node, nodeMap);
 			}
-			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan, kindEntries);
+			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan);
 		}
 		case 'polymorph':
 		case 'alias': {
@@ -732,7 +730,7 @@ function renderTypedKindFn(
 			if (struct === undefined) {
 				return renderTypedBranchFallbackFn(node, nodeMap);
 			}
-			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan, kindEntries);
+			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan);
 		}
 		case 'pattern':
 		case 'keyword':
@@ -820,8 +818,7 @@ function renderTypedBranchFn(
 	meta: MetaData,
 	nodeMap: NodeMap,
 	kindIdByKind: ReadonlyMap<string, number>,
-	plan: RenderPlan,
-	kindEntries: readonly KindEntryLike[]
+	plan: RenderPlan
 ): string[] {
 	return [
 		`fn ${rustTypedRenderFnName(node.typeName)}(node: &${rustTransportStructName(node)}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
@@ -832,8 +829,7 @@ function renderTypedBranchFn(
 			renderSlotModelOf(node),
 			node,
 			kindIdByKind,
-			plan,
-			kindEntries
+			plan
 		),
 		`}`,
 		''
@@ -862,8 +858,7 @@ function buildTypedTemplateBody(
 	slotModel: RenderSlotModel | undefined = undefined,
 	node: AssembledNode | undefined,
 	kindIdByKind: ReadonlyMap<string, number>,
-	plan: RenderPlan,
-	kindEntries: readonly KindEntryLike[]
+	plan: RenderPlan
 ): string[] {
 	const lines: string[] = [];
 	const sepLiteral = JSON.stringify(separator);
@@ -1000,12 +995,13 @@ function buildTypedTemplateBody(
 		...printRustBody(struct.body, {
 			field: rustFieldIdent,
 			optional: (name) => struct.fields.some((f) => rustFieldIdent(f.name) === rustFieldIdent(name) && !f.required),
-			edge: kindEdgeWriterOf(plan, node, kindEntries),
+			edge: kindEdgeWriterOf(plan, node),
 			site: (name) => {
 				if (node === undefined)
 					throw new Error(`render body for '${struct.kind}' names spacing site '${name}' without its node`);
-				const owner = node.display.name;
-				return `options::SITE_${toScreamingSnakeCase(owner, owner)}_${toScreamingSnakeCase(name, name)}`;
+				const site = plan.spacingSites.find((s) => s.source === node.kind && (s.address === name || s.fieldIdent === name));
+				if (site === undefined) throw new Error(`render body for '${struct.kind}' names spacing site '${name}', which has no site`);
+				return `options::${site.constName}`;
 			},
 			kinds: (names) => rustKindIdSlice(names, nodeMap, kindIdByKind, struct.kind),
 			unitSlot: (name) => {
@@ -1131,7 +1127,7 @@ function planRenderOptionsFor(
 		declaredIndent,
 		lang,
 		depthRegionsOf(inputs.renderRules, nodeMap),
-		seatWrappersOf(nodeMap, kindEntries, generatedIdTables)
+		seatWrappersOf(nodeMap, generatedIdTables)
 	);
 	const addresses = inputs.addresses ?? addressTablesFor(nodeMap, kindEntries, sites, inputs.options);
 	return { plan, addresses, kindEntries };
@@ -2092,14 +2088,13 @@ function literalSeamsOf(
 	literal: TransportLiteral,
 	entry: PerSlotChildEnum,
 	plan: RenderPlan,
-	kindEntries: readonly KindEnumEntry[],
-	nodeMap: NodeMap
+	kindEntries: readonly KindEnumEntry[]
 ): LiteralArmSeams | undefined {
-	const owner = displayNameOf(literal.enumKind ?? entry.ownerKind, nodeMap);
+	const owner = literal.enumKind ?? entry.ownerKind;
 	const sites: { before?: string; after?: string } = {};
 	const token = tokenNameOfText(literal.text, kindEntries);
 	for (const site of plan.spacingSites) {
-		if (site.kind !== owner || site.side !== 'seam' || site.seat !== undefined) continue;
+		if (site.source !== owner || site.side !== 'seam' || site.seat !== undefined) continue;
 		const seam = parseSeamLabel(site.address);
 		if (token !== undefined && seam?.token === token) sites[seam.side] = site.constName;
 	}
@@ -2117,8 +2112,7 @@ function choiceUnitsOf(
 	validKinds: readonly { readonly node: AssembledNode }[],
 	fixed: FixedLiterals,
 	plan: RenderPlan,
-	kindEntries: readonly KindEnumEntry[],
-	nodeMap: NodeMap
+	kindEntries: readonly KindEnumEntry[]
 ): ReadonlyMap<string, ChoiceUnit> {
 	const units = new Map<string, ChoiceUnit>();
 	for (const { node } of validKinds) {
@@ -2128,7 +2122,7 @@ function choiceUnitsOf(
 	}
 	for (const literal of entry.literals) {
 		const unit = fixedLiteralOf(fixed, literal.kind, literal.text);
-		const seams = literalSeamsOf(literal, entry, plan, kindEntries, nodeMap);
+		const seams = literalSeamsOf(literal, entry, plan, kindEntries);
 		const prior = units.get(unit.variant);
 		if (
 			prior?.seams !== undefined &&
@@ -2214,7 +2208,7 @@ function emitPerSlotChildEnum(
 
 	const validKinds = expandConcreteTransportKinds(entry.kinds, nodeMap);
 	const nodeKinds = validKinds.filter(({ node }) => !isFixedTextLeaf(node));
-	const units = choiceUnitsOf(entry, validKinds, fixed, plan, kindEntries, nodeMap);
+	const units = choiceUnitsOf(entry, validKinds, fixed, plan, kindEntries);
 	const admitsVerbatim = validKinds.some(({ node }) => node.modelType === 'pattern');
 
 	const isBoxed = (variantNode: AssembledNode): boolean => boxedInEnum(variantNode, read.boxedPayloads);
@@ -2614,8 +2608,7 @@ function inertPrepareImpl(typeName: string): string[] {
 }
 
 function synthesizedSpacingSites(plan: RenderPlan, node: AssembledNode): readonly SpacingSite[] {
-	const kind = node.display.name;
-	return plan.spacingSites.filter((site) => site.kind === kind && site.side !== undefined && site.seat === undefined);
+	return plan.spacingSites.filter((site) => site.source === node.kind && site.side !== undefined && site.seat === undefined);
 }
 
 function kindEdgeSidesOf(plan: RenderPlan, node: AssembledNode): ReadonlyMap<string, 'before' | 'after'> {
@@ -2629,12 +2622,11 @@ function kindEdgeSidesOf(plan: RenderPlan, node: AssembledNode): ReadonlyMap<str
 
 function kindEdgeWriterOf(
 	plan: RenderPlan,
-	node: AssembledNode | undefined,
-	kindEntries: readonly KindEntryLike[]
+	node: AssembledNode | undefined
 ): (name: string) => { readonly kindId: number; readonly side: 'before' | 'after' } | undefined {
 	const sides = node === undefined ? new Map<string, 'before' | 'after'>() : kindEdgeSidesOf(plan, node);
 	if (node === undefined || sides.size === 0) return () => undefined;
-	const kindId = edgeIdOf(plan, node, kindEntries);
+	const kindId = edgeIdOf(plan, node);
 	return (name) => {
 		const side = sides.get(rustFieldIdent(name));
 		return side === undefined ? undefined : { kindId, side };
@@ -2643,10 +2635,10 @@ function kindEdgeWriterOf(
 
 const edgeRowKindsCache = new WeakMap<RenderPlan, ReadonlySet<number>>();
 
-function edgeRowKindsOf(plan: RenderPlan, kindEntries: readonly KindEntryLike[]): ReadonlySet<number> {
+function edgeRowKindsOf(plan: RenderPlan): ReadonlySet<number> {
 	const cached = edgeRowKindsCache.get(plan);
 	if (cached !== undefined) return cached;
-	const kinds = new Set(edgeSitesOf(plan, kindEntries).map((row) => row.kind));
+	const kinds = new Set(edgeSitesOf(plan).map((row) => row.kind));
 	edgeRowKindsCache.set(plan, kinds);
 	return kinds;
 }
@@ -2658,10 +2650,10 @@ interface EdgeArmSlots {
 
 const edgeRowsCache = new WeakMap<RenderPlan, ReadonlyMap<number, EdgeSiteRow>>();
 
-function edgeRowsOf(plan: RenderPlan, kindEntries: readonly KindEntryLike[]): ReadonlyMap<number, EdgeSiteRow> {
+function edgeRowsOf(plan: RenderPlan): ReadonlyMap<number, EdgeSiteRow> {
 	const cached = edgeRowsCache.get(plan);
 	if (cached !== undefined) return cached;
-	const rows = new Map(edgeSitesOf(plan, kindEntries).map((row) => [row.kind, row]));
+	const rows = new Map(edgeSitesOf(plan).map((row) => [row.kind, row]));
 	edgeRowsCache.set(plan, rows);
 	return rows;
 }
@@ -2669,13 +2661,12 @@ function edgeRowsOf(plan: RenderPlan, kindEntries: readonly KindEntryLike[]): Re
 function edgeArmSlotsOf(
 	plan: RenderPlan,
 	node: AssembledNode,
-	body: Body | undefined,
-	kindEntries: readonly KindEntryLike[]
+	body: Body | undefined
 ): EdgeArmSlots | undefined {
-	const id = edgeKindId(kindEntries, node.display.name);
-	const row = id === undefined ? undefined : edgeRowsOf(plan, kindEntries).get(id);
+	const id = node.kindId;
+	const row = id === undefined ? undefined : edgeRowsOf(plan).get(id);
 	if (body === undefined || row === undefined || (row.beforeArms.length === 0 && row.afterArms.length === 0)) return undefined;
-	const edge = kindEdgeWriterOf(plan, node, kindEntries);
+	const edge = kindEdgeWriterOf(plan, node);
 	const out: { before?: string; after?: string } = {};
 	body.forEach((member, i) => {
 		const written = member.kind === 'seam' ? edge(member.field) : undefined;
@@ -2684,18 +2675,17 @@ function edgeArmSlotsOf(
 		if (arms.length === 0) return;
 		const slot = body[written.side === 'before' ? i + 1 : i - 1];
 		if (slot?.kind !== 'slot') {
-			throw new Error(`kind '${node.display.name}' has edge arm sites on its ${written.side} edge, but the member beside that edge is not a slot to read the arm from`);
+			throw new Error(`kind '${node.kind}' has edge arm sites on its ${written.side} edge, but the member beside that edge is not a slot to read the arm from`);
 		}
 		out[written.side] = slot.name;
 	});
 	return out;
 }
 
-function edgeIdOf(plan: RenderPlan, node: AssembledNode, kindEntries: readonly KindEntryLike[]): number {
-	const kind = node.display.name;
-	const id = edgeKindId(kindEntries, kind);
-	if (id !== undefined && edgeRowKindsOf(plan, kindEntries).has(id)) return id;
-	throw new Error(`kind '${kind}' has kind-edge sites but no edge row to prepare and write them from`);
+function edgeIdOf(plan: RenderPlan, node: AssembledNode): number {
+	const id = node.kindId;
+	if (id !== undefined && edgeRowKindsOf(plan).has(id)) return id;
+	throw new Error(`kind '${node.kind}' has kind-edge sites but no edge row to prepare and write them from`);
 }
 
 function sourceTrailingSeparator(
@@ -2722,13 +2712,11 @@ function sourceTrailingSeparator(
 }
 
 function delimiterSiteOf(plan: RenderPlan, node: AssembledNode): DelimiterSite | undefined {
-	const kind = node.display.name;
-	return plan.delimiterSites.find((site) => site.kind === kind);
+	return plan.delimiterSites.find((site) => site.source === node.kind);
 }
 
 function separatorSiteOf(plan: RenderPlan, node: AssembledNode): SpacingSite | undefined {
-	const kind = node.display.name;
-	return plan.spacingSites.find((site) => site.kind === kind && site.role === 'separator');
+	return plan.spacingSites.find((site) => site.source === node.kind && site.role === 'separator');
 }
 
 function slotItems(field: AssembledNonterminal, mutable: boolean): string {
@@ -2789,11 +2777,11 @@ function wrapperSlotOf(node: AssembledNode): AssembledNonterminal | undefined {
 	return slot?.name === undefined ? undefined : slot;
 }
 
-function seatWrappersOf(nodeMap: NodeMap, kindEntries: readonly KindEntryLike[], tables: GeneratedIdTables): SeatWrapper[] {
+function seatWrappersOf(nodeMap: NodeMap, tables: GeneratedIdTables): SeatWrapper[] {
 	const fields = new Map(generatedFieldIds(tables).map(({ name, id }) => [name, id]));
 	return [...nodeMap.nodes.values()].flatMap((node) => {
 		const slot = wrapperSlotOf(node);
-		const id = slot === undefined ? undefined : edgeKindId(kindEntries, node.display.name);
+		const id = slot === undefined ? undefined : node.kindId;
 		if (slot === undefined || id === undefined) return [];
 		if (slot.isUnnamed) return [{ id, field: 0 }];
 		const field = fields.get(slot.name!);
@@ -2830,7 +2818,7 @@ function seatReachOf(plan: RenderPlan, nodeMap: NodeMap): SeatReach {
 			if (reach.has(kind)) continue;
 			const wrapper = wrapperSlotOf(node);
 			const reaches =
-				seated.has(node.display.name) ||
+				seated.has(kind) ||
 				(node instanceof AssembledSupertype &&
 					collectEffectiveSupertypeTransportShape(node, nodeMap).subtypes.some(({ subKind }) => reach.has(subKind))) ||
 				(wrapper !== undefined && slotElementsReach(wrapper, nodeMap, has));
@@ -2872,16 +2860,15 @@ function seatTargetStructImpl(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	plan: RenderPlan,
-	kindEntries: readonly KindEntryLike[],
 	fixed: FixedLiterals
 ): string[] {
 	const reaches = seatReachOf(plan, nodeMap);
 	if (!reaches(node.kind)) return [];
-	const kind = node.display.name;
+	const kind = node.kind;
 	if (isFixedTextLeaf(node)) return seatTargetMatchImpl(rustTransportStructName(node), [fixedSeatArm(`Self::${fixedLiteralOf(fixed, node.kind).variant}`, fixedLiteralOf(fixed, node.kind))], true);
 	const body: string[] = [];
-	if (seatedKindsOf(plan).has(kind)) {
-		const id = edgeKindId(kindEntries, kind);
+	if (seatedKindsOf(plan).has(node.kind)) {
+		const id = node.kindId;
 		if (id === undefined) throw new Error(`kind '${kind}' is seated in a list but has no kind id to find its seat by`);
 		body.push(
 			`        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(${id})) {`,
@@ -2931,7 +2918,7 @@ function renderSeatTargets(
 	const lines: string[] = [];
 	for (const node of nodes) {
 		if (node instanceof AssembledEnum || node instanceof AssembledSupertype) continue;
-		lines.push(...seatTargetStructImpl(node, nodeMap, plan, kindEntries, fixed));
+		lines.push(...seatTargetStructImpl(node, nodeMap, plan, fixed));
 	}
 	for (const [, node] of nodeMap.nodes) {
 		if (!(node instanceof AssembledSupertype) || !usedSupertypeNames.has(node.typeName)) continue;
@@ -2969,7 +2956,7 @@ function seatedListFields(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMa
 	const fields = new Set<string>();
 	for (const field of [...slotModel.named, ...slotModel.unnamed]) {
 		if (field.name === undefined || !isMultiple(field)) continue;
-		if (!seated.has(seatTableName(node.display.name, field.name))) continue;
+		if (!seated.has(seatTableName(node.kind, field.name))) continue;
 		if (!slotElementsReach(field, nodeMap, reaches)) continue;
 		fields.add(field.name);
 	}
@@ -2984,20 +2971,20 @@ function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): str
 	for (const field of [...slotModel.named, ...slotModel.unnamed]) {
 		if (field.name === undefined || !seated.has(field.name)) continue;
 		const ident = rustFieldIdent(field.name);
-		const table = `options::${seatTableName(node.display.name, field.name)}`;
+		const table = `options::${seatTableName(node.kind, field.name)}`;
 		const items = hasOptionalElements(field) ? 'iter_mut().map(Option::as_mut)' : 'iter_mut().map(Some)';
 		lines.push(`        ::sittir_core::prepare::fill_seated_gaps(self.${ident}.${items}, ${table}, ctx);`);
 	}
 	return lines;
 }
 function optionDefaultFills(plan: RenderPlan, node: AssembledNode, choices: ChoiceNames): string[] {
-	const kind = node.display.name;
+	const kind = node.kind;
 	return renderSlotModelOf(node)
 		.named.filter(isPrepareFilled)
 		.map((slot) => {
 			const site = plan.spacingSites.find(
 				(candidate) =>
-					candidate.kind === kind &&
+					candidate.source === node.kind &&
 					candidate.slot === slot.name &&
 					candidate.side === undefined &&
 					candidate.seat === undefined
@@ -3242,8 +3229,8 @@ function renderTransportDataStruct(
 	lines.push('');
 	lines.push(...kindOfImplLines(structName, [], undefined, ownId === undefined ? [] : [ownId]));
 	const ownKind = ownId === undefined ? 'None' : `Some(::sittir_core::types::KindId(${ownId}))`;
-	const edgedId = edgeKindId(kindEntries, node.display.name);
-	if (edgedId !== undefined) lines.push(...edgedImplLines(structName, edgedId, edgeArmSlotsOf(plan, node, templateBody, kindEntries)));
+	const edgedId = node.kindId;
+	if (edgedId !== undefined) lines.push(...edgedImplLines(structName, edgedId, edgeArmSlotsOf(plan, node, templateBody)));
 	lines.push(`impl ::sittir_core::render::Render for ${structName} {`);
 	lines.push(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
@@ -3439,6 +3426,11 @@ interface StructSlot {
 	readonly slot: AssembledNonterminal;
 	readonly owner: AssembledNode;
 	readonly forceOptional: boolean;
+}
+
+export function transportSlotNumbers(node: AssembledNode, nodeMap: NodeMap): ReadonlyMap<string, number> {
+	if (!isCompoundOf(node)) return new Map();
+	return new Map(structSlotsOf(node, renderSlotModelOf(node), nodeMap).map(({ slot }, index) => [slot.storageName, index]));
 }
 
 function structSlotsOf(node: AssembledNode, slotModel: RenderSlotModel, nodeMap: NodeMap): StructSlot[] {
@@ -3914,10 +3906,9 @@ function armSeamPairsOf(
 	node: AssembledEnum,
 	kindEntries: readonly KindEntryLike[]
 ): Map<string, { before: string; after: string }> {
-	const kind = node.display.name;
 	const bySlot = new Map<string, { before?: string; after?: string }>();
 	for (const site of plan.spacingSites) {
-		if (site.kind !== kind || site.side !== 'seam' || site.seat !== undefined) continue;
+		if (site.source !== node.kind || site.side !== 'seam' || site.seat !== undefined) continue;
 		const seam = parseSeamLabel(site.address);
 		if (seam === undefined) continue;
 		const entry = bySlot.get(site.slot) ?? {};

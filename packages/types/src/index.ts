@@ -5,7 +5,34 @@
 
 import type { CamelCase } from 'type-fest';
 import type { NodeMethods } from './engine-api.ts';
-export type { Cond, KindMembership, PresenceRef, QueryFacet, QueryPlan, QuerySlotEntry, QuerySlots, Recorder, SlotNameOf, SlotRef, SlotRoutes, View } from './query.ts';
+export type {
+	Cond,
+	KindMembership,
+	PresenceRef,
+	QueryFacet,
+	QueryFlags,
+	FlagOf,
+	QueryPlan,
+	QuerySlotEntry,
+	QuerySlots,
+	QuerySubject,
+	Recorder,
+	SelfText,
+	SlotNameOf,
+	SlotRef,
+	SlotSubject,
+	StepAnchor,
+	View
+} from './query.ts';
+export type {
+	PortableCondition,
+	PortableGuard,
+	PortablePath,
+	PortableReadEntry,
+	PortableStep,
+	PortableSurface,
+	PortableTable
+} from './portable.ts';
 import type { Admit } from './node-surface.ts';
 import type { BooleanKeywordText, IsBooleanKeyword } from './keyword-presence.ts';
 export type { BooleanKeyword } from './keyword-presence.ts';
@@ -61,7 +88,6 @@ export type Simplify<T> = { [K in keyof T]: T[K] } & {};
  * emitted by factories / from() resolvers.
  */
 export type NonEmptyArray<T> = readonly [T, ...(readonly T[])];
-
 
 /**
  * Bitflag<E, TStorage> — brands numeric bitflag storage.
@@ -245,7 +271,9 @@ export type Hoisted<B> = 'coerce' extends keyof B
 			: B;
 
 /** @internal — the callable a pair collapses to, read by key so a pair whose flavors are intersections is never compared member against member. The arity stamp is read by `hoist` and is not a route. */
-type HoistedFlavor<F, B> = (F extends AnyFlavorFn ? F : () => never) & { [K in keyof B as K extends 'arity' ? never : K]: Hoisted<B[K]> };
+type HoistedFlavor<F, B> = (F extends AnyFlavorFn ? F : () => never) & {
+	[K in keyof B as K extends 'arity' ? never : K]: Hoisted<B[K]>;
+};
 
 // ---------------------------------------------------------------------------
 // Cycle-detected recursion (visited-set pattern)
@@ -402,19 +430,17 @@ type WidenLooseFieldValue<
 	NsMap,
 	Visited extends (string | number)[]
 > = K extends keyof LooseHintsOf<T>
-		?
-				| WidenSlotValue<LooseHintsOf<T>[K], Scalars, Strings, Depth, NsMap, Visited>
-				| WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, Depth, NsMap, Visited>
-		: WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, Depth, NsMap, Visited>;
+	?
+			| WidenSlotValue<LooseHintsOf<T>[K], Scalars, Strings, Depth, NsMap, Visited>
+			| WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, Depth, NsMap, Visited>
+	: WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, Depth, NsMap, Visited>;
 
 /**
  * Extract the child-slot shape for the Config/Loose bag surface —
  * consumer code writes `config.children`, not `config.$other`. The
  * `$`-prefixed metadata shape is internal UntypedNode.
  */
-type ChildSlotsOf<T> = T extends { readonly $other?: infer C }
-	? { readonly children: Admit<AdmitSlotInput<C>> }
-	: {};
+type ChildSlotsOf<T> = T extends { readonly $other?: infer C } ? { readonly children: Admit<AdmitSlotInput<C>> } : {};
 
 /**
  * WrappedNode<T> — the read-only lazy view produced by the generated
@@ -581,7 +607,9 @@ type BitflagSlotEnum<T> = T extends readonly (infer E)[] ? BitflagEnum<E> : Bitf
 type IsKindEnumSlot<T> = IsKindEnum<T> extends true ? true : T extends readonly (infer E)[] ? IsKindEnum<E> : false;
 
 /** @internal — widen a KindEnum slot back to its string-friendly input surface. */
-type KindEnumSlotInput<T> = T extends readonly (infer E)[] ? readonly (KindEnumText<E> | Admit<E>)[] : KindEnumText<T> | Admit<T>;
+type KindEnumSlotInput<T> = T extends readonly (infer E)[]
+	? readonly (KindEnumText<E> | Admit<E>)[]
+	: KindEnumText<T> | Admit<T>;
 
 /** A tree node with no typed field access — returned by `.children()`. */
 export interface AnyTreeNodeOf {
@@ -1259,6 +1287,9 @@ export type {
 	FacetOf,
 	EngineIdentity,
 	CreateEngineOptions,
+	PortableEngine,
+	PortableEngineOptions,
+	PortableLanguageAPI,
 	EngineOptions,
 	FileChange,
 	GrammarInnerTrivia,
@@ -1293,7 +1324,11 @@ type RefusedValue<V, Integer extends boolean> = V extends number | bigint ? Nume
 
 type KeysOfAll<K> = K extends unknown ? keyof K : never;
 
-type SlotRefusal<C, K, Integer extends boolean> = C extends unknown ? (K extends keyof C ? RefusedValue<C[K], Integer> : never) : never;
+type SlotRefusal<C, K, Integer extends boolean> = C extends unknown
+	? K extends keyof C
+		? RefusedValue<C[K], Integer>
+		: never
+	: never;
 
 type NoExtraKeys<C, Known> = { readonly [P in Exclude<KeysOfAll<C>, KeysOfAll<Known>>]?: never };
 
@@ -1307,7 +1342,9 @@ export type NumericConfig<C, W extends Readonly<Record<string, boolean>>, Known 
 /**
  * The refusal a loose entry applies to its input `I`: a bare number or bigint literal is judged as `NumericLiteral` judges it (`Bare` says whether the bare value is an integer; `undefined` when the kind takes none), and a config literal as `NumericConfig` does, with `Known` the loose type the entry accepts.
  */
-export type NumericInput<I, Bare extends boolean | undefined, W extends Readonly<Record<string, boolean>> = {}, Known = I> = (Bare extends boolean
-	? RefusedValue<I, Bare>
-	: unknown) &
-	NumericConfig<I, W, Known>;
+export type NumericInput<
+	I,
+	Bare extends boolean | undefined,
+	W extends Readonly<Record<string, boolean>> = {},
+	Known = I
+> = (Bare extends boolean ? RefusedValue<I, Bare> : unknown) & NumericConfig<I, W, Known>;

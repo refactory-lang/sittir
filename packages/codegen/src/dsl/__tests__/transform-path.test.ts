@@ -641,3 +641,16 @@ describe('applyPath() — a patch preserves the wrappers it descends through', (
 		}
 	});
 });
+
+describe('transform() — a field inside a token', () => {
+	it('names a keyword the token holds as its interior part, never through a symbol a token cannot reference', () => {
+		const token = { type: 'TOKEN', content: seq(choice(str('b'), { type: 'BLANK' }), str("'"), str("'")) } as any;
+		const result = transform(token, { '0/0': field('byte') as Rule<'evaluate'> }) as any;
+		expect(result.type).toBe('TOKEN');
+		expect(result.content.members[0]).toMatchObject({
+			type: 'FIELD',
+			name: 'byte',
+			content: { type: 'CHOICE', members: [{ type: 'STRING', value: 'b' }, { type: 'BLANK' }] }
+		});
+	});
+});

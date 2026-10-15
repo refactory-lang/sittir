@@ -6,7 +6,7 @@ Loads a language's hooks once per descriptor object: later engines for the same 
 
 ### `packages/common/src/create-engine.ts::refuseUnimplemented`
 
-Refuses, before anything loads, an engine option whose behaviour does not exist: any `api` other than `'default'` (the portable surface is reserved; the strict surface is not implemented). Each message names the option that is not implemented.
+Refuses, before anything loads, an engine option whose behaviour does not exist: an `api` of `'strict'`, which is not implemented. The portable surface never reaches it; `createEngine` assembles a portable engine before refusing. Each message names the option that is not implemented.
 
 ### `packages/common/src/create-engine.ts::nativeEngineOptions`
 
@@ -14,11 +14,11 @@ The one mapping from an engine's options to its native engine's: `format` passes
 
 ### `packages/common/src/create-engine.ts::unimplementedVerb`
 
-The error a file verb (`read`, `create`, `edit`, `write`) raises while file changes are not implemented.
+The error a file verb (`read`, `create`, `write`) raises while file changes are not implemented.
 
 ### `packages/common/src/create-engine.ts::languageGuards`
 
-Composes every function on a language's `is` table with the engine's language check: the guard runs only for a value whose stamped engine is of the engine's language (the check the node guards use), and the extra arguments of a guard such as `kind` pass through. A node of another grammar whose kind id the guard would accept is rejected, a value with no stamp is rejected, and a node of a disposed engine is accepted, since only the stamped language is read. It is one composition over the table, so a per-kind guard, a supertype guard, its variant guards and `kind` are all covered without each carrying the check; the result is frozen and keeps the table's type.
+Composes every function on a language's `is` table with the engine's language check: the guard runs only for a value whose stamped engine is of the engine's language (the check the node guards use), and the extra arguments of a guard such as `kind` pass through. A node of another grammar whose kind id the guard would accept is rejected, a value with no stamp is rejected, and a node of a disposed engine is accepted, since only the stamped language is read. It is one composition over the table, so a per-kind guard, a supertype guard, its variant guards and `kind` are all covered without each carrying the check; the result is frozen and keeps the table's type. One composition shares a map from each guard to its composed guard (`wrapped`), so a guard reached under several names, as a portable path is under its aliases, is composed once and stays one object.
 
 ### `packages/common/src/create-engine.ts::languageGuard`
 
@@ -54,13 +54,21 @@ A lazy output handle whose text is produced through render middleware. The hook 
 
 Produces text from an already captured native handle and, when enabled, records the native materialization duration and input/output sizes. Render middleware reaches it through `next`; the direct path retains its existing immediate measurement when metrics are enabled.
 
+### `packages/common/src/create-engine.ts::inLanguageOf`
+
+The language check an engine's guards use: a value whose stamped engine is of the identity's language (`engineOf`, `sameLanguage`), or a kind-id leaf. A kind-id leaf is a bare number the typed reader stores for a keyword, token or enum member; it carries no stamp, so it is read in the language of the engine asking, and a number read from one grammar and asked of another engine is that engine's kind id. The default engine and the portable engine compose their guards with it.
+
+### `packages/common/src/create-engine.ts::assemblePortableEngine`
+
+The portable engine: the language's identity, its portable `kinds` as the language's hooks carry them, and its portable `is` composed with the language check (`languageGuards`), so a node of another language whose kind id a guard would read is rejected. It has no native engine, so it holds nothing to dispose. A language whose hooks carry no portable surface (its grammar has no bindings) is refused with its name.
+
 ### `packages/common/src/create-engine.ts::mergeRenderOptions`
 
 The options a render interceptor sees: the engine's render options with the call's laid over them, key by key, and the `layout` group merged one level down, so a call that sets only `layout.newline` leaves the engine's `layout.indent` in place. The native render resolves the same way over the engine's table; this is the object form of that result for middleware.
 
 ### `packages/common/src/create-engine.ts::createEngine`
 
-The entry point: refuses unimplemented options, loads the language (once per descriptor), and assembles an engine. Engines share no state: each owns its native engine and its options. Its `render` option is inferred `const` and checked by `RenderOptionsCheck`, so an indent unit outside the language's indent characters, or a key the language's options do not declare, fails to compile.
+The entry point. `{ api: 'portable' }` loads the language and assembles a portable engine (`assemblePortableEngine`); otherwise it refuses unimplemented options, loads the language (once per descriptor), and assembles an engine. Engines share no state: each owns its native engine and its options. Its `render` option is inferred `const` and checked by `RenderOptionsCheck`, so an indent unit outside the language's indent characters, or a key the language's options do not declare, fails to compile.
 
 ### `packages/common/src/engine-scope.ts::LiveEngine`
 
@@ -186,6 +194,10 @@ The `where` step. Compiles the condition when the step is added, so a malformed 
 
 Iterates a view. It splits the plan, runs the early steps over entries (a kind, an address and a way to hydrate) from the source, and hydrates only what survives them. It then runs the late steps over nodes. Being a generator, it stops pulling as soon as the consumer stops.
 
+### `packages/common/src/query.ts::slotItems`
+
+The items a node's slot holds, read through its accessor: the accessor's value, called when it is a method, as an array (a single item wrapped, an absent one empty). The query facet's slot views and the portable guards read slots through it.
+
 ### `packages/common/src/query.ts::slotEntries`
 
 The entries of a slot source. A slot's items are already read with their node, so the early steps run over them in memory, and `where` runs as one native call per kind.
@@ -228,19 +240,47 @@ Keeps the entries of a batch whose slots satisfy a `where` condition: entries ar
 
 ### `packages/common/src/query.ts::compileFor`
 
-The plan a `where` callback records for elements of one kind, cached per immutable `querySlots` table, callback and kind. The callback runs against that kind's recorder, so each slot it reads compiles to that kind's parser routes for the slot; a kind lacking a slot the callback reads is refused there. Contexts sharing a table share plans, while equal numeric kind ids in different grammars never reuse each other's routes or validation.
+The plan a `where` callback records for elements of one kind, cached per immutable `querySlots` table, callback and kind. The callback runs against that kind's recorder, so each slot it reads compiles to that kind's number for the slot, keyed by the kind; a kind lacking a slot the callback reads is refused there. Contexts sharing a table share plans, while equal numeric kind ids in different grammars never reuse each other's numbers or validation.
+
+### `packages/common/src/query.ts::sharedPlan`
+
+The one plan a `where` pushes down with a walk over several kinds: each kind's plan (`compileFor`) merged (`mergedAt`), or `undefined` when the kinds' plans differ in more than their slot numbers, and each batch then runs per kind.
+
+### `packages/common/src/query.ts::mergedAt`
+
+Plans merged position by position: equal values stay, arrays of one length and objects of one key set merge item by item, and the `slots` maps union, each kind keeping its own number; any other difference is a `CONFLICT`. The kinds' plans name disjoint kinds, so the union never overwrites a number.
+
+### `packages/common/src/query.ts::CONFLICT`
+
+What `mergedAt` answers for plans that differ in more than their slot numbers.
 
 ### `packages/common/src/query.ts::recorder`
 
-What a `where` callback receives: a Proxy whose members are the accessors of a kind, each recording the slot's parser routes (fields, and kinds under no field) from the kind's `querySlots` row: a slot whose row names a keyword gets a presence member (`presenceRef`), any other slot a text member with `eq` and `match`. Each member of a known kind is named `<kind>.<slot>`, so a slot compared in the wrong form (a text on a boolean slot, a boolean on a text slot) is refused naming both, whether at the `where` call or when a view whose kinds were not known runs. Any other key, an assignment and a call are refused. A view whose element kinds are not yet known checks the callback at the `where` call against every accessor of the grammar (`everyAccessor`, each a `shapeRef`), recording no routes, so its shape is refused early and each kind's slots, and whether each takes a text or a boolean, when it runs. A pattern crosses as its source; a flag has no native equivalent and is refused rather than dropped.
+What a `where` callback receives: a Proxy whose members are the accessors of a kind, each recording the slot's number in the kind's `querySlots` row, keyed by the kind (`SlotSubject`): a slot whose row names a keyword gets a presence member (`presenceRef`), any other slot a text member with `eq` and `match`. Each member of a known kind is named `<kind>.<slot>`, so a slot compared in the wrong form (a text on a boolean slot, a boolean on a text slot) is refused naming both, whether at the `where` call or when a view whose kinds were not known runs. The key `is` is the flag test (`flagRef`). Any other key, an assignment and a call are refused. A view whose element kinds are not yet known checks the callback at the `where` call against every accessor of the grammar (`everyAccessor`, each a `shapeRef`), recording no slot (`NO_SLOT`), so its shape is refused early and each kind's slots, and whether each takes a text or a boolean, when it runs. A pattern crosses as its source; a flag has no native equivalent and is refused rather than dropped.
 
 ### `packages/common/src/query.ts::slotsOf`
 
-A kind's query slots by accessor, each its routes and the keyword its row names (`undefined` for a text slot), read once per table and kind.
+A kind's query slots by accessor, each its subject (its number keyed by the kind) and the keyword its row names (`undefined` for a text slot), read once per table and kind.
 
 ### `packages/common/src/query.ts::everyAccessor`
 
 Every accessor of the grammar, for the check a `where` runs before its view's kinds are known.
+
+### `packages/common/src/query.ts::flagRef`
+
+A recorder's `is`: for a known kind, the plan its row of `queryFlags` gives the flag; a flag the kind does not declare is refused naming the kind, and a flag whose row is `null`, one that depends on the node's context, is refused naming both. Before the view's kinds are known it checks only that some kind of the grammar declares the flag (`everyFlag`), recording no plan (`ALWAYS`), and each kind's compilation decides when the view runs, as the slot members' shape check does.
+
+### `packages/common/src/query.ts::everyFlag`
+
+Every flag some kind of the grammar declares, for the check a `where` runs before its view's kinds are known.
+
+### `packages/common/src/query.ts::ALWAYS`
+
+The plan that always holds (`and` over no plans), which the shape check records for a flag.
+
+### `packages/common/src/query.ts::NO_SLOT`
+
+The subject of a slot recorded before its view's kinds are known: it numbers no kind. Only the shape check records it, and its plan is never run.
 
 ### `packages/common/src/query.ts::shapeRef`
 
@@ -248,11 +288,27 @@ An accessor's member in the check a `where` runs before its view's kinds are kno
 
 ### `packages/common/src/query.ts::presenceRef`
 
-The member of a slot that holds a keyword's presence. `eq(true)` records a presence leaf over the slot's routes, and `eq(false)` its negation, so the leaf carries no boolean. A text, and `match`, are refused with a message naming `eq(true)` and `eq(false)`, never compiled to a text leaf that would match the keyword's spelling.
+The member of a slot that holds a keyword's presence. `eq(true)` records a presence leaf over the slot, and `eq(false)` its negation, so the leaf carries no boolean. A text, and `match`, are refused with a message naming `eq(true)` and `eq(false)`, never compiled to a text leaf that would match the keyword's spelling.
 
 ### `packages/common/src/query.ts::holds`
 
-The JavaScript evaluation of a plan over the texts a node's children have along each leaf's routes; a presence leaf holds when any text is there. It is the oracle the native evaluator is tested against, never an evaluator of its own.
+The JavaScript evaluation of a plan over what its `PlanSubjects` read: the texts, the node types for an `is` leaf, and the child subjects for a `child` step. A presence leaf (`present`) holds when its subject reads any text: a child sits in the slot. A `child` step keeps the nodes its slot holds, narrows them by its anchor (`anchored`), and holds when its condition holds on one of them, evaluated with that child as the node. It is the oracle the native evaluator is tested against, and the only evaluator of a portable read test's plans, whose subject may be the node itself.
+
+### `packages/common/src/query.ts::PlanSubjects`
+
+What a caller of `holds` reads for a node: the texts a subject holds, the node types (`$type`) it holds, and the subjects of the nodes a slot holds. A caller that reads no types or no children leaves them out, and an `is` leaf or a `child` step is refused there (`NO_TYPES`, `NO_CHILDREN`).
+
+### `packages/common/src/query.ts::NO_TYPES`
+
+The node-type reader of a caller that reads none: an `is` plan is refused there rather than read as holding nowhere.
+
+### `packages/common/src/query.ts::NO_CHILDREN`
+
+The child reader of a caller that reads none: a `child` step is refused there rather than read as holding nowhere.
+
+### `packages/common/src/query.ts::anchored`
+
+A slot's nodes as an anchored step reads them: the first, the last, the one node when it holds exactly one (none otherwise), or all of them. The portable read tests' `via` steps and `holds`'s `child` step both narrow by it, as the native child step does.
 
 ### `packages/common/src/engine-scope.ts::inTreeEngine`
 
@@ -656,6 +712,17 @@ A trivia side with its coordinate entries hydrated (`hydrateTriviaEntry`); the s
 
 The size of the index field a packed handle holds (`2 ** 32`): the native `encode_handle` multiplies the tree id by it and adds the descendant index, inside a double's exact integer range.
 
+### `packages/common/src/portable-path.ts::portablePathHasFacts`
+
+Whether a read path names every fact in a guard path: the top-level namespace matches, and each remaining whole segment occurs in order, allowing other refinement facts between them. Shared by namespace kind admission, exact-guard derivation, and runtime guard matching, including stamped portable paths. An absent read path matches nothing.
+
+### `packages/common/src/portable.ts::portableSurface`
+
+A bound grammar's portable `kinds` and `is`, built once from its generated `PortableTable` and slot table. Each path gets a frozen `kinds` node holding its `$ids` and a guard, and every path is linked under its parent as an own, non-writable property, so a segment named like a function property (`call`, `name`) shadows it. A path is reached only through its full path. A guard takes a node or a kind-id leaf, which the typed reader stores as a bare number and which is a node of that kind, and first requires its kind among the path's ids. On an exact path (`PortablePath.exact`) that decides it. Otherwise the node's path decides: its `$subType` where it carries one (stamped by the read dispatch and the portable build, which choose a vocabulary kind), or else, for a node no vocabulary kind was chosen for (one a low-level builder made), the first of its kind's read entries, in order, whose placement the context matches (`placed`) and whose every condition holds; the guard holds when `portablePathHasFacts` finds every fact of its path in that reading, within the same namespace and in order. A condition runs `holds`, the one evaluator of a `QueryPlan`, once over every node its `via` steps reach from the holder (the node, or the context node `up` places out), an anchored step reading only the first, the last or the only node of its slot (`anchored`); a negated plan therefore holds only when no reached node matches. A value's type is its `$type`, or a kind-id leaf's own number. Texts come from a slot's items through `query.ts::slotItems`, the slot found by the number its subject gives the node's kind in the slot table; a kind the subject does not number holds no item. A slot the table stamps with a keyword holds a boolean: `true` reads as that keyword, the text the parser holds there, and `false` reads as no item, so a presence leaf holds exactly when the keyword is there. A value's text is a kind-id leaf's `fixedText` entry, a leaf's `$text`, and otherwise, for a parsed structured node, the slice of its tree's source its span covers (`span.ts::spanSlicer`, one slicer per tree); a built structured node has none.
+
+### `packages/common/src/portable.ts::placed`
+
+Whether a read entry's placement holds for the context: no placement always does; otherwise the context's nearest nodes, nearest first, must have the placement's kinds (`null` admits any). Without context a placed entry never matches, so the node falls to its next entry.
 ### `packages/common/src/identity.ts::Role`
 
 How a route reaches a parsed node, the second half of its registry key. `aliasContent` is the content of an alias envelope that shares the envelope's parser node, and so its descendant index; every other route, an alias content that is its own parser node included, reaches a node as `node`. The role comes from the route, never from what the registry already holds.

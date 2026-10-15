@@ -2061,12 +2061,23 @@ parent is `seated`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::KindFacts`
 
-The grammar-wide facts every node constructor reads about its kind: the
-parser's kind entries and the direct arms of the declared supertypes
-(`supertypeArmsOf`).
-`assemble` builds one per grammar and hands the same object to each
-construction, so a fact added here reaches every node without another
-parameter at each site.
+The grammar-wide facts every node constructor reads about its kind: the parser's kind entries, the direct arms of the declared supertypes (`supertypeArmsOf`) and the kind's provenance. `assemble` builds one per grammar and hands the same object to each construction, so a fact added here reaches every node without another parameter at each site.
+
+### `packages/codegen/src/compiler/model/node-map.ts::provenanceOf`
+
+The kind's `renamedFrom`, `splitFrom` and `variantOf`, read from the construction's `KindFacts.provenance` as own keys, so a kind named like an `Object.prototype` member is never mistaken for one.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.renamedFrom`
+
+The base kind grammar bindings renamed into this kind, or `undefined`. It is read from `KindFacts.provenance` once, when the node is built, and is the node model's only record of the rename.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.splitFrom`
+
+The kind a bindings split cloned this kind from, or `undefined`. A split clone mints its own rule ids, so the split never reaches the rule catalog; the node carries it instead, read from `KindFacts.provenance` once when the node is built.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.variantOf`
+
+The kind this kind is an owned variant of (`ownedVariants`), or `undefined`, read from `KindFacts.provenance` once when the node is built.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.seated`
 
@@ -3647,7 +3658,9 @@ separator or flank the kind whose rule carries the multiplicity, the slot
 the rule id maps to, the label, the side and the resolved default; for a
 token seam the kind whose seq holds the choice, the token's kind name as
 the slot, the field name (`<token>_<side>`) as the address, the declared
-or default label, and side `seam`. Rule order is what the depth walk
+or default label, and side `seam`. A seam whose token is the kind's own
+display is the kind's edge, and its site is stamped `kindEdge` here, where
+that is known. Rule order is what the depth walk
 (`validateIndentDepth`, `DEPTH_SITES`) relies on: a flank's start precedes
 its array's sites and its end follows them. One entry per kind × transport
 field; two seams of one token in one kind resolving to different defaults
@@ -3657,7 +3670,8 @@ A kind edge that opens or closes with a choice of two or more tokens
 (`edgeLiterals`), where the member beside the seam is a slot with no
 multiplicity, also gets one arm site per token: address `<token>_<side>`, the
 edge's own arms and default, and `edgeArm` naming the edge's address as its
-parent and the token. A face on one token then resolves that arm alone, and the
+parent, the token, and the token's kind id (stamped where the render rules
+recorded the arm's default from the token's catalog entry). A face on one token then resolves that arm alone, and the
 edge's own address reaches the edge and every arm. An edge whose first or last
 member is optional or a run has no slot to read an arm from and keeps its single
 site.
@@ -4159,7 +4173,7 @@ site admits.
 `origin` being `PreferenceOrigin` (`site-addresses.ts`, `Exclude<SeamOrigin,
 'fallback'>`) — `'preference'` for a kind- or supertype-scoped declaration,
 `'literal-default'` for a wildcard (`_`-scope) one, decided once in
-`resolveBindings` from the winning entry's address (a leading `_` segment
+`resolveLabels` from the winning entry's address (a leading `_` segment
 vs. a named one) and never re-derived downstream. `#resolve` adds the
 third state, `'fallback'`, when no declaration reaches the site at all —
 the full three-value type, `SeamOrigin`, is defined once at the types
@@ -4182,7 +4196,7 @@ not of any declaration.
 
 A fourth origin, `'cascade'`, marks a site whose arm came from its edge
 token's `_`-scope face through the cascade path rather than from a row
-naming the site; `resolveBindings` decides it, and `render-options-rs.ts::seamStrength`
+naming the site; `resolveLabels` decides it, and `render-options-rs.ts::seamStrength`
 turns it into the middle strength tier the writer honours.
 
 A seam site that states its own default (`SeamArms.defaultArm`) uses it instead of the grammar's. There is no positional fallback: a site whose arms exclude the grammar default and that states none stops codegen with the address and its arms.
@@ -4392,7 +4406,7 @@ edge of a kind that closes with the literal it opened with (closure pipes,
 quotes, backticks). `matchAddress` is the same match with the flag dropped.
 
 An edge over a set of tokens takes a cascaded face only when every token has
-one and they are the same arm: `resolveBindings` records, per cascaded site,
+one and they are the same arm: `resolveLabels` records, per cascaded site,
 the arm each token's most specific cascading row gave it, and applies the
 face only if all tokens are covered and agree. A disagreeing or partly
 undeclared set takes no cascade and stays at its fallback. The rows of one
@@ -4433,7 +4447,7 @@ arms of its pure choice), so an address naming a variant parent reaches the
 sites on its variants exactly as one naming `_expression` reaches expressions;
 a polymorph parent is not transparent at read, which is why it is absent from
 `buildSupertypeMembersMap`. Built once per caller and threaded into
-`matchAddress` and `resolveBindings` rather than derived inside them, so the
+`matchAddress` and `resolveLabels` rather than derived inside them, so the
 membership has one source.
 
 ### `packages/codegen/src/compiler/model/layout-kinds.ts::layoutSymbolsOf`
@@ -4519,7 +4533,7 @@ The line ending a render spells breaks with when none is set: `_newline`'s canon
 
 The grammar's declared render indent unit, checked against `indentChars`. A grammar with indent characters must declare `indent` in its `options:` block, and a missing declaration throws naming the grammar; the unit must be non-empty and made only of those characters. A grammar with none (regex) must not declare one, and gets the empty unit. The unit is the one source of the render default: `renderOptionsRs` emits it into `defaults()`, and the runtime's format extractor compares parsed sources against it.
 
-### `packages/codegen/src/compiler/model/site-addresses.ts::resolveBindings`
+### `packages/codegen/src/compiler/model/site-addresses.ts::resolveLabels`
 
 Each site's arm, with the narrowest address that reaches it winning.
 Specificity is the site set rather than the path length, because two addresses
@@ -4559,7 +4573,7 @@ kind in the `options:` block and an address written `(kind)/…` reach the same
 site. Parsing stays literal, because a label's head is virtual and must not be
 resolved against the grammar.
 
-### `packages/codegen/src/compiler/model/site-addresses.ts::resolveBindings`
+### `packages/codegen/src/compiler/model/site-addresses.ts::resolveLabels`
 
 Each site's arm, with the narrowest binding that reaches it winning (see
 `addressSegments` above for the head-segment normalization specificity
@@ -4577,7 +4591,7 @@ other caller, only needs the arm and drops `origin`.
 Each site's arm as the `options:` block declares it, keyed by kind and address —
 the form the default resolver already looks sites up by. The map's value is
 `DeclaredArm` (`{ arm, origin }`), `origin` carried through unchanged from
-`resolveBindings`.
+`resolveLabels`.
 
 It runs between the two render-rule passes, because that is the first point
 where the sites an address names exist: they are read off the built rules, not

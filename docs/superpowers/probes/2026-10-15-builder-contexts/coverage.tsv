@@ -1,0 +1,64 @@
+grammar	set	entry	refused	contexts	where
+typescript	control	control	accepted		
+typescript	early-error	this parameter not first	accepted		
+typescript	early-error	readonly on a method	accepted		
+typescript	early-error	static constructor	accepted		
+typescript	early-error	async constructor	accepted		
+typescript	early-error	generator constructor	accepted		
+typescript	early-error	constructor as a getter	accepted		
+typescript	early-error	property named constructor	accepted		
+typescript	early-error	parameter property outside a constructor	accepted		
+typescript	early-error	accessibility modifier on a function parameter	refused	Visibility	program (root)
+typescript	early-error	abstract member outside an abstract class	refused	Abstract,Abstract	class_declaration.body,program (root)
+typescript	early-error	type-only import with default and named	accepted		
+typescript	early-error	readonly on a non-array type	accepted		
+typescript	early-error	computed enum member	accepted		
+typescript	early-error	legacy octal literal	accepted		
+typescript	early-error	octal escape in a string	accepted		
+typescript	early-error	duplicate regex flag	accepted		
+typescript	early-error	unknown regex flag	accepted		
+typescript	early-error	await outside an async function	accepted		
+typescript	early-error	yield outside a generator	refused	Yield,Yield	function_declaration.body,program (root)
+typescript	early-error	break outside a loop	refused	Break,Break	function_declaration.body,program (root)
+typescript	early-error	continue outside a loop	refused	Continue,Continue	function_declaration.body,program (root)
+typescript	early-error	continue to a non-loop label	refused	Continue,Continue	function_declaration.body,program (root)
+typescript	early-error	break to an undefined label	accepted		
+typescript	early-error	return at the top level	refused	Return	program (root)
+typescript	early-error	new.target at the top level	refused	NewTarget	program (root)
+typescript	early-error	delete of an identifier (strict)	accepted		
+typescript	early-error	with statement (strict)	accepted		
+typescript	early-error	let named let	accepted		
+typescript	early-error	labelled function declaration (strict)	accepted		
+typescript	early-error	duplicate arrow parameters	accepted		
+typescript	corpus	Ambient declarations	refused	Break|Continue|Return at program (root)	compiler: TS1005 '(' expected.
+typescript	corpus	Ambient declarations with for-let	refused	Break|Continue|Return at program (root)	compiler: TS1005 '(' expected.
+python	control	control	accepted		
+python	early-error	duplicate parameter names	accepted		
+python	early-error	return outside a function	refused	Return	module (root)
+python	early-error	await outside a function	refused	Await	module (root)
+python	early-error	nonlocal at module level	refused	Nonlocal	module (root)
+python	early-error	break outside a loop	refused	Break	module (root)
+python	early-error	yield outside a function	refused	Yield	module (root)
+python	early-error	starred expression alone	accepted		
+python	corpus	Await expressions	refused	Return|Await at module (root)	compiler: SyntaxError: 'await' outside function
+python	corpus	Tuples with yield	refused	Yield at module (root)	compiler: SyntaxError: invalid syntax
+python	corpus	Format strings	refused	Yield at module (root)	compiler: SyntaxError: 'yield' outside function
+python	corpus	Multiple match patterns	refused	Return at module (root)	compiler: SyntaxError: 'return' outside function
+python	corpus	Walrus match (Issue #150)	refused	Return at module (root)	compiler: SyntaxError: 'return' outside function
+python	corpus	Return statements	refused	Return at module (root)	compiler: SyntaxError: 'return' outside function
+rust	control	control	accepted		
+rust	early-error	self parameter on a free function	refused	Receiver	source_file (root)
+rust	early-error	const and async together	accepted		
+rust	early-error	visibility on an enum variant	refused	Visibility	enum_variant_list.elements
+rust	early-error	visibility on a trait item	refused	Visibility	trait_item.body
+rust	early-error	visibility on a trait impl item	accepted		
+rust	early-error	C variadic outside an extern block	refused	Variadic	source_file (root)
+rust	early-error	break outside a loop	accepted		
+rust	corpus	Await expression	refused	Await at source_file (root)	compiler: error: expected one of `!` or `::`, found `.`
+rust	corpus	Function declarations	refused	Receiver at source_file (root)	compiler: error[E0428]: the name `foo` is defined multiple times | error[E0428]: the name `foo` is defined multiple times | error[E0428]: the name `foo` is defined multiple times | error[E0428]: the name `foo` is defined multiple times | error[E0428]: the name `foo` is defined multiple times | error: `self` p
+rust	corpus	Functions with precise capture syntax	refused	Receiver at source_file (root)	compiler: error: `self` parameter is only allowed in associated functions | error[E0277]: `()` is not an iterator
+rust	corpus	Functions with empty precise capture syntax	refused	Receiver at source_file (root)	compiler: error: `self` parameter is only allowed in associated functions | error[E0277]: `()` is not an iterator
+rust	corpus	Extern function declarations	refused	Variadic at source_file (root)	compiler: error: expected parameter name, found `*` | error: missing pattern for `...` argument | error: functions with a C variable argument list must be unsafe | error: missing pattern for `...` argument | error[E0599]: no method named `as_va_list` found for struct `VaList<'a>` in the current scope | error[
+rust	corpus	Let-else Statements	refused	Continue|Return|Await at source_file (root)	compiler: error: expected item, found keyword `let`
+rust	corpus	Generic functions	refused	Receiver at source_file (root)	compiler: error: `self` parameter is only allowed in associated functions | error[E0425]: cannot find type `Text` in this scope | error[E0425]: cannot find type `Range` in this scope | error[E0411]: cannot find type `Self` in this scope
+rust	corpus	Where clauses	refused	Receiver at source_file (root)	compiler: error: `self` parameter is only allowed in associated functions | error[E0261]: use of undeclared lifetime name `'c` | error[E0261]: use of undeclared lifetime name `'c` | error[E0261]: use of undeclared lifetime name `'b` | error[E0425]: cannot find type `Pat` in this scope | error[E0425]: cannot f

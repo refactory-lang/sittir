@@ -673,8 +673,8 @@ export function wrapForInStatement(data: T.ForInStatement, tree: TreeHandle): T.
 		await() {
 			return this._await;
 		},
-		forHeader() {
-			return hydrateSlot<T.ForHeader>(this, '_for_header', tree);
+		header() {
+			return hydrateSlot<T.ForHeader>(this, '_header', tree);
 		},
 		body() {
 			return hydrateSlot<T.Statement>(this, '_body', tree);
@@ -682,8 +682,8 @@ export function wrapForInStatement(data: T.ForInStatement, tree: TreeHandle): T.
 		$with: {
 			await: (v: NonNullable<T.ForInStatement['_await']>) =>
 				rebuilt(node, handle, () => wrapForInStatement({ ...$edited(data), _await: v }, tree)),
-			forHeader: (v: NonNullable<T.ForInStatement['_for_header']>) =>
-				rebuilt(node, handle, () => wrapForInStatement({ ...$edited(data), _for_header: v }, tree)),
+			header: (v: NonNullable<T.ForInStatement['_header']>) =>
+				rebuilt(node, handle, () => wrapForInStatement({ ...$edited(data), _header: v }, tree)),
 			body: (v: NonNullable<T.ForInStatement['_body']>) =>
 				rebuilt(node, handle, () => wrapForInStatement({ ...$edited(data), _body: v }, tree))
 		},
@@ -6110,15 +6110,10 @@ export function wrapLiteralTypeNegativeNumber(
 	const node = {
 		...data,
 		$type: TSKindId.LiteralTypeNegativeNumber as const,
-		operator() {
-			return this._operator;
-		},
 		argument() {
 			return hydrateSlot<T.Number>(this, '_argument', tree);
 		},
 		$with: {
-			operator: (v: NonNullable<T.LiteralTypeNegativeNumber['_operator']>) =>
-				rebuilt(node, handle, () => wrapLiteralTypeNegativeNumber({ ...$edited(data), _operator: v }, tree)),
 			argument: (v: NonNullable<T.LiteralTypeNegativeNumber['_argument']>) =>
 				rebuilt(node, handle, () => wrapLiteralTypeNegativeNumber({ ...$edited(data), _argument: v }, tree))
 		},

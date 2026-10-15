@@ -19,7 +19,7 @@ import type { RenderRule, Rule, RuleSeparator, SeqRule } from '../types/rule.ts'
 import { fuseHeadRepeatLists } from '../dsl/rule-transforms.ts';
 import { selfReferentialFoldOf, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import { runToFixpoint } from './fixpoint.ts';
-import { attributeBuilder, buildOptional, overlaySeq } from '../dsl/builders.ts';
+import { attributeBuilder, buildOptional, carrySeqFacts } from '../dsl/builders.ts';
 import { withId, withKindFacts, withAttrsFrom, sharedArmAttrs, absorbIds, structuralKey } from '../dsl/rule-attrs.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { reservedWordsetsOf, withReservedWordsets } from '../dsl/rule-metadata.ts';
@@ -57,7 +57,7 @@ function construct(node: Input): Output {
 		case SEQ: {
 			const members = node.members.map(rebuild);
 			const rebuilt: SeqRule<'normalize'> = { ...node, members };
-			return overlaySeq(rebuilt, b.seq(...members));
+			return carrySeqFacts(rebuilt, b.seq(...members));
 		}
 		case CHOICE:
 			return { ...node, ...b.choice(...node.members.map(rebuild)) };

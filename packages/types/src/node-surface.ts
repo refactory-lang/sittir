@@ -70,6 +70,8 @@ export type NarrowTo<T, D extends number> = T extends number
 export type Remap<T, K extends PropertyKey> = { [P in keyof T as P extends K ? never : P]: T[P] };
 
 type HintsOf<Self> = Self extends { readonly __slotHints__?: infer H } ? NonNullable<H> : never;
+/** The vocabulary flags a node type's kind declares (its `__flags__`), or `never` for a kind with none. */
+export type FlagsHintOf<Self> = Self extends { readonly __flags__?: infer F } ? NonNullable<F> : never;
 export type SlotHintsOf<Self> = Remap<HintsOf<Self>, '$listView' | '$listSlots' | '$flat'>;
 type FlatOf<Self> = HintsOf<Self> extends { readonly $flat: infer F } ? F : never;
 type FlatNames<F> = F extends FlatHint<string, unknown, infer Keys, boolean> ? keyof Keys & string : never;
@@ -280,6 +282,7 @@ type SurfaceOf<N, ByChild> = Storage<N> &
 	ListPart<N, ByChild> & {
 		readonly $source?: AnyUntypedNode['$source'];
 		readonly __slotHints__?: HintsOf<N>;
+		readonly __flags__?: FlagsHintOf<N>;
 	};
 export type BoundOf<N, ByBound> = SurfaceOf<N, ByBound>;
 export type ParsedOf<N, ByParsed> = SurfaceOf<N, ByParsed>;

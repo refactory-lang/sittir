@@ -155,7 +155,7 @@ export default sittirGrammar(base, {
 			'"?"/before': preference('tight')
 		},
 
-		_bindings: {
+		_labels: {
 			'_/terminator:': 'statements/terminator',
 			'_/automatic_semicolon:': 'statements/terminator',
 			'string/variant': 'quotes/style',
@@ -193,6 +193,7 @@ export default sittirGrammar(base, {
 			1: variant('block')
 		},
 		literal_type: { 0: variant('negative_number') },
+		_number: { '0/0': { type: 'STRING', value: '-' } },
 		number: {
 			'1/0/0': field('integer'),
 			'1/0/2': field('fraction'),
@@ -555,6 +556,8 @@ export default sittirGrammar(base, {
 		export_statement_namespace_export: { 3: field('name'), 4: field('terminator') },
 		export_statement_equals_export: { 3: field('terminator') },
 
+		for_in_statement: { 2: field('header') },
+
 		_for_header: {
 			'1/0': variant('lhs'),
 			'1/1': variant('var_kind'),
@@ -640,7 +643,7 @@ export default sittirGrammar(base, {
 				prec(
 					'member',
 					seq(
-						field('object', choice($.identifier, $.super, alias($.decorator_member_expression, $.member_expression))),
+						field('object', choice($.identifier, $.super, $.decorator_member_expression)),
 						'.',
 						field('property', alias($.identifier, $.property_identifier))
 					)

@@ -12,7 +12,9 @@ interface QueryTestView extends Iterable<unknown> {
 	where(condition: (slots: NameRecorder) => Cond): QueryTestView;
 }
 
-function queryContext(querySlots: QuerySlots) {
+const IDENTITY: QueryHooks['membership'] = { isMember: (kind, type) => kind === type, membersOf: (kind) => [kind] };
+
+function queryContext(querySlots: QuerySlots, membership = IDENTITY) {
 	const walks: DescendantWalk[] = [];
 	const node = { $type: 0, $_layout: { at: { $treeHandle: 1, $span: { start: 0, end: 0 }, $type: 0 } } } as const;
 	const token = mintTreeToken(1);
@@ -28,7 +30,8 @@ function queryContext(querySlots: QuerySlots) {
 	holdTreeOn(node, token);
 	const hooks: QueryHooks = {
 		querySlots,
-		membership: { isMember: (kind, type) => kind === type, membersOf: (kind) => [kind] },
+		queryFlags: {},
+		membership,
 		kindName: (kind) => `kind_${kind}`,
 		wrap: (data) => data
 	};
@@ -36,27 +39,27 @@ function queryContext(querySlots: QuerySlots) {
 	return { view: facet.$descendants, walks };
 }
 
-function nameSlots(field: string, kind = 42): QuerySlots {
-	return Object.freeze({ [kind]: [['name', { fields: [field], kinds: [] }]] });
+function nameSlots(slot: number, kind = 42): QuerySlots {
+	return Object.freeze({ [kind]: [['name', slot]] });
 }
 
 describe('compiled query cache', () => {
 	it.each([
-		['field_a', 'field_b'],
-		['field_b', 'field_a']
-	])('keeps one callback scoped to its grammar routes (%s then %s)', (first, second) => {
+		[0, 1],
+		[1, 0]
+	])('keeps one callback scoped to its grammar\'s slot numbers (%s then %s)', (first, second) => {
 		const condition = vi.fn((slots: NameRecorder) => slots.name.eq('target'));
-		for (const field of [first, second]) {
-			const context = queryContext(nameSlots(field));
+		for (const slot of [first, second]) {
+			const context = queryContext(nameSlots(slot));
 			expect([...context.view.ofType(42).where(condition)]).toEqual([]);
-			expect(context.walks[0]?.plan).toEqual({ op: 'eq', text: 'target', fields: [field], kinds: [] });
+			expect(context.walks[0]?.plan).toEqual({ op: 'eq', text: 'target', slots: { 42: slot } });
 		}
 		expect(condition).toHaveBeenCalledTimes(2);
 	});
 
 	it('refuses a slot missing in another grammar after caching a valid callback', () => {
 		const condition = (slots: NameRecorder) => slots.name.eq('target');
-		const valid = queryContext(nameSlots('field_a'));
+		const valid = queryContext(nameSlots(0));
 		const invalid = queryContext(Object.freeze({ 42: [] }));
 		valid.view.ofType(42).where(condition);
 		expect(() => invalid.view.ofType(42).where(condition)).toThrow('name is not a slot of kind_42');
@@ -67,18 +70,28 @@ describe('compiled query cache', () => {
 		const condition = (slots: NameRecorder) => slots.name.eq('target');
 		const invalid = queryContext(Object.freeze({ 42: [] }));
 		expect(() => invalid.view.ofType(42).where(condition)).toThrow('name is not a slot of kind_42');
-		const valid = queryContext(nameSlots('field_a'));
+		const valid = queryContext(nameSlots(0));
 		expect([...valid.view.ofType(42).where(condition)]).toEqual([]);
-		expect(valid.walks[0]?.plan).toEqual({ op: 'eq', text: 'target', fields: ['field_a'], kinds: [] });
+		expect(valid.walks[0]?.plan).toEqual({ op: 'eq', text: 'target', slots: { 42: 0 } });
 	});
 
 	it('reuses a compiled plan across contexts sharing a query-slot table', () => {
-		const slots = nameSlots('shared');
+		const slots = nameSlots(2);
 		const condition = vi.fn((recorder: NameRecorder) => recorder.name.eq('target'));
 		for (const context of [queryContext(slots), queryContext(slots)]) {
 			expect([...context.view.ofType(42).where(condition)]).toEqual([]);
-			expect(context.walks[0]?.plan).toEqual({ op: 'eq', text: 'target', fields: ['shared'], kinds: [] });
+			expect(context.walks[0]?.plan).toEqual({ op: 'eq', text: 'target', slots: { 42: 2 } });
 		}
 		expect(condition).toHaveBeenCalledTimes(1);
+	});
+
+	it('pushes one plan down for a kind whose members number the slot apart, each member under its own number', () => {
+		const members: QueryHooks['membership'] = {
+			isMember: (kind, type) => kind === type || (kind === 40 && (type === 41 || type === 42)),
+			membersOf: (kind) => (kind === 40 ? [41, 42] : [kind])
+		};
+		const context = queryContext(Object.freeze({ 41: [['name', 0]], 42: [['other', 0], ['name', 1]] }), members);
+		expect([...context.view.ofType(40).where((slots) => slots.name.eq('target'))]).toEqual([]);
+		expect(context.walks[0]).toMatchObject({ kinds: [41, 42], plan: { op: 'eq', text: 'target', slots: { 41: 0, 42: 1 } } });
 	});
 });

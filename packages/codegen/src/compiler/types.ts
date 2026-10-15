@@ -20,6 +20,12 @@ export type RulePathSegment =
 	| { readonly edge: 'members'; readonly index: number }
 	| { readonly edge: 'forms'; readonly index: number };
 
+export interface KindProvenance {
+	readonly renamedFrom?: Readonly<Record<string, string>>;
+	readonly splitFrom?: Readonly<Record<string, string>>;
+	readonly variantOf?: Readonly<Record<string, string>>;
+}
+
 export interface RuleCatalogEntry {
 	readonly id: RuleId;
 	readonly ownerKind: string;
@@ -140,6 +146,8 @@ export interface RawGrammar {
 	readonly bodyPatternZeroMatches?: readonly string[];
 	readonly desugarDivergences?: readonly DesugarDivergenceEvent[];
 	readonly derivationRecords?: DerivationRecords;
+	readonly renamedFrom?: Readonly<Record<string, string>>;
+	readonly splitFrom?: Readonly<Record<string, string>>;
 }
 
 export interface StageEvaluation<G = RawGrammar> {
@@ -225,6 +233,7 @@ export interface LinkedGrammar {
 	readonly relaxedLiterals?: readonly string[];
 	readonly relaxedDisplayLiterals?: Readonly<Record<string, readonly string[]>>;
 	readonly fileTypes: readonly string[];
+	readonly provenance?: KindProvenance;
 	readonly references: SymbolRef[];
 	readonly derivations: DerivationLog;
 	readonly displayUnions?: DisplayUnions;
@@ -260,6 +269,7 @@ export interface NormalizedGrammar {
 	readonly relaxedLiterals?: readonly string[];
 	readonly relaxedDisplayLiterals?: Readonly<Record<string, readonly string[]>>;
 	readonly fileTypes: readonly string[];
+	readonly provenance?: KindProvenance;
 	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
 	readonly nodelessExtrasRun?: RegExp;
@@ -296,6 +306,7 @@ export interface SimplifiedGrammar {
 	readonly relaxedLiterals?: readonly string[];
 	readonly relaxedDisplayLiterals?: Readonly<Record<string, readonly string[]>>;
 	readonly fileTypes: readonly string[];
+	readonly provenance?: KindProvenance;
 	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
 	readonly nodelessExtrasRun?: RegExp;
@@ -339,6 +350,7 @@ export interface NodeMap {
 	readonly relaxedLiterals?: readonly string[];
 	readonly relaxedDisplayLiterals?: Readonly<Record<string, readonly string[]>>;
 	readonly fileTypes: readonly string[];
+	readonly provenance?: KindProvenance;
 	readonly externals?: readonly RuleListEntry[];
 	readonly extras?: readonly RuleListEntry[];
 	readonly nodelessExtrasRun?: RegExp;

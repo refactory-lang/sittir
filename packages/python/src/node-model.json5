@@ -611,7 +611,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "suite": {
+      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2502,6 +2502,7 @@
         "compoundStatement"
       ],
       "hidden": true,
+      "variantOf": "_statement",
       "transparent": true,
       "subtypes": [
         "class_definition",
@@ -3329,6 +3330,56 @@
         "parenthesized_list_splat",
         "keyword_argument"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression",
+            "list_splat",
+            "dictionary_splat",
+            "parenthesized_list_splat",
+            "keyword_argument"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "list_splat",
+              "parseKind": "list_splat"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "dictionary_splat",
+              "parseKind": "dictionary_splat"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "parenthesized_list_splat",
+              "parseKind": "parenthesized_list_splat"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "keyword_argument",
+              "parseKind": "keyword_argument"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -3412,6 +3463,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "expression",
@@ -3570,6 +3622,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "expression",
@@ -3633,6 +3686,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "assignment",
       "slots": [
         {
           "name": "left",
@@ -3744,6 +3798,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "assignment",
       "slots": [
         {
           "name": "left",
@@ -3820,6 +3875,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "assignment",
       "slots": [
         {
           "name": "left",
@@ -4245,6 +4301,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "expression",
@@ -4363,6 +4420,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "left",
@@ -4555,6 +4613,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "left",
@@ -4654,6 +4713,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "isParameterless": true,
       "stampExpression": "\"break\" as const",
       "text": "break",
@@ -4690,6 +4750,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "function",
@@ -4773,6 +4834,7 @@
         "caseAsPattern"
       ],
       "hidden": false,
+      "variantOf": "case_pattern",
       "slots": [
         {
           "name": "case_pattern",
@@ -4924,6 +4986,7 @@
         "caseListPattern"
       ],
       "hidden": false,
+      "variantOf": "_simple_pattern",
       "slots": [
         {
           "name": "elements",
@@ -5073,6 +5136,28 @@
       "elementKinds": [
         "case_pattern"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "case_pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "case_pattern",
+              "parseKind": "case_pattern"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -5112,6 +5197,7 @@
         "caseTuplePattern"
       ],
       "hidden": false,
+      "variantOf": "_simple_pattern",
       "slots": [
         {
           "name": "elements",
@@ -5382,6 +5468,7 @@
         "classPattern"
       ],
       "hidden": false,
+      "variantOf": "_simple_pattern",
       "slots": [
         {
           "name": "name",
@@ -5454,6 +5541,49 @@
         "yield",
         "list_splat",
         "parenthesized_list_splat"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression",
+            "yield",
+            "list_splat",
+            "parenthesized_list_splat"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "yield",
+              "parseKind": "yield"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "list_splat",
+              "parseKind": "list_splat"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "parenthesized_list_splat",
+              "parseKind": "parenthesized_list_splat"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -5618,6 +5748,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "left",
@@ -5797,6 +5928,7 @@
         "complexPattern"
       ],
       "hidden": false,
+      "variantOf": "_simple_pattern",
       "slots": [
         {
           "name": "sign",
@@ -6011,6 +6143,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "body",
@@ -6090,6 +6223,7 @@
         "constrainedType"
       ],
       "hidden": false,
+      "variantOf": "type",
       "slots": [
         {
           "name": "base_type",
@@ -6164,6 +6298,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "isParameterless": true,
       "stampExpression": "\"continue\" as const",
       "text": "continue",
@@ -6217,6 +6352,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_compound_statement",
       "slots": [
         {
           "name": "decorator",
@@ -6386,6 +6522,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "parameter",
       "slots": [
         {
           "name": "name",
@@ -6467,6 +6604,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "expressions",
@@ -6562,6 +6700,7 @@
         "dictPattern"
       ],
       "hidden": false,
+      "variantOf": "_simple_pattern",
       "slots": [
         {
           "name": "elements",
@@ -6618,6 +6757,35 @@
         "key_value_pattern",
         "splat_pattern"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "key_value_pattern",
+            "splat_pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "key_value_pattern",
+              "parseKind": "key_value_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "splat_pattern",
+              "parseKind": "splat_pattern"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -6648,6 +6816,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "elements",
@@ -6748,6 +6917,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "body",
@@ -6818,6 +6988,35 @@
       "elementKinds": [
         "pair",
         "dictionary_splat"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "pair",
+            "dictionary_splat"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "pair",
+              "parseKind": "pair"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "dictionary_splat",
+              "parseKind": "dictionary_splat"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -7160,6 +7359,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "isParameterless": true,
       "stampExpression": "\"...\" as const",
       "text": "...",
@@ -7373,6 +7573,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -7449,6 +7650,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -7525,6 +7727,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -7601,6 +7804,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -7677,6 +7881,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -7753,6 +7958,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -7829,6 +8035,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "escape_sequence",
       "slots": [
         {
           "name": "content",
@@ -7940,9 +8147,9 @@
           ]
         },
         {
-          "name": "suite",
-          "propertyName": "suite",
-          "paramName": "suite",
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -7964,7 +8171,7 @@
       "factoryFields": [
         "group",
         "exception",
-        "suite"
+        "body"
       ]
     },
     {
@@ -7981,6 +8188,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "except_clause",
       "slots": [
         {
           "name": "content",
@@ -8035,6 +8243,7 @@
         "exceptClauseExceptionAs"
       ],
       "hidden": false,
+      "variantOf": "except_clause_exception",
       "slots": [
         {
           "name": "value",
@@ -8098,6 +8307,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "except_clause_exception",
       "slots": [
         {
           "name": "value",
@@ -8162,6 +8372,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "code",
@@ -8256,6 +8467,28 @@
       "elementKinds": [
         "expression"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -8328,6 +8561,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "content",
@@ -8469,6 +8703,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "expression_statement",
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -8476,6 +8711,28 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "expression"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -8752,6 +9009,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "float",
       "slots": [
         {
           "name": "integer",
@@ -8930,6 +9188,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "float",
       "slots": [
         {
           "name": "integer",
@@ -9108,6 +9367,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "float",
       "slots": [
         {
           "name": "integer",
@@ -9363,6 +9623,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_compound_statement",
       "slots": [
         {
           "name": "async",
@@ -9757,6 +10018,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "content",
@@ -9882,6 +10144,7 @@
         "genericType"
       ],
       "hidden": false,
+      "variantOf": "type",
       "slots": [
         {
           "name": "name",
@@ -9956,6 +10219,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "names",
@@ -10171,6 +10435,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_compound_statement",
       "slots": [
         {
           "name": "condition",
@@ -10263,6 +10528,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "module_name",
@@ -10367,6 +10633,35 @@
         "dotted_name",
         "aliased_import"
       ],
+      "slots": [
+        {
+          "name": "name",
+          "propertyName": "names",
+          "paramName": "names",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "dotted_name",
+            "aliased_import"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "dotted_name",
+              "parseKind": "dotted_name"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "aliased_import",
+              "parseKind": "aliased_import"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "name"
@@ -10406,6 +10701,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "names",
@@ -10510,6 +10806,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer",
       "slots": [
         {
           "name": "prefix",
@@ -10626,6 +10923,7 @@
       "annotations": {
         "tokenForm": true
       },
+      "variantOf": "integer",
       "transparent": true,
       "subtypes": [
         "integer_decimal_imaginary",
@@ -10668,6 +10966,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer_decimal",
       "leafPattern": "/^(?:(?:(?:[0-9]+_?))+(?:[jJ]))$/u",
       "oneSurface": true,
       "factoryShape": "text"
@@ -10707,6 +11006,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer_decimal",
       "leafPattern": "/^(?:(?:(?:[0-9]+_?))+(?:[Ll]))$/u",
       "oneSurface": true,
       "factoryShape": "text"
@@ -10746,6 +11046,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer_decimal",
       "pattern": "[0-9]+_?",
       "leafPattern": "/^(?:(?:(?:[0-9]+_?))+)$/u",
       "oneSurface": true,
@@ -10783,6 +11084,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer",
       "slots": [
         {
           "name": "prefix",
@@ -10902,6 +11204,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "integer",
       "slots": [
         {
           "name": "prefix",
@@ -11348,6 +11651,7 @@
         "keywordPattern"
       ],
       "hidden": false,
+      "variantOf": "case_pattern",
       "slots": [
         {
           "name": "name",
@@ -11515,6 +11819,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "parameter",
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
       "text": "*",
@@ -11537,6 +11842,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "parameters",
@@ -11660,6 +11966,7 @@
         "lambdaWithinForInClause"
       ],
       "hidden": false,
+      "variantOf": "_expression_within_for_in_clause",
       "slots": [
         {
           "name": "parameters",
@@ -11763,6 +12070,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "line_continuation",
       "leafPattern": "/^(?:\\\\(?:\\r)?\\n)$/u",
       "oneSurface": true,
       "factoryShape": "text"
@@ -11782,6 +12090,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "line_continuation",
       "isParameterless": true,
       "stampExpression": "\"\\\\\\u0000\" as const",
       "text": "\\\u0000",
@@ -11809,6 +12118,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "collection_elements",
@@ -11909,6 +12219,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "body",
@@ -11973,6 +12284,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "pattern",
       "slots": [
         {
           "name": "patterns",
@@ -12032,6 +12344,28 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "case_pattern"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "case_pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "case_pattern",
+              "parseKind": "case_pattern"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -12360,6 +12694,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "match_block",
       "slots": [
         {
           "name": "alternative",
@@ -12408,6 +12743,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "match_block",
       "isParameterless": true,
       "slots": [
         {
@@ -12471,6 +12807,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_compound_statement",
       "slots": [
         {
           "name": "subjects",
@@ -12533,6 +12870,7 @@
         "memberType"
       ],
       "hidden": false,
+      "variantOf": "type",
       "slots": [
         {
           "name": "base_type",
@@ -12634,6 +12972,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "name",
@@ -12773,6 +13112,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "names",
@@ -12842,6 +13182,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "expression",
       "slots": [
         {
           "name": "argument",
@@ -13083,6 +13424,28 @@
       "elementKinds": [
         "parameter"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "parameter"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "parameter",
+              "parseKind": "parameter"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -13125,6 +13488,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "expression",
@@ -13395,6 +13759,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "isParameterless": true,
       "stampExpression": "\"pass\" as const",
       "text": "pass",
@@ -13438,6 +13803,28 @@
       "elementKinds": [
         "pattern"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "pattern",
+              "parseKind": "pattern"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -13470,6 +13857,28 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "pattern"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "pattern",
+              "parseKind": "pattern"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -13556,6 +13965,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "parameter",
       "isParameterless": true,
       "stampExpression": "\"/\" as const",
       "text": "/",
@@ -13624,6 +14034,28 @@
       "elementKinds": [
         "expression"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -13690,6 +14122,7 @@
         "printChevronArguments"
       ],
       "hidden": false,
+      "variantOf": "print_statement_chevron",
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "mandatory",
@@ -13697,6 +14130,28 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "expression"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -13780,6 +14235,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "content",
@@ -13878,6 +14334,7 @@
         "printStatementChevron"
       ],
       "hidden": false,
+      "variantOf": "print_statement",
       "slots": [
         {
           "name": "chevron",
@@ -13942,6 +14399,7 @@
         "printStatementPlain"
       ],
       "hidden": false,
+      "variantOf": "print_statement",
       "slots": [
         {
           "name": "print_arguments",
@@ -14048,6 +14506,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "expressions",
@@ -14205,6 +14664,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "expressions",
@@ -14320,6 +14780,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "collection_elements",
@@ -14420,6 +14881,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "body",
@@ -14482,6 +14944,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "_simple_pattern",
       "slots": [
         {
           "name": "sign",
@@ -14557,6 +15020,28 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "_simple_statement"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "_simple_statement"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "_simple_statement",
+              "parseKind": "_simple_statement"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -14929,6 +15414,7 @@
         "splatType"
       ],
       "hidden": false,
+      "variantOf": "type",
       "slots": [
         {
           "name": "operator",
@@ -15239,6 +15725,28 @@
       "elementKinds": [
         "expression"
       ],
+      "slots": [
+        {
+          "name": "subject",
+          "propertyName": "subjects",
+          "paramName": "subjects",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "subject"
@@ -15395,6 +15903,35 @@
         "expression",
         "slice"
       ],
+      "slots": [
+        {
+          "name": "subscript",
+          "propertyName": "subscripts",
+          "paramName": "subscripts",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression",
+            "slice"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "slice",
+              "parseKind": "slice"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "subscript"
@@ -15472,6 +16009,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "_suite",
       "slots": [
         {
           "name": "block",
@@ -15524,6 +16062,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "_suite",
       "isParameterless": true,
       "slots": [
         {
@@ -15577,6 +16116,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "_suite",
       "slots": [
         {
           "name": "elements",
@@ -15753,6 +16293,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_compound_statement",
       "slots": [
         {
           "name": "body",
@@ -15864,6 +16405,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "elements",
@@ -15963,6 +16505,49 @@
         "yield",
         "list_splat",
         "parenthesized_list_splat"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression",
+            "yield",
+            "list_splat",
+            "parenthesized_list_splat"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "parseKind": "expression"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "yield",
+              "parseKind": "yield"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "list_splat",
+              "parseKind": "list_splat"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "parenthesized_list_splat",
+              "parseKind": "parenthesized_list_splat"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -16095,6 +16680,28 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "pattern"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "pattern",
+              "parseKind": "pattern"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -16255,6 +16862,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_simple_statement",
       "slots": [
         {
           "name": "left",
@@ -16440,6 +17048,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "parameter",
       "slots": [
         {
           "name": "name",
@@ -16525,6 +17134,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "parameter",
       "slots": [
         {
           "name": "name",
@@ -16609,6 +17219,28 @@
       "elementKinds": [
         "type"
       ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "type"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "type",
+              "parseKind": "type"
+            }
+          ]
+        }
+      ],
       "factoryShape": "elements",
       "factoryFields": [
         "item"
@@ -16692,6 +17324,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "primary_expression",
       "slots": [
         {
           "name": "operator",
@@ -16770,6 +17403,7 @@
         "unionPattern"
       ],
       "hidden": false,
+      "variantOf": "_simple_pattern",
       "slots": [
         {
           "name": "patterns",
@@ -16909,6 +17543,7 @@
         "unionType"
       ],
       "hidden": false,
+      "variantOf": "type",
       "slots": [
         {
           "name": "left",
@@ -16987,6 +17622,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_compound_statement",
       "slots": [
         {
           "name": "condition",
@@ -17066,6 +17702,7 @@
         "wildcardImport"
       ],
       "hidden": false,
+      "variantOf": "import_from_statement",
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
       "text": "*",
@@ -17082,6 +17719,7 @@
         "wildcardPattern"
       ],
       "hidden": false,
+      "variantOf": "_simple_pattern",
       "isParameterless": true,
       "stampExpression": "\"_\" as const",
       "text": "_",
@@ -17123,6 +17761,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "with_clause",
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
@@ -17130,6 +17769,28 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "with_item"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "with_item"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "with_item",
+              "parseKind": "with_item"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -17208,6 +17869,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "with_clause",
       "slots": [
         {
           "name": "with_items",
@@ -17311,6 +17973,28 @@
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "with_item"
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "propertyName": "items",
+          "paramName": "items",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "storage": "verbatim",
+          "kinds": [
+            "with_item"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "with_item",
+              "parseKind": "with_item"
+            }
+          ]
+        }
       ],
       "factoryShape": "elements",
       "factoryFields": [
@@ -17487,6 +18171,7 @@
         ]
       ],
       "hidden": false,
+      "variantOf": "_compound_statement",
       "slots": [
         {
           "name": "async",
@@ -17676,6 +18361,7 @@
         "hoisted": true
       },
       "seated": true,
+      "variantOf": "yield",
       "slots": [
         {
           "name": "expression",

@@ -610,7 +610,7 @@
                 {
                   "$type": 214,
                   "_await": false,
-                  "_for_header": {
+                  "_header": {
                     "$type": 438,
                     "_left": {
                       "$type": 259,
@@ -840,7 +840,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
-    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) terminator: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))))",
+    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) terminator: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))))",
     "wrappedText": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "wrappedOffset": 0
   },
@@ -1563,7 +1563,7 @@
             {
               "$type": 214,
               "_await": false,
-              "_for_header": {
+              "_header": {
                 "$type": 438,
                 "_left": {
                   "$type": 259,
@@ -1772,7 +1772,7 @@
     "pattern": "ambient_declaration",
     "edits": [],
     "expectedSourceOut": "declare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
-    "expectedReparseTree": "(ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon))))",
+    "expectedReparseTree": "(ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon))))",
     "wrappedText": "declare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "wrappedOffset": 0
   },
@@ -4800,7 +4800,7 @@
         {
           "$type": 214,
           "_await": false,
-          "_for_header": {
+          "_header": {
             "$type": 438,
             "_left": {
               "$type": 259,
@@ -5007,7 +5007,7 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
-    "expectedReparseTree": "(statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon))",
     "wrappedText": "{\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "wrappedOffset": 0
   },
@@ -6276,7 +6276,7 @@
           {
             "$type": 214,
             "_await": false,
-            "_for_header": {
+            "_header": {
               "$type": 438,
               "_left": {
                 "$type": 259,
@@ -6484,7 +6484,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
-    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))",
     "wrappedText": "module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "wrappedOffset": 0
   },
@@ -6823,7 +6823,7 @@
     "input": {
       "$type": 214,
       "_await": false,
-      "_for_header": {
+      "_header": {
         "$type": 438,
         "_left": {
           "$type": 259,
@@ -6862,7 +6862,7 @@
     "pattern": "for_in_statement",
     "edits": [],
     "expectedSourceOut": "for (x in null) { }\n",
-    "expectedReparseTree": "(for_in_statement (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon)))",
     "wrappedText": "for (x in null) { }\n",
     "wrappedOffset": 0
   },
@@ -103864,1093 +103864,6 @@
       "$type": 188,
       "_statements": [
         {
-          "$type": 206,
-          "_kind": 53,
-          "_declarators": [
-            {
-              "$type": 434,
-              "_name": {
-                "$type": 1,
-                "$text": "x"
-              },
-              "_type": {
-                "$type": 332,
-                "_type": {
-                  "$type": 360,
-                  "_content": {
-                    "$type": 158,
-                    "$text": "2"
-                  }
-                }
-              }
-            }
-          ],
-          "_terminator": 173
-        },
-        {
-          "$type": 206,
-          "_kind": 53,
-          "_declarators": [
-            {
-              "$type": 434,
-              "_name": {
-                "$type": 1,
-                "$text": "x"
-              },
-              "_type": {
-                "$type": 332,
-                "_type": {
-                  "$type": 379,
-                  "_left": {
-                    "$type": 379,
-                    "_left": {
-                      "$type": 360,
-                      "_content": {
-                        "$type": 158,
-                        "$text": "2"
-                      }
-                    },
-                    "_right": {
-                      "$type": 360,
-                      "_content": {
-                        "$type": 401,
-                        "_operator": 103,
-                        "_argument": {
-                          "$type": 158,
-                          "$text": "3"
-                        }
-                      }
-                    }
-                  },
-                  "_right": {
-                    "$type": 360,
-                    "_content": {
-                      "$type": 401,
-                      "_operator": 102,
-                      "_argument": {
-                        "$type": 158,
-                        "$text": "4"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          ],
-          "_terminator": 173
-        },
-        {
-          "$type": 206,
-          "_kind": 53,
-          "_declarators": [
-            {
-              "$type": 434,
-              "_name": {
-                "$type": 1,
-                "$text": "x"
-              },
-              "_type": {
-                "$type": 332,
-                "_type": {
-                  "$type": 360,
-                  "_content": {
-                    "$type": 420,
-                    "_elements": [
-                      {
-                        "$type": 118,
-                        "$text": "string"
-                      }
-                    ]
-                  }
-                }
-              }
-            }
-          ],
-          "_terminator": 173
-        },
-        {
-          "$type": 206,
-          "_kind": 53,
-          "_declarators": [
-            {
-              "$type": 434,
-              "_name": {
-                "$type": 1,
-                "$text": "x"
-              },
-              "_type": {
-                "$type": 332,
-                "_type": {
-                  "$type": 360,
-                  "_content": 280
-                }
-              }
-            }
-          ],
-          "_terminator": 173
-        }
-      ],
-      "$errors": []
-    },
-    "expectedOutput": "\nlet x: 2\nlet x: 2 | -3 | +4\nlet x: \"string\"\nlet x: false\n",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "\nlet x: 2\nlet x: 2 | -3 | +4\nlet x: \"string\"\nlet x: false\n",
-    "pattern": "program",
-    "edits": [],
-    "expectedSourceOut": "\nlet x: 2\nlet x: 2 | -3 | +4\nlet x: \"string\"\nlet x: false\n",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (literal_type (number_decimal)))) terminator: (automatic_semicolon)) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (union_type left: (union_type left: (literal_type (number_decimal)) right: (literal_type (literal_type_negative_number argument: (number_decimal)))) right: (literal_type (literal_type_negative_number argument: (number_decimal)))))) terminator: (automatic_semicolon)) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (literal_type (string_double elements: (string_fragment))))) terminator: (automatic_semicolon)) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (literal_type (false)))) terminator: (automatic_semicolon)))",
-    "wrappedText": "\nlet x: 2\nlet x: 2 | -3 | +4\nlet x: \"string\"\nlet x: false\n",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "lexical_declaration",
-    "input": {
-      "$type": 206,
-      "_kind": 53,
-      "_declarators": [
-        {
-          "$type": 434,
-          "_name": {
-            "$type": 1,
-            "$text": "x"
-          },
-          "_type": {
-            "$type": 332,
-            "_type": {
-              "$type": 360,
-              "_content": {
-                "$type": 158,
-                "$text": "2"
-              }
-            }
-          }
-        }
-      ],
-      "_terminator": 173
-    },
-    "expectedOutput": "let x: 2\n",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "let x: 2",
-    "pattern": "lexical_declaration",
-    "edits": [],
-    "expectedSourceOut": "let x: 2\n",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (literal_type (number_decimal)))) terminator: (automatic_semicolon))",
-    "wrappedText": "let x: 2\n",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "lexical_declaration",
-    "input": {
-      "$type": 206,
-      "_kind": 53,
-      "_declarators": [
-        {
-          "$type": 434,
-          "_name": {
-            "$type": 1,
-            "$text": "x"
-          },
-          "_type": {
-            "$type": 332,
-            "_type": {
-              "$type": 379,
-              "_left": {
-                "$type": 379,
-                "_left": {
-                  "$type": 360,
-                  "_content": {
-                    "$type": 158,
-                    "$text": "2"
-                  }
-                },
-                "_right": {
-                  "$type": 360,
-                  "_content": {
-                    "$type": 401,
-                    "_operator": 103,
-                    "_argument": {
-                      "$type": 158,
-                      "$text": "3"
-                    }
-                  }
-                }
-              },
-              "_right": {
-                "$type": 360,
-                "_content": {
-                  "$type": 401,
-                  "_operator": 102,
-                  "_argument": {
-                    "$type": 158,
-                    "$text": "4"
-                  }
-                }
-              }
-            }
-          }
-        }
-      ],
-      "_terminator": 173
-    },
-    "expectedOutput": "let x: 2 | -3 | +4\n",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "let x: 2 | -3 | +4",
-    "pattern": "lexical_declaration",
-    "edits": [],
-    "expectedSourceOut": "let x: 2 | -3 | +4\n",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (union_type left: (union_type left: (literal_type (number_decimal)) right: (literal_type (literal_type_negative_number argument: (number_decimal)))) right: (literal_type (literal_type_negative_number argument: (number_decimal)))))) terminator: (automatic_semicolon))",
-    "wrappedText": "let x: 2 | -3 | +4\n",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "lexical_declaration",
-    "input": {
-      "$type": 206,
-      "_kind": 53,
-      "_declarators": [
-        {
-          "$type": 434,
-          "_name": {
-            "$type": 1,
-            "$text": "x"
-          },
-          "_type": {
-            "$type": 332,
-            "_type": {
-              "$type": 360,
-              "_content": {
-                "$type": 420,
-                "_elements": [
-                  {
-                    "$type": 118,
-                    "$text": "string"
-                  }
-                ]
-              }
-            }
-          }
-        }
-      ],
-      "_terminator": 173
-    },
-    "expectedOutput": "let x: \"string\"\n",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "let x: \"string\"",
-    "pattern": "lexical_declaration",
-    "edits": [],
-    "expectedSourceOut": "let x: \"string\"\n",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (literal_type (string_double elements: (string_fragment))))) terminator: (automatic_semicolon))",
-    "wrappedText": "let x: \"string\"\n",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "lexical_declaration",
-    "input": {
-      "$type": 206,
-      "_kind": 53,
-      "_declarators": [
-        {
-          "$type": 434,
-          "_name": {
-            "$type": 1,
-            "$text": "x"
-          },
-          "_type": {
-            "$type": 332,
-            "_type": {
-              "$type": 360,
-              "_content": 280
-            }
-          }
-        }
-      ],
-      "_terminator": 173
-    },
-    "expectedOutput": "let x: false\n",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "let x: false",
-    "pattern": "lexical_declaration",
-    "edits": [],
-    "expectedSourceOut": "let x: false\n",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (literal_type (false)))) terminator: (automatic_semicolon))",
-    "wrappedText": "let x: false\n",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "variable_declarator_plain",
-    "input": {
-      "$type": 434,
-      "_name": {
-        "$type": 1,
-        "$text": "x"
-      },
-      "_type": {
-        "$type": 332,
-        "_type": {
-          "$type": 360,
-          "_content": {
-            "$type": 158,
-            "$text": "2"
-          }
-        }
-      }
-    },
-    "expectedOutput": "x: 2",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "x: 2",
-    "pattern": "variable_declarator_plain",
-    "edits": [],
-    "expectedSourceOut": "x: 2",
-    "expectedReparseTree": "(variable_declarator_plain name: (identifier) type: (type_annotation type: (literal_type (number_decimal))))",
-    "wrappedText": "let x: 2;",
-    "wrappedOffset": 4
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "variable_declarator_plain",
-    "input": {
-      "$type": 434,
-      "_name": {
-        "$type": 1,
-        "$text": "x"
-      },
-      "_type": {
-        "$type": 332,
-        "_type": {
-          "$type": 379,
-          "_left": {
-            "$type": 379,
-            "_left": {
-              "$type": 360,
-              "_content": {
-                "$type": 158,
-                "$text": "2"
-              }
-            },
-            "_right": {
-              "$type": 360,
-              "_content": {
-                "$type": 401,
-                "_operator": 103,
-                "_argument": {
-                  "$type": 158,
-                  "$text": "3"
-                }
-              }
-            }
-          },
-          "_right": {
-            "$type": 360,
-            "_content": {
-              "$type": 401,
-              "_operator": 102,
-              "_argument": {
-                "$type": 158,
-                "$text": "4"
-              }
-            }
-          }
-        }
-      }
-    },
-    "expectedOutput": "x: 2 | -3 | +4",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "x: 2 | -3 | +4",
-    "pattern": "variable_declarator_plain",
-    "edits": [],
-    "expectedSourceOut": "x: 2 | -3 | +4",
-    "expectedReparseTree": "(variable_declarator_plain name: (identifier) type: (type_annotation type: (union_type left: (union_type left: (literal_type (number_decimal)) right: (literal_type (literal_type_negative_number argument: (number_decimal)))) right: (literal_type (literal_type_negative_number argument: (number_decimal))))))",
-    "wrappedText": "let x: 2 | -3 | +4;",
-    "wrappedOffset": 4
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "variable_declarator_plain",
-    "input": {
-      "$type": 434,
-      "_name": {
-        "$type": 1,
-        "$text": "x"
-      },
-      "_type": {
-        "$type": 332,
-        "_type": {
-          "$type": 360,
-          "_content": {
-            "$type": 420,
-            "_elements": [
-              {
-                "$type": 118,
-                "$text": "string"
-              }
-            ]
-          }
-        }
-      }
-    },
-    "expectedOutput": "x: \"string\"",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "x: \"string\"",
-    "pattern": "variable_declarator_plain",
-    "edits": [],
-    "expectedSourceOut": "x: \"string\"",
-    "expectedReparseTree": "(variable_declarator_plain name: (identifier) type: (type_annotation type: (literal_type (string_double elements: (string_fragment)))))",
-    "wrappedText": "let x: \"string\";",
-    "wrappedOffset": 4
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "variable_declarator_plain",
-    "input": {
-      "$type": 434,
-      "_name": {
-        "$type": 1,
-        "$text": "x"
-      },
-      "_type": {
-        "$type": 332,
-        "_type": {
-          "$type": 360,
-          "_content": 280
-        }
-      }
-    },
-    "expectedOutput": "x: false",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "x: false",
-    "pattern": "variable_declarator_plain",
-    "edits": [],
-    "expectedSourceOut": "x: false",
-    "expectedReparseTree": "(variable_declarator_plain name: (identifier) type: (type_annotation type: (literal_type (false))))",
-    "wrappedText": "let x: false;",
-    "wrappedOffset": 4
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "type_annotation",
-    "input": {
-      "$type": 332,
-      "_type": {
-        "$type": 360,
-        "_content": {
-          "$type": 158,
-          "$text": "2"
-        }
-      }
-    },
-    "expectedOutput": ": 2",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": ": 2",
-    "pattern": "type_annotation",
-    "edits": [],
-    "expectedSourceOut": ": 2",
-    "expectedReparseTree": "(type_annotation type: (literal_type (number_decimal)))",
-    "wrappedText": "let _: 2;",
-    "wrappedOffset": 5
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "type_annotation",
-    "input": {
-      "$type": 332,
-      "_type": {
-        "$type": 379,
-        "_left": {
-          "$type": 379,
-          "_left": {
-            "$type": 360,
-            "_content": {
-              "$type": 158,
-              "$text": "2"
-            }
-          },
-          "_right": {
-            "$type": 360,
-            "_content": {
-              "$type": 401,
-              "_operator": 103,
-              "_argument": {
-                "$type": 158,
-                "$text": "3"
-              }
-            }
-          }
-        },
-        "_right": {
-          "$type": 360,
-          "_content": {
-            "$type": 401,
-            "_operator": 102,
-            "_argument": {
-              "$type": 158,
-              "$text": "4"
-            }
-          }
-        }
-      }
-    },
-    "expectedOutput": ": 2 | -3 | +4",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": ": 2 | -3 | +4",
-    "pattern": "type_annotation",
-    "edits": [],
-    "expectedSourceOut": ": 2 | -3 | +4",
-    "expectedReparseTree": "(type_annotation type: (union_type left: (union_type left: (literal_type (number_decimal)) right: (literal_type (literal_type_negative_number argument: (number_decimal)))) right: (literal_type (literal_type_negative_number argument: (number_decimal)))))",
-    "wrappedText": "let _: 2 | -3 | +4;",
-    "wrappedOffset": 5
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "type_annotation",
-    "input": {
-      "$type": 332,
-      "_type": {
-        "$type": 360,
-        "_content": {
-          "$type": 420,
-          "_elements": [
-            {
-              "$type": 118,
-              "$text": "string"
-            }
-          ]
-        }
-      }
-    },
-    "expectedOutput": ": \"string\"",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": ": \"string\"",
-    "pattern": "type_annotation",
-    "edits": [],
-    "expectedSourceOut": ": \"string\"",
-    "expectedReparseTree": "(type_annotation type: (literal_type (string_double elements: (string_fragment))))",
-    "wrappedText": "let _: \"string\";",
-    "wrappedOffset": 5
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "type_annotation",
-    "input": {
-      "$type": 332,
-      "_type": {
-        "$type": 360,
-        "_content": 280
-      }
-    },
-    "expectedOutput": ": false",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": ": false",
-    "pattern": "type_annotation",
-    "edits": [],
-    "expectedSourceOut": ": false",
-    "expectedReparseTree": "(type_annotation type: (literal_type (false)))",
-    "wrappedText": "let _: false;",
-    "wrappedOffset": 5
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "literal_type",
-    "input": {
-      "$type": 360,
-      "_content": {
-        "$type": 158,
-        "$text": "2"
-      }
-    },
-    "expectedOutput": "2",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "2",
-    "pattern": "literal_type",
-    "edits": [],
-    "expectedSourceOut": "2",
-    "expectedReparseTree": "(literal_type (number_decimal))",
-    "wrappedText": "type _X = 2;",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "literal_type",
-    "input": {
-      "$type": 360,
-      "_content": {
-        "$type": 158,
-        "$text": "2"
-      }
-    },
-    "expectedOutput": "2",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "2",
-    "pattern": "literal_type",
-    "edits": [],
-    "expectedSourceOut": "2",
-    "expectedReparseTree": "(literal_type (number_decimal))",
-    "wrappedText": "type _X = 2;",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "literal_type",
-    "input": {
-      "$type": 360,
-      "_content": {
-        "$type": 401,
-        "_operator": 103,
-        "_argument": {
-          "$type": 158,
-          "$text": "3"
-        }
-      }
-    },
-    "expectedOutput": "-3",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "-3",
-    "pattern": "literal_type",
-    "edits": [],
-    "expectedSourceOut": "-3",
-    "expectedReparseTree": "(literal_type (literal_type_negative_number argument: (number_decimal)))",
-    "wrappedText": "type _X = -3;",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "literal_type",
-    "input": {
-      "$type": 360,
-      "_content": {
-        "$type": 401,
-        "_operator": 102,
-        "_argument": {
-          "$type": 158,
-          "$text": "4"
-        }
-      }
-    },
-    "expectedOutput": "+4",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "+4",
-    "pattern": "literal_type",
-    "edits": [],
-    "expectedSourceOut": "+4",
-    "expectedReparseTree": "(literal_type (literal_type_negative_number argument: (number_decimal)))",
-    "wrappedText": "type _X = +4;",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "literal_type",
-    "input": {
-      "$type": 360,
-      "_content": {
-        "$type": 420,
-        "_elements": [
-          {
-            "$type": 118,
-            "$text": "string"
-          }
-        ]
-      }
-    },
-    "expectedOutput": "\"string\"",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "\"string\"",
-    "pattern": "literal_type",
-    "edits": [],
-    "expectedSourceOut": "\"string\"",
-    "expectedReparseTree": "(literal_type (string_double elements: (string_fragment)))",
-    "wrappedText": "type _X = \"string\";",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "literal_type",
-    "input": {
-      "$type": 360,
-      "_content": 280
-    },
-    "expectedOutput": "false",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "false",
-    "pattern": "literal_type",
-    "edits": [],
-    "expectedSourceOut": "false",
-    "expectedReparseTree": "(literal_type (false))",
-    "wrappedText": "type _X = false;",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "union_type",
-    "input": {
-      "$type": 379,
-      "_left": {
-        "$type": 379,
-        "_left": {
-          "$type": 360,
-          "_content": {
-            "$type": 158,
-            "$text": "2"
-          }
-        },
-        "_right": {
-          "$type": 360,
-          "_content": {
-            "$type": 401,
-            "_operator": 103,
-            "_argument": {
-              "$type": 158,
-              "$text": "3"
-            }
-          }
-        }
-      },
-      "_right": {
-        "$type": 360,
-        "_content": {
-          "$type": 401,
-          "_operator": 102,
-          "_argument": {
-            "$type": 158,
-            "$text": "4"
-          }
-        }
-      }
-    },
-    "expectedOutput": "2 | -3 | +4",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "2 | -3 | +4",
-    "pattern": "union_type",
-    "edits": [],
-    "expectedSourceOut": "2 | -3 | +4",
-    "expectedReparseTree": "(union_type left: (union_type left: (literal_type (number_decimal)) right: (literal_type (literal_type_negative_number argument: (number_decimal)))) right: (literal_type (literal_type_negative_number argument: (number_decimal))))",
-    "wrappedText": "type _X = 2 | -3 | +4;",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "union_type",
-    "input": {
-      "$type": 379,
-      "_left": {
-        "$type": 360,
-        "_content": {
-          "$type": 158,
-          "$text": "2"
-        }
-      },
-      "_right": {
-        "$type": 360,
-        "_content": {
-          "$type": 401,
-          "_operator": 103,
-          "_argument": {
-            "$type": 158,
-            "$text": "3"
-          }
-        }
-      }
-    },
-    "expectedOutput": "2 | -3",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "2 | -3",
-    "pattern": "union_type",
-    "edits": [],
-    "expectedSourceOut": "2 | -3",
-    "expectedReparseTree": "(union_type left: (literal_type (number_decimal)) right: (literal_type (literal_type_negative_number argument: (number_decimal))))",
-    "wrappedText": "type _X = 2 | -3;",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "literal_type_negative_number",
-    "input": {
-      "$type": 401,
-      "_operator": 103,
-      "_argument": {
-        "$type": 158,
-        "$text": "3"
-      }
-    },
-    "expectedOutput": "-3",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "-3",
-    "pattern": "literal_type_negative_number",
-    "edits": [],
-    "expectedSourceOut": "-3",
-    "expectedReparseTree": "(literal_type_negative_number argument: (number_decimal))",
-    "wrappedText": "type _X = -3;",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "literal_type_negative_number",
-    "input": {
-      "$type": 401,
-      "_operator": 102,
-      "_argument": {
-        "$type": 158,
-        "$text": "4"
-      }
-    },
-    "expectedOutput": "+4",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "+4",
-    "pattern": "literal_type_negative_number",
-    "edits": [],
-    "expectedSourceOut": "+4",
-    "expectedReparseTree": "(literal_type_negative_number argument: (number_decimal))",
-    "wrappedText": "type _X = +4;",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "string_double",
-    "input": {
-      "$type": 420,
-      "_elements": [
-        {
-          "$type": 118,
-          "$text": "string"
-        }
-      ]
-    },
-    "expectedOutput": "\"string\"",
-    "options": {
-      "program": {
-        "before": 183
-      }
-    }
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "\"string\"",
-    "pattern": "string_double",
-    "edits": [],
-    "expectedSourceOut": "\"string\"",
-    "expectedReparseTree": "(string_double elements: (string_fragment))",
-    "wrappedText": "let _ = \"string\";",
-    "wrappedOffset": 8
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "pattern": "program",
-    "input": {
-      "$type": 188,
-      "_statements": [
-        {
           "$type": 323,
           "_name": {
             "$type": 475,
@@ -149482,7 +148395,7 @@
                 {
                   "$type": 214,
                   "_await": false,
-                  "_for_header": {
+                  "_header": {
                     "$type": 438,
                     "_left": {
                       "$type": 259,
@@ -149765,7 +148678,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  for (let i = 0; i < 3; i++) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
-    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) terminator: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))))",
+    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) terminator: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))))",
     "wrappedText": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  for (let i = 0; i < 3; i++) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "wrappedOffset": 0
   },
@@ -150488,7 +149401,7 @@
             {
               "$type": 214,
               "_await": false,
-              "_for_header": {
+              "_header": {
                 "$type": 438,
                 "_left": {
                   "$type": 259,
@@ -150750,7 +149663,7 @@
     "pattern": "ambient_declaration",
     "edits": [],
     "expectedSourceOut": "declare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  for (let i = 0; i < 3; i++) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
-    "expectedReparseTree": "(ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon))))",
+    "expectedReparseTree": "(ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon))))",
     "wrappedText": "declare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  for (let i = 0; i < 3; i++) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "wrappedOffset": 0
   },
@@ -153851,7 +152764,7 @@
         {
           "$type": 214,
           "_await": false,
-          "_for_header": {
+          "_header": {
             "$type": 438,
             "_left": {
               "$type": 259,
@@ -154111,7 +153024,7 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  for (let i = 0; i < 3; i++) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
-    "expectedReparseTree": "(statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon))",
     "wrappedText": "{\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  for (let i = 0; i < 3; i++) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "wrappedOffset": 0
   },
@@ -155418,7 +154331,7 @@
           {
             "$type": 214,
             "_await": false,
-            "_for_header": {
+            "_header": {
               "$type": 438,
               "_left": {
                 "$type": 259,
@@ -155679,7 +154592,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  for (let i = 0; i < 3; i++) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
-    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handler: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))",
     "wrappedText": "module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  for (let i = 0; i < 3; i++) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "wrappedOffset": 0
   },
@@ -156018,7 +154931,7 @@
     "input": {
       "$type": 214,
       "_await": false,
-      "_for_header": {
+      "_header": {
         "$type": 438,
         "_left": {
           "$type": 259,
@@ -156057,7 +154970,7 @@
     "pattern": "for_in_statement",
     "edits": [],
     "expectedSourceOut": "for (x in null) { }\n",
-    "expectedReparseTree": "(for_in_statement (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon)))",
     "wrappedText": "for (x in null) { }\n",
     "wrappedOffset": 0
   },
@@ -156814,6 +155727,1078 @@
     "expectedReparseTree": "(finally_clause body: (statement_block terminator: (automatic_semicolon)))",
     "wrappedText": "try { }\n  catch (e) { }\n  finally { }\n  ",
     "wrappedOffset": 26
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "program",
+    "input": {
+      "$type": 188,
+      "_statements": [
+        {
+          "$type": 206,
+          "_kind": 53,
+          "_declarators": [
+            {
+              "$type": 434,
+              "_name": {
+                "$type": 1,
+                "$text": "x"
+              },
+              "_type": {
+                "$type": 332,
+                "_type": {
+                  "$type": 360,
+                  "_content": {
+                    "$type": 158,
+                    "$text": "2"
+                  }
+                }
+              }
+            }
+          ],
+          "_terminator": 173
+        },
+        {
+          "$type": 206,
+          "_kind": 53,
+          "_declarators": [
+            {
+              "$type": 434,
+              "_name": {
+                "$type": 1,
+                "$text": "x"
+              },
+              "_type": {
+                "$type": 332,
+                "_type": {
+                  "$type": 379,
+                  "_left": {
+                    "$type": 379,
+                    "_left": {
+                      "$type": 360,
+                      "_content": {
+                        "$type": 158,
+                        "$text": "2"
+                      }
+                    },
+                    "_right": {
+                      "$type": 360,
+                      "_content": {
+                        "$type": 401,
+                        "_argument": {
+                          "$type": 158,
+                          "$text": "3"
+                        }
+                      }
+                    }
+                  },
+                  "_right": {
+                    "$type": 360,
+                    "_content": {
+                      "$type": 401,
+                      "_argument": {
+                        "$type": 158,
+                        "$text": "4"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "_terminator": 173
+        },
+        {
+          "$type": 206,
+          "_kind": 53,
+          "_declarators": [
+            {
+              "$type": 434,
+              "_name": {
+                "$type": 1,
+                "$text": "x"
+              },
+              "_type": {
+                "$type": 332,
+                "_type": {
+                  "$type": 360,
+                  "_content": {
+                    "$type": 420,
+                    "_elements": [
+                      {
+                        "$type": 118,
+                        "$text": "string"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "_terminator": 173
+        },
+        {
+          "$type": 206,
+          "_kind": 53,
+          "_declarators": [
+            {
+              "$type": 434,
+              "_name": {
+                "$type": 1,
+                "$text": "x"
+              },
+              "_type": {
+                "$type": 332,
+                "_type": {
+                  "$type": 360,
+                  "_content": 280
+                }
+              }
+            }
+          ],
+          "_terminator": 173
+        }
+      ],
+      "$errors": []
+    },
+    "expectedOutput": "\nlet x: 2\nlet x: 2 | -3 | -4\nlet x: \"string\"\nlet x: false\n",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "\nlet x: 2\nlet x: 2 | -3 | -4\nlet x: \"string\"\nlet x: false\n",
+    "pattern": "program",
+    "edits": [],
+    "expectedSourceOut": "\nlet x: 2\nlet x: 2 | -3 | -4\nlet x: \"string\"\nlet x: false\n",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (literal_type (number_decimal)))) terminator: (automatic_semicolon)) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (union_type left: (union_type left: (literal_type (number_decimal)) right: (literal_type (literal_type_negative_number argument: (number_decimal)))) right: (literal_type (literal_type_negative_number argument: (number_decimal)))))) terminator: (automatic_semicolon)) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (literal_type (string_double elements: (string_fragment))))) terminator: (automatic_semicolon)) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (literal_type (false)))) terminator: (automatic_semicolon)))",
+    "wrappedText": "\nlet x: 2\nlet x: 2 | -3 | -4\nlet x: \"string\"\nlet x: false\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "lexical_declaration",
+    "input": {
+      "$type": 206,
+      "_kind": 53,
+      "_declarators": [
+        {
+          "$type": 434,
+          "_name": {
+            "$type": 1,
+            "$text": "x"
+          },
+          "_type": {
+            "$type": 332,
+            "_type": {
+              "$type": 360,
+              "_content": {
+                "$type": 158,
+                "$text": "2"
+              }
+            }
+          }
+        }
+      ],
+      "_terminator": 173
+    },
+    "expectedOutput": "let x: 2\n",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "let x: 2",
+    "pattern": "lexical_declaration",
+    "edits": [],
+    "expectedSourceOut": "let x: 2\n",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (literal_type (number_decimal)))) terminator: (automatic_semicolon))",
+    "wrappedText": "let x: 2\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "lexical_declaration",
+    "input": {
+      "$type": 206,
+      "_kind": 53,
+      "_declarators": [
+        {
+          "$type": 434,
+          "_name": {
+            "$type": 1,
+            "$text": "x"
+          },
+          "_type": {
+            "$type": 332,
+            "_type": {
+              "$type": 379,
+              "_left": {
+                "$type": 379,
+                "_left": {
+                  "$type": 360,
+                  "_content": {
+                    "$type": 158,
+                    "$text": "2"
+                  }
+                },
+                "_right": {
+                  "$type": 360,
+                  "_content": {
+                    "$type": 401,
+                    "_argument": {
+                      "$type": 158,
+                      "$text": "3"
+                    }
+                  }
+                }
+              },
+              "_right": {
+                "$type": 360,
+                "_content": {
+                  "$type": 401,
+                  "_argument": {
+                    "$type": 158,
+                    "$text": "4"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "_terminator": 173
+    },
+    "expectedOutput": "let x: 2 | -3 | -4\n",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "let x: 2 | -3 | -4",
+    "pattern": "lexical_declaration",
+    "edits": [],
+    "expectedSourceOut": "let x: 2 | -3 | -4\n",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (union_type left: (union_type left: (literal_type (number_decimal)) right: (literal_type (literal_type_negative_number argument: (number_decimal)))) right: (literal_type (literal_type_negative_number argument: (number_decimal)))))) terminator: (automatic_semicolon))",
+    "wrappedText": "let x: 2 | -3 | -4\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "lexical_declaration",
+    "input": {
+      "$type": 206,
+      "_kind": 53,
+      "_declarators": [
+        {
+          "$type": 434,
+          "_name": {
+            "$type": 1,
+            "$text": "x"
+          },
+          "_type": {
+            "$type": 332,
+            "_type": {
+              "$type": 360,
+              "_content": {
+                "$type": 420,
+                "_elements": [
+                  {
+                    "$type": 118,
+                    "$text": "string"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "_terminator": 173
+    },
+    "expectedOutput": "let x: \"string\"\n",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "let x: \"string\"",
+    "pattern": "lexical_declaration",
+    "edits": [],
+    "expectedSourceOut": "let x: \"string\"\n",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (literal_type (string_double elements: (string_fragment))))) terminator: (automatic_semicolon))",
+    "wrappedText": "let x: \"string\"\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "lexical_declaration",
+    "input": {
+      "$type": 206,
+      "_kind": 53,
+      "_declarators": [
+        {
+          "$type": 434,
+          "_name": {
+            "$type": 1,
+            "$text": "x"
+          },
+          "_type": {
+            "$type": 332,
+            "_type": {
+              "$type": 360,
+              "_content": 280
+            }
+          }
+        }
+      ],
+      "_terminator": 173
+    },
+    "expectedOutput": "let x: false\n",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "let x: false",
+    "pattern": "lexical_declaration",
+    "edits": [],
+    "expectedSourceOut": "let x: false\n",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (literal_type (false)))) terminator: (automatic_semicolon))",
+    "wrappedText": "let x: false\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "variable_declarator_plain",
+    "input": {
+      "$type": 434,
+      "_name": {
+        "$type": 1,
+        "$text": "x"
+      },
+      "_type": {
+        "$type": 332,
+        "_type": {
+          "$type": 360,
+          "_content": {
+            "$type": 158,
+            "$text": "2"
+          }
+        }
+      }
+    },
+    "expectedOutput": "x: 2",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "x: 2",
+    "pattern": "variable_declarator_plain",
+    "edits": [],
+    "expectedSourceOut": "x: 2",
+    "expectedReparseTree": "(variable_declarator_plain name: (identifier) type: (type_annotation type: (literal_type (number_decimal))))",
+    "wrappedText": "let x: 2;",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "variable_declarator_plain",
+    "input": {
+      "$type": 434,
+      "_name": {
+        "$type": 1,
+        "$text": "x"
+      },
+      "_type": {
+        "$type": 332,
+        "_type": {
+          "$type": 379,
+          "_left": {
+            "$type": 379,
+            "_left": {
+              "$type": 360,
+              "_content": {
+                "$type": 158,
+                "$text": "2"
+              }
+            },
+            "_right": {
+              "$type": 360,
+              "_content": {
+                "$type": 401,
+                "_argument": {
+                  "$type": 158,
+                  "$text": "3"
+                }
+              }
+            }
+          },
+          "_right": {
+            "$type": 360,
+            "_content": {
+              "$type": 401,
+              "_argument": {
+                "$type": 158,
+                "$text": "4"
+              }
+            }
+          }
+        }
+      }
+    },
+    "expectedOutput": "x: 2 | -3 | -4",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "x: 2 | -3 | -4",
+    "pattern": "variable_declarator_plain",
+    "edits": [],
+    "expectedSourceOut": "x: 2 | -3 | -4",
+    "expectedReparseTree": "(variable_declarator_plain name: (identifier) type: (type_annotation type: (union_type left: (union_type left: (literal_type (number_decimal)) right: (literal_type (literal_type_negative_number argument: (number_decimal)))) right: (literal_type (literal_type_negative_number argument: (number_decimal))))))",
+    "wrappedText": "let x: 2 | -3 | -4;",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "variable_declarator_plain",
+    "input": {
+      "$type": 434,
+      "_name": {
+        "$type": 1,
+        "$text": "x"
+      },
+      "_type": {
+        "$type": 332,
+        "_type": {
+          "$type": 360,
+          "_content": {
+            "$type": 420,
+            "_elements": [
+              {
+                "$type": 118,
+                "$text": "string"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "expectedOutput": "x: \"string\"",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "x: \"string\"",
+    "pattern": "variable_declarator_plain",
+    "edits": [],
+    "expectedSourceOut": "x: \"string\"",
+    "expectedReparseTree": "(variable_declarator_plain name: (identifier) type: (type_annotation type: (literal_type (string_double elements: (string_fragment)))))",
+    "wrappedText": "let x: \"string\";",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "variable_declarator_plain",
+    "input": {
+      "$type": 434,
+      "_name": {
+        "$type": 1,
+        "$text": "x"
+      },
+      "_type": {
+        "$type": 332,
+        "_type": {
+          "$type": 360,
+          "_content": 280
+        }
+      }
+    },
+    "expectedOutput": "x: false",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "x: false",
+    "pattern": "variable_declarator_plain",
+    "edits": [],
+    "expectedSourceOut": "x: false",
+    "expectedReparseTree": "(variable_declarator_plain name: (identifier) type: (type_annotation type: (literal_type (false))))",
+    "wrappedText": "let x: false;",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "type_annotation",
+    "input": {
+      "$type": 332,
+      "_type": {
+        "$type": 360,
+        "_content": {
+          "$type": 158,
+          "$text": "2"
+        }
+      }
+    },
+    "expectedOutput": ": 2",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": ": 2",
+    "pattern": "type_annotation",
+    "edits": [],
+    "expectedSourceOut": ": 2",
+    "expectedReparseTree": "(type_annotation type: (literal_type (number_decimal)))",
+    "wrappedText": "let _: 2;",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "type_annotation",
+    "input": {
+      "$type": 332,
+      "_type": {
+        "$type": 379,
+        "_left": {
+          "$type": 379,
+          "_left": {
+            "$type": 360,
+            "_content": {
+              "$type": 158,
+              "$text": "2"
+            }
+          },
+          "_right": {
+            "$type": 360,
+            "_content": {
+              "$type": 401,
+              "_argument": {
+                "$type": 158,
+                "$text": "3"
+              }
+            }
+          }
+        },
+        "_right": {
+          "$type": 360,
+          "_content": {
+            "$type": 401,
+            "_argument": {
+              "$type": 158,
+              "$text": "4"
+            }
+          }
+        }
+      }
+    },
+    "expectedOutput": ": 2 | -3 | -4",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": ": 2 | -3 | -4",
+    "pattern": "type_annotation",
+    "edits": [],
+    "expectedSourceOut": ": 2 | -3 | -4",
+    "expectedReparseTree": "(type_annotation type: (union_type left: (union_type left: (literal_type (number_decimal)) right: (literal_type (literal_type_negative_number argument: (number_decimal)))) right: (literal_type (literal_type_negative_number argument: (number_decimal)))))",
+    "wrappedText": "let _: 2 | -3 | -4;",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "type_annotation",
+    "input": {
+      "$type": 332,
+      "_type": {
+        "$type": 360,
+        "_content": {
+          "$type": 420,
+          "_elements": [
+            {
+              "$type": 118,
+              "$text": "string"
+            }
+          ]
+        }
+      }
+    },
+    "expectedOutput": ": \"string\"",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": ": \"string\"",
+    "pattern": "type_annotation",
+    "edits": [],
+    "expectedSourceOut": ": \"string\"",
+    "expectedReparseTree": "(type_annotation type: (literal_type (string_double elements: (string_fragment))))",
+    "wrappedText": "let _: \"string\";",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "type_annotation",
+    "input": {
+      "$type": 332,
+      "_type": {
+        "$type": 360,
+        "_content": 280
+      }
+    },
+    "expectedOutput": ": false",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": ": false",
+    "pattern": "type_annotation",
+    "edits": [],
+    "expectedSourceOut": ": false",
+    "expectedReparseTree": "(type_annotation type: (literal_type (false)))",
+    "wrappedText": "let _: false;",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "literal_type",
+    "input": {
+      "$type": 360,
+      "_content": {
+        "$type": 158,
+        "$text": "2"
+      }
+    },
+    "expectedOutput": "2",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "2",
+    "pattern": "literal_type",
+    "edits": [],
+    "expectedSourceOut": "2",
+    "expectedReparseTree": "(literal_type (number_decimal))",
+    "wrappedText": "type _X = 2;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "literal_type",
+    "input": {
+      "$type": 360,
+      "_content": {
+        "$type": 158,
+        "$text": "2"
+      }
+    },
+    "expectedOutput": "2",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "2",
+    "pattern": "literal_type",
+    "edits": [],
+    "expectedSourceOut": "2",
+    "expectedReparseTree": "(literal_type (number_decimal))",
+    "wrappedText": "type _X = 2;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "literal_type",
+    "input": {
+      "$type": 360,
+      "_content": {
+        "$type": 401,
+        "_argument": {
+          "$type": 158,
+          "$text": "3"
+        }
+      }
+    },
+    "expectedOutput": "-3",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "-3",
+    "pattern": "literal_type",
+    "edits": [],
+    "expectedSourceOut": "-3",
+    "expectedReparseTree": "(literal_type (literal_type_negative_number argument: (number_decimal)))",
+    "wrappedText": "type _X = -3;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "literal_type",
+    "input": {
+      "$type": 360,
+      "_content": {
+        "$type": 401,
+        "_argument": {
+          "$type": 158,
+          "$text": "4"
+        }
+      }
+    },
+    "expectedOutput": "-4",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "-4",
+    "pattern": "literal_type",
+    "edits": [],
+    "expectedSourceOut": "-4",
+    "expectedReparseTree": "(literal_type (literal_type_negative_number argument: (number_decimal)))",
+    "wrappedText": "type _X = -4;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "literal_type",
+    "input": {
+      "$type": 360,
+      "_content": {
+        "$type": 420,
+        "_elements": [
+          {
+            "$type": 118,
+            "$text": "string"
+          }
+        ]
+      }
+    },
+    "expectedOutput": "\"string\"",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "\"string\"",
+    "pattern": "literal_type",
+    "edits": [],
+    "expectedSourceOut": "\"string\"",
+    "expectedReparseTree": "(literal_type (string_double elements: (string_fragment)))",
+    "wrappedText": "type _X = \"string\";",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "literal_type",
+    "input": {
+      "$type": 360,
+      "_content": 280
+    },
+    "expectedOutput": "false",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "false",
+    "pattern": "literal_type",
+    "edits": [],
+    "expectedSourceOut": "false",
+    "expectedReparseTree": "(literal_type (false))",
+    "wrappedText": "type _X = false;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "union_type",
+    "input": {
+      "$type": 379,
+      "_left": {
+        "$type": 379,
+        "_left": {
+          "$type": 360,
+          "_content": {
+            "$type": 158,
+            "$text": "2"
+          }
+        },
+        "_right": {
+          "$type": 360,
+          "_content": {
+            "$type": 401,
+            "_argument": {
+              "$type": 158,
+              "$text": "3"
+            }
+          }
+        }
+      },
+      "_right": {
+        "$type": 360,
+        "_content": {
+          "$type": 401,
+          "_argument": {
+            "$type": 158,
+            "$text": "4"
+          }
+        }
+      }
+    },
+    "expectedOutput": "2 | -3 | -4",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "2 | -3 | -4",
+    "pattern": "union_type",
+    "edits": [],
+    "expectedSourceOut": "2 | -3 | -4",
+    "expectedReparseTree": "(union_type left: (union_type left: (literal_type (number_decimal)) right: (literal_type (literal_type_negative_number argument: (number_decimal)))) right: (literal_type (literal_type_negative_number argument: (number_decimal))))",
+    "wrappedText": "type _X = 2 | -3 | -4;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "union_type",
+    "input": {
+      "$type": 379,
+      "_left": {
+        "$type": 360,
+        "_content": {
+          "$type": 158,
+          "$text": "2"
+        }
+      },
+      "_right": {
+        "$type": 360,
+        "_content": {
+          "$type": 401,
+          "_argument": {
+            "$type": 158,
+            "$text": "3"
+          }
+        }
+      }
+    },
+    "expectedOutput": "2 | -3",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "2 | -3",
+    "pattern": "union_type",
+    "edits": [],
+    "expectedSourceOut": "2 | -3",
+    "expectedReparseTree": "(union_type left: (literal_type (number_decimal)) right: (literal_type (literal_type_negative_number argument: (number_decimal))))",
+    "wrappedText": "type _X = 2 | -3;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "literal_type_negative_number",
+    "input": {
+      "$type": 401,
+      "_argument": {
+        "$type": 158,
+        "$text": "3"
+      }
+    },
+    "expectedOutput": "-3",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "-3",
+    "pattern": "literal_type_negative_number",
+    "edits": [],
+    "expectedSourceOut": "-3",
+    "expectedReparseTree": "(literal_type_negative_number argument: (number_decimal))",
+    "wrappedText": "type _X = -3;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "literal_type_negative_number",
+    "input": {
+      "$type": 401,
+      "_argument": {
+        "$type": 158,
+        "$text": "4"
+      }
+    },
+    "expectedOutput": "-4",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "-4",
+    "pattern": "literal_type_negative_number",
+    "edits": [],
+    "expectedSourceOut": "-4",
+    "expectedReparseTree": "(literal_type_negative_number argument: (number_decimal))",
+    "wrappedText": "type _X = -4;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "string_double",
+    "input": {
+      "$type": 420,
+      "_elements": [
+        {
+          "$type": 118,
+          "$text": "string"
+        }
+      ]
+    },
+    "expectedOutput": "\"string\"",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "\"string\"",
+    "pattern": "string_double",
+    "edits": [],
+    "expectedSourceOut": "\"string\"",
+    "expectedReparseTree": "(string_double elements: (string_fragment))",
+    "wrappedText": "let _ = \"string\";",
+    "wrappedOffset": 8
   },
   {
     "kind": "render",

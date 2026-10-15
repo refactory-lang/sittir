@@ -48,11 +48,10 @@ import {
 	buildFactoryNodeFromReference,
 	tableSides,
 	type ReadNodeLike,
-	wrapForReparse,
 	loadScopedFactoryMap,
 	loadNativeEngine
 } from './common.ts';
-import { hostlessReason, loadRenderReparseContext, renderReparse, type AstTolerance } from './read-render-parse.ts';
+import { hostlessReason, loadRenderReparseContext, renderReparse, wrapRendered, type AstTolerance } from './read-render-parse.ts';
 import { emptyBuiltRender, type BuiltRenderFailure, type BuiltRenderResult } from './built-render.ts';
 import { sourceSpans } from '@sittir/common';
 
@@ -753,12 +752,7 @@ export async function validateFactoryStorage(
 				} catch (e) {
 					buildErrors.push({ kind, message: `factory threw: ${(e as Error)?.message ?? String(e)}` });
 				}
-				const hostless =
-					wrapForReparse('', kind, grammar, renderReparseContext.kindToSupertypes, {
-						adoptedVariantKinds: renderReparseContext.adoptedVariantKinds,
-						targetKind: node1?.type ?? kind,
-						root: renderReparseContext.root
-					}) === null;
+				const hostless = wrapRendered('', kind, node1?.type ?? kind, renderReparseContext) === null;
 				if (hostless) {
 					render.total--;
 					render.excluded.push({ entry: entry.name, kind, reason: hostlessReason(kind, node1?.type ?? kind, renderReparseContext), input: inputSource });

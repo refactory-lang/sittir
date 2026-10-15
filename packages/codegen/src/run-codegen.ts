@@ -49,18 +49,16 @@ export interface CodegenOptions {
 	allowDiagnostics?: string[];
 }
 
+export async function formatSource(path: string, content: string): Promise<string> {
+	if (!path.endsWith('.ts')) return content;
+	const result = await oxfmtFormat(path, content, OXFMT_EFFECTIVE_CONFIG);
+	if (result.errors.length === 0) return result.code;
+	console.warn(`  ⚠ oxfmt failed to format ${path} (${result.errors.length} error(s)) — writing unformatted content.`);
+	return content;
+}
+
 export async function writeFile(path: string, content: string): Promise<void> {
-	let finalContent = content;
-	if (path.endsWith('.ts')) {
-		const result = await oxfmtFormat(path, content, OXFMT_EFFECTIVE_CONFIG);
-		if (result.errors.length === 0) {
-			finalContent = result.code;
-		} else {
-			console.warn(
-				`  ⚠ oxfmt failed to format ${path} (${result.errors.length} error(s)) — writing unformatted content.`
-			);
-		}
-	}
+	const finalContent = await formatSource(path, content);
 	if (existsSync(path)) {
 		try {
 			if (readFileSync(path, 'utf8') === finalContent) return;
@@ -309,6 +307,10 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	}
 
 	await writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
+	if (result.portableNodeModel === undefined) rmSync(join(outDir, 'node-model-portable.json5'), { force: true });
+	else await writeFile(join(outDir, 'node-model-portable.json5'), result.portableNodeModel);
+	if (result.portable === undefined) rmSync(join(outDir, 'portable.ts'), { force: true });
+	else await writeFile(join(outDir, 'portable.ts'), result.portable);
 
 	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
 	await writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);

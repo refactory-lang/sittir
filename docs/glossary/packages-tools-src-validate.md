@@ -728,6 +728,14 @@ builder: the parent takes the group's value whole under the slot key.
  * `factorySlots`/`fieldAliasMap`/`polymorphVariants` are top-level. */
 ```
 
+### `packages/tools/src/validate/common.ts::parseNodeModel`
+
+Projects a node model's text into the validators' tables; `loadNodeModel` reads the grammar's file and parses it here, so a test can build the tables from a literal model. `renamedFrom` and `splitFrom` collect each node's provenance by kind.
+
+### `packages/tools/src/validate/common.ts::loadBoundNameOf`
+
+The base-to-bound kind name mapping, from the node model's `renamedFrom` through codegen's `boundNameOf`. Fixture lists and parity tables written in base names translate through it.
+
 ### `packages/tools/src/validate/common.ts::readNodeModelFile`
 
 ```text
@@ -1647,9 +1655,13 @@ A kind passes when any of its candidates round-trips, so a candidate that only r
 
 A read refused anywhere in an entry fails it the same way: a child whose hydration throws while the tree is walked for candidates, or while a candidate is materialized, reaches `onAccessorThrow`, and the entry's refusals are reported as `read:` errors. An entry whose refusal leaves it no candidate to test is a failure, not a `no-testable-kind` skip. The deep and shallow `read-render-parse` rows of `validate counts` therefore count every read refusal in the corpus.
 
+### `packages/tools/src/validate/read-render-parse.ts::wrapRendered`
+
+Rendered text inside its reparse host: the kind's own host (`wrapForReparse`), or, for a split kind that has none, the host of its placement's owner with the placement's source on either side, the offset moved past the prefix. `renderReparse` wraps through it, and the factory row's host check asks it with empty text, so a kind the row counts is one `renderReparse` can wrap.
+
 ### `packages/tools/src/validate/read-render-parse.ts::renderReparse`
 
-The render-and-reparse step every rendering row shares. It renders a node with the native engine, wraps the text in its kind's reparse wrapper (`wrapForReparse`), reparses it, finds the reparsed node of the target kind at the wrapper's offset (or the tree's root for a root candidate), and diffs its AST with the source node's (`astStructuralDiff`). It returns one outcome: excluded (no wrapper for the kind, or an empty render), failed (a reparse error, or the kind not at the offset), or round-tripped with the AST difference. A render that throws propagates, so each row reports it in its own terms. `loadRenderReparseContext` loads what it needs for a grammar once per run.
+The render-and-reparse step every rendering row shares. It renders a node with the native engine, wraps the text in its kind's reparse wrapper (`wrapRendered`), reparses it, finds the reparsed node of the target kind at the wrapper's offset (or the tree's root for a root candidate), and diffs its AST with the source node's (`astStructuralDiff`). It returns one outcome: excluded (no wrapper for the kind, or an empty render), failed (a reparse error, or the kind not at the offset), or round-tripped with the AST difference. A render that throws propagates, so each row reports it in its own terms. `loadRenderReparseContext` loads what it needs for a grammar once per run.
 
 ### `packages/tools/src/validate/factory-storage.ts::validateFactoryStorage`
 
@@ -1761,6 +1773,14 @@ Why a kind without a host is excluded from a rendering row: `hidden-kind` when t
 ### `packages/tools/src/validate/read-render-parse.ts::findReparsedNodeAtOffset`
 
 The reparsed node of a kind at the splice offset. The kind is a grammar id wherever the source node is known, since a named rule and the keyword token it wraps share a name and a range but not an id; a name stands in only where there is no source node. Lookups run in order: past the candidate's own leading trivia (mapped through the indentation the host added to the lines before it), at the splice offset itself (a list kind's leading trivia belongs to its first element), and last at a node of the kind that starts inside the whitespace run just before the hole and spans it (a block node starts at the line break before its first line). Each requires the kind.
+
+### `packages/tools/src/validate/read-render-parse.ts::readIdentityOf`
+
+The id a parsed node reads as: its display id where the model's relaxation table says the node is a relaxed keyword or is shown as an alias of the word rule, else its grammar id. Host derivation, the reparse lookup and the structural AST compare use it, so a relaxed keyword equals its target and two spellings of one name share a host.
+
+### `packages/tools/src/validate/common.ts::relaxesOf`
+
+The generated reader's relaxation predicate over the node model's `relaxes` table.
 
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 

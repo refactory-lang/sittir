@@ -1,10 +1,12 @@
 import type { IsBooleanKeyword } from './keyword-presence.ts';
-import type { SlotHint, SlotHintsOf } from './node-surface.ts';
+import type { FlagsHintOf, SlotHint, SlotHintsOf } from './node-surface.ts';
 
-/** A slot as the parser spells it: the fields its children arrive under, and the kinds of its children that arrive under no field. */
-export interface SlotRoutes {
-	readonly fields: readonly string[];
-	readonly kinds: readonly string[];
+/**
+ * A slot by its number in each kind that has it, keyed by stamped kind id: the slot's position among the kind's transport
+ * slots, the numbering the native read routes children by. A node of a kind the map lacks holds nothing there.
+ */
+export interface SlotSubject {
+	readonly slots: Readonly<Record<number, number>>;
 }
 
 /** A language's kind membership: which node types count as a given kind. */
@@ -15,19 +17,40 @@ export interface KindMembership {
 	membersOf(kind: number): readonly number[];
 }
 
-/** One slot of a kind: the accessor a node reads it through, its parser routes, and the keyword when the slot holds that keyword's presence. */
-export type QuerySlotEntry = readonly [accessor: string, routes: SlotRoutes, keyword?: string];
+/** One slot of a kind: the accessor a node reads it through, its number (`SlotSubject`), and the keyword when the slot holds that keyword's presence. */
+export type QuerySlotEntry = readonly [accessor: string, slot: number, keyword?: string];
 
 /** Each kind's slots, by kind id. */
 export type QuerySlots = Readonly<Record<number, readonly QuerySlotEntry[]>>;
 
-/** A `where` condition as the native walk evaluates it, each slot compiled to its parser routes. */
-export type QueryPlan =
-	| ({ readonly op: 'eq'; readonly text: string } & SlotRoutes)
-	| ({ readonly op: 'match'; readonly pattern: string } & SlotRoutes)
-	| ({ readonly op: 'present' } & SlotRoutes)
-	| { readonly op: 'not'; readonly of: QueryPlan }
-	| { readonly op: 'and' | 'or'; readonly of: readonly QueryPlan[] };
+/** The node's own text as a condition's subject, in place of a slot's. */
+export interface SelfText {
+	readonly self: true;
+}
+
+/** What a comparison reads: a slot by its numbers, or the node's own text. */
+export type QuerySubject = SlotSubject | SelfText;
+
+/** Which of the nodes a step's slot holds it reaches: the first, the last, or the one node when the slot holds exactly one. */
+export type StepAnchor = 'first' | 'last' | 'only';
+
+/**
+ * A compiled condition, each comparison reading the subject `S`. A `where` condition reads slots only (the default) and is
+ * evaluated by the native walk; a portable read test may also read the node's own text (`QueryPlan<QuerySubject>`), which only
+ * `holds` evaluates. An `is` leaf tests the stamped kinds (`$type`) of its subject, and a `child` step evaluates its condition on
+ * the nodes its slot holds, narrowed by its anchor.
+ */
+export type QueryPlan<S extends QuerySubject = SlotSubject> =
+	| ({ readonly op: 'eq'; readonly text: string } & S)
+	| ({ readonly op: 'match'; readonly pattern: string } & S)
+	| ({ readonly op: 'present' } & SlotSubject)
+	| ({ readonly op: 'child'; readonly anchor?: StepAnchor; readonly of: QueryPlan<S> } & SlotSubject)
+	| ({ readonly op: 'is'; readonly types: readonly number[] } & S)
+	| { readonly op: 'not'; readonly of: QueryPlan<S> }
+	| { readonly op: 'and' | 'or'; readonly of: readonly QueryPlan<S>[] };
+
+/** Each kind's flags, by stamped kind id: the plan that tests the flag on a node of the kind, or `null` for a flag that depends on the node's context. */
+export type QueryFlags = Readonly<Record<number, Readonly<Record<string, QueryPlan | null>>>>;
 
 declare const CONDITION: unique symbol;
 
@@ -79,8 +102,23 @@ type SlotRefOf<N, S> = N extends unknown
 		: never
 	: never;
 
-/** What a `where` callback receives: one member per slot of the view's element type, a `PresenceRef` for a slot that holds a keyword's presence and a `SlotRef` for any other. */
-export type Recorder<N> = { readonly [S in SlotNameOf<N>]: SlotRefOf<N, S> };
+type SharedFlags<N> = (N extends unknown ? (flags: FlagsHintOf<N>) => void : never) extends (flags: infer F) => void ? F : never;
+
+/** The vocabulary flags a `where` condition can test on a node type: those its kind declares, and over a union only those every member declares. A flag that depends on the node's context is not one of them. */
+export type FlagOf<N> = [N] extends [never] ? never : SharedFlags<N> & string;
+
+/**
+ * What a `where` callback receives: one member per slot of the view's element type, a `PresenceRef` for a slot that holds a
+ * keyword's presence and a `SlotRef` for any other, and `is`, which tests a vocabulary flag.
+ */
+export type Recorder<N> = { readonly [S in SlotNameOf<N>]: SlotRefOf<N, S> } & {
+	/**
+	 * Holds when the node carries the vocabulary flag `flag`, as its kind spells it.
+	 *
+	 * @throws When the node's kind does not declare `flag`, or declares it only in a context a condition on the node cannot see.
+	 */
+	is(flag: FlagOf<N>): Cond;
+};
 
 type KindOf<T> = T extends { readonly $type: infer K extends number } ? K : never;
 

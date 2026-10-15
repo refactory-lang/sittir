@@ -2440,11 +2440,11 @@
         "required": true,
         "types": [
           {
-            "type": "identifier",
+            "type": "decorator_member_expression",
             "named": true
           },
           {
-            "type": "member_expression",
+            "type": "identifier",
             "named": true
           },
           {
@@ -3488,17 +3488,17 @@
             "named": true
           }
         ]
+      },
+      "header": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_for_header",
+            "named": true
+          }
+        ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "_for_header",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -5006,10 +5006,6 @@
         "required": true,
         "types": [
           {
-            "type": "+",
-            "named": false
-          },
-          {
             "type": "-",
             "named": false
           }
@@ -5113,7 +5109,7 @@
       },
       "separator": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": ".",

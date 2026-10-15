@@ -1473,7 +1473,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "suite"
+			"name": "body"
 		},
 		{
 			"kind": "seam",

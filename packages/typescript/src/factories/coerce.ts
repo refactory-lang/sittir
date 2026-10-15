@@ -795,6 +795,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		258, 260, 262, 266, 267, 268, 270, 272, 274, 277, 278, 279, 280, 281, 298, 303, 304, 305, 306, 314, 411, 415, 416,
 		417, 418, 419, 420, 421, 422, 423, 436, 437
 	]),
+	literal_type_negative_number: new Set([154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164]),
 	class_body_member_declaration: new Set([296, 299, 300, 408, 409]),
 	yield_expression_delegate: new Set([
 		1, 128, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 235, 236, 240, 243, 246, 248, 250, 255, 256, 257,
@@ -1073,6 +1074,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	object_type_content: TSKindId.ObjectTypeContent,
 	export_statement_namespace_export: TSKindId.ExportStatementNamespaceExport,
 	export_statement_equals_export: TSKindId.ExportStatementEqualsExport,
+	literal_type_negative_number: TSKindId.LiteralTypeNegativeNumber,
 	class_body_member_declaration: TSKindId.ClassBodyMemberDeclaration,
 	yield_expression_delegate: TSKindId.YieldExpressionDelegate,
 	parenthesized_expression_sequence: TSKindId.ParenthesizedExpressionSequence,
@@ -1137,6 +1139,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	ambient_declaration_global: 'statement_block',
 	export_statement_namespace_export: 'identifier',
 	export_statement_equals_export: 'expression',
+	literal_type_negative_number: 'number',
 	yield_expression_delegate: 'expression',
 	parenthesized_expression_sequence: 'sequence_expression',
 	arrow_function_parameter: 'identifier',
@@ -1205,6 +1208,7 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'ambient_declaration_global',
 	'export_statement_namespace_export',
 	'export_statement_equals_export',
+	'literal_type_negative_number',
 	'class_body_member_declaration',
 	'yield_expression_delegate',
 	'parenthesized_expression_sequence',
@@ -1396,6 +1400,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildExportStatementEqualsExport(
 				children[0] as Parameters<typeof F.buildExportStatementEqualsExport>[0]
 			);
+		case 'literal_type_negative_number':
+			return F.buildLiteralTypeNegativeNumber(children[0] as Parameters<typeof F.buildLiteralTypeNegativeNumber>[0]);
 		case 'class_body_member_declaration':
 			return F.buildClassBodyMemberDeclaration(children[0] as Parameters<typeof F.buildClassBodyMemberDeclaration>[0]);
 		case 'yield_expression_delegate':
@@ -2998,9 +3004,9 @@ export function resolveForInStatement_await(
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveForInStatement_forHeader(
-	value: T.ForInStatement.LooseConfig['forHeader']
-): Admit<T.ForInStatement['_for_header']> {
+export function resolveForInStatement_header(
+	value: T.ForInStatement.LooseConfig['header']
+): Admit<T.ForInStatement['_header']> {
 	return _resolveOne<T.ForHeader>(value, _K2, _super_for_header);
 }
 
@@ -3018,7 +3024,7 @@ export function coerceToForInStatement(input: T.ForInStatement.Loose): ReturnTyp
 		return input as unknown as ReturnType<typeof F.buildForInStatement>;
 	return F.buildForInStatement({
 		await: resolveForInStatement_await(input.await),
-		forHeader: _requireField('for_in_statement', 'forHeader', resolveForInStatement_forHeader(input.forHeader)),
+		header: _requireField('for_in_statement', 'header', resolveForInStatement_header(input.header)),
 		body: _requireField('for_in_statement', 'body', resolveForInStatement_body(input.body))
 	});
 }
@@ -8481,15 +8487,6 @@ export function coerceToCommentBlock(input: T.CommentBlock.Loose): ReturnType<ty
 	);
 }
 
-export function resolveLiteralTypeNegativeNumber_operator(
-	value: T.LiteralTypeNegativeNumber.LooseConfig['operator']
-): Admit<T.LiteralTypeNegativeNumber['_operator']> {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'-' | '+'>(value, _K2, _K2)),
-		[['-', TSKindId.Dash] as const, ['+', TSKindId.Plus] as const]
-	);
-}
-
 export function resolveLiteralTypeNegativeNumber_argument(
 	value: T.LiteralTypeNegativeNumber.LooseConfig['argument']
 ): Admit<T.LiteralTypeNegativeNumber['_argument']> {
@@ -8499,20 +8496,19 @@ export function resolveLiteralTypeNegativeNumber_argument(
 export function coerceToLiteralTypeNegativeNumber(
 	input: T.LiteralTypeNegativeNumber.Loose
 ): ReturnType<typeof F.buildLiteralTypeNegativeNumber> {
-	if (!_isLooseConfig<T.LiteralTypeNegativeNumber.LooseConfig>(input))
+	if (isNodeOfKind(input, TSKindId.LiteralTypeNegativeNumber))
 		return input as unknown as ReturnType<typeof F.buildLiteralTypeNegativeNumber>;
-	return F.buildLiteralTypeNegativeNumber({
-		operator: _requireField(
-			'literal_type_negative_number',
-			'operator',
-			resolveLiteralTypeNegativeNumber_operator(input.operator)
-		),
-		argument: _requireField(
+	return F.buildLiteralTypeNegativeNumber(
+		_requireField(
 			'literal_type_negative_number',
 			'argument',
-			resolveLiteralTypeNegativeNumber_argument(input.argument)
+			_resolveOne<T.Number>(
+				configFieldOr(input, 'argument', () => input),
+				_K36,
+				_K68
+			)
 		)
-	});
+	);
 }
 
 export function resolveNumberHex_content(value: T.NumberHex.LooseConfig['content']): Admit<T.NumberHex['_content']> {

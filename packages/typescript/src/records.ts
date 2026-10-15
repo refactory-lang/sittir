@@ -64,7 +64,7 @@ export const records = {
 	ForInStatementTransport: {
 		words: 13,
 		await_: { word: 2, bit: 0 },
-		for_header: { word: 3, width: 5 },
+		header: { word: 3, width: 5 },
 		body: { word: 8, width: 5 }
 	},
 	WhileStatementTransport: { words: 12, condition: { word: 2, width: 5 }, body: { word: 7, width: 5 } },
@@ -530,7 +530,7 @@ export const records = {
 	},
 	CommentLineTransport: { words: 6, content: { word: 2, width: 4 } },
 	CommentBlockTransport: { words: 6, content: { word: 2, width: 4 } },
-	LiteralTypeNegativeNumberTransport: { words: 12, operator: { word: 2, width: 5 }, argument: { word: 7, width: 5 } },
+	LiteralTypeNegativeNumberTransport: { words: 7, argument: { word: 2, width: 5 } },
 	NumberHexTransport: { words: 10, prefix: { word: 2, width: 4 }, content: { word: 6, width: 4 } },
 	NumberFloatPointTransport: {
 		words: 22,

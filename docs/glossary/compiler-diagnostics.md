@@ -450,7 +450,7 @@ and feed the phantom-kind ratchet; they are not grammar diagnostics.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::UNEXPECTABLE_CODES`
 
-The codes no `expectDiagnostics` entry may name: a grammar tree-sitter rejects (`dangling-internal-ref`, `unpredictable-symbol-table`) a config declaration that does not fit the grammar (`groups-config-invalid`, `refine-config-invalid`), a `rules:` or `renderAs:` declaration that contradicts the grammar (`rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`), a definition of a name enrich mints for the whitespace vocabulary (`whitespace-mint-collision`), and a conflict the grammar authors or the derivation cannot settle (`conflict-authored`, `conflict-unresolvable`, `conflict-resolutions-stale`), and dynamic precedence reshaping lost (`conflict-dynamic-precedence-lost`). Each is fixed at its cause, never accepted. The debt codes `rule-reauthored-without-cause` and `patch-without-cause` stay floorable.
+The codes no `expectDiagnostics` entry may name: a grammar tree-sitter rejects (`dangling-internal-ref`, `unpredictable-symbol-table`) a config declaration that does not fit the grammar (`groups-config-invalid`, `refine-config-invalid`), a `rules:` or `renderAs:` declaration that contradicts the grammar (`rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`), a definition of a name enrich mints for the whitespace vocabulary (`whitespace-mint-collision`), and a conflict the grammar authors or the derivation cannot settle (`conflict-authored`, `conflict-unresolvable`, `conflict-resolutions-stale`), dynamic precedence reshaping lost (`conflict-dynamic-precedence-lost`), and a receiver claim the lead derivation refuses (`lead-refused`). Each is fixed at its cause, never accepted. The debt codes `rule-reauthored-without-cause` and `patch-without-cause` stay floorable.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::unexpectableExpectEntries`
 
@@ -742,8 +742,9 @@ Why a conflict derivation stopped without converging, as `transpile/derive-confl
 
 The evaluate-time conflict records of a grammar built by `sittirGrammar`, from its derivation records:
 
-- one informational `conflict-resolution` per resolution the grammar imported, with the resolution, the policy step, the source chains and the conflict it settled, so every conflict a grammar declares has a reviewable reason;
-- one informational `conflict-unnecessary-upstream` per conflict set upstream declared that no resolution's upstream sources (`dsl/conflict-resolutions.ts::upstreamSourcesOf`) equal: the reshaped grammar never reports it;
+- one informational `conflict-resolution` per resolution the grammar imported, base then bound, with the resolution, the policy step, the source chains and the conflict it settled, so every conflict a grammar declares has a reviewable reason;
+- one informational `conflict-unnecessary-upstream` per conflict set upstream declared that no resolution's upstream sources (`dsl/conflict-resolutions.ts::upstreamSourcesOf`) equal, base or bound: the reshaped grammar never reports it;
+- one informational `conflict-unnecessary-bound` per bound set that a base set, under its bound names (`dsl/bind.ts::boundNameOf` over the grammar's `renamedFrom`), already declares: the bound grammar carries that set already, so the bound derivation should never have needed it;
 - a blocking `conflict-authored` when the config has a `conflicts` block. Every conflict is derived, so an authored list is never applied; blocking it keeps a grammar from carrying a list that silently does nothing.
 
 A grammar without derivation records has none.
@@ -797,3 +798,7 @@ A kind and the literal tokens its template neither writes nor seats in a slot.
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::fromDroppedTokens`
 
 The blocking `dropped-token` error for one kind: the tokens lost by its render, and the remedy, a named wrapper for the token in patches so it becomes a slot. Generation stops on it unless `dropped-token` is allowed. It is raised once the templates are emitted, because the template is the only place the loss is visible.
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::expectationsInEitherSpelling`
+
+The grammar's `expectDiagnostics` with each kind listed under both its base name and its bound name. A grammar declares its expectations in base names, and a diagnostic may name the kind either way, depending on whether it is raised before or after the grammar bindings rename it. A grammar with no renames keeps its expectations as written.
+

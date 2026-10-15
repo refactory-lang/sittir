@@ -4,7 +4,7 @@ import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isWordOrBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
-import { isFixedTextLeaf, isKindIdStored, kindIdText } from '../compiler/model/node-map.ts';
+import { isFixedTextLeaf, isKindIdStored } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { bareInteriorText, numberInputType, numericLeafInputTypes, numericLeafShape, numericSlotShape, widenNumericSlots } from './interior.ts';
@@ -15,6 +15,8 @@ import {
 	kindIdMemberName,
 	findKindEntry,
 	findKindEntryForLiteral,
+	fixedTextKinds,
+	hasKindId,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import { kindTypeName } from '../compiler/model/casing.ts';
@@ -28,10 +30,6 @@ export {
 	kindIdMemberName,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
-
-function hasKindId(kind: string, kindEntries: readonly KindEnumEntry[] | undefined): boolean {
-	return kindEntries !== undefined && findOwnKindEntry(kindEntries, kind) !== undefined;
-}
 
 function stampedDiscriminant(
 	kind: string,
@@ -163,8 +161,8 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	const scalars = scalarLeafKinds(nodeMap);
 	const scalarEntries = new Map<string, string>();
 	if (scalars.boolean !== undefined) {
-		scalarEntries.set(scalars.boolean.trueKind, 'boolean');
-		scalarEntries.set(scalars.boolean.falseKind, 'boolean');
+		scalarEntries.set(scalars.boolean.trueKind, 'true');
+		scalarEntries.set(scalars.boolean.falseKind, 'false');
 	}
 	for (const [kind, input] of numericLeafInputTypes(nodeMap)) scalarEntries.set(kind, input);
 	for (const kind of leafKinds) {
@@ -333,11 +331,7 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 		lines.push('');
 	}
 
-	const fixedTextKindIds = new Set(
-		[...nodeMap.nodes]
-			.filter(([kind, node]) => kindIdText(node) !== undefined && hasKindId(kind, kindEntries))
-			.map(([kind]) => kindDiscriminantExpr(kind, nodeMap, kindEntries))
-	);
+	const fixedTextKindIds = new Set(fixedTextKinds(nodeMap, kindEntries).map(([kind]) => kindDiscriminantExpr(kind, nodeMap, kindEntries)));
 	lines.push(`export type FixedTextKindId = ${fixedTextKindIds.size > 0 ? [...fixedTextKindIds].join(' | ') : 'never'};`);
 	lines.push('');
 

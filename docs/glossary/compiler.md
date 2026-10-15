@@ -1628,6 +1628,11 @@ and gates it through `diagnoseGrammar`, throwing `GrammarDiagnosticError` with t
 records and every record the gate saw when it does not pass. The config names the package, not the grammar, so the
 caller resolves it once. Hydrate then runs on the collected grammar with
 `droppedKinds` as the names whose absence is already reported, and the `ir` surface is stamped on the hydrated node map (`stampIrSurface`).
+After the gate it refuses stale grammar bindings (`bindings/hash.ts::assertBindingsFresh`
+over the package's committed `grammar.bindings.ts` and its `bindings.scm`), so
+codegen never runs with grammar bindings derived from other sources than the ones on disk.
+With `unbound` it evaluates the package without its grammar bindings and skips that check: the
+base grammar's compilation, whose model the grammar bindings are derived against.
 
 ### `packages/codegen/src/compiler/compile.ts::diagnoseGrammar`
 
@@ -2800,17 +2805,13 @@ source (`dsl-shape-fidelity.test.ts` holds each grammar to its shipped
 `grammar.json` under `rulesEqual`). `evaluate` is this plus the compile
 boundary; a caller that wants the DSL's own shape calls it directly.
 
+### `packages/codegen/src/compiler/evaluate.ts::evaluateUnboundDsl`
+
+`evaluateDsl` for the entry without its grammar bindings: the same extraction under the DSL globals, with the module imported through `importUnbound`. `evaluate` calls it when `EvaluateOptions.unbound` is set; the conflict-derivation child calls it directly.
+
 ### `packages/codegen/src/compiler/evaluate.ts::importAndExtractGrammar`
 
-```text
-/**
- * Import the grammar module at the given path and extract the RawGrammar
- * from its default or named export.
- *
- * @param entryPath - Absolute path to the grammar.js or grammar.sittir.ts file.
- * @returns The RawGrammar produced by the module's top-level `grammar()` call.
- */
-```
+Runs `load` (the grammar module's import: `evaluateDsl` passes a plain import, `evaluateUnboundDsl` passes `importUnbound`) and extracts the grammar from the module's default or named export, as its top-level `grammar()` call produced it.
 
 The dead enrich mints `sittirGrammar` blanked arrive as a non-enumerable sidecar on the grammar (`getDeadEnrichMints`); they become `orphanedSyntheticGroups` here, after the module's `grammar()` call has returned, since the dead set is computed from that call's result. The conflict-derivation records (`getDerivationRecords`) arrive the same way and become `derivationRecords`, and the text-token names `sittirGrammar` attached (`dsl/enrich.ts::getTextTokens`) become `textTokens`. The returned grammar is a spread copy, so a non-enumerable sidecar is read here or not at all.
 
@@ -5326,6 +5327,10 @@ A label's stamped provenance. A label without one was minted after `stampLabelPr
 `{parent -> VariantChild[]}` for every rule in `rules` that has at least one
 variant, by `variantChildrenOf`, with `definedBy` read from each label's stamp.
 
+### `packages/codegen/src/compiler/variant-structural.ts::ownedVariants`
+
+`{variant -> owner}` for every variant its owner owns: the variant's one reference in the grammar is the owner's arm stamped `variantOf` that owner. A variant referenced anywhere else is a kind of its own that the arm only names (rust `pointer_type`'s `mutable_specifier`), and gets no entry. `undefined` when no variant is owned. The owned variant of a supertype is a form of it: a node of the variant stands where a node of the supertype would.
+
 ### `packages/codegen/src/compiler/variant-structural.ts::variantChildrenOf`
 
 The variants of `parentKind` in `rule`, in tree-walk order and listed once
@@ -6696,7 +6701,7 @@ grammar that never ran through `wire()`; then no label is automatic.
 
 ### `packages/codegen/src/compiler/types.ts::KindProvenance`
 
-Where the grammar bindings' kinds came from: `renamedFrom` maps a renamed kind to its base kind, and `splitFrom` maps a split clone to the kind it was cloned from. `bindGrammar` writes both maps onto the evaluated grammar; link carries them under linked names, and every stage after it passes the one object through to the nodes.
+Where a kind came from: `renamedFrom` maps a kind the grammar bindings renamed to its base kind, `splitFrom` maps a split clone to the kind it was cloned from, and `variantOf` maps an owned variant to the kind it is a variant of (`ownedVariants`). `bindGrammar` writes the first two maps onto the evaluated grammar and link derives the third from the linked rules; link carries them under linked names, and every stage after it passes the one object through to the nodes.
 
 A `splitFrom` value is the source kind's bound name, never a base name: `bindGrammar` splits after it renames, and link renames the values with the keys. A clone of a renamed kind therefore names the renamed kind (rust `method_declaration` → `function_declaration`), and the base name is one more step through `renamedFrom` (`function_declaration` → `function_item`).
 
@@ -7335,7 +7340,7 @@ The parser catalog rows (`kindEntries`) a link pass reads before `LinkCtx` exist
 // original node's own stamped facts (id, metadata, …) must ride
 // along, so spread it under attributeBuilder's freshly-built shape.
 // For SEQ the built node may be a collapsed singleton survivor with
-// no `members` of its own — `overlaySeq` drops the stale array.
+// no `members` of its own — `carrySeqFacts` drops the stale array.
 ```
 
 #### body
@@ -7875,8 +7880,6 @@ The options `grammar()` receives: `WiredOpts`, the one contract the DSL and eval
 The global `grammar()` during evaluation, under the DSL's contract: `grammar(options)` for a grammar of its own,
 `grammar(base, options)` to extend a `grammar()` result. The base is told apart from options by its `grammar`
 property, and a call that mixes the two shapes throws.
-
-When the base was wired, the rules wire created or changed (the layout supertype excepted, which enrich mints after its own labelling) are labelled with `stampAutomaticVariants` into the wire context's record. That is the same stamping enrich applies to a kind it mints, run on the arms a patch or `groups:` entry authored after enrich, so a later enrich pass finds those arms already labelled.
 
 #### body
 
@@ -9924,13 +9927,13 @@ it is its own slot and never merges with a neighbouring pattern run.
 #### named parts in nested structure
 
 ```text
-A token whose sequence holds an authored `field()` at any depth is structured on the flattened sequence: a
-nested sequence is the same sequence (associativity), so its members become members of the token. A
-`field(name, choice-of-strings)` is an enum slot under its own name, and a `field(name, optional(x))` over a
-pattern is an optional text slot. An optional group (a choice with a blank, or an optional, whose live arm is a
+A nested sequence that holds an authored `field()` at any depth is the same sequence (associativity), so its
+members become members of the token; a nested sequence that names nothing and holds a pattern composes into one
+slot as it would with no field anywhere (`flattenSeqs`). A `field(name, optional(string))` is a presence flag
+under its own name, a `field(name, choice-of-strings)` is an enum slot under its own name, and a
+`field(name, optional(x))` over a pattern is an optional text slot. An optional group (a choice with a blank, or an optional, whose live arm is a
 sequence that holds a named part) stays a group: its members are structured the same way and the group stays
-optional, so its slots are optional and its literal text is written only when it is present. A token with no
-authored field is untouched: its nested sequences still compose into one slot, so no existing kind changes.
+optional, so its slots are optional and its literal text is written only when it is present.
 ```
 
 ### `packages/codegen/src/compiler/token-interior.ts::structureMembers`
@@ -9939,17 +9942,20 @@ The member loop of the token-interior pass, shared by the token's own sequence a
 
 ### `packages/codegen/src/compiler/token-interior.ts::structureSeq`
 
-Structures one token's top-level sequence. A sequence carrying fields
-flattens every nested unlexed sequence; one without fields flattens only the
-pattern-free ones (`flattenLiteralSeqs`), so a literal run such as `'\\'`
-before an escape choice becomes members beside the choice. The token is
+Structures one token's top-level sequence. Nested sequences are spliced in
+where they hold a named part or no pattern (`flattenSeqs`), so a literal run
+such as `'\\'` before an escape choice becomes members beside the choice, and a
+named part inside a nested sequence becomes a member. The token is
 structured when a slot or group holds a pattern, or when its one enum is the
 whole content (`isSoleEnumContent`); otherwise it stays whole-text.
 
-### `packages/codegen/src/compiler/token-interior.ts::flattenLiteralSeqs`
+### `packages/codegen/src/compiler/token-interior.ts::flattenSeqs`
 
-Splices nested sequences that hold no pattern into their parent's members,
-keeping any sequence that is already lexed or holds a pattern whole.
+Splices a nested (non-lexed) sequence into its parent's members, recursively, when it holds a named part (a field) or no pattern. A sequence that holds a pattern and names nothing stays whole, so its members compose into one slot: rust's escaped char keeps `\\` and the escape in one `content` beside its named `byte` flag.
+
+### `packages/codegen/src/compiler/token-interior.ts::isFlag`
+
+Whether a member is an optional single string: a flag whose presence is the slot's value.
 
 ### `packages/codegen/src/compiler/token-interior.ts::InteriorState`
 
@@ -9970,10 +9976,6 @@ A token whose members hold no other content and exactly one enum has that
 enum as its content. Shared by the token-interior pass (the enum is named
 `content`) and the full-form stamp (the enum sits between the literal runs),
 so the two cannot disagree about which enum is the text.
-
-### `packages/codegen/src/compiler/token-interior.ts::flattenMembers`
-
-The members of a sequence with every nested (non-lexed) sequence spliced in, recursively.
 
 ### `packages/codegen/src/compiler/token-interior.ts::containsField`
 
@@ -10095,7 +10097,7 @@ The renames the parser catalog records for the grammar's rules and externals (`d
 
 ### `packages/codegen/src/compiler/link.ts::renameRules`
 
-Rewrites a grammar under a rename map, as `collapseRenamedRules` describes; an empty map returns the grammar unchanged. The rebuilt catalog keeps each renamed kind's source rule ids (`BuildRuleCatalogCtx.sourceKindOf`).
+Rewrites a grammar under a rename map, as `collapseRenamedRules` describes; an empty map returns the grammar unchanged. The rebuilt catalog keeps each renamed kind's source rule ids (`BuildRuleCatalogCtx.sourceKindOf`). The provenance maps follow the rename: `renamedFrom` keys, and both the keys and the source kinds of `splitFrom`, since a split's source is itself a kind of the grammar.
 
 ### `packages/codegen/src/compiler/link.ts::splicedRuleNames`
 
@@ -10176,3 +10178,15 @@ A literal that is itself the slot (a STRING stamped `nonterminal: true` with `al
 ### `packages/codegen/src/compiler/generated-metadata.ts::foldedSymbols`
 
 The raw symbols a parser folds onto another public symbol: the entries of `ts_symbol_map` whose two sides differ. A token the grammar writes twice gets a second raw symbol that the parser reports under the first one's id. The fold census test pins each grammar's count.
+
+### `packages/codegen/src/compiler/evaluate.ts::EvaluateOptions`
+
+`unbound`: evaluate the entry without its grammar bindings (`evaluateUnboundDsl`).
+
+### `packages/codegen/src/compiler/evaluate.ts::importUnbound`
+
+Imports a grammar entry with `sittir-grammar.ts::UNBOUND_ENV` set (the prior value restored after), so `sittirGrammar` skips the grammar bindings. The entry is imported under its own `?unbound` URL, which keeps the unbound module apart from a bound import of the same file in the module cache.
+
+### `packages/codegen/src/compiler/evaluate.ts::withDslGlobals`
+
+Runs a callback with the tree-sitter DSL globals (`grammar`, `seq`, `sym`, …) installed and the prior values restored after, under the evaluation mutex, so two imports never see each other's globals. `evaluateDsl` imports a grammar entry inside it; `bindings/module.ts::loadBindingsModule` imports a `grammar.bindings.ts`, whose authoring helpers call the globals.

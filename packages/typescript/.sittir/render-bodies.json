@@ -3064,7 +3064,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "for_header"
+			"name": "header"
 		},
 		{
 			"kind": "slot",
@@ -4692,8 +4692,8 @@
 			"field": "literal_type_negative_number_before"
 		},
 		{
-			"kind": "slot",
-			"name": "operator"
+			"kind": "text",
+			"text": "-"
 		},
 		{
 			"kind": "seam",

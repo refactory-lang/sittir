@@ -5,11 +5,13 @@ import { Command } from 'commander';
 import { registerValidate } from './commands/validate/index.ts';
 import { registerTools } from './commands/tool/index.ts';
 import { gen } from './commands/gen.ts';
+import { bootstrapCommand } from './commands/bootstrap.ts';
 
 /** Build the fully-registered sittir program WITHOUT parsing argv. */
 export function buildProgram(): Command {
 	const program = new Command().name('sittir').description('Unified sittir command-line surface');
 	gen.register(program);
+	bootstrapCommand.register(program);
 	registerValidate(program);
 	registerTools(program);
 	return program;

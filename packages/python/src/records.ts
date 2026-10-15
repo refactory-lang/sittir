@@ -65,7 +65,7 @@ export const records = {
 		words: 13,
 		group: { word: 2, bit: 0 },
 		exception: { word: 3, width: 5 },
-		suite: { word: 8, width: 5 }
+		body: { word: 8, width: 5 }
 	},
 	FinallyClauseTransport: { words: 7, block: { word: 2, width: 5 } },
 	WithStatementTransport: {

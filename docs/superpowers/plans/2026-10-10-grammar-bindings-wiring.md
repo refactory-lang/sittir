@@ -2,7 +2,7 @@
 
 **Specs:** the bindings spec (`2026-09-13-bindings-and-vocabulary-design.md`, §2.1 and §9) and the binding generator spec (`2026-10-06-binding-generator-design.md`). **Probes:** `docs/superpowers/probes/2026-10-10-contextual-alias/` and `docs/superpowers/probes/2026-10-10-placed-claims/`. **Earlier stages:** `2026-10-06-binding-generator.md`.
 
-Three stages, in order. Each is one PR into `feat/bindings`, stacked on the one before. Every stage passes the standing gates:
+Four stages, in order. Each is one PR into `feat/bindings`, stacked on the one before, except stage 4: its two PRs land where it places them. Every stage passes the standing gates:
 - `validate:native` rows equal to the baseline on all five grammars, compared with `validate history`;
 - the full unit suite, run as its own call;
 - the cargo workspace (`cargo test --workspace --no-default-features`);
@@ -36,6 +36,8 @@ Each stage starts with a census, sent to brainstorm before any code: the sites t
 
 Ruled: everything in the grammar bindings except kind renames reaches the parser (field renames, wraps, splits, merges and aliases, patches). Kind renames stay out, so low-level kind names stay upstream's and the portable layer maps them. Claims resolve through field renames as they do through kind renames.
 
+A derived kind rename whose target is an existing kind or display name is a merge, not a rename: typescript's `private_property_identifier` → `property_identifier` targets the display kind an alias already names, and applying it would fold privateness (a flag fact) into the plain kind. Whatever applies kind renames refuses or reports such an entry under the merge rules and the shape guard (`sameShapeAs`), and never applies it as a plain rename.
+
 **Census first:** per grammar, the grammar bindings' entries by type (field rename, wrap, split, alias, patch), the parse-state and `parser.c` deltas against the unbound build, and every validation row and generated file the bound build moves. The contextual-alias probe has the alias numbers (rust's splits: +0.65% STATE; python's class-body method: +0.60%; decorated: +0.73%).
 
 ### 2a. Translation gaps the bound build hits
@@ -51,7 +53,7 @@ Each gets its own red test before its fix:
 
 ### 2b. Wire the grammar bindings, minus kind renames
 
-- `grammar.sittir.ts` passes the generated grammar bindings to `sittirGrammar` for each bound grammar; `bindGrammar` applies everything but `renames`.
+- `grammar.sittir.ts` passes the generated grammar bindings to `sittirGrammar` for each bound grammar; `bindGrammar` applies everything but `renames` and `splits`. Rust passes its bindings with `splits: []`: a split turns on only together with the claim-following that keeps its base kind's claims reading on the split kind (2c with 2e).
 - `bindFacts` maps field names through the grammar bindings' field renames, so claims and member routes resolve against the bound fields.
 - **The receiver split** (bindings spec §9, "A receiver is no parameter"). The edit, its shape and every ruling on it are in the receiver-split probe, `docs/superpowers/probes/2026-10-12-receiver-split/README.md` ("The edit", "Proposal", "Questions"). In short:
   - A claim that anchors a parameter list's first element as `@receiver` derives a `lead` (the derivation is on `feat/bindings`); every owner captures the rest as `@parameters` against the grammar's own list.
@@ -65,6 +67,8 @@ Each gets its own red test before its fix:
 
 ### 2c. Contextual aliases
 
+**2c and 2e land as one change.** A split turns on only with the claim-following that keeps its base kind's claims reading on the split kind: once the parser emits `method_declaration` where it emitted `function_item`, every `declaration.method` read keyed on `function_item` reads false until claims follow the split (2e). The `static` claims below also read the split kinds and, for python, the class-body clone. So the aliases, the clone projection (2e), the `variantOf` repair and one split per site ship together, behind one census and one gate.
+
 Ruled to be parser aliases at a context-unique site, with the ancestor clones kept and no target clone:
 - rust's three context splits: `function_signature_item` → `signature_method_declaration` in a trait, and `function_item` → `method_declaration` in a trait and in an impl body. Today's grammar bindings derive only the two trait splits: the impl-body one went when rust's impl methods became claimed by a read test (receiver or not), an interim. Ruled: all three are aliases, so the impl-body alias comes back; the census confirms its cost. With the alias, `$type` says method, and the no-receiver read test only sets the `static` flag (stage 1);
 - rust `crate` in `visibility_modifier` (`internal_public_visibility_modifier`), with no clones;
@@ -72,6 +76,44 @@ Ruled to be parser aliases at a context-unique site, with the ancestor clones ke
 - python's decorated method in a class body (a second split within `decorated_definition`, reusing the first split's clones).
 
 The aliases retire the interim placed claim that reads any decorated function in a python class body as `declaration.method`.
+
+**Literal splits.** A claim that names a kind by a fixed text on the claimed node's own leaf becomes a parser split. It is built on this stage's one copy primitive: one primitive serves splits, contextual aliases and the receiver lead, and a copy aliases back to its source's name unless it is named.
+
+- **Input:** a kind claim whose predicate is `#eq?` or `#any-of?` on a leaf of the captured node. Typescript's constructor is the case that motivates it: `((method_definition name: (property_identifier) @name) @declaration.constructor (#eq? @name "constructor"))`.
+  - A regex predicate (`#match?`) is the lexical floor and stays a read test.
+  - A flag claim stays a flag read (stage 1): python's `staticmethod` names a flag, not a kind.
+- **The split:**
+  - The claimed kind's rule is copied with the leaf replaced by the literal, aliased back to the leaf's kind (`alias('constructor', $.property_identifier)`), so the leaf node does not change.
+  - The copy is named from the claim's path, as the aliases are (`declaration.constructor` → `constructor_declaration`). It sits beside its source at each use site the claim's pattern names.
+  - Ancestors the pattern names as context are copied, and alias back.
+  - The claim then names the copy, and `$type` decides it.
+- **Precondition: the literal lexes as a keyword token at that position**, as `get` and `set` do in a method's head. It matches the grammar's `word` token, and the leaf is the word token or an alias of it (`property_identifier` over `identifier`). Tree-sitter's keyword extraction then lexes it as the literal wherever the copy's arm is valid, and as the identifier everywhere else.
+- **Diagnostic:** `literal-split-not-keyword`, blocking, for a fixed-text kind claim that fails the precondition: text that is not word-shaped, or a leaf that is a string, a number or a token other than the word. The claim is dropped, or rewritten on a kind the grammar already has.
+- **What promotion takes away:** at the parse states where the copy's arm is valid, the literal no longer reads as an identifier in any other arm. The gate finds every such reading. Each must be one the language rejects too, as with a class field named `constructor` (TS18006), or the split is refused.
+- **The claims it covers today:**
+  - **Typescript's `constructor`.** Its claim gains the class body as context, so an object literal's method named `constructor` stays a method; today the claim reads it as a constructor.
+  - **Typescript's `never`, and rust's `true` and `false`.** These are already keyword tokens in their rules, so they split with no promotion.
+  - **Python's `__init__`**, on the class-body method alias above.
+  - **Out of scope:** every `#match?` claim (comment shapes, dunders, constants, string prefixes, rust's prelude type names), and python's `staticmethod` and `classmethod` flags.
+- **The builder contexts depend on it.** A member modifier is permitted in the constructor's parameters and in no other function's. Until the split lands, the `Visibility` table provides at every method's parameters (builder contexts spec, §11).
+- **Census:** each split's STATE and `parser.c` deltas, and the parse states where each literal becomes a keyword.
+- **Gate:**
+  - Every valid corpus tree parses the same, apart from the split kinds.
+  - Every read of a split claim classifies the same, except an object literal's `constructor` method, which reads as a method.
+
+**`static` reads from the method's own node.** Today both `static` facts come from context: rust's from a placed claim in an impl body with a per-parameter `#not-kind-eq?`, and python's from the parent `decorated_definition`'s decorator. With the aliases, each is read from the method's own node, or, for python, from the envelope the portable method is read through. The aliases' claims replace the placed ones:
+- **rust** (also needs 2b's receiver form): a method or method signature whose parameter list is not the receiver form is static. The per-parameter test misses a typed `self` (`self: Box<Self>`), which 2b moves into the receiver form.
+  ```
+  ((method_declaration (parameters (_)? @_list)) @declaration.method.static (#not-kind-eq? @_list "parameters_elements_receiver"))
+  ((signature_method_declaration (parameters (_)? @_list)) @declaration.method.signature.static (#not-kind-eq? @_list "parameters_elements_receiver"))
+  ```
+- **python**: the flag is captured on the class-body clone, the envelope of the decorated method:
+  ```
+  ((decorated_definition_class_declaration (decorator (identifier) @static) definition: (method_declaration) @element) (#eq? @static "staticmethod"))
+  ```
+  A container's captures go to every kind its element slot names, and the clone's `definition` admits `class_declaration` too, which has no `static`. So derivation must give a capture only to the kind the claim's element pattern names. That is the one new mechanism, and it lands with this stage.
+- **Claim-level flags reach the read model.** Today `resolveFlags` resolves a claim whose last segment is a flag, but nothing downstream reads `claim.flag`. Such a flag reaches neither the read entries nor the members, so the portable surface and `c.is` cannot answer it. This stage carries a claim's flag into its read entry and the kind's flag table, as a member capture's flag already is, so both `static` claims above are answered node-locally.
+- **Gate:** every read the placed claims gave classifies the same, except that a typed-`self` method is no longer static. The `is` tests cover both grammars' static and non-static methods, and rust's static trait signature.
 
 Each alias kind gets its own low-level builder beside the aliased kind's (`build.methodDeclaration` beside `build.functionItem`). Today `fieldAliasMap` emits none, so the node-model and factory emit change: an alias of a visible kind at a context-unique site is a kind with a builder, a wrap and a transport (`MethodDeclarationTransport`), not a field-alias row.
 - **Census:** each alias site, its clones, and the per-grammar STATE and `parser.c` deltas, compared with the probe.
@@ -85,8 +127,11 @@ Each alias kind gets its own low-level builder beside the aliased kind's (`build
 
 ### 2e. Clones are forms
 
-`formsOf` adds the kind's split clones (stamped `splitFrom`) to its supertype forms, so a base kind's claims reach its visible clones (bindings §9). Python's `decorated_definition` container claim (decorators to the element, `static` from `@staticmethod`) then reaches `decorated_definition_class_declaration`.
-- **Census:** each clone, its base, and the members it gains.
+Lands with 2c (see there). `formsOf` adds the kind's split clones (stamped `splitFrom`) to its supertype forms, so a base kind's claims reach its visible clones (bindings §9). `splitFrom` reaches `ModelNode` (the node model serializes it; `slotModelOf` drops it today), and the one `formsOf` expansion covers the physical clones and the ancestor contexts a read entry's `within` names. Python's `decorated_definition` container claim (decorators to the element, `static` from `@staticmethod`) then reaches `decorated_definition_class_declaration`.
+- **`variantOf` survives the split.** Splitting clones a supertype the split kind's base belongs to: rust's `_declaration_statement` becomes `_declaration_statement_impl_item_body` and `_declaration_statement_trait_item`, and 17 of the 18 kinds stamped `variantOf: _declaration_statement` lose the stamp. A clone of a supertype keeps its members' `variantOf`; the stamp is never narrowed.
+- **One split per site.** The derived rust grammar bindings list the impl-body split twice, one per receiver claim (`self_parameter` and typed `self`). The derivation emits one split per (kind, context).
+- **Tests:** rust's `is` method tests find `method_declaration`; the receiver-routes inventory test checks that `method_declaration`'s read entries include `declaration.method`; the inline codemod acceptance test accepts `method_declaration` beside `function_item`.
+- **Census:** each clone, its base, and the members it gains; rust's callable builders gain `methodDeclaration`, `signatureMethodDeclaration`, `traitInterfaceDeclarationBody` and `extensionDeclarationBody`, and its list setters the two cloned body lists.
 
 ### 2f. The docstring path
 
@@ -96,6 +141,8 @@ The python docstring's `doc` member resolves through the `_simple_statements` si
 ## Stage 3: the runtime bindings generator
 
 The runtime bindings are what the portable engine runs, generated per grammar from the routes. The vocabulary's mapped types (owner × value crossings, per-kind flag unions) are authored in the vocabulary, not generated here.
+
+- Honor the authored numeric and boolean scalar value contracts in high-to-low runtime builds and built-node crossings, through the [scalar-contract follow-up](2026-10-06-binding-generator.md#follow-up-high-to-low-runtime-scalar-bindings-october-15) in the generator plan.
 - `build`, `is` and `kinds` per vocabulary path, keyed by `$type`;
 - the builder-chain steps and their guards: an `is` guard per segment carries the segment's read test and its flag bits;
 - each language's `$exclusions`: per kind, the flag pairs the grammar never spells together, derived from the rule by the generator, not declared by the vocabulary. The vocabulary's mapped types read them for the typed chains, so after a step the incompatible steps are gone, and the runtime check refuses a structure whose `$flags` break them;
@@ -103,3 +150,46 @@ The runtime bindings are what the portable engine runs, generated per grammar fr
 
 - **Census:** per grammar, the build, `is` and `kinds` entries and the flags each guard tests, compared with the routes.
 - **Gate:** the portable type-check ratchet (per-grammar error count) only falls, and every generated guard agrees with the routes' read tests on the existing `is` tests.
+
+## Stage 4: vocabulary synonyms
+
+`bindings.scm` claims are written in the languages' own words, and the portable side keeps only the canonical names. This stage implements the bindings spec's §4.2 as ruled, so a language's word for a segment or a flag reads as the canonical name everywhere. The table's entries are the synonyms probe's rulings (`docs/superpowers/probes/2026-10-12-vocabulary-synonyms/`, §1's "languages' words" and rulings NT1–NT9, NT11, ID2, ID5 and ID6), and the words NT10 excludes are in no table.
+
+Two PRs:
+- **4a** needs only stage 1's flag resolution (`bindings/vocabulary.ts::flagSegment` and `resolveFlags`). It lands after 2b merges, since 2b reworks the receiver claims that 4a rewrites.
+- **4b** stacks on stage 3, whose generated `is`, `kinds` and `build` it extends.
+
+**Census first:**
+- the synonyms per level and the flags' table (NT11: empty);
+- every synonym position the collision rule checks, against the probe's 120 positions with no collision and one note: `try` is a synonym of `propagate` and the canonical segment of `expression.block.try`;
+- per grammar, the claims 4a rewrites into their language's word.
+
+### 4a. The tables, the reader and the collision rule
+
+- **The tables.** Each top-level namespace's file declares its level's table, from a canonical segment to its synonyms (`declaration.ts`: `receiver` to `self` and `this`). The flags' table sits beside the `Flag` marker. A synonym is not gated: it holds where its canonical segment does.
+- **The vocabulary reader** (`bindings/vocabulary.ts`) reads the tables with the kinds, members and flags, so `Vocabulary` answers a segment's synonyms per level.
+- **Canonicalized where a claim is read.** A pass before `resolveFlags` resolves each path segment and each flag capture against the vocabulary:
+  - the canonical names at that position first;
+  - then the level's synonyms of the segments the position has.
+
+  It hands on canonical paths and flags only. Every later step sees canonical names only: `resolveFlags`, the routes, derivation, the inventory, `grammar.bindings.ts`, the node models and `portable.ts`. A segment that is neither a name nor a synonym at its position stays the diagnostic it is today.
+- **The collision rule** joins `vocabulary-features --check`'s planning issues (`tools/src/vocabulary/plan.ts`), as the spec words it:
+  - for a segment's synonym, a sibling segment or a sibling's synonym, or a flag the parent kind or a kind above it declares, or that flag's synonym;
+  - for a flag's synonym, another flag or flag synonym, a member of a kind that has the flag, or a segment or synonym beneath such a kind;
+  - a synonym not spelled as a segment.
+- **The claims use their words.** The bindings are written against the languages' idioms: the three `bindings.scm` files rewrite each claim segment the census attributes to that grammar into its language's word, e.g. rust's and typescript's receiver claims as `self` and `this`, and python's catch as `except`. Words of languages without a grammar (`rescue`, `using`, `unpack`) stay table entries only.
+- **Gate:**
+  - after the rewrite, every generated file is byte-identical to before it: `grammar.bindings.ts`, `augment.ts`, `flags.ts`, the node models and `portable.ts`, with the inventory's output unchanged;
+  - `vocabulary-features --check` passes on the real tables, and a fixture vocabulary trips each clause of the collision rule once;
+  - a scan of the generated files finds no synonym in a path or flag position.
+
+### 4b. Typed synonym keys on the portable surface
+
+- **Types.** A mapped type in the vocabulary adds a key per synonym to each portable namespace, typed as the canonical key, so an editor offers `is.declaration.parameter.this`. A synonym has no interface and no `$kind`.
+- **A spelling, not a shortcut.** A synonym key spells one canonical segment at its own level. It never drops, adds or reorders a segment, so the portable surface still names every path in full and has no aliases.
+- **Runtime.** The generator emits each synonym key as the canonical key's own entry, the same function and the same object, so nothing canonicalizes at run time.
+- **Canonical wherever kept.** `$kind`, `$type` and `$flags` never hold a synonym. A build through a synonym's path gives the canonical `$kind`; a structure whose `$kind` or `$flags` holds a synonym is refused as an unknown name, since a synonym is a builder's path, never data.
+- **Gate:**
+  - acceptance item 11: for a synonym path, `is`, `kinds` and `build` are the canonical entries (identity) and give equal results on the existing `is` tests;
+  - a type test that the synonym key's type equals the canonical key's;
+  - the portable type-check ratchet only falls.

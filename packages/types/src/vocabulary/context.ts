@@ -12,10 +12,10 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 	readonly declaration: V.Declaration.Any<G>;
 	readonly element: V.Element.Any<G>;
 	readonly expression: V.Expression.Any<G>;
+	readonly file: V.File.Any<G>;
 	readonly identifier: V.Identifier.Any<G>;
 	readonly literal: V.Literal.Any<G>;
 	readonly modifier: V.Modifier.Any<G>;
-	readonly module: V.Module.Any<G>;
 	readonly pattern: V.Pattern.Any<G>;
 	readonly statement: V.Statement.Any<G>;
 	readonly type: V.Type.Any<G>;
@@ -27,7 +27,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['literal']
 				| G['pattern'];
 		};
-		readonly 'argument.keyword': {
+		readonly 'argument.named': {
 			readonly value:
 				| G['expression']
 				| G['identifier']
@@ -43,12 +43,18 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Attribute.Content.Any<G>;
 		};
 		readonly 'attribute.content': {
-			readonly input: unknown;
+			readonly input:
+				| V.Element.Macro.TokenTree.Delimited<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement']
+				| V.Type.Primitive<G>;
 		};
 		readonly 'attribute.content.call': {
 			readonly arguments:
 				| V.Declaration.Module<G>
-				| V.Element.Splat<G>
+				| V.Element.Spread<G>
 				| G['expression']
 				| G['identifier']
 				| G['literal'];
@@ -90,20 +96,34 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['identifier']
 				| G['type'];
 		};
-		readonly 'clause.case': {
-			readonly bodies: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+		readonly 'clause.case.default': {
+			readonly bodies: G['declaration'] | G['statement'];
+		};
+		readonly 'clause.case.match': {
 			readonly consequence: V.Declaration.TypeAlias<G> | G['statement'];
+		};
+		readonly 'clause.case.switch': {
+			readonly bodies: G['declaration'] | G['statement'];
 			readonly value:
 				| V.Declaration.Module<G>
 				| G['expression']
 				| G['identifier']
 				| G['literal'];
 		};
-		readonly 'clause.case.default': {
-			readonly bodies: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
-		};
 		readonly 'clause.catch': {
-			readonly catchClauseGroup: unknown;
+			readonly body: V.Declaration.TypeAlias<G> | G['statement'];
+			readonly name:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern'];
+			readonly type:
+				| unknown
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| G['type'];
 		};
 		readonly 'clause.comprehension.for': {
 			readonly left: G['expression'] | G['identifier'] | G['pattern'];
@@ -120,14 +140,13 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['literal']
 				| G['pattern'];
 		};
-		readonly 'clause.constraint': {
-			readonly content: string;
-			readonly type: G['identifier'] | G['type'];
-		};
 		readonly 'clause.default': {
 			readonly type: G['identifier'] | G['type'];
 		};
-		readonly 'clause.elif': {
+		readonly 'clause.else': {
+			readonly body: G['declaration'] | G['statement'];
+		};
+		readonly 'clause.else_if': {
 			readonly condition:
 				| G['expression']
 				| G['identifier']
@@ -135,24 +154,11 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['pattern'];
 			readonly consequence: V.Declaration.TypeAlias<G> | G['statement'];
 		};
-		readonly 'clause.else': {
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
-		};
-		readonly 'clause.except': {
-			readonly exception:
-				| unknown
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['pattern'];
-			readonly suite: V.Declaration.TypeAlias<G> | G['statement'];
-		};
 		readonly 'clause.export.namespace': {
 			readonly moduleExportName: G['identifier'] | V.Literal.String<G>;
 		};
 		readonly 'clause.export.specifier': {
 			readonly alias: G['identifier'] | V.Literal.String<G>;
-			readonly exportKind: string;
 			readonly name: G['identifier'] | V.Literal.String<G>;
 		};
 		readonly 'clause.extends': {
@@ -162,10 +168,13 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly types: V.Identifier.Type<G> | G['type'];
 		};
 		readonly 'clause.finally': {
-			readonly block: V.Declaration.TypeAlias<G> | G['statement'];
+			readonly body: V.Declaration.TypeAlias<G> | G['statement'];
 		};
 		readonly 'clause.implements': {
 			readonly types: G['identifier'] | G['type'];
+		};
+		readonly 'clause.import.alias': {
+			readonly name: G['identifier'] | string;
 		};
 		readonly 'clause.import.attribute': {
 			readonly attributeKind: string;
@@ -174,7 +183,14 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly useClauses: G['identifier'] | V.Clause.Import.Any<G>;
 		};
 		readonly 'clause.import.names': {
-			readonly content: unknown | V.Clause.Import.Any<G>;
+			readonly content: V.Clause.Import.Any<G>;
+		};
+		readonly 'clause.import.specifier': {
+			readonly alias: G['identifier'] | string;
+			readonly name:
+				| G['identifier']
+				| V.Literal.String<G>
+				| string;
 		};
 		readonly 'clause.import.wildcard': {
 			readonly useWildcardGroup: unknown;
@@ -205,6 +221,14 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly alias: G['identifier'] | G['type'];
 			readonly type: G['identifier'] | G['type'];
 		};
+		readonly 'clause.match.arm': {
+			readonly value:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement']
+				| V.Type.Primitive<G>;
+		};
 		readonly 'clause.match.arm.last': {
 			readonly value:
 				| G['expression']
@@ -226,15 +250,16 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['literal']
 				| G['pattern'];
 		};
-		readonly 'clause.where.predicate': {
-			readonly left: V.Clause.Bounds.HigherRanked<G> | G['identifier'] | G['type'];
-		};
-		readonly 'clause.with.item': {
+		readonly 'clause.resource.item': {
+			readonly name: G['expression'] | G['identifier'] | G['pattern'];
 			readonly value:
 				| G['expression']
 				| G['identifier']
 				| G['literal']
 				| G['pattern'];
+		};
+		readonly 'clause.where.predicate': {
+			readonly left: V.Clause.Bounds.HigherRanked<G> | G['identifier'] | G['type'];
 		};
 		readonly comment: {
 			readonly content: unknown;
@@ -249,33 +274,28 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly content: unknown;
 		};
 		readonly 'comment.line': {
-			readonly content: unknown;
+			readonly content: V.Comment.Text<G>;
 		};
 		readonly 'comment.line.doc': {
-			readonly content: unknown;
+			readonly content: V.Comment.Text<G>;
 		};
 		readonly 'comment.line.doc.inner': {
-			readonly content: unknown;
+			readonly content: V.Comment.Text<G>;
 		};
 		readonly 'declaration.ambient': {
 			readonly content:
-				| V.Clause.Import.Alias<G>
 				| G['declaration']
 				| V.Statement.Block<G>;
 		};
 		readonly 'declaration.class': {
 			readonly bases:
-				| V.Argument.Keyword<G>
+				| V.Argument.Named<G>
 				| G['expression']
 				| G['identifier']
 				| G['literal']
 				| G['pattern']
-				| V.Element.Splat.Any<G>;
+				| V.Element.Spread.Any<G>;
 			readonly body: G['declaration'] | G['statement'];
-			readonly implements: G['identifier'] | G['type'];
-		};
-		readonly 'declaration.class.abstract': {
-			readonly body: G['declaration'] | V.Statement.Block.Static<G>;
 			readonly implements: G['identifier'] | G['type'];
 		};
 		readonly 'declaration.constant': {
@@ -291,7 +311,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'declaration.enum_member': {
-			readonly body: unknown | V.Declaration.Field<G>;
+			readonly body: V.Declaration.Field<G>;
 			readonly name: G['identifier'] | G['literal'] | string;
 			readonly value:
 				| V.Declaration.Module<G>
@@ -301,7 +321,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'declaration.enum_member.struct': {
-			readonly body: unknown | V.Declaration.Field<G>;
+			readonly body: V.Declaration.Field<G>;
 			readonly value:
 				| G['expression']
 				| G['identifier']
@@ -309,7 +329,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'declaration.enum_member.tuple': {
-			readonly body: unknown | V.Declaration.Field<G>;
+			readonly body: V.Declaration.Field<G>;
 			readonly value:
 				| G['expression']
 				| G['identifier']
@@ -317,6 +337,11 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'declaration.extension': {
+			readonly body:
+				| G['attribute']
+				| G['declaration']
+				| V.Expression.Call.Macro<G>
+				| G['statement'];
 			readonly implements: unknown;
 			readonly traitClause: unknown;
 			readonly type:
@@ -326,6 +351,11 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['type'];
 		};
 		readonly 'declaration.extension.conformance': {
+			readonly body:
+				| G['attribute']
+				| G['declaration']
+				| V.Expression.Call.Macro<G>
+				| G['statement'];
 			readonly implements: unknown;
 			readonly traitClause: unknown;
 			readonly type:
@@ -335,7 +365,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['type'];
 		};
 		readonly 'declaration.field': {
-			readonly name: G['identifier'] | G['literal'] | string;
+			readonly name: G['expression'] | G['identifier'] | G['literal'] | string;
 			readonly optionality: string;
 			readonly type:
 				| V.Clause.Bounds.Removed<G>
@@ -347,12 +377,10 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal'];
-			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.field.signature': {
-			readonly name: G['literal'] | V.Identifier.Property.Any<G> | string;
+			readonly name: G['expression'] | G['literal'] | V.Identifier.Property<G> | string;
 			readonly type: G['identifier'] | G['type'];
-			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.function': {
 			readonly body: V.Declaration.TypeAlias<G> | G['statement'];
@@ -369,9 +397,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
-		};
-		readonly 'declaration.function.generator': {
-			readonly returnType: G['identifier'] | G['type'];
 		};
 		readonly 'declaration.function.signature': {
 			readonly functionModifiers: V.Modifier.Extern<G> | string;
@@ -403,10 +428,12 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Expression.Call.Macro<G>
 				| G['statement'];
 		};
+		readonly 'declaration.macro': {
+			readonly name: G['identifier'] | string;
+		};
 		readonly 'declaration.method': {
-			readonly accessor: string;
 			readonly body: V.Declaration.TypeAlias<G> | G['statement'];
-			readonly name: G['identifier'] | G['literal'] | string;
+			readonly name: G['expression'] | G['identifier'] | G['literal'] | string;
 			readonly parameters:
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
@@ -420,12 +447,10 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
-			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.method.signature': {
-			readonly accessor: string;
 			readonly functionModifiers: V.Modifier.Extern<G> | string;
-			readonly name: G['identifier'] | G['literal'] | string;
+			readonly name: G['expression'] | G['identifier'] | G['literal'] | string;
 			readonly parameters:
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
@@ -438,29 +463,17 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
-			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.method.signature.abstract': {
-			readonly accessorKind: string;
-			readonly name: G['literal'] | V.Identifier.Property.Any<G> | string;
+			readonly name: G['expression'] | G['literal'] | V.Identifier.Property<G> | string;
 			readonly returnType: G['identifier'] | G['type'];
-			readonly visibility: V.Modifier.Visibility<G>;
-		};
-		readonly 'declaration.method.static': {
-			readonly parameters:
-				| V.Clause.Bounds.Removed<G>
-				| V.Expression.Call.Macro<G>
-				| G['identifier']
-				| V.Declaration.Parameter.Any<G>
-				| string
-				| G['type'];
-			readonly returnType:
-				| V.Clause.Bounds.Removed<G>
-				| V.Expression.Call.Macro<G>
-				| G['identifier']
-				| G['type'];
 		};
 		readonly 'declaration.module': {
+			readonly body:
+				| G['attribute']
+				| G['declaration']
+				| V.Expression.Call.Macro<G>
+				| G['statement'];
 			readonly name: G['identifier'] | V.Literal.String<G>;
 		};
 		readonly 'declaration.module.external': {
@@ -487,7 +500,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
-			readonly visibility: V.Modifier.Visibility<G>;
 		};
 		readonly 'declaration.parameter.default': {
 			readonly default:
@@ -497,22 +509,8 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['pattern'];
 			readonly name: G['identifier'] | V.Pattern.Tuple<G>;
 		};
-		readonly 'declaration.parameter.optional': {
-			readonly default:
-				| V.Declaration.Module<G>
-				| G['expression']
-				| G['identifier']
-				| G['literal'];
-			readonly name:
-				| G['expression']
-				| G['identifier']
-				| V.Literal.Null.Undefined<G>
-				| G['pattern'];
-			readonly type: G['identifier'] | G['type'];
-			readonly visibility: V.Modifier.Visibility<G>;
-		};
 		readonly 'declaration.parameter.typed': {
-			readonly name: G['identifier'] | V.Pattern.Splat.Any<G>;
+			readonly name: G['identifier'] | V.Pattern.Rest.Any<G>;
 		};
 		readonly 'declaration.parameter.typed_default': {
 			readonly default:
@@ -524,11 +522,41 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		readonly 'declaration.parameter.variadic': {
 			readonly pattern: unknown;
 		};
+		readonly 'declaration.property': {
+			readonly name: G['expression'] | G['literal'] | V.Identifier.Property<G> | string;
+			readonly type: G['identifier'] | G['type'];
+			readonly value:
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
+		};
+		readonly 'declaration.property.getter': {
+			readonly returnType: G['identifier'] | G['type'];
+		};
+		readonly 'declaration.property.signature.abstract.getter': {
+			readonly returnType: G['identifier'] | G['type'];
+		};
+		readonly 'declaration.property.signature.getter': {
+			readonly returnType: G['identifier'] | G['type'];
+		};
 		readonly 'declaration.signature.call': {
 			readonly returnType: G['identifier'] | G['type'];
 		};
 		readonly 'declaration.signature.construct': {
 			readonly type: G['identifier'] | G['type'];
+		};
+		readonly 'declaration.signature.index': {
+			readonly indexType: G['identifier'] | G['type'];
+			readonly name: G['identifier'] | string;
+			readonly sign: string;
+			readonly type: G['identifier'] | G['type'];
+		};
+		readonly 'declaration.struct': {
+			readonly body: V.Declaration.Field<G>;
+		};
+		readonly 'declaration.struct.tuple': {
+			readonly body: V.Declaration.Field<G>;
 		};
 		readonly 'declaration.type_alias': {
 			readonly value:
@@ -542,18 +570,22 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['clause']
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
+				| G['literal']
+				| V.Statement.Block<G>
 				| G['type'];
 		};
-		readonly 'declaration.type_parameter.const': {
+		readonly 'declaration.type_parameter.value': {
+			readonly default: G['identifier'] | G['literal'] | V.Statement.Block<G>;
 			readonly type:
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
-			readonly value: G['identifier'] | G['literal'] | V.Statement.Block<G>;
+		};
+		readonly 'declaration.union': {
+			readonly body: V.Declaration.Field<G>;
 		};
 		readonly 'declaration.variable': {
-			readonly binding: string;
 			readonly name: unknown | G['expression'] | G['identifier'] | G['pattern'];
 			readonly type:
 				| V.Clause.Bounds.Removed<G>
@@ -577,20 +609,16 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['identifier']
 				| G['literal'];
 		};
-		readonly 'declaration.variable.static': {
-			readonly type:
-				| V.Clause.Bounds.Removed<G>
-				| V.Expression.Call.Macro<G>
-				| G['identifier']
-				| G['type'];
-			readonly value:
+		readonly 'element.comparator': {
+			readonly right:
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| G['statement'];
+				| V.Pattern.Rest<G>;
 		};
 		readonly 'element.macro.token_repetition': {
 			readonly operator: string;
+			readonly separator: string;
 			readonly tokens:
 				| G['identifier']
 				| G['literal']
@@ -600,12 +628,20 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'element.macro.token_repetition.pattern': {
 			readonly operator: string;
+			readonly separator: string;
 			readonly tokenPatterns:
 				| G['identifier']
 				| G['literal']
 				| string
 				| V.Element.Macro.Any<G>
 				| V.Type.Primitive<G>;
+		};
+		readonly 'element.macro.token_tree': {
+			readonly tokens:
+				| V.Element.Macro.Any<G>
+				| G['identifier']
+				| G['literal']
+				| string;
 		};
 		readonly 'element.pair': {
 			readonly key:
@@ -621,7 +657,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['literal']
 				| G['pattern'];
 		};
-		readonly 'element.splat': {
+		readonly 'element.spread': {
 			readonly expression:
 				| V.Declaration.Module<G>
 				| G['expression']
@@ -629,7 +665,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['literal']
 				| G['pattern'];
 		};
-		readonly 'element.splat.dictionary': {
+		readonly 'element.spread.map': {
 			readonly expression:
 				| G['expression']
 				| G['identifier']
@@ -708,7 +744,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['pattern']
 				| G['statement']
 				| string;
-			readonly operator: string;
 			readonly right:
 				| G['declaration']
 				| G['expression']
@@ -723,11 +758,10 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| V.Pattern.Splat<G>
+				| V.Pattern.Rest<G>
 				| G['statement'];
 		};
 		readonly 'expression.binary': {
-			readonly binaryExpressionIn: unknown;
 			readonly left:
 				| V.Declaration.Module<G>
 				| G['expression']
@@ -749,7 +783,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| V.Pattern.Splat<G>;
+				| V.Pattern.Rest<G>;
 			readonly operator: unknown;
 		};
 		readonly 'expression.binary.identity.is': {
@@ -757,7 +791,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| V.Pattern.Splat<G>;
+				| V.Pattern.Rest<G>;
 			readonly operator: unknown;
 		};
 		readonly 'expression.binary.identity.is_not': {
@@ -765,7 +799,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| V.Pattern.Splat<G>;
+				| V.Pattern.Rest<G>;
 			readonly operator: unknown;
 		};
 		readonly 'expression.binary.logical': {
@@ -786,7 +820,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| V.Pattern.Splat<G>;
+				| V.Pattern.Rest<G>;
 			readonly operator: unknown;
 		};
 		readonly 'expression.binary.membership.not_in': {
@@ -794,12 +828,12 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| V.Pattern.Splat<G>;
+				| V.Pattern.Rest<G>;
 			readonly operator: unknown;
 		};
 		readonly 'expression.call': {
 			readonly arguments:
-				| V.Argument.Keyword<G>
+				| V.Argument.Named<G>
 				| V.Declaration.Module<G>
 				| G['element']
 				| G['expression']
@@ -812,41 +846,41 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| V.Pattern.Splat<G>
+				| V.Pattern.Rest<G>
 				| G['statement']
 				| string;
 			readonly typeArguments: G['identifier'] | G['type'];
 		};
-		readonly 'expression.call.member': {
-			readonly arguments:
-				| V.Argument.Keyword<G>
-				| V.Declaration.Module<G>
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['pattern']
-				| V.Element.Splat.Any<G>
-				| G['statement'];
-			readonly function:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| V.Pattern.Splat<G>
-				| G['statement']
-				| string;
-			readonly typeArguments: G['identifier'] | G['type'];
-		};
-		readonly 'expression.call.new': {
+		readonly 'expression.call.construct': {
 			readonly arguments:
 				| V.Declaration.Module<G>
-				| V.Element.Splat<G>
+				| V.Element.Spread<G>
 				| G['expression']
 				| G['identifier']
 				| G['literal'];
 			readonly function: G['expression'] | G['identifier'] | G['literal'];
 			readonly typeArguments: G['identifier'] | G['type'];
 		};
-		readonly 'expression.call.path': {
+		readonly 'expression.call.member': {
+			readonly arguments:
+				| V.Argument.Named<G>
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| V.Element.Spread.Any<G>
+				| G['statement'];
+			readonly function:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| V.Pattern.Rest<G>
+				| G['statement']
+				| string;
+			readonly typeArguments: G['identifier'] | G['type'];
+		};
+		readonly 'expression.call.qualified': {
 			readonly arguments:
 				| G['expression']
 				| G['identifier']
@@ -869,7 +903,15 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['identifier']
 				| G['literal'];
 		};
-		readonly 'expression.cast.as': {
+		readonly 'expression.cast.assertion': {
+			readonly expression:
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal'];
+			readonly type: G['identifier'] | string | G['type'];
+		};
+		readonly 'expression.cast.conversion': {
 			readonly expression:
 				| V.Declaration.Module<G>
 				| G['expression']
@@ -880,20 +922,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
-			readonly typeAnnotation: G['identifier'] | string | G['type'];
-			readonly value:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['statement'];
-		};
-		readonly 'expression.cast.assertion': {
-			readonly expression:
-				| V.Declaration.Module<G>
-				| G['expression']
-				| G['identifier']
-				| G['literal'];
-			readonly typeArguments: G['identifier'] | G['type'];
 		};
 		readonly 'expression.cast.non_null': {
 			readonly expression:
@@ -908,56 +936,64 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal'];
-			readonly typeAnnotation: G['identifier'] | G['type'];
+			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'expression.class': {
 			readonly body: G['declaration'] | V.Statement.Block.Static<G>;
 			readonly implements: G['identifier'] | G['type'];
 		};
 		readonly 'expression.collection.list': {
-			readonly collectionElements:
+			readonly elements:
+				| V.Declaration.Module<G>
+				| V.Element.Spread.Any<G>
 				| G['expression']
 				| G['identifier']
 				| G['literal']
+				| G['modifier']
 				| G['pattern']
-				| V.Element.Splat.Any<G>;
-			readonly elements:
-				| V.Declaration.Module<G>
-				| V.Element.Splat<G>
+				| G['statement']
+				| V.Type.Primitive<G>;
+		};
+		readonly 'expression.collection.list.repeat': {
+			readonly element:
 				| G['expression']
 				| G['identifier']
-				| G['literal'];
+				| G['literal']
+				| G['statement']
+				| V.Type.Primitive<G>;
+			readonly length:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement']
+				| V.Type.Primitive<G>;
 		};
 		readonly 'expression.collection.object': {
 			readonly properties:
 				| V.Declaration.Method<G>
 				| G['element']
-				| V.Identifier.Property.Shorthand<G>
 				| string;
 		};
 		readonly 'expression.collection.set': {
-			readonly collectionElements:
+			readonly elements:
 				| G['expression']
 				| G['identifier']
 				| G['literal']
 				| G['pattern']
-				| V.Element.Splat.Any<G>;
+				| V.Element.Spread.Any<G>;
 		};
 		readonly 'expression.collection.struct': {
 			readonly name: V.Identifier.Type<G> | G['type'];
 		};
 		readonly 'expression.collection.tuple': {
 			readonly elements:
+				| V.Element.Spread.Any<G>
 				| G['expression']
 				| G['identifier']
 				| G['literal']
 				| G['pattern']
-				| V.Element.Splat.Any<G>;
-			readonly expressions:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['statement'];
+				| G['statement']
+				| V.Type.Primitive<G>;
 		};
 		readonly 'expression.comprehension': {
 			readonly body:
@@ -1011,9 +1047,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		readonly 'expression.function': {
 			readonly returnType: G['identifier'] | G['type'];
 		};
-		readonly 'expression.function.generator': {
-			readonly returnType: G['identifier'] | G['type'];
-		};
 		readonly 'expression.instantiation': {
 			readonly expression:
 				| V.Declaration.Module<G>
@@ -1040,12 +1073,20 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal']
+				| G['modifier']
 				| G['pattern']
-				| V.Statement.Block<G>;
+				| G['statement']
+				| V.Type.Primitive<G>
+				| string;
 			readonly parameters:
 				| G['identifier']
 				| G['pattern']
 				| V.Declaration.Parameter.Any<G>;
+			readonly returnType:
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 		};
 		readonly 'expression.member': {
 			readonly object:
@@ -1053,17 +1094,50 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| V.Pattern.Splat<G>
+				| V.Pattern.Rest<G>
 				| G['statement'];
 			readonly property: G['identifier'] | V.Literal.Number.Integer<G>;
 		};
 		readonly 'expression.parenthesized': {
 			readonly expression:
+				| V.Declaration.Module<G>
 				| G['expression']
 				| G['identifier']
 				| G['literal']
+				| G['modifier']
 				| G['pattern']
+				| G['statement']
+				| V.Type.Primitive<G>;
+			readonly type: G['identifier'] | G['type'];
+		};
+		readonly 'expression.propagate': {
+			readonly argument:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
 				| G['statement'];
+		};
+		readonly 'expression.range': {
+			readonly end:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement']
+				| V.Type.Primitive<G>;
+			readonly start:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement']
+				| V.Type.Primitive<G>;
+		};
+		readonly 'expression.reference': {
+			readonly argument:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement']
+				| V.Type.Primitive<G>;
 		};
 		readonly 'expression.sequence': {
 			readonly expressions:
@@ -1101,14 +1175,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| V.Pattern.Splat<G>
-				| G['statement'];
-		};
-		readonly 'expression.try': {
-			readonly argument:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
+				| V.Pattern.Rest<G>
 				| G['statement'];
 		};
 		readonly 'expression.unary': {
@@ -1117,9 +1184,8 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal']
-				| V.Pattern.Splat<G>
+				| V.Pattern.Rest<G>
 				| G['statement'];
-			readonly operator: string;
 		};
 		readonly 'expression.update': {
 			readonly argument:
@@ -1127,7 +1193,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal'];
-			readonly operator: string;
 		};
 		readonly 'expression.yield': {
 			readonly content:
@@ -1149,21 +1214,18 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['identifier']
 				| G['literal'];
 		};
-		readonly 'identifier.metavariable': {
-			readonly name: unknown;
-		};
-		readonly 'identifier.property.computed': {
-			readonly expression:
-				| V.Declaration.Module<G>
-				| G['expression']
-				| G['identifier']
-				| G['literal'];
-		};
-		readonly 'identifier.property.private': {
-			readonly content: unknown;
+		readonly file: {
+			readonly statements:
+				| G['attribute']
+				| G['declaration']
+				| V.Expression.Call.Macro<G>
+				| G['statement'];
 		};
 		readonly 'identifier.scoped': {
 			readonly path: G['identifier'] | string | G['type'];
+		};
+		readonly 'literal.character': {
+			readonly content: string;
 		};
 		readonly 'literal.number.float': {
 			readonly exponent: unknown;
@@ -1217,18 +1279,11 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly suffix: string;
 		};
 		readonly 'literal.string': {
-			readonly content: unknown | V.Literal.String.Escape<G>;
-			readonly contents:
+			readonly elements:
 				| unknown
 				| V.Expression.Interpolation<G>
 				| V.Literal.String.Escape<G>
-				| string;
-		};
-		readonly 'literal.string.docstring': {
-			readonly contents:
-				| unknown
-				| V.Expression.Interpolation<G>
-				| V.Literal.String.Escape<G>
+				| V.Literal.String.Text<G>
 				| string;
 		};
 		readonly 'literal.string.escape': {
@@ -1237,35 +1292,8 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		readonly 'literal.string.raw': {
 			readonly content: unknown;
 		};
-		readonly 'literal.template': {
-			readonly elements: unknown | V.Expression.Interpolation<G> | V.Literal.String.Escape<G>;
-		};
-		readonly module: {
-			readonly statements:
-				| G['attribute']
-				| V.Clause.Import.Alias<G>
-				| G['declaration']
-				| V.Expression.Call.Macro<G>
-				| G['statement'];
-		};
-		readonly 'pattern.array': {
-			readonly elements:
-				| G['expression']
-				| G['identifier']
-				| V.Literal.Null.Undefined<G>
-				| G['pattern'];
-		};
 		readonly 'pattern.as': {
-			readonly alias:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['pattern'];
-			readonly expression:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['pattern'];
+			readonly pattern: unknown | V.Pattern.Case<G>;
 		};
 		readonly 'pattern.assignment': {
 			readonly left:
@@ -1278,9 +1306,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['expression']
 				| G['identifier']
 				| G['literal'];
-		};
-		readonly 'pattern.captured': {
-			readonly pattern: unknown;
 		};
 		readonly 'pattern.case': {
 			readonly content:
@@ -1316,7 +1341,12 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly operator: string;
 		};
 		readonly 'pattern.list': {
-			readonly patterns: G['expression'] | G['identifier'] | G['pattern'];
+			readonly elements:
+				| unknown
+				| G['expression']
+				| G['identifier']
+				| V.Literal.Null.Undefined<G>
+				| G['pattern'];
 		};
 		readonly 'pattern.match': {
 			readonly condition:
@@ -1342,12 +1372,37 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['literal'];
 		};
 		readonly 'pattern.object.pair': {
-			readonly key: G['literal'] | V.Identifier.Property.Any<G> | string;
+			readonly key: G['expression'] | G['literal'] | V.Identifier.Property<G> | string;
 			readonly value:
 				| G['expression']
 				| G['identifier']
 				| V.Literal.Null.Undefined<G>
 				| G['pattern'];
+		};
+		readonly 'pattern.or': {
+			readonly left:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| V.Type.Primitive<G>;
+			readonly right:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| V.Type.Primitive<G>;
+		};
+		readonly 'pattern.range': {
+			readonly content: string;
+			readonly left:
+				| G['identifier']
+				| G['literal']
+				| string;
+			readonly right:
+				| G['identifier']
+				| G['literal']
+				| string;
 		};
 		readonly 'pattern.reference': {
 			readonly pattern: unknown;
@@ -1356,25 +1411,28 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly pattern: unknown;
 		};
 		readonly 'pattern.rest': {
-			readonly lhsExpression:
+			readonly pattern:
 				| G['expression']
 				| G['identifier']
 				| V.Literal.Null.Undefined<G>
 				| G['pattern']
 				| string;
 		};
-		readonly 'pattern.slice': {
-			readonly patterns: unknown;
-		};
-		readonly 'pattern.splat': {
-			readonly target: G['expression'] | G['identifier'] | string;
-		};
-		readonly 'pattern.splat.dictionary': {
-			readonly target: G['expression'] | G['identifier'] | string;
+		readonly 'pattern.struct.field': {
+			readonly pattern:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| V.Type.Primitive<G>;
 		};
 		readonly 'pattern.tuple': {
-			readonly elements: unknown | V.Expression.Lambda<G>;
-			readonly patterns: unknown | G['expression'] | G['identifier'] | G['pattern'];
+			readonly elements:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['pattern']
+				| V.Type.Primitive<G>;
 		};
 		readonly 'pattern.tuple.struct': {
 			readonly patterns: unknown;
@@ -1390,7 +1448,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		readonly 'statement.block': {
 			readonly statements:
 				| G['attribute']
-				| V.Clause.Import.Alias<G>
 				| G['declaration']
 				| V.Expression.Call.Macro<G>
 				| G['statement'];
@@ -1422,6 +1479,16 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['literal']
 				| G['pattern'];
 		};
+		readonly 'statement.export': {
+			readonly declaration: G['declaration'];
+			readonly value:
+				| V.Declaration.Module<G>
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['modifier']
+				| V.Type.Primitive<G>;
+		};
 		readonly 'statement.expression': {
 			readonly content:
 				| V.Declaration.Variable<G>
@@ -1444,22 +1511,24 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['pattern']
 				| V.Clause.Let.Any<G>
 				| G['statement'];
-			readonly consequence: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly consequence: G['declaration'] | G['statement'];
 		};
 		readonly 'statement.import': {
 			readonly argument: G['identifier'] | V.Clause.Import.Any<G> | string;
-			readonly fromClause: unknown | V.Clause.Import.Require<G> | V.Literal.String<G>;
-			readonly importClause: string;
+			readonly fromClause: V.Clause.Import.Require<G> | V.Literal.String<G>;
+		};
+		readonly 'statement.import.alias': {
+			readonly value: G['identifier'];
 		};
 		readonly 'statement.labeled': {
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly body: G['declaration'] | G['statement'];
 			readonly label: V.Identifier.Label<G> | string;
 		};
 		readonly 'statement.loop': {
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly body: G['declaration'] | G['statement'];
 		};
 		readonly 'statement.loop.counted': {
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly body: G['declaration'] | G['statement'];
 			readonly condition:
 				| V.Declaration.Module<G>
 				| G['expression']
@@ -1479,11 +1548,11 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Statement.Empty<G>;
 		};
 		readonly 'statement.loop.do_while': {
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly body: G['declaration'] | G['statement'];
 		};
-		readonly 'statement.loop.for': {
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
-			readonly forHeader: unknown;
+		readonly 'statement.loop.for_each': {
+			readonly body: G['declaration'] | G['statement'];
+			readonly header: unknown;
 			readonly left: unknown | G['expression'] | G['identifier'] | G['pattern'];
 			readonly right:
 				| G['expression']
@@ -1493,7 +1562,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'statement.loop.while': {
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly body: G['declaration'] | G['statement'];
 			readonly condition:
 				| G['expression']
 				| G['identifier']
@@ -1503,7 +1572,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'statement.match': {
-			readonly body: unknown | V.Clause.Case<G> | string;
+			readonly body: unknown | V.Clause.Case.Match<G> | string;
 			readonly subject:
 				| G['expression']
 				| G['identifier']
@@ -1525,6 +1594,9 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['pattern']
 				| string;
 		};
+		readonly 'statement.resource': {
+			readonly body: V.Declaration.TypeAlias<G> | G['statement'];
+		};
 		readonly 'statement.return': {
 			readonly expression:
 				| V.Declaration.Module<G>
@@ -1535,7 +1607,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['statement'];
 		};
 		readonly 'statement.scope': {
-			readonly body: V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			readonly body: G['declaration'] | G['statement'];
 		};
 		readonly 'statement.throw': {
 			readonly cause:
@@ -1551,9 +1623,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['pattern'];
 		};
 		readonly 'statement.try': {
-			readonly body: V.Declaration.TypeAlias<G> | G['statement'];
-		};
-		readonly 'statement.with': {
 			readonly body: V.Declaration.TypeAlias<G> | G['statement'];
 		};
 		readonly type: {
@@ -1612,7 +1681,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly trait: V.Clause.Bounds.HigherRanked<G> | V.Identifier.Type<G> | G['type'];
 		};
 		readonly 'type.function': {
-			readonly content: unknown | V.Modifier.Extern<G> | string;
 			readonly parameters:
 				| V.Clause.Bounds.Removed<G>
 				| V.Expression.Call.Macro<G>
@@ -1625,6 +1693,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
+			readonly trait: V.Identifier.Type<G> | V.Type.Path<G>;
 		};
 		readonly 'type.function.constructor': {
 			readonly type: G['identifier'] | G['type'];
@@ -1651,7 +1720,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly indexType: G['identifier'] | G['type'];
 			readonly type: G['identifier'] | G['type'];
 		};
-		readonly 'type.maybe': {
+		readonly 'type.nullable': {
 			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'type.object': {
@@ -1670,6 +1739,13 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'type.path.expression': {
 			readonly path: G['identifier'] | string | V.Type.Generic.Turbofish<G>;
+		};
+		readonly 'type.pointer': {
+			readonly type:
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
 		};
 		readonly 'type.predicate': {
 			readonly name: G['identifier'] | V.Type.Primitive<G>;
@@ -1705,9 +1781,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'type.rest': {
 			readonly type: G['identifier'] | G['type'];
-		};
-		readonly 'type.splat': {
-			readonly operator: string;
 		};
 		readonly 'type.template': {
 			readonly elements: unknown | V.Element.Template.Substitution<G>;

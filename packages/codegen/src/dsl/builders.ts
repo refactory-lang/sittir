@@ -234,7 +234,7 @@ function slotShaped(rule: Built): boolean {
 	}
 }
 
-export function overlaySeq(content: BuiltSeq, built: Built): Built {
+export function carrySeqFacts(content: BuiltSeq, built: Built): Built {
 	const merged: Built & { members?: Built[] } = { ...content, ...built };
 	if (!('members' in built)) delete merged.members;
 	return merged;
@@ -247,7 +247,7 @@ export function buildOptional(content: Built): Built {
 			members: content.members,
 			multiplicity: combineMultiplicity('optional', content.multiplicity)
 		});
-		const merged = overlaySeq(content, built);
+		const merged = carrySeqFacts(content, built);
 		return nonterminal !== undefined ? { ...merged, nonterminal } : merged;
 	}
 	return {
@@ -289,7 +289,7 @@ function buildRepeatLike(input: { content: Built; native: 'array' | 'nonEmptyArr
 			members: content.members,
 			multiplicity: repeatCombine({ contentMult: content.multiplicity, native })
 		});
-		return { ...overlaySeq(content, built), ...stamps };
+		return { ...carrySeqFacts(content, built), ...stamps };
 	}
 	return { ...content, multiplicity: repeatCombine({ contentMult: content.multiplicity, native }), ...stamps };
 }

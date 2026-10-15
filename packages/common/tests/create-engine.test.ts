@@ -151,9 +151,6 @@ describe('createEngine', () => {
 
 	it('rejects unimplemented surfaces and accepts interceptor options', async () => {
 		const f = fakeLanguage();
-		await expect(createEngine(f.language as never, { api: 'portable' } as never)).rejects.toThrow(
-			'api "portable" is not implemented'
-		);
 		await expect(createEngine(f.language as never, { api: 'strict' } as never)).rejects.toThrow(
 			'api "strict" is not implemented'
 		);
@@ -162,11 +159,36 @@ describe('createEngine', () => {
 		await expect(createEngine(f.language as never, { api: 'default', intercept: [] } as never)).resolves.toBeDefined();
 	});
 
+	it('refuses a portable engine for a language whose grammar has no bindings', async () => {
+		const f = fakeLanguage();
+		await expect(createEngine(f.language as never, { api: 'portable' } as never)).rejects.toThrow(
+			'language "fake" has no portable surface: its grammar has no bindings'
+		);
+	});
+
+	it('makes a portable engine of the language\'s kinds and guards, and nothing it does not implement', async () => {
+		const f = fakeLanguage();
+		const hooks = await f.language.load();
+		const guard = Object.assign(() => true, { nested: () => true });
+		const portable = { kinds: { expression: { $ids: [1] } }, is: { expression: guard } };
+		Object.assign(hooks, { portable });
+		const e = (await createEngine(f.language as never, { api: 'portable' } as never)) as unknown as Record<string, never>;
+		expect(Object.keys(e).sort()).toEqual(['is', 'kinds', 'language', 'options', 'renderModuleHash', 'trivia']);
+		expect(e.kinds).toBe(portable.kinds);
+		const is = e.is as unknown as { expression: ((node: unknown) => boolean) & { nested: (node: unknown) => boolean } };
+		expect(is.expression({ $type: 1 })).toBe(false);
+		expect(is.expression.nested({ $type: 1 })).toBe(false);
+	});
+
 	it('rejects the file verbs it does not implement', async () => {
 		const e = await engineOf();
 		await expect(e.read('a')).rejects.toThrow('file verb "read" is not implemented');
 		expect(() => e.create('a', () => e.build.leaf('a'))).toThrow('file verb "create" is not implemented');
-		expect(() => e.edit('a', (r: unknown) => r)).toThrow('file verb "edit" is not implemented');
 		expect(() => e.write('a', e.build.leaf('a'))).toThrow('file verb "write" is not implemented');
+	});
+
+	it('does not expose the retired whole-file edit callback', async () => {
+		const e = await engineOf();
+		expect(e).not.toHaveProperty('edit');
 	});
 });

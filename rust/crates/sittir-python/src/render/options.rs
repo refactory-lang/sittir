@@ -121,7 +121,7 @@ pub const SITE_BLOCK_STATEMENTS_FOR_STATEMENT_AFTER: usize = 112;
 pub const SITE_BLOCK_STATEMENTS_FUNCTION_DEFINITION_AFTER: usize = 113;
 pub const SITE_BLOCK_STATEMENTS_IF_STATEMENT_AFTER: usize = 114;
 pub const SITE_BLOCK_STATEMENTS_MATCH_STATEMENT_AFTER: usize = 115;
-pub const SITE_BLOCK_STATEMENTS_SIMPLE_STATEMENTS_AFTER: usize = 116;
+pub const SITE_BLOCK_STATEMENTS__SIMPLE_STATEMENTS_AFTER: usize = 116;
 pub const SITE_BLOCK_STATEMENTS_TRY_STATEMENT_AFTER: usize = 117;
 pub const SITE_BLOCK_STATEMENTS_WHILE_STATEMENT_AFTER: usize = 118;
 pub const SITE_BLOCK_STATEMENTS_WITH_STATEMENT_AFTER: usize = 119;
@@ -610,7 +610,7 @@ pub const SITE_MODULE_STATEMENTS_FOR_STATEMENT_AFTER: usize = 601;
 pub const SITE_MODULE_STATEMENTS_FUNCTION_DEFINITION_AFTER: usize = 602;
 pub const SITE_MODULE_STATEMENTS_IF_STATEMENT_AFTER: usize = 603;
 pub const SITE_MODULE_STATEMENTS_MATCH_STATEMENT_AFTER: usize = 604;
-pub const SITE_MODULE_STATEMENTS_SIMPLE_STATEMENTS_AFTER: usize = 605;
+pub const SITE_MODULE_STATEMENTS__SIMPLE_STATEMENTS_AFTER: usize = 605;
 pub const SITE_MODULE_STATEMENTS_TRY_STATEMENT_AFTER: usize = 606;
 pub const SITE_MODULE_STATEMENTS_WHILE_STATEMENT_AFTER: usize = 607;
 pub const SITE_MODULE_STATEMENTS_WITH_STATEMENT_AFTER: usize = 608;
@@ -763,8 +763,8 @@ pub const SITE_SET_COMPREHENSION_SET_COMPREHENSION_AFTER: usize = 754;
 pub const SITE_SIMPLE_PATTERN_NEGATIVE_SIGN_AFTER: usize = 755;
 pub const SITE_SIMPLE_PATTERN_NEGATIVE_SIMPLE_PATTERN_NEGATIVE_BEFORE: usize = 756;
 pub const SITE_SIMPLE_PATTERN_NEGATIVE_SIMPLE_PATTERN_NEGATIVE_AFTER: usize = 757;
-pub const SITE_SIMPLE_STATEMENTS_SIMPLE_STATEMENTS_BEFORE: usize = 758;
-pub const SITE_SIMPLE_STATEMENTS_SIMPLE_STATEMENTS_AFTER: usize = 759;
+pub const SITE__SIMPLE_STATEMENTS_SIMPLE_STATEMENTS_BEFORE: usize = 758;
+pub const SITE__SIMPLE_STATEMENTS_SIMPLE_STATEMENTS_AFTER: usize = 759;
 pub const SITE_SIMPLE_STATEMENTS_ELEMENTS_ITEM_AS_PATTERN_AFTER: usize = 760;
 pub const SITE_SIMPLE_STATEMENTS_ELEMENTS_ITEM_ASSERT_STATEMENT_AFTER: usize = 761;
 pub const SITE_SIMPLE_STATEMENTS_ELEMENTS_ITEM_ASSIGNMENT_EQ_AFTER: usize = 762;
@@ -4468,7 +4468,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_SEPARATOR_SPACE, path: "(block)/statements:/separator" }] },
             ::sittir_core::options::AddressNode::Branch { key: "simpleStatements", path: "(block)/statements:/(simple_statements)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_SIMPLE_STATEMENTS_AFTER, path: "(block)/statements:/(simple_statements)/after" }] },
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS__SIMPLE_STATEMENTS_AFTER, path: "(block)/statements:/(simple_statements)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "tryStatement", path: "(block)/statements:/(try_statement)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_BLOCK_STATEMENTS_TRY_STATEMENT_AFTER, path: "(block)/statements:/(try_statement)/after" }] },
@@ -5806,7 +5806,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ] },
             ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_MODULE_STATEMENTS_SEPARATOR_SPACE, path: "(module)/statements:/separator" }] },
             ::sittir_core::options::AddressNode::Branch { key: "simpleStatements", path: "(module)/statements:/(simple_statements)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MODULE_STATEMENTS_SIMPLE_STATEMENTS_AFTER, path: "(module)/statements:/(simple_statements)/after" }] },
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MODULE_STATEMENTS__SIMPLE_STATEMENTS_AFTER, path: "(module)/statements:/(simple_statements)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "tryStatement", path: "(module)/statements:/(try_statement)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_MODULE_STATEMENTS_TRY_STATEMENT_AFTER, path: "(module)/statements:/(try_statement)/after" }] },
@@ -6247,8 +6247,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "simpleStatements", path: "(simple_statements)", children: &[
-        ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_SIMPLE_STATEMENTS_SIMPLE_STATEMENTS_AFTER, path: "(simple_statements)/after" }] },
-        ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_SIMPLE_STATEMENTS_SIMPLE_STATEMENTS_BEFORE, path: "(simple_statements)/before" }] },
+        ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE__SIMPLE_STATEMENTS_SIMPLE_STATEMENTS_AFTER, path: "(simple_statements)/after" }] },
+        ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE__SIMPLE_STATEMENTS_SIMPLE_STATEMENTS_BEFORE, path: "(simple_statements)/before" }] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "simpleStatementsElements", path: "(simple_statements_elements)", children: &[
         ::sittir_core::options::AddressNode::Branch { key: "item", path: "(simple_statements_elements)/item:", children: &[

@@ -66,7 +66,9 @@ const MODULES = {
 	types: '../../codegen/src/emitters/types.ts',
 	templates: '../../codegen/src/emitters/templates.ts',
 	from: '../../codegen/src/emitters/from.ts',
-	sitePreferences: '../../codegen/src/compiler/model/site-preferences.ts'
+	sitePreferences: '../../codegen/src/compiler/model/site-preferences.ts',
+	bind: '../../codegen/src/dsl/bind.ts',
+	nodeModel: '../../codegen/src/emitters/node-model.ts'
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -109,6 +111,8 @@ export interface CodegenSurface {
 	templates: typeof import('../../codegen/src/emitters/templates.ts');
 	from: typeof import('../../codegen/src/emitters/from.ts');
 	sitePreferences: typeof import('../../codegen/src/compiler/model/site-preferences.ts');
+	bind: typeof import('../../codegen/src/dsl/bind.ts');
+	nodeModel: typeof import('../../codegen/src/emitters/node-model.ts');
 }
 
 type AnyFn = (...args: never[]) => unknown;
@@ -188,7 +192,7 @@ export type SpelledTriviaTable = import('../../codegen/src/compiler/model/trivia
 // ---------------------------------------------------------------------------
 
 /** Evaluate a grammar package by name, stamped with the package's upstream file types. */
-export async function evaluateGrammar(grammar: string, options?: { readonly base?: boolean }): Promise<RawGrammar> {
+export async function evaluateGrammar(grammar: string, options?: { readonly base?: boolean; readonly unbound?: boolean }): Promise<RawGrammar> {
 	return invoke('evaluatePackage', 'evaluatePackage', await invoke('grammars', 'grammarPackage', grammar), options);
 }
 
@@ -203,11 +207,12 @@ export async function buildNodeMap(grammar: string): Promise<AssembledNodeMap> {
 	return compileNodeMap(grammar);
 }
 
-export async function compileNodeMap(grammar: string): Promise<AssembledNodeMap> {
+export async function compileNodeMap(grammar: string, options: { readonly unbound?: boolean } = {}): Promise<AssembledNodeMap> {
 	const { compileGrammar } = await load('compile');
 	const { nodeMap } = await compileGrammar({
 		package: await invoke('grammars', 'grammarPackage', grammar),
-		generatedIdTables: await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar)
+		generatedIdTables: options.unbound === true ? undefined : await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar),
+		unbound: options.unbound
 	});
 	return nodeMap;
 }

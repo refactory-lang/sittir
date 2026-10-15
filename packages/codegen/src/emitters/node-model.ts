@@ -1,5 +1,5 @@
 import { type RuleListEntry } from '../dsl/rule-patterns.ts';
-import type { AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
+import type { AssembledEnum, AuthoredCompound, FullForm } from '../compiler/model/node-map.ts';
 import { spelledTriviaTable, type SpelledTriviaTable } from '../compiler/model/trivia.ts';
 import type { RuleAnnotations } from '../types/rule.ts';
 import { seatOf, type Seat } from '../compiler/model/sub-factories.ts';
@@ -75,6 +75,9 @@ interface SerializedNodeBase {
 	hidden: boolean;
 	annotations?: RuleAnnotations;
 	seated?: true;
+	renamedFrom?: string;
+	splitFrom?: string;
+	variantOf?: string;
 	isParameterless?: boolean;
 	stampExpression?: string;
 	oneSurface?: true;
@@ -108,7 +111,7 @@ interface SerializedFixedText extends SerializedNodeBase {
 
 interface SerializedEnum extends SerializedNodeBase {
 	modelType: 'enum';
-	values: string[];
+	members: { kind: string; text: string }[];
 }
 
 interface SerializedSupertype extends SerializedNodeBase {
@@ -127,6 +130,7 @@ interface SerializedList extends SerializedNodeBase {
 	separatorCandidates?: string[];
 	elementKinds: string[];
 	elementSeats?: Seat[];
+	slots: SerializedSlot[];
 }
 
 type SerializedNode =
@@ -137,7 +141,7 @@ type SerializedNode =
 	| SerializedSupertype
 	| SerializedList;
 
-interface SerializedNodeModel {
+export interface SerializedNodeModel {
 	name: string;
 	root: string | null;
 	nodeCount: number;
@@ -154,8 +158,10 @@ interface SerializedNodeModel {
 }
 
 export function emitNodeModel(config: EmitNodeModelConfig): string {
-	const { nodeMap, generatedIdTables } = config;
-	const data = buildNodeModel(nodeMap, generatedIdTables);
+	return printNodeModel(buildNodeModel(config.nodeMap, config.generatedIdTables));
+}
+
+export function printNodeModel(data: SerializedNodeModel): string {
 	return JSON.stringify(data, null, 2) + '\n';
 }
 
@@ -210,6 +216,13 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 	};
 }
 
+function enumMembersOf(node: AssembledEnum): { kind: string; text: string }[] {
+	const members = node.members.map(({ kind, text }) => ({ kind, text }));
+	const unresolved = node.values.filter((value) => !members.some((member) => member.text === value));
+	if (unresolved.length > 0) throw new Error(`node model: enum '${node.kind}' has values no member resolves: ${unresolved.join(', ')}`);
+	return members;
+}
+
 function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWires): SerializedNode {
 	const base: SerializedNodeBase = {
 		kind: node.kind,
@@ -222,6 +235,9 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 		hidden: node.hidden,
 		...(node.annotations !== undefined ? { annotations: node.annotations } : {}),
 		...(node.seated ? { seated: true } : {}),
+		...(node.renamedFrom !== undefined ? { renamedFrom: node.renamedFrom } : {}),
+		...(node.splitFrom !== undefined ? { splitFrom: node.splitFrom } : {}),
+		...(node.variantOf !== undefined ? { variantOf: node.variantOf } : {}),
 		...(node.parameterless ? { isParameterless: true } : {}),
 		...(node.stampExpression !== undefined ? { stampExpression: node.stampExpression } : {})
 	};
@@ -250,11 +266,7 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 				text: node.text
 			};
 		case 'enum':
-			return {
-				...base,
-				modelType: 'enum',
-				values: [...node.values]
-			};
+			return { ...base, modelType: 'enum', members: enumMembersOf(node) };
 		case 'list':
 			return {
 				...base,
@@ -266,7 +278,8 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 				defaultDelimiter: declaredDelimiterDefault(node),
 				...(node.separatorRule === undefined ? {} : { separatorCandidates: [...node.separatorCandidateKindNames] }),
 				elementKinds: [...valueParseKindsOf({ values: node.elements })],
-				...seatsOfList(node, nodeMap, wires)
+				...seatsOfList(node, nodeMap, wires),
+				slots: node.slots.map((slot) => serializeSlot(node, slot, nodeMap, wires))
 			};
 	}
 }

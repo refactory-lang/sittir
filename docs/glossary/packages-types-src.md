@@ -110,7 +110,7 @@ The options a language's native engine is created with: the render options under
 
 ### `packages/types/src/engine-api.ts::LanguageHooks`
 
-What a language's `load()` resolves to: the builder table, guards, kind ids, trivia facts and the render module hash as data, plus `createNative` to create a native engine and `wrap` to turn a read root and its tree into the language's root node. `membership` is the language's one membership test, shared by its `is.*` guards and a query's `ofType`.
+What a language's `load()` resolves to: the builder table, guards, kind ids, trivia facts and the render module hash as data, plus `createNative` to create a native engine and `wrap` to turn a read root and its tree into the language's root node. `membership` is the language's one membership test, shared by its `is.*` guards and a query's `ofType`. `queryFlags`, present for a grammar with bindings, is each kind's flag plans (`QueryFlags`) for a `where` recorder's `is`.
 
 The optional `hydrate` hook reuses the grammar's `hydrateChild` for a shallow child read from its own tree. Generated languages supply it so factories can consume parsed list stubs without duplicating the grammar's depth or envelope normalization.
 
@@ -148,7 +148,7 @@ The type of an engine's `build` for a surface: the builder table, its strict sur
 
 ### `packages/types/src/engine-api.ts::Engine`
 
-A language engine: the only value surface of a language. It carries its `EngineIdentity` (descriptor, render module hash, options, trivia facts), and builds, guards (the node guards narrow to this engine's language, by the language a node's engine carries), parses, reads, renders, and creates, edits and writes files. The engine's `types` member is type-only, mapping each kind to its node type for generic code.
+A language engine: the only value surface of a language. It carries its `EngineIdentity` (descriptor, render module hash, options, trivia facts), and builds, guards (the node guards narrow to this engine's language, by the language a node's engine carries), parses and renders. Its `read`, `create` and `write` file verbs remain unimplemented. The engine's `types` member is type-only, mapping each kind to its node type for generic code.
 
 ### `packages/types/src/engine-api.ts::RenderInput`
 
@@ -186,7 +186,7 @@ Middleware around an engine's operations. Each hook receives the call and a `nex
 
 ### `packages/types/src/engine-api.ts::Project`
 
-A group of engines over one file set. Their file changes are staged, inspected with `staged`, `diff` and `files`, and written all or none by `commit`. Disposal discards what was not committed and disposes the engines.
+A group of engines over one file set. Their file changes are staged, inspected with `staged`, `diff` and `files`, and written all or none by `save`. Disposal discards what was not saved and disposes the engines. Draft `commit` updates a parsed tree; project `save` writes committed files to disk.
 
 ### `packages/types/src/engine-api.ts::KindTypes`
 
@@ -237,6 +237,10 @@ What a supertype guard narrows its input to, given the supertype's member kind i
 ### `packages/types/src/node-surface.ts::Remap`
 
 Key-remapping removal of the keys `K` from `T`. It is the only form used to drop members: `Omit` does not distribute over a union and collapses it to its common keys, and a declared type built on it lost its keys and cascaded into thousands of errors. Remapping keeps each member's keys.
+
+### `packages/types/src/node-surface.ts::FlagsHintOf`
+
+The vocabulary flags a node type's kind declares, read from its `__flags__`, which a bound grammar's `portable.ts` declares on the kind's node interface and the parsed surface carries (`SurfaceOf`); `never` for a kind with none.
 
 ### `packages/types/src/node-surface.ts::SlotHintsOf`
 
@@ -338,9 +342,37 @@ A strict builder with no coercer beside it, as one pair (a refine form); `bundle
 
 `undefined` for a key the node declares optional, `never` for a required one. `ConfigOf` appends it to the three keyword-presence arms (boolean keyword, bitflag, kind enum), so an explicit `undefined` is accepted exactly where the key itself may be omitted. The optional key keeps it spelled out because the types are published, and a consumer compiling with `exactOptionalPropertyTypes` must still be able to pass `{ key: undefined }` for an optional slot.
 
+### `packages/types/src/vocabulary/utils.ts::Flag`
+
+The marker a vocabulary interface declares a yes/no fact with: `readonly static?: Flag`. A flag is a bit in the node's one bitflag, tested by `is` and set by a builder step or a structure's `$flags`, never a member, so no value satisfies the marker and a structure can only leave it out. A `boolean` member is data, as a python complex pattern's `sign` is. The inventory reads the marker to write the flag's bit in `Flags`, and the generator to emit its guard and step.
+
+### `packages/types/src/vocabulary/flags.ts::Flags`
+
+The flags' bits, one per flag name the vocabulary declares, in name order: `Flags.Static | Flags.Async` combines two flags and `&` tests one, as a native bitflag does. The bindings inventory writes the module from the `Flag` declarations (`bindings-inventory --write`) and `--check` holds it to them, so it is never edited. It is the vocabulary's one run-time value; an `enum` is not erasable syntax, which the vocabulary may use because nothing the grammar executes imports it.
+
 ### `packages/types/src/keyword-presence.ts::BooleanKeyword`
 
 The brand on a keyword-presence slot's boolean storage, carrying the keyword's text. It lives in its own module so the query types read it (`IsBooleanKeyword`) without importing the package index.
+
+### `packages/types/src/query.ts::QueryPlan`
+
+The plan language one condition compiles to, which the native walk and `holds` both evaluate. Leaves read the values a slot holds, the slot named by its number in each kind (`SlotSubject`): `eq` and `match` their text, `present` that one exists, and `is` their stamped kind ids. The ids are expanded by membership when the plan is compiled, as `ofType` expands them, so the evaluators compare ids and never names. `child` moves the condition to a node the slot holds, narrowed by an anchor, so a flag spelled inside a wrapper (rust `function_item (function_modifiers "async")`) is still one plan. `not`, `and` and `or` combine. A constant is `and` or `or` over no plans, never an op of its own: a plan that always holds (a flag the kind's own form spells) is `{ op: 'and', of: [] }`, and one that never holds is `{ op: 'or', of: [] }`.
+
+### `packages/types/src/query.ts::FlagOf`
+
+The flags a recorder's `is` takes for a view's element type: each member's `FlagsHintOf`, intersected over a union (`SharedFlags`, by contravariant inference), so only the flags every member declares; `never` for no element type, or a member with no flags. A flag that depends on the node's context is never declared, so it is a type error as well as a refusal.
+
+### `packages/types/src/query.ts::QueryFlags`
+
+Each kind's vocabulary flags by stamped kind id, each the plan that tests the flag on a node of the kind, or `null` when the flag depends on the node's context (its placement, or a test on its parent), which a node-local plan cannot express. Generated from the bindings (`flagPlansOf`); a grammar without bindings has none.
+
+### `packages/types/src/query.ts::StepAnchor`
+
+The one anchor vocabulary shared by a portable read test's `via` step and a plan's `child` step: `first`, `last`, or `only`, which reaches the node only when the slot holds exactly one.
+
+### `packages/types/src/query.ts::SlotSubject`
+
+A slot by its number in each kind that has it, keyed by stamped kind id. The number is the slot's position among the kind's transport slots, the numbering the native read routes children by, so a plan names a slot exactly as the read does: the evaluator asks the node's kind how it finds its slots (`ReadTransport::router`: its children one at a time, a group of its token's text, or the node itself for an envelope) and keeps what lands in that number. Numbers are per kind, so a plan over several kinds, or a step that lands on several, carries one per kind, expanded when it is compiled as `is` membership is. A node of a kind the map lacks holds nothing there.
 
 ### `packages/types/src/query.ts::SlotRefOf`
 

@@ -1,4 +1,18 @@
-import type { AnyUntypedNode, Cond, KindMembership, PresenceRef, QueryPlan, QuerySlots, Recorder, SlotRef, SlotRoutes, TransportCoordinate } from '@sittir/types';
+import type {
+	AnyUntypedNode,
+	Cond,
+	KindMembership,
+	PresenceRef,
+	QueryFlags,
+	QueryPlan,
+	QuerySlots,
+	QuerySubject,
+	Recorder,
+	SlotRef,
+	SlotSubject,
+	StepAnchor,
+	TransportCoordinate
+} from '@sittir/types';
 import { inTreeEngine } from './engine-scope.ts';
 import type { TreeHandle } from './read.ts';
 import { treeOf, treeTokenOf } from './tree-token.ts';
@@ -26,6 +40,7 @@ export interface TreeQuery {
 
 export interface QueryHooks {
 	readonly querySlots: QuerySlots;
+	readonly queryFlags: QueryFlags;
 	readonly membership: KindMembership;
 	readonly kindName: (kind: number) => string | undefined;
 	readonly wrap: (data: unknown, tree: unknown) => unknown;
@@ -99,25 +114,56 @@ function kindLabel(context: Context, kind: number): string {
 }
 
 interface QuerySlot {
-	readonly routes: SlotRoutes;
+	readonly subject: SlotSubject;
 	readonly keyword: string | undefined;
 }
 
 const slotTables = new WeakMap<QuerySlots, Map<number, ReadonlyMap<string, QuerySlot>>>();
 const NO_SLOTS: ReadonlyMap<string, QuerySlot> = new Map();
-const NO_ROUTES: SlotRoutes = Object.freeze({ fields: [], kinds: [] });
+const NO_SLOT: SlotSubject = Object.freeze({ slots: Object.freeze({}) });
 
 function slotsOf(table: QuerySlots, kind: number): ReadonlyMap<string, QuerySlot> {
 	let byKind = slotTables.get(table);
 	if (byKind === undefined) slotTables.set(table, (byKind = new Map()));
 	let slots = byKind.get(kind);
 	if (slots === undefined)
-		byKind.set(kind, (slots = table[kind] === undefined ? NO_SLOTS : new Map(table[kind].map(([accessor, routes, keyword]) => [accessor, { routes, keyword }]))));
+		byKind.set(
+			kind,
+			(slots =
+				table[kind] === undefined
+					? NO_SLOTS
+					: new Map(
+							table[kind].map(([accessor, slot, keyword]) => [
+								accessor,
+								{ subject: Object.freeze({ slots: Object.freeze({ [kind]: slot }) }), keyword }
+							])
+						))
+		);
 	return slots;
 }
 
 function everyAccessor(table: QuerySlots): ReadonlySet<string> {
 	return new Set(Object.values(table).flatMap((row) => row.map(([accessor]) => accessor)));
+}
+
+function everyFlag(table: QueryFlags): ReadonlySet<string> {
+	return new Set(Object.values(table).flatMap((flags) => Object.keys(flags)));
+}
+
+const ALWAYS: QueryPlan = Object.freeze({ op: 'and', of: Object.freeze([]) });
+
+function flagRef(context: Context, kind: number | undefined, owner: string): (flag: string) => Cond {
+	return (flag) => {
+		if (typeof flag !== 'string') refuse('query: is takes the name of a flag');
+		if (kind === undefined) {
+			if (!everyFlag(context.hooks.queryFlags).has(flag)) refuse(`query: no kind of this grammar declares the flag ${flag}`);
+			return cond(ALWAYS);
+		}
+		const plan = context.hooks.queryFlags[kind]?.[flag];
+		if (plan === undefined) refuse(`query: ${owner} declares no flag ${flag}`);
+		if (plan === null) refuse(`query: ${flag} on ${owner} depends on the node's context`);
+		return cond(plan);
+	};
 }
 
 type Source =
@@ -201,7 +247,11 @@ function view(context: Context, source: Source, steps: readonly Step[]): QueryVi
 }
 
 function sliceStep(start: number | undefined, end: number | undefined): Step {
-	return { op: 'slice', start: toIntegerOrInfinity(start), end: end === undefined ? undefined : toIntegerOrInfinity(end) };
+	return {
+		op: 'slice',
+		start: toIntegerOrInfinity(start),
+		end: end === undefined ? undefined : toIntegerOrInfinity(end)
+	};
 }
 
 function ofTypeStep(kind: number): Step {
@@ -224,20 +274,34 @@ function* run(context: Context, source: Source, steps: readonly Step[]): Iterabl
 	yield* items;
 }
 
-function* slotEntries(context: Context, source: { readonly slot: string; readonly node: object }, early: readonly Declarative[]): Iterable<readonly Entry[]> {
-	const read = (source.node as Record<string, unknown>)[source.slot];
-	const value = typeof read === 'function' ? (read as () => unknown).call(source.node) : read;
-	const items = Array.isArray(value) ? value : value === undefined ? [] : [value];
-	yield* declarativeSteps([items.map(entryOfItem)], early, context);
+function* slotEntries(
+	context: Context,
+	source: { readonly slot: string; readonly node: object },
+	early: readonly Declarative[]
+): Iterable<readonly Entry[]> {
+	yield* declarativeSteps([slotItems(source.node, source.slot).map(entryOfItem)], early, context);
 }
 
-function* walkEntries(context: Context, source: { readonly from: NodeAddress; readonly depth: number | undefined }, early: readonly Declarative[]): Iterable<readonly Entry[]> {
+export function slotItems(node: object, accessor: string): readonly unknown[] {
+	const read = (node as Record<string, unknown>)[accessor];
+	const value = typeof read === 'function' ? (read as () => unknown).call(node) : read;
+	return Array.isArray(value) ? value : value === undefined ? [] : [value];
+}
+
+function* walkEntries(
+	context: Context,
+	source: { readonly from: NodeAddress; readonly depth: number | undefined },
+	early: readonly Declarative[]
+): Iterable<readonly Entry[]> {
 	const pushed = pushdown(context, early);
 	if (pushed === 'none') return;
 	yield* declarativeSteps(batches(context, source, pushed.kinds, pushed.plan), early.slice(pushed.count), context);
 }
 
-function pushdown(context: Context, early: readonly Declarative[]): { kinds: readonly number[]; plan: QueryPlan | undefined; count: number } | 'none' {
+function pushdown(
+	context: Context,
+	early: readonly Declarative[]
+): { kinds: readonly number[]; plan: QueryPlan | undefined; count: number } | 'none' {
 	let kinds: readonly number[] | undefined;
 	const plans: QueryPlan[] = [];
 	let count = 0;
@@ -252,10 +316,19 @@ function pushdown(context: Context, early: readonly Declarative[]): { kinds: rea
 		} else break;
 		count++;
 	}
-	return { kinds: kinds ?? [], plan: plans.length === 0 ? undefined : plans.length === 1 ? plans[0] : { op: 'and', of: plans }, count };
+	return {
+		kinds: kinds ?? [],
+		plan: plans.length === 0 ? undefined : plans.length === 1 ? plans[0] : { op: 'and', of: plans },
+		count
+	};
 }
 
-function* batches(context: Context, source: { readonly from: NodeAddress; readonly depth: number | undefined }, kinds: readonly number[], plan: QueryPlan | undefined): Iterable<readonly Entry[]> {
+function* batches(
+	context: Context,
+	source: { readonly from: NodeAddress; readonly depth: number | undefined },
+	kinds: readonly number[],
+	plan: QueryPlan | undefined
+): Iterable<readonly Entry[]> {
 	const { query, tree, hooks } = context;
 	let from = source.from;
 	let resume: readonly number[] | undefined;
@@ -291,7 +364,11 @@ function findIndex(items: Iterable<unknown>, predicate: Fn): number {
 	return -1;
 }
 
-function reduce(items: Iterable<unknown>, fn: (accumulated: unknown, node: unknown, index: number) => unknown, initial: readonly unknown[]): unknown {
+function reduce(
+	items: Iterable<unknown>,
+	fn: (accumulated: unknown, node: unknown, index: number) => unknown,
+	initial: readonly unknown[]
+): unknown {
 	let index = 0;
 	let started = initial.length > 0;
 	let accumulated = initial[0];
@@ -499,9 +576,27 @@ function compileFor(context: Context, condition: Where, kind: number): QueryPlan
 }
 
 function sharedPlan(context: Context, condition: Where, kinds: readonly number[]): QueryPlan | undefined {
-	const plans = kinds.map((kind) => compileFor(context, condition, kind));
-	const first = JSON.stringify(plans[0]);
-	return plans.every((plan) => JSON.stringify(plan) === first) ? plans[0] : undefined;
+	const merged = mergedAt(kinds.map((kind) => compileFor(context, condition, kind)), undefined);
+	return merged === CONFLICT ? undefined : (merged as QueryPlan | undefined);
+}
+
+const CONFLICT = Symbol('sittir.conflict');
+
+function mergedAt(values: readonly unknown[], key: string | undefined): unknown {
+	const [first] = values;
+	if (key === 'slots') return Object.assign({}, ...values);
+	if (typeof first !== 'object' || first === null) return values.every((value) => value === first) ? first : CONFLICT;
+	if (Array.isArray(first)) {
+		if (!values.every((value) => Array.isArray(value) && value.length === first.length)) return CONFLICT;
+		const items = first.map((_, i) => mergedAt(values.map((value) => (value as unknown[])[i]), undefined));
+		return items.includes(CONFLICT) ? CONFLICT : items;
+	}
+	const keys = Object.keys(first);
+	const same = (value: unknown): boolean =>
+		typeof value === 'object' && value !== null && !Array.isArray(value) && Object.keys(value).length === keys.length && keys.every((k) => k in value);
+	if (!values.every(same)) return CONFLICT;
+	const entries = keys.map((k) => [k, mergedAt(values.map((value) => (value as Record<string, unknown>)[k]), k)] as const);
+	return entries.some(([, value]) => value === CONFLICT) ? CONFLICT : Object.fromEntries(entries);
 }
 
 const PLAN = Symbol('sittir.where');
@@ -527,27 +622,28 @@ function cond(plan: QueryPlan): Cond {
 	}) as unknown as Cond;
 }
 
-function slotRef(slot: string, routes: SlotRoutes): SlotRef {
+function slotRef(slot: string, subject: SlotSubject): SlotRef {
 	return Object.freeze({
 		eq(text: string) {
 			if (typeof text !== 'string') refuse(`query: ${slot}.eq takes the text to compare`);
-			return cond({ op: 'eq', fields: routes.fields, kinds: routes.kinds, text });
+			return cond({ op: 'eq', slots: subject.slots, text });
 		},
 		match(pattern: RegExp) {
 			if (!(pattern instanceof RegExp)) refuse(`query: ${slot}.match takes a RegExp`);
 			if (pattern.flags.replace(/u/g, '') !== '')
 				refuse(`query: ${slot}.match: flags ${pattern.flags} have no native equivalent`);
-			return cond({ op: 'match', fields: routes.fields, kinds: routes.kinds, pattern: pattern.source });
+			return cond({ op: 'match', slots: subject.slots, pattern: pattern.source });
 		}
 	});
 }
 
-function presenceRef(slot: string, routes: SlotRoutes, keyword: string): PresenceRef {
-	const refuseText = (): never => refuse(`query: ${slot} holds the presence of ${JSON.stringify(keyword)}; compare it with eq(true) or eq(false)`);
+function presenceRef(slot: string, subject: SlotSubject, keyword: string): PresenceRef {
+	const refuseText = (): never =>
+		refuse(`query: ${slot} holds the presence of ${JSON.stringify(keyword)}; compare it with eq(true) or eq(false)`);
 	return Object.freeze({
 		eq(present: boolean) {
 			if (typeof present !== 'boolean') refuseText();
-			const leaf: QueryPlan = { op: 'present', fields: routes.fields, kinds: routes.kinds };
+			const leaf: QueryPlan = { op: 'present', slots: subject.slots };
 			return cond(present ? leaf : { op: 'not', of: leaf });
 		},
 		match: refuseText
@@ -555,11 +651,11 @@ function presenceRef(slot: string, routes: SlotRoutes, keyword: string): Presenc
 }
 
 const refOf = (key: string, slot: QuerySlot): SlotRef | PresenceRef =>
-	slot.keyword === undefined ? slotRef(key, slot.routes) : presenceRef(key, slot.routes, slot.keyword);
+	slot.keyword === undefined ? slotRef(key, slot.subject) : presenceRef(key, slot.subject, slot.keyword);
 
 function shapeRef(slot: string): SlotRef {
-	const text = slotRef(slot, NO_ROUTES);
-	const presence = presenceRef(slot, NO_ROUTES, slot);
+	const text = slotRef(slot, NO_SLOT);
+	const presence = presenceRef(slot, NO_SLOT, slot);
 	return Object.freeze({
 		eq: (value: string) => (typeof value === 'boolean' ? presence.eq(value) : text.eq(value)),
 		match: text.match
@@ -571,11 +667,13 @@ function recorder(context: Context, kind: number | undefined): Recorder<unknown>
 	const owner = kind === undefined ? 'this grammar' : kindLabel(context, kind);
 	const known = kind === undefined ? undefined : slotsOf(table, kind);
 	const names: ReadonlySet<string> = known === undefined ? everyAccessor(table) : new Set(known.keys());
-	const refFor = (key: string): SlotRef | PresenceRef => (known === undefined ? shapeRef(key) : refOf(`${owner}.${key}`, known.get(key)!));
+	const refFor = (key: string): SlotRef | PresenceRef =>
+		known === undefined ? shapeRef(key) : refOf(`${owner}.${key}`, known.get(key)!);
 	const refuseRecorder = (what: string): never =>
 		refuse(`query: ${what}; a condition reads slots and compares them (c.slot.eq / .match)`);
 	return new Proxy(Object.create(null) as Recorder<unknown>, {
 		get(_, key) {
+			if (key === 'is') return flagRef(context, kind, owner);
 			if (typeof key === 'string' && names.has(key)) return refFor(key);
 			return refuseRecorder(`${String(key)} is not a slot of ${owner}`);
 		},
@@ -583,11 +681,31 @@ function recorder(context: Context, kind: number | undefined): Recorder<unknown>
 		has: (_, key) => typeof key === 'string' && names.has(key),
 		ownKeys: () => [...names],
 		getOwnPropertyDescriptor: (_, key) =>
-			typeof key === 'string' && names.has(key) ? { configurable: true, enumerable: true, value: refFor(key) } : undefined
+			typeof key === 'string' && names.has(key)
+				? { configurable: true, enumerable: true, value: refFor(key) }
+				: undefined
 	});
 }
 
-export function holds(plan: QueryPlan, texts: (routes: SlotRoutes) => readonly string[]): boolean {
+const NO_TYPES = (): never => refuse('query: an is plan tests node types, and this caller reads none');
+
+const NO_CHILDREN = (): never => refuse('query: a child plan tests a node\'s children, and this caller reads none');
+
+export function anchored<T>(items: readonly T[], anchor: StepAnchor | undefined): readonly T[] {
+	if (anchor === undefined) return items;
+	if (anchor === 'first') return items.slice(0, 1);
+	if (anchor === 'last') return items.slice(-1);
+	return items.length === 1 ? items : [];
+}
+
+export interface PlanSubjects {
+	readonly texts: (subject: QuerySubject) => readonly string[];
+	readonly types?: (subject: QuerySubject) => readonly number[];
+	readonly children?: (subject: SlotSubject) => readonly PlanSubjects[];
+}
+
+export function holds(plan: QueryPlan<QuerySubject>, subjects: PlanSubjects): boolean {
+	const { texts, types = NO_TYPES, children = NO_CHILDREN } = subjects;
 	switch (plan.op) {
 		case 'eq':
 			return texts(plan).includes(plan.text);
@@ -597,11 +715,15 @@ export function holds(plan: QueryPlan, texts: (routes: SlotRoutes) => readonly s
 		}
 		case 'present':
 			return texts(plan).length > 0;
+		case 'is':
+			return types(plan).some((type) => plan.types.includes(type));
+		case 'child':
+			return anchored(children(plan), plan.anchor).some((child) => holds(plan.of, child));
 		case 'not':
-			return !holds(plan.of, texts);
+			return !holds(plan.of, subjects);
 		case 'and':
-			return plan.of.every((p) => holds(p, texts));
+			return plan.of.every((p) => holds(p, subjects));
 		case 'or':
-			return plan.of.some((p) => holds(p, texts));
+			return plan.of.some((p) => holds(p, subjects));
 	}
 }

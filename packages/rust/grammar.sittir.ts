@@ -174,7 +174,7 @@ export default sittirGrammar(base, {
 			'"..."/after': preference('space')
 		},
 
-		_bindings: {
+		_labels: {
 			'block/"{"/after': 'body/before',
 			'block/"}"/before': 'body/after',
 			'match_block/"{"/after': 'body/before',
@@ -227,7 +227,12 @@ export default sittirGrammar(base, {
 			'0/0': variant('simple', { default: true }),
 			'0/1': variant('unicode_fixed'),
 			'0/2': variant('unicode_braced'),
-			'0/3': variant('hex')
+			'0/3': variant('hex'),
+			'0/0/0/0': field('byte'),
+			'0/1/0/0': field('byte'),
+			'0/2/0/0': field('byte'),
+			'0/3/0/0': field('byte'),
+			'1/0/0': field('byte')
 		},
 		escape_sequence: {
 			0: variant('simple', { default: true }),

@@ -24,7 +24,7 @@ import { withWireContext } from '../wire/wire.ts';
 
 type Globals = Record<string, unknown>;
 
-const DSL_KEYS = ['seq', 'choice', 'optional', 'repeat', 'repeat1', 'field', 'alias', 'sym', 'prec'] as const;
+const DSL_KEYS = ['seq', 'choice', 'optional', 'repeat', 'repeat1', 'field', 'alias', 'sym', 'prec', 'token'] as const;
 
 let savedGlobals: Globals | null = null;
 
@@ -83,6 +83,11 @@ export function installFakeDsl(overrides?: Partial<Globals>): void {
 	precFn.right = makePrec('PREC_RIGHT');
 	precFn.dynamic = makePrec('PREC_DYNAMIC');
 	g.prec = precFn;
+	const tokenFn = ((content: Rule<'evaluate'>): Rule<'evaluate'> => ({ type: 'TOKEN', content }) as unknown as Rule<'evaluate'>) as ((
+		content: Rule<'evaluate'>
+	) => Rule<'evaluate'>) & { immediate: (content: Rule<'evaluate'>) => Rule<'evaluate'> };
+	tokenFn.immediate = (content) => ({ type: 'IMMEDIATE_TOKEN', content }) as unknown as Rule<'evaluate'>;
+	g.token = tokenFn;
 
 	if (overrides) {
 		for (const [k, v] of Object.entries(overrides)) g[k] = v;

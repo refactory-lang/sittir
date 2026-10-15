@@ -1,3 +1,4 @@
+import { pathToFileURL } from 'node:url';
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
 import {
 	ALIAS,
@@ -35,10 +36,8 @@ import { baseRulesOf } from '../dsl/shared.ts';
 import { protectedWireRuleNames, wireWithoutConfig, type PatchSite, type WireContext, type RefineForm, type WiredOpts } from '../dsl/wire/wire.ts';
 import { getDeadEnrichMints } from '../dsl/wire/dead-mints.ts';
 import { getDerivationRecords } from '../dsl/wire/derivation-records.ts';
+import { UNBOUND_ENV } from '../dsl/sittir-grammar.ts';
 import { getTextTokens } from '../dsl/enrich.ts';
-import { stampAutomaticVariants } from '../dsl/automatic-variants.ts';
-import { predictedSymbolSourceOf } from '../dsl/symbol-table.ts';
-import { LAYOUT_SUPERTYPE } from '../dsl/primitives/spacing.ts';
 import type { GrammarResult } from '../dsl/enrich.ts';
 
 type Input = string | RegExp | Rule<'evaluate'>;
@@ -254,13 +253,6 @@ function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: Gram
 
 	inheritBaseGrammarMetadata(opts, ctx);
 	const wireCtx = getWireContext(opts);
-	if (wireCtx !== undefined) {
-		const supertypeNames = new Set(supertypes);
-		const inlineNames = new Set(inline);
-		const symbols = predictedSymbolSourceOf({ rules, externals, extras, supertypes, inline, word });
-		const authoredHere = new Set(Object.keys(rules).filter((name) => name !== LAYOUT_SUPERTYPE && JSON.stringify(rules[name]) !== JSON.stringify(baseRules[name])));
-		stampAutomaticVariants(rules as Record<string, never>, supertypeNames, inlineNames, new Set(wireCtx.elementSupertypes.keys()), symbols, wireCtx.automaticVariants, authoredHere);
-	}
 
 	const refineForms = drainRefineMetadata(opts);
 	const groups = drainGroupsMetadata(opts);
@@ -918,11 +910,23 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 
 let evaluateMutex: Promise<void> = Promise.resolve();
 
-export async function evaluate(entryPath: string, fileTypes: readonly string[]): Promise<RawGrammar> {
-	return canonicalGrammar(await evaluateDsl(entryPath), fileTypes);
+export interface EvaluateOptions {
+	readonly unbound?: boolean;
+}
+
+export async function evaluate(entryPath: string, fileTypes: readonly string[], options: EvaluateOptions = {}): Promise<RawGrammar> {
+	return canonicalGrammar(await (options.unbound === true ? evaluateUnboundDsl(entryPath) : evaluateDsl(entryPath)), fileTypes);
 }
 
 export async function evaluateDsl(entryPath: string): Promise<EvaluatedGrammar> {
+	return withDslGlobals(() => importAndExtractGrammar(() => import(entryPath)));
+}
+
+export async function evaluateUnboundDsl(entryPath: string): Promise<EvaluatedGrammar> {
+	return withDslGlobals(() => importAndExtractGrammar(() => importUnbound(entryPath)));
+}
+
+export async function withDslGlobals<T>(run: () => Promise<T>): Promise<T> {
 	let release!: () => void;
 	const previous = evaluateMutex;
 	evaluateMutex = new Promise<void>((resolve) => {
@@ -933,7 +937,7 @@ export async function evaluateDsl(entryPath: string): Promise<EvaluatedGrammar> 
 		const g = globalThis as Record<string, unknown>;
 		const savedGlobals = saveAndInjectDslGlobals(g);
 		try {
-			return await importAndExtractGrammar(entryPath);
+			return await run();
 		} finally {
 			restoreSavedGlobals(g, savedGlobals);
 		}
@@ -969,8 +973,19 @@ function saveAndInjectDslGlobals(g: Record<string, unknown>): Record<string, unk
 	return savedGlobals;
 }
 
-async function importAndExtractGrammar(entryPath: string): Promise<EvaluatedGrammar> {
-	const mod = (await import(entryPath)) as {
+async function importUnbound(entryPath: string): Promise<unknown> {
+	const prior = process.env[UNBOUND_ENV];
+	process.env[UNBOUND_ENV] = '1';
+	try {
+		return await import(`${pathToFileURL(entryPath).href}?unbound`);
+	} finally {
+		if (prior === undefined) delete process.env[UNBOUND_ENV];
+		else process.env[UNBOUND_ENV] = prior;
+	}
+}
+
+async function importAndExtractGrammar(load: () => Promise<unknown>): Promise<EvaluatedGrammar> {
+	const mod = (await load()) as {
 		default?: unknown;
 		grammar?: unknown;
 	};

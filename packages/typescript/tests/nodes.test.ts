@@ -637,7 +637,7 @@ describe('for_statement', () => {
 describe('for_in_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.forInStatement({
-			forHeader: {
+			header: {
 				$type: TSKindId.ForHeaderLhs,
 				$text: 'test',
 				$source: 2,
@@ -659,7 +659,7 @@ describe('for_in_statement', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.forInStatement({
-			forHeader: {
+			header: {
 				$type: TSKindId.ForHeaderLhs,
 				$text: 'test',
 				$source: 2,
@@ -678,61 +678,6 @@ describe('for_in_statement', () => {
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
-describe('for_in_statement sub-factories', () => {
-	it('lhs builds the parent', () => {
-		const node = ir.forInStatement.lhs({
-			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
-			left: {
-				$type: TSKindId.LhsExpression,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_content: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
-			} as any,
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.ForInStatement);
-		expect((node as any).forHeader()?.$type).toBe(TSKindId.ForHeaderLhs);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('varKind builds the parent', () => {
-		const node = ir.forInStatement.varKind({
-			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
-			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.ForInStatement);
-		expect((node as any).forHeader()?.$type).toBe(TSKindId.ForHeaderVarKind);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('letConstKind builds the parent', () => {
-		const node = ir.forInStatement.letConstKind({
-			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
-			kind: 'let',
-			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.ForInStatement);
-		expect((node as any).forHeader()?.$type).toBe(TSKindId.ForHeaderLetConstKind);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('usingKind builds the parent', () => {
-		const node = ir.forInStatement.usingKind({
-			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
-			kind: 'using',
-			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.ForInStatement);
-		expect((node as any).forHeader()?.$type).toBe(TSKindId.ForHeaderUsingKind);
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -4001,9 +3946,11 @@ describe('literal_type', () => {
 describe('literal_type sub-factories', () => {
 	it('negativeNumber builds the parent', () => {
 		const node = ir.literalType.negativeNumber({
-			operator: '-',
-			argument: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
-		});
+			$type: TSKindId.NumberDecimal,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);

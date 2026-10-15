@@ -139,7 +139,7 @@ The name of a grammar's type map, `<Prefix>TypeMap` (`RustTypeMap`), from the sa
 
 ### `packages/codegen/src/emitters/engine.ts::emitApi`
 
-The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`, and `empty`, the grammar's type-map member naming each kind's empty form) and exports `hooks`, which wire the package's render module hash, the builder table, guards, kind ids and trivia facts (joined by the grammar's comment coercer, `commentCoercer`, when it has a default trivia form, so a loose trivia string builds a comment), a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree, and `membership`, the guards' membership test (`isMember`, `membersOf`) for a query's `ofType`. The `hydrate` hook points to the existing `hydrateChild`, so factories resolve bound list stubs through the grammar's single child-hydration implementation.
+The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`, and `empty`, the grammar's type-map member naming each kind's empty form) and exports `hooks`, which wire the package's render module hash, the builder table, guards, kind ids and trivia facts (joined by the grammar's comment coercer, `commentCoercer`, when it has a default trivia form, so a loose trivia string builds a comment), a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree, and `membership`, the guards' membership test (`isMember`, `membersOf`) for a query's `ofType`. The `hydrate` hook points to the existing `hydrateChild`, so factories resolve bound list stubs through the grammar's single child-hydration implementation. A grammar with bindings (`portable`) also declares its `portable` surface and hands over `portable.ts`'s `portable` and `queryFlags`; the others carry neither.
 
 
 ```text
@@ -2760,6 +2760,10 @@ A row's member is named from its model kind (`modelKindOfEntry`, so a renamed ro
  */
 ```
 
+### `packages/codegen/src/emitters/kind-discriminant.ts::fixedTextKinds`
+
+Every kind with a parser id that a kind id alone renders as text (`compiler/model/node-map.ts::kindIdText`), with that text. `FixedTextKindId` is typed from it and the portable table's `fixedText` is written from it, so the two cannot disagree.
+
 ### `packages/codegen/src/emitters/kind-discriminant.ts::kindDiscriminantExpr`
 
 ```text
@@ -2861,6 +2865,14 @@ Also emits `RELAXED_KEYWORDS`, the token ids of the keywords the grammar relaxes
 ### `packages/codegen/src/emitters/kind-id-rust.ts::relaxedKeywordIds`
 
 The catalog ids of the tokens of a node map's `relaxedLiterals`: the keywords the grammar aliases to its word rule. Resolves each literal through `findKindEntryForLiteral`, preserving the canonical anonymous-token, literal-rule, then terminal precedence independently of catalog row order. Shared by the reader's relaxed-keyword table and identifier transport folding.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::relaxedDisplayIds`
+
+The display ids that stand for the word rule because the grammar aliases the word rule to them (`property_identifier`, `statement_identifier`), each with the ids of the keyword tokens aliased to it. A display with no catalog row or no token row is left out.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::relaxationTable`
+
+The one relaxation fact the generated reader, the identifier transport's folded tokens and the node model all read: the word rule's own display with its relaxed tokens, and each word-alias display with its tokens. The generated `relaxes` predicate and `relaxesOf` in the validators are the same test over this table.
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::KindConstant`
 
@@ -4843,9 +4855,11 @@ grammar has no such enum, the two keyword kinds with those texts (typescript
 `true` / `false`, python `True` / `False`). `trueKind` / `falseKind` are the
 kinds whose ids `_resolveScalar` returns, which the slot admits as a stored
 kind id (through `_ENUMS_OF_MEMBER` when the slot names the enum), and the
-two ids `LeafScalarMap` widens to `boolean`: a slot stores the member ids,
-never the enum's own, so the map is keyed on the members and the types
-package's `WidenScalarKindId` lets a bare id with a scalar entry admit it.
+two ids `LeafScalarMap` maps to `true` and `false`, respectively. A slot
+stores the member ids, never the enum's own. The types package's distributive
+`WidenScalarKindId` admits the literal for each member present in the slot:
+`true`, `false`, or their union `boolean`. Numeric entries remain keyed by
+their individual leaf ids.
 
 ### `packages/codegen/src/emitters/shared.ts::testConstructsWithChildren`
 
@@ -7234,6 +7248,10 @@ enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
 built without one with, so a tool can tell a read delimiter that merely
 restates the default from one that must be spelled.
 
+`slots` is the list's item slot, serialized as a compound node's slots are,
+so a reader of the model steps into a list's items through a slot like any
+other; `elementKinds` stays the kinds the items admit.
+
 ### `packages/codegen/src/emitters/node-model.ts::polymorphVariants`
 
 ```text
@@ -8835,7 +8853,7 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 // constructor-target resolution here adds no cycle.
 ```
 
-### `packages/codegen/src/emitters/types.ts::hasKindId`
+### `packages/codegen/src/emitters/kind-discriminant.ts::hasKindId`
 
 ```text
 /** Whether the parser issues an id for this kind. `NamespaceMap` is keyed by
@@ -8878,12 +8896,10 @@ The types module of `emitTypesModules`, for callers that need only the public su
 #### body
 
 ```text
-// `LeafScalarMap` / `LeafStringMap` are keyed by each leaf's `$type`
-// discriminant (`kindDiscriminantOrLiteral`), because the widening indexes
-// them with the leaf member's inferred `$type` — a map keyed by grammar
-// name is unreachable from a numeric id and silently widens every leaf to
-// `string`. The scalar rows come from `scalarLeafKinds`, the same table
-// the runtime scalar resolver is emitted from.
+// `LeafScalarMap` / `LeafStringMap` use each leaf's `$type` discriminant
+// (`kindDiscriminantOrLiteral`). Boolean scalar rows map each member id to
+// its literal input, so distributive widening admits only the slot's values.
+// Boolean ids come from `scalarLeafKinds`, the runtime resolver's source.
 ```
 
 #### body
@@ -9293,7 +9309,7 @@ Prints the type-only `__slotHints__` member of a kind interface: one `SlotHint` 
  * seam faces (a token's `after` face and the next token's `before`
  * face), the record reports the more specific of the two
  * (`preference` > `literal-default` > `fallback`) — the same specificity
- * order `resolveBindings` already uses to pick a winning declaration.
+ * order `resolveLabels` already uses to pick a winning declaration.
  * Never re-derived from address text here or anywhere the record is
  * read; it is read off the `origin` annotation
  * `render-rules.ts::whitespaceChoice` stamps on the seam's resolved
@@ -10219,15 +10235,19 @@ The facts carry no `comment` builder and no render or edit: a node renders and e
 
 ### `packages/codegen/src/emitters/client-utils.ts::queryRoutesOf`
 
-How the parser delivers a slot's children: a named slot by its field alone, and an unnamed slot by the routes `wireRoutesOf` finds (its field labels, and the concrete kinds that arrive under no field), the derivation the `wire_slot` rows use.
+How the parser delivers a slot's children: a named slot by its field alone, and an unnamed slot by the routes `wireRoutesOf` finds (its field labels, and the concrete kinds that arrive under no field). The transport's `#[slot]` attributes are derived from it, so the native read routes children by it, and a query reads a slot through that read.
 
 ### `packages/codegen/src/emitters/client-utils.ts::querySlotRows`
 
-Each kind's slots, by stamped kind id: the accessor a node reads the slot through (`propertyName`), the slot's parser routes (`queryRoutesOf`), and, for a slot that holds a keyword's presence, that keyword (`keywordPresenceValue`). The keyword is the one fact that tells a boolean slot from a text slot: the recorder gives such a slot a member with only `eq(boolean)`, and a portable read reads its `true` as the keyword's text, the source text the native walk reads. A query condition compiles on the client to these routes, so the native evaluator knows no slot names. A kind with no slots has no row. Two nodes stamped with one kind id must agree on the row, and the emitter throws when they do not.
+Each kind's slots, by stamped kind id: the accessor a node reads the slot through (`propertyName`), the slot's number among the kind's transport slots (`render-module.ts::transportSlotNumbers`), and, for a slot that holds a keyword's presence, that keyword (`keywordPresenceValue`). The keyword is the one fact that tells a boolean slot from a text slot: the recorder gives such a slot a member with only `eq(boolean)`, and a portable read reads its `true` as the keyword's text, the source text the native walk reads. A query condition compiles on the client to these numbers, so the native evaluator knows no slot names and routes the slot by the read's own router. A slot with no field in its kind's transport cannot be numbered, and the emitter throws, as it does for a slot read as `is` (`RECORDER_FLAG_KEY`), the recorder's flag test. A kind with no slots has no row. Two nodes stamped with one kind id must agree on the row, and the emitter throws when they do not.
+
+### `packages/codegen/src/emitters/client-utils.ts::RECORDER_FLAG_KEY`
+
+The member a `where` recorder tests a flag by (`common/src/query.ts::flagRef`), which no slot may be read as.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitQuerySlots`
 
-Emits `querySlots`, the `querySlotRows` table as a frozen object keyed by kind id. The language hooks carry it to the engine, where a node's query facet takes its slot names from the row of the node's kind and a `where` condition compiles each slot it reads to that slot's routes.
+Emits `querySlots`, the `querySlotRows` table as a frozen object keyed by kind id. The language hooks carry it to the engine, where a node's query facet takes its slot names from the row of the node's kind and a `where` condition compiles each slot it reads to that slot's number.
 
 ### `packages/codegen/src/emitters/emit.ts::module`
 
@@ -10355,6 +10375,18 @@ The factory imports the trivia hook needs, one line per module: raw builders for
 /** Companion fact to factoryShape 'forwarded': the kind whose constructor
 	 *  this kind's factory forwards (see buildFactoryMap.forwardsTo). */
 ```
+
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.renamedFrom`
+
+The node's `renamedFrom`, written only when the kind was renamed. Tools read the base-to-bound name mapping from it rather than evaluating the grammar again.
+
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.splitFrom`
+
+The node's `splitFrom`, written only on a split clone. The validators place a split kind's render inside its owner from it.
+
+### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.variantOf`
+
+The node's `variantOf`, written only on an owned variant. Route derivation reaches a supertype's forms by it (`formsOf`).
 
 ### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.oneSurface`
 
@@ -13999,6 +14031,10 @@ mark meeting it at the same gap. `seamStrength` maps the site's origin —
 declared (`preference`, `literal-default`, `word-default`) is 2, `cascade` is 1, the fallback
 is 0; separator sites are declared.
 
+`display` is the owning kind's visible name, the spelling of the emitted
+rows; `source` is the kind itself and `kindId` its stamped id. `kindEdge` and
+`edgeArm` carry the render rules' stamps through unchanged.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::armIdOf`
 
 The kind id one preference arm stands for: `BLANK_KIND_ID` for the blank arm,
@@ -14029,10 +14065,10 @@ origins spell the same value core's `spacing::SEAM_DECLARED` holds.
 ### `packages/codegen/src/emitters/render-options-rs.ts::edgeSitesOf`
 
 The per-kind edge rows: for each spacing site that is its kind's own edge
-(`isKindEdge`), the kind's id (`edgeKindId`) and the site index of its before
+(`isKindEdge`), the kind's stamped id and the site index of its before
 and after edge, plus, for a kind whose edge is a choice of tokens, the arm sites
 of each side: one `{ arm, site }` per arm site (`edgeArm`), keyed by the arm
-token's kind id. An arm token with no kind id is an error. Kinds whose name
+token's stamped kind id. An arm token with no kind id is an error. Kinds whose name
 resolves to more than one id are dropped, and rows come out in id order.
 `renderOptionsRs` writes them as `EDGE_SITES` (`before_arms`/`after_arms`) and
 indexes them by kind id in the dense `EDGE_ROWS` table (`denseTable`), so the
@@ -14043,17 +14079,9 @@ a kind with edge sites against this table (`edgeIdOf`).
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::isKindEdge`
 
-Whether a spacing site is its kind's own edge: its address parses as a seam
-whose token is the kind itself (`<kind>_before`/`<kind>_after`). One
-predicate for the edge table, the transport emitter's edge writes and its
+Whether a spacing site is its kind's own edge: the `kindEdge` stamp the
+render rules put on it. One predicate for the edge table, the transport emitter's edge writes and its
 field filter, so they cannot disagree on which sites live in the base.
-
-### `packages/codegen/src/emitters/render-options-rs.ts::edgeKindId`
-
-The id a kind's edges are keyed by: the kind's catalog entry by public name.
-`EDGE_SITES` rows, a transport's `Edged::kind_id` and every `w.edge` call
-take it from here, so a kind's edges are found under the id they were
-written with.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::carriesPerNodeValue`
 
@@ -14115,6 +14143,10 @@ grouping whether a slot has seats.
 `newlineArms` is the grammar's line-ending arms (`newlineArms`), written as `OptionTables.newline_arms`: the runtime refuses a `layout.newline` outside them, naming them, and treats `layout.newline` as an unknown key when there are none. `newline` is the preferred arm (`PREFERRED_NEWLINE`), written into the generated `defaults()` as `newline: "<arm>".to_string()`, so the default ending comes from the model's preference; core's own `Default` holds the writer's internal spelling only, for tables built outside a generated grammar.
 
 `indent` is the grammar's declared indent unit (`indentUnitOf`), empty for a grammar whose whitespace admits no indent characters. `renderOptionsRs` writes it into the generated `defaults()` as `indent: "<unit>".to_string()`, so the unit is the grammar's and core has no default of its own; an empty unit emits no line and `defaults()` keeps core's empty unit.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::stampOf`
+
+The kind id a planned row carries for a kind, read from the node the model stamped, or nothing for a kind with no id. A spacing site stamps its source kind with it and a seated site stamps its seat, so neither re-resolves an id by name.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::SeatWrapper`
 
@@ -14873,7 +14905,7 @@ Turns the members of a lexed kind's render rule into interior nodes: an entry fo
 
 ### `packages/codegen/src/emitters/interior.ts::groupMembers`
 
-The members of a nested sequence member, which is an optional group of interior members. The render rule carries no optional marker here: `flattenMembers` in the token-interior pass splices every nested sequence that is not a group arm, so a nested sequence that survives to the render rule is, by construction, the arm of an optional group and the regex wraps it as one.
+The members of a nested sequence member, which is an optional group of interior members. The render rule carries no optional marker here: the token-interior pass splices every nested sequence that names a part or holds no pattern and composes the rest into slots (`compiler/token-interior.ts::flattenSeqs`), so a nested sequence that survives to the render rule is, by construction, the arm of an optional group and the regex wraps it as one.
 
 ### `packages/codegen/src/emitters/interior.ts::interiorNodePattern`
 
@@ -15046,7 +15078,7 @@ The rest parameter of a spreading kind is typed from the slot's own cardinality,
 
 ### `packages/codegen/src/emitters/native-crate.ts::nativeCrateFiles`
 
-The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json` (private: the crate is never published; its `build` scripts run `scripts/build-native.mts`, which writes the loader, typings and binary into the grammar package's `native/` directory), and `src/lib.rs` (the `LanguageFn`, the `EngineGrammar` impl over the generated render module, whose `shows` is the generated `AnyTransport`'s set of display ids it claims a node by, so every coordinate stamps the display id at an alias envelope and the grammar id elsewhere, whose `Trivia` is the generated `TriviaTransport`, whose `whitespace` is the render options' whitespace table and layout kinds, whose `surface_kinds` is `kind_ids.rs`'s `SURFACE_KINDS`, whose `option_tables` is the render options' site tables (the addresses a parse's inferred options are written at), whose `read_units` reads a node one level down as the generated `AnyTransport` and takes the sides of its unit children from its layout, and whose `render_read` reads a node `depth` levels down as `AnyTransport` and renders it through `render_transport_parts`, answering the text (the records a parsed tree's layout baseline is read from), and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
+The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json` (private: the crate is never published; its `build` scripts run `scripts/build-native.mts`, which writes the loader, typings and binary into the grammar package's `native/` directory), and `src/lib.rs` (the `LanguageFn`, the `EngineGrammar` impl over the generated render module, whose `shows` is the generated `AnyTransport`'s set of display ids it claims a node by, so every coordinate stamps the display id at an alias envelope and the grammar id elsewhere, whose `Trivia` is the generated `TriviaTransport`, whose `whitespace` is the render options' whitespace table and layout kinds, whose `surface_kinds` is `kind_ids.rs`'s `SURFACE_KINDS`, whose `option_tables` is the render options' site tables (the addresses a parse's inferred options are written at), whose `read_units` reads a node one level down as the generated `AnyTransport` and takes the sides of its unit children from its layout, and whose `render_read` reads a node `depth` levels down as `AnyTransport` and renders it through `render_transport_parts`, answering the text (the records a parsed tree's layout baseline is read from), whose `slot_routes` and `router` are `AnyTransport`'s routing (each child's route, and how a node's kind finds its slots for a query), and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
 
 ### `packages/codegen/src/emitters/native-crate.ts::NativeCrateFile`
 
@@ -15376,6 +15408,10 @@ The ids a fixed-literal transport takes: its accepted ids, or its own id. The de
 
 The slots a struct has fields for, in order: the slot model's named and unnamed slots in the node's own slot order, then the named slots of each hidden helper node an unnamed slot hoists, all optional. The field order is the order the read writes the transport's keys, so a read transport's keys follow the model's slots. The printer and the check that follows it walk the same list.
 
+### `packages/codegen/src/emitters/render-module.ts::transportSlotNumbers`
+
+Each slot's number by storage name: its position in `structSlotsOf`, which is the position of its field among the transport's slot fields, the number the native read routes a child to (`Route::Slot`) and an envelope's one slot, its content, takes as 0. A node with no struct (not compound) numbers none. The query slot table and the portable read tests take their numbers here, so a plan names a slot exactly as the read does.
+
 ### `packages/codegen/src/emitters/render-module.ts::slotAttr`
 
 The `#[slot]` attribute of one slot, its one attribute: its read facts, then its record place (`recordArgs`). The read facts are a capture for each slot of a token interior, else the routes, presence keyword, separators and scalar mark `slotArgs` computes. An alias envelope's content has no read facts, only its place: it is not a parser field but the aliased node itself, which the derive's envelope mode reads as the slot `content = …` names.
@@ -15415,6 +15451,13 @@ Writes the grammar's `reparseHosts` block as the generated `reparse-hosts.ts`: t
 ### `packages/codegen/src/emitters/__tests__/self-containing-list-types.test.ts::selfContainingList`
 
 Builds an isolated assembled list whose repeated element choice includes the list itself. The emitted modules are compiled with TypeScript 6 and 7 to pin own-kind built and parsed inputs, recursive loose configurations, setters, and namespace argument-row resolution without changing a language grammar.
+
+### `packages/codegen/src/emitters/node-model.ts::printNodeModel`
+
+The text of `node-model.json5`. `generate` builds the record once (`buildNodeModel`), prints it, and hands the same record to the bindings' routes input.
+### `packages/codegen/src/emitters/node-model.ts::enumMembersOf`
+
+An enum's members as the model records them, each its kind and text. Every value the enum admits must be some member's text; a value no member resolves is an error, so the serialized model carries members only.
 
 ### `packages/codegen/src/emitters/render-module.ts::recordsTs`
 

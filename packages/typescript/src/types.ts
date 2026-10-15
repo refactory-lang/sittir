@@ -40,8 +40,8 @@ import type * as T from './types.js';
 import type { ERROR_KIND_ID } from '@sittir/common/error-kind';
 
 export type LeafScalarMap = {
-	[TSKindId.True]: boolean;
-	[TSKindId.False]: boolean;
+	[TSKindId.True]: true;
+	[TSKindId.False]: false;
 	[TSKindId.NumberDecimal]: number | bigint;
 	[TSKindId.NumberFloatPoint]: number;
 	[TSKindId.NumberFloatLeadingPoint]: number;
@@ -3506,7 +3506,7 @@ export interface ForStatement {
 export interface ForInStatement {
 	readonly $type: TSKindId.ForInStatement;
 	readonly _await: boolean;
-	readonly _for_header: ForHeader;
+	readonly _header: ForHeader;
 	readonly _body: Statement;
 	readonly __inputHints__?: {
 		readonly await?: BaseBooleanKeyword<'await'>;
@@ -3514,11 +3514,11 @@ export interface ForInStatement {
 	};
 	readonly __slotHints__?: {
 		readonly await: SlotHint<NonNullable<T.ForInStatement.Config>['await'], true>;
-		readonly forHeader: SlotHint<T.ForHeader>;
+		readonly header: SlotHint<T.ForHeader>;
 		readonly body: SlotHint<NonNullable<T.ForInStatement.Config>['body']>;
 	};
 	await(): boolean;
-	forHeader(): ForHeader;
+	header(): ForHeader;
 	body(): Statement;
 }
 
@@ -8160,16 +8160,10 @@ export interface CommentBlock {
 
 export interface LiteralTypeNegativeNumber {
 	readonly $type: TSKindId.LiteralTypeNegativeNumber;
-	readonly _operator: number;
 	readonly _argument: Number;
-	readonly __inputHints__?: {
-		readonly operator: KindEnum<'-' | '+', TSKindId.Dash | TSKindId.Plus>;
-	};
 	readonly __slotHints__?: {
-		readonly operator: SlotHint<NonNullable<T.LiteralTypeNegativeNumber.Config>['operator']>;
 		readonly argument: SlotHint<T.Number>;
 	};
-	operator(): number;
 	argument(): Number;
 }
 
@@ -12060,9 +12054,7 @@ export namespace LiteralTypeNegativeNumber {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
-			readonly dash?: { readonly before?: LayoutKindId };
 			readonly operator?: { readonly after?: LayoutKindId };
-			readonly plus?: { readonly before?: LayoutKindId };
 		};
 	}
 }
@@ -14895,7 +14887,7 @@ export interface LiteralTypeNegativeNumberNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	LiteralTypeNegativeNumber.Bound,
-	never,
+	'argument',
 	TSKindId.LiteralTypeNegativeNumber,
 	LiteralTypeNegativeNumber.Parsed,
 	never
@@ -20826,8 +20818,8 @@ export namespace LiteralTypeNegativeNumber {
 	}
 	export type Loose = LooseFor<TSKindId.LiteralTypeNegativeNumber>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LiteralTypeNegativeNumber>;
-	export type BuildArgs = [config: ConfigOf<T.LiteralTypeNegativeNumber>];
-	export type LooseArgs = [config: T.LiteralTypeNegativeNumber.Loose];
+	export type BuildArgs = [value: Admit<T.Number>];
+	export type LooseArgs = [value: T.LiteralTypeNegativeNumber.Loose];
 	export type Kind = TSKindId.LiteralTypeNegativeNumber;
 }
 export namespace NumberHex {

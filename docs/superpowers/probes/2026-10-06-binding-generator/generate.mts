@@ -42,15 +42,16 @@ interface ModelNode {
 interface ClaimFact {
 	readonly vocab: string;
 	readonly kind: string | null;
-	readonly predicate: boolean;
+	readonly predicates: readonly unknown[];
 	readonly toplevel: boolean;
 	readonly within: readonly string[];
 	readonly fieldLiterals: Readonly<Record<string, string>>;
 	readonly tokens: readonly string[];
 }
+const predicated = (claim: ClaimFact): boolean => claim.predicates.length > 0;
 type MemberFact =
 	| ({ readonly route: 'rename'; readonly owner: string; readonly name: string } & SlotSelector)
-	| { readonly route: 'presence'; readonly owner: string; readonly name: string; readonly via: readonly string[] }
+	| { readonly route: 'presence'; readonly owner: string; readonly name: string; readonly token: string; readonly via: readonly string[] }
 	| ({
 			readonly route: 'nested';
 			readonly owner: string;
@@ -100,7 +101,7 @@ const { loadInputs, deriveVocabulary } = (await import(join(ROOT, 'packages/tool
 	deriveVocabulary: () => Promise<Derivation>;
 };
 const { camel, tsname, derive, levelMembers, slotEntries, collapsedKinds, armClass, soleRole, levelsWithMembers } =
-	(await import(join(ROOT, 'packages/tools/src/inventory/derive.ts'))) as {
+	(await import(join(ROOT, 'packages/codegen/src/bindings/derive.ts'))) as {
 		camel: (s: string) => string;
 		tsname: (s: string) => string;
 		derive: (inputs: readonly GrammarInput[]) => Derivation;
@@ -259,13 +260,13 @@ for (const claim of facts.claims) {
 for (const list of entriesOf.values())
 	list.sort(
 		(a, b) =>
-			Number(b.claim.predicate) - Number(a.claim.predicate) ||
+			Number(predicated(b.claim)) - Number(predicated(a.claim)) ||
 			b.claim.within.length - a.claim.within.length ||
 			b.literals.length - a.literals.length
 	);
 const plainVocabOf = (kind: string): string | undefined =>
-	entriesOf.get(kind)?.find((e) => e.literals.length === 0 && e.claim.toplevel && !e.claim.predicate)?.vocab;
-const runtimeEntry = (e: Entry): boolean => e.claim.toplevel && !e.claim.predicate;
+	entriesOf.get(kind)?.find((e) => e.literals.length === 0 && e.claim.toplevel && !predicated(e.claim))?.vocab;
+const runtimeEntry = (e: Entry): boolean => e.claim.toplevel && !predicated(e.claim);
 
 // ---------------------------------------------------------------------------------------------
 // Member routes: what each view reads, as typed-surface reader calls.
@@ -300,7 +301,7 @@ function membersOf(kind: string): Member[] {
 		out.push({ name: memberNameOf(renames, slot), route: 'slot', slot });
 	}
 	for (const d of deep) {
-		if (d.route === 'presence') out.push({ name: camel(d.name), route: 'presence', via: d.via, token: d.name });
+		if (d.route === 'presence') out.push({ name: camel(d.name), route: 'presence', via: d.via, token: d.token });
 		else out.push({ name: camel(d.name), route: 'nested', via: d.via, parent: d.parent, selector: d });
 	}
 	return out;
@@ -594,7 +595,7 @@ for (const [kind, entries] of entriesOf) {
 	}
 	for (const e of entries) {
 		if (!runtimeEntry(e)) {
-			skipped.push(`${kind} → ${e.vocab}: ${e.claim.predicate ? 'predicate' : `placed within ${e.claim.within.join(' > ')}`}`);
+			skipped.push(`${kind} → ${e.vocab}: ${predicated(e.claim) ? 'predicate' : `placed within ${e.claim.within.join(' > ')}`}`);
 			continue;
 		}
 		const node = modelNode(kind);
@@ -728,7 +729,7 @@ for (const [kind, entries] of entriesOf) {
 		continue;
 	}
 	for (const e of entries) {
-		if (e.claim.predicate) {
+		if (predicated(e.claim)) {
 			skipped.push(`build ${e.vocab}: predicate claim, its pinned text is not in the facts`);
 			continue;
 		}

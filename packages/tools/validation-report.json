@@ -5025,9 +5025,10 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "count": 2,
+    "count": 3,
     "entries": [
       "Interface declarations",
+      "Literal types",
       "Object types with automatic semicolon insertion"
     ],
     "stage": "from-excluded",
@@ -5066,6 +5067,19 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
+    "entry": "Literal types",
+    "reason": "parse-error",
+    "input": "\nlet x: 2\nlet x: 2 | -3 | +4\nlet x: \"string\"\nlet x: false\n",
+    "stage": "read-render-parse-skip",
+    "code": "read-render-parse-skip",
+    "severity": "info",
+    "message": "parse-error",
+    "label": "Literal types"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
     "entry": "Object types with automatic semicolon insertion",
     "reason": "parse-error",
     "input": "\ntype Something = {\n  length: number\n  (string): string\n  [index:string] : number\n}\n",
@@ -5092,9 +5106,23 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "count": 2,
+    "entry": "Literal types",
+    "reason": "parse-error",
+    "input": "\nlet x: 2\nlet x: 2 | -3 | +4\nlet x: \"string\"\nlet x: false\n",
+    "stage": "read-render-parse-shallow-skip",
+    "code": "read-render-parse-shallow-skip",
+    "severity": "info",
+    "message": "parse-error",
+    "label": "Literal types"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "count": 3,
     "entries": [
       "Interface declarations",
+      "Literal types",
       "Object types with automatic semicolon insertion"
     ],
     "stage": "factory-storage-excluded",
@@ -5107,9 +5135,10 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "count": 2,
+    "count": 3,
     "entries": [
       "Interface declarations",
+      "Literal types",
       "Object types with automatic semicolon insertion"
     ],
     "stage": "ir-storage-excluded",
