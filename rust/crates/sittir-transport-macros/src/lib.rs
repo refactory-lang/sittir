@@ -8,6 +8,7 @@
 mod attrs;
 mod codec;
 mod expand;
+mod record;
 
 #[proc_macro_derive(Transport, attributes(transport, slot, kind, flank, separator_kind, wire))]
 pub fn derive_transport(input: proc_macro::TokenStream) -> proc_macro::TokenStream {

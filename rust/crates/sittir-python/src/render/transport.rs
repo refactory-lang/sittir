@@ -10015,12 +10015,12 @@ impl ::sittir_core::render::Render for ComparisonOperatorComparatorOperatorsTran
 
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::MODULE)]
+#[transport(kind = kind::MODULE, words = 4)]
 pub struct ModuleTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_statements")]
-    #[slot(field = field::STATEMENTS)]
+    #[slot(field = field::STATEMENTS, word = 2, width = 2, run = 5)]
     pub statements: Vec<::sittir_core::SlotValue<StatementTransport>>,
     #[wire(key = "_statements_separator_space")]
     pub statements_separator_space: Option<u16>,
@@ -10075,12 +10075,12 @@ impl ::sittir_core::prepare::Prepare for ModuleTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_SIMPLE_STATEMENTS, min_depth = 2, layout = [kind::_NEWLINE])]
+#[transport(kind = kind::_SIMPLE_STATEMENTS, min_depth = 2, layout = [kind::_NEWLINE], words = 7)]
 pub struct SimpleStatementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 5)]
     pub elements: ::sittir_core::SlotValue<SimpleStatementsElementsTransport>,
 }
 
@@ -10124,12 +10124,12 @@ impl ::sittir_core::prepare::Prepare for SimpleStatementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::IMPORT_STATEMENT, layout = [kind::IMPORT_KEYWORD])]
+#[transport(kind = kind::IMPORT_STATEMENT, layout = [kind::IMPORT_KEYWORD], words = 7)]
 pub struct ImportStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_names")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub names: ::sittir_core::SlotValue<NamesTransport>,
 }
 
@@ -10173,7 +10173,7 @@ impl ::sittir_core::prepare::Prepare for ImportStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::IMPORT_PREFIX, text)]
+#[transport(kind = kind::IMPORT_PREFIX, text, words = 2)]
 pub struct ImportPrefixTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -10219,15 +10219,15 @@ impl ::sittir_core::prepare::Prepare for ImportPrefixTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::RELATIVE_IMPORT)]
+#[transport(kind = kind::RELATIVE_IMPORT, words = 12)]
 pub struct RelativeImportTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_prefix")]
-    #[slot(field = field::PREFIX)]
+    #[slot(field = field::PREFIX, word = 2, width = 5)]
     pub prefix: ::sittir_core::SlotValue<ImportPrefixTransport>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME)]
+    #[slot(field = field::NAME, word = 7, width = 5)]
     pub name: Option<::sittir_core::SlotValue<DottedNameTransport>>,
 }
 
@@ -10272,12 +10272,12 @@ impl ::sittir_core::prepare::Prepare for RelativeImportTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::FUTURE_IMPORT_STATEMENT, layout = [kind::FROM_KEYWORD, kind::__FUTURE_U_KEYWORD, kind::IMPORT_KEYWORD])]
+#[transport(kind = kind::FUTURE_IMPORT_STATEMENT, layout = [kind::FROM_KEYWORD, kind::__FUTURE_U_KEYWORD, kind::IMPORT_KEYWORD], words = 7)]
 pub struct FutureImportStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub content: ::sittir_core::SlotValue<FutureImportStatementContentTransportSlot>,
 }
 
@@ -10321,15 +10321,15 @@ impl ::sittir_core::prepare::Prepare for FutureImportStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::IMPORT_FROM_STATEMENT, layout = [kind::FROM_KEYWORD, kind::IMPORT_KEYWORD])]
+#[transport(kind = kind::IMPORT_FROM_STATEMENT, layout = [kind::FROM_KEYWORD, kind::IMPORT_KEYWORD], words = 12)]
 pub struct ImportFromStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_module_name")]
-    #[slot(field = field::MODULE_NAME)]
+    #[slot(field = field::MODULE_NAME, word = 2, width = 5)]
     pub module_name: ::sittir_core::SlotValue<ImportFromStatementModuleNameTransportSlot>,
     #[wire(key = "_content")]
-    #[slot]
+    #[slot(word = 7, width = 5)]
     pub content: ::sittir_core::SlotValue<ImportFromStatementContentTransportSlot>,
 }
 
@@ -10374,12 +10374,12 @@ impl ::sittir_core::prepare::Prepare for ImportFromStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_IMPORT_LIST, item = name)]
+#[transport(kind = kind::_IMPORT_LIST, item = name, words = 4)]
 pub struct ImportListTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME, separator = kind::COMMA)]
+    #[slot(field = field::NAME, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub name: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ImportListNameTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -10434,15 +10434,15 @@ impl ::sittir_core::prepare::Prepare for ImportListTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ALIASED_IMPORT, layout = [kind::AS_KEYWORD])]
+#[transport(kind = kind::ALIASED_IMPORT, layout = [kind::AS_KEYWORD], words = 12)]
 pub struct AliasedImportTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME)]
+    #[slot(field = field::NAME, word = 2, width = 5)]
     pub name: ::sittir_core::SlotValue<DottedNameTransport>,
     #[wire(key = "_alias")]
-    #[slot(field = field::ALIAS)]
+    #[slot(field = field::ALIAS, word = 7, width = 5)]
     pub alias: ::sittir_core::SlotValue<IdentifierTransport>,
 }
 
@@ -10515,12 +10515,12 @@ impl ::sittir_core::render::Render for WildcardImportTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::PRINT_STATEMENT)]
+#[transport(kind = kind::PRINT_STATEMENT, words = 7)]
 pub struct PrintStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub content: ::sittir_core::SlotValue<PrintStatementContentTransportSlot>,
 }
 
@@ -10563,12 +10563,12 @@ impl ::sittir_core::prepare::Prepare for PrintStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CHEVRON, layout = [kind::GT_GT])]
+#[transport(kind = kind::CHEVRON, layout = [kind::GT_GT], words = 7)]
 pub struct ChevronTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expression")]
-    #[slot(field = field::EXPRESSION)]
+    #[slot(field = field::EXPRESSION, word = 2, width = 5)]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
 }
 
@@ -10612,12 +10612,12 @@ impl ::sittir_core::prepare::Prepare for ChevronTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ASSERT_STATEMENT, layout = [kind::ASSERT_KEYWORD])]
+#[transport(kind = kind::ASSERT_STATEMENT, layout = [kind::ASSERT_KEYWORD], words = 4)]
 pub struct AssertStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expression")]
-    #[slot(field = field::EXPRESSION, separator = kind::COMMA)]
+    #[slot(field = field::EXPRESSION, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub expression: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_expression_separator_space_before")]
     pub expression_separator_space_before: Option<u16>,
@@ -10669,12 +10669,12 @@ impl ::sittir_core::prepare::Prepare for AssertStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::EXPRESSION_STATEMENT)]
+#[transport(kind = kind::EXPRESSION_STATEMENT, words = 7)]
 pub struct ExpressionStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub content: ::sittir_core::SlotValue<ExpressionStatementContentTransportSlot>,
 }
 
@@ -10717,15 +10717,15 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::NAMED_EXPRESSION, layout = [kind::COLON_EQ])]
+#[transport(kind = kind::NAMED_EXPRESSION, layout = [kind::COLON_EQ], words = 12)]
 pub struct NamedExpressionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME)]
+    #[slot(field = field::NAME, word = 2, width = 5)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE)]
+    #[slot(field = field::VALUE, word = 7, width = 5)]
     pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
@@ -10770,12 +10770,12 @@ impl ::sittir_core::prepare::Prepare for NamedExpressionTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_NAMED_EXPRESSION_LHS)]
+#[transport(kind = kind::_NAMED_EXPRESSION_LHS, words = 7)]
 pub struct NamedExpressionLhsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_identifier")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub identifier: ::sittir_core::SlotValue<IdentifierTransport>,
 }
 
@@ -10818,12 +10818,12 @@ impl ::sittir_core::prepare::Prepare for NamedExpressionLhsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::RETURN_STATEMENT, layout = [kind::RETURN_KEYWORD])]
+#[transport(kind = kind::RETURN_STATEMENT, layout = [kind::RETURN_KEYWORD], words = 7)]
 pub struct ReturnStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expressions")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub expressions: Option<::sittir_core::SlotValue<ReturnStatementExpressionsTransportSlot>>,
 }
 
@@ -10867,12 +10867,12 @@ impl ::sittir_core::prepare::Prepare for ReturnStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::DELETE_STATEMENT, layout = [kind::DEL_KEYWORD])]
+#[transport(kind = kind::DELETE_STATEMENT, layout = [kind::DEL_KEYWORD], words = 7)]
 pub struct DeleteStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expressions")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub expressions: ::sittir_core::SlotValue<ReturnStatementExpressionsTransportSlot>,
 }
 
@@ -10916,15 +10916,15 @@ impl ::sittir_core::prepare::Prepare for DeleteStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::RAISE_STATEMENT, layout = [kind::RAISE_KEYWORD, kind::FROM_KEYWORD])]
+#[transport(kind = kind::RAISE_STATEMENT, layout = [kind::RAISE_KEYWORD, kind::FROM_KEYWORD], words = 12)]
 pub struct RaiseStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expressions")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub expressions: Option<::sittir_core::SlotValue<ReturnStatementExpressionsTransportSlot>>,
     #[wire(key = "_cause")]
-    #[slot(field = field::CAUSE)]
+    #[slot(field = field::CAUSE, word = 7, width = 5)]
     pub cause: Option<::sittir_core::SlotValue<ExpressionTransport>>,
 }
 
@@ -11113,18 +11113,18 @@ impl ::sittir_core::render::Render for ContinueStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::IF_STATEMENT, layout = [kind::IF_KEYWORD, kind::COLON])]
+#[transport(kind = kind::IF_STATEMENT, layout = [kind::IF_KEYWORD, kind::COLON], words = 14)]
 pub struct IfStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_condition")]
-    #[slot(field = field::CONDITION)]
+    #[slot(field = field::CONDITION, word = 2, width = 5)]
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
     #[wire(key = "_consequence")]
-    #[slot(field = field::CONSEQUENCE)]
+    #[slot(field = field::CONSEQUENCE, word = 7, width = 5)]
     pub consequence: ::sittir_core::SlotValue<SuiteTransport>,
     #[wire(key = "_alternative")]
-    #[slot(field = field::ALTERNATIVE)]
+    #[slot(field = field::ALTERNATIVE, word = 12, width = 2, run = 5)]
     pub alternative: Vec<::sittir_core::SlotValue<IfStatementAlternativeTransportSlot>>,
     #[wire(key = "_alternative_separator_space")]
     pub alternative_separator_space: Option<u16>,
@@ -11175,15 +11175,15 @@ impl ::sittir_core::prepare::Prepare for IfStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ELIF_CLAUSE, layout = [kind::ELIF_KEYWORD, kind::COLON])]
+#[transport(kind = kind::ELIF_CLAUSE, layout = [kind::ELIF_KEYWORD, kind::COLON], words = 12)]
 pub struct ElifClauseTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_condition")]
-    #[slot(field = field::CONDITION)]
+    #[slot(field = field::CONDITION, word = 2, width = 5)]
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
     #[wire(key = "_consequence")]
-    #[slot(field = field::CONSEQUENCE)]
+    #[slot(field = field::CONSEQUENCE, word = 7, width = 5)]
     pub consequence: ::sittir_core::SlotValue<SuiteTransport>,
 }
 
@@ -11228,12 +11228,12 @@ impl ::sittir_core::prepare::Prepare for ElifClauseTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ELSE_CLAUSE, layout = [kind::ELSE_KEYWORD, kind::COLON])]
+#[transport(kind = kind::ELSE_CLAUSE, layout = [kind::ELSE_KEYWORD, kind::COLON], words = 7)]
 pub struct ElseClauseTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY)]
+    #[slot(field = field::BODY, word = 2, width = 5)]
     pub body: ::sittir_core::SlotValue<SuiteTransport>,
 }
 
@@ -11277,15 +11277,15 @@ impl ::sittir_core::prepare::Prepare for ElseClauseTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::MATCH_STATEMENT, layout = [kind::MATCH_KEYWORD, kind::COLON])]
+#[transport(kind = kind::MATCH_STATEMENT, layout = [kind::MATCH_KEYWORD, kind::COLON], words = 12)]
 pub struct MatchStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_subjects")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub subjects: ::sittir_core::SlotValue<SubjectsTransport>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY)]
+    #[slot(field = field::BODY, word = 7, width = 5)]
     pub body: ::sittir_core::SlotValue<MatchBlockTransport>,
 }
 
@@ -11330,12 +11330,12 @@ impl ::sittir_core::prepare::Prepare for MatchStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_MATCH_BLOCK)]
+#[transport(kind = kind::_MATCH_BLOCK, words = 7)]
 pub struct MatchBlockTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub content: ::sittir_core::SlotValue<MatchBlockContentTransportSlot>,
 }
 
@@ -11378,18 +11378,18 @@ impl ::sittir_core::prepare::Prepare for MatchBlockTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CASE_CLAUSE, layout = [kind::CASE_KEYWORD, kind::COLON])]
+#[transport(kind = kind::CASE_CLAUSE, layout = [kind::CASE_KEYWORD, kind::COLON], words = 17)]
 pub struct CaseClauseTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_case_patterns")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub case_patterns: ::sittir_core::SlotValue<CasePatternsTransport>,
     #[wire(key = "_guard")]
-    #[slot(field = field::GUARD)]
+    #[slot(field = field::GUARD, word = 7, width = 5)]
     pub guard: Option<::sittir_core::SlotValue<IfClauseTransport>>,
     #[wire(key = "_consequence")]
-    #[slot(field = field::CONSEQUENCE)]
+    #[slot(field = field::CONSEQUENCE, word = 12, width = 5)]
     pub consequence: ::sittir_core::SlotValue<SuiteTransport>,
 }
 
@@ -11435,24 +11435,24 @@ impl ::sittir_core::prepare::Prepare for CaseClauseTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::FOR_STATEMENT, layout = [kind::FOR_KEYWORD, kind::IN_KEYWORD, kind::COLON])]
+#[transport(kind = kind::FOR_STATEMENT, layout = [kind::FOR_KEYWORD, kind::IN_KEYWORD, kind::COLON], words = 23)]
 pub struct ForStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_async")]
-    #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
+    #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD, word = 2, bit = 0)]
     pub async_: bool,
     #[wire(key = "_left")]
-    #[slot(field = field::LEFT)]
+    #[slot(field = field::LEFT, word = 3, width = 5)]
     pub left: ::sittir_core::SlotValue<ForStatementLeftTransportSlot>,
     #[wire(key = "_right")]
-    #[slot(field = field::RIGHT)]
+    #[slot(field = field::RIGHT, word = 8, width = 5)]
     pub right: ::sittir_core::SlotValue<ReturnStatementExpressionsTransportSlot>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY)]
+    #[slot(field = field::BODY, word = 13, width = 5)]
     pub body: ::sittir_core::SlotValue<SuiteTransport>,
     #[wire(key = "_alternative")]
-    #[slot(field = field::ALTERNATIVE)]
+    #[slot(field = field::ALTERNATIVE, word = 18, width = 5)]
     pub alternative: Option<::sittir_core::SlotValue<ElseClauseTransport>>,
 }
 
@@ -11500,18 +11500,18 @@ impl ::sittir_core::prepare::Prepare for ForStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::WHILE_STATEMENT, layout = [kind::WHILE_KEYWORD, kind::COLON])]
+#[transport(kind = kind::WHILE_STATEMENT, layout = [kind::WHILE_KEYWORD, kind::COLON], words = 17)]
 pub struct WhileStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_condition")]
-    #[slot(field = field::CONDITION)]
+    #[slot(field = field::CONDITION, word = 2, width = 5)]
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY)]
+    #[slot(field = field::BODY, word = 7, width = 5)]
     pub body: ::sittir_core::SlotValue<SuiteTransport>,
     #[wire(key = "_alternative")]
-    #[slot(field = field::ALTERNATIVE)]
+    #[slot(field = field::ALTERNATIVE, word = 12, width = 5)]
     pub alternative: Option<::sittir_core::SlotValue<ElseClauseTransport>>,
 }
 
@@ -11557,21 +11557,21 @@ impl ::sittir_core::prepare::Prepare for WhileStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TRY_STATEMENT, layout = [kind::TRY_KEYWORD, kind::COLON])]
+#[transport(kind = kind::TRY_STATEMENT, layout = [kind::TRY_KEYWORD, kind::COLON], words = 19)]
 pub struct TryStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY)]
+    #[slot(field = field::BODY, word = 2, width = 5)]
     pub body: ::sittir_core::SlotValue<SuiteTransport>,
     #[wire(key = "_except_clauses")]
-    #[slot(field = field::EXCEPT_CLAUSES)]
+    #[slot(field = field::EXCEPT_CLAUSES, word = 7, width = 2, run = 5)]
     pub except_clauses: Vec<::sittir_core::SlotValue<ExceptClauseTransport>>,
     #[wire(key = "_else_clause")]
-    #[slot(field = field::ELSE_CLAUSE)]
+    #[slot(field = field::ELSE_CLAUSE, word = 9, width = 5)]
     pub else_clause: Option<::sittir_core::SlotValue<ElseClauseTransport>>,
     #[wire(key = "_finally_clause")]
-    #[slot(field = field::FINALLY_CLAUSE)]
+    #[slot(field = field::FINALLY_CLAUSE, word = 14, width = 5)]
     pub finally_clause: Option<::sittir_core::SlotValue<FinallyClauseTransport>>,
     #[wire(key = "_except_clauses_separator_space")]
     pub except_clauses_separator_space: Option<u16>,
@@ -11623,18 +11623,18 @@ impl ::sittir_core::prepare::Prepare for TryStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::EXCEPT_CLAUSE, layout = [kind::EXCEPT_KEYWORD, kind::COLON])]
+#[transport(kind = kind::EXCEPT_CLAUSE, layout = [kind::EXCEPT_KEYWORD, kind::COLON], words = 13)]
 pub struct ExceptClauseTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_group")]
-    #[slot(field = field::GROUP, presence = kind::STAR | kind::STAR2)]
+    #[slot(field = field::GROUP, presence = kind::STAR | kind::STAR2, word = 2, bit = 0)]
     pub group: bool,
     #[wire(key = "_exception")]
-    #[slot(field = field::EXCEPTION)]
+    #[slot(field = field::EXCEPTION, word = 3, width = 5)]
     pub exception: Option<::sittir_core::SlotValue<ExceptClauseExceptionTransport>>,
     #[wire(key = "_suite")]
-    #[slot]
+    #[slot(word = 8, width = 5)]
     pub suite: ::sittir_core::SlotValue<SuiteTransport>,
 }
 
@@ -11680,12 +11680,12 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::FINALLY_CLAUSE, layout = [kind::FINALLY_KEYWORD, kind::COLON])]
+#[transport(kind = kind::FINALLY_CLAUSE, layout = [kind::FINALLY_KEYWORD, kind::COLON], words = 7)]
 pub struct FinallyClauseTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_block")]
-    #[slot(field = field::BLOCK)]
+    #[slot(field = field::BLOCK, word = 2, width = 5)]
     pub block: ::sittir_core::SlotValue<SuiteTransport>,
 }
 
@@ -11729,18 +11729,18 @@ impl ::sittir_core::prepare::Prepare for FinallyClauseTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::WITH_STATEMENT, layout = [kind::WITH_KEYWORD, kind::COLON])]
+#[transport(kind = kind::WITH_STATEMENT, layout = [kind::WITH_KEYWORD, kind::COLON], words = 13)]
 pub struct WithStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_async")]
-    #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
+    #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD, word = 2, bit = 0)]
     pub async_: bool,
     #[wire(key = "_with_clause")]
-    #[slot(field = field::WITH_CLAUSE)]
+    #[slot(field = field::WITH_CLAUSE, word = 3, width = 5)]
     pub with_clause: ::sittir_core::SlotValue<WithClauseTransport>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY)]
+    #[slot(field = field::BODY, word = 8, width = 5)]
     pub body: ::sittir_core::SlotValue<SuiteTransport>,
 }
 
@@ -11786,12 +11786,12 @@ impl ::sittir_core::prepare::Prepare for WithStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::WITH_ITEM)]
+#[transport(kind = kind::WITH_ITEM, words = 7)]
 pub struct WithItemTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE)]
+    #[slot(field = field::VALUE, word = 2, width = 5)]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
 }
 
@@ -11834,27 +11834,27 @@ impl ::sittir_core::prepare::Prepare for WithItemTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::FUNCTION_DEFINITION, layout = [kind::DEF_KEYWORD, kind::DASH_GT, kind::COLON])]
+#[transport(kind = kind::FUNCTION_DEFINITION, layout = [kind::DEF_KEYWORD, kind::DASH_GT, kind::COLON], words = 28)]
 pub struct FunctionDefinitionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_async")]
-    #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
+    #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD, word = 2, bit = 0)]
     pub async_: bool,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME)]
+    #[slot(field = field::NAME, word = 3, width = 5)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[wire(key = "_type_parameters")]
-    #[slot(field = field::TYPE_PARAMETERS)]
+    #[slot(field = field::TYPE_PARAMETERS, word = 8, width = 5)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParameterTransport>>,
     #[wire(key = "_parameters")]
-    #[slot(field = field::PARAMETERS)]
+    #[slot(field = field::PARAMETERS, word = 13, width = 5)]
     pub parameters: ::sittir_core::SlotValue<ParametersTransport>,
     #[wire(key = "_return_type")]
-    #[slot(field = field::RETURN_TYPE)]
+    #[slot(field = field::RETURN_TYPE, word = 18, width = 5)]
     pub return_type: Option<::sittir_core::SlotValue<TypeTransport>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY)]
+    #[slot(field = field::BODY, word = 23, width = 5)]
     pub body: ::sittir_core::SlotValue<SuiteTransport>,
 }
 
@@ -11903,12 +11903,12 @@ impl ::sittir_core::prepare::Prepare for FunctionDefinitionTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN])]
+#[transport(kind = kind::PARAMETERS, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
 pub struct ParametersTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 5)]
     pub elements: Option<::sittir_core::SlotValue<ParametersElementsTransport>>,
 }
 
@@ -11952,12 +11952,12 @@ impl ::sittir_core::prepare::Prepare for ParametersTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::LAMBDA_PARAMETERS, min_depth = 2)]
+#[transport(kind = kind::LAMBDA_PARAMETERS, min_depth = 2, words = 7)]
 pub struct LambdaParametersTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_parameters_elements")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub parameters_elements: ::sittir_core::SlotValue<ParametersElementsTransport>,
 }
 
@@ -12000,12 +12000,12 @@ impl ::sittir_core::prepare::Prepare for LambdaParametersTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::LIST_SPLAT, layout = [kind::STAR | kind::STAR2])]
+#[transport(kind = kind::LIST_SPLAT, layout = [kind::STAR | kind::STAR2], words = 7)]
 pub struct ListSplatTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expression")]
-    #[slot(field = field::EXPRESSION)]
+    #[slot(field = field::EXPRESSION, word = 2, width = 5)]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
 }
 
@@ -12049,12 +12049,12 @@ impl ::sittir_core::prepare::Prepare for ListSplatTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::DICTIONARY_SPLAT, layout = [kind::STAR_STAR])]
+#[transport(kind = kind::DICTIONARY_SPLAT, layout = [kind::STAR_STAR], words = 7)]
 pub struct DictionarySplatTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expression")]
-    #[slot(field = field::EXPRESSION)]
+    #[slot(field = field::EXPRESSION, word = 2, width = 5)]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
 }
 
@@ -12098,12 +12098,12 @@ impl ::sittir_core::prepare::Prepare for DictionarySplatTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::GLOBAL_STATEMENT, layout = [kind::GLOBAL_KEYWORD])]
+#[transport(kind = kind::GLOBAL_STATEMENT, layout = [kind::GLOBAL_KEYWORD], words = 4)]
 pub struct GlobalStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_names")]
-    #[slot(field = field::NAMES, separator = kind::COMMA)]
+    #[slot(field = field::NAMES, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub names: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierTransport>>,
     #[wire(key = "_names_separator_space_before")]
     pub names_separator_space_before: Option<u16>,
@@ -12154,12 +12154,12 @@ impl ::sittir_core::prepare::Prepare for GlobalStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::NONLOCAL_STATEMENT, layout = [kind::NONLOCAL_KEYWORD])]
+#[transport(kind = kind::NONLOCAL_STATEMENT, layout = [kind::NONLOCAL_KEYWORD], words = 4)]
 pub struct NonlocalStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_names")]
-    #[slot(field = field::NAMES, separator = kind::COMMA)]
+    #[slot(field = field::NAMES, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub names: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierTransport>>,
     #[wire(key = "_names_separator_space_before")]
     pub names_separator_space_before: Option<u16>,
@@ -12210,15 +12210,15 @@ impl ::sittir_core::prepare::Prepare for NonlocalStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::EXEC_STATEMENT, layout = [kind::EXEC_KEYWORD, kind::IN_KEYWORD])]
+#[transport(kind = kind::EXEC_STATEMENT, layout = [kind::EXEC_KEYWORD, kind::IN_KEYWORD], words = 9)]
 pub struct ExecStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_code")]
-    #[slot(field = field::CODE)]
+    #[slot(field = field::CODE, word = 2, width = 5)]
     pub code: ::sittir_core::SlotValue<ExecStatementCodeTransportSlot>,
     #[wire(key = "_in_clause")]
-    #[slot(field = field::IN_CLAUSE, separator = kind::COMMA)]
+    #[slot(field = field::IN_CLAUSE, separator = kind::COMMA, word = 7, width = 2, run = 5)]
     pub in_clause: Vec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_in_clause_separator_space_before")]
     pub in_clause_separator_space_before: Option<u16>,
@@ -12271,15 +12271,15 @@ impl ::sittir_core::prepare::Prepare for ExecStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TYPE_ALIAS_STATEMENT, layout = [kind::TYPE_KEYWORD, kind::EQ])]
+#[transport(kind = kind::TYPE_ALIAS_STATEMENT, layout = [kind::TYPE_KEYWORD, kind::EQ], words = 12)]
 pub struct TypeAliasStatementTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
-    #[slot(field = field::LEFT)]
+    #[slot(field = field::LEFT, word = 2, width = 5)]
     pub left: ::sittir_core::SlotValue<TypeTransport>,
     #[wire(key = "_right")]
-    #[slot(field = field::RIGHT)]
+    #[slot(field = field::RIGHT, word = 7, width = 5)]
     pub right: ::sittir_core::SlotValue<TypeTransport>,
 }
 
@@ -12324,21 +12324,21 @@ impl ::sittir_core::prepare::Prepare for TypeAliasStatementTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CLASS_DEFINITION, layout = [kind::CLASS_KEYWORD, kind::COLON])]
+#[transport(kind = kind::CLASS_DEFINITION, layout = [kind::CLASS_KEYWORD, kind::COLON], words = 22)]
 pub struct ClassDefinitionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME)]
+    #[slot(field = field::NAME, word = 2, width = 5)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[wire(key = "_type_parameters")]
-    #[slot(field = field::TYPE_PARAMETERS)]
+    #[slot(field = field::TYPE_PARAMETERS, word = 7, width = 5)]
     pub type_parameters: Option<::sittir_core::SlotValue<TypeParameterTransport>>,
     #[wire(key = "_superclasses")]
-    #[slot(field = field::SUPERCLASSES)]
+    #[slot(field = field::SUPERCLASSES, word = 12, width = 5)]
     pub superclasses: Option<::sittir_core::SlotValue<ArgumentListTransport>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY)]
+    #[slot(field = field::BODY, word = 17, width = 5)]
     pub body: ::sittir_core::SlotValue<SuiteTransport>,
 }
 
@@ -12385,12 +12385,12 @@ impl ::sittir_core::prepare::Prepare for ClassDefinitionTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TYPE_PARAMETER, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK])]
+#[transport(kind = kind::TYPE_PARAMETER, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], words = 7)]
 pub struct TypeParameterTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_types")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub types: ::sittir_core::SlotValue<TypesTransport>,
 }
 
@@ -12434,12 +12434,12 @@ impl ::sittir_core::prepare::Prepare for TypeParameterTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::PARENTHESIZED_LIST_SPLAT, layout = [kind::LPAREN, kind::RPAREN])]
+#[transport(kind = kind::PARENTHESIZED_LIST_SPLAT, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
 pub struct ParenthesizedListSplatTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
-    #[slot(field = field::CONTENT)]
+    #[slot(field = field::CONTENT, word = 2, width = 5)]
     pub content: ::sittir_core::SlotValue<Box<ParenthesizedListSplatContentTransportSlot>>,
 }
 
@@ -12483,12 +12483,12 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedListSplatTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ARGUMENT_LIST, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN])]
+#[transport(kind = kind::ARGUMENT_LIST, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
 pub struct ArgumentListTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_arguments")]
-    #[slot(field = field::ARGUMENTS)]
+    #[slot(field = field::ARGUMENTS, word = 2, width = 5)]
     pub arguments: Option<::sittir_core::SlotValue<ArgumentListElementsTransport>>,
 }
 
@@ -12532,15 +12532,15 @@ impl ::sittir_core::prepare::Prepare for ArgumentListTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::DECORATED_DEFINITION)]
+#[transport(kind = kind::DECORATED_DEFINITION, words = 9)]
 pub struct DecoratedDefinitionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_decorator")]
-    #[slot]
+    #[slot(word = 2, width = 2, run = 5)]
     pub decorator: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DecoratorTransport>>,
     #[wire(key = "_definition")]
-    #[slot(field = field::DEFINITION)]
+    #[slot(field = field::DEFINITION, word = 4, width = 5)]
     pub definition: ::sittir_core::SlotValue<DecoratedDefinitionDefinitionTransportSlot>,
     #[wire(key = "_decorator_separator_space")]
     pub decorator_separator_space: Option<u16>,
@@ -12590,12 +12590,12 @@ impl ::sittir_core::prepare::Prepare for DecoratedDefinitionTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::DECORATOR, layout = [kind::AT, kind::_NEWLINE])]
+#[transport(kind = kind::DECORATOR, layout = [kind::AT, kind::_NEWLINE], words = 7)]
 pub struct DecoratorTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expression")]
-    #[slot(field = field::EXPRESSION)]
+    #[slot(field = field::EXPRESSION, word = 2, width = 5)]
     pub expression: ::sittir_core::SlotValue<ExpressionTransport>,
 }
 
@@ -12639,12 +12639,12 @@ impl ::sittir_core::prepare::Prepare for DecoratorTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::BLOCK, layout = [kind::_DEDENT])]
+#[transport(kind = kind::BLOCK, layout = [kind::_DEDENT], words = 4)]
 pub struct BlockTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_statements")]
-    #[slot(field = field::STATEMENTS)]
+    #[slot(field = field::STATEMENTS, word = 2, width = 2, run = 5)]
     pub statements: Vec<::sittir_core::SlotValue<StatementTransport>>,
     #[wire(key = "_statements_separator_space")]
     pub statements_separator_space: Option<u16>,
@@ -12693,12 +12693,12 @@ impl ::sittir_core::prepare::Prepare for BlockTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::EXPRESSION_LIST, item = item)]
+#[transport(kind = kind::EXPRESSION_LIST, item = item, words = 4)]
 pub struct ExpressionListTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -12753,12 +12753,12 @@ impl ::sittir_core::prepare::Prepare for ExpressionListTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::DOTTED_NAME)]
+#[transport(kind = kind::DOTTED_NAME, words = 4)]
 pub struct DottedNameTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_names")]
-    #[slot(field = field::NAMES, separator = kind::DOT)]
+    #[slot(field = field::NAMES, separator = kind::DOT, word = 2, width = 2, run = 5)]
     pub names: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierTransport>>,
     #[wire(key = "_names_separator_space_before")]
     pub names_separator_space_before: Option<u16>,
@@ -12808,12 +12808,12 @@ impl ::sittir_core::prepare::Prepare for DottedNameTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CASE_PATTERN)]
+#[transport(kind = kind::CASE_PATTERN, words = 7)]
 pub struct CasePatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub content: ::sittir_core::SlotValue<Box<CasePatternContentTransportSlot>>,
 }
 
@@ -12856,12 +12856,12 @@ impl ::sittir_core::prepare::Prepare for CasePatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_SIMPLE_PATTERN)]
+#[transport(kind = kind::_SIMPLE_PATTERN, words = 7)]
 pub struct SimplePatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub content: ::sittir_core::SlotValue<SimplePatternContentTransportSlot>,
 }
 
@@ -12904,15 +12904,15 @@ impl ::sittir_core::prepare::Prepare for SimplePatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_CASE_AS_PATTERN, layout = [kind::AS_KEYWORD])]
+#[transport(kind = kind::_CASE_AS_PATTERN, layout = [kind::AS_KEYWORD], words = 12)]
 pub struct CaseAsPatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_case_pattern")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub case_pattern: ::sittir_core::SlotValue<Box<CasePatternTransport>>,
     #[wire(key = "_identifier")]
-    #[slot]
+    #[slot(word = 7, width = 5)]
     pub identifier: ::sittir_core::SlotValue<IdentifierTransport>,
 }
 
@@ -12957,12 +12957,12 @@ impl ::sittir_core::prepare::Prepare for CaseAsPatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::UNION_PATTERN)]
+#[transport(kind = kind::UNION_PATTERN, words = 4)]
 pub struct UnionPatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_patterns")]
-    #[slot(field = field::PATTERNS, separator = kind::PIPE)]
+    #[slot(field = field::PATTERNS, separator = kind::PIPE, word = 2, width = 2, run = 5)]
     pub patterns: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<SimplePatternContentTransportSlot>>,
     #[wire(key = "_patterns_separator_space_before")]
     pub patterns_separator_space_before: Option<u16>,
@@ -13013,12 +13013,12 @@ impl ::sittir_core::prepare::Prepare for UnionPatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::DICT_PATTERN, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE])]
+#[transport(kind = kind::DICT_PATTERN, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7)]
 pub struct DictPatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 5)]
     pub elements: Option<::sittir_core::SlotValue<DictPatternElementsTransport>>,
 }
 
@@ -13062,15 +13062,15 @@ impl ::sittir_core::prepare::Prepare for DictPatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_KEY_VALUE_PATTERN, layout = [kind::COLON])]
+#[transport(kind = kind::_KEY_VALUE_PATTERN, layout = [kind::COLON], words = 12)]
 pub struct KeyValuePatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_key")]
-    #[slot(field = field::KEY)]
+    #[slot(field = field::KEY, word = 2, width = 5)]
     pub key: ::sittir_core::SlotValue<SimplePatternContentTransportSlot>,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE)]
+    #[slot(field = field::VALUE, word = 7, width = 5)]
     pub value: ::sittir_core::SlotValue<CasePatternTransport>,
 }
 
@@ -13115,15 +13115,15 @@ impl ::sittir_core::prepare::Prepare for KeyValuePatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::KEYWORD_PATTERN, layout = [kind::EQ])]
+#[transport(kind = kind::KEYWORD_PATTERN, layout = [kind::EQ], words = 12)]
 pub struct KeywordPatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME)]
+    #[slot(field = field::NAME, word = 2, width = 5)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE)]
+    #[slot(field = field::VALUE, word = 7, width = 5)]
     pub value: ::sittir_core::SlotValue<SimplePatternContentTransportSlot>,
 }
 
@@ -13168,15 +13168,15 @@ impl ::sittir_core::prepare::Prepare for KeywordPatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::SPLAT_PATTERN)]
+#[transport(kind = kind::SPLAT_PATTERN, words = 12)]
 pub struct SplatPatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_operator")]
-    #[slot(field = field::OPERATOR)]
+    #[slot(field = field::OPERATOR, word = 2, width = 5)]
     pub operator: ::sittir_core::SlotValue<SplatPatternOperatorTransportSlot>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME)]
+    #[slot(field = field::NAME, word = 7, width = 5)]
     pub name: ::sittir_core::SlotValue<SplatPatternNameTransportSlot>,
 }
 
@@ -13225,15 +13225,15 @@ impl ::sittir_core::prepare::Prepare for SplatPatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CLASS_PATTERN, layout = [kind::LPAREN, kind::RPAREN])]
+#[transport(kind = kind::CLASS_PATTERN, layout = [kind::LPAREN, kind::RPAREN], words = 12)]
 pub struct ClassPatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME)]
+    #[slot(field = field::NAME, word = 2, width = 5)]
     pub name: ::sittir_core::SlotValue<DottedNameTransport>,
     #[wire(key = "_arguments")]
-    #[slot(field = field::ARGUMENTS)]
+    #[slot(field = field::ARGUMENTS, word = 7, width = 5)]
     pub arguments: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
 }
 
@@ -13278,21 +13278,21 @@ impl ::sittir_core::prepare::Prepare for ClassPatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::COMPLEX_PATTERN)]
+#[transport(kind = kind::COMPLEX_PATTERN, words = 18)]
 pub struct ComplexPatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_sign")]
-    #[slot(field = field::SIGN, presence = kind::DASH)]
+    #[slot(field = field::SIGN, presence = kind::DASH, word = 2, bit = 0)]
     pub sign: bool,
     #[wire(key = "_real")]
-    #[slot(field = field::REAL)]
+    #[slot(field = field::REAL, word = 3, width = 5)]
     pub real: ::sittir_core::SlotValue<ComplexPatternRealTransportSlot>,
     #[wire(key = "_operator")]
-    #[slot(field = field::OPERATOR)]
+    #[slot(field = field::OPERATOR, word = 8, width = 5)]
     pub operator: ::sittir_core::SlotValue<ComplexPatternOperatorTransportSlot>,
     #[wire(key = "_imaginary")]
-    #[slot(field = field::IMAGINARY)]
+    #[slot(field = field::IMAGINARY, word = 13, width = 5)]
     pub imaginary: ::sittir_core::SlotValue<ComplexPatternRealTransportSlot>,
 }
 
@@ -13339,12 +13339,12 @@ impl ::sittir_core::prepare::Prepare for ComplexPatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_PARAMETERS_ELEMENTS, item = item)]
+#[transport(kind = kind::_PARAMETERS_ELEMENTS, item = item, words = 4)]
 pub struct ParametersElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ParameterTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -13399,12 +13399,12 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_PATTERNS, item = item)]
+#[transport(kind = kind::_PATTERNS, item = item, words = 4)]
 pub struct PatternsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<PatternTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -13459,12 +13459,12 @@ impl ::sittir_core::prepare::Prepare for PatternsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TUPLE_PATTERN, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN])]
+#[transport(kind = kind::TUPLE_PATTERN, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
 pub struct TuplePatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 5)]
     pub elements: Option<::sittir_core::SlotValue<TuplePatternElementsTransport>>,
 }
 
@@ -13508,12 +13508,12 @@ impl ::sittir_core::prepare::Prepare for TuplePatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::LIST_PATTERN, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK])]
+#[transport(kind = kind::LIST_PATTERN, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], words = 7)]
 pub struct ListPatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_patterns")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub patterns: Option<::sittir_core::SlotValue<PatternsTransport>>,
 }
 
@@ -13557,15 +13557,15 @@ impl ::sittir_core::prepare::Prepare for ListPatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::DEFAULT_PARAMETER, layout = [kind::EQ])]
+#[transport(kind = kind::DEFAULT_PARAMETER, layout = [kind::EQ], words = 12)]
 pub struct DefaultParameterTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME)]
+    #[slot(field = field::NAME, word = 2, width = 5)]
     pub name: ::sittir_core::SlotValue<DefaultParameterNameTransportSlot>,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE)]
+    #[slot(field = field::VALUE, word = 7, width = 5)]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
 }
 
@@ -13610,18 +13610,18 @@ impl ::sittir_core::prepare::Prepare for DefaultParameterTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TYPED_DEFAULT_PARAMETER, layout = [kind::COLON, kind::EQ])]
+#[transport(kind = kind::TYPED_DEFAULT_PARAMETER, layout = [kind::COLON, kind::EQ], words = 17)]
 pub struct TypedDefaultParameterTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME)]
+    #[slot(field = field::NAME, word = 2, width = 5)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[wire(key = "_type")]
-    #[slot(field = field::TYPE)]
+    #[slot(field = field::TYPE, word = 7, width = 5)]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE)]
+    #[slot(field = field::VALUE, word = 12, width = 5)]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
 }
 
@@ -13667,12 +13667,12 @@ impl ::sittir_core::prepare::Prepare for TypedDefaultParameterTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::LIST_SPLAT_PATTERN, layout = [kind::STAR | kind::STAR2])]
+#[transport(kind = kind::LIST_SPLAT_PATTERN, layout = [kind::STAR | kind::STAR2], words = 7)]
 pub struct ListSplatPatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_target")]
-    #[slot(field = field::TARGET)]
+    #[slot(field = field::TARGET, word = 2, width = 5)]
     pub target: ::sittir_core::SlotValue<Box<ListSplatPatternTargetTransportSlot>>,
 }
 
@@ -13716,12 +13716,12 @@ impl ::sittir_core::prepare::Prepare for ListSplatPatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::DICTIONARY_SPLAT_PATTERN, layout = [kind::STAR_STAR])]
+#[transport(kind = kind::DICTIONARY_SPLAT_PATTERN, layout = [kind::STAR_STAR], words = 7)]
 pub struct DictionarySplatPatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_target")]
-    #[slot(field = field::TARGET)]
+    #[slot(field = field::TARGET, word = 2, width = 5)]
     pub target: ::sittir_core::SlotValue<ListSplatPatternTargetTransportSlot>,
 }
 
@@ -13765,15 +13765,15 @@ impl ::sittir_core::prepare::Prepare for DictionarySplatPatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::AS_PATTERN, layout = [kind::AS_KEYWORD])]
+#[transport(kind = kind::AS_PATTERN, layout = [kind::AS_KEYWORD], words = 12)]
 pub struct AsPatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expression")]
-    #[slot(field = field::EXPRESSION)]
+    #[slot(field = field::EXPRESSION, word = 2, width = 5)]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[wire(key = "_alias")]
-    #[slot(field = field::ALIAS)]
+    #[slot(field = field::ALIAS, word = 7, width = 5)]
     pub alias: ::sittir_core::SlotValue<Box<AsPatternTargetTransport>>,
 }
 
@@ -13818,12 +13818,12 @@ impl ::sittir_core::prepare::Prepare for AsPatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::NOT_OPERATOR, layout = [kind::NOT_KEYWORD])]
+#[transport(kind = kind::NOT_OPERATOR, layout = [kind::NOT_KEYWORD], words = 7)]
 pub struct NotOperatorTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_argument")]
-    #[slot(field = field::ARGUMENT)]
+    #[slot(field = field::ARGUMENT, word = 2, width = 5)]
     pub argument: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
@@ -13867,18 +13867,18 @@ impl ::sittir_core::prepare::Prepare for NotOperatorTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::BOOLEAN_OPERATOR)]
+#[transport(kind = kind::BOOLEAN_OPERATOR, words = 17)]
 pub struct BooleanOperatorTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
-    #[slot(field = field::LEFT)]
+    #[slot(field = field::LEFT, word = 2, width = 5)]
     pub left: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[wire(key = "_operator")]
-    #[slot(field = field::OPERATOR)]
+    #[slot(field = field::OPERATOR, word = 7, width = 5)]
     pub operator: ::sittir_core::SlotValue<BooleanOperatorOperatorTransportSlot>,
     #[wire(key = "_right")]
-    #[slot(field = field::RIGHT)]
+    #[slot(field = field::RIGHT, word = 12, width = 5)]
     pub right: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
@@ -13924,18 +13924,18 @@ impl ::sittir_core::prepare::Prepare for BooleanOperatorTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::BINARY_OPERATOR)]
+#[transport(kind = kind::BINARY_OPERATOR, words = 17)]
 pub struct BinaryOperatorTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
-    #[slot(field = field::LEFT)]
+    #[slot(field = field::LEFT, word = 2, width = 5)]
     pub left: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[wire(key = "_operator")]
-    #[slot(field = field::OPERATOR)]
+    #[slot(field = field::OPERATOR, word = 7, width = 5)]
     pub operator: ::sittir_core::SlotValue<BinaryOperatorOperatorTransportSlot>,
     #[wire(key = "_right")]
-    #[slot(field = field::RIGHT)]
+    #[slot(field = field::RIGHT, word = 12, width = 5)]
     pub right: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
 }
 
@@ -13981,15 +13981,15 @@ impl ::sittir_core::prepare::Prepare for BinaryOperatorTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::UNARY_OPERATOR)]
+#[transport(kind = kind::UNARY_OPERATOR, words = 12)]
 pub struct UnaryOperatorTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_operator")]
-    #[slot(field = field::OPERATOR)]
+    #[slot(field = field::OPERATOR, word = 2, width = 5)]
     pub operator: ::sittir_core::SlotValue<UnaryOperatorOperatorTransportSlot>,
     #[wire(key = "_argument")]
-    #[slot(field = field::ARGUMENT)]
+    #[slot(field = field::ARGUMENT, word = 7, width = 5)]
     pub argument: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
 }
 
@@ -14038,15 +14038,15 @@ impl ::sittir_core::prepare::Prepare for UnaryOperatorTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::COMPARISON_OPERATOR)]
+#[transport(kind = kind::COMPARISON_OPERATOR, words = 9)]
 pub struct ComparisonOperatorTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
-    #[slot(field = field::LEFT)]
+    #[slot(field = field::LEFT, word = 2, width = 5)]
     pub left: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[wire(key = "_comparators")]
-    #[slot(field = field::COMPARATORS)]
+    #[slot(field = field::COMPARATORS, word = 7, width = 2, run = 5)]
     pub comparators: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ComparisonOperatorComparatorTransport>>,
     #[wire(key = "_comparators_separator_space")]
     pub comparators_separator_space: Option<u16>,
@@ -14096,15 +14096,15 @@ impl ::sittir_core::prepare::Prepare for ComparisonOperatorTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::LAMBDA, layout = [kind::LAMBDA_KEYWORD, kind::COLON])]
+#[transport(kind = kind::LAMBDA, layout = [kind::LAMBDA_KEYWORD, kind::COLON], words = 12)]
 pub struct LambdaTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_parameters")]
-    #[slot(field = field::PARAMETERS)]
+    #[slot(field = field::PARAMETERS, word = 2, width = 5)]
     pub parameters: Option<::sittir_core::SlotValue<LambdaParametersTransport>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY)]
+    #[slot(field = field::BODY, word = 7, width = 5)]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
@@ -14149,15 +14149,15 @@ impl ::sittir_core::prepare::Prepare for LambdaTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::LAMBDA_WITHIN_FOR_IN_CLAUSE, layout = [kind::LAMBDA_KEYWORD, kind::COLON])]
+#[transport(kind = kind::LAMBDA_WITHIN_FOR_IN_CLAUSE, layout = [kind::LAMBDA_KEYWORD, kind::COLON], words = 12)]
 pub struct LambdaWithinForInClauseTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_parameters")]
-    #[slot(field = field::PARAMETERS)]
+    #[slot(field = field::PARAMETERS, word = 2, width = 5)]
     pub parameters: Option<::sittir_core::SlotValue<LambdaParametersTransport>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY)]
+    #[slot(field = field::BODY, word = 7, width = 5)]
     pub body: ::sittir_core::SlotValue<Box<LambdaWithinForInClauseBodyTransportSlot>>,
 }
 
@@ -14202,18 +14202,18 @@ impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::AUGMENTED_ASSIGNMENT)]
+#[transport(kind = kind::AUGMENTED_ASSIGNMENT, words = 17)]
 pub struct AugmentedAssignmentTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
-    #[slot(field = field::LEFT)]
+    #[slot(field = field::LEFT, word = 2, width = 5)]
     pub left: ::sittir_core::SlotValue<ForStatementLeftTransportSlot>,
     #[wire(key = "_operator")]
-    #[slot(field = field::OPERATOR)]
+    #[slot(field = field::OPERATOR, word = 7, width = 5)]
     pub operator: ::sittir_core::SlotValue<AugmentedAssignmentOperatorTransportSlot>,
     #[wire(key = "_right")]
-    #[slot(field = field::RIGHT)]
+    #[slot(field = field::RIGHT, word = 12, width = 5)]
     pub right: ::sittir_core::SlotValue<Box<AugmentedAssignmentRightTransportSlot>>,
 }
 
@@ -14259,12 +14259,12 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::PATTERN_LIST, item = item)]
+#[transport(kind = kind::PATTERN_LIST, item = item, words = 4)]
 pub struct PatternListTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<PatternTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -14319,12 +14319,12 @@ impl ::sittir_core::prepare::Prepare for PatternListTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::YIELD, layout = [kind::YIELD_KEYWORD])]
+#[transport(kind = kind::YIELD, layout = [kind::YIELD_KEYWORD], words = 7)]
 pub struct YieldTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub content: Option<::sittir_core::SlotValue<Box<YieldContentTransportSlot>>>,
 }
 
@@ -14368,15 +14368,15 @@ impl ::sittir_core::prepare::Prepare for YieldTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ATTRIBUTE, layout = [kind::DOT])]
+#[transport(kind = kind::ATTRIBUTE, layout = [kind::DOT], words = 12)]
 pub struct AttributeTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_object")]
-    #[slot(field = field::OBJECT)]
+    #[slot(field = field::OBJECT, word = 2, width = 5)]
     pub object: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[wire(key = "_attribute")]
-    #[slot(field = field::ATTRIBUTE)]
+    #[slot(field = field::ATTRIBUTE, word = 7, width = 5)]
     pub attribute: ::sittir_core::SlotValue<IdentifierTransport>,
 }
 
@@ -14421,15 +14421,15 @@ impl ::sittir_core::prepare::Prepare for AttributeTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::SUBSCRIPT, layout = [kind::LBRACK, kind::RBRACK])]
+#[transport(kind = kind::SUBSCRIPT, layout = [kind::LBRACK, kind::RBRACK], words = 12)]
 pub struct SubscriptTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE)]
+    #[slot(field = field::VALUE, word = 2, width = 5)]
     pub value: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[wire(key = "_subscripts")]
-    #[slot]
+    #[slot(word = 7, width = 5)]
     pub subscripts: ::sittir_core::SlotValue<SubscriptsTransport>,
 }
 
@@ -14474,18 +14474,18 @@ impl ::sittir_core::prepare::Prepare for SubscriptTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::SLICE, layout = [kind::COLON])]
+#[transport(kind = kind::SLICE, layout = [kind::COLON], words = 17)]
 pub struct SliceTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_start")]
-    #[slot(field = field::START)]
+    #[slot(field = field::START, word = 2, width = 5)]
     pub start: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_stop")]
-    #[slot(field = field::STOP)]
+    #[slot(field = field::STOP, word = 7, width = 5)]
     pub stop: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_step")]
-    #[slot(field = field::STEP)]
+    #[slot(field = field::STEP, word = 12, width = 5)]
     pub step: Option<::sittir_core::SlotValue<SliceGroupTransport>>,
 }
 
@@ -14579,15 +14579,15 @@ impl ::sittir_core::render::Render for EllipsisTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CALL)]
+#[transport(kind = kind::CALL, words = 12)]
 pub struct CallTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_function")]
-    #[slot(field = field::FUNCTION)]
+    #[slot(field = field::FUNCTION, word = 2, width = 5)]
     pub function: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
     #[wire(key = "_arguments")]
-    #[slot(field = field::ARGUMENTS)]
+    #[slot(field = field::ARGUMENTS, word = 7, width = 5)]
     pub arguments: ::sittir_core::SlotValue<Box<CallArgumentsTransportSlot>>,
 }
 
@@ -14632,15 +14632,15 @@ impl ::sittir_core::prepare::Prepare for CallTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TYPED_PARAMETER, layout = [kind::COLON])]
+#[transport(kind = kind::TYPED_PARAMETER, layout = [kind::COLON], words = 12)]
 pub struct TypedParameterTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME)]
+    #[slot(field = field::NAME, word = 2, width = 5)]
     pub name: ::sittir_core::SlotValue<TypedParameterNameTransportSlot>,
     #[wire(key = "_type")]
-    #[slot(field = field::TYPE)]
+    #[slot(field = field::TYPE, word = 7, width = 5)]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
 }
 
@@ -14685,12 +14685,12 @@ impl ::sittir_core::prepare::Prepare for TypedParameterTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TYPE)]
+#[transport(kind = kind::TYPE, words = 7)]
 pub struct TypeTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub content: ::sittir_core::SlotValue<Box<TypeContentTransportSlot>>,
 }
 
@@ -14733,15 +14733,15 @@ impl ::sittir_core::prepare::Prepare for TypeTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::SPLAT_TYPE)]
+#[transport(kind = kind::SPLAT_TYPE, words = 12)]
 pub struct SplatTypeTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_operator")]
-    #[slot(field = field::OPERATOR)]
+    #[slot(field = field::OPERATOR, word = 2, width = 5)]
     pub operator: ::sittir_core::SlotValue<SplatTypeOperatorTransportSlot>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME)]
+    #[slot(field = field::NAME, word = 7, width = 5)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
 }
 
@@ -14790,15 +14790,15 @@ impl ::sittir_core::prepare::Prepare for SplatTypeTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::GENERIC_TYPE)]
+#[transport(kind = kind::GENERIC_TYPE, words = 12)]
 pub struct GenericTypeTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME)]
+    #[slot(field = field::NAME, word = 2, width = 5)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[wire(key = "_type_parameter")]
-    #[slot(field = field::TYPE_PARAMETER)]
+    #[slot(field = field::TYPE_PARAMETER, word = 7, width = 5)]
     pub type_parameter: ::sittir_core::SlotValue<TypeParameterTransport>,
 }
 
@@ -14843,15 +14843,15 @@ impl ::sittir_core::prepare::Prepare for GenericTypeTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::UNION_TYPE, layout = [kind::PIPE])]
+#[transport(kind = kind::UNION_TYPE, layout = [kind::PIPE], words = 12)]
 pub struct UnionTypeTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
-    #[slot(field = field::LEFT)]
+    #[slot(field = field::LEFT, word = 2, width = 5)]
     pub left: ::sittir_core::SlotValue<Box<TypeTransport>>,
     #[wire(key = "_right")]
-    #[slot(field = field::RIGHT)]
+    #[slot(field = field::RIGHT, word = 7, width = 5)]
     pub right: ::sittir_core::SlotValue<Box<TypeTransport>>,
 }
 
@@ -14896,15 +14896,15 @@ impl ::sittir_core::prepare::Prepare for UnionTypeTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CONSTRAINED_TYPE, layout = [kind::COLON])]
+#[transport(kind = kind::CONSTRAINED_TYPE, layout = [kind::COLON], words = 12)]
 pub struct ConstrainedTypeTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_base_type")]
-    #[slot(field = field::BASE_TYPE)]
+    #[slot(field = field::BASE_TYPE, word = 2, width = 5)]
     pub base_type: ::sittir_core::SlotValue<Box<TypeTransport>>,
     #[wire(key = "_constraint")]
-    #[slot(field = field::CONSTRAINT)]
+    #[slot(field = field::CONSTRAINT, word = 7, width = 5)]
     pub constraint: ::sittir_core::SlotValue<Box<TypeTransport>>,
 }
 
@@ -14949,15 +14949,15 @@ impl ::sittir_core::prepare::Prepare for ConstrainedTypeTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::MEMBER_TYPE, layout = [kind::DOT])]
+#[transport(kind = kind::MEMBER_TYPE, layout = [kind::DOT], words = 12)]
 pub struct MemberTypeTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_base_type")]
-    #[slot(field = field::BASE_TYPE)]
+    #[slot(field = field::BASE_TYPE, word = 2, width = 5)]
     pub base_type: ::sittir_core::SlotValue<Box<TypeTransport>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME)]
+    #[slot(field = field::NAME, word = 7, width = 5)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
 }
 
@@ -15002,15 +15002,15 @@ impl ::sittir_core::prepare::Prepare for MemberTypeTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::KEYWORD_ARGUMENT, layout = [kind::EQ])]
+#[transport(kind = kind::KEYWORD_ARGUMENT, layout = [kind::EQ], words = 12)]
 pub struct KeywordArgumentTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_name")]
-    #[slot(field = field::NAME)]
+    #[slot(field = field::NAME, word = 2, width = 5)]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE)]
+    #[slot(field = field::VALUE, word = 7, width = 5)]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
 }
 
@@ -15055,12 +15055,12 @@ impl ::sittir_core::prepare::Prepare for KeywordArgumentTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::LIST, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK])]
+#[transport(kind = kind::LIST, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], words = 7)]
 pub struct ListTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_collection_elements")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub collection_elements: Option<::sittir_core::SlotValue<CollectionElementsTransport>>,
 }
 
@@ -15104,12 +15104,12 @@ impl ::sittir_core::prepare::Prepare for ListTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::SET, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE])]
+#[transport(kind = kind::SET, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7)]
 pub struct SetTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_collection_elements")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub collection_elements: ::sittir_core::SlotValue<CollectionElementsTransport>,
 }
 
@@ -15153,12 +15153,12 @@ impl ::sittir_core::prepare::Prepare for SetTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TUPLE, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN])]
+#[transport(kind = kind::TUPLE, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
 pub struct TupleTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 5)]
     pub elements: Option<::sittir_core::SlotValue<TupleElementsTransport>>,
 }
 
@@ -15202,12 +15202,12 @@ impl ::sittir_core::prepare::Prepare for TupleTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::DICTIONARY, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE])]
+#[transport(kind = kind::DICTIONARY, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 7)]
 pub struct DictionaryTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 5)]
     pub elements: Option<::sittir_core::SlotValue<DictionaryElementsTransport>>,
 }
 
@@ -15251,15 +15251,15 @@ impl ::sittir_core::prepare::Prepare for DictionaryTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::PAIR, layout = [kind::COLON])]
+#[transport(kind = kind::PAIR, layout = [kind::COLON], words = 12)]
 pub struct PairTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_key")]
-    #[slot(field = field::KEY)]
+    #[slot(field = field::KEY, word = 2, width = 5)]
     pub key: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE)]
+    #[slot(field = field::VALUE, word = 7, width = 5)]
     pub value: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
@@ -15304,15 +15304,15 @@ impl ::sittir_core::prepare::Prepare for PairTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::LIST_COMPREHENSION, layout = [kind::LBRACK, kind::RBRACK])]
+#[transport(kind = kind::LIST_COMPREHENSION, layout = [kind::LBRACK, kind::RBRACK], words = 12)]
 pub struct ListComprehensionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY)]
+    #[slot(field = field::BODY, word = 2, width = 5)]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[wire(key = "_clauses")]
-    #[slot(field = field::CLAUSES)]
+    #[slot(field = field::CLAUSES, word = 7, width = 5)]
     pub clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
 }
 
@@ -15357,15 +15357,15 @@ impl ::sittir_core::prepare::Prepare for ListComprehensionTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::DICTIONARY_COMPREHENSION, layout = [kind::LBRACE, kind::RBRACE])]
+#[transport(kind = kind::DICTIONARY_COMPREHENSION, layout = [kind::LBRACE, kind::RBRACE], words = 12)]
 pub struct DictionaryComprehensionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY)]
+    #[slot(field = field::BODY, word = 2, width = 5)]
     pub body: ::sittir_core::SlotValue<Box<PairTransport>>,
     #[wire(key = "_clauses")]
-    #[slot(field = field::CLAUSES)]
+    #[slot(field = field::CLAUSES, word = 7, width = 5)]
     pub clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
 }
 
@@ -15410,15 +15410,15 @@ impl ::sittir_core::prepare::Prepare for DictionaryComprehensionTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::SET_COMPREHENSION, layout = [kind::LBRACE, kind::RBRACE])]
+#[transport(kind = kind::SET_COMPREHENSION, layout = [kind::LBRACE, kind::RBRACE], words = 12)]
 pub struct SetComprehensionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY)]
+    #[slot(field = field::BODY, word = 2, width = 5)]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[wire(key = "_clauses")]
-    #[slot(field = field::CLAUSES)]
+    #[slot(field = field::CLAUSES, word = 7, width = 5)]
     pub clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
 }
 
@@ -15463,15 +15463,15 @@ impl ::sittir_core::prepare::Prepare for SetComprehensionTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::GENERATOR_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN])]
+#[transport(kind = kind::GENERATOR_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN], words = 12)]
 pub struct GeneratorExpressionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY)]
+    #[slot(field = field::BODY, word = 2, width = 5)]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[wire(key = "_clauses")]
-    #[slot(field = field::CLAUSES)]
+    #[slot(field = field::CLAUSES, word = 7, width = 5)]
     pub clauses: ::sittir_core::SlotValue<ComprehensionClausesTransport>,
 }
 
@@ -15516,12 +15516,12 @@ impl ::sittir_core::prepare::Prepare for GeneratorExpressionTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::PARENTHESIZED_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN])]
+#[transport(kind = kind::PARENTHESIZED_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
 pub struct ParenthesizedExpressionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expression")]
-    #[slot(field = field::EXPRESSION)]
+    #[slot(field = field::EXPRESSION, word = 2, width = 5)]
     pub expression: ::sittir_core::SlotValue<Box<ParenthesizedExpressionExpressionTransportSlot>>,
 }
 
@@ -15565,12 +15565,12 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_COLLECTION_ELEMENTS, item = item)]
+#[transport(kind = kind::_COLLECTION_ELEMENTS, item = item, words = 4)]
 pub struct CollectionElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CollectionElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -15625,21 +15625,21 @@ impl ::sittir_core::prepare::Prepare for CollectionElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::FOR_IN_CLAUSE, layout = [kind::FOR_KEYWORD, kind::IN_KEYWORD])]
+#[transport(kind = kind::FOR_IN_CLAUSE, layout = [kind::FOR_KEYWORD, kind::IN_KEYWORD], words = 10)]
 pub struct ForInClauseTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_async")]
-    #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD)]
+    #[slot(field = field::ASYNC, presence = kind::ASYNC_KEYWORD, word = 2, bit = 0)]
     pub async_: bool,
     #[wire(key = "_left")]
-    #[slot(field = field::LEFT)]
+    #[slot(field = field::LEFT, word = 3, width = 5)]
     pub left: ::sittir_core::SlotValue<ForStatementLeftTransportSlot>,
     #[wire(key = "_right")]
-    #[slot(field = field::RIGHT, separator = kind::COMMA)]
+    #[slot(field = field::RIGHT, separator = kind::COMMA, word = 8, width = 2, run = 5)]
     pub right: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<LambdaWithinForInClauseBodyTransportSlot>>,
     #[wire(key = "_comma")]
-    #[slot(field = field::COMMA, presence = kind::COMMA)]
+    #[slot(field = field::COMMA, presence = kind::COMMA, word = 2, bit = 1)]
     pub comma: bool,
     #[wire(key = "_right_separator_space_before")]
     pub right_separator_space_before: Option<u16>,
@@ -15694,12 +15694,12 @@ impl ::sittir_core::prepare::Prepare for ForInClauseTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::IF_CLAUSE, layout = [kind::IF_KEYWORD])]
+#[transport(kind = kind::IF_CLAUSE, layout = [kind::IF_KEYWORD], words = 7)]
 pub struct IfClauseTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_condition")]
-    #[slot(field = field::CONDITION)]
+    #[slot(field = field::CONDITION, word = 2, width = 5)]
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
 }
 
@@ -15743,18 +15743,18 @@ impl ::sittir_core::prepare::Prepare for IfClauseTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CONDITIONAL_EXPRESSION, layout = [kind::IF_KEYWORD, kind::ELSE_KEYWORD])]
+#[transport(kind = kind::CONDITIONAL_EXPRESSION, layout = [kind::IF_KEYWORD, kind::ELSE_KEYWORD], words = 17)]
 pub struct ConditionalExpressionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY)]
+    #[slot(field = field::BODY, word = 2, width = 5)]
     pub body: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[wire(key = "_condition")]
-    #[slot(field = field::CONDITION)]
+    #[slot(field = field::CONDITION, word = 7, width = 5)]
     pub condition: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[wire(key = "_alternative")]
-    #[slot(field = field::ALTERNATIVE)]
+    #[slot(field = field::ALTERNATIVE, word = 12, width = 5)]
     pub alternative: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
@@ -15800,12 +15800,12 @@ impl ::sittir_core::prepare::Prepare for ConditionalExpressionTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CONCATENATED_STRING)]
+#[transport(kind = kind::CONCATENATED_STRING, words = 4)]
 pub struct ConcatenatedStringTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_string")]
-    #[slot]
+    #[slot(word = 2, width = 2, run = 5)]
     pub string: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<StringTransport>>,
     #[wire(key = "_string_separator_space")]
     pub string_separator_space: Option<u16>,
@@ -15854,18 +15854,18 @@ impl ::sittir_core::prepare::Prepare for ConcatenatedStringTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::STRING)]
+#[transport(kind = kind::STRING, words = 14)]
 pub struct StringTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_string_start")]
-    #[slot(field = field::STRING_START)]
+    #[slot(field = field::STRING_START, word = 2, width = 5)]
     pub string_start: ::sittir_core::SlotValue<StringStartTransport>,
     #[wire(key = "_content")]
-    #[slot(field = field::CONTENT)]
+    #[slot(field = field::CONTENT, word = 7, width = 2, run = 5)]
     pub content: Vec<::sittir_core::SlotValue<StringContentTransportSlot>>,
     #[wire(key = "_string_end")]
-    #[slot(field = field::STRING_END)]
+    #[slot(field = field::STRING_END, word = 9, width = 5)]
     pub string_end: ::sittir_core::SlotValue<StringEndTransport, true>,
 }
 
@@ -15912,12 +15912,12 @@ impl ::sittir_core::prepare::Prepare for StringTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::STRING_CONTENT)]
+#[transport(kind = kind::STRING_CONTENT, words = 4)]
 pub struct StringContentTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 2, run = 5)]
     pub elements: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<StringContentElementsTransportSlot, true>>,
 }
 
@@ -15961,21 +15961,21 @@ impl ::sittir_core::prepare::Prepare for StringContentTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::INTERPOLATION, layout = [kind::LBRACE, kind::RBRACE])]
+#[transport(kind = kind::INTERPOLATION, layout = [kind::LBRACE, kind::RBRACE], words = 18)]
 pub struct InterpolationTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expression")]
-    #[slot(field = field::EXPRESSION)]
+    #[slot(field = field::EXPRESSION, word = 3, width = 5)]
     pub expression: ::sittir_core::SlotValue<InterpolationExpressionTransportSlot>,
     #[wire(key = "_debug")]
-    #[slot(field = field::DEBUG, presence = kind::EQ)]
+    #[slot(field = field::DEBUG, presence = kind::EQ, word = 2, bit = 0)]
     pub debug: bool,
     #[wire(key = "_type_conversion")]
-    #[slot(field = field::TYPE_CONVERSION)]
+    #[slot(field = field::TYPE_CONVERSION, word = 8, width = 5)]
     pub type_conversion: Option<::sittir_core::SlotValue<TypeConversionTransport>>,
     #[wire(key = "_format_specifier")]
-    #[slot(field = field::FORMAT_SPECIFIER)]
+    #[slot(field = field::FORMAT_SPECIFIER, word = 13, width = 5)]
     pub format_specifier: Option<::sittir_core::SlotValue<FormatSpecifierTransport>>,
 }
 
@@ -16050,12 +16050,12 @@ impl ::sittir_core::render::Render for NotEscapeSequenceTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::FORMAT_SPECIFIER, layout = [kind::COLON])]
+#[transport(kind = kind::FORMAT_SPECIFIER, layout = [kind::COLON], words = 4)]
 pub struct FormatSpecifierTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 2, run = 5)]
     pub elements: Vec<::sittir_core::SlotValue<FormatSpecifierElementsTransportSlot, true>>,
 }
 
@@ -16100,7 +16100,7 @@ impl ::sittir_core::prepare::Prepare for FormatSpecifierTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TYPE_CONVERSION, text)]
+#[transport(kind = kind::TYPE_CONVERSION, text, words = 2)]
 pub struct TypeConversionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -16146,7 +16146,7 @@ impl ::sittir_core::prepare::Prepare for TypeConversionTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::IDENTIFIER, folded = [kind::TYPE_KEYWORD, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::MATCH_KEYWORD], text)]
+#[transport(kind = kind::IDENTIFIER, folded = [kind::TYPE_KEYWORD, kind::PRINT_KEYWORD, kind::EXEC_KEYWORD, kind::ASYNC_KEYWORD, kind::AWAIT_KEYWORD, kind::MATCH_KEYWORD], text, words = 2)]
 pub struct IdentifierTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -16336,12 +16336,12 @@ impl ::sittir_core::render::Render for NoneTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::AWAIT, layout = [kind::AWAIT_KEYWORD])]
+#[transport(kind = kind::AWAIT, layout = [kind::AWAIT_KEYWORD], words = 7)]
 pub struct AwaitTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expression")]
-    #[slot(field = field::EXPRESSION)]
+    #[slot(field = field::EXPRESSION, word = 2, width = 5)]
     pub expression: ::sittir_core::SlotValue<Box<PrimaryExpressionTransport>>,
 }
 
@@ -16385,12 +16385,12 @@ impl ::sittir_core::prepare::Prepare for AwaitTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::COMMENT, interior = "^#(?<content>(?:.*))$")]
+#[transport(kind = kind::COMMENT, interior = "^#(?<content>(?:.*))$", words = 6)]
 pub struct CommentTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
-    #[slot(capture = "content")]
+    #[slot(capture = "content", word = 2, width = 4)]
     pub content: String,
 }
 
@@ -16529,12 +16529,12 @@ impl ::sittir_core::render::Render for KeywordSeparatorTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::SIMPLE_STATEMENTS_ELEMENTS, item = item)]
+#[transport(kind = kind::SIMPLE_STATEMENTS_ELEMENTS, item = item, words = 4)]
 pub struct SimpleStatementsElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::SEMI)]
+    #[slot(field = field::ITEM, separator = kind::SEMI, word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<SimpleStatementTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -16589,12 +16589,12 @@ impl ::sittir_core::prepare::Prepare for SimpleStatementsElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::SUBJECTS, item = subject)]
+#[transport(kind = kind::SUBJECTS, item = subject, words = 4)]
 pub struct SubjectsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_subject")]
-    #[slot(field = field::SUBJECT, separator = kind::COMMA)]
+    #[slot(field = field::SUBJECT, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub subject: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -16649,12 +16649,12 @@ impl ::sittir_core::prepare::Prepare for SubjectsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CASE_PATTERNS, item = item)]
+#[transport(kind = kind::CASE_PATTERNS, item = item, words = 4)]
 pub struct CasePatternsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CasePatternTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -16709,12 +16709,12 @@ impl ::sittir_core::prepare::Prepare for CasePatternsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::WITH_CLAUSE_WITH_ITEMS, item = item)]
+#[transport(kind = kind::WITH_CLAUSE_WITH_ITEMS, item = item, words = 4)]
 pub struct WithClauseWithItemsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<WithItemTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -16768,12 +16768,12 @@ impl ::sittir_core::prepare::Prepare for WithClauseWithItemsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::TYPES, item = item)]
+#[transport(kind = kind::TYPES, item = item, words = 4)]
 pub struct TypesTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TypeTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -16828,12 +16828,12 @@ impl ::sittir_core::prepare::Prepare for TypesTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ARGUMENT_LIST_ELEMENTS, item = item)]
+#[transport(kind = kind::ARGUMENT_LIST_ELEMENTS, item = item, words = 4)]
 pub struct ArgumentListElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ArgumentListElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -16888,12 +16888,12 @@ impl ::sittir_core::prepare::Prepare for ArgumentListElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::LIST_PATTERN_CASE_PATTERNS, item = item)]
+#[transport(kind = kind::LIST_PATTERN_CASE_PATTERNS, item = item, words = 4)]
 pub struct ListPatternCasePatternsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CasePatternTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -16948,12 +16948,12 @@ impl ::sittir_core::prepare::Prepare for ListPatternCasePatternsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::DICT_PATTERN_ELEMENTS, item = item)]
+#[transport(kind = kind::DICT_PATTERN_ELEMENTS, item = item, words = 4)]
 pub struct DictPatternElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DictPatternElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -17008,12 +17008,12 @@ impl ::sittir_core::prepare::Prepare for DictPatternElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::SUBSCRIPTS, item = subscript)]
+#[transport(kind = kind::SUBSCRIPTS, item = subscript, words = 4)]
 pub struct SubscriptsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_subscript")]
-    #[slot(field = field::SUBSCRIPT, separator = kind::COMMA)]
+    #[slot(field = field::SUBSCRIPT, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub subscript: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<SubscriptsSubscriptTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -17068,12 +17068,12 @@ impl ::sittir_core::prepare::Prepare for SubscriptsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::DICTIONARY_ELEMENTS, item = item)]
+#[transport(kind = kind::DICTIONARY_ELEMENTS, item = item, words = 4)]
 pub struct DictionaryElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<DictionaryElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -17128,12 +17128,12 @@ impl ::sittir_core::prepare::Prepare for DictionaryElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::SLICE_GROUP, layout = [kind::COLON])]
+#[transport(kind = kind::SLICE_GROUP, layout = [kind::COLON], words = 7)]
 pub struct SliceGroupTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expression")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub expression: Option<::sittir_core::SlotValue<ExpressionTransport>>,
 }
 
@@ -17177,7 +17177,7 @@ impl ::sittir_core::prepare::Prepare for SliceGroupTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::FORMAT_SPECIFIER_TEXT, text)]
+#[transport(kind = kind::FORMAT_SPECIFIER_TEXT, text, words = 2)]
 pub struct FormatSpecifierTextTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -17223,12 +17223,12 @@ impl ::sittir_core::prepare::Prepare for FormatSpecifierTextTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_TUPLE_PATTERN_ELEMENTS, item = item)]
+#[transport(kind = kind::_TUPLE_PATTERN_ELEMENTS, item = item, words = 4)]
 pub struct TuplePatternElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<PatternTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -17283,12 +17283,12 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_TUPLE_ELEMENTS, item = item)]
+#[transport(kind = kind::_TUPLE_ELEMENTS, item = item, words = 4)]
 pub struct TupleElementsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CollectionElementsItemTransportSlot>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -17343,15 +17343,15 @@ impl ::sittir_core::prepare::Prepare for TupleElementsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::EXCEPT_CLAUSE_EXCEPTION_AS, layout = [kind::AS_KEYWORD])]
+#[transport(kind = kind::EXCEPT_CLAUSE_EXCEPTION_AS, layout = [kind::AS_KEYWORD], words = 12)]
 pub struct ExceptClauseExceptionAsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE)]
+    #[slot(field = field::VALUE, word = 2, width = 5)]
     pub value: ::sittir_core::SlotValue<ExpressionTransport>,
     #[wire(key = "_alias")]
-    #[slot(field = field::ALIAS)]
+    #[slot(field = field::ALIAS, word = 7, width = 5)]
     pub alias: Option<::sittir_core::SlotValue<ExpressionTransport>>,
 }
 
@@ -17396,12 +17396,12 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionAsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CASE_TUPLE_PATTERN, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN])]
+#[transport(kind = kind::CASE_TUPLE_PATTERN, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
 pub struct CaseTuplePatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 5)]
     pub elements: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
 }
 
@@ -17445,12 +17445,12 @@ impl ::sittir_core::prepare::Prepare for CaseTuplePatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::CASE_LIST_PATTERN, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK])]
+#[transport(kind = kind::CASE_LIST_PATTERN, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], words = 7)]
 pub struct CaseListPatternTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 5)]
     pub elements: Option<::sittir_core::SlotValue<ListPatternCasePatternsTransport>>,
 }
 
@@ -17494,12 +17494,12 @@ impl ::sittir_core::prepare::Prepare for CaseListPatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_PRINT_ARGUMENTS, item = item)]
+#[transport(kind = kind::_PRINT_ARGUMENTS, item = item, words = 4)]
 pub struct PrintArgumentsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -17554,12 +17554,12 @@ impl ::sittir_core::prepare::Prepare for PrintArgumentsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_PRINT_CHEVRON_ARGUMENTS, item = item)]
+#[transport(kind = kind::_PRINT_CHEVRON_ARGUMENTS, item = item, words = 4)]
 pub struct PrintChevronArgumentsTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 1)]
@@ -17614,15 +17614,15 @@ impl ::sittir_core::prepare::Prepare for PrintChevronArgumentsTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::PRINT_STATEMENT_CHEVRON, layout = [kind::PRINT_KEYWORD, kind::COMMA])]
+#[transport(kind = kind::PRINT_STATEMENT_CHEVRON, layout = [kind::PRINT_KEYWORD, kind::COMMA], words = 12)]
 pub struct PrintStatementChevronTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_chevron")]
-    #[slot(field = field::CHEVRON)]
+    #[slot(field = field::CHEVRON, word = 2, width = 5)]
     pub chevron: ::sittir_core::SlotValue<ChevronTransport>,
     #[wire(key = "_print_chevron_arguments")]
-    #[slot]
+    #[slot(word = 7, width = 5)]
     pub print_chevron_arguments: Option<::sittir_core::SlotValue<PrintStatementChevronPrintChevronArgumentsTransportSlot>>,
 }
 
@@ -17667,12 +17667,12 @@ impl ::sittir_core::prepare::Prepare for PrintStatementChevronTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::PRINT_STATEMENT_PLAIN, min_depth = 2, layout = [kind::PRINT_KEYWORD])]
+#[transport(kind = kind::PRINT_STATEMENT_PLAIN, min_depth = 2, layout = [kind::PRINT_KEYWORD], words = 7)]
 pub struct PrintStatementPlainTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_print_arguments")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub print_arguments: ::sittir_core::SlotValue<PrintArgumentsTransport>,
 }
 
@@ -17764,12 +17764,12 @@ impl ::sittir_core::render::Render for WildcardPatternTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_PARENTHESIZED_IMPORT_LIST, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN])]
+#[transport(kind = kind::_PARENTHESIZED_IMPORT_LIST, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
 pub struct ParenthesizedImportListTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_import_list")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub import_list: ::sittir_core::SlotValue<ImportListTransport>,
 }
 
@@ -17813,12 +17813,12 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedImportListTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::COMPREHENSION_CLAUSES)]
+#[transport(kind = kind::COMPREHENSION_CLAUSES, words = 4)]
 pub struct ComprehensionClausesTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
-    #[slot(field = field::CONTENT)]
+    #[slot(field = field::CONTENT, word = 2, width = 2, run = 5)]
     pub content: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ComprehensionClausesContentTransportSlot>>,
     #[wire(key = "_content_separator_space")]
     pub content_separator_space: Option<u16>,
@@ -17866,15 +17866,15 @@ impl ::sittir_core::prepare::Prepare for ComprehensionClausesTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::INTEGER_HEX, interior = "^(?<prefix>0x|0X)(?<content>(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$")]
+#[transport(kind = kind::INTEGER_HEX, interior = "^(?<prefix>0x|0X)(?<content>(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$", words = 10)]
 pub struct IntegerHexTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_prefix")]
-    #[slot(capture = "prefix")]
+    #[slot(capture = "prefix", word = 2, width = 4)]
     pub prefix: String,
     #[wire(key = "_content")]
-    #[slot(capture = "content")]
+    #[slot(capture = "content", word = 6, width = 4)]
     pub content: String,
 }
 
@@ -17918,15 +17918,15 @@ impl ::sittir_core::prepare::Prepare for IntegerHexTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::INTEGER_OCTAL, interior = "^(?<prefix>0o|0O)(?<content>(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$")]
+#[transport(kind = kind::INTEGER_OCTAL, interior = "^(?<prefix>0o|0O)(?<content>(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$", words = 10)]
 pub struct IntegerOctalTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_prefix")]
-    #[slot(capture = "prefix")]
+    #[slot(capture = "prefix", word = 2, width = 4)]
     pub prefix: String,
     #[wire(key = "_content")]
-    #[slot(capture = "content")]
+    #[slot(capture = "content", word = 6, width = 4)]
     pub content: String,
 }
 
@@ -17970,15 +17970,15 @@ impl ::sittir_core::prepare::Prepare for IntegerOctalTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::INTEGER_BINARY, interior = "^(?<prefix>0b|0B)(?<content>(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$")]
+#[transport(kind = kind::INTEGER_BINARY, interior = "^(?<prefix>0b|0B)(?<content>(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$", words = 10)]
 pub struct IntegerBinaryTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_prefix")]
-    #[slot(capture = "prefix")]
+    #[slot(capture = "prefix", word = 2, width = 4)]
     pub prefix: String,
     #[wire(key = "_content")]
-    #[slot(capture = "content")]
+    #[slot(capture = "content", word = 6, width = 4)]
     pub content: String,
 }
 
@@ -18022,7 +18022,7 @@ impl ::sittir_core::prepare::Prepare for IntegerBinaryTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::INTEGER_DECIMAL_LONG, text)]
+#[transport(kind = kind::INTEGER_DECIMAL_LONG, text, words = 2)]
 pub struct IntegerDecimalLongTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -18068,7 +18068,7 @@ impl ::sittir_core::prepare::Prepare for IntegerDecimalLongTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::INTEGER_DECIMAL_IMAGINARY, text)]
+#[transport(kind = kind::INTEGER_DECIMAL_IMAGINARY, text, words = 2)]
 pub struct IntegerDecimalImaginaryTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -18114,7 +18114,7 @@ impl ::sittir_core::prepare::Prepare for IntegerDecimalImaginaryTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::INTEGER_DECIMAL_PLAIN, text)]
+#[transport(kind = kind::INTEGER_DECIMAL_PLAIN, text, words = 2)]
 pub struct IntegerDecimalPlainTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -18160,24 +18160,24 @@ impl ::sittir_core::prepare::Prepare for IntegerDecimalPlainTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::FLOAT_POINT, interior = "^(?<integer>(?:(?:[0-9]+_?))+)\\.(?<fraction>(?:(?:[0-9]+_?))+)?(?:(?<marker>(?:[eE][\\+-]?))?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$")]
+#[transport(kind = kind::FLOAT_POINT, interior = "^(?<integer>(?:(?:[0-9]+_?))+)\\.(?<fraction>(?:(?:[0-9]+_?))+)?(?:(?<marker>(?:[eE][\\+-]?))?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$", words = 22)]
 pub struct FloatPointTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_integer")]
-    #[slot(capture = "integer")]
+    #[slot(capture = "integer", word = 2, width = 4)]
     pub integer: String,
     #[wire(key = "_fraction")]
-    #[slot(capture = "fraction")]
+    #[slot(capture = "fraction", word = 6, width = 4)]
     pub fraction: Option<String>,
     #[wire(key = "_marker")]
-    #[slot(capture = "marker")]
+    #[slot(capture = "marker", word = 10, width = 4)]
     pub marker: Option<String>,
     #[wire(key = "_exponent")]
-    #[slot(capture = "exponent")]
+    #[slot(capture = "exponent", word = 14, width = 4)]
     pub exponent: Option<String>,
     #[wire(key = "_imaginary")]
-    #[slot(capture = "imaginary")]
+    #[slot(capture = "imaginary", word = 18, width = 4)]
     pub imaginary: Option<String>,
 }
 
@@ -18224,24 +18224,24 @@ impl ::sittir_core::prepare::Prepare for FloatPointTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::FLOAT_LEADING_POINT, interior = "^(?<integer>(?:(?:[0-9]+_?))+)?\\.(?<fraction>(?:(?:[0-9]+_?))+)(?:(?<marker>(?:[eE][\\+-]?))?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$")]
+#[transport(kind = kind::FLOAT_LEADING_POINT, interior = "^(?<integer>(?:(?:[0-9]+_?))+)?\\.(?<fraction>(?:(?:[0-9]+_?))+)(?:(?<marker>(?:[eE][\\+-]?))?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$", words = 22)]
 pub struct FloatLeadingPointTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_integer")]
-    #[slot(capture = "integer")]
+    #[slot(capture = "integer", word = 2, width = 4)]
     pub integer: Option<String>,
     #[wire(key = "_fraction")]
-    #[slot(capture = "fraction")]
+    #[slot(capture = "fraction", word = 6, width = 4)]
     pub fraction: String,
     #[wire(key = "_marker")]
-    #[slot(capture = "marker")]
+    #[slot(capture = "marker", word = 10, width = 4)]
     pub marker: Option<String>,
     #[wire(key = "_exponent")]
-    #[slot(capture = "exponent")]
+    #[slot(capture = "exponent", word = 14, width = 4)]
     pub exponent: Option<String>,
     #[wire(key = "_imaginary")]
-    #[slot(capture = "imaginary")]
+    #[slot(capture = "imaginary", word = 18, width = 4)]
     pub imaginary: Option<String>,
 }
 
@@ -18288,21 +18288,21 @@ impl ::sittir_core::prepare::Prepare for FloatLeadingPointTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::FLOAT_SCIENTIFIC, interior = "^(?<integer>(?:(?:[0-9]+_?))+)(?<marker>(?:[eE][\\+-]?))(?<exponent>(?:(?:[0-9]+_?))+)(?<imaginary>(?:[jJ]))?$")]
+#[transport(kind = kind::FLOAT_SCIENTIFIC, interior = "^(?<integer>(?:(?:[0-9]+_?))+)(?<marker>(?:[eE][\\+-]?))(?<exponent>(?:(?:[0-9]+_?))+)(?<imaginary>(?:[jJ]))?$", words = 18)]
 pub struct FloatScientificTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_integer")]
-    #[slot(capture = "integer")]
+    #[slot(capture = "integer", word = 2, width = 4)]
     pub integer: String,
     #[wire(key = "_marker")]
-    #[slot(capture = "marker")]
+    #[slot(capture = "marker", word = 6, width = 4)]
     pub marker: String,
     #[wire(key = "_exponent")]
-    #[slot(capture = "exponent")]
+    #[slot(capture = "exponent", word = 10, width = 4)]
     pub exponent: String,
     #[wire(key = "_imaginary")]
-    #[slot(capture = "imaginary")]
+    #[slot(capture = "imaginary", word = 14, width = 4)]
     pub imaginary: Option<String>,
 }
 
@@ -18348,12 +18348,12 @@ impl ::sittir_core::prepare::Prepare for FloatScientificTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ESCAPE_SEQUENCE_UNICODE_FIXED, interior = "^\\\\(?<content>(?:u[a-fA-F\\d]{4}))$")]
+#[transport(kind = kind::ESCAPE_SEQUENCE_UNICODE_FIXED, interior = "^\\\\(?<content>(?:u[a-fA-F\\d]{4}))$", words = 6)]
 pub struct EscapeSequenceUnicodeFixedTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
-    #[slot(capture = "content")]
+    #[slot(capture = "content", word = 2, width = 4)]
     pub content: String,
 }
 
@@ -18396,12 +18396,12 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeFixedTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ESCAPE_SEQUENCE_UNICODE_WIDE, interior = "^\\\\(?<content>(?:U[a-fA-F\\d]{8}))$")]
+#[transport(kind = kind::ESCAPE_SEQUENCE_UNICODE_WIDE, interior = "^\\\\(?<content>(?:U[a-fA-F\\d]{8}))$", words = 6)]
 pub struct EscapeSequenceUnicodeWideTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
-    #[slot(capture = "content")]
+    #[slot(capture = "content", word = 2, width = 4)]
     pub content: String,
 }
 
@@ -18444,12 +18444,12 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeWideTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ESCAPE_SEQUENCE_HEX, interior = "^\\\\(?<content>(?:x[a-fA-F\\d]{2}))$")]
+#[transport(kind = kind::ESCAPE_SEQUENCE_HEX, interior = "^\\\\(?<content>(?:x[a-fA-F\\d]{2}))$", words = 6)]
 pub struct EscapeSequenceHexTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
-    #[slot(capture = "content")]
+    #[slot(capture = "content", word = 2, width = 4)]
     pub content: String,
 }
 
@@ -18492,12 +18492,12 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceHexTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ESCAPE_SEQUENCE_OCTAL, interior = "^\\\\(?<content>(?:\\d{1,3}))$")]
+#[transport(kind = kind::ESCAPE_SEQUENCE_OCTAL, interior = "^\\\\(?<content>(?:\\d{1,3}))$", words = 6)]
 pub struct EscapeSequenceOctalTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
-    #[slot(capture = "content")]
+    #[slot(capture = "content", word = 2, width = 4)]
     pub content: String,
 }
 
@@ -18540,12 +18540,12 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceOctalTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ESCAPE_SEQUENCE_LINE_BREAK, interior = "^\\\\(?<content>(?:\\r?\\n))$")]
+#[transport(kind = kind::ESCAPE_SEQUENCE_LINE_BREAK, interior = "^\\\\(?<content>(?:\\r?\\n))$", words = 6)]
 pub struct EscapeSequenceLineBreakTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
-    #[slot(capture = "content")]
+    #[slot(capture = "content", word = 2, width = 4)]
     pub content: String,
 }
 
@@ -18588,12 +18588,12 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceLineBreakTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ESCAPE_SEQUENCE_SIMPLE, interior = "^\\\\(?<content>(?:['\"abfrntv\\\\]))$")]
+#[transport(kind = kind::ESCAPE_SEQUENCE_SIMPLE, interior = "^\\\\(?<content>(?:['\"abfrntv\\\\]))$", words = 6)]
 pub struct EscapeSequenceSimpleTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
-    #[slot(capture = "content")]
+    #[slot(capture = "content", word = 2, width = 4)]
     pub content: String,
 }
 
@@ -18636,12 +18636,12 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceSimpleTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ESCAPE_SEQUENCE_NAMED, interior = "^\\\\(?<content>(?:N\\{[^}]+\\}))$")]
+#[transport(kind = kind::ESCAPE_SEQUENCE_NAMED, interior = "^\\\\(?<content>(?:N\\{[^}]+\\}))$", words = 6)]
 pub struct EscapeSequenceNamedTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
-    #[slot(capture = "content")]
+    #[slot(capture = "content", word = 2, width = 4)]
     pub content: String,
 }
 
@@ -18684,7 +18684,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceNamedTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::LINE_CONTINUATION_NEWLINE, text)]
+#[transport(kind = kind::LINE_CONTINUATION_NEWLINE, text, words = 2)]
 pub struct LineContinuationNewlineTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -18758,15 +18758,15 @@ impl ::sittir_core::render::Render for LineContinuationNulTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::SIMPLE_PATTERN_NEGATIVE)]
+#[transport(kind = kind::SIMPLE_PATTERN_NEGATIVE, words = 8)]
 pub struct SimplePatternNegativeTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_sign")]
-    #[slot(field = field::SIGN, presence = kind::DASH)]
+    #[slot(field = field::SIGN, presence = kind::DASH, word = 2, bit = 0)]
     pub sign: bool,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE)]
+    #[slot(field = field::VALUE, word = 3, width = 5)]
     pub value: ::sittir_core::SlotValue<ComplexPatternRealTransportSlot>,
 }
 
@@ -18811,12 +18811,12 @@ impl ::sittir_core::prepare::Prepare for SimplePatternNegativeTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::EXCEPT_CLAUSE_EXCEPTION_LIST)]
+#[transport(kind = kind::EXCEPT_CLAUSE_EXCEPTION_LIST, words = 4)]
 pub struct ExceptClauseExceptionListTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE, separator = kind::COMMA)]
+    #[slot(field = field::VALUE, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub value: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_value_separator_space_before")]
     pub value_separator_space_before: Option<u16>,
@@ -18867,12 +18867,12 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionListTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::EXCEPT_CLAUSE_EXCEPTION)]
+#[transport(kind = kind::EXCEPT_CLAUSE_EXCEPTION, words = 7)]
 pub struct ExceptClauseExceptionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub content: ::sittir_core::SlotValue<ExceptClauseExceptionContentTransportSlot>,
 }
 
@@ -18915,15 +18915,15 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseExceptionTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ASSIGNMENT_EQ, layout = [kind::EQ])]
+#[transport(kind = kind::ASSIGNMENT_EQ, layout = [kind::EQ], words = 12)]
 pub struct AssignmentEqTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
-    #[slot(field = field::LEFT)]
+    #[slot(field = field::LEFT, word = 2, width = 5)]
     pub left: ::sittir_core::SlotValue<ForStatementLeftTransportSlot>,
     #[wire(key = "_right")]
-    #[slot(field = field::RIGHT)]
+    #[slot(field = field::RIGHT, word = 7, width = 5)]
     pub right: ::sittir_core::SlotValue<Box<AugmentedAssignmentRightTransportSlot>>,
 }
 
@@ -18968,15 +18968,15 @@ impl ::sittir_core::prepare::Prepare for AssignmentEqTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ASSIGNMENT_TYPE, layout = [kind::COLON])]
+#[transport(kind = kind::ASSIGNMENT_TYPE, layout = [kind::COLON], words = 12)]
 pub struct AssignmentTypeTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
-    #[slot(field = field::LEFT)]
+    #[slot(field = field::LEFT, word = 2, width = 5)]
     pub left: ::sittir_core::SlotValue<ForStatementLeftTransportSlot>,
     #[wire(key = "_type")]
-    #[slot(field = field::TYPE)]
+    #[slot(field = field::TYPE, word = 7, width = 5)]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
 }
 
@@ -19021,18 +19021,18 @@ impl ::sittir_core::prepare::Prepare for AssignmentTypeTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ASSIGNMENT_TYPED, layout = [kind::COLON, kind::EQ])]
+#[transport(kind = kind::ASSIGNMENT_TYPED, layout = [kind::COLON, kind::EQ], words = 17)]
 pub struct AssignmentTypedTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_left")]
-    #[slot(field = field::LEFT)]
+    #[slot(field = field::LEFT, word = 2, width = 5)]
     pub left: ::sittir_core::SlotValue<ForStatementLeftTransportSlot>,
     #[wire(key = "_type")]
-    #[slot(field = field::TYPE)]
+    #[slot(field = field::TYPE, word = 7, width = 5)]
     pub type_: ::sittir_core::SlotValue<TypeTransport>,
     #[wire(key = "_right")]
-    #[slot(field = field::RIGHT)]
+    #[slot(field = field::RIGHT, word = 12, width = 5)]
     pub right: ::sittir_core::SlotValue<Box<AugmentedAssignmentRightTransportSlot>>,
 }
 
@@ -19078,12 +19078,12 @@ impl ::sittir_core::prepare::Prepare for AssignmentTypedTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::EXPRESSION_STATEMENT_TUPLE, item = item)]
+#[transport(kind = kind::EXPRESSION_STATEMENT_TUPLE, item = item, words = 4)]
 pub struct ExpressionStatementTupleTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -19138,12 +19138,12 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementTupleTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::WITH_CLAUSE_BARE, item = item)]
+#[transport(kind = kind::WITH_CLAUSE_BARE, item = item, words = 4)]
 pub struct WithClauseBareTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA)]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<WithItemTransport>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
@@ -19197,12 +19197,12 @@ impl ::sittir_core::prepare::Prepare for WithClauseBareTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::WITH_CLAUSE_PAREN, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN])]
+#[transport(kind = kind::WITH_CLAUSE_PAREN, min_depth = 2, layout = [kind::LPAREN, kind::RPAREN], words = 7)]
 pub struct WithClauseParenTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_with_items")]
-    #[slot(field = field::WITH_ITEMS)]
+    #[slot(field = field::WITH_ITEMS, word = 2, width = 5)]
     pub with_items: ::sittir_core::SlotValue<WithClauseWithItemsTransport>,
 }
 
@@ -19246,12 +19246,12 @@ impl ::sittir_core::prepare::Prepare for WithClauseParenTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::MATCH_BLOCK_BLOCK, layout = [kind::_INDENT, kind::_DEDENT])]
+#[transport(kind = kind::MATCH_BLOCK_BLOCK, layout = [kind::_INDENT, kind::_DEDENT], words = 4)]
 pub struct MatchBlockBlockTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_alternative")]
-    #[slot(field = field::ALTERNATIVE)]
+    #[slot(field = field::ALTERNATIVE, word = 2, width = 2, run = 5)]
     pub alternative: Vec<::sittir_core::SlotValue<CaseClauseTransport>>,
     #[wire(key = "_alternative_separator_space")]
     pub alternative_separator_space: Option<u16>,
@@ -19300,12 +19300,12 @@ impl ::sittir_core::prepare::Prepare for MatchBlockBlockTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::MATCH_BLOCK_EMPTY, layout = [kind::_NEWLINE])]
+#[transport(kind = kind::MATCH_BLOCK_EMPTY, layout = [kind::_NEWLINE], words = 7)]
 pub struct MatchBlockEmptyTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_newline")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub newline: ::sittir_core::SlotValue<NewlineTransport>,
 }
 
@@ -19348,12 +19348,12 @@ impl ::sittir_core::prepare::Prepare for MatchBlockEmptyTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::SUITE_INLINE, min_depth = 2, layout = [kind::_NEWLINE])]
+#[transport(kind = kind::SUITE_INLINE, min_depth = 2, layout = [kind::_NEWLINE], words = 7)]
 pub struct SuiteInlineTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 5)]
     pub elements: ::sittir_core::SlotValue<SimpleStatementsElementsTransport>,
 }
 
@@ -19397,12 +19397,12 @@ impl ::sittir_core::prepare::Prepare for SuiteInlineTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::SUITE_BLOCK, layout = [kind::_INDENT])]
+#[transport(kind = kind::SUITE_BLOCK, layout = [kind::_INDENT], words = 7)]
 pub struct SuiteBlockTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_block")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub block: ::sittir_core::SlotValue<BlockTransport>,
 }
 
@@ -19446,12 +19446,12 @@ impl ::sittir_core::prepare::Prepare for SuiteBlockTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::SUITE_EMPTY, layout = [kind::_NEWLINE])]
+#[transport(kind = kind::SUITE_EMPTY, layout = [kind::_NEWLINE], words = 7)]
 pub struct SuiteEmptyTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_newline")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub newline: ::sittir_core::SlotValue<NewlineTransport>,
 }
 
@@ -19494,15 +19494,15 @@ impl ::sittir_core::prepare::Prepare for SuiteEmptyTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_COMPARISON_OPERATOR_COMPARATOR)]
+#[transport(kind = kind::_COMPARISON_OPERATOR_COMPARATOR, words = 12)]
 pub struct ComparisonOperatorComparatorTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_operators")]
-    #[slot(field = field::OPERATORS)]
+    #[slot(field = field::OPERATORS, word = 2, width = 5)]
     pub operators: ::sittir_core::SlotValue<ComparisonOperatorComparatorOperatorsTransportSlot>,
     #[wire(key = "_primary_expression")]
-    #[slot]
+    #[slot(word = 7, width = 5)]
     pub primary_expression: ::sittir_core::SlotValue<PrimaryExpressionTransport>,
 }
 
@@ -19551,12 +19551,12 @@ impl ::sittir_core::prepare::Prepare for ComparisonOperatorComparatorTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_YIELD_FROM_CLAUSE, layout = [kind::FROM_KEYWORD])]
+#[transport(kind = kind::_YIELD_FROM_CLAUSE, layout = [kind::FROM_KEYWORD], words = 7)]
 pub struct YieldFromClauseTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_expression")]
-    #[slot]
+    #[slot(word = 2, width = 5)]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
@@ -19600,7 +19600,7 @@ impl ::sittir_core::prepare::Prepare for YieldFromClauseTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::STRING_START, text)]
+#[transport(kind = kind::STRING_START, text, words = 2)]
 pub struct StringStartTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -19646,7 +19646,7 @@ impl ::sittir_core::prepare::Prepare for StringStartTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_STRING_FRAGMENT, text)]
+#[transport(kind = kind::_STRING_FRAGMENT, text, words = 2)]
 pub struct StringFragmentTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -19692,7 +19692,7 @@ impl ::sittir_core::prepare::Prepare for StringFragmentTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::ESCAPE_INTERPOLATION, text)]
+#[transport(kind = kind::ESCAPE_INTERPOLATION, text, words = 2)]
 pub struct EscapeInterpolationTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -19738,7 +19738,7 @@ impl ::sittir_core::prepare::Prepare for EscapeInterpolationTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::STRING_END, text)]
+#[transport(kind = kind::STRING_END, text, words = 2)]
 pub struct StringEndTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -20008,11 +20008,12 @@ impl ::sittir_core::render::Render for DoubleBlanklineTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_NAMES, display, content = content)]
+#[transport(kind = kind::_NAMES, display, content = content, words = 7)]
 pub struct NamesTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
+    #[slot(word = 2, width = 5)]
     pub content: ::sittir_core::SlotValue<ImportListTransport>,
 }
 
@@ -20055,11 +20056,12 @@ impl ::sittir_core::prepare::Prepare for NamesTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_AS_PATTERN_TARGET, display, content = content, wraps_hidden)]
+#[transport(kind = kind::_AS_PATTERN_TARGET, display, content = content, wraps_hidden, words = 7)]
 pub struct AsPatternTargetTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
+    #[slot(word = 2, width = 5)]
     pub content: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
 }
 
@@ -20102,11 +20104,12 @@ impl ::sittir_core::prepare::Prepare for AsPatternTargetTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::_FORMAT_EXPRESSION, display, content = content)]
+#[transport(kind = kind::_FORMAT_EXPRESSION, display, content = content, words = 7)]
 pub struct FormatExpressionTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
     #[wire(key = "_content")]
+    #[slot(word = 2, width = 5)]
     pub content: ::sittir_core::SlotValue<InterpolationTransport>,
 }
 

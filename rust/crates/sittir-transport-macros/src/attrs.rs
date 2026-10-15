@@ -33,6 +33,19 @@ pub struct KindAttrs {
     /// On a variant: a unit that holds its kind's edges, read and decoded
     /// with none set and written as its kind id.
     pub edged: bool,
+    /// On a struct: the words of its record, which codegen stamps.
+    pub words: Option<u32>,
+}
+
+/// A slot's record cell, as codegen stamps it on `#[slot(…)]`: `word` and
+/// `width` (and `run`, a list's words an item), or `word` and `bit` for a
+/// presence. All absent on a slot with no stamp.
+#[derive(Default)]
+pub struct CellStamp {
+    pub word: Option<u32>,
+    pub width: Option<u32>,
+    pub run: Option<u32>,
+    pub bit: Option<u32>,
 }
 
 /// `#[slot]` or `#[slot(…)]` on a field.
@@ -44,6 +57,7 @@ pub struct SlotAttrs {
     pub separators: Vec<TokenGroup>,
     pub capture: Option<LitStr>,
     pub scalar: bool,
+    pub cell: CellStamp,
 }
 
 /// `#[kind(…)]` on a variant: the ids it claims, display ids when marked.
@@ -149,6 +163,7 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "error" => out.error = true,
                 "codec_only" => out.codec_only = true,
                 "edged" => out.edged = true,
+                "words" => out.words = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
                 _ => return Err(meta.error("unknown `transport` attribute")),
             }
             Ok(())
@@ -171,6 +186,10 @@ pub fn slot_attrs(attrs: &[Attribute]) -> syn::Result<Option<SlotAttrs>> {
             "separator" => out.separators.extend(token_groups(meta.value()?)?),
             "capture" => out.capture = Some(meta.value()?.parse()?),
             "scalar" => out.scalar = true,
+            "word" => out.cell.word = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
+            "width" => out.cell.width = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
+            "run" => out.cell.run = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
+            "bit" => out.cell.bit = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
             _ => return Err(meta.error("unknown `slot` attribute")),
         }
         Ok(())

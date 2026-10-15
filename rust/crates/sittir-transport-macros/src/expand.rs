@@ -458,6 +458,14 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         .as_ref()
         .ok_or_else(|| syn::Error::new_spanned(ident, "`#[transport(kind = …)]` names the struct's kind"))?;
     let fields = fields_of(ident, data)?;
+    let stamped: Vec<_> = fields
+        .iter()
+        .filter_map(|field| match &field.role {
+            Role::Slot(slot) => Some((field.ident, field.ty, &slot.cell)),
+            _ => None,
+        })
+        .collect();
+    let record = crate::record::checks(ident, attrs.words, &stamped)?;
     let folded = &attrs.folded;
     let admits = if attrs.display { quote!(display == #kind) } else { quote!(grammar == #kind #(|| grammar == #folded)*) };
     let layout: Vec<&Path> = attrs.layout.iter().flatten().collect();
@@ -542,6 +550,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
             #separator_kind_of
             #codec
         };
+        #record
     })
 }
 
