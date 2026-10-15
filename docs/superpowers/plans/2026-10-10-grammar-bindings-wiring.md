@@ -36,6 +36,8 @@ Each stage starts with a census, sent to brainstorm before any code: the sites t
 
 Ruled: everything in the grammar bindings except kind renames reaches the parser (field renames, wraps, splits, merges and aliases, patches). Kind renames stay out, so low-level kind names stay upstream's and the portable layer maps them. Claims resolve through field renames as they do through kind renames.
 
+A derived kind rename whose target is an existing kind or display name is a merge, not a rename: typescript's `private_property_identifier` → `property_identifier` targets the display kind an alias already names, and applying it would fold privateness (a flag fact) into the plain kind. Whatever applies kind renames refuses or reports such an entry under the merge rules and the shape guard (`sameShapeAs`), and never applies it as a plain rename.
+
 **Census first:** per grammar, the grammar bindings' entries by type (field rename, wrap, split, alias, patch), the parse-state and `parser.c` deltas against the unbound build, and every validation row and generated file the bound build moves. The contextual-alias probe has the alias numbers (rust's splits: +0.65% STATE; python's class-body method: +0.60%; decorated: +0.73%).
 
 ### 2a. Translation gaps the bound build hits
