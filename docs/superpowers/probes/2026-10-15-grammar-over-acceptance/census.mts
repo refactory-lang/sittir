@@ -1,12 +1,11 @@
 // Each witness against three judges: sittir's parser (packages/<g>/.sittir/parser.wasm), the
 // upstream parser the grammar is built from (tree-sitter-<g>.wasm), and the language's compiler
 // (tsc, CPython's compile, rustc). Writes results/<grammar>.tsv and prints the over-accepted rows.
-import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { judges, removeScratch } from './judges.mts';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '../../../..');
@@ -37,41 +36,6 @@ async function parserFor(wasm: string) {
 	};
 }
 
-const scratch = mkdtempSync(join(tmpdir(), 'over-acceptance-'));
-
-function tscVerdicts(sources: string[]): string[] {
-	// One program per witness: tsc skips the checker's grammar errors (TS1054 and its kin)
-	// for the whole program once any file has a syntax error.
-	writeFileSync(join(scratch, 'm.ts'), 'export type A = { x: 1 };\nexport type B<T = unknown> = T;\nexport default 0;\n');
-	return sources.map((s, i) => {
-		const f = join(scratch, `w${i}.ts`);
-		writeFileSync(f, s);
-		const r = spawnSync(join(ROOT, 'node_modules/.bin/tsc'), ['--ignoreConfig', '--noEmit', '--pretty', 'false', '--strict', '--target', 'esnext', '--module', 'esnext', '--moduleResolution', 'bundler', '--experimentalDecorators', '--skipLibCheck', f], { encoding: 'utf8' });
-		const errors = `${r.stdout}${r.stderr}`
-			.split('\n')
-			.map((line) => /w\d+\.ts\(\d+,\d+\): error (TS\d+): (.*)$/.exec(line))
-			.filter((m): m is RegExpExecArray => m !== null)
-			.map((m) => `${m[1]} ${m[2]}`);
-		return errors.join(' | ') || 'accepted';
-	});
-}
-
-function pythonVerdicts(sources: string[]): string[] {
-	const out = execFileSync('python3', ['-I', '-c', 'import json,sys\nr=[]\nfor s in json.load(sys.stdin):\n  try:\n    compile(s,"<w>","exec"); r.append("accepted")\n  except SyntaxError as e:\n    r.append(f"SyntaxError: {e.msg}")\nprint(json.dumps(r))'], { input: JSON.stringify(sources), encoding: 'utf8' });
-	return JSON.parse(out) as string[];
-}
-
-function rustVerdicts(sources: string[]): string[] {
-	return sources.map((s, i) => {
-		const f = join(scratch, `w${i}.rs`);
-		writeFileSync(f, s);
-		const r = spawnSync('rustc', ['--edition', '2024', '--crate-type', 'lib', '--emit=metadata', '-o', join(scratch, `w${i}.rmeta`), f], { encoding: 'utf8' });
-		const errors = r.stderr.split('\n').filter((l) => l.startsWith('error')).filter((l) => !l.startsWith('error: aborting'));
-		return errors.join(' | ') || 'accepted';
-	});
-}
-
-const judges: Record<string, (s: string[]) => string[]> = { typescript: tscVerdicts, python: pythonVerdicts, rust: rustVerdicts };
 const upstream = (g: string) => createRequire(join(ROOT, `packages/${g}/package.json`)).resolve(`tree-sitter-${g}/tree-sitter-${g}.wasm`);
 
 for (const [grammar, list] of Object.entries(witnesses)) {
@@ -121,4 +85,4 @@ for (const grammar of ['typescript', 'rust', 'python']) {
 }
 writeFileSync(join(HERE, 'results', 'upstream.tsv'), `${upstreamOut.join('\n')}\n`);
 console.log(`upstream: ${upstreamOut.length - 1} rows`);
-rmSync(scratch, { recursive: true, force: true });
+removeScratch();

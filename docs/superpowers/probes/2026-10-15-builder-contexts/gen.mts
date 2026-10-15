@@ -12,6 +12,6 @@ mkdirSync(out, { recursive: true });
 const here = resolve(import.meta.dirname);
 for (const variant of ['plain', 'contexts']) {
 	const lines = [`import { awaitE, bin, block, breakS, call, exprS, fn, ident, ifS, paren, returnS, whileS } from '${join(here, `signatures-${variant}.ts`)}';`];
-	for (let i = 0; i < n; i++) lines.push(`export const f${i} = fn({ name: 'f${i}', async: true, body: block(${nest(d)}, returnS(bin(ident('a'), awaitE(ident('p'))))) });`);
+	for (let i = 0; i < n; i++) lines.push(`export const f${i} = fn({ name: 'f${i}', body: block(${nest(d)}, returnS(bin(ident('a'), awaitE(ident('p'))))) });`);
 	writeFileSync(join(out, `workload-${variant}.ts`), `${lines.join('\n')}\n`);
 }

@@ -77,6 +77,14 @@ Ruled to be parser aliases at a context-unique site, with the ancestor clones ke
 
 The aliases retire the interim placed claim that reads any decorated function in a python class body as `declaration.method`.
 
+**Planned with the aliases: typescript's constructor as a kind.**
+- typescript's `bindings.scm` claims the constructor by a predicate today: `((method_definition name: (property_identifier) @name) @declaration.constructor (#eq? @name "constructor"))`. It becomes a kind of its own.
+- In a class body, a member whose name is the token `constructor` is its own rule, authored in typescript's `grammar.sittir.ts` at the class-body site. Object-literal methods keep `method_definition`, since a method named `constructor` there is an ordinary method. The claim then names the kind, and `$type` decides it.
+- It lands with the aliases because the claim and the read test change together.
+- The builder contexts depend on it. A member modifier is permitted in the constructor's parameters and in no other function's, and until this kind exists the `Visibility` table has to provide at every method's parameters (builder contexts spec, §11).
+- **Census:** the STATE and `parser.c` deltas, and every read of `declaration.constructor` and `declaration.method`.
+- **Gate:** reads classify the same.
+
 **`static` reads from the method's own node.** Today both `static` facts come from context: rust's from a placed claim in an impl body with a per-parameter `#not-kind-eq?`, and python's from the parent `decorated_definition`'s decorator. With the aliases, each is read from the method's own node, or, for python, from the envelope the portable method is read through. The aliases' claims replace the placed ones:
 - **rust** (also needs 2b's receiver form): a method or method signature whose parameter list is not the receiver form is static. The per-parameter test misses a typed `self` (`self: Box<Self>`), which 2b moves into the receiver form.
   ```
