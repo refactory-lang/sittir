@@ -256,7 +256,7 @@ What `mergedAt` answers for plans that differ in more than their slot numbers.
 
 ### `packages/common/src/query.ts::recorder`
 
-What a `where` callback receives: a Proxy whose members are the accessors of a kind, each recording the slot's number in the kind's `querySlots` row, keyed by the kind (`SlotSubject`): a slot whose row names a keyword gets a presence member (`presenceRef`), any other slot a text member with `eq` and `match`. Each member of a known kind is named `<kind>.<slot>`, so a slot compared in the wrong form (a text on a boolean slot, a boolean on a text slot) is refused naming both, whether at the `where` call or when a view whose kinds were not known runs. Any other key, an assignment and a call are refused. A view whose element kinds are not yet known checks the callback at the `where` call against every accessor of the grammar (`everyAccessor`, each a `shapeRef`), recording no slot (`NO_SLOT`), so its shape is refused early and each kind's slots, and whether each takes a text or a boolean, when it runs. A pattern crosses as its source; a flag has no native equivalent and is refused rather than dropped.
+What a `where` callback receives: a Proxy whose members are the accessors of a kind, each recording the slot's number in the kind's `querySlots` row, keyed by the kind (`SlotSubject`): a slot whose row names a keyword gets a presence member (`presenceRef`), any other slot a text member with `eq` and `match`. Each member of a known kind is named `<kind>.<slot>`, so a slot compared in the wrong form (a text on a boolean slot, a boolean on a text slot) is refused naming both, whether at the `where` call or when a view whose kinds were not known runs. The key `is` is the flag test (`flagRef`). Any other key, an assignment and a call are refused. A view whose element kinds are not yet known checks the callback at the `where` call against every accessor of the grammar (`everyAccessor`, each a `shapeRef`), recording no slot (`NO_SLOT`), so its shape is refused early and each kind's slots, and whether each takes a text or a boolean, when it runs. A pattern crosses as its source; a flag has no native equivalent and is refused rather than dropped.
 
 ### `packages/common/src/query.ts::slotsOf`
 
@@ -265,6 +265,18 @@ A kind's query slots by accessor, each its subject (its number keyed by the kind
 ### `packages/common/src/query.ts::everyAccessor`
 
 Every accessor of the grammar, for the check a `where` runs before its view's kinds are known.
+
+### `packages/common/src/query.ts::flagRef`
+
+A recorder's `is`: for a known kind, the plan its row of `queryFlags` gives the flag; a flag the kind does not declare is refused naming the kind, and a flag whose row is `null`, one that depends on the node's context, is refused naming both. Before the view's kinds are known it checks only that some kind of the grammar declares the flag (`everyFlag`), recording no plan (`ALWAYS`), and each kind's compilation decides when the view runs, as the slot members' shape check does.
+
+### `packages/common/src/query.ts::everyFlag`
+
+Every flag some kind of the grammar declares, for the check a `where` runs before its view's kinds are known.
+
+### `packages/common/src/query.ts::ALWAYS`
+
+The plan that always holds (`and` over no plans), which the shape check records for a flag.
 
 ### `packages/common/src/query.ts::NO_SLOT`
 

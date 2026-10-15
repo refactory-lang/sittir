@@ -4568,3 +4568,130 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.Unique]: { unique: { op: 'and', of: [] } },
 	[TSKindId.VariableDeclaratorDefinite]: { definite: { op: 'and', of: [] } }
 } satisfies QueryFlags);
+
+declare module './types.js' {
+	interface AbstractClassDeclaration {
+		readonly __flags__?: 'abstract';
+	}
+	interface AbstractMethodSignature {
+		readonly __flags__?: 'override' | 'optional' | 'generator' | 'privateName' | 'computed';
+	}
+	interface ArrowFunction {
+		readonly __flags__?: 'async';
+	}
+	interface AssignmentExpression {
+		readonly __flags__?: 'disposable';
+	}
+	interface CallExpressionMember {
+		readonly __flags__?: 'optionalChain';
+	}
+	interface ConstructSignature {
+		readonly __flags__?: 'abstract';
+	}
+	interface ConstructorType {
+		readonly __flags__?: 'abstract';
+	}
+	interface EnumDeclaration {
+		readonly __flags__?: 'const';
+	}
+	interface ExportSpecifier {
+		readonly __flags__?: 'typeOnly';
+	}
+	interface ExportStatementDefaultFrom {
+		readonly __flags__?: 'typeOnly';
+	}
+	interface ForInStatement {
+		readonly __flags__?: 'async';
+	}
+	interface FunctionDeclaration {
+		readonly __flags__?: 'async';
+	}
+	interface FunctionExpression {
+		readonly __flags__?: 'async';
+	}
+	interface FunctionSignature {
+		readonly __flags__?: 'async';
+	}
+	interface GeneratorFunction {
+		readonly __flags__?: 'async' | 'generator';
+	}
+	interface GeneratorFunctionDeclaration {
+		readonly __flags__?: 'async' | 'generator';
+	}
+	interface ImportSpecifierAs {
+		readonly __flags__?: 'typeOnly';
+	}
+	interface ImportSpecifierName {
+		readonly __flags__?: 'typeOnly';
+	}
+	interface ImportStatement {
+		readonly __flags__?: 'typeOnly';
+	}
+	interface IndexSignatureColon {
+		readonly __flags__?: 'readonly';
+	}
+	interface IndexSignatureMappedTypeClause {
+		readonly __flags__?: 'readonly';
+	}
+	interface MemberExpression {
+		readonly __flags__?: 'optionalChain' | 'privateName';
+	}
+	interface MethodDefinition {
+		readonly __flags__?:
+			| 'static'
+			| 'override'
+			| 'readonly'
+			| 'async'
+			| 'optional'
+			| 'generator'
+			| 'privateName'
+			| 'computed';
+	}
+	interface MethodSignature {
+		readonly __flags__?:
+			| 'static'
+			| 'override'
+			| 'readonly'
+			| 'async'
+			| 'optional'
+			| 'generator'
+			| 'privateName'
+			| 'computed';
+	}
+	interface OptionalParameter {
+		readonly __flags__?: 'override' | 'readonly' | 'optional';
+	}
+	interface Pair {
+		readonly __flags__?: 'computed';
+	}
+	interface PairPattern {
+		readonly __flags__?: 'computed';
+	}
+	interface PropertySignature {
+		readonly __flags__?: 'static' | 'override' | 'readonly' | 'optional' | 'privateName' | 'computed';
+	}
+	interface PublicFieldDefinition {
+		readonly __flags__?:
+			| 'declare'
+			| 'static'
+			| 'override'
+			| 'readonly'
+			| 'abstract'
+			| 'optional'
+			| 'definite'
+			| 'privateName'
+			| 'computed';
+	}
+	interface RequiredParameter {
+		readonly __flags__?: 'override' | 'readonly';
+	}
+	interface SubscriptExpression {
+		readonly __flags__?: 'optionalChain';
+	}
+	interface TypeParameter {
+		readonly __flags__?: 'const';
+	}
+	interface VariableDeclaratorDefinite {
+		readonly __flags__?: 'definite';
+	}
+}

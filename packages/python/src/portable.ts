@@ -2791,3 +2791,24 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.Interpolation]: { debug: { op: 'present', slots: { '249': 1 } } },
 	[TSKindId.WithStatement]: { async: { op: 'present', slots: { '161': 0 } } }
 } satisfies QueryFlags);
+
+declare module './types.js' {
+	interface ExceptClause {
+		readonly __flags__?: 'group';
+	}
+	interface ForInClause {
+		readonly __flags__?: 'async';
+	}
+	interface ForStatement {
+		readonly __flags__?: 'async';
+	}
+	interface FunctionDefinition {
+		readonly __flags__?: 'async';
+	}
+	interface Interpolation {
+		readonly __flags__?: 'debug';
+	}
+	interface WithStatement {
+		readonly __flags__?: 'async';
+	}
+}

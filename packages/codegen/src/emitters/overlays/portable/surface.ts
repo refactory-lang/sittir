@@ -10,11 +10,12 @@ export interface PortableSurfaceConfig {
 	readonly kindIdOf: (kind: string) => string;
 	readonly fixedText: readonly (readonly [kindId: string, text: string])[];
 	readonly flags: readonly (readonly [kindId: string, plans: ReadonlyMap<string, QueryPlan | null>])[];
+	readonly flagTypes: readonly (readonly [typeName: string, flags: readonly string[]])[];
 }
 
 const q = (text: string): string => JSON.stringify(text);
 
-export function emitPortableSurface({ routes, readTest, kindIdOf, fixedText, flags }: PortableSurfaceConfig): string {
+export function emitPortableSurface({ routes, readTest, kindIdOf, fixedText, flags, flagTypes }: PortableSurfaceConfig): string {
 	const root = namespaceTree(routes.readEntries);
 	const nodes = descendants(root);
 	const byPath = new Map([root, ...nodes].map((n) => [n.path, n]));
@@ -79,6 +80,14 @@ export function emitPortableSurface({ routes, readTest, kindIdOf, fixedText, fla
 		'export const queryFlags: QueryFlags = Object.freeze({',
 		...flags.map(([id, plans]) => `\t[${id}]: ${JSON.stringify(Object.fromEntries(plans))},`),
 		'} satisfies QueryFlags);',
+		...(flagTypes.length === 0
+			? []
+			: [
+					'',
+					"declare module './types.js' {",
+					...flagTypes.flatMap(([typeName, names]) => [`\tinterface ${typeName} {`, `\t\treadonly __flags__?: ${names.map(q).join(' | ')};`, '\t}']),
+					'}'
+				]),
 		''
 	].join('\n');
 }

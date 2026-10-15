@@ -6408,3 +6408,87 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.UsizeKeyword]: { unsigned: { op: 'and', of: [] } },
 	[TSKindId.VariadicParameter]: { mutable: { op: 'present', slots: { '232': 0 } } }
 } satisfies QueryFlags);
+
+declare module './types.js' {
+	interface AsyncBlock {
+		readonly __flags__?: 'move';
+	}
+	interface CharLiteralEscapedHex {
+		readonly __flags__?: 'byte';
+	}
+	interface CharLiteralEscapedSimple {
+		readonly __flags__?: 'byte';
+	}
+	interface CharLiteralEscapedUnicodeBraced {
+		readonly __flags__?: 'byte';
+	}
+	interface CharLiteralEscapedUnicodeFixed {
+		readonly __flags__?: 'byte';
+	}
+	interface CharLiteralPlain {
+		readonly __flags__?: 'byte';
+	}
+	interface ClosureExpressionBlock {
+		readonly __flags__?: 'static' | 'async' | 'move';
+	}
+	interface ClosureExpressionExpr {
+		readonly __flags__?: 'static' | 'async' | 'move';
+	}
+	interface FieldPatternNamed {
+		readonly __flags__?: 'mutable' | 'byReference';
+	}
+	interface FieldPatternShorthand {
+		readonly __flags__?: 'mutable' | 'byReference';
+	}
+	interface FunctionItem {
+		readonly __flags__?: 'async' | 'const' | 'unsafe' | 'default';
+	}
+	interface FunctionType {
+		readonly __flags__?: 'unsafe';
+	}
+	interface GenBlock {
+		readonly __flags__?: 'move';
+	}
+	interface ImplItemBody {
+		readonly __flags__?: 'unsafe';
+	}
+	interface ImplItemSemi {
+		readonly __flags__?: 'unsafe';
+	}
+	interface LetDeclaration {
+		readonly __flags__?: 'mutable';
+	}
+	interface Parameter {
+		readonly __flags__?: 'mutable';
+	}
+	interface PointerTypeMut {
+		readonly __flags__?: 'writable';
+	}
+	interface ReferenceExpressionMut {
+		readonly __flags__?: 'exclusive';
+	}
+	interface ReferenceExpressionRawConst {
+		readonly __flags__?: 'raw';
+	}
+	interface ReferenceExpressionRawMut {
+		readonly __flags__?: 'writable' | 'raw';
+	}
+	interface ReferencePattern {
+		readonly __flags__?: 'exclusive';
+	}
+	interface ReferenceType {
+		readonly __flags__?: 'exclusive';
+	}
+	interface SelfParameter {
+		readonly __flags__?: 'mutable';
+	}
+	interface StaticItem {
+		readonly __flags__?: 'mutable' | 'byReference';
+	}
+	interface TraitItem {
+		readonly __flags__?: 'unsafe';
+	}
+	interface VariadicParameter {
+		readonly __flags__?: 'mutable';
+	}
+}

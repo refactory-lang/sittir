@@ -2,7 +2,7 @@ import { resolveRoutes, type GrammarInput, type ReadEntry } from '../../../bindi
 import type { NodeMap } from '../../../compiler/types.ts';
 import { findKindEntry, fixedTextKinds, kindDiscriminantExpr, type KindEnumEntry } from '../../kind-discriminant.ts';
 import type { QueryPlan } from '@sittir/types';
-import { expandToConcreteParseKinds } from '../../shared.ts';
+import { expandToConcreteParseKinds, isSlotBearingCompound } from '../../shared.ts';
 import { flagPlansOf } from './flags.ts';
 import { emitPortableNodeModel } from './node-model.ts';
 import { presenceKeywordOf, readTestOf, slotSubjectOf } from './read-tests.ts';
@@ -20,6 +20,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 	const kindIdOf = (kind: string) => kindDiscriminantExpr(kind, nodeMap, kindEntries);
 	const typesOf = (kind: string): readonly number[] => [...new Set(expandToConcreteParseKinds([kind], nodeMap).flatMap((member) => typeOf(member) ?? []))];
 	const flags = new Map<string, ReadonlyMap<string, QueryPlan | null>>();
+	const flagTypes: (readonly [string, readonly string[]])[] = [];
 	for (const kind of [...new Set([...routes.members.keys(), ...routes.readEntries.keys()])].sort()) {
 		if (typeOf(kind) === undefined) continue;
 		const plans = flagPlansOf({
@@ -37,6 +38,9 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 		const claimed = flags.get(id);
 		if (claimed !== undefined && JSON.stringify([...claimed]) !== JSON.stringify([...plans])) throw new Error(`portable: kind id ${id} ('${kind}') has two flag tables`);
 		flags.set(id, plans);
+		const node = nodeMap.nodes.get(kind);
+		const declared = [...plans].flatMap(([flag, plan]) => (plan === null ? [] : [flag]));
+		if (node !== undefined && isSlotBearingCompound(node) && declared.length > 0) flagTypes.push([node.typeName, declared]);
 	}
 	return {
 		nodeModel: emitPortableNodeModel(routes, readTest),
@@ -45,7 +49,8 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 			readTest,
 			kindIdOf,
 			fixedText: fixedTextKinds(nodeMap, kindEntries).map(([kind, text]) => [kindIdOf(kind), text] as const),
-			flags: [...flags]
+			flags: [...flags],
+			flagTypes
 		})
 	};
 }

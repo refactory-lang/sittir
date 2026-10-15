@@ -146,6 +146,26 @@ function everyAccessor(table: QuerySlots): ReadonlySet<string> {
 	return new Set(Object.values(table).flatMap((row) => row.map(([accessor]) => accessor)));
 }
 
+function everyFlag(table: QueryFlags): ReadonlySet<string> {
+	return new Set(Object.values(table).flatMap((flags) => Object.keys(flags)));
+}
+
+const ALWAYS: QueryPlan = Object.freeze({ op: 'and', of: Object.freeze([]) });
+
+function flagRef(context: Context, kind: number | undefined, owner: string): (flag: string) => Cond {
+	return (flag) => {
+		if (typeof flag !== 'string') refuse('query: is takes the name of a flag');
+		if (kind === undefined) {
+			if (!everyFlag(context.hooks.queryFlags).has(flag)) refuse(`query: no kind of this grammar declares the flag ${flag}`);
+			return cond(ALWAYS);
+		}
+		const plan = context.hooks.queryFlags[kind]?.[flag];
+		if (plan === undefined) refuse(`query: ${owner} declares no flag ${flag}`);
+		if (plan === null) refuse(`query: ${flag} on ${owner} depends on the node's context`);
+		return cond(plan);
+	};
+}
+
 type Source =
 	| { readonly slot: string; readonly node: object }
 	| { readonly from: NodeAddress; readonly depth: number | undefined };
@@ -653,6 +673,7 @@ function recorder(context: Context, kind: number | undefined): Recorder<unknown>
 		refuse(`query: ${what}; a condition reads slots and compares them (c.slot.eq / .match)`);
 	return new Proxy(Object.create(null) as Recorder<unknown>, {
 		get(_, key) {
+			if (key === 'is') return flagRef(context, kind, owner);
 			if (typeof key === 'string' && names.has(key)) return refFor(key);
 			return refuseRecorder(`${String(key)} is not a slot of ${owner}`);
 		},

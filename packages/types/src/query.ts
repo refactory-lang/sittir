@@ -1,5 +1,5 @@
 import type { IsBooleanKeyword } from './keyword-presence.ts';
-import type { SlotHint, SlotHintsOf } from './node-surface.ts';
+import type { FlagsHintOf, SlotHint, SlotHintsOf } from './node-surface.ts';
 
 /**
  * A slot by its number in each kind that has it, keyed by stamped kind id: the slot's position among the kind's transport
@@ -102,8 +102,23 @@ type SlotRefOf<N, S> = N extends unknown
 		: never
 	: never;
 
-/** What a `where` callback receives: one member per slot of the view's element type, a `PresenceRef` for a slot that holds a keyword's presence and a `SlotRef` for any other. */
-export type Recorder<N> = { readonly [S in SlotNameOf<N>]: SlotRefOf<N, S> };
+type SharedFlags<N> = (N extends unknown ? (flags: FlagsHintOf<N>) => void : never) extends (flags: infer F) => void ? F : never;
+
+/** The vocabulary flags a `where` condition can test on a node type: those its kind declares, and over a union only those every member declares. A flag that depends on the node's context is not one of them. */
+export type FlagOf<N> = [N] extends [never] ? never : SharedFlags<N> & string;
+
+/**
+ * What a `where` callback receives: one member per slot of the view's element type, a `PresenceRef` for a slot that holds a
+ * keyword's presence and a `SlotRef` for any other, and `is`, which tests a vocabulary flag.
+ */
+export type Recorder<N> = { readonly [S in SlotNameOf<N>]: SlotRefOf<N, S> } & {
+	/**
+	 * Holds when the node carries the vocabulary flag `flag`, as its kind spells it.
+	 *
+	 * @throws When the node's kind does not declare `flag`, or declares it only in a context a condition on the node cannot see.
+	 */
+	is(flag: FlagOf<N>): Cond;
+};
 
 type KindOf<T> = T extends { readonly $type: infer K extends number } ? K : never;
 

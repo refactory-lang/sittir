@@ -238,6 +238,10 @@ What a supertype guard narrows its input to, given the supertype's member kind i
 
 Key-remapping removal of the keys `K` from `T`. It is the only form used to drop members: `Omit` does not distribute over a union and collapses it to its common keys, and a declared type built on it lost its keys and cascaded into thousands of errors. Remapping keeps each member's keys.
 
+### `packages/types/src/node-surface.ts::FlagsHintOf`
+
+The vocabulary flags a node type's kind declares, read from its `__flags__`, which a bound grammar's `portable.ts` declares on the kind's node interface and the parsed surface carries (`SurfaceOf`); `never` for a kind with none.
+
 ### `packages/types/src/node-surface.ts::SlotHintsOf`
 
 The slot hints of a kind interface with the reserved `$listView` and `$listSlots` entries removed, so a setter is produced per slot and never for those facts.
@@ -353,6 +357,10 @@ The brand on a keyword-presence slot's boolean storage, carrying the keyword's t
 ### `packages/types/src/query.ts::QueryPlan`
 
 The plan language one condition compiles to, which the native walk and `holds` both evaluate. Leaves read the values a slot holds, the slot named by its number in each kind (`SlotSubject`): `eq` and `match` their text, `present` that one exists, and `is` their stamped kind ids. The ids are expanded by membership when the plan is compiled, as `ofType` expands them, so the evaluators compare ids and never names. `child` moves the condition to a node the slot holds, narrowed by an anchor, so a flag spelled inside a wrapper (rust `function_item (function_modifiers "async")`) is still one plan. `not`, `and` and `or` combine. A constant is `and` or `or` over no plans, never an op of its own: a plan that always holds (a flag the kind's own form spells) is `{ op: 'and', of: [] }`, and one that never holds is `{ op: 'or', of: [] }`.
+
+### `packages/types/src/query.ts::FlagOf`
+
+The flags a recorder's `is` takes for a view's element type: each member's `FlagsHintOf`, intersected over a union (`SharedFlags`, by contravariant inference), so only the flags every member declares; `never` for no element type, or a member with no flags. A flag that depends on the node's context is never declared, so it is a type error as well as a refusal.
 
 ### `packages/types/src/query.ts::QueryFlags`
 

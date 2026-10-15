@@ -50,3 +50,18 @@ describe('a flag a boolean slot holds', () => {
 		expect(queryFlags[TSKindId.SymbolKeyword]?.['unique']).toBeUndefined();
 	});
 });
+
+describe('c.is(flag) with slot comparisons', () => {
+	const SOURCE = 'class C {\n  static m() {}\n  m() {}\n  static n() {}\n}\n';
+	const methods = () => ts.parse(SOURCE).$query().$descendants.ofType(ts.kinds.MethodDefinition);
+	const spanOf = (node: unknown) => (node as { $_layout: { at: { $span: { start: number; end: number } } } }).$_layout.at.$span;
+	const text = (node: unknown) => SOURCE.slice(spanOf(node).start, spanOf(node).end);
+
+	it('pushes the flag and the slot comparison down as one plan, selecting what the read holds', () => {
+		const native = [...methods().where((c) => c.is('static').and(c.name.eq('m')))].map(text);
+		const reference = [...methods()].filter((m) => m.static() && text(m.name()) === 'm').map(text);
+		expect(native).toEqual(['static m() {}']);
+		expect(native).toEqual(reference);
+	});
+});
+

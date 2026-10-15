@@ -11,6 +11,7 @@ export type {
 	PresenceRef,
 	QueryFacet,
 	QueryFlags,
+	FlagOf,
 	QueryPlan,
 	QuerySlotEntry,
 	QuerySlots,

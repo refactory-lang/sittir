@@ -62,6 +62,8 @@ function emitTriviaFacts(
 
 type QuerySlotRow = readonly [accessor: string, slot: number, keyword?: string];
 
+const RECORDER_FLAG_KEY = 'is';
+
 export function queryRoutesOf(slot: AssembledNonterminal, nodeMap: NodeMap): WireRoutes {
 	return slot.fieldName === undefined ? wireRoutesOf(slot, nodeMap) : { fields: [slot.fieldName], kinds: [] };
 }
@@ -72,6 +74,8 @@ export function querySlotRows(nodeMap: NodeMap): ReadonlyMap<number, readonly Qu
 		if (node.kindId === undefined || node.slots.length === 0) continue;
 		const numbers = transportSlotNumbers(node, nodeMap);
 		const row = node.slots.map((slot): QuerySlotRow => {
+			if (slot.propertyName === RECORDER_FLAG_KEY)
+				throw new Error(`client-utils: ${node.kind}'s slot ${slot.name} is read as \`${RECORDER_FLAG_KEY}\`, which a where condition reserves for flags`);
 			const number = numbers.get(slot.storageName);
 			if (number === undefined) throw new Error(`client-utils: ${node.kind}'s slot ${slot.name} has no field in its transport, so a query cannot number it`);
 			const keyword = keywordPresenceValue(slot, nodeMap);

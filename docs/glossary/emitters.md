@@ -10213,7 +10213,11 @@ How the parser delivers a slot's children: a named slot by its field alone, and 
 
 ### `packages/codegen/src/emitters/client-utils.ts::querySlotRows`
 
-Each kind's slots, by stamped kind id: the accessor a node reads the slot through (`propertyName`), the slot's number among the kind's transport slots (`render-module.ts::transportSlotNumbers`), and, for a slot that holds a keyword's presence, that keyword (`keywordPresenceValue`). The keyword is the one fact that tells a boolean slot from a text slot: the recorder gives such a slot a member with only `eq(boolean)`, and a portable read reads its `true` as the keyword's text, the source text the native walk reads. A query condition compiles on the client to these numbers, so the native evaluator knows no slot names and routes the slot by the read's own router. A slot with no field in its kind's transport cannot be numbered, and the emitter throws. A kind with no slots has no row. Two nodes stamped with one kind id must agree on the row, and the emitter throws when they do not.
+Each kind's slots, by stamped kind id: the accessor a node reads the slot through (`propertyName`), the slot's number among the kind's transport slots (`render-module.ts::transportSlotNumbers`), and, for a slot that holds a keyword's presence, that keyword (`keywordPresenceValue`). The keyword is the one fact that tells a boolean slot from a text slot: the recorder gives such a slot a member with only `eq(boolean)`, and a portable read reads its `true` as the keyword's text, the source text the native walk reads. A query condition compiles on the client to these numbers, so the native evaluator knows no slot names and routes the slot by the read's own router. A slot with no field in its kind's transport cannot be numbered, and the emitter throws, as it does for a slot read as `is` (`RECORDER_FLAG_KEY`), the recorder's flag test. A kind with no slots has no row. Two nodes stamped with one kind id must agree on the row, and the emitter throws when they do not.
+
+### `packages/codegen/src/emitters/client-utils.ts::RECORDER_FLAG_KEY`
+
+The member a `where` recorder tests a flag by (`common/src/query.ts::flagRef`), which no slot may be read as.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitQuerySlots`
 
