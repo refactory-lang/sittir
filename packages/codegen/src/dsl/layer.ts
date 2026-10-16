@@ -1,10 +1,8 @@
 import type { GrammarJson, SymbolRule } from '../grammar-shapes/grammar-json.ts';
-import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { Rule } from '../types/rule.ts';
 import { EMPTY_CONFLICT_RESOLUTIONS, type ConflictResolutionRecord, type ConflictResolutionsInput } from './conflict-resolutions.ts';
 import {
 	enrich,
-	enrichSidecarsOf,
 	getEnrichMints,
 	getEnrichTextTokens,
 	nativeRuleFn,
@@ -18,6 +16,7 @@ import type { ExternalRole } from '../types/ir.ts';
 import { layerRecordOf, mergedRecords, synthesizedOf, withLayerRecord, type LayerRecord, type LayerRecords, type StageBases } from './layer-record.ts';
 import { withRoleScope } from './primitives/role.ts';
 import { isRecord, type GrammarRecord } from './rule-patterns.ts';
+import type { DisplayFamilies } from './rule-transforms.ts';
 import { baseRulesOf } from './shared.ts';
 import { verbCtxOf, type VerbCtx } from './verbs/copy.ts';
 import { appendProvenance, displayFamiliesOf, effectsForOwners, provenanceOf, rewriteInherited, type AliasEffect, type Effect, type SegmentEffect } from './verbs/effects.ts';
@@ -90,6 +89,7 @@ export interface LayerOutput {
 }
 
 export interface LayerCtx extends VerbCtx {
+	readonly config: LayerConfig;
 	readonly depth: number;
 	readonly inherited: LayerRecord | undefined;
 	readonly upstream: GrammarJson;
@@ -182,9 +182,7 @@ export function layerOptions<B = any, const P = unknown, const O = unknown>(
 	const layer = config as LayerConfig;
 	let output: LayerOutput | undefined;
 	const options: Record<string, unknown> = {
-		...(layer.name === undefined ? {} : { name: layer.name }),
-		...(layer.edits === undefined ? {} : { edits: layer.edits }),
-		...(layer.factoryInline === undefined ? {} : { factoryInline: layer.factoryInline }),
+		...configOptions(layer),
 		externals: function layerEntry(this: unknown, _$: unknown, previous?: unknown): unknown {
 			const handle = handleOf(previous);
 			if (handle === undefined) throw new Error(`wire(): the runtime gave externals that carry no pending base; a layer's base is given through enrich()`);
@@ -201,7 +199,7 @@ export function layerOptions<B = any, const P = unknown, const O = unknown>(
 				throw new Error(
 					`wire(): the runtime read options.rules before it called externals, where the layer pass runs; the call order was verified against tree-sitter ${VERIFIED_TREE_SITTER}`
 				);
-			return ruleCallbacksOf(output);
+			return ruleCallbacksOf(output.bodies);
 		},
 		enumerable: true,
 		configurable: true
@@ -215,30 +213,56 @@ function returning(value: unknown): LayerCallback {
 	};
 }
 
-function ruleCallbacksOf(output: LayerOutput): Record<string, LayerCallback> {
-	return Object.fromEntries([...output.bodies].map(([name, body]) => [name, returning(body)]));
+function ruleCallbacksOf(bodies: ReadonlyMap<string, unknown>): Record<string, LayerCallback> {
+	return Object.fromEntries([...bodies].map(([name, body]) => [name, returning(body)]));
+}
+
+function configOptions(layer: LayerConfig): Record<string, unknown> {
+	return {
+		...(layer.name === undefined ? {} : { name: layer.name }),
+		...(layer.edits === undefined ? {} : { edits: layer.edits }),
+		...(layer.factoryInline === undefined ? {} : { factoryInline: layer.factoryInline })
+	};
+}
+
+function listOptions(lists: LayerLists): Record<string, unknown> {
+	return {
+		...(lists.reserved === undefined
+			? {}
+			: { reserved: Object.fromEntries(Object.entries(lists.reserved).map(([set, words]) => [set, returning(words)])) }),
+		...(lists.extras === undefined ? {} : { extras: returning(lists.extras) }),
+		...(lists.word === undefined ? {} : { word: returning(lists.word) }),
+		conflicts: returning(lists.conflicts),
+		inline: returning(lists.inline),
+		supertypes: returning(lists.supertypes),
+		...(lists.precedences === undefined ? {} : { precedences: returning(lists.precedences) })
+	};
 }
 
 function fillLayerOptions(options: Record<string, unknown>, output: LayerOutput): void {
-	const { lists } = output;
 	options.name ??= output.name;
-	if (lists.reserved !== undefined)
-		options.reserved = Object.fromEntries(Object.entries(lists.reserved).map(([set, words]) => [set, returning(words)]));
-	if (lists.extras !== undefined) options.extras = returning(lists.extras);
-	if (lists.word !== undefined) options.word = returning(lists.word);
-	options.conflicts = returning(lists.conflicts);
-	options.inline = returning(lists.inline);
-	options.supertypes = returning(lists.supertypes);
-	if (lists.precedences !== undefined) options.precedences = returning(lists.precedences);
+	Object.assign(options, listOptions(output.lists));
 	Object.defineProperty(options, '__wireContext__', { value: output.wire, enumerable: false, configurable: true });
 }
 
-export function enrichFixpoint(
+function layerResult(ctx: LayerCtx, bodies: ReadonlyMap<string, unknown>, lists: LayerLists): GrammarResult {
+	const grammar = nativeRuleFn<(base: GrammarResult, options: Readonly<Record<string, unknown>>) => GrammarResult>('grammar');
+	return grammar(ctx.base, {
+		...configOptions(ctx.config),
+		name: ctx.name,
+		externals: returning(lists.externals),
+		rules: ruleCallbacksOf(bodies),
+		...listOptions(lists)
+	});
+}
+
+function enrichFixpoint(
 	result: GrammarResult,
-	record: Pick<LayerRecord, 'sidecars' | 'effects'>
+	base: GrammarResult,
+	displayFamilies: DisplayFamilies
 ): { readonly checked: GrammarResult; readonly changed: readonly string[] } {
 	const before = baseRulesOf<unknown>(result) ?? {};
-	const checked = enrich(withEnrichSidecarsOf(result, record.sidecars), { displayFamilies: displayFamiliesOf(record.effects) }) as unknown as GrammarResult;
+	const checked = enrich(withEnrichSidecarsOf(result, base), { displayFamilies }) as unknown as GrammarResult;
 	const after = baseRulesOf<unknown>(checked) ?? {};
 	const changed = [...new Set([...Object.keys(before), ...Object.keys(after)])].filter(
 		(name) => JSON.stringify(before[name]) !== JSON.stringify(after[name])
@@ -250,7 +274,6 @@ interface IntakeCtx {
 	readonly config: LayerConfig;
 	readonly name: string;
 	readonly inherited: LayerRecord | undefined;
-	readonly diagnostics: GrammarDiagnostic[];
 	readonly declared: EvaluatedConfig;
 }
 
@@ -264,18 +287,7 @@ function intake(source: GrammarResult, ctx: IntakeCtx): GrammarResult {
 		}) as unknown as GrammarResult;
 	if (config.resolutions !== undefined)
 		throw new Error(`wire(): '${ctx.name}' gives resolutions, which belong to the first layer; its layer applies its section of the first layer's file`);
-	const { checked, changed } = enrichFixpoint(source, inherited);
-	if (changed.length > 0)
-		ctx.diagnostics.push({
-			scope: 'grammar',
-			code: 'layer-not-enrich-fixpoint',
-			severity: 'fail',
-			canProceed: false,
-			grammar: ctx.name,
-			message: `enrich changes ${changed.join(', ')} in the layer below '${ctx.name}', so that layer is not enrich's fixpoint`,
-			details: { layer: ctx.name, depth: inherited.depth + 1, rules: changed }
-		});
-	return checked;
+	return inherited.enrichment;
 }
 
 function wireConfigOf(config: LayerConfig, ctx: Pick<IntakeCtx, 'name' | 'inherited'>): WireConfig<any> {
@@ -296,7 +308,7 @@ function evaluatedLayer(base: PendingBase<unknown>, source: GrammarResult, confi
 	const name = config.name ?? source.grammar.name;
 	const diagnostics = [...(inherited?.diagnostics ?? [])];
 	const declared = evaluatedConfig(config);
-	const completed = intake(source, { config, name, inherited, diagnostics, declared });
+	const completed = intake(source, { config, name, inherited, declared });
 	completePendingBase(base, completed);
 	const depth = (inherited?.depth ?? 0) + 1;
 	const layer: WireLayer = { name, depth, diagnostics, narrows: [], leads: [] };
@@ -315,6 +327,7 @@ function evaluatedLayer(base: PendingBase<unknown>, source: GrammarResult, confi
 		...verbCtxOf(view, { effects: [...resolvedEffects(view, wire)], diagnostics }, rules),
 		rules,
 		created: [...bodies.keys()].filter((ruleName) => !(ruleName in baseRules)),
+		config,
 		depth,
 		inherited,
 		upstream: inherited?.upstream ?? (source.grammar as unknown as GrammarJson),
@@ -412,16 +425,34 @@ function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx, 
 	const bodies = new Map<string, unknown>();
 	for (const [name, body] of wire.evaluatedBodies!) bodies.set(name, name === start || dead.has(name) || isRecord(body) ? rules[name] : body);
 	for (const name of ctx.created) if (!bodies.has(name)) bodies.set(name, rules[name]);
+	const lists: LayerLists = {
+		...evaluated,
+		conflicts: layerConflicts(ctx),
+		inline: withoutDeadNames(ctx.lists.inline, dead) as readonly unknown[],
+		supertypes
+	};
+	const effects = [...(ctx.inherited?.effects ?? []), ...ctx.effects];
+	const { checked, changed } = enrichFixpoint(layerResult(ctx, bodies, lists), ctx.base, displayFamiliesOf(effects));
+	if (changed.length > 0)
+		ctx.diagnostics.push({
+			scope: 'grammar',
+			code: 'layer-not-enrich-fixpoint',
+			severity: 'fail',
+			canProceed: false,
+			grammar: ctx.name,
+			message: `enrich changes ${changed.join(', ')} in layer '${ctx.name}', so the layer is not enrich's fixpoint`,
+			details: { layer: ctx.name, depth, rules: changed }
+		});
 	const own = ownRecordsOf(wire, { supertypes: [...symbolNamesOf(supertypes)], roles, unmatchedGroups: unmatchedGroupPatterns(rules, baseRules, wire) });
 	const record: LayerRecord = {
 		depth,
 		upstream: ctx.upstream,
-		sidecars: enrichSidecarsOf(ctx.base),
+		enrichment: checked,
 		resolutions: ctx.resolutions,
 		deadMints,
 		textTokens: [...getEnrichTextTokens(ctx.base).keys()].filter((name) => !deadMints.has(name)),
 		liftNames,
-		effects: [...(ctx.inherited?.effects ?? []), ...ctx.effects],
+		effects,
 		records: mergedRecords(ctx.inherited === undefined ? undefined : rewriteInherited(ctx.inherited.records, { effects: ctx.effects, rules }), own),
 		synthesized: [...(ctx.inherited?.synthesized ?? []), ...synthesizedOf(new Set([...Object.keys(baseRules), ...bodies.keys()]).size, own)],
 		automaticVariants: wire.automaticVariants,
@@ -435,18 +466,7 @@ function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx, 
 		diagnostics: ctx.diagnostics
 	};
 	if (start !== undefined) bodies.set(start, withLayerRecord(rules[start]!, record));
-	return {
-		name: ctx.name,
-		bodies,
-		lists: {
-			...evaluated,
-			conflicts: layerConflicts(ctx),
-			inline: withoutDeadNames(ctx.lists.inline, dead) as readonly unknown[],
-			supertypes
-		},
-		record,
-		wire
-	};
+	return { name: ctx.name, bodies, lists, record, wire };
 }
 
 export interface OwnRecordFacts {

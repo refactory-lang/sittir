@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { EMPTY_CONFLICT_RESOLUTIONS } from '../conflict-resolutions.ts';
-import { enrichSidecarsOf } from '../enrich.ts';
 import { layerRecordOf, withLayerRecord, type LayerRecord } from '../layer-record.ts';
 
 const SENTINEL = 'layer-record-sentinel';
@@ -8,7 +7,7 @@ const SENTINEL = 'layer-record-sentinel';
 const record = (depth: number): LayerRecord => ({
 	depth,
 	upstream: { name: SENTINEL, rules: {} },
-	sidecars: enrichSidecarsOf({}),
+	enrichment: { grammar: { name: SENTINEL, rules: {} } },
 	resolutions: EMPTY_CONFLICT_RESOLUTIONS,
 	deadMints: new Set([SENTINEL]),
 	textTokens: [SENTINEL],

@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { evaluateDsl, withDslGlobals } from '../../compiler/evaluate.ts';
+import { evaluateDsl } from '../../compiler/evaluate.ts';
 import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
 import { grammarPackage, topLayerPath } from '../../grammars.ts';
-import type { GrammarResult } from '../enrich.ts';
-import { enrichFixpoint } from '../layer.ts';
 import { layerRecordOf } from '../layer-record.ts';
 
 interface AliasSites {
@@ -25,12 +23,6 @@ function aliasSites(rules: Readonly<Record<string, unknown>>): AliasSites {
 	return sites;
 }
 
-async function topLayerChanges(grammar: string): Promise<readonly string[]> {
-	const evaluated = await evaluateDsl(topLayerPath(grammarPackage(grammar)));
-	const record = layerRecordOf({ grammar: evaluated });
-	return (await withDslGlobals(async () => enrichFixpoint({ grammar: evaluated } as unknown as GrammarResult, record!))).changed;
-}
-
 describe('visible externals across layers', () => {
 	it('aliases a visible external once when a second layer wires it again', async () => {
 		const raw = await evaluateTempGrammar({ extras: '/\\s/', rules: "pair: $ => seq($.word, ',', $.word)" }, '', { bindings: '' });
@@ -40,6 +32,8 @@ describe('visible externals across layers', () => {
 	}, 60_000);
 
 	it.each(['rust', 'typescript', 'python'])("takes %s's completed top layer as a fixpoint of enrich", async (grammar) => {
-		expect(await topLayerChanges(grammar)).toEqual([]);
+		const record = layerRecordOf({ grammar: await evaluateDsl(topLayerPath(grammarPackage(grammar))) });
+		expect(record).toBeDefined();
+		expect(record!.diagnostics).not.toContainEqual(expect.objectContaining({ code: 'layer-not-enrich-fixpoint' }));
 	}, 240_000);
 });

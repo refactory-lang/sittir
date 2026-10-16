@@ -7163,7 +7163,7 @@ layer's inherited records pass through `rewriteInherited`, and its own merge ove
 
 ### `packages/codegen/src/dsl/layer-record.ts::LayerRecord`
 
-The one record a completed layer hands the layer above, on its result's start rule: its `depth` (1 for `grammar.sittir.ts`, one more per layer above), the `upstream` grammar (`GrammarJson`) its derivation records stay keyed to, the enrich `sidecars` the next layer re-attaches when it checks its base, the conflict `resolutions` (the file the first layer gave), the dead enrich mints, the text tokens, the lift names, the effect log, the records (`mergedRecords`), where each layer's render bodies go among the rules (`SynthesizedRules`), the top layer's automatic-variant record (`automatic-variants.ts::AutomaticVariants`), the stage bases (`StageBases`), the projections (`verbs/effects.ts::Provenance`, for a layer that inherits a record), the conflict-derivation records (`wire/derivation-records.ts::DerivationRecords`) and the diagnostics the passes recorded (`layer-not-enrich-fixpoint`, `edit-site-missing`), which `evaluate` hands the compile gate. JSON never carries it.
+The one record a completed layer hands the layer above, on its result's start rule: its `depth` (1 for `grammar.sittir.ts`, one more per layer above), the `upstream` grammar (`GrammarJson`) its derivation records stay keyed to, enrich's checked run over the layer's result with its three sidecars (`enrichment`), which the layer above takes as its base, the conflict `resolutions` (the file the first layer gave), the dead enrich mints, the text tokens, the lift names, the effect log, the records (`mergedRecords`), where each layer's render bodies go among the rules (`SynthesizedRules`), the top layer's automatic-variant record (`automatic-variants.ts::AutomaticVariants`), the stage bases (`StageBases`), the projections (`verbs/effects.ts::Provenance`, for a layer that inherits a record), the conflict-derivation records (`wire/derivation-records.ts::DerivationRecords`) and the diagnostics the passes recorded (`layer-not-enrich-fixpoint`, `edit-site-missing`), which `evaluate` hands the compile gate. JSON never carries it.
 
 ### `packages/codegen/src/dsl/layer-record.ts::SynthesizedRules`
 
@@ -7263,7 +7263,7 @@ One pass's result: the layer's name, the body each rule callback returns, keyed 
 
 ### `packages/codegen/src/dsl/layer.ts::LayerCtx`
 
-The one phase context of the pass, a verb context (`verbs/copy.ts::VerbCtx`) over the layer's grammar view (`layerView`), whose rules are the layer's own: the layer's name and depth, the record it inherits, the upstream grammar and the completed base, the conflict resolutions and whether the config authors conflicts, wire's context and the rule names it protects, the rules as the layer leaves them, the rules it creates in creation order (wire's, then the verbs' copies and groups), the layer's `$`, the stage bases, the effects (the layer's own, resolved per owner, then the copies the verbs record) and the diagnostics the pass records.
+The one phase context of the pass, a verb context (`verbs/copy.ts::VerbCtx`) over the layer's grammar view (`layerView`), whose rules are the layer's own: the layer's config, name and depth, the record it inherits, the upstream grammar and the completed base, the conflict resolutions and whether the config authors conflicts, wire's context and the rule names it protects, the rules as the layer leaves them, the rules it creates in creation order (wire's, then the verbs' copies and groups), the layer's `$`, the stage bases, the effects (the layer's own, resolved per owner, then the copies the verbs record) and the diagnostics the pass records.
 
 ### `packages/codegen/src/dsl/layer.ts::LayerHandle`
 
@@ -7319,7 +7319,7 @@ Fills a pending base from intake's completed result. The guarded keys are cleare
 
 ### `packages/codegen/src/dsl/layer.ts::layerOptions`
 
-`wire(config)` in grammar files: the options the runtime reads. They carry the config's `name`, and its `edits` and `factoryInline`, which `evaluate` reads, and the layer's entry as `externals`. The entry takes the handle from the base externals the runtime passes and refuses a missing or consumed one; it runs the pass (`runLayerPass`), fills the options with its results (`fillLayerOptions`) and returns the layer's externals. Reading `rules` before that throws, naming `VERIFIED_TREE_SITTER`. `contexts` never reaches the options.
+`wire(config)` in grammar files: the options the runtime reads. They carry the config's own options (`configOptions`) and the layer's entry as `externals`. The entry takes the handle from the base externals the runtime passes and refuses a missing or consumed one; it runs the pass (`runLayerPass`), fills the options with its results (`fillLayerOptions`) and returns the layer's externals. Reading `rules` before that throws, naming `VERIFIED_TREE_SITTER`. `contexts` never reaches the options.
 
 `B` is inferred from the call's contextual type, the global `grammar(base, options)`, which ties it to the base `enrich()` was given. `edits` and `options` are checked against that base through `BaseEditsCheck` and `BaseOptionsCheck`, and their values against records that do not depend on it.
 
@@ -7333,22 +7333,42 @@ One returning callback per body the pass computed, in the order the runtime appe
 
 ### `packages/codegen/src/dsl/layer.ts::fillLayerOptions`
 
-Fills the options from a pass's output: `name` when the config gives none, a returning callback for each list the pass computed (one per reserved word set), and wire's context, not enumerable, under `__wireContext__`.
+Fills the options from a pass's output: `name` when the config gives none, its lists (`listOptions`), and wire's context, not enumerable, under `__wireContext__`.
 
 ### `packages/codegen/src/dsl/layer.ts::enrichFixpoint`
 
-Runs enrich once over a completed result with its record's sidecars and the display families its effect log declares
-(`verbs/effects.ts::displayFamiliesOf`), and names every rule enrich would add, remove or change, sorted. A merge a layer
-declared therefore passes. The checked result is returned for the layer above to build on.
+Runs enrich once over a layer's result, with the sidecars of the base it completed (`enrich.ts::withEnrichSidecarsOf`)
+and the display families an effect log declares (`verbs/effects.ts::displayFamiliesOf`), and names every rule enrich
+would add, remove or change, sorted. A merge a layer declared therefore passes. The checked result is the record's
+`enrichment`, which the layer above takes as its base.
+
+### `packages/codegen/src/dsl/layer.ts::configOptions`
+
+The options a layer's config gives the runtime as written: its `name`, and its `edits` and `factoryInline`, which
+`evaluate` reads, each only when the config gives it.
+
+### `packages/codegen/src/dsl/layer.ts::listOptions`
+
+The options that hand the runtime a pass's lists, each as a returning callback (one per reserved word set):
+`reserved`, `extras`, `word` and `precedences` when the pass computed them, and `conflicts`, `inline` and `supertypes`
+always.
+
+### `packages/codegen/src/dsl/layer.ts::layerResult`
+
+The layer's result as the runtime builds it: the runtime's own `grammar()` (`enrich.ts::nativeRuleFn`), called over the
+completed base with the options the layer hands the runtime: the config's (`configOptions`), the layer's name, its
+externals, its bodies and its lists (`listOptions`). Both runtimes' `grammar()` read only their arguments, so the call
+inside the pass builds the rules the runtime's own call returns, in either runtime, without the record the start rule
+then carries.
 
 ### `packages/codegen/src/dsl/layer.ts::IntakeCtx`
 
-What intake reads beside the source grammar: the config, the layer's name, the inherited record, the diagnostics it
-appends to and the config's evaluated callbacks (`declared`), whose `groups:` bodies enrich reads.
+What intake reads beside the source grammar: the config, the layer's name, the inherited record and the config's
+evaluated callbacks (`declared`), whose `groups:` bodies enrich reads.
 
 ### `packages/codegen/src/dsl/layer.ts::intake`
 
-Completes a layer's base. Over an upstream base, which carries no record, enrich runs with the config's enrich inputs: the `groups:` bodies the layer evaluated, the `extras:` callback, which enrich evaluates once against the base's list (`enrich.ts::authoredExtrasOf`), and the field sites `edits` names. Over a completed layer the config's enrich inputs reach no enrich: `resolutions` is refused, since it belongs to the first layer, and enrich runs once over the base with its record (`enrichFixpoint`), recording `layer-not-enrich-fixpoint` with the rules it would change.
+Completes a layer's base. Over an upstream base, which carries no record, enrich runs with the config's enrich inputs: the `groups:` bodies the layer evaluated, the `extras:` callback, which enrich evaluates once against the base's list (`enrich.ts::authoredExtrasOf`), and the field sites `edits` names. Over a completed layer the config's enrich inputs reach no enrich: `resolutions` is refused, since it belongs to the first layer, and the base is its record's `enrichment`, the run the layer below checked when it completed (`completeLayer`), so intake enriches nothing.
 
 ### `packages/codegen/src/dsl/layer.ts::wireConfigOf`
 
@@ -7410,7 +7430,7 @@ The conflict sets the `conflicts` callback returns. The first layer's are its se
 
 ### `packages/codegen/src/dsl/layer.ts::completeLayer`
 
-Completion, in order. Automatic variants are stamped over the layer's grammar view, with the supertype and inline lists the verbs' copies joined. Enrich mints that nothing reaches (`wire/dead-mints.ts::deadEnrichMints`) are blanked, and `inline` and `supertypes` leave them out. The dead set covers every way a mint dies without tracking any one of them: a lift renamed onto an authored variant, a lift whose owner the grammar re-authors, a lift left behind by a body rewrite. Each dead rule's entry is reassigned to the runtime's own `blank()` and no rule object is changed, so a body another rule shares is untouched, and reassigning an existing key keeps the key order, which fixes parser symbol ids. tree-sitter's generate drops the unreachable blank rule, `transpile/prune-grammar-json.ts::pruneOrphanedPlaceholderRules` removes it from grammar.json, and the canonical prune removes it from sittir's grammar. The record's dead mints, the inherited ones and the layer's own, become `orphanedSyntheticGroups`. The record is built: depth, upstream, enrich sidecars, resolutions, dead mints, text tokens, lift names, effects, the records (`layer-record.ts::mergedRecords`: the ones its base's record carries, rewritten through the effects (`rewriteInherited`), under the layer's own (`ownRecordsOf`), which take the `groups:` entries that nothing in the final rules references (`wire/wire.ts::unmatchedGroupPatterns`)), where the layer's render bodies go (`layer-record.ts::synthesizedOf`, after the rules the runtime holds once the layer's bodies join its base's), wire's automatic-variant record, the stage bases, the projections, derivation records and diagnostics. A layer that inherits a record projects its effects (`provenanceOf`, over the rules before dead mints are blanked) after the ones it inherits (`appendProvenance`); layer 1 records its effects and projects nothing. The record rides on the start rule's body (`withLayerRecord`), normalized for it.
+Completion, in order. Automatic variants are stamped over the layer's grammar view, with the supertype and inline lists the verbs' copies joined. Enrich mints that nothing reaches (`wire/dead-mints.ts::deadEnrichMints`) are blanked, and `inline` and `supertypes` leave them out. The dead set covers every way a mint dies without tracking any one of them: a lift renamed onto an authored variant, a lift whose owner the grammar re-authors, a lift left behind by a body rewrite. Each dead rule's entry is reassigned to the runtime's own `blank()` and no rule object is changed, so a body another rule shares is untouched, and reassigning an existing key keeps the key order, which fixes parser symbol ids. tree-sitter's generate drops the unreachable blank rule, `transpile/prune-grammar-json.ts::pruneOrphanedPlaceholderRules` removes it from grammar.json, and the canonical prune removes it from sittir's grammar. The record's dead mints, the inherited ones and the layer's own, become `orphanedSyntheticGroups`. The layer's result (`layerResult`), its bodies and lists as the runtime takes them, is checked against enrich (`enrichFixpoint`) with the display families every effect so far declares, the inherited ones and the layer's own: the rules enrich would change are one `layer-not-enrich-fixpoint` at the layer's depth, and the checked result becomes the record's `enrichment`. A layer cannot know whether another will extend it, so every layer checks its own result and no layer checks its base again. The record is built: depth, upstream, the checked enrichment, resolutions, dead mints, text tokens, lift names, effects, the records (`layer-record.ts::mergedRecords`: the ones its base's record carries, rewritten through the effects (`rewriteInherited`), under the layer's own (`ownRecordsOf`), which take the `groups:` entries that nothing in the final rules references (`wire/wire.ts::unmatchedGroupPatterns`)), where the layer's render bodies go (`layer-record.ts::synthesizedOf`, after the rules the runtime holds once the layer's bodies join its base's), wire's automatic-variant record, the stage bases, the projections, derivation records and diagnostics. A layer that inherits a record projects its effects (`provenanceOf`, over the rules before dead mints are blanked) after the ones it inherits (`appendProvenance`); layer 1 records its effects and projects nothing. The record rides on the start rule's body (`withLayerRecord`), normalized for it.
 
 Each other body is returned as its callback returned it unless the pass replaced it: an object body as the pass left it, a dead mint as `blank()`, and a string or RegExp as written, for the runtime to normalize, because the runtimes normalize a RegExp differently (sittir's `PATTERN` drops its flags). The rules the verbs created follow every body wire evaluated, in creation order, so the runtime appends them last.
 
@@ -7746,15 +7766,7 @@ Builds a `Lead` from the list, the item field, the lead field and the matches it
 
 ### `packages/codegen/src/dsl/enrich.ts::ENRICH_SIDECAR_KEYS`
 
-The keys of enrich's three sidecars: whitespace, rule origins and automatic variants. `withEnrichSidecarsOf` copies them onto a grammar, and `enrichSidecarsOf` reads them into a record of their own.
-
-### `packages/codegen/src/dsl/enrich.ts::EnrichSidecars`
-
-Enrich's three sidecars, held apart from the grammar they came with. Their values stay untyped here: the getters (`getEnrichWhitespace`, `getEnrichRuleOrigins`, `getEnrichAutomaticVariants`) type each one where it is read.
-
-### `packages/codegen/src/dsl/enrich.ts::enrichSidecarsOf`
-
-The three sidecars an enrich result holds, as a plain record that a layer record keeps; a key the result lacks is undefined.
+The keys of enrich's three sidecars: whitespace, rule origins and automatic variants. `withEnrichSidecarsOf` copies them onto a grammar.
 
 ### `packages/codegen/src/dsl/enrich.ts::withEnrichSidecarsOf`
 

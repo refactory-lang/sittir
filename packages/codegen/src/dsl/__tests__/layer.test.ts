@@ -17,7 +17,7 @@ import { runTreeSitterCliCapturing, treeSitterCliVersion } from '../../transpile
 import { alias, field, match, narrow, preference } from '../dsl-authoring.ts';
 import type { GrammarResult } from '../enrich.ts';
 import type { SymbolRule } from '../../grammar-shapes/grammar-json.ts';
-import { enrichFixpoint, layerOptions, pendingBase } from '../layer.ts';
+import { layerOptions, pendingBase } from '../layer.ts';
 import { layerRecordOf } from '../layer-record.ts';
 import { lead } from '../primitives/lead.ts';
 import { SENTINEL } from './fixtures/layer-chain/sentinel.ts';
@@ -27,12 +27,16 @@ const chain = (name: string): string => resolve(here, 'fixtures/layer-chain', na
 const layerRecordModule = pathToFileURL(resolve(here, '../layer-record.ts')).href;
 const packages = resolve(here, '../../../..');
 const require = createRequire(import.meta.url);
-const checks = vi.hoisted(() => ({ count: 0, bases: [] as string[] }));
+const checks = vi.hoisted(() => ({ count: 0, enrich: 0, bases: [] as string[] }));
 
 vi.mock('../enrich.ts', async (importOriginal) => {
 	const actual = await importOriginal<typeof import('../enrich.ts')>();
 	return {
 		...actual,
+		enrich: (...args: Parameters<typeof actual.enrich>) => {
+			checks.enrich++;
+			return actual.enrich(...args);
+		},
 		withEnrichSidecarsOf: <G extends object>(grammar: G, enriched: unknown): G => {
 			checks.count++;
 			checks.bases.push(JSON.stringify(grammar));
@@ -62,8 +66,10 @@ const probeModule = (layerUrl: string, log: string): string => `import { appendF
 import { layerRecordOf } from ${JSON.stringify(layerRecordModule)};
 const log = (line) => appendFileSync(${JSON.stringify(log)}, line + '\\n');
 const runtimeGrammar = globalThis.grammar;
+let nesting = 0;
 globalThis.grammar = function probedGrammar(base, options) {
 	if (options === undefined) return runtimeGrammar(base);
+	if (nesting > 0) return runtimeGrammar(base, options);
 	let passed = false;
 	const probe = new Proxy(options, {
 		get(target, key, receiver) {
@@ -78,7 +84,13 @@ globalThis.grammar = function probedGrammar(base, options) {
 			};
 		}
 	});
-	const result = runtimeGrammar(base, probe);
+	nesting++;
+	let result;
+	try {
+		result = runtimeGrammar(base, probe);
+	} finally {
+		nesting--;
+	}
 	log('record ' + layerRecordOf(result)?.depth);
 	return result;
 };
@@ -203,6 +215,19 @@ describe('the layer record', () => {
 			const result = layer(upstream(), { rules: { program: () => 'x' } });
 			expect(Object.values(result.grammar.rules)[0]).toMatchObject({ type: 'STRING', value: 'x' });
 			expect(layerRecordOf(result)?.depth).toBe(1);
+		});
+	});
+});
+
+describe('the enrich fixpoint of a layer', () => {
+	it('reports a created rule that enrich would change as a diagnostic of the layer that creates it', async () => {
+		await withDslGlobals(async () => {
+			const first = layer(upstream({ program: ($: Symbols) => repeat(choice($.item!, $.a!, $.b!)), a: ($: Symbols) => seq('(', $.item!), b: ($: Symbols) => seq('[', $.item!) }), {});
+			const second = layer(first, { rules: { pair: ($: Symbols) => seq(alias($.a!, $.shown), alias($.b!, $.shown)) } });
+			expect(layerRecordOf(second)?.diagnostics).toContainEqual(
+				expect.objectContaining({ code: 'layer-not-enrich-fixpoint', canProceed: false, details: { layer: 'up', depth: 2, rules: ['pair'] } })
+			);
+			expect(layerRecordOf(first)?.diagnostics).not.toContainEqual(expect.objectContaining({ code: 'layer-not-enrich-fixpoint' }));
 		});
 	});
 });
@@ -562,6 +587,15 @@ describe('the fixture chain', () => {
 		});
 	});
 
+	it('enriches each layer at its completion and never at the intake of a completed layer', async () => {
+		checks.count = 0;
+		checks.enrich = 0;
+		vi.resetModules();
+		await evaluateDsl(chain('layer2.ts'));
+		expect(checks.enrich).toBe(3);
+		expect(checks.count).toBe(2);
+	});
+
 	it('never passes contexts to the runtime', async () => {
 		await withDslGlobals(async () => {
 			const options = layerOptions({ contexts: () => ({}) });
@@ -578,9 +612,10 @@ describe('the grammar bindings layer', () => {
 		const raw = await evaluateTempGrammar({ extras: '', rules: "holder: $ => seq('(', $.word, ')')" }, "edits: { holder: { 1: field('authored') } }", {
 			bindings: "edits: { holder: { 1: field('portable') } }"
 		});
-		expect(checks.bases).toHaveLength(1);
+		expect(checks.bases).toHaveLength(2);
 		expect(checks.bases[0]).toContain('"name":"authored"');
 		expect(checks.bases[0]).not.toContain('"name":"portable"');
+		expect(checks.bases[1]).toContain('"name":"portable"');
 		expect(JSON.stringify(raw.rules.holder)).toContain('"name":"portable"');
 	});
 
@@ -638,22 +673,15 @@ describe('the grammar bindings layer', () => {
 			const evaluated = await evaluateDsl(join(packages, grammar, 'grammar.sittir.ts'));
 			const record = layerRecordOf({ grammar: evaluated });
 			expect(record?.depth).toBe(1);
-			const { changed } = await withDslGlobals(async () => enrichFixpoint({ grammar: evaluated } as unknown as GrammarResult, record!));
-			expect(changed).toEqual([]);
+			expect(record?.diagnostics).not.toContainEqual(expect.objectContaining({ code: 'layer-not-enrich-fixpoint' }));
 		},
 		240_000
 	);
 
-	it('reports a layer whose base enrich would reshape, as a blocking diagnostic of that layer', async () => {
+	it("tree-sitter-c's depth-1 layer is a fixpoint of enrich", async () => {
 		checks.count = 0;
 		const raw = await evaluateSittirGrammar(require.resolve('tree-sitter-c/grammar.js'), 'c', '', undefined, { bindings: '' });
-		expect(raw.layerDiagnostics).toContainEqual(
-			expect.objectContaining({
-				code: 'layer-not-enrich-fixpoint',
-				canProceed: false,
-				message: expect.stringMatching(/enrich changes _type_declarator, generic_expression, sized_type_specifier, sized_type_specifier_arm in the layer below 'c'/)
-			})
-		);
+		expect(raw.layerDiagnostics ?? []).not.toContainEqual(expect.objectContaining({ code: 'layer-not-enrich-fixpoint' }));
 		expect(checks.count).toBeGreaterThan(0);
 	}, 120_000);
 });

@@ -87,7 +87,6 @@ import {
 	withOptionalContent,
 	ruleListEntryOf,
 	ruleListParts,
-	isRecord,
 	type RuleListEntry
 } from './rule-patterns.ts';
 import { baseRulesOf } from './shared.ts';
@@ -339,17 +338,6 @@ export function getEnrichMints(grammar: unknown): ReadonlySet<string> {
 export const ENRICH_WHITESPACE_KEY = '__enrichedWhitespace__' as const;
 
 const ENRICH_SIDECAR_KEYS = [ENRICH_WHITESPACE_KEY, ENRICH_RULE_ORIGINS_KEY, ENRICH_AUTOMATIC_VARIANTS_KEY] as const;
-
-export type EnrichSidecars = { readonly [K in (typeof ENRICH_SIDECAR_KEYS)[number]]: unknown };
-
-export function enrichSidecarsOf(enriched: unknown): EnrichSidecars {
-	const holder: Readonly<Record<string, unknown>> = isRecord(enriched) ? enriched : {};
-	return {
-		[ENRICH_WHITESPACE_KEY]: holder[ENRICH_WHITESPACE_KEY],
-		[ENRICH_RULE_ORIGINS_KEY]: holder[ENRICH_RULE_ORIGINS_KEY],
-		[ENRICH_AUTOMATIC_VARIANTS_KEY]: holder[ENRICH_AUTOMATIC_VARIANTS_KEY]
-	};
-}
 
 export function withEnrichSidecarsOf<G extends object>(grammar: G, enriched: unknown): G {
 	const out = { ...grammar };

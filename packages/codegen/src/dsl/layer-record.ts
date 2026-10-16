@@ -3,7 +3,7 @@ import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { AutomaticVariants } from './automatic-variants.ts';
 import type { ConflictResolutionsInput } from './conflict-resolutions.ts';
-import type { EnrichSidecars, GrammarResult } from './enrich.ts';
+import type { GrammarResult } from './enrich.ts';
 import { isRecord } from './rule-patterns.ts';
 import type { Effect, Provenance } from './verbs/effects.ts';
 import type { DerivationRecords } from './wire/derivation-records.ts';
@@ -43,7 +43,7 @@ export interface StageBases {
 export interface LayerRecord {
 	readonly depth: number;
 	readonly upstream: GrammarJson;
-	readonly sidecars: EnrichSidecars;
+	readonly enrichment: GrammarResult;
 	readonly resolutions: ConflictResolutionsInput;
 	readonly deadMints: ReadonlySet<string>;
 	readonly textTokens: readonly string[];
