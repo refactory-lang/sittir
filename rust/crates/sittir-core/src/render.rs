@@ -70,8 +70,9 @@ impl WhitespaceTable {
     }
 
     /// The layout kinds a leaf of `kind` takes before and after it, when it is stamped.
-    pub fn leaf_edges_of(&self, kind: KindId) -> Option<(u8, u8)> {
-        self.leaf_edges.get(kind.index()).copied().filter(|packed| *packed != 0).map(|packed| (packed as u8, (packed >> 8) as u8))
+    pub fn leaf_edges_of(&self, kind: KindId) -> Option<(crate::layout_kinds::LayoutKinds, crate::layout_kinds::LayoutKinds)> {
+        use crate::layout_kinds::LayoutKinds;
+        self.leaf_edges.get(kind.index()).copied().filter(|packed| *packed != 0).map(|packed| (LayoutKinds(packed as u8), LayoutKinds((packed >> 8) as u8)))
     }
 }
 
@@ -180,17 +181,17 @@ pub enum CoordinateError {
     /// The handle's tag names no tree in this language's table on this
     /// thread: never parsed here, or already released.
     UnknownTree {
-        handle: u64,
+        handle: crate::types::TreeHandle,
         tree_id: crate::types::TreeId,
     },
     BadSpan {
-        handle: u64,
+        handle: crate::types::TreeHandle,
         detail: String,
     },
     /// A write lies in the node's range, and reading the node to render it
     /// from its template failed.
     Unread {
-        handle: u64,
+        handle: crate::types::TreeHandle,
         detail: String,
     },
 }
@@ -239,7 +240,7 @@ pub trait RenderSink {
     fn leaf_kind(&mut self, kind: KindId) {
         let _ = kind;
     }
-    fn leaf_edges(&mut self, leading: u8, trailing: u8) {
+    fn leaf_edges(&mut self, leading: crate::layout_kinds::LayoutKinds, trailing: crate::layout_kinds::LayoutKinds) {
         let _ = (leading, trailing);
     }
     fn site(&mut self, kind: KindId);
@@ -390,7 +391,7 @@ pub trait RenderSink {
     }
     /// Whether `kind` carries `flag` (`options::KIND_ANON`, ...) in the kind
     /// flag table of the options this sink holds; a sink with none answers no.
-    fn kind_has(&self, kind: KindId, flag: u8) -> bool {
+    fn kind_has(&self, kind: KindId, flag: crate::options::KindFlags) -> bool {
         let _ = (kind, flag);
         false
     }
@@ -408,9 +409,9 @@ pub trait RenderSink {
     /// Every node render reaches this once, whether a transport, a
     /// coordinate or detached trivia text.
     fn end_line_after(&mut self, kind: KindId) {
-        if self.kind_has(kind, crate::options::KIND_LINE_TERMINATED) {
+        if self.kind_has(kind, crate::options::KindFlags::LINE_TERMINATED) {
             self.hold_line_end(LineHold::Terminated);
-        } else if self.kind_has(kind, crate::options::KIND_LINE_BREAK_TERMINATED) {
+        } else if self.kind_has(kind, crate::options::KindFlags::LINE_BREAK_TERMINATED) {
             self.hold_line_end(LineHold::Break);
         }
     }

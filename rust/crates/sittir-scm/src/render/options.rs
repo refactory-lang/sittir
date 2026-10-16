@@ -1,7 +1,7 @@
 // @generated — render options: site table and resolver. Do not hand-edit.
 
-use ::sittir_core::options::{ResolvedOptions, SeatPath};
-use ::sittir_core::types::{EdgeRow, FlankId, KindId, SiteId};
+use ::sittir_core::options::{KindFlags, ResolvedOptions, SeatPath};
+use ::sittir_core::types::{Delimiter, EdgeRow, FlankId, KindId, SiteId};
 
 pub const SPACING_SITE_COUNT: usize = 152;
 pub const DELIMITER_SITE_COUNT: usize = 0;
@@ -347,11 +347,11 @@ pub static EDGE_ROWS: &[Option<EdgeRow>] = &[
     Some(EdgeRow(18)),
 ];
 
-/// Per kind id, its flags: KIND_ANON (the parser's anonymous token), KIND_LINE_TERMINATED, KIND_LINE_BREAK_TERMINATED, KIND_ROOT.
-pub static KIND_FLAGS: &[u8] = &[
-    0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-    4, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 1, 1, 1, 1, 1, 1,
+/// Per kind id, its `KindFlags`: ANON (the parser's anonymous token), LINE_TERMINATED, LINE_BREAK_TERMINATED, ROOT.
+pub static KIND_FLAGS: &[KindFlags] = &[
+    KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(2), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(0), KindFlags(1), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
+    KindFlags(4), KindFlags(8), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
+    KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
 ];
 
 /// Per kind id, the layout kinds its leaf pattern takes before it (low byte) and after it (high byte); 0 where the kind has no stamp.
@@ -360,8 +360,8 @@ pub const LEAF_EDGES: &[u16] = &[
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16129,
 ];
 
-/// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.
-pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[
+/// (kind, `<slot>_delimiter` key, allowed delimiters, default delimiters), in site order.
+pub static DELIMITER_SITES: &[(&str, &str, Delimiter, Delimiter)] = &[
 ];
 
 pub const INDENT_KIND: KindId = KindId(31);
@@ -685,7 +685,7 @@ pub fn defaults() -> ResolvedOptions {
     }
 }
 
-pub fn delimiter_allowed(site: FlankId) -> u8 {
+pub fn delimiter_allowed(site: FlankId) -> Delimiter {
     DELIMITER_SITES[site.index()].2
 }
 

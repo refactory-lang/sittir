@@ -123,21 +123,16 @@ pub type SeamRank = usize;
 /// value set on the node) beats one the kind edge took from its edge token's
 /// face (cascade), which beats the bare fallback; rank decides only between
 /// marks of one strength. Depth marks stay above the whole scale.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 #[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum SeamStrength {
-    Fallback,
-    Cascade,
-    Declared,
-    Slot,
-    Trivia,
+    #[default]
+    Fallback = 0,
+    Cascade = 1,
+    Declared = 2,
+    Slot = 3,
+    Trivia = 4,
 }
-
-pub const SEAM_FALLBACK: SeamStrength = SeamStrength::Fallback;
-pub const SEAM_CASCADE: SeamStrength = SeamStrength::Cascade;
-pub const SEAM_DECLARED: SeamStrength = SeamStrength::Declared;
-pub const SEAM_SLOT: SeamStrength = SeamStrength::Slot;
-pub const SEAM_TRIVIA: SeamStrength = SeamStrength::Trivia;
 
 /// The rank of a seam's text: empty 2, no break 1, otherwise 2 plus the number
 /// of logical breaks (`\r\n` counts once).
@@ -196,10 +191,10 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     swallow_cr: bool,
     deferred: Vec<DeferredRun>,
     line_end_held: Option<crate::render::LineHold>,
-    leaf_trailing: Option<u8>,
+    leaf_trailing: Option<LayoutKinds>,
     leaf_lexed: bool,
     indent_lazy: bool,
-    trailing_accepts: u8,
+    trailing_accepts: LayoutKinds,
     /// Whether the render is a document: its root is a node of the
     /// grammar's root kind (`with_document`).
     document: bool,
@@ -288,7 +283,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             indent_pending: false,
             indent_armed: false,
             seam: None,
-            seam_strength: SEAM_FALLBACK,
+            seam_strength: SeamStrength::Fallback,
             seam_set: LayoutKinds::NONE,
             seam_pick: LayoutKinds::NONE,
             seam_cont: String::new(),
@@ -307,7 +302,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             leaf_trailing: None,
             leaf_lexed: false,
             indent_lazy: false,
-            trailing_accepts: LayoutKinds::ALL.0,
+            trailing_accepts: LayoutKinds::ALL,
             document: false,
             frames: Vec::new(),
             excess: 0,
@@ -462,7 +457,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             indent_pending: std::mem::replace(&mut self.indent_pending, false),
             indent_armed: std::mem::replace(&mut self.indent_armed, false),
             seam: self.seam.take(),
-            seam_strength: std::mem::replace(&mut self.seam_strength, SEAM_FALLBACK),
+            seam_strength: std::mem::replace(&mut self.seam_strength, SeamStrength::Fallback),
             seam_set: std::mem::take(&mut self.seam_set),
             seam_pick: std::mem::take(&mut self.seam_pick),
             seam_cont: std::mem::take(&mut self.seam_cont),
@@ -595,14 +590,14 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// at this gap did not ask for a tight one.
     fn word_space_allowed(&self) -> bool {
         self.leaf_leading.is_none_or(|leading| leading.has(LayoutKinds::SPACE))
-            && LayoutKinds(self.trailing_accepts).has(LayoutKinds::SPACE)
+            && self.trailing_accepts.has(LayoutKinds::SPACE)
             && self.flushed_template.is_none_or(|set| set.has(LayoutKinds::SPACE))
     }
 
     /// The text just written closes a leaf: layout after it must be a kind
     /// its trailing edge takes.
     fn end_leaf(&mut self) {
-        let trailing = self.leaf_trailing.take().unwrap_or(LayoutKinds::ALL.0);
+        let trailing = self.leaf_trailing.take().unwrap_or(LayoutKinds::ALL);
         self.leaf_lexed = false;
         self.trailing_accepts = trailing;
     }
@@ -632,7 +627,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             return Ok(());
         }
         if !token && !root && line_end.is_none() {
-            let kept = payload.set.and(LayoutKinds(self.trailing_accepts));
+            let kept = payload.set.and(self.trailing_accepts);
             if kept.is_empty() {
                 return Ok(());
             }
@@ -664,7 +659,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// and the held strength stays; a mark without a line break never
     /// replaces it.
     fn merge_seam(&mut self, kinds: LayoutKinds) -> bool {
-        self.merge_payload(Payload { set: kinds, pick: kinds.narrowest(), cont: String::new() }, SEAM_DECLARED, false)
+        self.merge_payload(Payload { set: kinds, pick: kinds.narrowest(), cont: String::new() }, SeamStrength::Declared, false)
     }
 
     fn merge_seam_with(&mut self, kinds: LayoutKinds, strength: SeamStrength) {
@@ -780,7 +775,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         let end = self.document && side == crate::options::Side::After;
         let floor = !end && self.line_end_held == Some(crate::render::LineHold::Terminated) && self.held_breaks();
         let continuation_held = self.seam.is_some()
-            && self.seam_strength == SEAM_TRIVIA
+            && self.seam_strength == SeamStrength::Trivia
             && self.seam_pick == LayoutKinds::LINE_CONTINUATION
             && self.seam_cont.ends_with('\n')
             && gap.rank() <= LayoutKinds::NEWLINE.rank();
@@ -937,8 +932,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     /// `leading` before it and `trailing` after it. The held seam keeps only
     /// the kinds the leading edge takes; none left, it writes nothing. A seam
     /// a whitespace token wrote is required text and stays.
-    fn leaf_edges(&mut self, leading: u8, trailing: u8) {
-        let leading = LayoutKinds(leading);
+    fn leaf_edges(&mut self, leading: LayoutKinds, trailing: LayoutKinds) {
         self.leaf_leading = Some(leading);
         if !self.seam_is_token && !self.seam_is_root && self.seam.is_some() {
             let kept = self.seam_set.and(leading);
@@ -961,7 +955,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     /// arm's text as a seam. A writer with no table attached treats every
     /// other kind as unknown and writes nothing.
     fn site(&mut self, kind: crate::types::KindId) {
-        self.site_with(kind, SEAM_DECLARED);
+        self.site_with(kind, SeamStrength::Declared);
     }
 
     fn site_at(&mut self, site: crate::types::SiteId) {
@@ -976,7 +970,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let Some(seam) = options.edge_arm(kind, side, stamped, None) else {
             return;
         };
-        if options.kind_has(kind, crate::options::KIND_ROOT) {
+        if options.kind_has(kind, crate::options::KindFlags::ROOT) {
             self.root_edge(side, seam.arm, seam.strength);
         } else {
             self.seam_arm(seam);
@@ -1014,14 +1008,14 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     fn trivia_seam(&mut self, gap: LayoutKinds, text: Option<&str>) {
         let text = text.map(crate::line_endings::to_internal);
         let text = text.as_deref();
-        let continues = self.seam.is_some() && self.seam_strength == SEAM_TRIVIA && gap == LayoutKinds::LINE_CONTINUATION;
+        let continues = self.seam.is_some() && self.seam_strength == SeamStrength::Trivia && gap == LayoutKinds::LINE_CONTINUATION;
         if continues {
             let held = self.payload_text(&self.held_payload()).into_owned();
             let payload = Payload { set: gap, pick: gap, cont: held + text.unwrap_or_default() };
             self.set_payload(payload);
         } else {
             let payload = Payload { set: gap, pick: gap, cont: text.unwrap_or_default().to_string() };
-            self.merge_payload(payload, SEAM_TRIVIA, false);
+            self.merge_payload(payload, SeamStrength::Trivia, false);
         }
         self.seam_is_token = true;
     }
@@ -1075,7 +1069,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let text = crate::line_endings::to_internal(&reindented);
         let text = text.as_ref();
         let token = crate::render::RenderSink::kind_of(self, coord)
-            .is_some_and(|kind| crate::render::RenderSink::kind_has(self, kind, crate::options::KIND_ANON));
+            .is_some_and(|kind| crate::render::RenderSink::kind_has(self, kind, crate::options::KindFlags::ANON));
         if !token {
             self.write_deferred(Some(text))?;
         }
@@ -1142,7 +1136,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         }
         self.merged.pop();
         self.depth = self.depth.saturating_sub(1);
-        let holds_trivia = self.seam.is_some() && self.seam_strength == SEAM_TRIVIA;
+        let holds_trivia = self.seam.is_some() && self.seam_strength == SeamStrength::Trivia;
         if std::mem::replace(&mut self.indent_armed, false) && !holds_trivia {
             self.clear_payload();
             self.seam_is_token = false;
@@ -1165,7 +1159,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.indent_armed
     }
 
-    fn kind_has(&self, kind: crate::types::KindId, flag: u8) -> bool {
+    fn kind_has(&self, kind: crate::types::KindId, flag: crate::options::KindFlags) -> bool {
         self.options.is_some_and(|options| options.kind_has(kind, flag))
     }
 
@@ -1184,7 +1178,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             return;
         }
         if !self.held_breaks() {
-            self.merge_seam_with(LayoutKinds::NEWLINE, SEAM_TRIVIA);
+            self.merge_seam_with(LayoutKinds::NEWLINE, SeamStrength::Trivia);
         }
         self.line_end_held = self.line_end_held.max(Some(hold));
     }
@@ -1196,7 +1190,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             kinds: payload.set,
             pick: payload.pick,
             cont: payload.cont,
-            strength: std::mem::replace(&mut self.seam_strength, SEAM_FALLBACK),
+            strength: std::mem::replace(&mut self.seam_strength, SeamStrength::Fallback),
             token: std::mem::replace(&mut self.seam_is_token, false),
             flank: std::mem::replace(&mut self.seam_is_flank, false),
             root: std::mem::replace(&mut self.seam_is_root, false),
@@ -1434,7 +1428,7 @@ mod sink_tests {
         assert_eq!(
             run(|w| {
                 w.text("let").unwrap();
-                w.leaf_edges(crate::layout_kinds::LayoutKinds::TIGHT.0, crate::layout_kinds::LayoutKinds::ALL.0);
+                w.leaf_edges(crate::layout_kinds::LayoutKinds::TIGHT, crate::layout_kinds::LayoutKinds::ALL);
                 w.text("x").unwrap();
             }),
             "letx"
@@ -1698,7 +1692,7 @@ mod sink_tests {
         assert_eq!(
             run(|w| {
                 w.text("let s = ").unwrap();
-                w.leaf_edges(K::TIGHT.0, K::TIGHT.0);
+                w.leaf_edges(K::TIGHT, K::TIGHT);
                 w.text("a").unwrap();
                 w.text(";").unwrap();
                 w.seam(K::NEWLINE);
@@ -1715,7 +1709,7 @@ mod sink_tests {
         assert_eq!(
             run(|w| {
                 w.text("a").unwrap();
-                w.leaf_edges(K::ALL.0, K::SPACE.0 | K::TIGHT.0);
+                w.leaf_edges(K::ALL, K(K::SPACE.0 | K::TIGHT.0));
                 w.text("b").unwrap();
                 w.seam(K::SEPARATING);
                 w.text("c").unwrap();
@@ -1724,7 +1718,7 @@ mod sink_tests {
         );
         assert_eq!(
             run(|w| {
-                w.leaf_edges(K::TIGHT.0, K::TIGHT.0);
+                w.leaf_edges(K::TIGHT, K::TIGHT);
                 w.text("b").unwrap();
                 w.seam(K::SEPARATING);
                 w.text("c").unwrap();
@@ -1920,7 +1914,7 @@ mod strength_tests {
         let out = render(|w| {
             w.text("a").unwrap();
             w.hold_line_end(crate::render::LineHold::Break);
-            w.site_with(KindId(4), SEAM_DECLARED);
+            w.site_with(KindId(4), SeamStrength::Declared);
             w.text("b").unwrap();
         });
         assert_eq!(out, "a\n\nb");
@@ -1931,7 +1925,7 @@ mod strength_tests {
         let out = render(|w| {
             w.text("a").unwrap();
             w.hold_line_end(crate::render::LineHold::Break);
-            w.site_with(KindId(2), SEAM_DECLARED);
+            w.site_with(KindId(2), SeamStrength::Declared);
             w.text("b").unwrap();
         });
         assert_eq!(out, "a\nb");
@@ -1941,13 +1935,13 @@ mod strength_tests {
     fn a_line_break_the_text_before_a_seam_ends_with_counts_toward_it() {
         let out = render(|w| {
             w.text("#!\n").unwrap();
-            w.site_with(KindId(4), SEAM_TRIVIA);
+            w.site_with(KindId(4), SeamStrength::Trivia);
             w.text("fn").unwrap();
         });
         assert_eq!(out, "#!\n\nfn");
         let out = render(|w| {
             w.text("#!\n").unwrap();
-            w.site_with(KindId(3), SEAM_DECLARED);
+            w.site_with(KindId(3), SeamStrength::Declared);
             w.text("fn").unwrap();
         });
         assert_eq!(out, "#!\nfn");
@@ -1960,9 +1954,9 @@ mod strength_tests {
         // end it floors is still satisfied.
         let out = render(|w| {
             w.text("a").unwrap();
-            w.site_with(KindId(4), SEAM_DECLARED);
+            w.site_with(KindId(4), SeamStrength::Declared);
             w.hold_line_end(crate::render::LineHold::Break);
-            w.site_with(KindId(3), SEAM_TRIVIA);
+            w.site_with(KindId(3), SeamStrength::Trivia);
             w.text("b").unwrap();
         });
         assert_eq!(out, "a\nb");
@@ -1998,7 +1992,7 @@ mod strength_tests {
         let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident()).with_table(&TABLE).with_document(true);
         w.text("// c").unwrap();
         w.hold_line_end(crate::render::LineHold::Terminated);
-        w.root_edge(crate::options::Side::Before, KindId(1), SEAM_DECLARED);
+        w.root_edge(crate::options::Side::Before, KindId(1), SeamStrength::Declared);
         w.text("fn").unwrap();
         w.finish().unwrap();
         assert_eq!(out, "// c\nfn");
@@ -2010,8 +2004,8 @@ mod strength_tests {
         // cascaded tight edge; the declared mark wins whatever its width.
         let out = render(|w| {
             w.text("=").unwrap();
-            w.site_with(KindId(2), SEAM_DECLARED);
-            w.site_with(KindId(1), SEAM_CASCADE);
+            w.site_with(KindId(2), SeamStrength::Declared);
+            w.site_with(KindId(1), SeamStrength::Cascade);
             w.text("(").unwrap();
         });
         assert_eq!(out, "= (");
@@ -2023,8 +2017,8 @@ mod strength_tests {
         // tight edge; cascade outranks fallback.
         let out = render(|w| {
             w.text("f").unwrap();
-            w.site_with(KindId(2), SEAM_FALLBACK);
-            w.site_with(KindId(1), SEAM_CASCADE);
+            w.site_with(KindId(2), SeamStrength::Fallback);
+            w.site_with(KindId(1), SeamStrength::Cascade);
             w.text("(").unwrap();
         });
         assert_eq!(out, "f(");
@@ -2034,15 +2028,15 @@ mod strength_tests {
     fn within_one_strength_the_wider_mark_still_wins() {
         let out = render(|w| {
             w.text("a").unwrap();
-            w.site_with(KindId(1), SEAM_DECLARED);
-            w.site_with(KindId(3), SEAM_DECLARED);
+            w.site_with(KindId(1), SeamStrength::Declared);
+            w.site_with(KindId(3), SeamStrength::Declared);
             w.text("b").unwrap();
         });
         assert_eq!(out, "a\nb");
         let tight = render(|w| {
             w.text("x").unwrap();
-            w.site_with(KindId(2), SEAM_DECLARED);
-            w.site_with(KindId(1), SEAM_DECLARED);
+            w.site_with(KindId(2), SeamStrength::Declared);
+            w.site_with(KindId(1), SeamStrength::Declared);
             w.text(";").unwrap();
         });
         assert_eq!(tight, "x;");
@@ -2054,8 +2048,8 @@ mod strength_tests {
         // space flank; the flank wins though it is narrower.
         let out = render(|w| {
             w.text("{").unwrap();
-            w.site_with(KindId(1), SEAM_DECLARED);
-            w.site_mark(KindId(2), SEAM_DECLARED, true);
+            w.site_with(KindId(1), SeamStrength::Declared);
+            w.site_mark(KindId(2), SeamStrength::Declared, true);
             w.text("a").unwrap();
         });
         assert_eq!(out, "{ a");
@@ -2065,8 +2059,8 @@ mod strength_tests {
     fn an_equal_strength_face_does_not_replace_a_held_flank() {
         let out = render(|w| {
             w.text("a").unwrap();
-            w.site_mark(KindId(2), SEAM_DECLARED, true);
-            w.site_with(KindId(1), SEAM_DECLARED);
+            w.site_mark(KindId(2), SeamStrength::Declared, true);
+            w.site_with(KindId(1), SeamStrength::Declared);
             w.text("}").unwrap();
         });
         assert_eq!(out, "a }");
@@ -2078,22 +2072,22 @@ mod strength_tests {
         // tight face in either order, and a declared flank beats a cascaded face.
         let held_face = render(|w| {
             w.text("{").unwrap();
-            w.site_with(KindId(1), SEAM_DECLARED);
-            w.site_mark(KindId(2), SEAM_CASCADE, true);
+            w.site_with(KindId(1), SeamStrength::Declared);
+            w.site_mark(KindId(2), SeamStrength::Cascade, true);
             w.text("b").unwrap();
         });
         assert_eq!(held_face, "{b");
         let held_flank = render(|w| {
             w.text("b").unwrap();
-            w.site_mark(KindId(2), SEAM_CASCADE, true);
-            w.site_with(KindId(1), SEAM_DECLARED);
+            w.site_mark(KindId(2), SeamStrength::Cascade, true);
+            w.site_with(KindId(1), SeamStrength::Declared);
             w.text("}").unwrap();
         });
         assert_eq!(held_flank, "b}");
         let declared_flank = render(|w| {
             w.text("{").unwrap();
-            w.site_with(KindId(1), SEAM_CASCADE);
-            w.site_mark(KindId(2), SEAM_DECLARED, true);
+            w.site_with(KindId(1), SeamStrength::Cascade);
+            w.site_mark(KindId(2), SeamStrength::Declared, true);
             w.text("b").unwrap();
         });
         assert_eq!(declared_flank, "{ b");
@@ -2103,11 +2097,11 @@ mod strength_tests {
     fn a_held_flank_survives_a_take_and_restore() {
         let out = render(|w| {
             w.text("a").unwrap();
-            w.site_mark(KindId(2), SEAM_DECLARED, true);
+            w.site_mark(KindId(2), SeamStrength::Declared, true);
             let held = w.take_seam().unwrap();
             assert!(held.flank);
             w.restore_seam(held);
-            w.site_with(KindId(1), SEAM_DECLARED);
+            w.site_with(KindId(1), SeamStrength::Declared);
             w.text("}").unwrap();
         });
         assert_eq!(out, "a }");

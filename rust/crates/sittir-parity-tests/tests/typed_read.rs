@@ -696,7 +696,7 @@ struct List {
     item: Vec<SlotValue<Param>>,
     #[wire(key = "_delimiter")]
     #[flank(trailing = 0)]
-    delimiter: Option<u8>,
+    delimiter: Option<sittir_core::types::Delimiter>,
 }
 
 #[derive(Debug, Clone, PartialEq, Transport)]
@@ -719,9 +719,9 @@ fn a_list_owner_brings_its_list_and_the_list_knows_its_trailing_separator() {
     let list = plain.elements.as_ref().unwrap().transport().expect("min_depth reads the list");
     assert_eq!(list.item.len(), 2);
     assert!(list.item.iter().all(|item| item.coord().is_some()), "the items have structure: past the depth");
-    assert_eq!(list.delimiter, Some(0));
+    assert_eq!(list.delimiter, Some(sittir_core::types::Delimiter::NONE));
     let trailing = owner("fn f(a: u8, b: u8,) {}");
-    assert_eq!(trailing.elements.unwrap().transport().unwrap().delimiter, Some(sittir_core::read::TRAILING));
+    assert_eq!(trailing.elements.unwrap().transport().unwrap().delimiter, Some(sittir_core::types::Delimiter::TRAILING));
 }
 
 #[test]

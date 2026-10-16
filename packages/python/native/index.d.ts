@@ -140,7 +140,7 @@ layoutWork(treeId: TreeId): { regionNodes: number; siblingItems: number }
  * a tree that is not live and a plan whose pattern the native
  * matcher cannot compile.
  */
-descendants(from: string, kinds: Array<import('../src/types.ts').TSKindId> | undefined | null, resume: Array<number> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null): string
+descendants(from: string, kinds: Array<import('../src/types.ts').TSKindId> | undefined | null, resume: Array<ChildPosition> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null): string
 /**
  * The byte offsets of the lines under the node at `index` of the
  * live tree `treeId` (its root when absent) that begin inside a
@@ -174,6 +174,10 @@ renderToFile(transport: object, path: string, treeId?: number | undefined | null
  */
 dispose(): void
 }
+
+/** A child's position under its parent as JavaScript holds it: a whole number. */
+export type ChildPosition =
+  number
 
 /**
  * Drop one tree. Called from the boundary's `FinalizationRegistry`

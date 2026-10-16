@@ -1,7 +1,7 @@
 // @generated — render options: site table and resolver. Do not hand-edit.
 
-use ::sittir_core::options::{ResolvedOptions, SeatPath};
-use ::sittir_core::types::{EdgeRow, FieldId, FlankId, KindId, SiteId};
+use ::sittir_core::options::{KindFlags, ResolvedOptions, SeatPath};
+use ::sittir_core::types::{Delimiter, EdgeRow, FieldId, FlankId, KindId, SiteId};
 
 pub const SPACING_SITE_COUNT: usize = 1454;
 pub const DELIMITER_SITE_COUNT: usize = 8;
@@ -3158,23 +3158,23 @@ pub static EDGE_ROWS: &[Option<EdgeRow>] = &[
     Some(EdgeRow(187)), Some(EdgeRow(188)), Some(EdgeRow(189)), Some(EdgeRow(190)), None, None, Some(EdgeRow(191)), Some(EdgeRow(192)), Some(EdgeRow(193)), Some(EdgeRow(194)),
 ];
 
-/// Per kind id, its flags: KIND_ANON (the parser's anonymous token), KIND_LINE_TERMINATED, KIND_LINE_BREAK_TERMINATED, KIND_ROOT.
-pub static KIND_FLAGS: &[u8] = &[
-    0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0,
-    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 8, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+/// Per kind id, its `KindFlags`: ANON (the parser's anonymous token), LINE_TERMINATED, LINE_BREAK_TERMINATED, ROOT.
+pub static KIND_FLAGS: &[KindFlags] = &[
+    KindFlags(0), KindFlags(0), KindFlags(2), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
+    KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
+    KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
+    KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(0), KindFlags(0), KindFlags(0),
+    KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(2), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
+    KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(4), KindFlags(8), KindFlags(0), KindFlags(0), KindFlags(0),
+    KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
+    KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
+    KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
+    KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
+    KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
+    KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
+    KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
+    KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
+    KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
 ];
 
 /// Per kind id, the layout kinds its leaf pattern takes before it (low byte) and after it (high byte); 0 where the kind has no stamp.
@@ -3187,16 +3187,16 @@ pub const LEAF_EDGES: &[u16] = &[
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 257, 0, 0, 257,
 ];
 
-/// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.
-pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[
-    ("enum_body_elements", "item_delimiter", 2, 2),
-    ("export_specifiers", "item_delimiter", 2, 0),
-    ("formal_parameters_elements", "item_delimiter", 2, 0),
-    ("import_specifiers", "item_delimiter", 2, 0),
-    ("object_type_content", "item_delimiter", 3, 2),
-    ("tuple_type_members", "item_delimiter", 2, 0),
-    ("type_parameters_elements", "item_delimiter", 2, 0),
-    ("types", "item_delimiter", 2, 0),
+/// (kind, `<slot>_delimiter` key, allowed delimiters, default delimiters), in site order.
+pub static DELIMITER_SITES: &[(&str, &str, Delimiter, Delimiter)] = &[
+    ("enum_body_elements", "item_delimiter", Delimiter(2), Delimiter(2)),
+    ("export_specifiers", "item_delimiter", Delimiter(2), Delimiter(0)),
+    ("formal_parameters_elements", "item_delimiter", Delimiter(2), Delimiter(0)),
+    ("import_specifiers", "item_delimiter", Delimiter(2), Delimiter(0)),
+    ("object_type_content", "item_delimiter", Delimiter(3), Delimiter(2)),
+    ("tuple_type_members", "item_delimiter", Delimiter(2), Delimiter(0)),
+    ("type_parameters_elements", "item_delimiter", Delimiter(2), Delimiter(0)),
+    ("types", "item_delimiter", Delimiter(2), Delimiter(0)),
 ];
 
 pub const INDENT_KIND: KindId = KindId(186);
@@ -5857,7 +5857,7 @@ pub fn defaults() -> ResolvedOptions {
     }
 }
 
-pub fn delimiter_allowed(site: FlankId) -> u8 {
+pub fn delimiter_allowed(site: FlankId) -> Delimiter {
     DELIMITER_SITES[site.index()].2
 }
 
