@@ -251,12 +251,8 @@ pub trait RenderSink {
         let _ = strength;
         self.site(kind);
     }
-    /// A resolved seam: the depth it closes first (`SeamArm::dedent`), then
-    /// its arm at its strength.
+    /// A resolved seam: its arm at its strength.
     fn seam_arm(&mut self, seam: crate::slot::SeamArm) {
-        if seam.dedent {
-            self.dedent(crate::layout_kinds::LayoutKinds::NONE);
-        }
         self.site_with(seam.arm, seam.strength);
     }
     /// A spacing site's arm read from the resolved options this sink holds,

@@ -69,11 +69,6 @@ impl ChangedEdges {
 pub struct SeamArm {
     pub arm: crate::types::KindId,
     pub strength: crate::spacing::SeamStrength,
-    /// Close a depth before writing the arm. No fill sets it; it stays for
-    /// the niche it gives `Option<SeamArm>`, which keeps a coordinate's edges,
-    /// and so the transports that hold coordinates, within their payload
-    /// ceiling.
-    pub dedent: bool,
 }
 
 /// The seams a kind writes before and after itself.
@@ -390,6 +385,18 @@ pub(crate) unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: NodeC
     }
 }
 
+/// `{ leading?, trailing? }`, each `true` for a changed edge.
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ChangedEdges {
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        use crate::boundary::property;
+        Ok(Self {
+            leading: unsafe { property::<bool>(env, napi_val, c"leading")? }.unwrap_or(false),
+            trailing: unsafe { property::<bool>(env, napi_val, c"trailing")? }.unwrap_or(false),
+        })
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::spacing::SeamStrength;
@@ -400,6 +407,12 @@ mod tests {
     use crate::render::{CoordinateError, SourceTable};
     use crate::slot::NodeCoordinate;
     use crate::spacing::{SpacingWriter, WordMatcher};
+
+    #[test]
+    fn an_optional_seam_arm_keeps_its_niche_in_four_bytes() {
+        assert_eq!(std::mem::size_of::<super::SeamArm>(), 4);
+        assert_eq!(std::mem::size_of::<Option<super::SeamArm>>(), 4);
+    }
     use crate::types::Span;
     use std::collections::HashMap;
     use std::sync::Arc;
@@ -665,17 +678,5 @@ mod tests {
         assert!(coord.transport_or_write(&mut w2).unwrap().is_none());
         w2.finish().unwrap();
         assert_eq!(buf2, "raw");
-    }
-}
-
-/// `{ leading?, trailing? }`, each `true` for a changed edge.
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ChangedEdges {
-    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
-        use crate::boundary::property;
-        Ok(Self {
-            leading: unsafe { property::<bool>(env, napi_val, c"leading")? }.unwrap_or(false),
-            trailing: unsafe { property::<bool>(env, napi_val, c"trailing")? }.unwrap_or(false),
-        })
     }
 }

@@ -93,7 +93,7 @@ impl SiteSpec {
     /// `arm` at this site: the default's strength when it is the default, declared otherwise.
     pub fn seam(&self, arm: KindId) -> crate::slot::SeamArm {
         let strength = if arm == self.default_arm { self.strength } else { crate::spacing::SeamStrength::Declared };
-        crate::slot::SeamArm { arm, strength, dedent: false }
+        crate::slot::SeamArm { arm, strength }
     }
 }
 
@@ -107,14 +107,11 @@ impl SiteSpec {
 pub struct EdgeArm {
     pub arm: KindId,
     pub strength: Option<crate::spacing::SeamStrength>,
-    /// Close a depth before the arm (`SeamArm::dedent`). The wire never
-    /// sends it.
-    pub dedent: Option<bool>,
 }
 
 impl From<crate::slot::SeamArm> for EdgeArm {
     fn from(seam: crate::slot::SeamArm) -> Self {
-        EdgeArm { arm: seam.arm, strength: Some(seam.strength), dedent: seam.dedent.then_some(true) }
+        EdgeArm { arm: seam.arm, strength: Some(seam.strength) }
     }
 }
 
@@ -197,7 +194,7 @@ impl ResolvedOptions {
     /// declared strength even when it is the site's default: the caller chose
     /// it, so it must win a seam merge the default would lose.
     pub fn set_arm(&mut self, site: SiteId, arm: KindId) {
-        self.spacing[site.index()] = crate::slot::SeamArm { arm, strength: crate::spacing::SeamStrength::Declared, dedent: false };
+        self.spacing[site.index()] = crate::slot::SeamArm { arm, strength: crate::spacing::SeamStrength::Declared };
     }
 
     /// What one side of a kind's edge writes: the stamp when one is set (at its
@@ -233,8 +230,8 @@ impl ResolvedOptions {
     fn edge_seam(&self, site: SiteId, stamped: Option<EdgeArm>) -> Option<crate::slot::SeamArm> {
         let site = site.index();
         Some(match stamped {
-            Some(EdgeArm { arm, strength: Some(strength), dedent }) => crate::slot::SeamArm { arm, strength, dedent: dedent == Some(true) },
-            Some(EdgeArm { arm, strength: None, dedent }) => crate::slot::SeamArm { dedent: dedent == Some(true), ..self.sites[site].seam(arm) },
+            Some(EdgeArm { arm, strength: Some(strength) }) => crate::slot::SeamArm { arm, strength },
+            Some(EdgeArm { arm, strength: None }) => self.sites[site].seam(arm),
             None => self.spacing[site],
         })
     }

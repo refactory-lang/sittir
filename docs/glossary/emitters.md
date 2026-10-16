@@ -13712,11 +13712,11 @@ and `defaultText` (the default token's text) for the render's fallback
 arm. It has no `side` and registers no top-level label, like the
 delimiter site.
 
-`strength` (`SeamStrength`, 0–2) is the sixth column of the emitted
+`strength` (`SeamStrength`, the name of a core `spacing::SeamStrength` variant) is the sixth column of the emitted
 `SPACING_SITES` row: how firmly the site's table default holds against the
 mark meeting it at the same gap. `seamStrength` maps the site's origin —
-declared (`preference`, `literal-default`, `word-default`) is 2, `cascade` is 1, the fallback
-is 0; separator sites are declared.
+declared (`preference`, `literal-default`, `word-default`) is `Declared`, `cascade` is `Cascade`, the fallback
+is `Fallback`; separator sites are declared.
 
 `display` is the owning kind's visible name, the spelling of the emitted
 rows; `source` is the kind itself and `kindId` its stamped id. `kindEdge` and
@@ -13741,8 +13741,8 @@ writes them as.
 ### `packages/codegen/src/emitters/render-options-rs.ts::seamStrength`
 
 An exhaustive switch over `SeamOrigin | undefined`: `preference`,
-`literal-default` and `word-default` are `Declared`, `cascade` is `Cascade`,
-and `fallback` or no origin is `Fallback`. A new origin fails to compile here until it is
+`literal-default` and `word-default` are `Declared`, `cascade` is `Cascade`, and
+`fallback` or no origin is `Fallback`. A new origin fails to compile here until it is
 given a strength.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::SEAM_DECLARED`
@@ -13874,9 +13874,9 @@ the kind catalog is in hand, so the render emitter never re-derives it.
 
 A row's strength is what the sink writes the site's default arm at:
 `SiteSpec` carries it into the resolved options, and `site_arm`/`edge_arm`
-use it when the arm is the default and `SEAM_DECLARED` otherwise, so a value
+use it when the arm is the default and `SeamStrength::Declared` otherwise, so a value
 set on the node counts as declared. A separator row carries
-`SEAM_DECLARED` regardless of origin: the list view writes it at declared
+`SeamStrength::Declared` regardless of origin: the list view writes it at declared
 strength, so the row states the strength render uses. A list flank row
 (`start`/`end`) takes its origin's strength like any other site: only a
 flank a grammar row or a node value declares holds its gap at declared
@@ -14069,7 +14069,7 @@ Per kind id, the leaf's `LeafEdges` packed into one cell: the leading set in the
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::kindFlagsOf`
 
-Per kind id, the OR of its flags over every kind entry that carries that id: `KIND_ANON` when the entry is the parser's anonymous token (`anon`), `KIND_LINE_TERMINATED` when it is an outermost line-terminated kind (`lineTerminatedKinds`), `KIND_LINE_BREAK_TERMINATED` when it is an outermost kind ending in the declared newline token (`lineBreakTerminatedKinds`), `KIND_ROOT` for the grammar root (`grammarRoot`), whose edges the writer writes at a render's two ends. The bit values match `sittir_core::options`. The sink reads them by kind id. A coordinate onto an anonymous token is a token, not an owner, so the writer seats no held trailing entries before it. A node of a line-terminated kind, whether a transport, a coordinate or detached trivia text, holds its line end (`RenderSink::end_line_after`) as a `LineHold::Terminated`; a node of a kind ending in the declared newline token holds it as a `LineHold::Break`, which the end of a render drops.
+Per kind id, the OR of its flags over every kind entry that carries that id: `KIND_ANON` when the entry is the parser's anonymous token (`anon`), `KIND_LINE_TERMINATED` when it is an outermost line-terminated kind (`lineTerminatedKinds`), `KIND_LINE_BREAK_TERMINATED` when it is an outermost kind ending in the declared newline token (`lineBreakTerminatedKinds`), `KIND_ROOT` for the grammar root (`grammarRoot`), whose edges the writer writes at a render's two ends. The bit values match `sittir_core::options::KindFlags`'s constants. The sink reads them by kind id. A coordinate onto an anonymous token is a token, not an owner, so the writer seats no held trailing entries before it. A node of a line-terminated kind, whether a transport, a coordinate or detached trivia text, holds its line end (`RenderSink::end_line_after`) as a `LineHold::Terminated`; a node of a kind ending in the declared newline token holds it as a `LineHold::Break`, which the end of a render drops.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::EdgeSiteRow`
 
@@ -14263,7 +14263,7 @@ layout the node's source stores for that slot (`Layout::slot`, by the slot's
 wire key). A list slot's layout holds the class most of its separator gaps
 have on each side of the separator, stored only where it differs from what
 the read-time options write. The fill gives every gap between two present
-items those classes at slot strength (`SEAM_SLOT`): the side before the
+items those classes at slot strength (`SeamStrength::Slot`): the side before the
 separator on the earlier item's `after` edge, the side after it on the later
 item's `before` edge. So an item inserted or moved into the list takes the
 slot's class, a gap's own deviation (trivia, which is stronger) keeps its

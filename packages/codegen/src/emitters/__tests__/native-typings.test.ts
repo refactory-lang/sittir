@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const GRAMMARS = ['rust', 'typescript', 'python', 'scm', 'regex'] as const;
-const ADDON_API = ['BaselineRun', 'EngineOptions', 'NodeIndex', 'SittirEngine', 'TreeId', 'disposeTree', 'liveTreeCount'];
+const ADDON_API = ['BaselineRun', 'ChildPosition', 'EngineOptions', 'NodeIndex', 'SittirEngine', 'TreeId', 'disposeTree', 'liveTreeCount'];
 
 describe("each grammar's native typings", () => {
 	it.each(GRAMMARS)('%s declares the addon API alone', (grammar) => {

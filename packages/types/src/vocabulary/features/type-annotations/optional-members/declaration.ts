@@ -27,6 +27,9 @@ export namespace Declaration {
 			}
 		}
 	}
+	export interface Property<G extends GrammarContext<G>> {
+		readonly optionality?: G['slots']['declaration.property']['optionality'];
+	}
 	export interface Parameter<G extends GrammarContext<G>> {
 		readonly optional?: Flag;
 		// t only

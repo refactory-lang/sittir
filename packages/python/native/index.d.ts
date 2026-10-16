@@ -175,6 +175,10 @@ renderToFile(transport: object, path: string, treeId?: number | undefined | null
 dispose(): void
 }
 
+/** A child's position under its parent as JavaScript holds it: a whole number. */
+export type ChildPosition =
+  number
+
 /**
  * Drop one tree. Called from the boundary's `FinalizationRegistry`
  * once JavaScript has collected the last object naming it.

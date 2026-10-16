@@ -524,6 +524,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'declaration.property': {
 			readonly name: G['expression'] | G['literal'] | V.Identifier.Property<G> | string;
+			readonly optionality: string;
 			readonly type: G['identifier'] | G['type'];
 			readonly value:
 				| V.Declaration.Module<G>
