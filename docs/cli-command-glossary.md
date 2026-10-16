@@ -539,6 +539,25 @@ List groups, unaliased, and phantom kinds
 pnpm exec tsx packages/cli/src/cli.ts tool list-kinds [options]
 ```
 
+### `tool output-gate`
+
+Record the generated files as git blobs and check a tree against them, or snapshot and check each layer's evaluated grammar
+
+**Options**
+
+- `--record <out>` — Write a manifest of every generated file, as <blob> <path> lines, at --rev (default HEAD)
+- `--check <manifest>` — Compare the generated files at --rev (default the worktree) with a manifest, and print each changed, missing or added file
+- `--rev <rev>` — The revision to record or check
+- `--except <path[:key,key]>` — A generated file allowed to differ; with keys, only those top-level JSON keys may differ (repeatable)
+- `--snapshot <dir>` — Write each grammar's evaluated grammar, per layer, as canonical JSON
+- `--check-snapshot <dir>` — Compare each grammar's evaluated grammar, per layer, with the snapshots in a directory
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool output-gate [options]
+```
+
 ### `tool override-census`
 
 List hand-written rules and patch sites, with the diagnostic records they resolve across the raw, enriched and final stages

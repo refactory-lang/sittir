@@ -21,7 +21,7 @@ export interface DerivationInputs {
 
 export const DERIVATION_INPUTS_MARKER = '\u0000sittir-derivation-inputs\u0000';
 
-function canonical(value: unknown): unknown {
+export function canonical(value: unknown): unknown {
 	if (value instanceof Map) return [...value].map(([key, entry]) => [canonical(key), canonical(entry)]).sort(byJson);
 	if (value instanceof Set) return [...value].map(canonical).sort(byJson);
 	if (Array.isArray(value)) return value.map(canonical);
