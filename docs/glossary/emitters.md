@@ -1144,7 +1144,7 @@ The lines that split a leading options object off a rest argument list: the firs
 
 ### `packages/codegen/src/emitters/shared.ts::pruneUnusedImports`
 
-The one mechanism for "import only what the body uses" in every generated TypeScript module. An emitter writes its preamble naming every candidate import, then passes its finished lines and the candidate local names here. The body is every line that is not an `import`; a named import specifier (`X`, or `X as Y` tested by its local name `Y`) whose name has no `\b` use in the body is removed, and an import line left with no specifiers is dropped whole. A namespace import (`import * as X`) is dropped whole when `X` is unused. Keying on the imported name, not on the import's path or line text, keeps it correct wherever the import sits: the `Delimiter` import in the raw factories, the coerce module and wrap; the `@sittir/types` names in the factories, the coerce module and the types module; wrap's `projectInterior` / `TokenInterior` / `TOKEN_INTERIORS`, keyword-storage coercers and `FR` namespace. An emitter keeps a usage flag only where the flag gates a helper it writes, never to choose imports. A grammar that never uses a name (scm and regex have no separated lists and no keyword-presence slots) gets no import of it, so its generated package lints clean.
+The one mechanism for "import only what the body uses" in every generated TypeScript module. An emitter writes its preamble naming every candidate import, then passes its finished lines and the candidate local names here. The body is every line that is not an `import`; a named import specifier (`X`, or `X as Y` tested by its local name `Y`) whose name has no `\b` use in the body is removed, and an import line left with no specifiers is dropped whole. A namespace import (`import * as X`) is dropped whole when `X` is unused. Keying on the imported name, not on the import's path or line text, keeps it correct wherever the import sits: the `Delimiter` import in the raw factories, the coerce module and wrap; `listStorage` in the coerce module; the `@sittir/types` names in the factories, the coerce module and the types module; wrap's `projectInterior` / `TokenInterior` / `TOKEN_INTERIORS`, keyword-storage coercers and `FR` namespace. An emitter keeps a usage flag only where the flag gates a helper it writes, never to choose imports. A grammar that never uses a name (scm and regex have no separated lists and no keyword-presence slots) gets no import of it, so its generated package lints clean.
 
 ### `packages/codegen/src/emitters/shared.ts::isDeclaredSupertype`
 
@@ -12154,7 +12154,7 @@ The arity of a keyword leaf's pair: its coercer takes one optional `<Kind>.Loose
 
 ### `packages/codegen/src/emitters/from.ts::storedFieldCall`
 
-A slot's resolver expression without keyword extraction: the single-kind fast path or the interned resolver call, wrapped in the kind-enum or mixed-enum storage coercion. `resolveFieldCall` puts keyword extraction in front of it: whole value for a scalar slot, one element at a time (resolved as a scalar) for an array slot.
+A slot's resolver expression without keyword extraction: the single-kind fast path or the interned resolver call, wrapped in the kind-enum or mixed-enum storage coercion (`slotStorageCoercion` with text input), mapped over a multiple slot's items through `storageCallExpr`. `resolveFieldCall` puts keyword extraction in front of it: whole value for a scalar slot, one element at a time (resolved as a scalar) for an array slot.
 
 ### `packages/codegen/src/emitters/from.ts::WrapChildrenEntry`
 
@@ -14790,7 +14790,19 @@ What a strict slot takes instead of bare text, for the bare-text refusal: the le
 
 ### `packages/codegen/src/emitters/factories.ts::storedSlotValueExpr`
 
-The storage coercion of one slot value (boolean keyword, bitflag, kind enum, mixed enum, or verbatim), before the keyword-text rejection. A strict boolean-keyword slot stores through `strictBooleanStorage`, so bare text stays visible to a `'runtime'` engine's verifier. `slotStorageFromValueExpr` composes it with `admittedSlotInput`.
+The storage of one slot value, before the keyword-text rejection. A list slot (`isListStorage`) stores through `listStorage`, with the slot's coercion as the item function, so every list a builder holds is its own array and no caller keeps a handle on it; any other slot stores through its coercion (`slotStorageCoercion`) or as given. A strict boolean-keyword slot stores through `strictBooleanStorage`, so bare text stays visible to a `'runtime'` engine's verifier. `slotStorageFromValueExpr` composes it with `admittedSlotInput`.
+
+### `packages/codegen/src/emitters/factories.ts::slotStorageCoercion`
+
+The runtime helper one slot value is stored through, by the slot's storage encoding (`resolveFieldStorageInfo`): `strictBooleanStorage` or `coerceBooleanKeywordStorage`, `coerceBitflagStorage` with the slot's texts, `kindIdStorage` for a strict kind-enum or mixed slot and `coerceKindEnumStorage` / `coerceMixedEnumStorage` with the slot's text table for text input; `undefined` for a verbatim slot, or an enum slot without kind entries. `typed` says whether the helper takes the slot's storage type. `storedSlotValueExpr` and `storedFieldCall` emit it and `collectStorageCoercionImports` imports it, so they cannot disagree.
+
+### `packages/codegen/src/emitters/factories.ts::storageCallExpr`
+
+The call that stores one value: for a list, `listStorage` over it with the coercion as the item function (the helper itself when it takes no table, otherwise a closure passing the table); otherwise the coercion applied to the value, or the value as given. `storedSlotValueExpr` and the loose resolvers' `storedFieldCall` both emit through it, so a list is stored one way whichever surface builds it.
+
+### `packages/codegen/src/emitters/factories.ts::isListStorage`
+
+Whether a slot stores a list: a repeated slot whose encoding is not a presence (`boolean` or `bitflag` collapse a repeat into one value).
 
 ### `packages/codegen/src/emitters/factories.ts::leafReDeclaration`
 

@@ -44,6 +44,7 @@ import {
 	admitAliasContent,
 	coerceKindEnumStorage,
 	kindIdStorage,
+	listStorage,
 	numberText,
 	orDefault,
 	rejectKeywordText,
@@ -104,7 +105,7 @@ export function buildProgram(): T.EmptyProgram;
 export function buildProgram(config?: Partial<T.Program.Config>): T.Program.Bound;
 export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.Bound {
 	const _hash_bang_line = config.hashBangLine;
-	const _statements = kindIdStorage<NonNullable<T.Program['_statements']>>(config.statements ?? []);
+	const _statements = listStorage<NonNullable<T.Program['_statements']>>(config.statements ?? [], kindIdStorage);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Program as const,
@@ -555,7 +556,7 @@ export function buildLexicalDeclaration(
 	options?: T.LexicalDeclaration.Options
 ): T.LexicalDeclaration.Bound {
 	const _kind = kindIdStorage<NonNullable<T.LexicalDeclaration['_kind']>>(config.kind);
-	const _declarators = config.declarators;
+	const _declarators = listStorage<NonNullable<T.LexicalDeclaration['_declarators']>>(config.declarators);
 	const _terminator = coerceKindEnumStorage<NonNullable<T.LexicalDeclaration['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
@@ -1247,7 +1248,7 @@ export function buildSwitchBody(...children: Admit<(T.SwitchCase | T.SwitchDefau
 
 export function buildSwitchCase(config: T.SwitchCase.Config): T.SwitchCase.Bound {
 	const _value = kindIdStorage<NonNullable<T.SwitchCase['_value']>>(config.value);
-	const _body = kindIdStorage<NonNullable<T.SwitchCase['_body']>>(config.body ?? []);
+	const _body = listStorage<NonNullable<T.SwitchCase['_body']>>(config.body ?? [], kindIdStorage);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SwitchCase as const,
@@ -1840,7 +1841,7 @@ export function buildNestedIdentifier(config: T.NestedIdentifier.Config): T.Nest
 }
 
 export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound {
-	const _decorator = config.decorator ?? [];
+	const _decorator = listStorage<NonNullable<T.Class['_decorator']>>(config.decorator ?? []);
 	const _name = admitAliasContent<NonNullable<T.Class['_name']>>(config.name, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
@@ -1893,7 +1894,7 @@ export function buildClassDeclaration(
 	config: T.ClassDeclaration.Config,
 	options?: T.ClassDeclaration.Options
 ): T.ClassDeclaration.Bound {
-	const _decorator = config.decorator ?? [];
+	const _decorator = listStorage<NonNullable<T.ClassDeclaration['_decorator']>>(config.decorator ?? []);
 	const _name = admitAliasContent<NonNullable<T.ClassDeclaration['_name']>>(config.name, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
@@ -3432,7 +3433,7 @@ export function buildComputedPropertyName(value: Admit<T.Expression>): T.Compute
 }
 
 export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Config): T.PublicFieldDefinition.Bound {
-	const _decorator = config.decorator ?? [];
+	const _decorator = listStorage<NonNullable<T.PublicFieldDefinition['_decorator']>>(config.decorator ?? []);
 	const _declare = strictBooleanStorage(config.declare);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.PublicFieldDefinition['_accessibility_modifier']>>(
 		config.accessibilityModifier
@@ -4071,7 +4072,7 @@ export function buildAmbientDeclaration(
 export function buildAbstractClassDeclaration(
 	config: T.AbstractClassDeclaration.Config
 ): T.AbstractClassDeclaration.Bound {
-	const _decorator = config.decorator ?? [];
+	const _decorator = listStorage<NonNullable<T.AbstractClassDeclaration['_decorator']>>(config.decorator ?? []);
 	const _name = admitAliasContent<NonNullable<T.AbstractClassDeclaration['_name']>>(config.name, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
@@ -4516,7 +4517,7 @@ export function buildTypeAliasDeclaration(
 export const buildOverrideModifier: TSKindId.OverrideModifier = TSKindId.OverrideModifier;
 
 export function buildRequiredParameter(config: T.RequiredParameter.Config): T.RequiredParameter.Bound {
-	const _decorator = config.decorator ?? [];
+	const _decorator = listStorage<NonNullable<T.RequiredParameter['_decorator']>>(config.decorator ?? []);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.RequiredParameter['_accessibility_modifier']>>(
 		config.accessibilityModifier
 	);
@@ -4571,7 +4572,7 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 }
 
 export function buildOptionalParameter(config: T.OptionalParameter.Config): T.OptionalParameter.Bound {
-	const _decorator = config.decorator ?? [];
+	const _decorator = listStorage<NonNullable<T.OptionalParameter['_decorator']>>(config.decorator ?? []);
 	const _accessibility_modifier = kindIdStorage<NonNullable<T.OptionalParameter['_accessibility_modifier']>>(
 		config.accessibilityModifier
 	);
@@ -7906,7 +7907,7 @@ export function buildClassBodyMemberMethod(
 	config: T.ClassBodyMemberMethod.Config,
 	options?: T.ClassBodyMemberMethod.Options
 ): T.ClassBodyMemberMethod.Bound {
-	const _decorator = config.decorator ?? [];
+	const _decorator = listStorage<NonNullable<T.ClassBodyMemberMethod['_decorator']>>(config.decorator ?? []);
 	const _method_definition = config.methodDefinition;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberMethod['_terminator']>>(
 		options?.terminator === null ? 0 : options?.terminator,
@@ -8637,7 +8638,9 @@ export function buildExportStatementDefaultFrom(
 export function buildExportStatementDefaultDeclaration(
 	config: T.ExportStatementDefaultDeclaration.Config
 ): T.ExportStatementDefaultDeclaration.Bound {
-	const _decorator = config.decorator ?? [];
+	const _decorator = listStorage<NonNullable<T.ExportStatementDefaultDeclaration['_decorator']>>(
+		config.decorator ?? []
+	);
 	const _content = config.content;
 	const handle = currentHandle();
 	const node = {

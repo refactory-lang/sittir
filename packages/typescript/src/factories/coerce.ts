@@ -12,7 +12,8 @@ import {
 	coerceMixedEnumStorage,
 	configFieldOr,
 	isNodeOfKind,
-	isNodeValue
+	isNodeValue,
+	listStorage
 } from '@sittir/common/utils';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
@@ -2371,9 +2372,9 @@ export function resolveProgram_hashBangLine(
 }
 
 export function resolveProgram_statements(value: T.Program.LooseConfig['statements']): Admit<T.Program['_statements']> {
-	return coerceMixedEnumStorage(
+	return listStorage(
 		_resolveKindEnum(value, () => _resolveMany<T.Statement>(value, _K0, _K1)),
-		[]
+		(item) => coerceMixedEnumStorage(item, [])
 	);
 }
 
@@ -2731,9 +2732,9 @@ export function coerceToStatementBlock(...input: T.StatementBlock.LooseArgs): Re
 	})();
 	return (F.buildStatementBlock as (...args: unknown[]) => ReturnType<typeof F.buildStatementBlock>)(
 		options,
-		...(coerceMixedEnumStorage(
+		...(listStorage(
 			_resolveKindEnum(_elems, () => _resolveMany<T.Statement | '\n'>(_elems, _K0, _K1)),
-			[]
+			(item) => coerceMixedEnumStorage(item, [])
 		) as readonly unknown[])
 	);
 }
@@ -3304,9 +3305,9 @@ export function resolveSwitchCase_value(value: T.SwitchCase.LooseConfig['value']
 }
 
 export function resolveSwitchCase_bodies(value: T.SwitchCase.LooseConfig['body']): Admit<T.SwitchCase['_body']> {
-	return coerceMixedEnumStorage(
+	return listStorage(
 		_resolveKindEnum(value, () => _resolveMany<T.Statement>(value, _K0, _K1)),
-		[]
+		(item) => coerceMixedEnumStorage(item, [])
 	);
 }
 
@@ -3324,9 +3325,9 @@ export function coerceToSwitchDefault(...input: T.SwitchDefault.LooseArgs): Retu
 		const stored = (data as unknown as { _body?: unknown })._body;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildSwitchDefault(
-			...(coerceMixedEnumStorage(
+			...(listStorage(
 				_resolveKindEnum(children, () => _resolveMany<T.Statement>(children, _K0, _K1)),
-				[]
+				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildSwitchDefault>)
 		);
 	}
@@ -3339,9 +3340,9 @@ export function coerceToSwitchDefault(...input: T.SwitchDefault.LooseArgs): Retu
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildSwitchDefault(
-		...(coerceMixedEnumStorage(
+		...(listStorage(
 			_resolveKindEnum(_elems, () => _resolveMany<T.Statement>(_elems, _K0, _K1)),
-			[]
+			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildSwitchDefault>)
 	);
 }
@@ -3945,9 +3946,9 @@ export function coerceToArray(...input: T.Array.LooseArgs): ReturnType<typeof F.
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildArray(
-		...(coerceMixedEnumStorage(
+		...(listStorage(
 			_resolveKindEnum(_elems, () => _resolveMany<T.Expression | T.SpreadElement>(_elems, _K6, _K16)),
-			[]
+			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildArray>)
 	);
 }
@@ -4824,9 +4825,9 @@ export function coerceToSequenceExpression(
 		const stored = (data as unknown as { _expression?: unknown })._expression;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildSequenceExpression(
-			...(coerceMixedEnumStorage(
+			...(listStorage(
 				_resolveKindEnum(children, () => _resolveMany<T.Expression>(children, _K6, _K14)),
-				[]
+				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildSequenceExpression>)
 		);
 	}
@@ -4839,9 +4840,9 @@ export function coerceToSequenceExpression(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildSequenceExpression(
-		...(coerceMixedEnumStorage(
+		...(listStorage(
 			_resolveKindEnum(_elems, () => _resolveMany<T.Expression>(_elems, _K6, _K14)),
-			[]
+			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildSequenceExpression>)
 	);
 }
@@ -5025,9 +5026,9 @@ export function coerceToArguments(...input: T.Arguments.LooseArgs): ReturnType<t
 		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildArguments(
-			...(coerceMixedEnumStorage(
+			...(listStorage(
 				_resolveKindEnum(children, () => _resolveMany<T.Expression | T.SpreadElement>(children, _K6, _K16)),
-				[]
+				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildArguments>)
 		);
 	}
@@ -5040,9 +5041,9 @@ export function coerceToArguments(...input: T.Arguments.LooseArgs): ReturnType<t
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildArguments(
-		...(coerceMixedEnumStorage(
+		...(listStorage(
 			_resolveKindEnum(_elems, () => _resolveMany<T.Expression | T.SpreadElement>(_elems, _K6, _K16)),
-			[]
+			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildArguments>)
 	);
 }
@@ -5129,9 +5130,9 @@ export function coerceToClassBody(...input: T.ClassBody.LooseArgs): ReturnType<t
 		const stored = (data as unknown as { _members?: unknown })._members;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildClassBody(
-			...(coerceMixedEnumStorage(
+			...(listStorage(
 				_resolveKindEnum(children, () => _resolveMany<T.ClassBodyMember>(children, _K33, _K34)),
-				[]
+				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildClassBody>)
 		);
 	}
@@ -5144,9 +5145,9 @@ export function coerceToClassBody(...input: T.ClassBody.LooseArgs): ReturnType<t
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildClassBody(
-		...(coerceMixedEnumStorage(
+		...(listStorage(
 			_resolveKindEnum(_elems, () => _resolveMany<T.ClassBodyMember>(_elems, _K33, _K34)),
-			[]
+			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildClassBody>)
 	);
 }
@@ -6494,9 +6495,9 @@ export function coerceToImplementsClause(
 		const stored = (data as unknown as { _type?: unknown })._type;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildImplementsClause(
-			...(coerceMixedEnumStorage(
+			...(listStorage(
 				_resolveKindEnum(children, () => _resolveMany<T.Type>(children, _K38, _K39)),
-				[]
+				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildImplementsClause>)
 		);
 	}
@@ -6509,9 +6510,9 @@ export function coerceToImplementsClause(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildImplementsClause(
-		...(coerceMixedEnumStorage(
+		...(listStorage(
 			_resolveKindEnum(_elems, () => _resolveMany<T.Type>(_elems, _K38, _K39)),
-			[]
+			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildImplementsClause>)
 	);
 }
@@ -8967,9 +8968,9 @@ export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.
 			['delimiter'],
 			undefined,
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () => _resolveMany<T.Type | T.TypeIdentifier.Types>(els, _K38, _K39)),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'predefined_type',
@@ -9058,7 +9059,7 @@ export function coerceToTupleTypeMembers(
 			['delimiter'],
 			undefined,
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () =>
 						_resolveMany<
 							| T.TupleParameter
@@ -9069,7 +9070,7 @@ export function coerceToTupleTypeMembers(
 							| T.TypeIdentifier.Types
 						>(els, _K38, _K64)
 					),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'predefined_type',

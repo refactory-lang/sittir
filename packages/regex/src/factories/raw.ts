@@ -16,6 +16,7 @@ import {
 	restItems,
 	admitAliasContent,
 	kindIdStorage,
+	listStorage,
 	numberText,
 	orDefault,
 	strictBooleanStorage,
@@ -227,7 +228,10 @@ export function buildCharacterClass(config?: Partial<T.CharacterClass.Config>): 
 export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {}): T.CharacterClass.Bound {
 	const _negation = strictBooleanStorage(config.negation);
 	const _leading = strictBooleanStorage(config.leading);
-	const _class_atoms = kindIdStorage<NonNullable<T.CharacterClass['_class_atoms']>>(config.classAtoms ?? []);
+	const _class_atoms = listStorage<NonNullable<T.CharacterClass['_class_atoms']>>(
+		config.classAtoms ?? [],
+		kindIdStorage
+	);
 	const _trailing = strictBooleanStorage(config.trailing);
 	const handle = currentHandle();
 	const node = {

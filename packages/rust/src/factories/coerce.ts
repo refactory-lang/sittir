@@ -12,7 +12,8 @@ import {
 	coerceMixedEnumStorage,
 	configFieldOr,
 	isNodeOfKind,
-	isNodeValue
+	isNodeValue,
+	listStorage
 } from '@sittir/common/utils';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
@@ -2519,9 +2520,9 @@ export function resolveSourceFile_shebang(value: T.SourceFile.LooseConfig['sheba
 export function resolveSourceFile_statements(
 	value: T.SourceFile.LooseConfig['statements']
 ): Admit<T.SourceFile['_statements']> {
-	return coerceMixedEnumStorage(
+	return listStorage(
 		_resolveKindEnum(value, () => _resolveMany<T.Statement>(value, _K0, _K1)),
-		[]
+		(item) => coerceMixedEnumStorage(item, [])
 	);
 }
 
@@ -3327,9 +3328,9 @@ export function coerceToDeclarationList(
 		const stored = (data as unknown as { _declarations?: unknown })._declarations;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildDeclarationList(
-			...(coerceMixedEnumStorage(
+			...(listStorage(
 				_resolveKindEnum(children, () => _resolveMany<T.DeclarationStatement>(children, _K0, _K10)),
-				[]
+				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildDeclarationList>)
 		);
 	}
@@ -3342,9 +3343,9 @@ export function coerceToDeclarationList(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildDeclarationList(
-		...(coerceMixedEnumStorage(
+		...(listStorage(
 			_resolveKindEnum(_elems, () => _resolveMany<T.DeclarationStatement>(_elems, _K0, _K10)),
-			[]
+			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildDeclarationList>)
 	);
 }
@@ -4151,11 +4152,11 @@ export function coerceToTraitBounds(...input: T.TraitBounds.LooseArgs): ReturnTy
 		const stored = (data as unknown as { _bounds?: unknown })._bounds;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildTraitBounds(
-			...(coerceMixedEnumStorage(
+			...(listStorage(
 				_resolveKindEnum(children, () =>
 					_resolveMany<T.Type | T.Lifetime | T.HigherRankedTraitBound>(children, _K14, _K20)
 				),
-				[]
+				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildTraitBounds>)
 		);
 	}
@@ -4168,9 +4169,9 @@ export function coerceToTraitBounds(...input: T.TraitBounds.LooseArgs): ReturnTy
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildTraitBounds(
-		...(coerceMixedEnumStorage(
+		...(listStorage(
 			_resolveKindEnum(_elems, () => _resolveMany<T.Type | T.Lifetime | T.HigherRankedTraitBound>(_elems, _K14, _K20)),
-			[]
+			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildTraitBounds>)
 	);
 }
@@ -5892,9 +5893,9 @@ export function resolveLetChain_left(value: T.LetChain.LooseConfig['left']): Adm
 }
 
 export function resolveLetChain_rights(value: T.LetChain.LooseConfig['right']): Admit<T.LetChain['_right']> {
-	return coerceMixedEnumStorage(
+	return listStorage(
 		_resolveKindEnum(value, () => _resolveMany<T.LetCondition | T.Expression>(value, _K12, _K47)),
-		[]
+		(item) => coerceMixedEnumStorage(item, [])
 	);
 }
 
@@ -6147,9 +6148,9 @@ export function coerceToClosureParameters(
 		const stored = (data as unknown as { _parameters?: unknown })._parameters;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildClosureParameters(
-			...(coerceMixedEnumStorage(
+			...(listStorage(
 				_resolveKindEnum(children, () => _resolveMany<T.Pattern | T.Parameter>(children, _K23, _K50)),
-				[]
+				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildClosureParameters>)
 		);
 	}
@@ -6162,9 +6163,9 @@ export function coerceToClosureParameters(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildClosureParameters(
-		...(coerceMixedEnumStorage(
+		...(listStorage(
 			_resolveKindEnum(_elems, () => _resolveMany<T.Pattern | T.Parameter>(_elems, _K23, _K50)),
-			[]
+			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildClosureParameters>)
 	);
 }
@@ -6378,9 +6379,9 @@ export function resolveBlock_label(value: T.Block.LooseConfig['label']): Admit<T
 }
 
 export function resolveBlock_statements(value: T.Block.LooseConfig['statements']): Admit<T.Block['_statements']> {
-	return coerceMixedEnumStorage(
+	return listStorage(
 		_resolveKindEnum(value, () => _resolveMany<T.Statement>(value, _K0, _K1)),
-		[]
+		(item) => coerceMixedEnumStorage(item, [])
 	);
 }
 
@@ -6916,11 +6917,11 @@ export function coerceToOrderedFieldDeclarationListElements(
 			['delimiter'],
 			'attributed_ordered_field',
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () =>
 						_resolveMany<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>(els, _K14, _K15)
 					),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'attributed_ordered_field',
@@ -7258,9 +7259,9 @@ export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.
 			['delimiter'],
 			undefined,
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () => _resolveMany<T.Type | T.TypeIdentifier.Types>(els, _K14, _K15)),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'unit_type',
@@ -7339,13 +7340,13 @@ export function coerceToTypeArgumentsElements(
 			['delimiter'],
 			'type_argument',
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () =>
 						_resolveMany<
 							T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types
 						>(els, _K60, _K61)
 					),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'type_argument',
@@ -7446,9 +7447,9 @@ export function coerceToArgumentsElements(
 			['delimiter'],
 			'attributed_argument',
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () => _resolveMany<T.AttributedArgument | T.Expression>(els, _K12, _K13)),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'attributed_argument',
@@ -7597,9 +7598,9 @@ export function coerceToExpressions(...input: T.Expressions.LooseArgs): ReturnTy
 			['delimiter'],
 			undefined,
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () => _resolveMany<T.Expression>(els, _K12, _K13)),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'char_literal_empty',
@@ -7721,9 +7722,9 @@ export function coerceToTuplePatternElements(
 			['delimiter'],
 			undefined,
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () => _resolveMany<T.Pattern | T.ClosureExpression>(els, _K23, _K63)),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'char_literal_empty',
@@ -7788,9 +7789,9 @@ export function coerceToPatterns(...input: T.Patterns.LooseArgs): ReturnType<typ
 			['delimiter'],
 			undefined,
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () => _resolveMany<T.Pattern>(els, _K23, _K24)),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'char_literal_empty',
@@ -7855,11 +7856,11 @@ export function coerceToStructPatternElements(
 			['delimiter'],
 			undefined,
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () =>
 						_resolveMany<T.FieldPattern | TSKindId.RemainingFieldPattern>(els, _K64, _super_field_pattern)
 					),
-					[['..', TSKindId.RemainingFieldPattern] as const]
+					(item) => coerceMixedEnumStorage(item, [['..', TSKindId.RemainingFieldPattern] as const])
 				),
 			['remaining_field_pattern', 'field_pattern_shorthand', 'field_pattern_named']
 		) as unknown as NonEmptyArray<Admit<T.FieldPattern | TSKindId.RemainingFieldPattern>>)
@@ -9539,9 +9540,9 @@ export function coerceToDelimTokenTreeParen(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildDelimTokenTreeParen(
-		...(coerceMixedEnumStorage(
+		...(listStorage(
 			_resolveKindEnum(_elems, () => _resolveMany<T.NonSpecialToken | '$' | T.DelimTokenTree>(_elems, _K2, _K69)),
-			[['$', TSKindId.Dollar] as const]
+			(item) => coerceMixedEnumStorage(item, [['$', TSKindId.Dollar] as const])
 		) as unknown as Parameters<typeof F.buildDelimTokenTreeParen>)
 	);
 }
@@ -9562,9 +9563,9 @@ export function coerceToDelimTokenTreeBracket(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildDelimTokenTreeBracket(
-		...(coerceMixedEnumStorage(
+		...(listStorage(
 			_resolveKindEnum(_elems, () => _resolveMany<T.NonSpecialToken | '$' | T.DelimTokenTree>(_elems, _K2, _K69)),
-			[['$', TSKindId.Dollar] as const]
+			(item) => coerceMixedEnumStorage(item, [['$', TSKindId.Dollar] as const])
 		) as unknown as Parameters<typeof F.buildDelimTokenTreeBracket>)
 	);
 }
@@ -9585,9 +9586,9 @@ export function coerceToDelimTokenTreeBrace(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildDelimTokenTreeBrace(
-		...(coerceMixedEnumStorage(
+		...(listStorage(
 			_resolveKindEnum(_elems, () => _resolveMany<T.NonSpecialToken | '$' | T.DelimTokenTree>(_elems, _K2, _K69)),
-			[['$', TSKindId.Dollar] as const]
+			(item) => coerceMixedEnumStorage(item, [['$', TSKindId.Dollar] as const])
 		) as unknown as Parameters<typeof F.buildDelimTokenTreeBrace>)
 	);
 }

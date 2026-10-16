@@ -36,6 +36,7 @@ import {
 	isNodeOfKind,
 	admitAliasContent,
 	kindIdStorage,
+	listStorage,
 	numberText,
 	orDefault,
 	rejectKeywordText,
@@ -99,7 +100,7 @@ export function buildSourceFile(): T.EmptySourceFile;
 export function buildSourceFile(config?: Partial<T.SourceFile.Config>): T.SourceFile.Bound;
 export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): T.SourceFile.Bound {
 	const _shebang = config.shebang;
-	const _statements = kindIdStorage<NonNullable<T.SourceFile['_statements']>>(config.statements ?? []);
+	const _statements = listStorage<NonNullable<T.SourceFile['_statements']>>(config.statements ?? [], kindIdStorage);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SourceFile as const,
@@ -236,7 +237,9 @@ export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config): 
 }
 
 export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Config): T.TokenRepetitionPattern.Bound {
-	const _token_patterns = config.tokenPatterns ?? [];
+	const _token_patterns = listStorage<NonNullable<T.TokenRepetitionPattern['_token_patterns']>>(
+		config.tokenPatterns ?? []
+	);
 	const _separator = config.separator;
 	const _operator = kindIdStorage<NonNullable<T.TokenRepetitionPattern['_operator']>>(config.operator);
 	const handle = currentHandle();
@@ -275,7 +278,7 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 }
 
 export function buildTokenRepetition(config: T.TokenRepetition.Config): T.TokenRepetition.Bound {
-	const _tokens = config.tokens ?? [];
+	const _tokens = listStorage<NonNullable<T.TokenRepetition['_tokens']>>(config.tokens ?? []);
 	const _separator = config.separator;
 	const _operator = kindIdStorage<NonNullable<T.TokenRepetition['_operator']>>(config.operator);
 	const handle = currentHandle();
@@ -3935,7 +3938,7 @@ export function buildParenthesizedExpression(value: Admit<T.Expression>): T.Pare
 }
 
 export function buildTupleExpression(config: T.TupleExpression.Config): T.TupleExpression.Bound {
-	const _attributes = config.attributes ?? [];
+	const _attributes = listStorage<NonNullable<T.TupleExpression['_attributes']>>(config.attributes ?? []);
 	const _expressions = config.expressions;
 	const handle = currentHandle();
 	const node = {
@@ -4088,7 +4091,7 @@ function _buildFieldInitializerList(value?: Admit<T.FieldInitializerListElements
 export function buildShorthandFieldInitializer(
 	config: T.ShorthandFieldInitializer.Config
 ): T.ShorthandFieldInitializer.Bound {
-	const _attributes = config.attributes ?? [];
+	const _attributes = listStorage<NonNullable<T.ShorthandFieldInitializer['_attributes']>>(config.attributes ?? []);
 	const _name = config.name;
 	const handle = currentHandle();
 	const node = {
@@ -4118,7 +4121,7 @@ export function buildShorthandFieldInitializer(
 }
 
 export function buildFieldInitializer(config: T.FieldInitializer.Config): T.FieldInitializer.Bound {
-	const _attribute_item = config.attributeItem ?? [];
+	const _attribute_item = listStorage<NonNullable<T.FieldInitializer['_attribute_item']>>(config.attributeItem ?? []);
 	const _field = admitAliasContent<NonNullable<T.FieldInitializer['_field']>>(config.field, [
 		[[1], (v: unknown) => buildFieldIdentifier(v as never)]
 	]);
@@ -4239,7 +4242,7 @@ export function buildLetCondition(config: T.LetCondition.Config): T.LetCondition
 
 export function buildLetChain(config: T.LetChain.Config): T.LetChain.Bound {
 	const _left = kindIdStorage<NonNullable<T.LetChain['_left']>>(config.left);
-	const _right = kindIdStorage<NonNullable<T.LetChain['_right']>>(config.right ?? []);
+	const _right = listStorage<NonNullable<T.LetChain['_right']>>(config.right ?? [], kindIdStorage);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.LetChain as const,
@@ -4384,7 +4387,7 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 }
 
 export function buildLastMatchArm(config: T.LastMatchArm.Config): T.LastMatchArm.Bound {
-	const _attributes = config.attributes ?? [];
+	const _attributes = listStorage<NonNullable<T.LastMatchArm['_attributes']>>(config.attributes ?? []);
 	const _pattern = config.pattern;
 	const _value = kindIdStorage<NonNullable<T.LastMatchArm['_value']>>(config.value);
 	const _comma = strictBooleanStorage(config.comma);
@@ -4938,7 +4941,7 @@ export function buildBlock(): T.EmptyBlock;
 export function buildBlock(config?: Partial<T.Block.Config>): T.Block.Bound;
 export function buildBlock(config: Partial<T.Block.Config> = {}): T.Block.Bound {
 	const _label = config.label;
-	const _statements = kindIdStorage<NonNullable<T.Block['_statements']>>(config.statements ?? []);
+	const _statements = listStorage<NonNullable<T.Block['_statements']>>(config.statements ?? [], kindIdStorage);
 	const _trailing_expression = kindIdStorage<NonNullable<T.Block['_trailing_expression']>>(config.trailingExpression);
 	const handle = currentHandle();
 	const node = {
@@ -5333,7 +5336,7 @@ export function buildNegativeLiteral(value: Admit<T.IntegerLiteral | T.FloatLite
 
 export function buildStringLiteral(config: T.StringLiteral.Config): T.StringLiteral.Bound {
 	const _string_open = config.stringOpen;
-	const _elements = config.elements ?? [];
+	const _elements = listStorage<NonNullable<T.StringLiteral['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.StringLiteral as const,
@@ -7544,7 +7547,7 @@ export function buildEscapeSequenceHex(input: string, affix: boolean = true): T.
 }
 
 export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config): T.ArrayExpressionSemi.Bound {
-	const _attributes = config.attributes ?? [];
+	const _attributes = listStorage<NonNullable<T.ArrayExpressionSemi['_attributes']>>(config.attributes ?? []);
 	const _element = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_element']>>(config.element);
 	const _length = kindIdStorage<NonNullable<T.ArrayExpressionSemi['_length']>>(config.length);
 	const handle = currentHandle();
@@ -7583,7 +7586,7 @@ export function buildArrayExpressionList(config?: Partial<T.ArrayExpressionList.
 export function buildArrayExpressionList(
 	config: Partial<T.ArrayExpressionList.Config> = {}
 ): T.ArrayExpressionList.Bound {
-	const _attributes = config.attributes ?? [];
+	const _attributes = listStorage<NonNullable<T.ArrayExpressionList['_attributes']>>(config.attributes ?? []);
 	const _elements = config.elements;
 	const handle = currentHandle();
 	const node = {
@@ -8563,7 +8566,7 @@ export function buildForeignModItemBody(config: Partial<T.ForeignModItemBody.Con
 }
 
 export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.MatchArmWithComma.Bound {
-	const _attributes = config.attributes ?? [];
+	const _attributes = listStorage<NonNullable<T.MatchArmWithComma['_attributes']>>(config.attributes ?? []);
 	const _pattern = config.pattern;
 	const _value = kindIdStorage<NonNullable<T.MatchArmWithComma['_value']>>(config.value);
 	const readGroup_pattern = () => _pattern;
@@ -8635,7 +8638,7 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 }
 
 export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): T.MatchArmBlockEnding.Bound {
-	const _attributes = config.attributes ?? [];
+	const _attributes = listStorage<NonNullable<T.MatchArmBlockEnding['_attributes']>>(config.attributes ?? []);
 	const _pattern = config.pattern;
 	const _value = config.value;
 	const readGroup_pattern = () => _pattern;
@@ -9635,7 +9638,9 @@ export const buildWildcardPattern: TSKindId.WildcardPattern = TSKindId.WildcardP
 export function buildAttributedFieldDeclaration(
 	config: T.AttributedFieldDeclaration.Config
 ): T.AttributedFieldDeclaration.Bound {
-	const _attribute_item = config.attributeItem ?? [];
+	const _attribute_item = listStorage<NonNullable<T.AttributedFieldDeclaration['_attribute_item']>>(
+		config.attributeItem ?? []
+	);
 	const _field_declaration = config.fieldDeclaration;
 	const handle = currentHandle();
 	const node = {
@@ -9665,7 +9670,9 @@ export function buildAttributedFieldDeclaration(
 }
 
 export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Config): T.AttributedEnumVariant.Bound {
-	const _attribute_item = config.attributeItem ?? [];
+	const _attribute_item = listStorage<NonNullable<T.AttributedEnumVariant['_attribute_item']>>(
+		config.attributeItem ?? []
+	);
 	const _enum_variant = config.enumVariant;
 	const handle = currentHandle();
 	const node = {
@@ -9728,7 +9735,9 @@ export function buildAttributedParameter(config: T.AttributedParameter.Config): 
 export function buildAttributedTypeParameter(
 	config: T.AttributedTypeParameter.Config
 ): T.AttributedTypeParameter.Bound {
-	const _attribute_item = config.attributeItem ?? [];
+	const _attribute_item = listStorage<NonNullable<T.AttributedTypeParameter['_attribute_item']>>(
+		config.attributeItem ?? []
+	);
 	const _content = config.content;
 	const handle = currentHandle();
 	const node = {
@@ -9758,7 +9767,7 @@ export function buildAttributedTypeParameter(
 }
 
 export function buildAttributedArgument(config: T.AttributedArgument.Config): T.AttributedArgument.Bound {
-	const _attribute_item = config.attributeItem ?? [];
+	const _attribute_item = listStorage<NonNullable<T.AttributedArgument['_attribute_item']>>(config.attributeItem ?? []);
 	const _expression = kindIdStorage<NonNullable<T.AttributedArgument['_expression']>>(config.expression);
 	const handle = currentHandle();
 	const node = {
@@ -9788,7 +9797,9 @@ export function buildAttributedArgument(config: T.AttributedArgument.Config): T.
 }
 
 export function buildAttributedOrderedField(config: T.AttributedOrderedField.Config): T.AttributedOrderedField.Bound {
-	const _attribute_item = config.attributeItem ?? [];
+	const _attribute_item = listStorage<NonNullable<T.AttributedOrderedField['_attribute_item']>>(
+		config.attributeItem ?? []
+	);
 	const _visibility_modifier = config.visibilityModifier;
 	const _type = admitAliasContent<NonNullable<T.AttributedOrderedField['_type']>>(
 		kindIdStorage<NonNullable<T.AttributedOrderedField['_type']>>(config.type),
@@ -9857,7 +9868,7 @@ export function buildTypeArgument(config: T.TypeArgument.Config): T.TypeArgument
 }
 
 export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlockArms.Bound {
-	const _arms = config.arms ?? [];
+	const _arms = listStorage<NonNullable<T.MatchBlockArms['_arms']>>(config.arms ?? []);
 	const _last_arm = config.lastArm;
 	const handle = currentHandle();
 	const node = {

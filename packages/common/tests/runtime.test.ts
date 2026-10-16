@@ -11,6 +11,7 @@ import {
 	coerceMixedEnumStorage,
 	hoist,
 	hoistRoutes,
+	listStorage,
 	rejectBareText,
 	rejectKeywordText
 } from '../src/utils.ts';
@@ -65,7 +66,7 @@ describe('grammar-free runtime helpers', () => {
 		expect(coerceMixedEnumStorage('+', byText)).toBe(10);
 		expect(coerceMixedEnumStorage('other', byText)).toBe('other');
 		expect(coerceMixedEnumStorage({ $type: 10 }, byText)).toBe(10);
-		expect(coerceMixedEnumStorage(['+', undefined], byText)).toEqual([10]);
+		expect(listStorage(['+', undefined], (item) => coerceMixedEnumStorage(item, byText))).toEqual([10]);
 	});
 
 	it('coerceKindEnumStorage maps text and node text to ids and refuses unknown text', () => {

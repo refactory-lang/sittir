@@ -147,12 +147,29 @@ describe('setter bodies', () => {
 });
 
 describe('kindIdStorage', () => {
-	it('keeps absent and ids, reads arrays item by item, and leaves text for the slot to refuse', async () => {
-		const { kindIdStorage } = await import('../src/utils.ts');
+	it('keeps absent and ids, and leaves text for the slot to refuse; a list maps it item by item', async () => {
+		const { kindIdStorage, listStorage } = await import('../src/utils.ts');
 		expect(kindIdStorage(undefined)).toBeUndefined();
 		expect(kindIdStorage(null)).toBeUndefined();
 		expect(kindIdStorage(7)).toBe(7);
-		expect(kindIdStorage([1, undefined, 2])).toEqual([1, 2]);
+		expect(listStorage([1, null, 2], kindIdStorage)).toEqual([1, 2]);
 		expect(kindIdStorage('+')).toBe('+');
+	});
+});
+
+describe('listStorage', () => {
+	it('stores a new array of the items, each through the item function, dropping the absent ones', async () => {
+		const { listStorage } = await import('../src/utils.ts');
+		const input = [1, undefined, 2];
+		const stored = listStorage<number[]>(input);
+		expect(stored).toEqual([1, 2]);
+		expect(stored).not.toBe(input);
+		expect(listStorage([1, 2], (item) => (item === 1 ? undefined : (item as number) * 10))).toEqual([20]);
+	});
+
+	it('stores a value that is not an array through the item function alone', async () => {
+		const { listStorage } = await import('../src/utils.ts');
+		expect(listStorage(undefined)).toBeUndefined();
+		expect(listStorage(3, (item) => (item as number) + 1)).toBe(4);
 	});
 });

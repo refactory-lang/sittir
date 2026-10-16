@@ -124,23 +124,9 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 	const imports = new Set<string>();
 	for (const node of nodeMap.nodes.values()) {
 		for (const slot of node.slots) {
-			const storageInfo = resolveFieldStorageInfo(slot, nodeMap, kindEntries);
-			switch (storageInfo.kind) {
-				case 'boolean':
-					imports.add(slot.registeredOption === undefined ? 'strictBooleanStorage' : 'coerceBooleanKeywordStorage');
-					break;
-				case 'bitflag':
-					imports.add('coerceBitflagStorage');
-					break;
-				case 'kindEnum':
-					if (kindEntries) imports.add(slot.registeredOption === 'choice' ? 'coerceKindEnumStorage' : 'kindIdStorage');
-					break;
-				case 'mixedEnum':
-					if (kindEntries) imports.add(slot.registeredOption === 'choice' ? 'coerceMixedEnumStorage' : 'kindIdStorage');
-					break;
-				case 'verbatim':
-					break;
-			}
+			const coercion = slotStorageCoercion(slot, nodeMap, kindEntries, slot.registeredOption === 'choice');
+			if (coercion !== undefined) imports.add(coercion.helper);
+			if (isListStorage(slot, nodeMap, kindEntries)) imports.add('listStorage');
 			if (!isMultiple(slot) && emptyDefaultOf(slot, nodeMap, kindEntries)) imports.add('orDefault');
 			if (seatedKeywordTexts(slot, nodeMap, kindEntries).length > 0) imports.add('rejectKeywordText');
 			if (kindEntries !== undefined && slotAliases(slot, nodeMap).length > 0) imports.add('admitAliasContent');
@@ -684,6 +670,54 @@ function aliasContentAdmission(
 	return `admitAliasContent<${storedType}>(${expr}, [${table.join(', ')}])`;
 }
 
+export interface SlotStorageCoercion {
+	readonly helper: string;
+	readonly args: string;
+	readonly typed: boolean;
+}
+
+export function storageCallExpr(valueExpr: string, coercion: SlotStorageCoercion | undefined, list: boolean, stored?: string): string {
+	const typeArg = stored === undefined ? '' : `<${stored}>`;
+	if (list) {
+		if (coercion === undefined) return `listStorage${typeArg}(${valueExpr})`;
+		const item = coercion.args === '' ? coercion.helper : `(item) => ${coercion.helper}(item${coercion.args})`;
+		return `listStorage${typeArg}(${valueExpr}, ${item})`;
+	}
+	if (coercion === undefined) return valueExpr;
+	return `${coercion.helper}${coercion.typed ? typeArg : ''}(${valueExpr}${coercion.args})`;
+}
+
+export function slotStorageCoercion(
+	f: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	textInput: boolean,
+	storageInfo: FieldStorageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries)
+): SlotStorageCoercion | undefined {
+	switch (storageInfo.kind) {
+		case 'boolean':
+			return { helper: textInput ? 'coerceBooleanKeywordStorage' : 'strictBooleanStorage', args: '', typed: false };
+		case 'bitflag':
+			return { helper: 'coerceBitflagStorage', args: `, ${bitflagTextsExpr(storageInfo.texts)}`, typed: false };
+		case 'kindEnum':
+		case 'mixedEnum':
+			if (!kindEntries) return undefined;
+			if (!textInput) return { helper: 'kindIdStorage', args: '', typed: true };
+			return {
+				helper: storageInfo.kind === 'kindEnum' ? 'coerceKindEnumStorage' : 'coerceMixedEnumStorage',
+				args: `, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)}`,
+				typed: true
+			};
+		case 'verbatim':
+			return undefined;
+	}
+}
+
+function isListStorage(f: AssembledNonterminal, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): boolean {
+	const kind = resolveFieldStorageInfo(f, nodeMap, kindEntries).kind;
+	return isMultiple(f) && kind !== 'boolean' && kind !== 'bitflag';
+}
+
 function storedSlotValueExpr(
 	f: AssembledNonterminal,
 	valueExpr: string,
@@ -692,28 +726,8 @@ function storedSlotValueExpr(
 	typeName: string,
 	textInput = false
 ): string {
-	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 	const stored = `NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>`;
-	switch (storageInfo.kind) {
-		case 'boolean':
-			return textInput
-				? `coerceBooleanKeywordStorage(${valueExpr})`
-				: `strictBooleanStorage(${valueExpr})`;
-		case 'bitflag':
-			return `coerceBitflagStorage(${valueExpr}, ${bitflagTextsExpr(storageInfo.texts)})`;
-		case 'kindEnum':
-			if (!kindEntries) return valueExpr;
-			return textInput
-				? `coerceKindEnumStorage<${stored}>(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`
-				: `kindIdStorage<${stored}>(${valueExpr})`;
-		case 'mixedEnum':
-			if (!kindEntries) return valueExpr;
-			return textInput
-				? `coerceMixedEnumStorage<${stored}>(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`
-				: `kindIdStorage<${stored}>(${valueExpr})`;
-		case 'verbatim':
-			return valueExpr;
-	}
+	return storageCallExpr(valueExpr, slotStorageCoercion(f, nodeMap, kindEntries, textInput), isListStorage(f, nodeMap, kindEntries), stored);
 }
 
 function narrowedStorageExpr(

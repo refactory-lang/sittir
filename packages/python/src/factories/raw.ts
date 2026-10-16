@@ -35,6 +35,7 @@ import {
 	restItems,
 	admitAliasContent,
 	kindIdStorage,
+	listStorage,
 	numberText,
 	orDefault,
 	rejectKeywordText,
@@ -685,7 +686,7 @@ export const buildContinueStatement: TSKindId.ContinueStatement = TSKindId.Conti
 export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bound {
 	const _condition = kindIdStorage<NonNullable<T.IfStatement['_condition']>>(config.condition);
 	const _consequence = config.consequence;
-	const _alternative = config.alternative ?? [];
+	const _alternative = listStorage<NonNullable<T.IfStatement['_alternative']>>(config.alternative ?? []);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.IfStatement as const,
@@ -935,7 +936,7 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 
 export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement.Bound {
 	const _body = config.body;
-	const _except_clauses = config.exceptClauses ?? [];
+	const _except_clauses = listStorage<NonNullable<T.TryStatement['_except_clauses']>>(config.exceptClauses ?? []);
 	const _else_clause = config.elseClause;
 	const _finally_clause = config.finallyClause;
 	const handle = currentHandle();
@@ -1359,7 +1360,7 @@ export function buildNonlocalStatement(...children: NonEmptyArray<Admit<T.Identi
 
 export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatement.Bound {
 	const _code = config.code;
-	const _in_clause = kindIdStorage<NonNullable<T.ExecStatement['_in_clause']>>(config.inClause ?? []);
+	const _in_clause = listStorage<NonNullable<T.ExecStatement['_in_clause']>>(config.inClause ?? [], kindIdStorage);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ExecStatement as const,
@@ -1616,7 +1617,7 @@ function _buildArgumentList(value?: Admit<T.ArgumentListElements>): T.ArgumentLi
 }
 
 export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): T.DecoratedDefinition.Bound {
-	const _decorator = config.decorator;
+	const _decorator = listStorage<NonNullable<T.DecoratedDefinition['_decorator']>>(config.decorator);
 	const _definition = config.definition;
 	const handle = currentHandle();
 	const node = {
@@ -2686,7 +2687,7 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOpera
 
 export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.ComparisonOperator.Bound {
 	const _left = kindIdStorage<NonNullable<T.ComparisonOperator['_left']>>(config.left);
-	const _comparators = config.comparators;
+	const _comparators = listStorage<NonNullable<T.ComparisonOperator['_comparators']>>(config.comparators);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ComparisonOperator as const,
@@ -3753,7 +3754,7 @@ function _buildCollectionElements(
 export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bound {
 	const _async = strictBooleanStorage(config.async);
 	const _left = config.left;
-	const _right = kindIdStorage<NonNullable<T.ForInClause['_right']>>(config.right);
+	const _right = listStorage<NonNullable<T.ForInClause['_right']>>(config.right, kindIdStorage);
 	const _comma = strictBooleanStorage(config.comma);
 	const handle = currentHandle();
 	const node = {
@@ -3868,7 +3869,7 @@ export function buildConcatenatedString(...children: NonEmptyArray<Admit<T.Strin
 
 export function buildString(config: T.String.Config): T.String.Bound {
 	const _string_start = config.stringStart;
-	const _content = config.content ?? [];
+	const _content = listStorage<NonNullable<T.String['_content']>>(config.content ?? []);
 	const _string_end = config.stringEnd;
 	const handle = currentHandle();
 	const node = {

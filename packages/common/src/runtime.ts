@@ -67,15 +67,13 @@ export function admitAliasContent<T = unknown>(value: unknown, aliases: readonly
 	return (hit === undefined ? value : hit[1](value)) as T;
 }
 
-/**
- * A strict slot's kind-id storage: absent stays absent, a kind id stays itself, and an array is
- * read item by item with the absent ones dropped. Text is not read here; a string passes through
- * unchanged for the slot's refusal.
- */
+export function listStorage<T = unknown>(value: unknown, item: (value: unknown) => unknown = (value) => value): T {
+	if (!Array.isArray(value)) return item(value) as T;
+	return value.map(item).filter((stored) => stored !== undefined) as T;
+}
+
 export function kindIdStorage<T = unknown>(value: unknown): T {
-	if (value === undefined || value === null) return undefined as T;
-	if (Array.isArray(value)) return value.map((item) => kindIdStorage(item)).filter((item) => item !== undefined) as T;
-	return value as T;
+	return (value === null ? undefined : value) as T;
 }
 
 export function coerceMixedEnumStorage<T = unknown>(
@@ -84,9 +82,6 @@ export function coerceMixedEnumStorage<T = unknown>(
 ): T {
 	if (value === undefined || value === null) return undefined as T;
 	if (typeof value === 'number') return value as T;
-	if (Array.isArray(value)) {
-		return value.map((item) => coerceMixedEnumStorage(item, byText)).filter((item) => item !== undefined) as T;
-	}
 	if (typeof value === 'string') {
 		const mapped = byText.find(([candidate]) => candidate === value);
 		return (mapped ? mapped[1] : value) as T;
@@ -103,9 +98,6 @@ export function coerceKindEnumStorage<T = unknown>(
 ): T {
 	if (value === undefined || value === null) return undefined as T;
 	if (typeof value === 'number') return value as T;
-	if (Array.isArray(value)) {
-		return value.map((item) => coerceKindEnumStorage(item, byText)).filter((item) => item !== undefined) as T;
-	}
 	const text = extractNodeText(value);
 	if (text !== undefined) {
 		const mapped = byText.find(([candidate]) => candidate === text);

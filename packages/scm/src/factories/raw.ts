@@ -15,6 +15,7 @@ import {
 	describeValue,
 	restItems,
 	kindIdStorage,
+	listStorage,
 	strictBooleanStorage,
 	unaffixed
 } from '@sittir/common/utils';
@@ -298,8 +299,8 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 }
 
 export function buildList(config: T.List.Config): T.List.Bound {
-	const _definitions = config.definitions;
-	const _elements = config.elements ?? [];
+	const _definitions = listStorage<NonNullable<T.List['_definitions']>>(config.definitions);
+	const _elements = listStorage<NonNullable<T.List['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.List as const,
@@ -326,8 +327,8 @@ export function buildList(config: T.List.Config): T.List.Bound {
 }
 
 export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
-	const _grouping_group = config.groupingGroup;
-	const _elements = config.elements ?? [];
+	const _grouping_group = listStorage<NonNullable<T.Grouping['_grouping_group']>>(config.groupingGroup);
+	const _elements = listStorage<NonNullable<T.Grouping['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Grouping as const,
@@ -364,7 +365,7 @@ export function buildMissingNode(): T.EmptyMissingNode;
 export function buildMissingNode(config?: Partial<T.MissingNode.Config>): T.MissingNode.Bound;
 export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.MissingNode.Bound {
 	const _name = config.name;
-	const _elements = config.elements ?? [];
+	const _elements = listStorage<NonNullable<T.MissingNode['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MissingNode as const,
@@ -393,7 +394,7 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 
 export function buildAnonymousNode(config: T.AnonymousNode.Config): T.AnonymousNode.Bound {
 	const _name = kindIdStorage<NonNullable<T.AnonymousNode['_name']>>(config.name);
-	const _elements = config.elements ?? [];
+	const _elements = listStorage<NonNullable<T.AnonymousNode['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AnonymousNode as const,
@@ -641,7 +642,7 @@ export const buildAnchor: TSKindId.Anchor = TSKindId.Anchor;
 export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNodePlain.Bound {
 	const _name = kindIdStorage<NonNullable<T.NamedNodePlain['_name']>>(config.name);
 	const _named_node_group = config.namedNodeGroup;
-	const _elements = config.elements ?? [];
+	const _elements = listStorage<NonNullable<T.NamedNodePlain['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NamedNodePlain as const,
@@ -675,7 +676,7 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 	const _supertype = config.supertype;
 	const _name = config.name;
 	const _named_node_group = config.namedNodeGroup;
-	const _elements = config.elements ?? [];
+	const _elements = listStorage<NonNullable<T.NamedNodeSupertyped['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NamedNodeSupertyped as const,
@@ -711,7 +712,9 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 
 export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Config): T.NamedNodeGroupChildren.Bound {
 	const _anchor = strictBooleanStorage(config.anchor);
-	const _named_node_expressions = config.namedNodeExpressions;
+	const _named_node_expressions = listStorage<NonNullable<T.NamedNodeGroupChildren['_named_node_expressions']>>(
+		config.namedNodeExpressions
+	);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NamedNodeGroupChildren as const,
@@ -745,7 +748,9 @@ export function buildNamedNodeGroupAnchoredLast(
 	config: T.NamedNodeGroupAnchoredLast.Config
 ): T.NamedNodeGroupAnchoredLast.Bound {
 	const _anchor = strictBooleanStorage(config.anchor);
-	const _named_node_expressions = config.namedNodeExpressions ?? [];
+	const _named_node_expressions = listStorage<NonNullable<T.NamedNodeGroupAnchoredLast['_named_node_expressions']>>(
+		config.namedNodeExpressions ?? []
+	);
 	const _last = config.last;
 	const handle = currentHandle();
 	const node = {

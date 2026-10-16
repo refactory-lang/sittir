@@ -10,7 +10,8 @@ import {
 	coerceMixedEnumStorage,
 	configFieldOr,
 	isNodeOfKind,
-	isNodeValue
+	isNodeValue,
+	listStorage
 } from '@sittir/common/utils';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
@@ -800,7 +801,7 @@ export function resolveCharacterClass_leading(
 export function resolveCharacterClass_classAtoms(
 	value: T.CharacterClass.LooseConfig['classAtoms']
 ): Admit<T.CharacterClass['_class_atoms']> {
-	return coerceMixedEnumStorage(
+	return listStorage(
 		_resolveKindEnum(value, () =>
 			_resolveMany<
 				| T.ClassCharacter
@@ -813,7 +814,7 @@ export function resolveCharacterClass_classAtoms(
 				| T.ClassRange
 			>(value, _K3, _K4)
 		),
-		[['\\-', TSKindId.BslashDash] as const]
+		(item) => coerceMixedEnumStorage(item, [['\\-', TSKindId.BslashDash] as const])
 	);
 }
 

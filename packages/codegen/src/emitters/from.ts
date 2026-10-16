@@ -69,7 +69,6 @@ import {
 	fieldElementType,
 	childElementType,
 	kindEnumMemberDiscriminants,
-	kindEnumTextMapExpr,
 	keywordArmTextMapExpr,
 	delimiterMembersFor,
 	listHasOptions,
@@ -78,7 +77,9 @@ import {
 	listOptionKeys,
 	listSpreadTarget,
 	leadingOptionsSplit,
-	leafReDeclaration
+	leafReDeclaration,
+	slotStorageCoercion,
+	storageCallExpr
 } from './factories.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import {
@@ -155,7 +156,7 @@ function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEnt
 	}
 	lines.push(DELIMITER_IMPORT);
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
-	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind, isNodeValue } from '@sittir/common/utils';");
+	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind, isNodeValue, listStorage } from '@sittir/common/utils';");
 	lines.push('');
 }
 
@@ -1045,15 +1046,10 @@ function storedFieldCall(
 					elementType,
 					defaultArmKindOf(field, nodeMap)
 				);
-	if (storageInfo?.kind === 'kindEnum') {
-		const table = kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap, kindEntries);
-		return `coerceKindEnumStorage(_resolveKindEnumScalar(${prop}, () => ${baseCall}), ${table})`;
-	}
-	if (storageInfo?.kind === 'mixedEnum') {
-		const table = kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap, kindEntries);
-		return `coerceMixedEnumStorage(_resolveKindEnum(${prop}, () => ${baseCall}), ${table})`;
-	}
-	return baseCall;
+	if (storageInfo?.kind !== 'kindEnum' && storageInfo?.kind !== 'mixedEnum') return baseCall;
+	const coercion = slotStorageCoercion(field as AssembledNonterminal, nodeMap, kindEntries, true, storageInfo);
+	const resolved = storageInfo.kind === 'kindEnum' ? `_resolveKindEnumScalar(${prop}, () => ${baseCall})` : `_resolveKindEnum(${prop}, () => ${baseCall})`;
+	return storageCallExpr(resolved, coercion, fieldMultiple);
 }
 
 function keywordPresenceResolverCall(
@@ -1937,6 +1933,6 @@ export class FromEmitter implements CodegenEmitter<string> {
 			}
 			return [l];
 		});
-		return pruneUnusedImports(pruned, ['Delimiter', ...TYPES_IMPORT_OPTIONAL]).join('\n');
+		return pruneUnusedImports(pruned, ['Delimiter', 'listStorage', ...TYPES_IMPORT_OPTIONAL]).join('\n');
 	}
 }

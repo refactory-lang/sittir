@@ -12,7 +12,8 @@ import {
 	coerceMixedEnumStorage,
 	configFieldOr,
 	isNodeOfKind,
-	isNodeValue
+	isNodeValue,
+	listStorage
 } from '@sittir/common/utils';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
@@ -2197,9 +2198,9 @@ export function coerceToAssertStatement(
 		const stored = (data as unknown as { _expression?: unknown })._expression;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildAssertStatement(
-			...(coerceMixedEnumStorage(
+			...(listStorage(
 				_resolveKindEnum(children, () => _resolveMany<T.Expression>(children, _K7, _K8)),
-				[]
+				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildAssertStatement>)
 		);
 	}
@@ -2212,9 +2213,9 @@ export function coerceToAssertStatement(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildAssertStatement(
-		...(coerceMixedEnumStorage(
+		...(listStorage(
 			_resolveKindEnum(_elems, () => _resolveMany<T.Expression>(_elems, _K7, _K8)),
-			[]
+			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildAssertStatement>)
 	);
 }
@@ -2914,9 +2915,9 @@ export function resolveExecStatement_code(value: T.ExecStatement.LooseConfig['co
 export function resolveExecStatement_inClauses(
 	value: T.ExecStatement.LooseConfig['inClause']
 ): Admit<T.ExecStatement['_in_clause']> {
-	return coerceMixedEnumStorage(
+	return listStorage(
 		_resolveKindEnum(value, () => _resolveMany<T.Expression>(value, _K7, _K8)),
-		[]
+		(item) => coerceMixedEnumStorage(item, [])
 	);
 }
 
@@ -3145,9 +3146,9 @@ export function coerceToExpressionList(...input: T.ExpressionList.LooseArgs): Re
 			['delimiter'],
 			undefined,
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () => _resolveMany<T.Expression>(els, _K7, _K8)),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'identifier',
@@ -3642,9 +3643,9 @@ export function coerceToParametersElements(
 			['delimiter'],
 			undefined,
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () => _resolveMany<T.Parameter>(els, _K22, _K23)),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'identifier',
@@ -4707,11 +4708,11 @@ export function coerceToCollectionElements(
 			['delimiter'],
 			undefined,
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () =>
 						_resolveMany<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(els, _K7, _K35)
 					),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'identifier',
@@ -4770,9 +4771,9 @@ export function resolveForInClause_left(value: T.ForInClause.LooseConfig['left']
 }
 
 export function resolveForInClause_rights(value: T.ForInClause.LooseConfig['right']): Admit<T.ForInClause['_right']> {
-	return coerceMixedEnumStorage(
+	return listStorage(
 		_resolveKindEnum(value, () => _resolveMany<T.Expression | T.LambdaWithinForInClause>(value, _K7, _K28)),
-		[]
+		(item) => coerceMixedEnumStorage(item, [])
 	) as Admit<T.ForInClause['_right']>;
 }
 
@@ -4908,7 +4909,7 @@ export function coerceToStringContent(...input: T.StringContent.LooseArgs): Retu
 		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildStringContent(
-			...(coerceMixedEnumStorage(
+			...(listStorage(
 				_resolveKindEnum(children, () =>
 					_resolveMany<T.EscapeInterpolation | T.EscapeSequence | '\\' | T.StringFragment>(
 						children,
@@ -4916,7 +4917,7 @@ export function coerceToStringContent(...input: T.StringContent.LooseArgs): Retu
 						_super_escape_sequence
 					)
 				),
-				[['\\', TSKindId.NotEscapeSequence] as const]
+				(item) => coerceMixedEnumStorage(item, [['\\', TSKindId.NotEscapeSequence] as const])
 			) as unknown as Parameters<typeof F.buildStringContent>)
 		);
 	}
@@ -4929,7 +4930,7 @@ export function coerceToStringContent(...input: T.StringContent.LooseArgs): Retu
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildStringContent(
-		...(coerceMixedEnumStorage(
+		...(listStorage(
 			_resolveKindEnum(_elems, () =>
 				_resolveMany<T.EscapeInterpolation | T.EscapeSequence | '\\' | T.StringFragment>(
 					_elems,
@@ -4937,7 +4938,7 @@ export function coerceToStringContent(...input: T.StringContent.LooseArgs): Retu
 					_super_escape_sequence
 				)
 			),
-			[['\\', TSKindId.NotEscapeSequence] as const]
+			(item) => coerceMixedEnumStorage(item, [['\\', TSKindId.NotEscapeSequence] as const])
 		) as unknown as Parameters<typeof F.buildStringContent>)
 	);
 }
@@ -5108,9 +5109,9 @@ export function coerceToSimpleStatementsElements(
 			['delimiter'],
 			undefined,
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () => _resolveMany<T.SimpleStatement>(els, _K41, _K42)),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'pass_statement',
@@ -5155,9 +5156,9 @@ export function coerceToSubjects(...input: T.Subjects.LooseArgs): ReturnType<typ
 			['delimiter'],
 			undefined,
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () => _resolveMany<T.Expression>(els, _K7, _K8)),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'identifier',
@@ -5301,7 +5302,7 @@ export function coerceToArgumentListElements(
 			['delimiter'],
 			undefined,
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () =>
 						_resolveMany<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>(
 							els,
@@ -5309,7 +5310,7 @@ export function coerceToArgumentListElements(
 							_K43
 						)
 					),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'identifier',
@@ -5439,9 +5440,9 @@ export function coerceToSubscripts(...input: T.Subscripts.LooseArgs): ReturnType
 			['delimiter'],
 			undefined,
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () => _resolveMany<T.Expression | T.Slice>(els, _K7, _K45)),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'identifier',
@@ -5602,11 +5603,11 @@ export function coerceToTupleElements(...input: T.TupleElements.LooseArgs): Retu
 			['delimiter'],
 			undefined,
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () =>
 						_resolveMany<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(els, _K7, _K35)
 					),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'identifier',
@@ -5764,9 +5765,9 @@ export function coerceToPrintArguments(...input: T.PrintArguments.LooseArgs): Re
 			['delimiter'],
 			undefined,
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () => _resolveMany<T.Expression>(els, _K7, _K8)),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'identifier',
@@ -5836,9 +5837,9 @@ export function coerceToPrintChevronArguments(
 			['delimiter'],
 			undefined,
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () => _resolveMany<T.Expression>(els, _K7, _K8)),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'identifier',
@@ -6478,9 +6479,9 @@ export function coerceToExceptClauseExceptionList(
 		const stored = (data as unknown as { _value?: unknown })._value;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildExceptClauseExceptionList(
-			...(coerceMixedEnumStorage(
+			...(listStorage(
 				_resolveKindEnum(children, () => _resolveMany<T.Expression>(children, _K7, _K8)),
-				[]
+				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildExceptClauseExceptionList>)
 		);
 	}
@@ -6493,9 +6494,9 @@ export function coerceToExceptClauseExceptionList(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildExceptClauseExceptionList(
-		...(coerceMixedEnumStorage(
+		...(listStorage(
 			_resolveKindEnum(_elems, () => _resolveMany<T.Expression>(_elems, _K7, _K8)),
-			[]
+			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildExceptClauseExceptionList>)
 	);
 }
@@ -6627,9 +6628,9 @@ export function coerceToExpressionStatementTuple(
 			['delimiter'],
 			undefined,
 			(els) =>
-				coerceMixedEnumStorage(
+				listStorage(
 					_resolveKindEnum(els, () => _resolveMany<T.Expression>(els, _K7, _K8)),
-					[]
+					(item) => coerceMixedEnumStorage(item, [])
 				),
 			[
 				'identifier',
