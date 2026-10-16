@@ -610,11 +610,13 @@ export default sittirGrammar(base, {
 
 		export_statement: reauthored(
 			'rejects-valid-syntax',
-			{
-				text: "export type * from './x.ts';",
-				form: ['export', 'type', '*', 'from', { symbol: 'string' }, ';'],
-				kind: 'export_statement'
-			},
+			[
+				{
+					text: "export type * from './x.ts';",
+					form: ['export', 'type', '*', 'from', { symbol: 'string' }, ';'],
+					kind: 'export_statement'
+				}
+			],
 			($) =>
 				choice(
 					choice(
