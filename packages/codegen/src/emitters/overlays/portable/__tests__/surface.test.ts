@@ -32,7 +32,9 @@ const emit = async (scm: string) =>
 		kindIdOf: (kind) => `TSKindId.${kind[0]!.toUpperCase()}${kind.slice(1)}`,
 		fixedText: [['TSKindId.Plus', '+']],
 		flags: [],
-		flagTypes: []
+		flagTypes: [],
+		slotFlags: [],
+		slotFlagTypes: []
 	});
 
 const SCM = [
@@ -88,7 +90,7 @@ describe('emitPortableSurface', () => {
 			textTokens: new Set(),
 			layoutSlots: []
 		});
-		const text = emitPortableSurface({ routes, readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [], flags: [], flagTypes: [] });
+		const text = emitPortableSurface({ routes, readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [], flags: [], flagTypes: [], slotFlags: [], slotFlagTypes: [] });
 		expect(text).toContain('\t"expression.call": TSKindId.Call;');
 		expect(text).toContain('\t\t"expression.call": { ids: [TSKindId.Call], exact: true },');
 		expect(text.match(/\[TSKindId\.Call\]: \[/g)).toHaveLength(1);
@@ -142,10 +144,12 @@ describe('emitPortableSurface', () => {
 			kindIdOf: () => 'TSKindId.Call',
 			fixedText: [],
 			flags: [],
-			flagTypes: [['Call', ['async', 'static']]]
+			flagTypes: [['Call', ['async', 'static']]],
+			slotFlags: [],
+			slotFlagTypes: []
 		});
 		expect(text).toContain(["declare module './types.js' {", '\tinterface Call {', '\t\treadonly __flags__?: "async" | "static";', '\t}', '}'].join('\n'));
-		const none = emitPortableSurface({ routes: resolveRoutes(await input(SCM)), readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [], flags: [], flagTypes: [] });
+		const none = emitPortableSurface({ routes: resolveRoutes(await input(SCM)), readTest: () => [], kindIdOf: () => 'TSKindId.Call', fixedText: [], flags: [], flagTypes: [], slotFlags: [], slotFlagTypes: [] });
 		expect(none).not.toContain('declare module');
 	});
 });

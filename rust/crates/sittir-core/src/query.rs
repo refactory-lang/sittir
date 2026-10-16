@@ -145,7 +145,9 @@ pub struct QueryCtx<'a> {
 }
 
 /// One value a slot holds: its text, and the node that spells it, by its
-/// descendant index and kind, unless it is a group of a token's text.
+/// descendant index and kind, unless it is a group of a token's text. The
+/// kind is the id the slot's read stores for a node it stores as a unit
+/// (`Router`), and the node's stamped kind otherwise.
 struct Hit<'s> {
     node: Option<(u32, crate::types::KindId)>,
     text: &'s str,
@@ -217,7 +219,8 @@ fn any_hit(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'_>, slots: &Slots, mut t
 }
 
 /// Visit each value the slot holds on the node the cursor is on, as the
-/// node's read finds it (`Router`), with no allocation. `false` when the node
+/// node's read finds it (`Router`), allocating only to survey the tokens of
+/// a spelled enum member. `false` when the node
 /// holds nothing there: its kind has no number for the slot, no router, or
 /// a child the read cannot route, so the query and the read agree. The
 /// cursor was created at the tree's root and ends where it started.
@@ -228,7 +231,7 @@ fn slot_hits<'s>(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'s>, slots: &Slots,
     };
     let text = |node: &Node<'_>| ctx.source.get(node.byte_range()).unwrap_or("");
     match router {
-        Router::Children(route) => {
+        Router::Children(route, unit) => {
             let mut routed = true;
             if cursor.goto_first_child() {
                 loop {
@@ -236,7 +239,8 @@ fn slot_hits<'s>(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'s>, slots: &Slots,
                     match route(&child) {
                         Ok(Route::Slot { slot: at, .. }) if at == slot => {
                             let node = cursor.node();
-                            visit(Hit { node: Some((child.index, (ctx.stamp)(&node))), text: text(&node) });
+                            let kind = unit(slot, cursor).unwrap_or_else(|| (ctx.stamp)(&node));
+                            visit(Hit { node: Some((child.index, kind)), text: text(&node) });
                         }
                         Ok(_) => {}
                         Err(_) => routed = false,
@@ -256,12 +260,13 @@ fn slot_hits<'s>(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'s>, slots: &Slots,
             }
             true
         }
-        Router::Envelope { wraps_hidden } => {
+        Router::Envelope { wraps_hidden, unit } => {
             if slot != crate::types::SlotId(0) {
                 return false;
             }
             if !wraps_hidden {
-                visit(Hit { node: Some((index_of(cursor), crate::read::grammar_id(&node))), text: text(&node) });
+                let kind = unit(cursor).unwrap_or_else(|| crate::read::grammar_id(&node));
+                visit(Hit { node: Some((index_of(cursor), kind)), text: text(&node) });
                 return true;
             }
             let mut wrapped = None;
@@ -270,7 +275,8 @@ fn slot_hits<'s>(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'s>, slots: &Slots,
                     let child = Child::at(cursor);
                     if !child.trivia {
                         let node = cursor.node();
-                        wrapped = Some(Hit { node: Some((child.index, (ctx.stamp)(&node))), text: text(&node) });
+                        let kind = unit(cursor).unwrap_or_else(|| (ctx.stamp)(&node));
+                        wrapped = Some(Hit { node: Some((child.index, kind)), text: text(&node) });
                         break;
                     }
                     if !cursor.goto_next_sibling() {
@@ -333,13 +339,25 @@ mod tests {
 
     const ROUTES: [crate::read::ChildRoute; 5] = [route::<0>, route::<1>, route::<2>, route::<3>, route::<4>];
 
+    /// A parameter's type slot stores a primitive type as a unit, the `u8`
+    /// token's id, as an enum kind's read stores its member.
+    fn unit<const T: usize>(slot: crate::types::SlotId, cursor: &mut TreeCursor<'_>) -> Option<KindId> {
+        (TABLES[T].0 == "parameter" && slot == crate::types::SlotId(1) && cursor.node().kind() == "primitive_type").then(member)
+    }
+
+    fn member() -> KindId {
+        crate::read::kind_named(language(), "u8", false)
+    }
+
+    const UNITS: [crate::read::SlotUnit; 5] = [unit::<0>, unit::<1>, unit::<2>, unit::<3>, unit::<4>];
+
     static INTEGER: Interior = Interior::new("^(?<digits>[0-9]+)(?<suffix>u8|i32)?$");
 
     fn router(node: &Node<'_>) -> Option<Router> {
         match node.kind() {
             "integer_literal" => Some(Router::Interior(&INTEGER, &["digits", "suffix"])),
-            "type_identifier" => Some(Router::Envelope { wraps_hidden: false }),
-            kind => TABLES.iter().position(|(name, ..)| *name == kind).map(|t| Router::Children(ROUTES[t])),
+            "type_identifier" => Some(Router::Envelope { wraps_hidden: false, unit: |_| None }),
+            kind => TABLES.iter().position(|(name, ..)| *name == kind).map(|t| Router::Children(ROUTES[t], UNITS[t])),
         }
     }
 
@@ -412,6 +430,15 @@ mod tests {
         assert_eq!(eval(&plan(&receiver), source, "function_item"), [false, true]);
         let named = format!(r#"{{"op":"is","types":[{}],{}}}"#, id("identifier"), slots(&[("function_item", 0)]));
         assert_eq!(eval(&plan(&named), source, "function_item"), [true, true]);
+    }
+
+    #[test]
+    fn an_is_leaf_tests_the_id_the_read_stores_for_a_unit() {
+        let source = "fn a(x: u8, y: String) {}\n";
+        let typed = |kind: KindId| plan(&format!(r#"{{"op":"is","types":[{kind}],{}}}"#, slots(&[("parameter", 1)])));
+        assert_eq!(eval(&typed(member()), source, "parameter"), [true, false]);
+        assert_eq!(eval(&typed(id("primitive_type")), source, "parameter"), [false, false], "the read stores the member, not its enum kind");
+        assert_eq!(eval(&typed(id("type_identifier")), source, "parameter"), [false, true], "a slot that stores no unit keeps the stamped kind");
     }
 
     #[test]

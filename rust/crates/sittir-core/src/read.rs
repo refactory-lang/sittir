@@ -649,25 +649,43 @@ pub trait ReadTransport: Sized {
         let _ = (grammar, display);
         None
     }
+    /// The id the read stores for the node the cursor is on when it stores
+    /// the node as a unit (an enum kind's member, a choice's unit variant),
+    /// resolved as the read resolves it; `None` for a node it stores as a
+    /// transport, or one it does not admit. The cursor ends where it
+    /// started.
+    fn unit_id(cursor: &mut TreeCursor<'_>) -> Option<KindId> {
+        let _ = cursor;
+        None
+    }
 }
 
 /// The route a kind's read gives one child (`Route`), or the refusal of a
 /// child it has no route for.
 pub type ChildRoute = fn(&Child) -> Result<Route, ReadError>;
 
+/// The id a slot's read stores for the child the cursor is on, when it
+/// stores the child as a unit (`ReadSlot::unit_id`), by the slot's number.
+pub type SlotUnit = fn(crate::types::SlotId, &mut TreeCursor<'_>) -> Option<KindId>;
+
+/// [`ReadTransport::unit_id`] of one transport.
+pub type UnitId = fn(&mut TreeCursor<'_>) -> Option<KindId>;
+
 /// How a kind finds its slots on a node, each slot by its number: the
 /// position of its field among the transport's slot fields.
 #[derive(Clone, Copy)]
 pub enum Router {
     /// Each child is routed by the kind's read, one child at a time; the
-    /// function `routes` maps over the children.
-    Children(ChildRoute),
+    /// function `routes` maps over the children. The second function gives
+    /// the id a slot stores for a child it stores as a unit.
+    Children(ChildRoute, SlotUnit),
     /// The node is one token, and each slot is a named group of its text,
     /// the names in slot order.
     Interior(&'static Interior, &'static [&'static str]),
     /// The one slot is the node itself, or its one child that is not trivia
-    /// when the envelope wraps a hidden node.
-    Envelope { wraps_hidden: bool },
+    /// when the envelope wraps a hidden node; `unit` gives the id its content
+    /// stores when it stores that node as a unit.
+    Envelope { wraps_hidden: bool, unit: UnitId },
 }
 
 /// A node's children as its read routes them: each child (`survey`), the
@@ -707,6 +725,9 @@ impl<T: ReadTransport> ReadTransport for Box<T> {
     }
     fn router(grammar: KindId, display: KindId) -> Option<Router> {
         T::router(grammar, display)
+    }
+    fn unit_id(cursor: &mut TreeCursor<'_>) -> Option<KindId> {
+        T::unit_id(cursor)
     }
 }
 
@@ -799,6 +820,13 @@ pub trait ReadSlot: Sized {
     fn admits(grammar: KindId, display: KindId) -> bool;
     fn takes_tagged(grammar: KindId, display: KindId, named: bool) -> bool;
     fn scalar(grammar: KindId, display: KindId) -> bool;
+    /// The id the slot stores for the child the cursor is on when it stores
+    /// the child as a unit (`ReadTransport::unit_id`). The cursor ends where
+    /// it started.
+    fn unit_id(cursor: &mut TreeCursor<'_>) -> Option<KindId> {
+        let _ = cursor;
+        None
+    }
     fn take(
         acc: &mut Self::Acc,
         cursor: &mut TreeCursor<'_>,
@@ -847,6 +875,9 @@ macro_rules! slot_value_kinds {
         }
         fn scalar(grammar: KindId, display: KindId) -> bool {
             T::scalar(grammar, display)
+        }
+        fn unit_id(cursor: &mut TreeCursor<'_>) -> Option<KindId> {
+            T::unit_id(cursor)
         }
     };
 }

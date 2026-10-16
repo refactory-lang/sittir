@@ -4427,7 +4427,11 @@ The direct member names of a union node, or `null` for a node that is not one: a
 
 ### `packages/codegen/src/compiler/model/supertype-members.ts::buildMembersMap`
 
-The one expansion behind both maps: keys are the nodes `directMembers` recognises, values their transitive members by kind, enums expanded to their resolved kinds. The two public maps differ only in the predicate they pass.
+The one expansion behind both maps: keys are the nodes `directMembers` recognises, values their transitive members by kind, enums expanded to their resolved kinds (`memberKindsOf`). The two public maps differ only in the predicate they pass.
+
+### `packages/codegen/src/compiler/model/supertype-members.ts::memberKindsOf`
+
+The kinds a read stamps for a value of one kind: an enum's resolved member kinds (`AssembledEnum.resolvedKinds`), since a read stores the member's own kind id and never the enum's; any other kind, or an enum none of whose members resolved, stands for itself.
 
 A polymorph's arms are its own membership, full stop: an "is a"
 relationship. Chasing each arm's own union too would fold a sibling

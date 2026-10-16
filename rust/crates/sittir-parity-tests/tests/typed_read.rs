@@ -445,6 +445,17 @@ fn a_member_spelled_by_two_tokens_reads_as_the_id_both_display() {
     }
 }
 
+#[test]
+fn a_spelled_member_reports_as_its_unit_the_id_its_read_stores() {
+    for (source, stored) in [("declare const x: unique symbol;", ts::UNIQUE), ("declare const x: symbol;", ts::SYMBOL_KEYWORD)] {
+        let tree = parse(&sittir_typescript::language(), source);
+        let mut cursor = find(&tree, ts::PREDEFINED_TYPE, 0);
+        let at = cursor.descendant_index();
+        assert_eq!(Predefined::unit_id(&mut cursor), Some(stored), "{source}");
+        assert_eq!(cursor.descendant_index(), at, "the cursor ends where it started");
+    }
+}
+
 /// Members `is` and `not` but not `is not`, whose node holds one token of each.
 #[derive(Debug, Clone, Copy, PartialEq, Transport)]
 #[transport(kind = py::_IS_NOT, spelled)]
