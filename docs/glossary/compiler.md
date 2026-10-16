@@ -2577,16 +2577,6 @@ It takes the grammar's file types and stamps them on the raw grammar it builds, 
 // ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE.
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::rewriteVisibleExternalRefsInArray`
-
-```text
-/**
- * Map `rewriteVisibleExternalRefs` over an array, returning the original
- * array when no element changed (cheap reference-equality check for the
- * parent node).
- */
-```
-
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateMetadataCallbacksInScope`
 
 ```text
@@ -5789,43 +5779,6 @@ The names of the rules this evaluation added itself, filled as each is injected.
 // ---------------------------------------------------------------------------
 // Wire-phase pattern find-and-replace
 // ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::VisibleExternalsRewriteCtx`
-
-```text
-/**
- * Recursively rewrite every `SymbolRule<'evaluate'>` whose `name` is a
- * `visibleExternals:` key into a named `AliasRule<'evaluate'>` wrapping that
- * symbol. Sittir-pipeline counterpart of `wire.ts`'s
- * `rewriteVisibleExternalRefsRt` — both MUST produce structurally identical
- * output (see `VisibleExternalsConfig`'s doc comment).
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// visibleExternals — SYMBOL→ALIAS rewrite (sittir-pipeline path)
-// ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::hiddenToVisible`
-
-```text
-/** hidden external name → visible (underscore-trimmed) alias name. */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::ApplyVisibleExternalsCtx`
-
-```text
-/**
- * Evaluate the `visibleExternals:` fn from the wire context (if configured)
- * and rewrite every matching SYMBOL reference across ALL rules — authored
- * AND unoverridden base rules alike, since `rules` already holds every base
- * rule's evaluated body as plain data by this point (unlike wire.ts's
- * lazy-fn-per-rule tree-sitter-CLI model, sittir's evaluate pipeline has no
- * "unreached" base rule bodies to separately inject a passthrough for).
- */
 ```
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::collectReferences`

@@ -260,6 +260,14 @@ export const _fromMap = {
 	_template_chars: coerceToTemplateChars,
 	_automatic_semicolon: coerceToAutomaticSemicolon,
 	_function_signature_automatic_semicolon: coerceToFunctionSignatureAutomaticSemicolon,
+	_tight: coerceToTight,
+	_space: coerceToSpace,
+	_tab: coerceToTab,
+	_newline: coerceToNewline,
+	_blankline: coerceToBlankline,
+	_double_blankline: coerceToDoubleBlankline,
+	_indent: coerceToIndent,
+	_dedent: coerceToDedent,
 	receiver_parameter_declaration: coerceToReceiverParameterDeclaration,
 	formal_parameters_elements_receiver: coerceToFormalParametersElementsReceiver,
 	formal_parameters_elements_receiver_group: coerceToFormalParametersElementsReceiverGroup,
@@ -11238,6 +11246,38 @@ export function coerceToFunctionSignatureAutomaticSemicolon(
 	_input?: T.FunctionSignatureAutomaticSemicolon.Loose
 ): typeof F.buildFunctionSignatureAutomaticSemicolon {
 	return F.buildFunctionSignatureAutomaticSemicolon;
+}
+
+export function coerceToTight(_input?: T.Tight.Loose): typeof F.buildTight {
+	return F.buildTight;
+}
+
+export function coerceToSpace(_input?: T.Space.Loose): typeof F.buildSpace {
+	return F.buildSpace;
+}
+
+export function coerceToTab(_input?: T.Tab.Loose): typeof F.buildTab {
+	return F.buildTab;
+}
+
+export function coerceToNewline(_input?: T.Newline.Loose): typeof F.buildNewline {
+	return F.buildNewline;
+}
+
+export function coerceToBlankline(_input?: T.Blankline.Loose): typeof F.buildBlankline {
+	return F.buildBlankline;
+}
+
+export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): typeof F.buildDoubleBlankline {
+	return F.buildDoubleBlankline;
+}
+
+export function coerceToIndent(_input?: T.Indent.Loose): typeof F.buildIndent {
+	return F.buildIndent;
+}
+
+export function coerceToDedent(_input?: T.Dedent.Loose): typeof F.buildDedent {
+	return F.buildDedent;
 }
 
 export function resolveReceiverParameterDeclaration_decorators(

@@ -672,9 +672,12 @@ only when a replacement happens.
  * Recursively rewrite every `{type:'SYMBOL', name}` reference whose `name`
  * is a `visibleExternals:` key into `{type:'ALIAS', content:<the symbol>,
  * named:true, value:<visible name>}` — see `VisibleExternalsConfig`'s doc
- * comment for the full mechanism. Runs on the tree-sitter-CLI runtime path;
- * `evaluate.ts`'s `applyVisibleExternalsRewrite` is the sittir-pipeline
- * counterpart and MUST produce structurally identical output.
+ * comment for the full mechanism. Wire runs it under both runtimes.
+ *
+ * An alias whose content is a lone symbol is left as it is: it already
+ * names its symbol, and an outer alias decides the displayed name, so a
+ * second alias inside it could never show. That makes the rewrite
+ * idempotent: a layer that wires a completed one adds no second alias.
  */
 ```
 
@@ -700,8 +703,8 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
  * Evaluate `visibleExternals:` (if configured) to learn its hidden-name
  * keys, then wrap EVERY rule fn (authored + injected passthroughs) so
  * their returned bodies have matching SYMBOL refs rewritten into named
- * visible aliases. Counterpart to `evaluate.ts`'s
- * `applyVisibleExternalsRewrite` (the sittir-pipeline path).
+ * visible aliases. Every layer's wire applies it, over its base's rules
+ * too, so it must be idempotent.
  */
 ```
 
@@ -858,9 +861,8 @@ it, and the pattern-replacing wrappers read its automatic-variant record.
 /**
  * Hidden (`_`-prefixed) external-scanner symbol → render body, PLUS a parser
  * rewrite: every `SYMBOL` reference to the key is wrapped in a named `ALIAS`
- * of the underscore-stripped name, in both grammar pipelines (tree-sitter CLI
- * via {@link applyWireVisibleExternalsRewrite}, sittir evaluate via its
- * `rewriteVisibleExternalRefs`). The parser then materializes real CST nodes
+ * of the underscore-stripped name, in both grammar pipelines, through
+ * {@link applyWireVisibleExternalsRewrite}, which wire runs under each. The parser then materializes real CST nodes
  * for the symbol (python `_newline` → visible `newline`). Use this when the
  * external must be visible; use {@link RenderAsConfig} when it only needs a
  * sittir-side body — the two keys carry independent facts and both stay.
@@ -1772,9 +1774,8 @@ built it, the same object the upstream diagnostic stage reads.
 #### body
 
 ```text
-// visibleExternals: SYMBOL→ALIAS rewrite (tree-sitter-CLI-runtime path).
-// evaluate.ts's applyVisibleExternalsRewrite is the sittir-pipeline twin
-// — both MUST produce structurally identical output.
+// visibleExternals: SYMBOL→ALIAS rewrite, under both runtimes. It is
+// idempotent, so it may run over base rules a lower layer already wired.
 ```
 
 #### body

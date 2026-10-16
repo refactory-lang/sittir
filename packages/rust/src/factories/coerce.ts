@@ -271,6 +271,14 @@ export const _fromMap = {
 	raw_string_literal_end: coerceToRawStringLiteralEnd,
 	doc_comment: coerceToDocComment,
 	_block_comment_content: coerceToBlockCommentContent,
+	_tight: coerceToTight,
+	_space: coerceToSpace,
+	_tab: coerceToTab,
+	_newline: coerceToNewline,
+	_blankline: coerceToBlankline,
+	_double_blankline: coerceToDoubleBlankline,
+	_indent: coerceToIndent,
+	_dedent: coerceToDedent,
 	receiver_parameter_declaration: coerceToReceiverParameterDeclaration,
 	attributed_parameter_receiver: coerceToAttributedParameterReceiver,
 	parameters_elements_receiver: coerceToParametersElementsReceiver,
@@ -10492,6 +10500,38 @@ export function coerceToBlockCommentContent(
 ): ReturnType<typeof F.buildBlockCommentContent> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildBlockCommentContent>;
 	return F.buildBlockCommentContent(input as Parameters<typeof F.buildBlockCommentContent>[0]);
+}
+
+export function coerceToTight(_input?: T.Tight.Loose): typeof F.buildTight {
+	return F.buildTight;
+}
+
+export function coerceToSpace(_input?: T.Space.Loose): typeof F.buildSpace {
+	return F.buildSpace;
+}
+
+export function coerceToTab(_input?: T.Tab.Loose): typeof F.buildTab {
+	return F.buildTab;
+}
+
+export function coerceToNewline(_input?: T.Newline.Loose): typeof F.buildNewline {
+	return F.buildNewline;
+}
+
+export function coerceToBlankline(_input?: T.Blankline.Loose): typeof F.buildBlankline {
+	return F.buildBlankline;
+}
+
+export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): typeof F.buildDoubleBlankline {
+	return F.buildDoubleBlankline;
+}
+
+export function coerceToIndent(_input?: T.Indent.Loose): typeof F.buildIndent {
+	return F.buildIndent;
+}
+
+export function coerceToDedent(_input?: T.Dedent.Loose): typeof F.buildDedent {
+	return F.buildDedent;
 }
 
 export function resolveReceiverParameterDeclaration_mutable(

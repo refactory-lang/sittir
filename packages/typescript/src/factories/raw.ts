@@ -11013,6 +11013,14 @@ export type FluentKindMap = {
 	_template_chars: T.TemplateChars;
 	_automatic_semicolon: T.AutomaticSemicolon;
 	_function_signature_automatic_semicolon: T.FunctionSignatureAutomaticSemicolon;
+	_tight: T.Tight;
+	_space: T.Space;
+	_tab: T.Tab;
+	_newline: T.Newline;
+	_blankline: T.Blankline;
+	_double_blankline: T.DoubleBlankline;
+	_indent: T.Indent;
+	_dedent: T.Dedent;
 	receiver_parameter_declaration: T.ReceiverParameterDeclaration.Bound;
 	formal_parameters_elements_receiver: T.FormalParametersElementsReceiver.Bound;
 	formal_parameters_elements_receiver_group: T.FormalParametersElementsReceiverGroup.Bound;
@@ -11268,6 +11276,14 @@ export const _factoryMap = {
 	_template_chars: buildTemplateChars,
 	_automatic_semicolon: buildAutomaticSemicolon,
 	_function_signature_automatic_semicolon: buildFunctionSignatureAutomaticSemicolon,
+	_tight: buildTight,
+	_space: buildSpace,
+	_tab: buildTab,
+	_newline: buildNewline,
+	_blankline: buildBlankline,
+	_double_blankline: buildDoubleBlankline,
+	_indent: buildIndent,
+	_dedent: buildDedent,
 	receiver_parameter_declaration: buildReceiverParameterDeclaration,
 	formal_parameters_elements_receiver: buildFormalParametersElementsReceiver,
 	formal_parameters_elements_receiver_group: buildFormalParametersElementsReceiverGroup,

@@ -498,7 +498,6 @@ function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>
 			}
 		}
 		applyPatternReplacement(rules, ctx, wireCtx);
-		applyVisibleExternalsRewrite(rules, { wireCtx });
 	}
 }
 
@@ -661,88 +660,6 @@ function patternRulesEqual(a: Rule<'evaluate'>, b: Rule<'evaluate'>): boolean {
 		}
 		default:
 			return false;
-	}
-}
-
-interface VisibleExternalsRewriteCtx {
-	readonly hiddenToVisible: ReadonlyMap<string, string>;
-}
-
-function rewriteVisibleExternalRefs(rule: Rule<'evaluate'>, ctx: VisibleExternalsRewriteCtx): Rule<'evaluate'> {
-	const { hiddenToVisible } = ctx;
-	if (rule.type === SYMBOL) {
-		const visibleName = hiddenToVisible.get((rule as SymbolRule<'evaluate'>).name);
-		if (visibleName === undefined) return rule;
-		return structuralBuilder.alias(rule, sym(visibleName));
-	}
-	switch (rule.type) {
-		case SEQ: {
-			const r = rule;
-			const members = rewriteVisibleExternalRefsInArray(rule.members, ctx);
-			return members === r.members ? rule : { ...rule, members };
-		}
-		case CHOICE: {
-			const r = rule as ChoiceRule<'evaluate'>;
-			const members = rewriteVisibleExternalRefsInArray(r.members, ctx);
-			return members === r.members ? rule : ({ ...r, members } as Rule<'evaluate'>);
-		}
-		case OPTIONAL: {
-			const r = rule as OptionalRule<'evaluate'>;
-			const content = rewriteVisibleExternalRefs(r.content, ctx);
-			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
-		}
-		case REPEAT: {
-			const r = rule as RepeatRule<'evaluate'>;
-			const content = rewriteVisibleExternalRefs(r.content, ctx);
-			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
-		}
-		case REPEAT1: {
-			const r = rule as Repeat1Rule<'evaluate'>;
-			const content = rewriteVisibleExternalRefs(r.content, ctx);
-			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
-		}
-		case FIELD: {
-			const r = rule as FieldRule<'evaluate'>;
-			const content = rewriteVisibleExternalRefs(r.content, ctx);
-			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
-		}
-		default:
-			return rule;
-	}
-}
-
-function rewriteVisibleExternalRefsInArray(
-	members: Rule<'evaluate'>[],
-	ctx: VisibleExternalsRewriteCtx
-): Rule<'evaluate'>[] {
-	let changed = false;
-	const out: Rule<'evaluate'>[] = members.map((m) => {
-		const r = rewriteVisibleExternalRefs(m, ctx);
-		if (r !== m) changed = true;
-		return r;
-	});
-	return changed ? out : members;
-}
-
-interface ApplyVisibleExternalsCtx {
-	readonly wireCtx: WireContext;
-}
-
-function applyVisibleExternalsRewrite(rules: Record<string, Rule<'evaluate'>>, ctx: ApplyVisibleExternalsCtx): void {
-	const { wireCtx } = ctx;
-	if (!wireCtx.visibleExternals) return;
-	const $ = createProxy();
-	const rawEntries = wireCtx.visibleExternals($);
-	if (!rawEntries) return;
-	const hiddenToVisible = new Map<string, string>();
-	for (const hiddenName of Object.keys(rawEntries)) {
-		hiddenToVisible.set(hiddenName, hiddenName.replace(/^_+/, ''));
-	}
-	if (hiddenToVisible.size === 0) return;
-	const rewriteCtx: VisibleExternalsRewriteCtx = { hiddenToVisible };
-	for (const [name, body] of Object.entries(rules)) {
-		const rewritten = rewriteVisibleExternalRefs(body, rewriteCtx);
-		if (rewritten !== body) rules[name] = rewritten;
 	}
 }
 

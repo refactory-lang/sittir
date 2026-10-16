@@ -206,7 +206,12 @@ export const _fromMap = {
 	string_end: coerceToStringEnd,
 	_indent: coerceToIndent,
 	_dedent: coerceToDedent,
+	_tight: coerceToTight,
+	_space: coerceToSpace,
+	_tab: coerceToTab,
 	_newline: coerceToNewline,
+	_blankline: coerceToBlankline,
+	_double_blankline: coerceToDoubleBlankline,
 	names: coerceToNames,
 	as_pattern_target: coerceToAsPatternTarget,
 	format_expression: coerceToFormatExpression
@@ -7176,8 +7181,28 @@ export function coerceToDedent(_input?: T.Dedent.Loose): typeof F.buildDedent {
 	return F.buildDedent;
 }
 
+export function coerceToTight(_input?: T.Tight.Loose): typeof F.buildTight {
+	return F.buildTight;
+}
+
+export function coerceToSpace(_input?: T.Space.Loose): typeof F.buildSpace {
+	return F.buildSpace;
+}
+
+export function coerceToTab(_input?: T.Tab.Loose): typeof F.buildTab {
+	return F.buildTab;
+}
+
 export function coerceToNewline(_input?: T.Newline.Loose): typeof F.buildNewline {
 	return F.buildNewline;
+}
+
+export function coerceToBlankline(_input?: T.Blankline.Loose): typeof F.buildBlankline {
+	return F.buildBlankline;
+}
+
+export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): typeof F.buildDoubleBlankline {
+	return F.buildDoubleBlankline;
 }
 
 export function resolveNames_content(value: T.Names.LooseConfig['content']): Admit<T.Names['_content']> {

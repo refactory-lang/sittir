@@ -11511,6 +11511,14 @@ export type FluentKindMap = {
 	raw_string_literal_end: T.RawStringLiteralEnd;
 	doc_comment: T.DocComment;
 	_block_comment_content: T.BlockCommentContent;
+	_tight: T.Tight;
+	_space: T.Space;
+	_tab: T.Tab;
+	_newline: T.Newline;
+	_blankline: T.Blankline;
+	_double_blankline: T.DoubleBlankline;
+	_indent: T.Indent;
+	_dedent: T.Dedent;
 	receiver_parameter_declaration: T.ReceiverParameterDeclaration.Bound;
 	attributed_parameter_receiver: T.AttributedParameterReceiver.Bound;
 	parameters_elements_receiver: T.ParametersElementsReceiver.Bound;
@@ -11774,6 +11782,14 @@ export const _factoryMap = {
 	raw_string_literal_end: buildRawStringLiteralEnd,
 	doc_comment: buildDocComment,
 	_block_comment_content: buildBlockCommentContent,
+	_tight: buildTight,
+	_space: buildSpace,
+	_tab: buildTab,
+	_newline: buildNewline,
+	_blankline: buildBlankline,
+	_double_blankline: buildDoubleBlankline,
+	_indent: buildIndent,
+	_dedent: buildDedent,
 	receiver_parameter_declaration: buildReceiverParameterDeclaration,
 	attributed_parameter_receiver: buildAttributedParameterReceiver,
 	parameters_elements_receiver: buildParametersElementsReceiver,

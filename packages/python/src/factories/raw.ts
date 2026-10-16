@@ -7337,7 +7337,12 @@ export type FluentKindMap = {
 	string_end: T.StringEnd;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
+	_tight: T.Tight;
+	_space: T.Space;
+	_tab: T.Tab;
 	_newline: T.Newline;
+	_blankline: T.Blankline;
+	_double_blankline: T.DoubleBlankline;
 	names: T.Names.Bound;
 	as_pattern_target: T.AsPatternTarget.Bound;
 	format_expression: T.FormatExpression.Bound;
@@ -7532,7 +7537,12 @@ export const _factoryMap = {
 	string_end: buildStringEnd,
 	_indent: buildIndent,
 	_dedent: buildDedent,
+	_tight: buildTight,
+	_space: buildSpace,
+	_tab: buildTab,
 	_newline: buildNewline,
+	_blankline: buildBlankline,
+	_double_blankline: buildDoubleBlankline,
 	names: buildNames,
 	as_pattern_target: buildAsPatternTarget,
 	format_expression: buildFormatExpression

@@ -1266,8 +1266,9 @@ function withStringGlobalShim<T>(fn: () => T): T {
 
 function rewriteVisibleExternalRefsRt(rule: unknown, hiddenToVisible: ReadonlyMap<string, string>): unknown {
 	if (!rule || typeof rule !== 'object') return rule;
-	const r = rule as { type: string; members?: unknown[]; content?: unknown; name?: string };
+	const r = rule as { type: string; members?: unknown[]; content?: { readonly type?: string }; name?: string };
 	const t = r.type;
+	if (t === 'ALIAS' && r.content?.type === 'SYMBOL') return rule;
 	if (t === 'SYMBOL') {
 		const visibleName = hiddenToVisible.get(r.name ?? '');
 		if (visibleName === undefined) return rule;
