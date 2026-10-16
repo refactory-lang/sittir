@@ -1,8 +1,7 @@
-import { createEngine } from '@sittir/common';
 import python from '@sittir/python';
 
-const engine = await createEngine(python);
-const { kinds } = engine;
+const py = await python.createEngine();
+const { kinds } = py;
 
 /**
  * Read: each accessor returns a wrapped child, read lazily one level at a
@@ -11,16 +10,16 @@ const { kinds } = engine;
  * form first with the variant's guard.
  */
 export function outline(source: string) {
-	return engine
+	return py
 		.parse(source)
 		.statements()
 		.flatMap((statement) => {
-			if (engine.is.functionDefinition(statement)) return [`def ${statement.name().$text}`];
-			if (!engine.is.classDefinition(statement)) return [];
+			if (py.is.functionDefinition(statement)) return [`def ${statement.name().$text}`];
+			if (!py.is.classDefinition(statement)) return [];
 			const body = statement.body();
-			const members = engine.is.suite.block(body) ? body.block().statements() : [];
+			const members = py.is.suite.block(body) ? body.block().statements() : [];
 			const methods = members.flatMap((member) =>
-				engine.is.functionDefinition(member) ? [`  def ${member.name().$text}`] : []
+				py.is.functionDefinition(member) ? [`  def ${member.name().$text}`] : []
 			);
 			return [`class ${statement.name().$text}`, ...methods];
 		});
@@ -33,7 +32,7 @@ export function outline(source: string) {
  */
 export function callsTo(source: string, callee: string) {
 	return Array.from(
-		engine
+		py
 			.parse(source)
 			.$query()
 			.$descendants.ofType(kinds.Call)
@@ -48,7 +47,7 @@ export function callsTo(source: string, callee: string) {
  */
 export function privateHelpers(source: string) {
 	return Array.from(
-		engine
+		py
 			.parse(source)
 			.$query()
 			.$descendants.ofType(kinds.FunctionDefinition)
@@ -63,7 +62,7 @@ export function privateHelpers(source: string) {
  * narrowing the body's suite form, including any function nested in a method.
  */
 export function methodsOf(source: string, className: string) {
-	const cls = engine
+	const cls = py
 		.parse(source)
 		.$query()
 		.$children.ofType(kinds.ClassDefinition)
@@ -79,12 +78,12 @@ export function methodsOf(source: string, className: string) {
 }
 
 /**
- * Query: `engine.query` returns the facet of any node; a slot on the facet is
+ * Query: `py.query` returns the facet of any node; a slot on the facet is
  * a view of what the slot's accessor returns. A parameter list's children are
  * its parameters.
  */
 export function parameterTexts(source: string, name: string) {
-	const fn = engine
+	const fn = py
 		.parse(source)
 		.$query()
 		.$descendants.ofType(kinds.FunctionDefinition)
@@ -92,7 +91,7 @@ export function parameterTexts(source: string, name: string) {
 		.find();
 	const list = fn?.$query().parameters.find()?.elements();
 	if (list === undefined) return [];
-	return [...engine.query(list).$children].map((parameter) => engine.render(parameter).toString());
+	return [...py.query(list).$children].map((parameter) => py.render(parameter).toString());
 }
 
 /**
@@ -100,13 +99,13 @@ export function parameterTexts(source: string, name: string) {
  * child the edit did not touch renders the bytes it was read from.
  */
 export function renameFunction(source: string, from: string, to: string) {
-	const fn = engine
+	const fn = py
 		.parse(source)
 		.$query()
 		.$descendants.ofType(kinds.FunctionDefinition)
 		.where((candidate) => candidate.name.eq(from))
 		.find();
-	return fn?.$with.name(engine.build.identifier(to));
+	return fn?.$with.name(py.build.identifier(to));
 }
 
 /**
@@ -115,12 +114,12 @@ export function renameFunction(source: string, from: string, to: string) {
  * changed.
  */
 export function renameInFile(source: string, from: string, to: string) {
-	const root = engine.parse(source);
+	const root = py.parse(source);
 	const statements = root
 		.statements()
 		.map((statement) =>
-			engine.is.functionDefinition(statement) && statement.name().$text === from
-				? statement.$with.name(engine.build.identifier(to))
+			py.is.functionDefinition(statement) && statement.name().$text === from
+				? statement.$with.name(py.build.identifier(to))
 				: statement
 		);
 	return root.$with.statements(...statements);

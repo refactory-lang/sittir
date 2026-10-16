@@ -224,7 +224,8 @@ export type BuildSurface<API extends LanguageAPI, M extends ApiSurface> = M exte
 /** The facet `engine.query` returns: the node's own `$query` result, or a leaf's empty facet. */
 export type FacetOf<N> = N extends { readonly $query: () => infer F } ? F : QueryFacet<N, {}>;
 
-export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'> extends EngineIdentity<API> {
+export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'>
+	extends EngineIdentity<API>, Disposable {
 	readonly build: BuildSurface<API, M>;
 	readonly is: API['is'];
 	readonly kinds: API['kinds'];
@@ -266,6 +267,7 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API> | SnapshotInput<API>>;
 	readonly create: (path: string, fn: (build: API['build']) => API['root']) => Pending;
 	readonly write: (path: string, node: API['root']) => Pending;
+	/** Releases the native engine; `using` invokes the same cleanup at scope exit. */
 	readonly dispose: () => void;
 }
 

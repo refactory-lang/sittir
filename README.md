@@ -37,7 +37,7 @@ Each package's own README covers its full surface:
 
 ### Build and render
 
-A language package's default export creates an engine. `engine.build` has a
+A language package's default export creates an engine. `rs.build` has a
 builder for every kind. The strict form takes every slot as a node; the
 default form also takes strings, arrays and plain objects, and resolves each
 to the one kind the slot admits.
@@ -45,21 +45,21 @@ to the one kind the slot admits.
 ```ts
 import rust from '@sittir/rust';
 
-const engine = await rust.createEngine();
+using rs = await rust.createEngine();
 
-const strict = engine.build.statement.function.strict({
-  visibilityModifier: engine.build.visibilityModifier.pub(),
-  name: engine.build.identifier('main'),
-  parameters: engine.build.parameters.strict(),
-  body: engine.build.block.strict()
+const strict = rs.build.statement.function.strict({
+  visibilityModifier: rs.build.visibilityModifier.pub(),
+  name: rs.build.identifier('main'),
+  parameters: rs.build.parameters.strict(),
+  body: rs.build.block.strict()
 });
 strict.$render(); // "pub fn main() {}"
 
-const loose = engine.build.statement.function({
+const loose = rs.build.statement.function({
   visibilityModifier: 'pub',
   name: 'greet',
-  parameters: engine.build.parameters(engine.build.parameter({ name: 'name', type: 'String' })),
-  body: engine.build.block.strict()
+  parameters: rs.build.parameters(rs.build.parameter({ name: 'name', type: 'String' })),
+  body: rs.build.block.strict()
 });
 loose.$render(); // "pub fn greet(name: String) {}"
 ```
@@ -70,25 +70,25 @@ against the grammar's own token pattern when the leaf is built.
 
 ### Parse, read and edit
 
-`engine.parse` returns the root of a typed tree. Each accessor reads one
-level, and `engine.is` narrows a node to its kind. `$with` returns an edited
+`rs.parse` returns the root of a typed tree. Each accessor reads one
+level, and `rs.is` narrows a node to its kind. `$with` returns an edited
 copy. Rendering it writes the edit, and every child the edit didn't touch
 renders the bytes it was read from, comments and spacing included.
 
 ```ts
 import rust from '@sittir/rust';
 
-const engine = await rust.createEngine();
+using rs = await rust.createEngine();
 
 const source = 'fn process( x: u8 ) {\n    // keep me\n    run(x);\n}\n';
-const file = engine.parse(source);
+const file = rs.parse(source);
 file.$render() === source; // true
 
-const fn = file.statements().find((statement) => engine.is.functionItem(statement));
+const fn = file.statements().find((statement) => rs.is.functionItem(statement));
 if (fn === undefined) throw new Error('expected a function');
-engine.render(fn.name()).toString(); // "process"
+rs.render(fn.name()).toString(); // "process"
 
-const renamed = fn.$with.name(engine.build.identifier('handle'));
+const renamed = fn.$with.name(rs.build.identifier('handle'));
 renamed.$render(); // "fn handle( x: u8 ) {\n    // keep me\n    run(x);\n}"
 ```
 
@@ -101,14 +101,14 @@ only the nodes that match are read into typed nodes.
 ```ts
 import rust from '@sittir/rust';
 
-const engine = await rust.createEngine();
+using rs = await rust.createEngine();
 
 const source = 'fn main() {\n    log("a");\n    run();\n    log("b");\n}\n';
 const logged = Array.from(
-  engine
+  rs
     .parse(source)
     .$query()
-    .$descendants.ofType(engine.kinds.CallExpression)
+    .$descendants.ofType(rs.kinds.CallExpression)
     .where((call) => call.function.eq('log'))
 );
 logged.length; // 2
@@ -247,7 +247,7 @@ There's no JavaScript renderer to fall back to.
 
 A node is frozen data. `$type` is its numeric kind id, a branch holds its
 slots, and a leaf holds `$text`. Its accessors (`fn.name()`) are typed by
-kind. A node built with `engine.build`, read from a parse, or edited with
+kind. A node built with `rs.build`, read from a parse, or edited with
 `$with` has the same shape, so the same guards and accessors serve all three.
 `$trivia` reads and attaches the comments around a node.
 

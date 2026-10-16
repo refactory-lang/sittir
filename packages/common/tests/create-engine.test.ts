@@ -139,6 +139,19 @@ describe('createEngine', () => {
 		expect(f.natives.map((n) => n.disposed)).toEqual([true]);
 	});
 
+	it.each([false, true])('disposes its native engine when a using scope exits (throws: %s)', async (throws) => {
+		const f = fakeLanguage();
+		const leaveScope = async () => {
+			using engine = await engineOf(undefined, f);
+			expect(engine.build.leaf('inside').text).toBe('inside');
+			expect(f.natives.map((n) => n.disposed)).toEqual([false]);
+			if (throws) throw new Error('scope error');
+		};
+		if (throws) await expect(leaveScope()).rejects.toThrow('scope error');
+		else await leaveScope();
+		expect(f.natives.map((n) => n.disposed)).toEqual([true]);
+	});
+
 	it('throws on a rendered handle used after disposal', async () => {
 		const e = await engineOf();
 		const r = e.render(e.build.leaf('a'));
