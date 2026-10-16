@@ -6,16 +6,18 @@ need explanation.
 
 ---
 
-### `sittirGrammar(base, …)` (`packages/scm/grammar.sittir.ts:10`)
+### `grammar(enrich(base), wire({…}))` (`packages/scm/grammar.sittir.ts:13`)
 
-`export default sittirGrammar(base, {…})` composes the grammar in one call:
-enrich runs over the upstream base with the config's authored `groups:`
-patterns visible, so it declines any group a pattern covers; wire runs over
-that enriched base; `grammar()` receives both. There is no separate enriched
-binding to hand to two places, so the base wire sees and the base tree-sitter
-compiles cannot drift apart.
+`export default grammar(enrich(base), wire({…}))` is one layer in the stock
+shape. `grammar` is the runtime's own; `enrich(base)` is the pending base and
+`wire({…})` the options. The runtime hands the pending base's externals to the
+options' `externals` callback, where the layer pass enriches the upstream base
+with the config's authored inputs (its `groups:` patterns visible, so enrich
+declines any group a pattern covers), completes the pending base and
+evaluates the config against it. The two halves meet only there, so the base
+wire sees and the base tree-sitter compiles cannot drift apart.
 
-### `_group_expression` / `_named_node_expression` (`packages/scm/grammar.sittir.ts:19`)
+### `_group_expression` / `_named_node_expression` (`packages/scm/grammar.sittir.ts:18`)
 
 Both are left-recursive anchor chains, `prec.left(seq(expr, '.', expr))`
 (the `.` anchor between sibling patterns). The two operands are the same

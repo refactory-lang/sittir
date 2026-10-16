@@ -2599,7 +2599,7 @@ It takes the grammar's file types and stamps them on the raw grammar it builds, 
 
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateExternalsCallback`
 
-Calls the grammar's `externals` callback and fills the externals sink, before any rule callback runs. tree-sitter's `grammar()` evaluates `externals` first, so sittir does the same: whatever an `externals` callback can observe of the rule callbacks is then the same in both runtimes (nothing has run yet). Every other list and `word` is evaluated after the rules in both (`evaluateMetadataCallbacks`).
+Calls the grammar's `externals` callback and fills the externals sink, before `grammarFn` reads anything of the base but its `name` and `externals`, the order tree-sitter's `grammar()` reads in. A layer's pass runs inside this call and completes the base, so the base's rules and lists exist only after it. Whatever an `externals` callback can observe of the rule callbacks is then the same in both runtimes (nothing has run yet). Every other list and `word` is evaluated after the rules in both (`evaluateMetadataCallbacks`).
 
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateRuleFunctions`
 
@@ -2803,7 +2803,7 @@ boundary; a caller that wants the DSL's own shape calls it directly.
 
 Runs `load` (the grammar module's import: `evaluateDsl` passes a plain import, `evaluateUnboundDsl` passes `importUnbound`) and extracts the grammar from the module's default or named export, as its top-level `grammar()` call produced it.
 
-The dead enrich mints `sittirGrammar` blanked arrive as a non-enumerable sidecar on the grammar (`getDeadEnrichMints`); they become `orphanedSyntheticGroups` here, after the module's `grammar()` call has returned, since the dead set is computed from that call's result. The conflict-derivation records (`getDerivationRecords`) arrive the same way and become `derivationRecords`, and the text-token names `sittirGrammar` attached (`dsl/enrich.ts::getTextTokens`) become `textTokens`. The returned grammar is a spread copy, so a non-enumerable sidecar is read here or not at all.
+The dead enrich mints, the conflict-derivation records and the text-token names arrive on the top layer's record (`dsl/layer-record.ts::layerRecordOf`), with the diagnostics the layer passes recorded, which become `layerDiagnostics`. A grammar no layer pass completed carries the first three as non-enumerable sidecars on the grammar instead (`getDeadEnrichMints`, `getDerivationRecords`, `dsl/enrich.ts::getTextTokens`). The dead mints become `orphanedSyntheticGroups`, the records `derivationRecords` and the names `textTokens`, here, after the module's `grammar()` call has returned, since they are computed from that call's result. The returned grammar is a spread copy, so a non-enumerable sidecar is read here or not at all.
 
 ### `packages/codegen/src/compiler/evaluate.ts::restoreSavedGlobals`
 
@@ -6172,6 +6172,10 @@ It is the only authorship fact evaluate records. Who authored any other rule is 
 
 It is a different fact from link's `synthesizedKinds` (`link.ts`), the kinds link itself synthesizes later. The two sets answer "who synthesized this kind" for different phases and are not to be merged.
 
+### `packages/codegen/src/compiler/types.ts::RawGrammar.layerDiagnostics`
+
+The blocking diagnostics the layer passes recorded on the top layer's record (`layer-not-enrich-fixpoint`, `edit-site-missing`). `evaluateRecords` hands them to the compile gate with evaluate's own records.
+
 ### `packages/codegen/src/compiler/types.ts::KindParserMetadata`
 
 ```text
@@ -7734,7 +7738,12 @@ wire has no protected names and prunes nothing.
 
 Converts a callback's result to a `Rule<'evaluate'>`: a string is a `STRING`, a RegExp a `PATTERN`, an object with
 a `type` a rule as is; anything else throws. It takes `unknown` because rule callbacks return `unknown` under the
-shared `grammar()` contract, and it is the runtime check that contract relies on.
+shared `grammar()` contract, and it is the runtime check that contract relies on. An undefined-symbol `ReferenceError`,
+which `$` gives for a name the grammar lacks, is thrown, as tree-sitter's `normalize` throws it.
+
+### `packages/codegen/src/compiler/evaluate.ts::undefinedSymbolOf`
+
+The symbol an undefined-symbol `ReferenceError` carries as `.symbol`, which `alias()` takes as a new kind's name.
 
 ### `packages/codegen/src/compiler/evaluate.ts::createProxy`
 
@@ -7790,6 +7799,9 @@ the wrappers exactly as tree-sitter does; the compile boundary peels every one
 
 ### `packages/codegen/src/compiler/evaluate.ts::alias`
 
+A target that is an undefined-symbol `ReferenceError` names a new kind: its symbol (`undefinedSymbolOf`) is the
+alias target, as in tree-sitter's `alias()`.
+
 ```text
 // ---------------------------------------------------------------------------
 // Alias + blank (needed for grammar.js compatibility)
@@ -7830,7 +7842,9 @@ The options `grammar()` receives: `WiredOpts`, the one contract the DSL and eval
 
 The global `grammar()` during evaluation, under the DSL's contract: `grammar(options)` for a grammar of its own,
 `grammar(base, options)` to extend a `grammar()` result. The base is told apart from options by its `grammar`
-property, and a call that mixes the two shapes throws.
+property, and a call that mixes the two shapes throws. It reads the base's `name` and `externals`, calls the
+`externals` callback, and only then reads the base's rules and other lists, the order tree-sitter's `dsl.js` reads in
+(`dsl/layer.ts::VERIFIED_TREE_SITTER`): a layer's pass runs inside that call and completes the base.
 
 #### body
 
@@ -10082,9 +10096,13 @@ alias envelopes the same way element and value derivation does.
 
 The `SymbolSource` over the predicted kind catalog evaluate stamped (`RawGrammar.predictedKinds`), asked through `catalogSymbolSource`, built on first use and shared by the phase. `liftSeparators` reads it so link recognizes a separator by the same grammar-source test enrich uses (`separatorOf`).
 
+### `packages/codegen/src/compiler/canonical-rules.ts::parserRulesOf`
+
+The evaluated rules tree-sitter also sees: every rule but those whose body evaluate supplied itself (`evaluateSynthesized`: render-only rules, visible externals, undeclared deposits and the body-pattern fallback). Kind prediction reads them, and so does the test that compares evaluate's grammar with the CLI's `grammar.json`.
+
 ### `packages/codegen/src/compiler/canonical-rules.ts::predictKinds`
 
-The kind catalog predicted from the faithful evaluated grammar, before canonicalization: `dsl/symbol-table.ts::predictedKindsOf` over its rules without the evaluate-synthesized ones. A grammar tree-sitter rejects yields the failure instead of rows, so evaluate never throws on it. `canonicalGrammar` stamps the result as `predictedKinds`, for the grammar and its upstream alike.
+The kind catalog predicted from the faithful evaluated grammar, before canonicalization: `dsl/symbol-table.ts::predictedKindsOf` over its parser rules (`parserRulesOf`). A grammar tree-sitter rejects yields the failure instead of rows, so evaluate never throws on it. `canonicalGrammar` stamps the result as `predictedKinds`, for the grammar and its upstream alike.
 
 ### `packages/codegen/src/compiler/link.ts::assertPredictedKinds`
 

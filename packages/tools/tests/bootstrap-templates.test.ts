@@ -25,17 +25,23 @@ describe('bootstrap templates reproduce an existing grammar package', () => {
 	}
 });
 
-const COMPOSITION = /\bsittirGrammar\b[^}]*\} from '\.\.\/codegen\/src\/dsl\/(index|dsl-authoring)\.ts';[\s\S]*export default sittirGrammar\(base, \{[\s\S]*\}\);\s*$/;
-const SEPARATE_STEPS = /\b(enrich|wire)\(/;
+const STOCK_SHAPE = /export default grammar\(enrich\(base\), wire\(\{[\s\S]*\}\)\);\s*$/;
+const SITTIR_GRAMMAR = /\bsittirGrammar\b[^}]*\} from '\.\.\/codegen\/src\/dsl\/(index|dsl-authoring)\.ts';[\s\S]*export default sittirGrammar\(base, \{[\s\S]*\}\);\s*$/;
+const LAYER_HALVES = /\b(enrich|wire)\(/g;
 
-function expectComposition(source: string): void {
-	expect(source).toMatch(COMPOSITION);
-	expect(source).not.toMatch(SEPARATE_STEPS);
+function expectStockShape(source: string): void {
+	expect(source).toMatch(STOCK_SHAPE);
+	expect(source.match(LAYER_HALVES)).toEqual(['enrich(', 'wire(']);
 }
 
-describe('grammar composition goes through sittirGrammar, which enriches and wires the base itself', () => {
-	it('the bootstrap template', () => {
-		expectComposition(python.find((f) => f.path === 'grammar.sittir.ts')!.contents);
+function expectComposition(source: string): void {
+	if (SITTIR_GRAMMAR.test(source)) expect(source.match(LAYER_HALVES)).toBeNull();
+	else expectStockShape(source);
+}
+
+describe('grammar composition is one entry, whose base enrich() and wire() complete together', () => {
+	it('the bootstrap template is in the stock shape', () => {
+		expectStockShape(python.find((f) => f.path === 'grammar.sittir.ts')!.contents);
 	});
 	for (const grammar of allGrammars()) {
 		it(grammar, () => {

@@ -1,0 +1,309 @@
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { describe, expect, it, vi } from 'vitest';
+import { parserRulesOf } from '../../compiler/canonical-rules.ts';
+import { diagnoseGrammar } from '../../compiler/compile.ts';
+import { evaluate, evaluateDsl, withDslGlobals } from '../../compiler/evaluate.ts';
+import type { EvaluatedGrammar } from '../../compiler/types.ts';
+import { canonical } from '../../transpile/evaluate-for-derivation.ts';
+import { runTreeSitterCliCapturing, treeSitterCliVersion } from '../../transpile/tree-sitter-cli.ts';
+import { alias, field } from '../dsl-authoring.ts';
+import type { GrammarResult } from '../enrich.ts';
+import type { SymbolRule } from '../../grammar-shapes/grammar-json.ts';
+import { layerOptions, pendingBase } from '../layer.ts';
+import { layerRecordOf } from '../layer-record.ts';
+import { SENTINEL } from './fixtures/layer-chain/sentinel.ts';
+
+const here = fileURLToPath(new URL('.', import.meta.url));
+const chain = (name: string): string => resolve(here, 'fixtures/layer-chain', name);
+const layerRecordModule = pathToFileURL(resolve(here, '../layer-record.ts')).href;
+
+type RuntimeGrammar = (base: unknown, options?: unknown) => GrammarResult;
+type Symbols = Readonly<Record<string, SymbolRule<string>>>;
+type Config = Parameters<typeof layerOptions>[0];
+const runtimeGrammar = (): RuntimeGrammar => (globalThis as unknown as { grammar: RuntimeGrammar }).grammar;
+
+function upstream(rules: Record<string, unknown> = {}): GrammarResult {
+	return runtimeGrammar()({
+		name: 'up',
+		externals: ($: Symbols) => [$.marker],
+		rules: { program: ($: Symbols) => repeat($.item!), item: () => /[a-z]+/, ...rules }
+	});
+}
+
+function layer(base: GrammarResult, config: Config): GrammarResult {
+	return runtimeGrammar()(pendingBase(base), layerOptions(config));
+}
+
+const probeModule = (layerUrl: string, log: string): string => `import { appendFileSync } from 'node:fs';
+import { layerRecordOf } from ${JSON.stringify(layerRecordModule)};
+const log = (line) => appendFileSync(${JSON.stringify(log)}, line + '\\n');
+const runtimeGrammar = globalThis.grammar;
+globalThis.grammar = function probedGrammar(base, options) {
+	if (options === undefined) return runtimeGrammar(base);
+	let passed = false;
+	const probe = new Proxy(options, {
+		get(target, key, receiver) {
+			if (key === 'rules') log(passed ? 'rules after the pass' : 'rules before the pass');
+			const value = Reflect.get(target, key, receiver);
+			if (key !== 'externals' || typeof value !== 'function') return value;
+			return function probedEntry(...args) {
+				log('pass');
+				const out = value.apply(this, args);
+				passed = true;
+				return out;
+			};
+		}
+	});
+	const result = runtimeGrammar(base, probe);
+	log('record ' + layerRecordOf(result)?.depth);
+	return result;
+};
+export default (await import(${JSON.stringify(layerUrl)})).default;
+`;
+
+function generateWithCli(layerFile: string): { readonly grammarJson: string; readonly events: readonly string[] } {
+	const dir = mkdtempSync(join(tmpdir(), 'sittir-layer-chain-'));
+	try {
+		const log = join(dir, 'events.log');
+		writeFileSync(log, '');
+		writeFileSync(join(dir, 'grammar.js'), probeModule(pathToFileURL(chain(layerFile)).href, log));
+		const run = runTreeSitterCliCapturing(['generate'], dir);
+		if (run.status !== 0) throw new Error(`tree-sitter generate failed: ${run.stderr}`);
+		return {
+			grammarJson: readFileSync(join(dir, 'src/grammar.json'), 'utf8'),
+			events: readFileSync(log, 'utf8').trim().split('\n')
+		};
+	} finally {
+		rmSync(dir, { recursive: true, force: true });
+	}
+}
+
+let chainRun: ReturnType<typeof generateWithCli> | undefined;
+const cliChain = (): ReturnType<typeof generateWithCli> => (chainRun ??= generateWithCli('layer2.ts'));
+
+const ruleListNames = (list: unknown): unknown[] =>
+	(Array.isArray(list) ? list : []).map((entry) =>
+		typeof entry === 'string' ? entry : (entry as { name?: string; value?: string }).name ?? (entry as { value?: string }).value
+	);
+
+describe('the pending base', () => {
+	it('reads its name and externals before the pass completes it, and refuses its rules', async () => {
+		await withDslGlobals(async () => {
+			const base = upstream();
+			const pending = pendingBase(base);
+			expect(pending.grammar.name).toBe('up');
+			expect(ruleListNames(pending.grammar.externals)).toEqual(['marker']);
+			expect(() => pending.grammar.rules).toThrow(/before the layer pass/);
+		});
+	});
+
+	it("gives the runtime a reserved object of its own, so a layer's reserved sets never reach its base", async () => {
+		await withDslGlobals(async () => {
+			const base = upstream();
+			const pending = pendingBase(base);
+			runtimeGrammar()(pending, layerOptions({}));
+			const reserved = pending.grammar.reserved as Record<string, unknown>;
+			expect(reserved).not.toBe(base.grammar.reserved);
+			reserved.global = [];
+			expect(base.grammar.reserved).toEqual({});
+		});
+	});
+});
+
+describe('the hook guards', () => {
+	it('refuses a read of options.rules before the pass has run, naming the tree-sitter version the order was verified against', () => {
+		const options = layerOptions({});
+		expect(() => options.rules).toThrow(/0\.26\.9/);
+	});
+
+	it('refuses a second call of the externals callback with one handle', async () => {
+		await withDslGlobals(async () => {
+			const pending = pendingBase(upstream());
+			const options = layerOptions({});
+			const $ = new Proxy({}, { get: (_target, name) => sym(String(name)) });
+			options.externals!.call($, $, pending.grammar.externals);
+			expect(() => options.externals!.call($, $, pending.grammar.externals)).toThrow(/already/);
+		});
+	});
+
+	it('refuses a base that carries a handle no pass consumed', async () => {
+		await withDslGlobals(async () => {
+			const pending = pendingBase(upstream());
+			expect(() => pendingBase(pending as unknown as GrammarResult)).toThrow(/no layer pass consumed/);
+		});
+	});
+
+	it('runs the pass once per layer under the pinned CLI, before tree-sitter builds $', () => {
+		expect(treeSitterCliVersion(), 'the layer hook rests on the order in which tree-sitter 0.26.9 calls the callbacks; verify that order again before moving the pin').toBe(
+			'0.26.9'
+		);
+		const { events } = cliChain();
+		const layers: string[][] = [[]];
+		for (const event of events) {
+			layers.at(-1)!.push(event);
+			if (event.startsWith('record ')) layers.push([]);
+		}
+		layers.pop();
+		expect(layers.map((events) => events.at(-1))).toEqual(['record 1', 'record 2']);
+		for (const events of layers) {
+			expect(events[0]).toBe('pass');
+			expect(events.filter((event) => event === 'pass')).toHaveLength(1);
+			expect(events).not.toContain('rules before the pass');
+			expect(events).toContain('rules after the pass');
+		}
+	});
+});
+
+describe('the layer record', () => {
+	it('never reaches the grammar.json the pinned CLI writes', () => {
+		const { grammarJson } = cliChain();
+		expect(grammarJson).not.toContain(SENTINEL);
+	});
+
+	it('rides on the first rule when rules: overrides the start rule', async () => {
+		await withDslGlobals(async () => {
+			const result = layer(upstream(), { rules: { program: ($: Symbols) => repeat1($.item!) } });
+			expect(layerRecordOf(result)?.depth).toBe(1);
+		});
+	});
+
+	it('rides on the first rule when an entry edits the start rule', async () => {
+		await withDslGlobals(async () => {
+			const result = layer(upstream(), { edits: { program: { 0: field('items') } } });
+			expect(layerRecordOf(result)?.depth).toBe(1);
+		});
+	});
+
+	it('rides on a start rule whose body is a bare string, normalized first', async () => {
+		await withDslGlobals(async () => {
+			const result = layer(upstream(), { rules: { program: () => 'x' } });
+			expect(Object.values(result.grammar.rules)[0]).toMatchObject({ type: 'STRING', value: 'x' });
+			expect(layerRecordOf(result)?.depth).toBe(1);
+		});
+	});
+});
+
+describe('an edits key that names no rule', () => {
+	it('is edit-site-missing on the record, and the layer drops the entry while its other edits apply', async () => {
+		await withDslGlobals(async () => {
+			const base = upstream({ program: ($: Symbols) => repeat($.pair!), pair: ($: Symbols) => seq($.item!, ',', $.item!) });
+			const result = layer(base, { edits: { missing: { 0: field('x') }, pair: { 0: field('left') } } });
+			expect(result.grammar.rules).not.toHaveProperty('missing');
+			expect(result.grammar.rules.pair).toMatchObject({ type: 'SEQ', members: [{ type: 'FIELD', name: 'left' }, expect.anything(), expect.anything()] });
+			expect(layerRecordOf(result)?.diagnostics).toEqual([
+				expect.objectContaining({ code: 'edit-site-missing', severity: 'fail', canProceed: false, grammar: 'up', ownerKind: 'missing' })
+			]);
+		});
+	});
+
+	it('accepts a key naming a kind the layer mints, after the key that mints it', async () => {
+		await withDslGlobals(async () => {
+			const base = upstream({ program: ($: Symbols) => repeat(seq($.item!, ',', $.item!)) });
+			const result = layer(base, { edits: { program: { 0: alias('pair') }, _pair: { 0: field('left') } } });
+			expect(result.grammar.rules._pair).toMatchObject({ type: 'SEQ', members: [{ type: 'FIELD', name: 'left' }, expect.anything(), expect.anything()] });
+			expect(layerRecordOf(result)?.diagnostics).toEqual([]);
+		});
+	});
+
+	it('blocks the compile gate', async () => {
+		const evaluated = await evaluate(chain('missing-edit.ts'), []);
+		expect(evaluated.rules).not.toHaveProperty('let_statemnt');
+		const diagnosis = diagnoseGrammar({ grammar: 'chain', evaluated });
+		expect(diagnosis.passed).toBe(false);
+		expect(diagnosis.blocked).toEqual([expect.objectContaining({ code: 'edit-site-missing', grammar: 'chain', ownerKind: 'let_statemnt' })]);
+	});
+});
+
+describe('the fixture chain', () => {
+	it('gives the same rules, rule order and lists from evaluate() and from the pinned CLI', async () => {
+		const evaluated = await evaluateDsl(chain('layer2.ts'));
+		const generated = JSON.parse(cliChain().grammarJson) as Record<string, unknown>;
+		expect(Object.keys(parserRulesOf(evaluated))).toEqual(Object.keys(generated.rules as object));
+		expect(ruleListNames(evaluated.extras)).toEqual(ruleListNames(generated.extras));
+		expect(ruleListNames(evaluated.externals)).toEqual(ruleListNames(generated.externals));
+		expect(evaluated.inline).toEqual(generated.inline);
+		expect(evaluated.supertypes).toEqual(generated.supertypes);
+		expect(evaluated.conflicts).toEqual(generated.conflicts);
+		expect(evaluated.precedences).toEqual(generated.precedences);
+		expect(evaluated.word ?? undefined).toEqual(generated.word);
+	});
+
+	it("reads layer 2's record from the result's start rule in both runtimes", async () => {
+		const evaluated = await evaluateDsl(chain('layer2.ts'));
+		expect(layerRecordOf({ grammar: evaluated })?.depth).toBe(2);
+		expect(cliChain().events).toContain('record 2');
+	});
+
+	it('calls the externals callback before it reads the base rules', async () => {
+		await withDslGlobals(async () => {
+			const order: string[] = [];
+			const pending = pendingBase(upstream());
+			const grammar = pending.grammar;
+			Object.defineProperty(pending, 'grammar', {
+				value: new Proxy(grammar, {
+					get(target, key, receiver) {
+						if (key === 'rules') order.push('base rules');
+						return Reflect.get(target, key, receiver);
+					}
+				})
+			});
+			const options = layerOptions({});
+			const entry = options.externals!;
+			Object.assign(options, {
+				externals(this: unknown, ...args: unknown[]) {
+					order.push('externals');
+					return entry.apply(this, args as never);
+				}
+			});
+			runtimeGrammar()(pending, options);
+			expect(order[0]).toBe('externals');
+			expect(order).toContain('base rules');
+		});
+	});
+
+	it('gives equal snapshots for layer 1, then layer 2 with a reserved set, then layer 1 again', async () => {
+		const first = JSON.stringify(canonical(await evaluateDsl(chain('layer1.ts'))));
+		await evaluateDsl(chain('reserved-layer2.ts'));
+		const again: EvaluatedGrammar = await evaluateDsl(chain('layer1.ts'));
+		expect(JSON.stringify(canonical(again))).toBe(first);
+		expect(again.reserved).toEqual({});
+	});
+
+	it('runs each config callback once per evaluation', async () => {
+		await withDslGlobals(async () => {
+			const spies = {
+				rule: vi.fn((_$: unknown, previous: unknown) => previous),
+				externals: vi.fn((_$: unknown, previous: unknown) => previous),
+				extras: vi.fn((_$: unknown, previous: unknown) => previous),
+				inline: vi.fn((_$: unknown, previous: unknown) => previous),
+				supertypes: vi.fn((_$: unknown, previous: unknown) => previous),
+				precedences: vi.fn((_$: unknown, previous: unknown) => previous),
+				word: vi.fn(($: Record<string, unknown>) => $.item),
+				reserved: vi.fn(() => ['let'])
+			};
+			layer(upstream(), {
+				rules: { item: spies.rule },
+				externals: spies.externals,
+				extras: spies.extras,
+				inline: spies.inline,
+				supertypes: spies.supertypes,
+				precedences: spies.precedences,
+				word: spies.word,
+				reserved: { global: spies.reserved }
+			} as Config);
+			for (const [name, spy] of Object.entries(spies)) expect(spy, name).toHaveBeenCalledTimes(1);
+		});
+	});
+
+	it('never passes contexts to the runtime', async () => {
+		await withDslGlobals(async () => {
+			const options = layerOptions({ contexts: () => ({}) });
+			expect('contexts' in options).toBe(false);
+			runtimeGrammar()(pendingBase(upstream()), options);
+			expect('contexts' in options).toBe(false);
+		});
+	});
+});

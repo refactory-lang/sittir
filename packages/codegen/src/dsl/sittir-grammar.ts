@@ -1,5 +1,5 @@
-import { attachTextTokens, enrich, getEnrichTextTokens, stampWiredVariants, withEnrichSidecarsOf, type EnrichedGrammar, type GrammarResult } from './enrich.ts';
-import { baseRulesOf } from './shared.ts';
+import { attachTextTokens, enrich, enrichSidecarsOf, getEnrichTextTokens, stampWiredVariants, type EnrichedGrammar, type GrammarResult } from './enrich.ts';
+import { enrichFixpoint } from './layer.ts';
 import {
 	authoredFieldSites,
 	authoredGroupBodies,
@@ -35,16 +35,11 @@ function markedBindingPatches(bindingPatches: EditsConfig): EditsConfig {
 	return out as EditsConfig;
 }
 
-function assertEnrichFixpoint(wired: GrammarResult, enriched: unknown): EnrichedGrammar<GrammarResult> {
-	const before = baseRulesOf<unknown>(wired) ?? {};
-	const checked = enrich(withEnrichSidecarsOf(wired, enriched));
-	const after = baseRulesOf<unknown>(checked) ?? {};
-	const changed = [...new Set([...Object.keys(before), ...Object.keys(after)])].filter(
-		(name) => JSON.stringify(before[name]) !== JSON.stringify(after[name])
-	);
+function assertEnrichFixpoint(wired: GrammarResult, enriched: unknown): GrammarResult {
+	const { checked, changed } = enrichFixpoint(wired, enrichSidecarsOf(enriched));
 	if (changed.length > 0)
 		throw new Error(
-			`grammar bindings: enrich changes ${changed.sort().join(', ')} in the wired grammar, so the bindings layer's base is not enrich's fixpoint`
+			`grammar bindings: enrich changes ${changed.join(', ')} in the wired grammar, so the bindings layer's base is not enrich's fixpoint`
 		);
 	return checked;
 }
@@ -108,7 +103,8 @@ export function sittirGrammar<
 		extras: wireConfig.extras,
 		fieldSites: authoredFieldSites(wireConfig.edits)
 	});
-	const opts = wire<EnrichedGrammar<B>, P, O>(wireConfig, enriched, base);
+	const { extras: _enrichExtras, ...wiredConfig } = wireConfig;
+	const opts = wire<EnrichedGrammar<B>, P, O>(wiredConfig, enriched, base);
 	let result = completeLayer(enriched, opts);
 	if (bindings !== undefined) {
 		const bindingBase = assertEnrichFixpoint(result, enriched);

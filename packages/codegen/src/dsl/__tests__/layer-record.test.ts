@@ -14,7 +14,17 @@ const record = (depth: number): LayerRecord => ({
 	textTokens: [SENTINEL],
 	liftNames: new Map(),
 	effects: [{ kind: 'alias', from: SENTINEL, to: `${SENTINEL}_to` }],
-	records: { options: { [SENTINEL]: {} } }
+	records: { options: { [SENTINEL]: {} } },
+	derivationRecords: {
+		upstreamConflicts: [[SENTINEL]],
+		sourceEdges: {},
+		resolutions: [],
+		boundResolutions: [],
+		conflictsAuthored: false,
+		upstreamDynamicPrecedence: {},
+		dynamicPrecedence: {}
+	},
+	diagnostics: []
 });
 
 describe('the layer record', () => {

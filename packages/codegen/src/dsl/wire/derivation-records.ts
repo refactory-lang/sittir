@@ -2,7 +2,7 @@ import { RuleWalker } from '../rule-walker.ts';
 import type { AnyRule } from '../../types/rule.ts';
 import type { GrammarResult } from '../enrich.ts';
 import { upstreamConflictSets, upstreamSymbolNames, type WiredOpts } from './wire.ts';
-import { liftRenames } from './lift-names.ts';
+import { liftRenames, type LiftName } from './lift-names.ts';
 import type { ConflictResolutionRecord } from '../conflict-resolutions.ts';
 import { baseRulesOf } from '../shared.ts';
 
@@ -48,22 +48,32 @@ function dynamicPrecedenceOf(rules: Readonly<Record<string, AnyRule>>): Record<s
 	return values;
 }
 
-export function attachDerivationRecords(grammar: WiredGrammar, base: unknown, opts: WiredOpts, conflicts: ConflictConfig): void {
-	const upstreamSymbols = upstreamSymbolNames(base);
+export interface DerivationCtx {
+	readonly upstream: unknown;
+	readonly liftNames: ReadonlyMap<string, LiftName> | undefined;
+	readonly conflicts: ConflictConfig;
+}
+
+export function derivationRecordsOf(rules: Readonly<Record<string, AnyRule>>, ctx: DerivationCtx): DerivationRecords {
+	const upstreamSymbols = upstreamSymbolNames(ctx.upstream);
 	const edges = new Map<string, string>();
-	for (const [oldName, newName] of liftRenames(opts.__wireContext__?.liftNames)) {
+	for (const [oldName, newName] of liftRenames(ctx.liftNames)) {
 		if (oldName !== newName && !upstreamSymbols.has(newName)) edges.set(newName, oldName);
 	}
-	for (const [name, owner] of variantEdgesOf(grammar.rules)) {
+	for (const [name, owner] of variantEdgesOf(rules)) {
 		if (name !== owner && !upstreamSymbols.has(name)) edges.set(name, owner);
 	}
-	const records: DerivationRecords = {
-		upstreamConflicts: upstreamConflictSets(base),
+	return {
+		upstreamConflicts: upstreamConflictSets(ctx.upstream),
 		sourceEdges: Object.fromEntries(edges),
-		...conflicts,
-		upstreamDynamicPrecedence: dynamicPrecedenceOf(baseRulesOf<AnyRule>(base) ?? {}),
-		dynamicPrecedence: dynamicPrecedenceOf(grammar.rules)
+		...ctx.conflicts,
+		upstreamDynamicPrecedence: dynamicPrecedenceOf(baseRulesOf<AnyRule>(ctx.upstream) ?? {}),
+		dynamicPrecedence: dynamicPrecedenceOf(rules)
 	};
+}
+
+export function attachDerivationRecords(grammar: WiredGrammar, base: unknown, opts: WiredOpts, conflicts: ConflictConfig): void {
+	const records = derivationRecordsOf(grammar.rules, { upstream: base, liftNames: opts.__wireContext__?.liftNames, conflicts });
 	Object.defineProperty(grammar, DERIVATION_RECORDS_KEY, { value: records, enumerable: false, writable: false, configurable: true });
 }
 

@@ -138,12 +138,13 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 		| undefined;
 	const supertypeNames = extractGrammarSymbolNames(base, hasWrapper, 'supertypes');
 	const inlineNames = extractGrammarSymbolNames(base, hasWrapper, 'inline');
+	const authoredExtras = authoredExtrasOf(base, hasWrapper, authored.extras);
 	const ctx = EnrichCtx.create({
 		rulesBag,
 		supertypeNames,
 		externals: extractGrammarRuleList(base, hasWrapper, 'externals'),
 		inline: inlineNames,
-		extras: effectiveExtras(base, hasWrapper, authored.extras),
+		extras: ruleListEntries(authoredExtras ?? grammarListOf(base, hasWrapper, 'extras'), 'extras'),
 		word: extractWordName(grammarMeta?.word),
 		wordMatcher: compileWordMatcher(extractWordName(grammarMeta?.word), rulesBag),
 		authoredGroupBodies: authored.groupBodies ?? [],
@@ -264,6 +265,7 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	const resultGrammar = (hasWrapper ? (result as { grammar: Record<string, unknown> }).grammar : result) as Record<string, unknown>;
 	appendGrammarNames(resultGrammar, 'supertypes', [...tokenFormParents, LAYOUT_SUPERTYPE, ...elementSupertypes], (name) => name);
 	appendGrammarNames(resultGrammar, 'externals', whitespace.addedExternals, (name) => ({ type: SYMBOL, name }));
+	if (authoredExtras !== undefined) resultGrammar.extras = [...authoredExtras];
 	replaceExtras(resultGrammar, tokenFormArms(mergedRules, tokenFormParents));
 	Object.defineProperty(result, ENRICH_WHITESPACE_KEY, {
 		value: { bodies: whitespace.bodies, collisions: whitespace.collisions, addedExternals: whitespace.addedExternals },
@@ -620,11 +622,10 @@ function symbolDollar(): unknown {
 	);
 }
 
-function effectiveExtras(base: unknown, hasWrapper: boolean, authored: EnrichAuthoredConfig['extras']): RuleListEntry[] {
-	const upstream = extractGrammarRuleList(base, hasWrapper, 'extras');
-	if (authored === undefined) return upstream;
-	const result = (authored as (dollar: unknown, previous: readonly RuleListEntry[]) => unknown)(symbolDollar(), upstream);
-	return ruleListEntries(Array.isArray(result) ? result : [], 'extras');
+function authoredExtrasOf(base: unknown, hasWrapper: boolean, authored: EnrichAuthoredConfig['extras']): readonly unknown[] | undefined {
+	if (authored === undefined) return undefined;
+	const result = (authored as (dollar: unknown, previous: readonly unknown[]) => unknown)(symbolDollar(), grammarListOf(base, hasWrapper, 'extras'));
+	return Array.isArray(result) ? result : [];
 }
 
 function extractGrammarSymbolNames(base: unknown, hasWrapper: boolean, key: 'supertypes' | 'inline'): ReadonlySet<string> {

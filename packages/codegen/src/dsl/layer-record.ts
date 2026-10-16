@@ -1,9 +1,11 @@
 import type { EvaluatedGrammar } from '../compiler/types.ts';
 import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
-import type { ConflictResolutionsFile } from './conflict-resolutions.ts';
+import type { GrammarDiagnostic } from '../types/diagnostics.ts';
+import type { ConflictResolutionsInput } from './conflict-resolutions.ts';
 import type { EnrichSidecars } from './enrich.ts';
 import { isRecord } from './rule-patterns.ts';
 import type { Effect } from './verbs/effects.ts';
+import type { DerivationRecords } from './wire/derivation-records.ts';
 import type { LiftName } from './wire/lift-names.ts';
 
 export type LayerRecords = Pick<
@@ -30,12 +32,14 @@ export interface LayerRecord {
 	readonly depth: number;
 	readonly upstream: GrammarJson;
 	readonly sidecars: EnrichSidecars;
-	readonly resolutions: ConflictResolutionsFile;
+	readonly resolutions: ConflictResolutionsInput;
 	readonly deadMints: ReadonlySet<string>;
 	readonly textTokens: readonly string[];
 	readonly liftNames: ReadonlyMap<string, LiftName>;
 	readonly effects: readonly Effect[];
 	readonly records: LayerRecords;
+	readonly derivationRecords: DerivationRecords;
+	readonly diagnostics: readonly GrammarDiagnostic[];
 }
 
 export const LAYER_RECORD_KEY: unique symbol = Symbol.for('sittir.layerRecord');

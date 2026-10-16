@@ -18,8 +18,12 @@ import type {
 	ImmediateTokenRule,
 	BlankRule
 } from '../grammar-shapes/grammar-json.ts';
+import type { GrammarResult } from './enrich.ts';
+import type { LayerOptions, PendingBase } from './layer.ts';
 
 declare global {
+	function grammar<B>(base: PendingBase<B>, options: LayerOptions<B>): GrammarResult;
+
 	function seq<M extends readonly AuthoringRule[]>(...members: M): SeqRule<AuthoringRulesToRules<M>>;
 	function choice<M extends readonly AuthoringRule[]>(...members: M): ChoiceRule<AuthoringRulesToRules<M>>;
 	function field<const N extends string, R extends AuthoringRule>(name: N, rule: R): FieldRule<N, ToGrammarRule<R>>;

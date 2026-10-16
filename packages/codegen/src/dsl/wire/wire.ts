@@ -2,6 +2,7 @@ import type { BindingEffect } from '../verbs/effects.ts';
 import { withHoistedAnnotation } from '../annotations.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import type { AnyRule } from '../../types/rule.ts';
+import type { GrammarDiagnostic } from '../../types/diagnostics.ts';
 import { RuleWalker } from '../rule-walker.ts';
 import { transform as transformFn } from '../transform/transform.ts';
 import { isPreference, type PreferencePlaceholder } from '../primitives/preference.ts';
@@ -28,7 +29,7 @@ import { renameNameList, renameRule } from './symbol-renames.ts';
 import { assertNoRenamedExternal, liftRenames, resolveLiftNames, type LiftName } from './lift-names.ts';
 import { isComplexBody, onlyAliasedSymbols, rulesEqual, type SymbolSource } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
-import { getEnrichElementSupertypes, getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichMints, getEnrichTextTokens, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type AuthoredFieldSite, type GrammarResult } from '../enrich.ts';
+import { getEnrichElementSupertypes, getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichMints, getEnrichTextTokens, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, nativeRuleFn, type AuthoredFieldSite, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
@@ -85,10 +86,12 @@ export interface WireContext {
 	readonly patchSites: Map<string, PatchSite>;
 	readonly bindingEffects: BindingEffect[];
 	recordingBindingEffects: boolean;
-	readonly extraRuleNames: ReadonlySet<string>;
-	readonly precedenceRankedNames: ReadonlySet<string>;
+	extraRuleNames: ReadonlySet<string>;
+	precedenceRankedNames: ReadonlySet<string>;
+	lists?: WireLists;
 	readonly flattenedParents: Set<string>;
 	readonly aliasTargets: Set<string>;
+	readonly editedMints: Set<string>;
 	readonly automaticVariants: AutomaticVariants;
 	readonly baseRuleBodies: Readonly<Record<string, RuntimeRule>>;
 	readonly textTokens: ReadonlyMap<string, readonly string[]>;
@@ -100,6 +103,14 @@ export interface WireContext {
 	activePatchSites: readonly string[];
 	readonly source: unknown;
 	evaluatedExternals: ReadonlySet<string>;
+	evaluatedBodies?: ReadonlyMap<string, unknown>;
+	readonly diagnostics: GrammarDiagnostic[] | undefined;
+}
+
+export interface WireLists {
+	readonly extras: unknown;
+	readonly supertypes: unknown;
+	readonly precedences: unknown;
 }
 
 export interface RefineForm {
@@ -343,6 +354,7 @@ export function withWireContext<T>(
 		precedenceRankedNames: new Set(),
 		flattenedParents: new Set(),
 		aliasTargets: new Set(),
+		editedMints: new Set(),
 		automaticVariants: seedAutomaticVariants(base),
 		baseRuleBodies: baseRuleBodiesOf(base as BaseArg | undefined),
 		textTokens: getEnrichTextTokens(base),
@@ -353,7 +365,8 @@ export function withWireContext<T>(
 		elementSupertypes: getEnrichElementSupertypes(base),
 		activePatchSites: [],
 		source: base,
-		evaluatedExternals: new Set()
+		evaluatedExternals: new Set(),
+		diagnostics: undefined
 	};
 	const prev = currentContext;
 	currentContext = ctx;
@@ -536,7 +549,7 @@ export function wireBindings(name: string, base: GrammarResult, edits: EditsConf
 	return wireImpl({ name, edits }, base, base);
 }
 
-function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOpts {
+export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, diagnostics?: GrammarDiagnostic[]): WiredOpts {
 	const baseArg = base as BaseArg | undefined;
 	const { visibleExternals, whitespaceCollisions } = withEnrichedWhitespace(cfg.visibleExternals, base);
 	assertNoSpacingAddressPatches(cfg.edits ?? {}, knownRuleNames(cfg, baseArg));
@@ -562,10 +575,11 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		patchSites: new Map(),
 		bindingEffects: [],
 		recordingBindingEffects: false,
-		extraRuleNames: extraRuleNames(cfg, baseArg),
-		precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
+		extraRuleNames: new Set(),
+		precedenceRankedNames: new Set(),
 		flattenedParents: new Set(),
 		aliasTargets: new Set(),
+		editedMints: new Set(),
 		automaticVariants: seedAutomaticVariants(base),
 		baseRuleBodies: baseRuleBodiesOf(baseArg),
 		textTokens: getEnrichTextTokens(base),
@@ -576,7 +590,8 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		elementSupertypes: getEnrichElementSupertypes(base),
 		activePatchSites: [],
 		source,
-		evaluatedExternals: new Set()
+		evaluatedExternals: new Set(),
+		diagnostics
 	};
 
 	const edits = cfg.edits ?? {};
@@ -605,28 +620,24 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
 	}
 	recordAliasTargets(outRules, context);
-	wrapRuleHook(outRules, context, [
+	const externals = evaluatingExternals(cfg, outRules, { base: baseArg, context }, [
 		(bodies) => resolveLiftNames(bodies, context.liftNames, getEnrichMints(base), context.evaluatedExternals)
 	]);
+	returnEvaluatedBodies(outRules, context);
 
 	const inline = wrapInlineCallback(cfg.inline as DollarFn<unknown[]> | undefined, context);
-	const supertypes = wrapSupertypesCallback(cfg.supertypes as DollarFn<unknown[]> | undefined, context);
+	const supertypes = wrapSupertypesCallback(evaluatedList('supertypes', context) as DollarFn<unknown[]>, context);
 
 	const renamedCallbacks = Object.fromEntries(
 		(['extras', 'precedences'] as const)
 			.filter((key) => key in cfg || baseDeclares(baseArg, key))
-			.map((key) => [key, renamingCallback(cfg[key as keyof typeof cfg] as (() => unknown) | undefined, renameNameList, context)])
+			.map((key) => [key, renamingCallback(evaluatedList(key, context), renameNameList, context)])
 	);
-	const externals =
-		'externals' in cfg || baseDeclares(baseArg, 'externals')
-			? { externals: recordingExternals(cfg.externals as DollarFn<unknown> | undefined, context) }
-			: {};
-
 	const wired = {
 		...cfg,
 		rules: outRules,
 		...renamedCallbacks,
-		...externals,
+		externals,
 		...(cfg.reserved === undefined ? {} : { reserved: renamingReserved(cfg.reserved, context) }),
 		...renamingWord(cfg.word as DollarFn<unknown> | undefined, baseWordOf(baseArg), context),
 		conflicts: undefined,
@@ -693,13 +704,113 @@ function baseDeclares(base: BaseArg | undefined, key: string): boolean {
 	return grammar?.[key] !== undefined;
 }
 
-function recordingExternals(user: DollarFn<unknown> | undefined, context: WireContext): DollarFn<unknown> {
-	return function recordedExternals(this: unknown, $: unknown, previous?: unknown) {
+export function layerSymbols(names?: ReadonlySet<string>): Record<string, unknown> {
+	const symbol = nativeRuleFn<(name: string) => unknown>('sym');
+	return new Proxy({} as Record<string, unknown>, {
+		get(_target, name) {
+			if (typeof name !== 'string') return undefined;
+			if (names === undefined || names.has(name)) return symbol(name);
+			return Object.assign(new ReferenceError(`Undefined symbol '${name}'`), { symbol: symbol(name) });
+		}
+	});
+}
+
+interface WireEntryCtx {
+	readonly base: BaseArg | undefined;
+	readonly context: WireContext;
+}
+
+function evaluatingExternals(
+	cfg: WireConfig<any>,
+	rules: Readonly<Record<string, RuleFn>>,
+	ctx: WireEntryCtx,
+	operations: readonly ((bodies: Map<string, unknown>) => void)[]
+): DollarFn<unknown> {
+	const { context } = ctx;
+	const user = cfg.externals as DollarFn<unknown> | undefined;
+	const callbacks = Object.entries(rules);
+	return function evaluatingExternals(this: unknown, $: unknown, previous?: unknown) {
+		if (context.evaluatedBodies !== undefined) throw new Error('wire: the runtime called externals twice, and wire evaluates its rules once');
 		const value = user === undefined ? previous : user.call(this, $, previous);
 		context.evaluatedExternals = symbolNamesOf(value);
 		assertNoRenamedExternal(context.evaluatedExternals, context.liftNames);
+		const symbols = layerSymbols(
+			new Set([...callbacks.map(([name]) => name), ...Object.keys(context.baseRuleBodies), ...context.evaluatedExternals])
+		);
+		evaluateWireLists(cfg, { ...ctx, symbols });
+		const bodies = new Map<string, unknown>();
+		for (const [name, callback] of callbacks) {
+			if (context.editedMints.has(name) && context.deposits.get(name) === undefined) refuseEditSite(name, cfg, ctx);
+			else bodies.set(name, callback.call(symbols, symbols, context.baseRuleBodies[name]));
+		}
+		for (const operation of operations) operation(bodies);
+		context.evaluatedBodies = bodies;
 		return value;
 	};
+}
+
+function refuseEditSite(kind: string, cfg: WireConfig<any>, ctx: WireEntryCtx): void {
+	const diagnostic: GrammarDiagnostic = {
+		scope: 'grammar',
+		code: 'edit-site-missing',
+		severity: 'fail',
+		canProceed: false,
+		grammar: cfg.name,
+		ownerKind: kind,
+		message: `edits: '${kind}' names no rule of the base or of the layer's rules:, nor a kind the layer minted before it evaluated '${kind}'`,
+		details: { kind }
+	};
+	if (ctx.context.diagnostics === undefined) throw new Error(diagnostic.message);
+	ctx.context.diagnostics.push(diagnostic);
+}
+
+function evaluateWireLists(cfg: WireConfig<any>, ctx: WireEntryCtx & { readonly symbols: Record<string, unknown> }): void {
+	const { base, context, symbols: $ } = ctx;
+	const evaluated = (key: keyof WireLists, previous: unknown): unknown => {
+		const own = cfg[key] as DollarFn<unknown> | undefined;
+		return own === undefined ? previous : own.call($, $, previous ?? []);
+	};
+	const lists: WireLists = {
+		extras: evaluated('extras', baseListOf(base, 'extras')),
+		supertypes: evaluated('supertypes', namedSymbols(baseListOf(base, 'supertypes'))),
+		precedences: evaluated('precedences', baseListOf(base, 'precedences'))
+	};
+	context.lists = lists;
+	context.extraRuleNames = extraRuleNamesOf(lists, base);
+	context.precedenceRankedNames = new Set(
+		(Array.isArray(lists.precedences) ? lists.precedences : []).flatMap((group: unknown) => [...symbolNamesOf(group)])
+	);
+}
+
+function evaluatedList(key: keyof WireLists, context: WireContext): DollarFn<unknown> {
+	return function evaluatedList() {
+		if (context.lists === undefined)
+			throw new Error(
+				`wire: the runtime asked for ${key} before it called externals, where wire evaluates its lists; the call order was verified against tree-sitter 0.26.9`
+			);
+		return context.lists[key];
+	};
+}
+
+export function namedSymbols(names: unknown): unknown[] {
+	const symbol = nativeRuleFn<(name: string) => unknown>('sym');
+	return (Array.isArray(names) ? names : []).map((name) => (typeof name === 'string' ? symbol(name) : name));
+}
+
+function returnEvaluatedBodies(rules: Record<string, RuleFn>, context: WireContext): void {
+	for (const name of Object.keys(rules)) {
+		rules[name] = function evaluatedRule(_$, previous) {
+			if (previous !== undefined && previous !== context.baseRuleBodies[name]) {
+				throw new Error(`wire: the base body the grammar runtime passes for '${name}' is not the one wire holds`);
+			}
+			if (context.evaluatedBodies === undefined) {
+				throw new Error(
+					`wire: the runtime asked for '${name}' before it called externals, where wire evaluates its rules; the call order was verified against tree-sitter 0.26.9`
+				);
+			}
+			return context.evaluatedBodies.get(name);
+		};
+	}
 }
 
 function renamingCallback<F extends (...args: never[]) => unknown>(
@@ -821,6 +932,7 @@ function composeOrSynthesizePatchedParents(
 ): void {
 	for (const [kind, entry] of Object.entries(edits)) {
 		if (!entry) continue;
+		if (!(kind in rules) && !(kind in context.baseRuleBodies)) context.editedMints.add(kind);
 		rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), rules[kind], context);
 	}
 }
@@ -901,33 +1013,19 @@ function overriddenList(baseValue: unknown, own: unknown): unknown {
 		: (own ?? previous);
 }
 
-function precedenceRankedNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
-	const groups = overriddenList(
-		base?.grammar?.precedences ?? base?.precedences,
-		(cfg as { precedences?: unknown }).precedences
-	);
-	const names = new Set<string>();
-	for (const group of Array.isArray(groups) ? groups : []) for (const name of symbolNamesOf(group)) names.add(name);
-	return names;
+function baseListOf(base: BaseArg | undefined, key: 'extras' | 'supertypes' | 'precedences'): unknown {
+	return overriddenList(base?.grammar?.[key] ?? base?.[key], undefined);
 }
 
-function extraRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
-	const extras = symbolNamesOf(
-		overriddenList(base?.grammar?.extras ?? base?.extras, (cfg as { extras?: unknown }).extras)
-	);
-	const supertypes = symbolNamesOf(
-		overriddenList(base?.grammar?.supertypes ?? base?.supertypes, (cfg as { supertypes?: unknown }).supertypes)
-	);
-	return extrasClosure(extras, supertypes, (name) => {
+function extraRuleNamesOf(lists: WireLists, base: BaseArg | undefined): ReadonlySet<string> {
+	const supertypes = symbolNamesOf(lists.supertypes);
+	const rules = baseRulesOf<unknown>(base) ?? {};
+	return extrasClosure(symbolNamesOf(lists.extras), supertypes, (name) => {
 		if (!supertypes.has(name)) return undefined;
-		const baseRule: unknown = base?.grammar?.rules?.[name] ?? base?.rules?.[name];
-		const own: unknown = cfg.rules?.[name];
-		const body = own ?? baseRule;
+		const body = rules[name];
 		const rule = (
 			typeof body === 'function'
-				? withStringGlobalShim(() =>
-						(body as (dollar: unknown, original: unknown) => unknown)(makeSimpleDollarProxy(), baseRule)
-					)
+				? withStringGlobalShim(() => (body as (dollar: unknown, original: unknown) => unknown)(makeSimpleDollarProxy(), undefined))
 				: body
 		) as { type?: unknown; members?: unknown } | undefined;
 		return rule?.type === 'CHOICE' ? symbolNamesOf(rule.members) : undefined;
@@ -1010,29 +1108,6 @@ function makeDeferredContentFn(context: WireContext, hiddenName: string): Sittir
 		const blankFn = (globalThis as { blank?: () => unknown }).blank;
 		return blankFn ? blankFn() : { type: 'BLANK' };
 	};
-}
-
-function wrapRuleHook(
-	rules: Record<string, RuleFn>,
-	context: WireContext,
-	operations: readonly ((bodies: Map<string, unknown>) => void)[]
-): void {
-	const callbacks = Object.entries(rules);
-	let finished: ReadonlyMap<string, unknown> | undefined;
-	for (const [name] of callbacks) {
-		rules[name] = function ruleHook($, previous) {
-			if (previous !== undefined && previous !== context.baseRuleBodies[name]) {
-				throw new Error(`wire: the base body the grammar runtime passes for '${name}' is not the one wire holds`);
-			}
-			if (finished === undefined) {
-				const bodies = new Map<string, unknown>();
-				for (const [ruleName, callback] of callbacks) bodies.set(ruleName, callback($, context.baseRuleBodies[ruleName]));
-				for (const operation of operations) operation(bodies);
-				finished = bodies;
-			}
-			return finished.get(name);
-		};
-	}
 }
 
 function wrapAllRuleFns(rules: Record<string, RuleFn>, context: WireContext): void {

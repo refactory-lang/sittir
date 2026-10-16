@@ -3,13 +3,10 @@ import { alias as aliasImpl, type AliasPlaceholder } from './primitives/alias.ts
 import { rule as ruleImpl, type RulePlaceholder } from './primitives/rule.ts';
 import { role as roleImpl } from './primitives/role.ts';
 import { refine as refineImpl, type FormMap } from './primitives/refine.ts';
-import type { GrammarResult, EnrichedGrammar } from './enrich.ts';
-import type { WiredOpts } from './wire/wire.ts';
 import type {
 	FieldRule,
 	AliasRule,
 	GrammarRule,
-	GrammarJson,
 	AuthoringRule,
 	SymbolRule,
 	ToGrammarRule,
@@ -27,9 +24,9 @@ export { flatten } from './primitives/flatten.ts';
 export { regex } from './primitives/regex.ts';
 export { arm } from './primitives/arm.ts';
 export { preference } from './primitives/preference.ts';
-export { enrich } from './enrich.ts';
+export { pendingBase as enrich, layerOptions as wire } from './layer.ts';
+export type { LayerConfig, LayerOptions, PendingBase } from './layer.ts';
 export type { GrammarResult } from './enrich.ts';
-export { wire } from './wire/wire.ts';
 export { sittirGrammar } from './sittir-grammar.ts';
 export { bindings, lead, match, rename, split } from './bind.ts';
 export { reauthored, vocabulary } from './primitives/rule-cause.ts';
@@ -78,8 +75,3 @@ interface AuthoringToken {
 	immediate<R extends AuthoringRule>(rule: R): ImmediateTokenRule<ToGrammarRule<R>>;
 }
 export const token = (globalThis as unknown as { token: unknown }).token as unknown as AuthoringToken;
-
-interface AuthoringGrammar {
-	<B extends GrammarJson>(base: EnrichedGrammar<B>, options: WiredOpts): GrammarResult;
-}
-export const grammar = (globalThis as unknown as { grammar: unknown }).grammar as unknown as AuthoringGrammar;

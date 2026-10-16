@@ -5,40 +5,11 @@ import { variant } from '../primitives/variant.ts';
 import { transform } from '../transform/transform.ts';
 import { field } from '../primitives/field.ts';
 import { alias } from '../primitives/alias.ts';
-import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
+import { enterWired, evaluateWired, installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import type { AuthoringRule, GrammarJson } from '../../grammar-shapes/grammar-json.ts';
 import { baseOf, emptyBase } from '../../__tests__/helpers/empty-base.ts';
 
-// ---------------------------------------------------------------------------
-// Wire helpers — simulate what tree-sitter's grammar() / sittir's
-// grammarFn do after wire() augments opts: iterate opts.rules keys in
-// insertion order, invoke each fn with a $-proxy, collect the results.
-// The iteration order matters — user rules must fire before the
-// wire-injected hidden-rule placeholders so deposits are populated
-// by the time the placeholders are invoked.
-// ---------------------------------------------------------------------------
-
 type RuleFn = (this: unknown, $: unknown, previous?: unknown) => unknown;
-
-function evaluateWiredRules(
-	rules: Record<string, RuleFn>,
-	baseRules: Record<string, unknown> = {}
-): Record<string, unknown> {
-	const $ = new Proxy(
-		{},
-		{
-			get(_, prop: string) {
-				return { type: 'SYMBOL', name: prop };
-			}
-		}
-	);
-	const out: Record<string, unknown> = {};
-	for (const [name, fn] of Object.entries(rules)) {
-		const base = baseRules[name];
-		out[name] = fn.call($, $, base);
-	}
-	return out;
-}
 
 describe('wire()', () => {
 	beforeAll(() => {
@@ -53,7 +24,7 @@ describe('wire()', () => {
 		const wired = wire<GrammarJson>({ name: 'test', rules: { foo: ruleFn } }, emptyBase);
 		expect(wired.name).toBe('test');
 		expect(Object.keys(wired.rules)).toEqual(['foo']);
-		const result = evaluateWiredRules(wired.rules);
+		const result = evaluateWired(wired);
 		expect(result.foo).toEqual({ type: 'SYMBOL', name: 'x' });
 	});
 
@@ -104,6 +75,7 @@ describe('wire()', () => {
 			}
 		}, baseOf({ assignment: origSeq }));
 		// Drive the synthesized `assignment` fn with `original = origSeq`.
+		enterWired(wired);
 		const assignmentFn = wired.rules.assignment!;
 		const assignmentResult = assignmentFn.call({}, {}, origSeq);
 		// Result is a seq(symbol, symbol) — each symbol names the variant rule.
@@ -139,6 +111,7 @@ describe('wire()', () => {
 			rules: {},
 			edits: { assignment: { '0': variant('eq'), '1': variant('type') } }
 		}, baseOf({ assignment: origSeq }));
+		enterWired(wired);
 		const out = wired.rules.assignment!.call({}, {}, origSeq) as { members: Array<{ type: string; name?: string }> };
 		expect(out.members[0]!.type).toBe('SYMBOL');
 		expect(out.members[0]!.name).toBe('a');
@@ -153,6 +126,7 @@ describe('wire()', () => {
 			rules: {},
 			edits: { assignment: { '0': variant('eq') } }
 		}, baseOf({ assignment: { type: 'SEQ', members: [{ type: 'SYMBOL', name: 'a' }] } }));
+		enterWired(wired);
 		const eqFn = wired.rules.assignment_eq!;
 		const result = eqFn.call({}, {});
 		// Fake dsl has no blank(); fn falls back to { type: 'BLANK' }
@@ -198,6 +172,7 @@ describe('wire()', () => {
 				assignment: { '0/0': variant('first'), '0/1': variant('second') }
 			}
 		}, baseOf({ assignment: origSeq }));
+		enterWired(wired);
 		const assignmentFn = wired.rules.assignment!;
 		const out = assignmentFn.call({}, {}, origSeq);
 		// After user's fn, tree is: seq( seq(a, b), extra ). After wire's
@@ -229,7 +204,7 @@ describe('wire()', () => {
 				}
 			}
 		}, baseOf(base));
-		evaluateWiredRules(wired.rules, base);
+		evaluateWired(wired);
 		expect(observedKindDuringAssignment).toBe('assignment');
 		expect(observedKindDuringIdent).toBe('ident');
 	});
@@ -242,7 +217,7 @@ describe('wire()', () => {
 			}
 		}, emptyBase);
 		expect(getCurrentWireContext()).toBeNull();
-		evaluateWiredRules(wired.rules);
+		evaluateWired(wired);
 		expect(getCurrentWireContext()).toBeNull();
 	});
 
@@ -255,7 +230,7 @@ describe('wire()', () => {
 				}
 			}
 		}, emptyBase);
-		expect(() => evaluateWiredRules(wired.rules)).toThrow('intentional');
+		expect(() => evaluateWired(wired)).toThrow('intentional');
 		expect(getCurrentWireContext()).toBeNull();
 	});
 
@@ -293,6 +268,7 @@ describe('wire()', () => {
 		// Run A's assignment — deposits should appear in A's context only.
 		// FIXTURE UPDATE: the arm carries an anonymous token (see the
 		// transparent-unit-production skip note in the deposit test above).
+		enterWired(wiredA);
 		wiredA.rules.assignment!.call({}, {}, origSeq);
 		const depositsA = (ctxA as { deposits: Map<string, unknown> }).deposits;
 		const depositsB = (ctxB as { deposits: Map<string, unknown> }).deposits;
@@ -346,6 +322,7 @@ describe('wire()', () => {
 			rules: {},
 			edits: { assignment: { '1/0': variant('eq'), '1/1': variant('type') } }
 		}, baseOf({ assignment: origSeq }));
+		enterWired(wired);
 		const assignmentFn = wired.rules.assignment!;
 		assignmentFn.call({}, {}, origSeq);
 		assignmentFn.call({}, {}, origSeq);
@@ -386,6 +363,7 @@ describe('wire()', () => {
 				assignment: { '1/0': variant('eq'), '1/1': variant('type') }
 			}
 		}, baseOf({ assignment: origSeq }));
+		enterWired(wired);
 		wired.rules.assignment!.call({}, {}, origSeq);
 		const ctx = (wired as unknown as { __wireContext__: { deposits: Map<string, unknown> } }).__wireContext__;
 		expect([...ctx.deposits.keys()].sort()).toEqual(['assignment_eq', 'assignment_type']);
@@ -432,6 +410,7 @@ describe('wire()', () => {
 			}
 		}, baseOf({ async_block: origSeq }));
 		// wire() synthesized `async_block`.
+		enterWired(wired);
 		const fn = wired.rules.async_block!;
 		const out = fn.call({}, {}, origSeq) as {
 			type: string;
@@ -462,6 +441,7 @@ describe('wire()', () => {
 				}
 			}
 		}, baseOf({ r: origSeq }));
+		enterWired(wired);
 		const fn = wired.rules.r!;
 		const out = fn.call({}, {}, origSeq) as { members: unknown[] };
 		// Structure: seq(seq(field('wrapped', a)), symbol(extra))
@@ -487,6 +467,7 @@ describe('wire()', () => {
 				r: [{ 0: field('first') }, { 1: field('second') }]
 			}
 		}, baseOf({ r: origSeq }));
+		enterWired(wired);
 		const fn = wired.rules.r!;
 		const out = fn.call({}, {}, origSeq) as {
 			members: Array<{ type: string; name?: string }>;
@@ -507,6 +488,7 @@ describe('wire()', () => {
 		expect('_kw_async' in wired.rules).toBe(true);
 		expect('_kw_move' in wired.rules).toBe(true);
 		// The deferred fns return blank when no deposit happened.
+		enterWired(wired);
 		const asyncFn = wired.rules._kw_async!;
 		expect(asyncFn.call({}, {})).toEqual({ type: 'BLANK' });
 	});
@@ -523,6 +505,7 @@ describe('wire()', () => {
 				r: { 0: field('async') }
 			}
 		}, baseOf({ r: origSeq }));
+		enterWired(wired);
 		wired.rules.r!.call({}, {}, origSeq);
 		const $ = new Proxy(
 			{},
@@ -553,6 +536,7 @@ describe('wire()', () => {
 				($ as Record<string, unknown>)._kw_async
 			]) as WireConfig<GrammarJson>['inline']
 		}, baseOf({ r: origSeq }));
+		enterWired(wired);
 		wired.rules.r!.call({}, {}, origSeq);
 		const $ = new Proxy(
 			{},
@@ -576,6 +560,7 @@ describe('wire()', () => {
 				r: { 0: field('async') }
 			}
 		}, baseOf({ r: origSeq }));
+		enterWired(wired);
 		wired.rules.r!.call({}, {}, origSeq);
 		const asyncFn = wired.rules._kw_async!;
 		expect(asyncFn.call({}, {})).toEqual({ type: 'STRING', value: 'async' });
@@ -648,6 +633,7 @@ describe('wire()', () => {
 		}, baseOf({ r: origSeq }));
 		// Author's fn is wrapped but its identity is preserved as the inner
 		// callee. Calling it produces 'custom', not a blank.
+		enterWired(wired);
 		const fn = wired.rules._kw_async!;
 		expect(fn.call({}, {})).toEqual({ type: 'STRING', value: 'custom' });
 		wired.rules.r!.call({}, {}, origSeq);
@@ -690,8 +676,22 @@ describe('a patch keyed by a groups: or injects: declaration', () => {
 			groups: { paren_x: pair as never },
 			edits: { call: { 0: field('function') } }
 		}, emptyBase);
-		const call = evaluateWiredRules(wired.rules).call as { members: unknown[] };
+		const call = evaluateWired(wired).call as { members: unknown[] };
 		expect(call.members[0]).toMatchObject({ type: 'FIELD', name: 'function' });
+	});
+});
+
+describe('an edits key that names no rule, outside a layer pass', () => {
+	beforeAll(() => {
+		installFakeDsl();
+	});
+	afterAll(() => {
+		restoreFakeDsl();
+	});
+
+	it('throws edit-site-missing when wire evaluates, naming the key', () => {
+		const wired = wire<GrammarJson>({ name: 'test', rules: {}, edits: { missing: { 0: field('x') } } }, baseOf({ r: { type: 'SYMBOL', name: 'a' } }));
+		expect(() => enterWired(wired)).toThrow(/edits: 'missing' names no rule of the base or of the layer's rules:/);
 	});
 });
 

@@ -3,13 +3,14 @@ import base from './base.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import {
 	alias,
+	enrich,
 	field,
 	preference,
 	variant,
-	sittirGrammar
+	wire
 } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export default sittirGrammar(base, {
+export default grammar(enrich(base), wire({
 	resolutions,
 	name: 'scm',
 	edits: {
@@ -40,4 +41,4 @@ export default sittirGrammar(base, {
 	expectDiagnostics: {
 		'unclassifiable-shape': ['predicate']
 	}
-});
+}));

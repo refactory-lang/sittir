@@ -141,6 +141,8 @@ array form `transform()` consumes as its rest parameter.
  */
 ```
 
+A key that names neither a rule of the base (enrich's mints included) nor one of the config's `rules:` joins `WireContext.editedMints`: only a kind the layer mints can give it a body.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::buildPatchedParentFn`
 
 ```text
@@ -247,10 +249,6 @@ visible-externals rewrite so it sees the tree those passes produce.
 
 Whether `name` is a rule the grammar's `precedences` table ranks by symbol (tree-sitter-javascript ranks `$.arrow_function`, `$.await_expression`, …). The whole-arm hoist leaves such a parent in its per-arm form: its reduction would move into hidden variant rules the table does not rank, and adding those rules to the table beside their parent does not restore the resolution.
 
-### `packages/codegen/src/dsl/wire/wire.ts::precedenceRankedNames`
-
-The symbol names in the grammar's `precedences` groups, read through `overriddenList`. Named (string) precedences carry no symbol and are skipped.
-
 ### `packages/codegen/src/dsl/wire/wire.ts::overriddenList`
 
 One grammar list as the override sees it: the base grammar's list (its callback evaluated through the simple `$` proxy), or the override's callback applied to that list, or the override's literal list. The one reader of `extras`, `precedences` and `supertypes`.
@@ -259,9 +257,9 @@ One grammar list as the override sees it: the base grammar's list (its callback 
 
 Whether `name` is one of the grammar's `extras` rules in the active wire context. The whole-arm variant hoist asks before restructuring a parent: tree-sitter rejects a non-token rule inside an extra, and an extra is lexical, so its variants keep the per-arm form and gain nothing from a supertype.
 
-### `packages/codegen/src/dsl/wire/wire.ts::extraRuleNames`
+### `packages/codegen/src/dsl/wire/wire.ts::extraRuleNamesOf`
 
-The names of the grammar's extra rules: the `extras` list read through `overriddenList`, closed over supertypes by `extrasClosure` — a supertype listed in `extras` contributes each member of its choice body, and a supertype whose members are all extras is one. A supertype's body is the override's rule (called with the base rule as its original) or the base grammar's evaluated rule. This is the DSL-side reading of the same fact the compiler's `triviaKinds` reads from the node map, through the same closure. Patterns in the list carry no name and are skipped.
+The names of the grammar's extra rules: the names in the evaluated `extras` list (`WireLists`), closed over supertypes by `extrasClosure`. A supertype listed in `extras` contributes each member of its choice body, and a supertype whose members are all extras is one. A supertype's members are read from its body in the base: a grammar result's evaluated rule, or a bare grammar's callback called with a plain `$`. This is the DSL-side reading of the same fact the compiler's `triviaKinds` reads from the node map, through the same closure. Patterns in the list carry no name and are skipped.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::protectedWireRuleNames`
 
@@ -285,7 +283,19 @@ The rule-list entries of an `extras` value in either runtime's shape; an entry t
 
 ### `packages/codegen/src/dsl/wire/dead-mints.ts::reachableRuleNames`
 
-The rules a wired grammar reaches, walking SYMBOL references from its roots: `grammarRootNames` (the start rule and the rules the extras name), the supertypes, the externals, the `word` rule and `protectedWireRuleNames`. It reads the grammar's final rules, so every wire rewrite, rename and pattern replacement is already in them.
+The rules a wired grammar reaches, walking SYMBOL references from its roots: `grammarRootNames` (the start rule and the rules the extras name), the supertypes, the externals, the `word` rule and the names wire protects, which the context carries (`protectedWireRuleNames`). It reads the grammar's final rules, so every wire rewrite, rename and pattern replacement is already in them.
+
+### `packages/codegen/src/dsl/wire/dead-mints.ts::ReachableGrammar`
+
+The parts of a grammar reachability reads: the rules, extras, supertypes, externals and `word`.
+
+### `packages/codegen/src/dsl/wire/dead-mints.ts::DeadMintCtx`
+
+What the dead-mint check reads beside the grammar: the rules enrich minted and the rule names wire protects.
+
+### `packages/codegen/src/dsl/wire/dead-mints.ts::deadEnrichMints`
+
+The rules enrich minted that a grammar has and does not reach (`reachableRuleNames`). It changes nothing: `blankDeadEnrichMints` applies it to a `grammar()` result, and the layer pass applies it through its callbacks.
 
 ### `packages/codegen/src/dsl/wire/dead-mints.ts::withoutDeadNames`
 
@@ -327,14 +337,22 @@ What the config says about conflicts: the resolutions the grammar imported (`res
 
 The variant records: every SYMBOL reference that carries `annotations.variantOf` names a variant of that owner (`transform.ts::withVariantAnnotation`). Read off the final rules, so every rename is already applied to both names.
 
-### `packages/codegen/src/dsl/wire/derivation-records.ts::attachDerivationRecords`
+### `packages/codegen/src/dsl/wire/derivation-records.ts::derivationRecordsOf`
 
-Builds the records once, in `sittirGrammar`, after the `grammar()` call has run every rule callback, so `liftNames` is complete. One edge per rule, set from two records in order, the later winning:
+The records of a grammar's final rules, built once its rule callbacks have all run, so `liftNames` is complete. Beside the source edges they carry the upstream grammar's own conflict sets, the conflict config, and the dynamic precedences of the upstream grammar and of the final rules. One edge per rule, set from two records in order, the later winning:
 
 1. a lift rename (`liftNames`, written by `wireRenameLift`) maps the new name to the lift's;
 2. a variant maps to its `variantOf` owner. It wins over a rename: a hoisted variant made from a lift is both renamed from the lift's mint name and a variant of its parent, and the parent is the upstream rule, while the lift name is a mint with no upstream source.
 
 A name the upstream grammar defines (a rule or an external) never gets an edge; it is its own source. Automatic arm labels put `variantOf` on references to existing upstream rules too, and an upstream rule is not reshaped by being labelled. A promoted group gets no edge: it is an upstream rule unchanged, and its visible name is an alias, which a conflict report never names. Any other enrich mint has no record here and so no source.
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::DerivationCtx`
+
+What the records are derived from beside the final rules: the upstream grammar, the lift names and the conflict config.
+
+### `packages/codegen/src/dsl/wire/derivation-records.ts::attachDerivationRecords`
+
+Puts `derivationRecordsOf` on a `grammar()` result under `DERIVATION_RECORDS_KEY`, in `sittirGrammar`. The layer pass carries the same records on its layer record.
 
 ### `packages/codegen/src/dsl/wire/derivation-records.ts::getDerivationRecords`
 
@@ -1034,7 +1052,7 @@ Records a `PatchSite` on the active wire context; a no-op outside one.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.liftNames`
 
-The one record of an enrich lift's final name: lift name → `LiftName`. `wireRenameLift` is its only writer. The rule hook's drain resolves every rule body through it (`resolveLiftNames`), wire's list and `word` callbacks read it through `liftRenames`, and the conflict-derivation records follow it back to the lift.
+The one record of an enrich lift's final name: lift name → `LiftName`. `wireRenameLift` is its only writer. Wire's entry resolves every rule body through it (`resolveLiftNames`), wire's list and `word` callbacks read it through `liftRenames`, and the conflict-derivation records follow it back to the lift.
 
 ### `packages/codegen/src/dsl/wire/lift-names.ts::LiftName`
 
@@ -1267,9 +1285,13 @@ names it. A non-literal key (`string`) passes: there is nothing to judge.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::EditsCheck`
 
-The `edits:` block with every key judged against its rule's post-enrich
-shape. Intersected with the written block in `wire()`'s parameter, so an
-invalid key fails assignability at its own line.
+The `edits:` block with each key that names a rule of the typed base judged
+against that rule's post-enrich shape, so a path the rule lacks fails
+assignability at its own line. A key the typed base lacks passes unjudged:
+it may name a rule of the layer's `rules:`, or a kind enrich or the layer
+mints, none of which the base type carries. One that names no rule when the
+layer evaluates is `edit-site-missing` (`refuseEditSite`). Intersected with
+the written block in `wire()`'s parameter.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::DeclaredLabels`
 
@@ -1606,32 +1628,67 @@ Whether the base grammar (the enriched base, with or without its `grammar` wrapp
 `wire` with no config but the grammar's name, over a runtime `grammar()` result: how an evaluation stage is
 evaluated (`evaluateStage`), so the stage sees exactly what enrich hands wire, such as the minted whitespace bodies.
 
-### `packages/codegen/src/dsl/wire/wire.ts::wrapRuleHook`
+### `packages/codegen/src/dsl/wire/wire.ts::evaluatingExternals`
 
-The outermost wrap of every rule callback, applied after wire's other wraps. Every base rule has a callback (a
-`passthroughBaseRuleFn` when nothing else authors it), so the hook sees the whole grammar.
+Wire's `externals` callback, always present. The runtime calls it once, before it reads any rule, and wire evaluates the config there: it applies the config's `externals` callback (or passes the base's list through), records the names on `WireContext.evaluatedExternals`, builds a `$` over the rule callbacks' names, the base's rules and the externals (`layerSymbols`), evaluates the lists (`evaluateWireLists`), calls every rule callback once in key order with the base body wire holds, and runs the whole-grammar operations over the bodies. A key of `WireContext.editedMints` that no callback has minted a body for by its turn is refused instead (`refuseEditSite`) and has no body. A second call is refused.
 
-The first hook call runs the top-level stage once: it calls every wrapped callback with that call's `$` and the
-base body wire holds, memoizes the bodies, and runs the queued whole-grammar operations over them. After that
-each hook returns its finished body, so a callback runs once however often the runtime calls its rule. The stage
-has to start inside a callback because the runtime's `$` only arrives as a callback argument; both runtimes pass
-every rule the same builder, so the first caller's `$` serves all.
+A whole-grammar operation sees every body at once, so its result does not depend on the order the runtime calls the rules in. The lift rename is one (`resolveLiftNames`); it refuses a renamed lift among the externals. The externals are returned unchanged: an external is never renamed.
 
-A whole-grammar operation sees every body at once, so its result does not depend on the order the runtime calls
-the rules in. The lift rename is one (`resolveLiftNames`). Rule order is not the hook's concern: each body is
-returned by its own callback, so the runtime's rule order is the order of `opts.rules` as before.
+### `packages/codegen/src/dsl/wire/wire.ts::refuseEditSite`
 
-The hook checks that the base body the runtime passes is the one wire holds and throws otherwise: the stage
-evaluates callbacks against wire's base bodies, and a runtime handing a different body would be evaluated
-against the wrong one.
+Refuses an `edits` key that names no rule when the layer evaluates: no rule of the base (enrich's mints included) or of the config's `rules:`, and no kind the layer minted before wire reached the key. Wire evaluates in key order and a mint exists once the callback that mints it has run, so a key naming a mint follows the key that mints it. The refusal is the blocking `edit-site-missing` diagnostic, naming the grammar and the key (`ownerKind`). Given the layer pass's diagnostics list (`WireContext.diagnostics`), wire records it there; given none, it throws the diagnostic's message.
 
-### `packages/codegen/src/dsl/wire/wire.ts::recordingExternals`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.editedMints`
 
-The `externals` callback wire hands the runtime. It calls the config's callback (or passes the base list through), records the names it returned on `WireContext.evaluatedExternals`, and returns the list unchanged: an external is never renamed, because a renamed lift among the externals is an error. The names are recorded from the one call the runtime makes; wire never calls the callback itself. It also checks the names against the lift names known at that moment, so a runtime that read `externals` after the rules would still throw.
+The `edits` keys that name neither a rule of the base nor one of the config's `rules:` (`composeOrSynthesizePatchedParents`). Each must name a kind the layer mints; wire's entry refuses one it reaches with no minted body (`refuseEditSite`).
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.diagnostics`
+
+The list wire's refusals join: the layer pass's, which becomes its record's. Absent outside a layer pass, where a refusal throws.
+
+### `packages/codegen/src/dsl/wire/wire.ts::returnEvaluatedBodies`
+
+Replaces every rule callback with one that returns the body the entry evaluated, so the runtime's calls evaluate nothing and its rule order is the order of `opts.rules`. A call before the entry ran is refused, naming the verified call order, and so is a base body other than the one wire holds, since the entry evaluated each callback against wire's.
+
+### `packages/codegen/src/dsl/wire/wire.ts::evaluateWireLists`
+
+Evaluates the config's `extras`, `supertypes` and `precedences` callbacks once, each with the entry's `$` and the base's list (empty when the base has none), takes the base's list where the config gives no callback, and stores the three on `WireContext.lists`. From them it fills the names the rule wrappers read: the extra rule names (`extraRuleNamesOf`) and the precedence-ranked names, the symbol names in the `precedences` groups. Named (string) precedences carry no symbol and are skipped.
+
+### `packages/codegen/src/dsl/wire/wire.ts::evaluatedList`
+
+The `extras`, `supertypes` and `precedences` callback wire hands the runtime: it returns the list the entry evaluated, and refuses a call before the entry ran.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireLists`
+
+The lists wire's entry evaluates: `extras`, `supertypes` and `precedences`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireEntryCtx`
+
+What wire's entry closes over: the base and wire's context.
+
+### `packages/codegen/src/dsl/wire/wire.ts::layerSymbols`
+
+A `$` like tree-sitter's `RuleBuilder`, built on the runtime's own `sym`: a known name gives its symbol, and an unknown one gives an undefined-symbol `ReferenceError` carrying the symbol as `.symbol`, which `alias()` accepts as a new name and normalization refuses. Given no names, every name is known, as tree-sitter's builder is before it has a rule map.
+
+### `packages/codegen/src/dsl/wire/wire.ts::namedSymbols`
+
+A list of names as symbols, through the runtime's `sym`. Entries that are already rules pass through.
+
+### `packages/codegen/src/dsl/wire/wire.ts::baseListOf`
+
+One of the base's lists (`extras`, `supertypes` or `precedences`), from a grammar result or a bare grammar, read through `overriddenList`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.lists`
+
+The lists the entry evaluated (`evaluateWireLists`); absent until the runtime calls it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.evaluatedBodies`
+
+The body of every rule callback as the entry evaluated it, in key order; absent until the runtime calls the entry.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.evaluatedExternals`
 
-The names the grammar's `externals` callback returned, empty until the runtime calls it. The rule hook's drain checks renamed lifts against it.
+The names the grammar's `externals` callback returned, set when the runtime calls wire's entry. Lift-name resolution, which the entry runs after the rule callbacks, refuses a renamed lift among them.
 
 ### `packages/codegen/src/dsl/wire/lift-names.ts::assertNoRenamedExternal`
 
@@ -1651,7 +1708,11 @@ The base grammar's `word`, when it declares one.
 ### `packages/codegen/src/dsl/wire/wire.ts::wireImpl`
 
 The body of `wire` over the runtime base (`unknown`, read as `BaseArg`). `wire` is its typed facade, whose
-generic base type only checks the authored config's keys; `wireWithoutConfig` calls it directly.
+generic base type only checks the authored config's keys; `wireWithoutConfig`, `wireBindings` and the layer pass
+(`layer.ts::runLayerPass`) call it directly. The runtime's call to its `externals` callback is where wire evaluates
+the config (`evaluatingExternals`); the rule callbacks and the `extras`, `supertypes` and `precedences` callbacks
+return what that call computed. The layer pass also passes its diagnostics list, which wire's refusals join
+(`WireContext.diagnostics`); the other callers pass none.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wire`
 

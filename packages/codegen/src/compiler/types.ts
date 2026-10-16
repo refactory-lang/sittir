@@ -15,6 +15,7 @@ export type { OptionsConfig } from '../dsl/wire/options-block.ts';
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
 import type { ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
 import type { RuleCauseDeclaration } from '../dsl/primitives/rule-cause.ts';
+import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 
 export type RulePathSegment =
 	| { readonly edge: 'content' }
@@ -145,6 +146,7 @@ export interface RawGrammar {
 
 	readonly bodyPatternZeroMatches?: readonly string[];
 	readonly desugarDivergences?: readonly DesugarDivergenceEvent[];
+	readonly layerDiagnostics?: readonly GrammarDiagnostic[];
 	readonly derivationRecords?: DerivationRecords;
 	readonly renamedFrom?: Readonly<Record<string, string>>;
 	readonly splitFrom?: Readonly<Record<string, string>>;

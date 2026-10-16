@@ -511,7 +511,8 @@ export function evaluateRecords(raw: RawGrammar): GrammarDiagnostic[] {
 		...predictionRecords(raw),
 		...unexpectableExpectEntries(raw.name, raw.expectDiagnostics),
 		...(raw.bodyPatternZeroMatches ?? []).map((name) => fromBodyPatternZeroMatch(raw.name, name)),
-		...(raw.desugarDivergences ?? []).map((event) => fromDesugarDivergence(raw.name, event))
+		...(raw.desugarDivergences ?? []).map((event) => fromDesugarDivergence(raw.name, event)),
+		...(raw.layerDiagnostics ?? [])
 	]);
 }
 

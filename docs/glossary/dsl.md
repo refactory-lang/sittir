@@ -3017,22 +3017,6 @@ declares the same overloads. `field(name)` returns a `FieldPlaceholder` that
 keeps its name as a type, which is how a patch list knows which labels an earlier
 map minted; `role()` takes a symbol reference, matching the runtime check.
 
-### `packages/codegen/src/dsl/dsl-authoring.ts::grammar`
-
-Runtime-injected the same way — this is `evaluate.ts`'s own `grammarFn`, NOT
-tree-sitter's ambient `grammar()`. Its real two-arg (extension) contract is
-`(base: <flat enriched grammar shape>, options: WiredOpts) => GrammarResult`:
-`enrich(base)` returns `EnrichedGrammar<B>`, the SAME flat `{ name, rules, … }`
-shape as `B` (sittir's readonly-tupled grammar-shape rules, each enriched) and
-not a `{ grammar: { … } }` wrapper, while `wire()` returns `WiredOpts`.
-`grammarFn`'s own return value IS `{ grammar: { … } }`-shaped
-(`GrammarResult`), which is what a base-extension call receives.
-
-Tree-sitter's ambient overloads instead expect a flat but MUTABLE
-`GrammarSchema` base. Typing this re-export against the real contract is what
-lets `grammar.sittir.ts` call `grammar(enrichedBase, wire(…))` without a
-suppression.
-
 ### `mergeUnanimousAttrs` — separator comparison (`packages/codegen/src/dsl/rule-attrs.ts`)
 
 `separator` is the nested `{ value, trailing?, leading? }` fact, and the
@@ -3518,6 +3502,10 @@ one representation difference `rulesEqual` treats as equal).
 /** Runtime-injected `string()` literal wrapper (see saveAndInjectDslGlobals). */
 ```
 
+### `packages/codegen/src/dsl/authoring-globals.d.ts::grammar`
+
+The runtime's global `grammar(base, options)`, typed generic over the base: `enrich(base)` returns `PendingBase<B>` and `wire(config)` returns `LayerOptions<B>`, so a grammar file's `grammar(enrich(base), wire({…}))` infers `B` from the base and checks `wire`'s config against it through the call's contextual type.
+
 ### `packages/codegen/src/dsl/authoring-globals.d.ts::token`
 
 ```text
@@ -3731,9 +3719,9 @@ The anchored RegExp matching a whole run of a grammar's node-less extras — the
 
 Its rule map is any phase's (`AnyRule`): enrich calls it on the DSL rules, and link calls it once on the evaluated grammar's rules and stamps the result as `nodelessExtrasRun` on the linked grammar, which normalize and assemble carry to the `NodeMap`. Rules past link are simplified (repeats folded into multiplicity), which `ruleToRegexSource` does not read, so no later phase re-derives the run.
 
-### `packages/codegen/src/dsl/enrich.ts::effectiveExtras`
+### `packages/codegen/src/dsl/enrich.ts::authoredExtrasOf`
 
-The extras the final grammar lexes: the upstream list, or what the config's `extras:` callback returns when handed a symbol `$` and that list as `previous`, the call tree-sitter makes. Enrich reads every extras fact from it (the predicted symbol source, the whitespace vocabulary), so a config that adds or clears whitespace extras changes the vocabulary with the parser.
+What the config's `extras:` callback returns when handed a symbol `$` and the base's own `extras` list as `previous`, the call tree-sitter makes; undefined without a callback. It is the one evaluation of the callback. Enrich reads every extras fact from it, normalized (the predicted symbol source, the whitespace vocabulary), so a config that adds or clears whitespace extras changes the vocabulary with the parser. The result's `extras` is the list as returned, its patterns' flags kept, with token-form parents replaced by their arms (`replaceExtras`).
 
 ### `packages/codegen/src/dsl/enrich.ts::symbolDollar`
 
@@ -4602,8 +4590,10 @@ The list a lead can split: a head-form separated list (`separatedListBodyInfo`) 
  *     in an existing rule tree.
  *   - `role` — structural-whitespace annotation with per-grammar
  *     accumulator.
- *   - `enrich` — mechanical enrichment passes applied before the
- *     override's own rule callbacks run.
+ *   - `enrich(base)` — a layer's base half: the pending base its layer
+ *     pass completes (`layer.ts::pendingBase`).
+ *   - `wire(config)` — a layer's options half, whose `externals`
+ *     callback runs the layer pass (`layer.ts::layerOptions`).
  *
  * **Sittir shadows of baseline tree-sitter DSL** (add one-arg shorthand;
  * two-arg calls delegate to the runtime-injected native):
@@ -4779,7 +4769,7 @@ A predicate over rule names: whether the name is a text token an earlier enrich 
 The part of a grammar's authored config enrich reads: `groupBodies`, the
 evaluated `groups:` body patterns (`authoredGroupBodies`), and `extras`, the
 config's `extras:` callback, which decides the extras the final grammar
-lexes (`effectiveExtras`).
+lexes (`authoredExtrasOf`). Enrich evaluates it once, and its result carries the list.
 
 `fieldSites` maps each kind to the sites its authored patches mark with `field()` (`authoredFieldSites`): index path and field name. The token-form hoist leaves a choice at one of those paths unsplit, and an element choice under a fielded repeat takes the site's name as its slot (`elementChoiceSlots`).
 
@@ -4795,7 +4785,7 @@ minted group.
 
 ### `packages/codegen/src/dsl/sittir-grammar.ts::sittirGrammar`
 
-Completes the authored grammar through enrich and wire. An absent or unbound bindings layer returns that result. A configured bindings layer enriches that completed result exactly once and refuses every rule change, then wires its own marked patches and applies splits and leads. Both layers share automatic-variant stamping, dead-mint handling and text-token completion. Kind renames stay outside the parser. The final derivation records remain tied to the original upstream base, and the bound conflict resolutions follow the binding edits.
+Completes the authored grammar through enrich and wire. An absent or unbound bindings layer returns that result. A configured bindings layer enriches that completed result exactly once and refuses every rule change, then wires its own marked patches and applies splits and leads. Both layers share automatic-variant stamping, dead-mint handling and text-token completion. Kind renames stay outside the parser. The final derivation records remain tied to the original upstream base, and the bound conflict resolutions follow the binding edits. The config's `extras:` callback is an enrich input, so wire is given the config without it and hands the runtime the enriched base's list.
 
 `B` infers from the upstream `base`, and the config is contextually typed as
 `WireConfig<EnrichedGrammar<B>>`, so rule callbacks get the grammar-shaped
@@ -7235,7 +7225,7 @@ The records that cross layers beside the rules, under the names the evaluated gr
 
 ### `packages/codegen/src/dsl/layer-record.ts::LayerRecord`
 
-The one record a completed layer hands the layer above, on its result's start rule: its `depth` (1 for `grammar.sittir.ts`, one more per layer above), the `upstream` grammar (`GrammarJson`) its derivation records stay keyed to, the enrich `sidecars` the next layer re-attaches when it checks its base, the conflict `resolutions`, the dead enrich mints, the text tokens, the lift names, the effect log and the records. JSON never carries it.
+The one record a completed layer hands the layer above, on its result's start rule: its `depth` (1 for `grammar.sittir.ts`, one more per layer above), the `upstream` grammar (`GrammarJson`) its derivation records stay keyed to, the enrich `sidecars` the next layer re-attaches when it checks its base, the conflict `resolutions` (the file the first layer gave), the dead enrich mints, the text tokens, the lift names, the effect log, the records, the conflict-derivation records (`wire/derivation-records.ts::DerivationRecords`) and the diagnostics the passes recorded (`layer-not-enrich-fixpoint`, `edit-site-missing`), which `evaluate` hands the compile gate. JSON never carries it.
 
 ### `packages/codegen/src/dsl/layer-record.ts::LAYER_RECORD_KEY`
 
@@ -7248,6 +7238,158 @@ The record a `grammar()` result carries, read from its first rule's body: the st
 ### `packages/codegen/src/dsl/layer-record.ts::withLayerRecord`
 
 A fresh copy of a start rule's body that carries the record. Both runtimes keep the body a rule callback returns by identity, so the record reaches the result. The key is not enumerable, so a spread copy of the body, which a later layer's edits make, carries no stale record.
+
+### `packages/codegen/src/dsl/layer.ts::LAYER_BASE`
+
+A type-only key under which `PendingBase<B>` and `LayerOptions<B>` carry the base type, so `grammar(enrich(base), wire(config))` infers one `B` for both halves and `wire`'s config is checked against the base `enrich` was given. No value exists at runtime.
+
+### `packages/codegen/src/dsl/layer.ts::ContextsConfig`
+
+A layer's `contexts:` callback: a function of the layer's `$` that returns named contexts. It never reaches the runtime's options.
+
+### `packages/codegen/src/dsl/layer.ts::LayerConfig`
+
+What `wire(config)` takes in a grammar file: wire's config over the enriched base, with an optional `name` (the base's by default), `resolutions` (the conflict resolutions file, which only the first layer gives) and `contexts`.
+
+### `packages/codegen/src/dsl/layer.ts::LayerCallback`
+
+The shape of every callback the options hand the runtime: tree-sitter calls each with its rule builder as `this` and as the first argument, and the base's value as `previous`.
+
+### `packages/codegen/src/dsl/layer.ts::PendingBase`
+
+What `enrich(base)` returns: a grammar result whose `name` and `externals` are set and whose rules and other lists are filled when the layer pass completes it. Its `externals` array carries the layer's handle (`LAYER_HANDLE`).
+
+### `packages/codegen/src/dsl/layer.ts::LayerOptions`
+
+What `wire(config)` returns: the options the runtime reads. `externals` is the layer's entry and is always present. `rules` throws until the pass has run; after it, every callback returns what the pass computed and evaluates nothing.
+
+### `packages/codegen/src/dsl/layer.ts::LayerLists`
+
+The lists the pass computes for the runtime's list callbacks: externals, reserved word sets, extras, word, conflicts, inline, supertypes and precedences. An absent optional key leaves the runtime the base's value.
+
+### `packages/codegen/src/dsl/layer.ts::LayerOutput`
+
+One pass's result: the layer's name, the body each rule callback returns, keyed in the runtime's order, the lists, the layer record, and wire's context, which `evaluate` reads through the options' `__wireContext__`.
+
+### `packages/codegen/src/dsl/layer.ts::LayerCtx`
+
+The one phase context of the pass: the layer's name and depth, the record it inherits, the upstream grammar and the completed base, the conflict resolutions and whether the config authors conflicts, wire's context and the rule names it protects, the rules as the layer leaves them, the rules it creates in creation order, the layer's `$`, the resolved effects and the diagnostics the pass records.
+
+### `packages/codegen/src/dsl/layer.ts::LayerHandle`
+
+The link between a layer's two halves: the pending base, the grammar result it stands for, and whether a pass has consumed it.
+
+### `packages/codegen/src/dsl/layer.ts::LAYER_HANDLE`
+
+The key the handle rides under on the pending base's `externals` array, the one value of the base tree-sitter hands the options (as `previous` of the `externals` callback) before it reads anything else. It is not enumerable, so a spread copy, `JSON.stringify` and tree-sitter's normalization of the list drop it, and it is a registered symbol (`Symbol.for`), so two loaded copies of this module agree on it.
+
+### `packages/codegen/src/dsl/layer.ts::VERIFIED_TREE_SITTER`
+
+The tree-sitter version whose `dsl.js` call order the hook rests on: `grammar(base, options)` reads the base's `name` and `externals`, calls `options.externals` with them, builds `$` from the keys of `options.rules` and of the base's rules, then calls each rule callback and the list callbacks. Every refusal of an out-of-order read names it, and a test pins the CLI to it.
+
+### `packages/codegen/src/dsl/layer.ts::PENDING_KEYS`
+
+The base keys the runtime may read only after the pass: the rules and every list but `externals`. A pending base guards each with a getter that throws.
+
+### `packages/codegen/src/dsl/layer.ts::handleOf`
+
+The handle an externals list carries, if any.
+
+### `packages/codegen/src/dsl/layer.ts::withHandle`
+
+A copy of an externals list that carries the handle.
+
+### `packages/codegen/src/dsl/layer.ts::grammarResultOf`
+
+A base as a `grammar()` result: a result as given, a bare grammar wrapped. A value that is not an object is refused.
+
+### `packages/codegen/src/dsl/layer.ts::pendingBase`
+
+`enrich(base)` in grammar files: a fresh pending base for `base`, with its `name`, its `externals` copied with a new handle, and a throwing getter for every key in `PENDING_KEYS`. The given base is never written. A base whose externals carry a handle no pass consumed is refused: it is another layer's pending base, not a completed grammar.
+
+### `packages/codegen/src/dsl/layer.ts::copyProperties`
+
+Copies every own property of `source`, symbol keys included and `skip` excepted, onto `target` as a writable, configurable value with its enumerability, so a frozen source can be copied.
+
+### `packages/codegen/src/dsl/layer.ts::completePendingBase`
+
+Fills a pending base from intake's completed result. The guarded keys are cleared and every property of the completed grammar is copied over; the externals keep the consumed handle; `reserved` is a fresh copy, because tree-sitter writes a layer's reserved word sets into its base's `reserved`, which must never reach the layer below. The result's own properties beside `grammar`, enrich's sidecars among them, are copied onto the pending base too.
+
+### `packages/codegen/src/dsl/layer.ts::BaseEditsCheck`
+
+`EditsCheck` against the enriched base when the base type is a grammar, and `unknown` otherwise.
+
+### `packages/codegen/src/dsl/layer.ts::BaseOptionsCheck`
+
+`OptionsCheck` against the enriched base when the base type is a grammar, and `unknown` otherwise.
+
+### `packages/codegen/src/dsl/layer.ts::BaseLayerConfig`
+
+`LayerConfig` over the base, without `edits` and `options`, which `layerOptions` checks through `BaseEditsCheck` and `BaseOptionsCheck`. Every base-dependent part of `layerOptions`' parameter is a conditional on `B`, deferred until inference has fixed `B`: a constraint on `B` makes TypeScript instantiate the whole config against the base during contextual inference, which is excessively deep (TS2589).
+
+### `packages/codegen/src/dsl/layer.ts::layerOptions`
+
+`wire(config)` in grammar files: the options the runtime reads. They carry the config's `name`, and its `edits` and `factoryInline`, which `evaluate` reads, and the layer's entry as `externals`. The entry takes the handle from the base externals the runtime passes and refuses a missing or consumed one; it runs the pass (`runLayerPass`), fills the options with its results (`fillLayerOptions`) and returns the layer's externals. Reading `rules` before that throws, naming `VERIFIED_TREE_SITTER`. `contexts` never reaches the options.
+
+`B` is inferred from the call's contextual type, the global `grammar(base, options)`, which ties it to the base `enrich()` was given. `edits` and `options` are checked against that base through `BaseEditsCheck` and `BaseOptionsCheck`, and their values against records that do not depend on it.
+
+### `packages/codegen/src/dsl/layer.ts::returning`
+
+A callback that returns a computed value. Every option callback is one once the pass has run.
+
+### `packages/codegen/src/dsl/layer.ts::ruleCallbacksOf`
+
+One returning callback per body the pass computed, in the order the runtime appends the rules a layer creates.
+
+### `packages/codegen/src/dsl/layer.ts::fillLayerOptions`
+
+Fills the options from a pass's output: `name` when the config gives none, a returning callback for each list the pass computed (one per reserved word set), and wire's context, not enumerable, under `__wireContext__`.
+
+### `packages/codegen/src/dsl/layer.ts::enrichFixpoint`
+
+Runs enrich once over a completed result with the given sidecars, and names every rule enrich would add, remove or change, sorted. The checked result is returned for the layer above to build on. `sittirGrammar`'s bindings gate makes the same check (`sittir-grammar.ts::assertEnrichFixpoint`).
+
+### `packages/codegen/src/dsl/layer.ts::IntakeCtx`
+
+What intake reads beside the source grammar: the config, the layer's name, the inherited record and the diagnostics it appends to.
+
+### `packages/codegen/src/dsl/layer.ts::intake`
+
+Completes a layer's base. Over an upstream base, which carries no record, enrich runs with the config's enrich inputs: the `groups:` bodies, the `extras:` callback, which enrich evaluates once against the base's list (`enrich.ts::authoredExtrasOf`), and the field sites `edits` names. Over a completed layer the config's enrich inputs reach no enrich: `resolutions` is refused, since it belongs to the first layer, and enrich runs once over the base with the record's sidecars (`enrichFixpoint`), recording `layer-not-enrich-fixpoint` with the rules it would change.
+
+### `packages/codegen/src/dsl/layer.ts::wireConfigOf`
+
+Wire's config for the layer: the layer's config under its resolved name. Over an upstream base, intake has consumed the `extras:` callback, so wire gets none and hands the runtime the completed base's list; above, wire evaluates it against the base's list.
+
+### `packages/codegen/src/dsl/layer.ts::runLayerPass`
+
+The layer pass, run from the layer's entry. Intake completes the base and the pending base takes the result. Wire's own entry then evaluates the config's rule callbacks and lists once, against the completed base, and its refusals join the pass's diagnostics (`wire/wire.ts::refuseEditSite`); each body is normalized as tree-sitter normalizes it and laid over the base's rules. The pass builds its context (`LayerCtx`), with a `$` that knows the rules and the externals, resolves the layer's effects per owner, and completes the layer (`completeLayer`).
+
+### `packages/codegen/src/dsl/layer.ts::resolvedEffects`
+
+The layer's field (segment) and alias effects, resolved per owner (`verbs/effects.ts::effectsForOwners`) over the rules as its edits leave them.
+
+### `packages/codegen/src/dsl/layer.ts::normalizedBody`
+
+A rule callback's value as a rule, as tree-sitter's `normalize` makes it: a string is a `STRING`, a RegExp a `PATTERN` with its flags, an object with a `type` a rule as is. An undefined-symbol `ReferenceError` is thrown; `undefined` and any other value are refused.
+
+### `packages/codegen/src/dsl/layer.ts::evaluatedLists`
+
+Calls wire's list callbacks once, with the layer's `$` and the completed base's lists. Wire returns the `extras`, `supertypes` and `precedences` its entry evaluated, and evaluates `inline`, `word` and each reserved word set here. The externals are the entry's.
+
+### `packages/codegen/src/dsl/layer.ts::resolutionSections`
+
+The conflict resolutions file's sections by depth: the base section for the first layer and the bound section for the second.
+
+### `packages/codegen/src/dsl/layer.ts::layerConflicts`
+
+The conflict sets the `conflicts` callback returns. The first layer's are its section of the resolutions file, and replace any the base carries; a layer above keeps its base's sets and appends its own section's.
+
+### `packages/codegen/src/dsl/layer.ts::completeLayer`
+
+Completion, in order. Automatic variants are stamped over a view of the layer's grammar. Enrich mints that nothing reaches (`wire/dead-mints.ts::deadEnrichMints`) are blanked, and `inline` and `supertypes` leave them out. The record is built: depth, upstream, enrich sidecars, resolutions, dead mints, text tokens, lift names, effects, inherited records rewritten through the effects (`rewriteInherited`), derivation records and diagnostics. The record rides on the start rule's body (`withLayerRecord`), normalized for it.
+
+Each other body is returned as its callback returned it unless the pass replaced it: an object body as the pass left it, a dead mint as `blank()`, and a string or RegExp as written, for the runtime to normalize, because the runtimes normalize a RegExp differently (sittir's `PATTERN` drops its flags).
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::ConflictResolutionsFile`
 
@@ -7666,7 +7808,7 @@ A shallow copy of a grammar carrying the three sidecars an enrich result holds (
 
 ### `packages/codegen/src/dsl/sittir-grammar.ts::assertEnrichFixpoint`
 
-The configured bindings layer's gate: enrich the completed authored grammar exactly once with its enrich sidecars, compare all rule names and trees, and return that enriched result for the binding wire pass. Every added, removed or changed rule fails with its name; configured empty bindings are checked too. Absent bindings and unbound evaluation skip the second layer.
+The configured bindings layer's gate: enrich the completed authored grammar exactly once with its enrich sidecars (`layer.ts::enrichFixpoint`), compare all rule names and trees, and return that enriched result for the binding wire pass. Every added, removed or changed rule fails with its name; configured empty bindings are checked too. Absent bindings and unbound evaluation skip the second layer.
 
 ### `packages/codegen/src/dsl/sittir-grammar.ts::completeLayer`
 

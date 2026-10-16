@@ -30,7 +30,7 @@ import type {
 import { structuralBuilder } from '../dsl/builders.ts';
 import type { RawGrammar, DesugarDivergenceEvent, EvaluatedGrammar, EvaluationStages, StageEvaluation } from './types.ts';
 import { canonicalGrammar } from './canonical-rules.ts';
-import { isComplexBody, onlyAliasedSymbols, optionalContentOf, ruleListEntryOf, type RuleListEntry } from '../dsl/rule-patterns.ts';
+import { isComplexBody, isRecord, onlyAliasedSymbols, optionalContentOf, ruleListEntryOf, type RuleListEntry } from '../dsl/rule-patterns.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { baseRulesOf } from '../dsl/shared.ts';
 import { protectedWireRuleNames, wireWithoutConfig, type PatchSite, type WireContext, type RefineForm, type WiredOpts } from '../dsl/wire/wire.ts';
@@ -38,6 +38,7 @@ import { getDeadEnrichMints } from '../dsl/wire/dead-mints.ts';
 import { getDerivationRecords } from '../dsl/wire/derivation-records.ts';
 import { UNBOUND_ENV } from '../dsl/sittir-grammar.ts';
 import { getTextTokens } from '../dsl/enrich.ts';
+import { layerRecordOf } from '../dsl/layer-record.ts';
 import type { GrammarResult } from '../dsl/enrich.ts';
 
 type Input = string | RegExp | Rule<'evaluate'>;
@@ -46,6 +47,8 @@ function coerceToRule(input: unknown): Rule<'evaluate'> {
 	if (input === undefined || input === null) {
 		throw new Error('Undefined symbol');
 	}
+
+	if (input instanceof ReferenceError) throw input;
 
 	if (typeof input === 'string') {
 		return { type: STRING, value: input } satisfies StringRule<'evaluate'>;
@@ -146,10 +149,15 @@ const prec: PrecFn = Object.assign(
 	}
 );
 
-function alias(rule: Input, value: string | Rule<'evaluate'>): AliasRule<'evaluate'> {
+function undefinedSymbolOf(value: ReferenceError): unknown {
+	return (value as ReferenceError & { readonly symbol?: unknown }).symbol;
+}
+
+function alias(rule: Input, value: string | Rule<'evaluate'> | ReferenceError): AliasRule<'evaluate'> {
 	const content = coerceToRule(rule);
-	if (typeof value === 'string' || (value !== null && typeof value === 'object' && value.type === SYMBOL)) {
-		return structuralBuilder.alias(content, value);
+	const target = value instanceof ReferenceError ? undefinedSymbolOf(value) : value;
+	if (typeof target === 'string' || (isRecord(target) && target.type === SYMBOL)) {
+		return structuralBuilder.alias(content, target as string | SymbolRule<'evaluate'>);
 	}
 	throw new Error(`Invalid alias value: ${value}`);
 }
@@ -222,7 +230,6 @@ function grammarFn(
 	optionsOrBase: GrammarOptions | GrammarResult,
 	options?: GrammarOptions
 ): { grammar: EvaluatedGrammar } {
-	let baseRules: Record<string, Rule<'evaluate'>> = {};
 	let baseGrammar: any = null;
 	let base: GrammarResult | undefined;
 	let opts: GrammarOptions;
@@ -234,13 +241,8 @@ function grammarFn(
 		if (!('grammar' in optionsOrBase)) throw new Error(`grammar(base, options): '${options.name}' extends a base that is not a grammar() result`);
 		base = optionsOrBase;
 		baseGrammar = base.grammar;
-		baseRules = { ...baseRulesOf<Rule<'evaluate'>>(baseGrammar) };
 		opts = options;
 	}
-
-	const inherited: Partial<EvaluatedGrammar> = baseGrammar ?? {};
-	const rules: Record<string, Rule<'evaluate'>> = { ...baseRules };
-	const evaluateSynthesized = new Set<string>(inherited.evaluateSynthesized);
 
 	const extras: RuleListEntry[] = [];
 	const externals: RuleListEntry[] = [];
@@ -262,27 +264,31 @@ function grammarFn(
 		precedences,
 		reserved
 	};
-	const ctx: EvaluateCtx = {
-		rules,
-		evaluateSynthesized,
-		opts,
-		baseRules,
-		baseGrammar,
-		externals,
-		isExtension: baseGrammar !== null,
-		sinks,
-		setWord: (w) => {
-			word = w;
-		},
-		bodyPatternZeroMatches: [...(inherited.bodyPatternZeroMatches ?? [])],
-		desugarDivergences: [...(inherited.desugarDivergences ?? [])]
-	};
-
+	let inherited: Partial<EvaluatedGrammar> = {};
+	let ctx!: EvaluateCtx;
 	const { roles: collectedRoles } = withRoleScope(() => {
-		evaluateExternalsCallback(opts, ctx);
-		evaluateRulesAndInjectSynthetics(rules, ctx);
+		evaluateExternalsCallback(opts, { baseGrammar, sinks });
+		inherited = baseGrammar ?? {};
+		const baseRules = { ...baseRulesOf<Rule<'evaluate'>>(baseGrammar) };
+		ctx = {
+			rules: { ...baseRules },
+			evaluateSynthesized: new Set<string>(inherited.evaluateSynthesized),
+			opts,
+			baseRules,
+			baseGrammar,
+			externals,
+			isExtension: baseGrammar !== null,
+			sinks,
+			setWord: (w) => {
+				word = w;
+			},
+			bodyPatternZeroMatches: [...(inherited.bodyPatternZeroMatches ?? [])],
+			desugarDivergences: [...(inherited.desugarDivergences ?? [])]
+		};
+		evaluateRulesAndInjectSynthetics(ctx.rules, ctx);
 		evaluateMetadataCallbacksInScope(opts, ctx);
 	});
+	const { rules, evaluateSynthesized } = ctx;
 
 	inheritBaseGrammarMetadata(opts, ctx);
 	const wireCtx = getWireContext(opts);
@@ -759,7 +765,7 @@ function appendCallbackMetadataNames(sink: string[], result: unknown): void {
 	}
 }
 
-function evaluateExternalsCallback(opts: GrammarOptions, ctx: EvaluateCtx): void {
+function evaluateExternalsCallback(opts: GrammarOptions, ctx: Pick<EvaluateCtx, 'baseGrammar' | 'sinks'>): void {
 	if (!opts.externals) return;
 	const $ = createProxy();
 	const baseExternals = (ctx.baseGrammar as { externals?: RuleListEntry[] } | null)?.externals ?? [];
@@ -948,14 +954,17 @@ async function importAndExtractGrammar(load: () => Promise<unknown>): Promise<Ev
 	};
 	const result = (mod.default ?? mod) as { grammar?: unknown };
 	const grammarObj = (result.grammar ?? result) as EvaluatedGrammar;
-	const deadMints = getDeadEnrichMints(grammarObj);
-	const derivationRecords = getDerivationRecords(grammarObj);
-	const textTokens = getTextTokens(grammarObj);
+	const record = layerRecordOf(result);
+	const deadMints = record?.deadMints ?? getDeadEnrichMints(grammarObj);
+	const derivationRecords = record?.derivationRecords ?? getDerivationRecords(grammarObj);
+	const textTokens = record?.textTokens ?? getTextTokens(grammarObj);
+	const layerDiagnostics = record?.diagnostics ?? [];
 	return {
 		...grammarObj,
 		...(deadMints.size === 0 ? {} : { orphanedSyntheticGroups: [...deadMints] }),
 		...(derivationRecords === undefined ? {} : { derivationRecords }),
-		...(textTokens.length === 0 ? {} : { textTokens })
+		...(textTokens.length === 0 ? {} : { textTokens }),
+		...(layerDiagnostics.length === 0 ? {} : { layerDiagnostics })
 	};
 }
 

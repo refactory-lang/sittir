@@ -1,9 +1,12 @@
 import { join } from 'node:path';
 import { createRequire } from 'node:module';
 import { describe, expect, it, vi } from 'vitest';
-import { evaluateDsl } from '../../compiler/evaluate.ts';
+import { evaluateDsl, withDslGlobals } from '../../compiler/evaluate.ts';
 import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
 import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
+import type { GrammarResult } from '../enrich.ts';
+import { enrichFixpoint } from '../layer.ts';
+import { layerRecordOf } from '../layer-record.ts';
 
 const PACKAGES = join(__dirname, '../../../..');
 const require = createRequire(import.meta.url);
@@ -77,7 +80,7 @@ describe('the grammar bindings layer', () => {
 		expect(raw.bindingEffects).toContainEqual({ kind: 'segment', owner: 'parameter', from: 'pattern:', to: 'name:' });
 	});
 
-	it.each(['rust', 'typescript', 'python', 'regex', 'scm'])(
+	it.each(['rust', 'typescript', 'python'])(
 		"takes %s's wired grammar as a base enrich leaves unchanged",
 		async (grammar) => {
 			checks.count = 0;
@@ -88,6 +91,18 @@ describe('the grammar bindings layer', () => {
 			} finally {
 				checks.empty = false;
 			}
+		},
+		240_000
+	);
+
+	it.each(['regex', 'scm'])(
+		"completes %s's layer as a base enrich leaves unchanged",
+		async (grammar) => {
+			const evaluated = await evaluateDsl(join(PACKAGES, grammar, 'grammar.sittir.ts'));
+			const record = layerRecordOf({ grammar: evaluated });
+			expect(record?.depth).toBe(1);
+			const { changed } = await withDslGlobals(async () => enrichFixpoint({ grammar: evaluated } as unknown as GrammarResult, record!.sidecars));
+			expect(changed).toEqual([]);
 		},
 		240_000
 	);
