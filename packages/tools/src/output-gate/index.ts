@@ -63,12 +63,12 @@ function blobsAtRevision(roots: readonly string[], rev: string, root: string): M
 }
 
 function blobsInWorktree(roots: readonly string[], root: string): Map<string, string> {
-	const paths = git(['ls-files', '-z', '--cached', '--others', '--exclude-standard', '--', ...roots], root)
+	const paths = git(['ls-files', '-z', '--cached', '--others', '--exclude-per-directory=.gitignore', '--', ...roots], root)
 		.split('\0')
 		.filter((path) => path !== '' && existsSync(join(root, path)));
 	const unique = [...new Set(paths)];
 	if (unique.length === 0) return new Map();
-	const blobs = git(['hash-object', '--', ...unique], root).trim().split('\n');
+	const blobs = git(['hash-object', '--no-filters', '--', ...unique], root).trim().split('\n');
 	return new Map(unique.map((path, index) => [path, blobs[index]!]));
 }
 
@@ -84,10 +84,19 @@ function textAt(path: string, blob: string, rev: GateRevision, root: string): st
 	return rev === 'worktree' ? readFileSync(join(root, path), 'utf8') : git(['cat-file', 'blob', blob], root);
 }
 
-function withoutKeys(text: string, keys: readonly string[]): string {
-	const value = JSON.parse(text) as Record<string, unknown>;
-	for (const key of keys) delete value[key];
-	return JSON.stringify(value, null, 2);
+function printedWithoutKeys(path: string, text: string, keys: readonly string[]): string | undefined {
+	const value: unknown = JSON.parse(text);
+	if (value === null || typeof value !== 'object' || Array.isArray(value))
+		throw new Error(`output gate: ${path} has dropped keys but its JSON is not an object`);
+	const printed = JSON.stringify(value, null, 2);
+	const tail = text.slice(printed.length);
+	if (!text.startsWith(printed) || (tail !== '' && tail !== '\n')) return undefined;
+	return JSON.stringify(Object.fromEntries(Object.entries(value).filter(([key]) => !keys.includes(key))), null, 2) + tail;
+}
+
+function sameWithoutKeys(path: string, before: string, after: string, keys: readonly string[]): boolean {
+	const kept = printedWithoutKeys(path, before, keys);
+	return kept !== undefined && kept === printedWithoutKeys(path, after, keys);
 }
 
 export function checkGate(
@@ -98,22 +107,20 @@ export function checkGate(
 	root: string = REPO_ROOT
 ): readonly GateDifference[] {
 	const exceptions = new Map(except.map((exception) => [exception.path, exception]));
+	const wholeFile = (path: string): boolean => {
+		const exception = exceptions.get(path);
+		return exception !== undefined && exception.dropJsonKeys === undefined;
+	};
 	const differences: GateDifference[] = [];
 	for (const [path, expected] of manifest.entries) {
 		const actual = current.get(path);
-		if (actual === expected) continue;
-		const exception = exceptions.get(path);
-		if (actual === undefined) {
-			if (exception === undefined || exception.dropJsonKeys !== undefined) differences.push({ path, change: 'missing' });
-			continue;
-		}
-		if (exception === undefined) differences.push({ path, change: 'changed' });
-		else if (exception.dropJsonKeys !== undefined) {
-			const before = withoutKeys(git(['cat-file', 'blob', expected], root), exception.dropJsonKeys);
-			if (before !== withoutKeys(textAt(path, actual, rev, root), exception.dropJsonKeys)) differences.push({ path, change: 'changed' });
-		}
+		if (actual === expected || wholeFile(path)) continue;
+		const keys = exceptions.get(path)?.dropJsonKeys;
+		if (actual === undefined) differences.push({ path, change: 'missing' });
+		else if (keys === undefined || !sameWithoutKeys(path, git(['cat-file', 'blob', expected], root), textAt(path, actual, rev, root), keys))
+			differences.push({ path, change: 'changed' });
 	}
-	for (const path of current.keys()) if (!manifest.entries.has(path) && !exceptions.has(path)) differences.push({ path, change: 'added' });
+	for (const path of current.keys()) if (!manifest.entries.has(path) && !wholeFile(path)) differences.push({ path, change: 'added' });
 	return differences.sort((left, right) => (left.path < right.path ? -1 : left.path > right.path ? 1 : 0));
 }
 

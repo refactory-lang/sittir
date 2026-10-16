@@ -70,11 +70,62 @@ describe('the output gate', () => {
 		]);
 	});
 
-	it('lets a whole-file exception differ, and still reports it missing only when keys were named', () => {
+	it('lets a whole-file exception differ or go missing, and reports a file with dropped keys missing', () => {
 		const root = repo(OUTPUTS);
 		const manifest = recordGateManifest(['gen'], 'HEAD', root);
 		write(root, 'gen/a.txt', 'rewritten\n');
 		expect(checkGate(manifest, gateBlobs(['gen'], 'worktree', root), 'worktree', [parseGateException('gen/a.txt')], root)).toEqual([]);
+		rmSync(join(root, 'gen/a.txt'));
+		rmSync(join(root, 'gen/src/grammar.json'));
+		const except = [parseGateException('gen/a.txt'), parseGateException('gen/src/grammar.json:splitFrom')];
+		expect(checkGate(manifest, gateBlobs(['gen'], 'worktree', root), 'worktree', except, root)).toEqual([
+			{ path: 'gen/src/grammar.json', change: 'missing' }
+		]);
+	});
+
+	it('reports an added file that only a key exception names', () => {
+		const root = repo(OUTPUTS);
+		const manifest = recordGateManifest(['gen'], 'HEAD', root);
+		write(root, 'gen/src/new.json', grammarJson({ rules: { anything: { type: 'BLANK' } }, splitFrom: {} }));
+		const except = [parseGateException('gen/src/new.json:splitFrom')];
+		expect(checkGate(manifest, gateBlobs(['gen'], 'worktree', root), 'worktree', except, root)).toEqual([
+			{ path: 'gen/src/new.json', change: 'added' }
+		]);
+	});
+
+	it('reports a change of layout alone in a file with dropped keys', () => {
+		const root = repo(OUTPUTS);
+		const manifest = recordGateManifest(['gen'], 'HEAD', root);
+		const except = [parseGateException('gen/src/grammar.json:splitFrom,leadFrom')];
+		const value = { name: 'g', rules: { a: { type: 'BLANK' } } };
+		for (const text of [`${JSON.stringify(value, null, 4)}\n`, JSON.stringify(value, null, 2)]) {
+			write(root, 'gen/src/grammar.json', text);
+			expect(checkGate(manifest, gateBlobs(['gen'], 'worktree', root), 'worktree', except, root)).toEqual([
+				{ path: 'gen/src/grammar.json', change: 'changed' }
+			]);
+		}
+	});
+
+	it('hashes the bytes on disk, so a change of line endings alone shows', () => {
+		const root = repo({ ...OUTPUTS, '.gitattributes': '* text=auto eol=lf\n' });
+		const manifest = recordGateManifest(['gen'], 'HEAD', root);
+		write(root, 'gen/a.txt', 'a\r\n');
+		expect(checkGate(manifest, gateBlobs(['gen'], 'worktree', root), 'worktree', [], root)).toEqual([
+			{ path: 'gen/a.txt', change: 'changed' }
+		]);
+	});
+
+	it("sees a file that only a local or global exclude hides, and not one the repository's .gitignore ignores", () => {
+		const root = repo({ ...OUTPUTS, '.gitignore': 'gen/ignored.txt\n' });
+		const manifest = recordGateManifest(['gen'], 'HEAD', root);
+		write(root, '.git/info/exclude', 'gen/local.txt\n');
+		write(root, 'excludes', 'gen/global.txt\n');
+		execFileSync('git', ['config', 'core.excludesFile', join(root, 'excludes')], { cwd: root });
+		for (const name of ['ignored', 'local', 'global']) write(root, `gen/${name}.txt`, `${name}\n`);
+		expect(checkGate(manifest, gateBlobs(['gen'], 'worktree', root), 'worktree', [], root)).toEqual([
+			{ path: 'gen/global.txt', change: 'added' },
+			{ path: 'gen/local.txt', change: 'added' }
+		]);
 	});
 
 	it('reads back the manifest it prints', () => {

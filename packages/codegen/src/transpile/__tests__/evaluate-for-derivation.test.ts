@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { grammarPackage, type GrammarName } from '../../grammars.ts';
 import { sourceChain } from '../../dsl/conflict-resolutions.ts';
-import { evaluateForDerivation, grammarHash, type GrammarDerivationInputs } from '../evaluate-for-derivation.ts';
+import { canonical, evaluateForDerivation, grammarHash, type GrammarDerivationInputs } from '../evaluate-for-derivation.ts';
 import { treeSitterCliVersion } from '../tree-sitter-cli.ts';
 
 interface UpstreamGrammarJson {
@@ -38,6 +38,17 @@ describe('grammarHash', () => {
 
 	it('changes when a rule changes', () => {
 		expect(grammarHash({ ...grammar, rules: { a: { type: 'STRING', value: 'b' } } }, '0.26.9')).not.toBe(grammarHash(grammar, '0.26.9'));
+	});
+});
+
+describe('canonical', () => {
+	it('refuses a value whose JSON would be lost or turned into null', () => {
+		const unprintable = [() => 1, 1n, Number.NaN, Number.POSITIVE_INFINITY, /a/, new Date(0), [undefined], new Set([undefined]), new Map([['a', undefined]])];
+		for (const value of unprintable) expect(() => canonical({ value })).toThrow(/has no canonical JSON form/);
+	});
+
+	it('keeps a plain object without a prototype', () => {
+		expect(canonical(Object.assign(Object.create(null) as object, { b: 1, a: 2 }))).toEqual({ a: 2, b: 1 });
 	});
 });
 

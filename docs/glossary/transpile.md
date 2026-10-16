@@ -357,6 +357,20 @@ while evaluating cannot be mistaken for the result.
 ```text
 A value with every object's keys sorted and every Map and Set as sorted
 entries, so its JSON depends only on content, not on insertion order.
+
+It throws on a value that JSON would drop or turn into null: a function, a
+bigint, a non-finite number, an object that is not plain (a Date, a RegExp,
+a class instance), and an undefined element of an array, Map or Set. Two
+values still read alike when one has an undefined member and the other
+lacks it, or when one holds a Set or Map and the other holds the same
+sorted entries in an array.
+```
+
+### `packages/codegen/src/transpile/evaluate-for-derivation.ts::canonicalElement`
+
+```text
+The canonical form of an element of an array, Map or Set. It throws on
+undefined, which JSON would print as null.
 ```
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::byJson`

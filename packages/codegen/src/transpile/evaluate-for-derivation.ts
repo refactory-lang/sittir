@@ -22,10 +22,15 @@ export interface DerivationInputs {
 export const DERIVATION_INPUTS_MARKER = '\u0000sittir-derivation-inputs\u0000';
 
 export function canonical(value: unknown): unknown {
-	if (value instanceof Map) return [...value].map(([key, entry]) => [canonical(key), canonical(entry)]).sort(byJson);
-	if (value instanceof Set) return [...value].map(canonical).sort(byJson);
-	if (Array.isArray(value)) return value.map(canonical);
+	if (value instanceof Map) return [...value].map(([key, entry]) => [canonicalElement(key), canonicalElement(entry)]).sort(byJson);
+	if (value instanceof Set) return [...value].map(canonicalElement).sort(byJson);
+	if (Array.isArray(value)) return value.map(canonicalElement);
+	if (typeof value === 'function' || typeof value === 'bigint') return unprintable(`a ${typeof value}`);
+	if (typeof value === 'number' && !Number.isFinite(value)) return unprintable(String(value));
 	if (value && typeof value === 'object') {
+		const prototype: unknown = Object.getPrototypeOf(value);
+		if (prototype !== Object.prototype && prototype !== null)
+			return unprintable(`a ${(value as { constructor?: { name?: string } }).constructor?.name ?? 'non-plain'} object`);
 		return Object.fromEntries(
 			Object.keys(value)
 				.sort()
@@ -33,6 +38,14 @@ export function canonical(value: unknown): unknown {
 		);
 	}
 	return value;
+}
+
+function canonicalElement(value: unknown): unknown {
+	return value === undefined ? unprintable('an undefined element') : canonical(value);
+}
+
+function unprintable(what: string): never {
+	throw new Error(`canonical: ${what} has no canonical JSON form`);
 }
 
 function byJson(left: unknown, right: unknown): number {

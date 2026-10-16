@@ -10,7 +10,7 @@ Generated files keyed by repository-relative path, each mapped to its git blob i
 
 ### `packages/tools/src/output-gate/index.ts::GateException`
 
-A generated file that a gate allows to differ. With no keys, the file may change freely, or be missing. With `dropJsonKeys`, the file is JSON and may differ only in those top-level keys: both sides are compared with the keys removed, so key order and every other value still count.
+A generated file that a gate allows to differ. With no keys, the file may change freely, be missing, or be added. With `dropJsonKeys`, the file is JSON and may differ only in those top-level keys: both sides are compared with the keys removed, so key order, every other value and the layout still count. Such a file is still reported when it is missing, or when it is added with no baseline to compare.
 
 ### `packages/tools/src/output-gate/index.ts::GateRevision`
 
@@ -42,7 +42,9 @@ The paths a gate covers: each grammar's generated roots, as `generatedRootsFor` 
 
 ### `packages/tools/src/output-gate/index.ts::gateBlobs`
 
-The blob of every file under the roots in one tree. At a revision it reads `git ls-tree`. In the worktree it hashes every tracked and untracked, non-ignored file with `git hash-object`, so a generated file nobody has staged is still seen.
+The blob of every file under the roots in one tree. At a revision it reads `git ls-tree`. In the worktree it hashes the bytes on disk with `git hash-object --no-filters`, so a change of line endings alone shows.
+
+In the worktree it covers every tracked file, and every untracked one the repository's own `.gitignore` files allow, so a generated file nobody has staged is still seen. A file that only `.git/info/exclude` or a global excludes file hides is seen as well. A file the repository's `.gitignore` ignores is not: it can never be committed, so it never ships. A new artifact ships once the `.gitignore` allows it, and from then on the gate sees it.
 
 ### `packages/tools/src/output-gate/index.ts::recordGateManifest`
 
@@ -50,7 +52,15 @@ The manifest of the roots at a revision.
 
 ### `packages/tools/src/output-gate/index.ts::checkGate`
 
-The files of a tree that break a manifest, sorted by path. A file with a whole-file exception is never reported. A file with dropped keys is compared as JSON without those keys, and is reported missing if it is gone. A generated file the manifest does not list is reported as added unless an exception names it.
+The files of a tree that break a manifest, sorted by path. A file with a whole-file exception is never reported. A file with dropped keys is compared as JSON without those keys, and is reported missing if it is gone. A generated file the manifest does not list is reported as added unless a whole-file exception names it.
+
+### `packages/tools/src/output-gate/index.ts::printedWithoutKeys`
+
+A JSON file's text with the named top-level keys removed, printed as `JSON.stringify` prints it with two-space indentation, keeping the file's final newline if it has one. It is undefined when the text is not in that printed form, since comparing re-printed text would then hide a change of layout. It throws when the JSON is not an object.
+
+### `packages/tools/src/output-gate/index.ts::sameWithoutKeys`
+
+Whether two texts of one JSON file differ only in the named top-level keys. Both texts must be in printed form and print alike without those keys. Outside the keys the comparison is therefore exact, and a file that is not in printed form must match byte for byte.
 
 ### `packages/tools/src/output-gate/index.ts::parseGateException`
 
