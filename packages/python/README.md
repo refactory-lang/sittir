@@ -26,7 +26,7 @@ const fn = engine.build.functionDefinition({
 });
 
 fn.$render(); // "def greet():\n    pass\n"
-engine.render(fn).toString(); // the same text
+engine.render(fn).toString(); // "def greet():\n    pass\n"
 engine.parse(fn.$render(), { errors: 'throw' }).$errors.length === 0; // true
 ```
 

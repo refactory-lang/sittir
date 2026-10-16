@@ -25,7 +25,7 @@ const iface = engine.build.interfaceDeclaration({
 });
 
 iface.$render(); // "interface User {}"
-engine.render(iface).toString(); // the same text
+engine.render(iface).toString(); // "interface User {}"
 ```
 
 A node belongs to the engine that built or read it, and renders, edits and takes trivia through that engine. `engine.build` is the only way to make nodes; a node made anywhere else has no engine, and `$render()` says so.
