@@ -22,12 +22,12 @@
 
 - **Branch.**
   - `feat/authoring-dsl`, in the worktree `scratchpad/wt-dsl-authoring`, is cut from master, with the 2b head (946114382, `codex/bindings-parser-layer`) merged in (Task 0.0). `codex/bindings-parser-layer` stays as it is.
-  - Each stage is a PR into `feat/authoring-dsl`. Never rebase; master comes in by merge.
+  - Stages land back to back on `feat/authoring-dsl`, with no per-stage PR and no review hold. Each stage has its own commits, passes its own gate before the next starts, and carries its gate results in its commit messages. Never rebase; master comes in by merge.
+  - One PR, `feat/authoring-dsl` → master, opens when every stage has landed. Its body starts `Owner: sittir-design` and carries a per-stage gate table, the rows compared against master, and a whole-branch Codex adversarial review. Coordinate and brainstorm review it.
   - The branch merges to master on the maintainer's word, carrying 2b.
-  - PR bodies start `Owner: sittir-design`. Coordinate reviews the stages.
 - **Execution.** The design session executes this plan inline, with superpowers:executing-plans. It uses no subagents.
 - **Byte-identical gates.** Every stage leaves generated output byte-identical to the previous stage's commit, except the exceptions the stage names.
-  - Stage 1's reference is the baseline recorded at Task 0.0's merge (spec §10). That baseline's grammar-level outputs equal 946114382's (`scratchpad/handoffs/reshape-gate-manifest-946114382.txt`). Its rows equal `scratchpad/handoffs/reshape-gate-rows-946114382.txt`, unless Task 0.0 reports a moved row.
+  - Stage 1's reference is the baseline re-recorded at Task 0.4 (2867fa8ed, spec §10). Its grammar-level outputs equal 946114382's with each nested alias collapsed, and its rows equal the merge's.
   - A failed gate stops the stage for review. Nothing is reverted to make a gate pass.
 - **Erasable syntax only** in `grammar.sittir.ts`, `grammar.bindings.ts` and every module they import: no enums, no namespaces with values, no parameter properties.
 - **Generated outputs are never hand-edited;** regenerate them. The generated layer is written only by `bindings-inventory --write`.
@@ -43,7 +43,7 @@
   - `cargo test --workspace --no-default-features`;
   - `bindings-inventory --check`;
   - `tool output-gate --check` (Task 0.1);
-  - the Codex adversarial review before each PR opens, with each finding fixed or declined in the PR body.
+  - the whole-branch Codex adversarial review before the PR opens, with each finding fixed or declined in the PR body.
 
 ## Review Focus
 
@@ -60,7 +60,7 @@
    - Test: in Task 1.2.
 4. **Effects rewrite inherited records only.**
    - Expected: a `field()` entry in layer 1 leaves layer 1's own `options` untouched, while the same entry in layer 2 rewrites the inherited option path.
-   - Test: in Task 1.1.
+   - Test: in Task 1.1 (the inherited records), and in Task 2.2 (a layer's own records, read from the evaluated grammar).
 5. **The same-site check under two spellings.**
    - Expected: an inline `edit(previous, { '1': field('a') })` and an entry `{ 'body:': field('b') }` that resolve to one member raise `edit-site-conflict`.
    - Test: in Task 4.4.
@@ -219,6 +219,18 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 
 ### Task 1.1: the layer record and the effect table
 
+**Landed** on `feat/authoring-dsl`: f2d2de021, and 5322cee2c for coordinate's review. Byte-neutral: regen moved no file, and the output gate and the snapshot check match the 2867fa8ed baseline.
+
+- Moved without rewriting:
+  - into `verbs/effects.ts`: the seven functions below, their private helpers, `bindingEffectsForOwners` (as `effectsForOwners`), and the types `LeadWithin`, `LeadMatch`, `Lead`, `LeadEffect` and `BindingEffect`;
+  - into `rule-patterns.ts`: the record walkers `GrammarRecord`, `isRecord`, `symbolNames`, `fieldNames`, `supertypesOf` and `transparentReach`, which `bind.ts` and the table share without an import cycle.
+  - `enrich.ts` gains `EnrichSidecars` and `enrichSidecarsOf`, sharing one key list with `withEnrichSidecarsOf`.
+- **Field effects are resolved per owner** over the rules as the edits leave them (`effectsForOwners`), as `bindGrammar` does today. Resolved over the final rules instead, typescript loses `required_parameter`'s `pattern:` → `name:` entry, because the lead's rest side copies `_parameter_name`. The log keeps the resolved entries: `provenanceOf` passes them through, and `rewriteInherited` reads each owner's own.
+- **A copy effect records `admitted`,** the admitted kind a narrowing made the copy as the form of. It keys a lead's `variants`: rust's `_attributed_parameter` copy stands for `attributed_parameter`, which its source's name cannot give.
+- **`RECORD_RENAMES`** states, for every `LayerRecords` key, what a kind rename does to it, typed so that a new record fails the type-check until it has an entry. `renameRecords` applies it, for `rewriteInherited` and for `renameGrammar`. As ruled, every record that holds a kind name follows a rename, as a key or as a name, except `stages` (spec §1.7), and a test case pins each record the ruling added: rule causes, test-failure expectations, refine forms and external roles by key; diagnostic expectations, patch sites, whitespace collisions and body-pattern zero matches by name.
+- `rewriteInherited` takes only inherited records, so a layer's own records never reach it. The test that a layer's own records stay as written moves to Task 2.2, where the record's records reach the evaluated grammar.
+- Tests: `provenanceOf` and `rewriteInherited` reproduce the bindings layer byte for byte, key order included, for rust, typescript and python, from a fixture taken from the baseline (`__tests__/fixtures/bindings-layer-effects.json`): its `splitFrom`, `leadFrom` and `bindingEffects`, and its options, reparse hosts, render-as and visible externals.
+
 **Files:**
 - Create: `packages/codegen/src/dsl/layer-record.ts`
 - Create: `packages/codegen/src/dsl/verbs/effects.ts`
@@ -237,10 +249,10 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   	| { readonly kind: 'segment'; readonly owner: string; readonly from: string; readonly to: string }
   	| { readonly kind: 'alias'; readonly from: string; readonly to: string }
   	| { readonly kind: 'rename'; readonly from: string; readonly to: string }
-  	| { readonly kind: 'copy'; readonly copy: string; readonly source: string; readonly part: string; readonly context: string; readonly display: string | undefined; readonly origin: CopyOrigin };
+  	| { readonly kind: 'copy'; readonly copy: string; readonly source: string; readonly part: string; readonly context: string; readonly display: string | undefined; readonly admitted: string | undefined; readonly origin: CopyOrigin };
   export interface LayerRecord {
   	readonly depth: number;
-  	readonly upstream: unknown;
+  	readonly upstream: GrammarJson;
   	readonly sidecars: EnrichSidecars;                     // Stage 3 replaces this with `enrichment` (spec §1.6)
   	readonly resolutions: ConflictResolutionsFile;
   	readonly deadMints: ReadonlySet<string>;
@@ -258,11 +270,11 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   ```
 - `provenanceOf` must reproduce the baseline's `splitFrom`, `leadFrom` and `bindingEffects` exactly, key order included (spec §1.7, projections).
   - A lead's `bindingEffects` entry takes its list, item, field and admits from the copy origin.
-  - Its `receiver` and `variants` come from the displayed names of the lead's copies.
+  - Its `receiver` is the displayed name of the list's copy, and its `variants` map each copy's `admitted` kind to its displayed name.
   - Its `group` and `restField` come from the receiver form's body in `rules`.
   - `renamedFrom` is absent when no rename effect exists.
 
-- [ ] **Step 1: Write the failing tests** (Review Focus 4).
+- [x] **Step 1: Write the failing tests** (Review Focus 4).
   - `rewriteInherited` applies a segment effect to an inherited option path, `'item:/separator/","/after'` on owner `o`.
   - It applies an alias effect to a `(from)` segment.
   - It applies a copy effect with origin `path` as `inheritSplitOptions` does today: the source's options and `_labels`, layout included.
@@ -270,11 +282,11 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   - A layer's own records passed beside inherited ones are never rewritten.
   - `layerRecordOf` reads the record from a result whose first rule's body carries it. JSON serialization of that result does not contain the record.
   - On the effects the rust and typescript leads record, `provenanceOf` deep-equals the baseline's `leadFrom` and `bindingEffects`, taken from the snapshot.
-- [ ] **Step 2: Run them and confirm they fail.**
+- [x] **Step 2: Run them and confirm they fail.**
   `pnpm exec vitest run packages/codegen/src/dsl/__tests__/layer-record.test.ts packages/codegen/src/dsl/__tests__/effects.test.ts`
-- [ ] **Step 3: Implement.** Move the functions listed above; do not rewrite them. Keep `bind.ts` compiling, since its remaining passes still call them until Task 1.5.
-- [ ] **Step 4: Run the tests and the existing `split-layout`, `lead-grammar` and `grammar-bindings` tests.** All pass.
-- [ ] **Step 5: Write the glossary entries and commit.**
+- [x] **Step 3: Implement.** Move the functions listed above; do not rewrite them. Keep `bind.ts` compiling, since its remaining passes still call them until Task 1.5.
+- [x] **Step 4: Run the tests and the existing `split-layout`, `lead-grammar` and `grammar-bindings` tests.** All pass.
+- [x] **Step 5: Write the glossary entries and commit.**
 
 ### Task 1.2: the pending base and the layer pass
 
@@ -309,6 +321,7 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   - a known name gives `{ type: 'SYMBOL', name }`;
   - an unknown name gives a `ReferenceError` carrying `.symbol`, which `alias()` accepts and `normalize` throws.
 - Intake: a base without a record takes today's layer-1 path, enrich with the config's authored inputs. A base with a record runs today's gate (`assertEnrichFixpoint`, moved here, reporting `layer-not-enrich-fixpoint`) with the record's sidecars.
+- Effects: the pass resolves the layer's field effects per owner (`effectsForOwners`) over the rules as its edits leave them, before the whole-grammar phase runs, and logs the resolved entries. `rewriteInherited` takes those rules as `EffectCtx.rules`; `provenanceOf` takes the final rules, where the receiver forms and groups sit.
 - Completion, in the pass:
   - `stampWiredVariants`;
   - the dead mints;
@@ -408,7 +421,7 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 ### Task 1.5: removals, and the stage gate
 
 **Files:**
-- Modify: `packages/codegen/src/dsl/bind.ts`. Delete `bindings`, `Bindings`, `bindGrammar`, `bindingEffectsForOwners`, `rewriteBindingOptions`, `checkBindingPatches`, `leadGrammar`, `LeadEffect`, `LeadRefusal`, `BINDING_SET`, `markBindingSet` and `isBindingSet`.
+- Modify: `packages/codegen/src/dsl/bind.ts`. Delete `bindings`, `Bindings`, `bindGrammar`, `rewriteBindingOptions`, `checkBindingPatches`, `leadGrammar`, `LeadRefusal`, `BINDING_SET`, `markBindingSet` and `isBindingSet`. `effectsForOwners` and `LeadEffect` stay in the effect table.
   - `aliasTargetIssue` moves into the `alias` verb as the check for layers above the first (`alias-target-invalid`), reading the member's displayed name.
   - `splitGrammar` and `renameGrammar` stay as library code, with their tests, until Stages 6 and 9.
 - Modify: `packages/codegen/src/dsl/transform/transform.ts`. `transform` loses the `isBindingSet` branch. `recordFieldEffect` and `recordAliasEffect` record into `LayerCtx.effects` in every layer.
@@ -421,7 +434,7 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 - [ ] **Step 1:** Delete, migrate, and run the full suite as its own call. Any new failure is isolated with stash-and-rerun before it is accepted as pre-existing.
 - [ ] **Step 2:** Regenerate all five grammars with `pnpm run validate:native`, which generates.
 - [ ] **Step 3: Run the stage gate** (above): output-gate, snapshots and rows.
-- [ ] **Step 4:** Run the standing gates, then the Codex adversarial review. Open the stage PR into `feat/authoring-dsl`, with a body that starts `Owner: sittir-design` and gives the gate numbers. Ask coordinate to review it.
+- [ ] **Step 4:** Run the standing gates. Commit, with the stage gate's numbers in the message.
 
 ---
 
@@ -447,8 +460,9 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   - `inheritedRecord`, `inheritedMap`, `inheritedPatchSites`, the `drain*Metadata` functions and evaluate's `LayerCtx<T>` go.
   - `importAndExtractGrammar` reads `layerRecordOf`, and spreads its records and projections into the evaluated grammar.
 - Test: the snapshots. Every key of every grammar's evaluated grammar is unchanged.
+- Test (Review Focus 4, a layer's own records): over a fixture chain, a `field()` entry in layer 1 leaves layer 1's own `options` as written, while the same entry in layer 2 rewrites the inherited option path. Both are read from the evaluated grammar.
 
-- [ ] **Step 1:** Implement, then run `tool output-gate --check-snapshot`. Every snapshot is equal.
+- [ ] **Step 1:** Write the own-records test and confirm it fails. Implement, then run `tool output-gate --check-snapshot`. Every snapshot is equal.
 - [ ] **Step 2:** Run the suite and the stage gate. Commit.
 
 ### Task 2.3: `injects:` and the record form of `groups:` go
@@ -662,7 +676,7 @@ Ruled (maintainer): the TypeScript grammar authors ECMAScript's productions for 
 - [ ] **Step 1: Write the failing tests.**
   - `k: { '.': rename('t') }` appends `t` with `k`'s body, rewrites every reference in rules and in every list, and leaves `k` as a blank rule that nothing reaches.
   - Each refusal in spec §3.3 is `rename-invalid`: the start rule, a hiddenness flip, a taken target, and a source that is no rule or external.
-  - The rename effect rewrites inherited option paths, render-as keys and reparse hosts, and gives `renamedFrom`.
+  - The rename effect rewrites every inherited record `RECORD_RENAMES` names (Task 1.1 pins each), and gives `renamedFrom`.
   - A fixture layer with a rename generates with the pinned CLI.
 - [ ] **Step 2:** Implement and run the gate. Commit.
 

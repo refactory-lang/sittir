@@ -245,8 +245,15 @@ One table states what each effect rewrites. It replaces `renameGrammar`'s three 
 | `_labels` addresses | the segment | `(from)` segments | heads | by origin, below |
 | reparse hosts | — | — | keys, priority, gated | — |
 | render-as, visible externals, groups | — | — | keys | — |
+| rule causes, refine forms, external roles, test-failure expectations | — | — | keys | — |
+| protected and undeclared rule names, body-pattern zero matches | — | — | names | — |
+| diagnostic expectations | — | — | the kinds each code lists | — |
+| patch sites, whitespace collisions | — | — | each entry's owner kind or name | — |
+| stages | — | — | — | — |
 | supertypes, inline, factory-inline | — | — | names | a whole copy joins every list its source is in |
 | rule bodies, `word`, conflicts, precedences, reserved | — | — | names | — |
+
+A rename leaves the old name only as an unreachable blank rule (§3.3), so a fact still keyed to it would describe nothing. Every record that holds a kind name therefore follows the rename, as a key or as a name. The one exception is `stages`, the layer's evaluation snapshots, which stay as they were recorded.
 
 How a copy is treated depends on its origin:
 - **A path that enters a rule, or `copy()`.** The copy inherits its source's options and `_labels` entries, layout included, as split copies do today (`inheritSplitOptions`).
@@ -414,7 +421,7 @@ The "parser" column says whether tree-sitter sees the edit, or only the model do
 - appends a rule `to` with the kind's body;
 - rewrites every reference to the kind, in every rule and in `word`, `extras`, `externals`, `inline`, `supertypes`, `conflicts`, `precedences` and `reserved`;
 - leaves the old name as an unreachable blank rule, as a dead enrich mint is left;
-- records the rename effect. The effect rewrites every inherited record that a kind name keys (§1.7) and gives `renamedFrom`.
+- records the rename effect. The effect rewrites every kind name an inherited record holds, as a key or as a name, except in `stages`, which stays as recorded (§1.7). It also gives `renamedFrom`.
 
 It is refused with `rename-invalid` when:
 - the source is not a rule or an external;
