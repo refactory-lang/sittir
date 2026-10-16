@@ -492,8 +492,7 @@ throw; the hydrate-time unresolved reference in `assemble.ts::hydrateValues` is 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::evaluateRecords`
 
 The records answerable from the evaluated grammar alone, before link: the prediction records, the
-`expect-diagnostics-invalid` entries, evaluate's own events (`body-pattern-zero-match`,
-`desugar-divergence-*`) and the diagnostics the layer passes recorded (`RawGrammar.layerDiagnostics`).
+`expect-diagnostics-invalid` entries, the `groups:` entries the layer pass found matching nothing (`body-pattern-zero-match`) and the diagnostics the layer passes recorded (`RawGrammar.layerDiagnostics`).
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::diagnoseStage`
 

@@ -146,7 +146,6 @@ export interface RawGrammar {
 	readonly automaticVariants?: AutomaticVariants;
 
 	readonly bodyPatternZeroMatches?: readonly string[];
-	readonly desugarDivergences?: readonly DesugarDivergenceEvent[];
 	readonly layerDiagnostics?: readonly GrammarDiagnostic[];
 	readonly derivationRecords?: DerivationRecords;
 	readonly renamedFrom?: Readonly<Record<string, string>>;
@@ -168,11 +167,6 @@ export interface EvaluationStages<G = RawGrammar> {
 export interface EvaluatedGrammar extends Omit<RawGrammar, 'ruleCatalog' | 'references' | 'stages' | 'fileTypes'> {
 	readonly protectedRuleNames?: readonly string[];
 	readonly stages?: EvaluationStages<EvaluatedGrammar>;
-}
-
-export interface DesugarDivergenceEvent {
-	readonly site: 'body-pattern-group';
-	readonly name: string;
 }
 
 import type { PatchSite, RefineForm } from '../dsl/wire/wire.ts';

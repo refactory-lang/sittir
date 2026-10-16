@@ -897,7 +897,6 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 		orphanedSyntheticGroups: raw.orphanedSyntheticGroups?.map(rename),
 		textTokens: raw.textTokens?.map(rename),
 		bodyPatternZeroMatches: raw.bodyPatternZeroMatches?.map(rename),
-		desugarDivergences: raw.desugarDivergences?.map((event) => ({ ...event, name: rename(event.name) })),
 		automaticVariants:
 			raw.automaticVariants === undefined
 				? undefined

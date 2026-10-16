@@ -345,30 +345,6 @@ describe('grammar diagnostics preflight', () => {
 		expect(result.diagnostics.filter((d) => d.code.startsWith('kindid-'))).toEqual([]);
 	});
 
-	it('evaluateRecords surfaces desugarDivergences (evaluate-only mints with no wire-side deposit)', () => {
-		const rawGrammar: RawGrammar = {
-			...buildRawGrammar({
-				host: { type: 'SYMBOL', name: 'known' },
-				known: { type: 'PATTERN', value: 'x' }
-			}),
-			desugarDivergences: [
-				{ site: 'body-pattern-group', name: '_orphan_group' }
-			]
-		};
-		expect(evaluateRecords(rawGrammar)).toEqual(
-			expect.arrayContaining([
-				expect.objectContaining({
-					scope: 'grammar',
-					code: 'desugar-divergence-body-pattern-group',
-					grammar: 'synth',
-					ownerKind: '_orphan_group',
-					severity: 'warning',
-					canProceed: true
-				})
-			])
-		);
-	});
-
 	it('nonterminal-separator-unstamped blocks (canProceed: false) — zero-instance guard', () => {
 		// No grammar fixture can fire this today (no kind in any of the 3 grammars
 		// routes a nonterminal separator through the slot-value stamp path's

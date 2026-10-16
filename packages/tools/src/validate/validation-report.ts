@@ -136,7 +136,7 @@ function classifyByMessage(message: string): SClass | undefined {
 /**
  * Maps a validation report entry to its round-trip-fidelity-restoration
  * source class. Entries outside this initiative's scope (e.g. the
- * kindid-invariant-restoration `kindid-*`/`desugar-divergence-*` codes)
+ * kindid-invariant-restoration `kindid-*` codes)
  * are deliberately left unclassified.
  */
 export function classifySClass(entry: { readonly code: string; readonly message: string }): SClass | undefined {

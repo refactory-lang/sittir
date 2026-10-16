@@ -1,35 +1,11 @@
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
-import {
-	ALIAS,
-	CHOICE,
-	FIELD,
-	OPTIONAL,
-	PATTERN,
-	REPEAT,
-	REPEAT1,
-	SEQ,
-	STRING,
-	SYMBOL
-} from '../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, PATTERN, STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { sym } from '../types/rule.ts';
-import type {
-	AliasRule,
-	ChoiceRule,
-	FieldRule,
-	OptionalRule,
-	PatternRule,
-	Repeat1Rule,
-	RepeatRule,
-	Rule,
-	SeqRule,
-	StringRule,
-	SymbolRule,
-	TokenRule
-} from '../types/rule.ts';
+import type { AliasRule, FieldRule, PatternRule, Rule, StringRule, SymbolRule, TokenRule } from '../types/rule.ts';
 import { structuralBuilder } from '../dsl/builders.ts';
-import type { RawGrammar, DesugarDivergenceEvent, EvaluatedGrammar, EvaluationStages, StageEvaluation } from './types.ts';
+import type { RawGrammar, EvaluatedGrammar, EvaluationStages, StageEvaluation } from './types.ts';
 import { canonicalGrammar } from './canonical-rules.ts';
-import { isComplexBody, isRecord, onlyAliasedSymbols, optionalContentOf, ruleListEntryOf, type RuleListEntry } from '../dsl/rule-patterns.ts';
+import { isRecord, optionalContentOf, ruleListEntryOf, type RuleListEntry } from '../dsl/rule-patterns.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { baseRulesOf } from '../dsl/shared.ts';
 import { protectedWireRuleNames, wireWithoutConfig, type PatchSite, type WireContext, type RefineForm, type WiredOpts } from '../dsl/wire/wire.ts';
@@ -188,8 +164,6 @@ export interface EvaluateCtx {
 	readonly isExtension: boolean;
 	readonly sinks: MetadataSinks;
 	readonly setWord: (w: string) => void;
-	readonly bodyPatternZeroMatches: string[];
-	readonly desugarDivergences: DesugarDivergenceEvent[];
 }
 
 interface LayerCtx<T> {
@@ -276,17 +250,16 @@ function grammarFn(
 			sinks,
 			setWord: (w) => {
 				word = w;
-			},
-			bodyPatternZeroMatches: [...(inherited.bodyPatternZeroMatches ?? [])],
-			desugarDivergences: [...(inherited.desugarDivergences ?? [])]
+			}
 		};
-		evaluateRulesAndInjectSynthetics(ctx.rules, ctx);
+		evaluateRuleFunctions(ctx.rules, ctx);
 		evaluateMetadataCallbacksInScope(opts, ctx);
 	});
 	const { rules, evaluateSynthesized } = ctx;
 
 	inheritBaseGrammarMetadata(opts, ctx);
 	const wireCtx = getWireContext(opts);
+	const bodyPatternZeroMatches = [...(inherited.bodyPatternZeroMatches ?? []), ...(wireCtx?.bodyPatternZeroMatches ?? [])];
 
 	const refineForms = inheritedMap(drainRefineMetadata(opts), { previous: inherited.refineForms });
 	const groups = inheritedRecord(drainGroupsMetadata(opts), { previous: inherited.groups });
@@ -338,8 +311,7 @@ function grammarFn(
 		patchSites,
 		stages: inherited.stages ?? stages,
 		automaticVariants: wireCtx?.automaticVariants,
-		bodyPatternZeroMatches: ctx.bodyPatternZeroMatches.length > 0 ? [...ctx.bodyPatternZeroMatches] : undefined,
-		desugarDivergences: ctx.desugarDivergences.length > 0 ? [...ctx.desugarDivergences] : undefined
+		bodyPatternZeroMatches: bodyPatternZeroMatches.length > 0 ? [...bodyPatternZeroMatches] : undefined
 	} satisfies EvaluatedGrammar;
 	return { grammar: grammarResult };
 }
@@ -476,194 +448,6 @@ function drainVisibleExternalsMetadata(
 	return result;
 }
 
-function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
-	const { opts, evaluateSynthesized } = ctx;
-	evaluateRuleFunctions(rules, ctx);
-	const wireCtx = getWireContext(opts);
-	if (wireCtx) {
-		injectSyntheticRules(rules, ctx, wireCtx.deposits);
-		if (wireCtx.groups) {
-			for (const [key, value] of Object.entries(wireCtx.groups)) {
-				if (typeof value !== 'function') continue;
-				const hiddenName = `_${key}`;
-				if (hiddenName in rules) continue;
-				const $ = createProxy();
-				try {
-					const result = (value as ($: unknown, previous: unknown) => unknown).call($, $, undefined);
-					if (result && typeof result === 'object' && typeof (result as { type?: unknown }).type === 'string') {
-						rules[hiddenName] = coerceToRule(result as Input);
-						evaluateSynthesized.add(hiddenName);
-						ctx.desugarDivergences.push({ site: 'body-pattern-group', name: hiddenName });
-					}
-				} catch {}
-			}
-		}
-		applyPatternReplacement(rules, ctx, wireCtx);
-	}
-}
-
-interface PatternCandidate {
-	readonly name: string;
-	readonly body: Rule<'evaluate'>;
-	readonly aliasAs?: string;
-}
-
-function applyPatternReplacement(
-	rules: Record<string, Rule<'evaluate'>>,
-	ctx: EvaluateCtx,
-	wireCtx: WireContext
-): void {
-	const { baseRules } = ctx;
-	const candidates: PatternCandidate[] = [];
-	for (const name of wireCtx.authoredRuleNames) {
-		if (!name.startsWith('_')) continue;
-		if (name in baseRules) continue;
-		const body = rules[name];
-		if (!body) continue;
-		if (!isComplexBody(body)) continue;
-		candidates.push({ name, body });
-	}
-	if (wireCtx.groups) {
-		for (const [key, value] of Object.entries(wireCtx.groups)) {
-			if (typeof value !== 'function') continue;
-			const hiddenName = `_${key}`;
-			const body = rules[hiddenName];
-			if (!body) continue;
-			if (!isComplexBody(body)) continue;
-			candidates.push({ name: hiddenName, body, aliasAs: key });
-		}
-	}
-	if (candidates.length === 0) return;
-
-	const candidateNames = new Set(candidates.map((c) => c.name));
-	const aliasOnly = onlyAliasedSymbols(Object.values(rules));
-	const folding = candidates.filter((c) => c.aliasAs !== undefined || !aliasOnly.has(c.name));
-	for (const [name, body] of Object.entries(rules)) {
-		if (candidateNames.has(name)) continue;
-		const rewritten = replacePatterns(body, folding);
-		if (rewritten !== body) {
-			rules[name] = rewritten;
-		}
-	}
-	const pathBNames = candidates.filter((c) => c.aliasAs !== undefined).map((c) => c.name);
-	if (pathBNames.length > 0) {
-		const referenced = new Set<string>();
-		const collect = (rule: Rule<'evaluate'>): void => {
-			if (rule.type === SYMBOL) {
-				referenced.add((rule as SymbolRule<'evaluate'>).name);
-				return;
-			}
-			const r = rule as { members?: Rule<'evaluate'>[]; content?: Rule<'evaluate'> };
-			if (Array.isArray(r.members)) r.members.forEach(collect);
-			if (r.content) collect(r.content);
-		};
-		for (const [ruleName, body] of Object.entries(rules)) {
-			if (candidateNames.has(ruleName)) continue;
-			collect(body);
-		}
-		for (const name of pathBNames) {
-			if (!referenced.has(name)) ctx.bodyPatternZeroMatches.push(name);
-		}
-	}
-}
-
-function replacePatterns(rule: Rule<'evaluate'>, candidates: PatternCandidate[]): Rule<'evaluate'> {
-	for (const c of candidates) {
-		if (patternRulesEqual(rule, c.body)) {
-			const symRef = sym(c.name);
-			return c.aliasAs !== undefined ? structuralBuilder.alias(symRef, sym(c.aliasAs)) : symRef;
-		}
-	}
-	switch (rule.type) {
-		case SEQ: {
-			const r = rule as SeqRule<'evaluate'>;
-			const members = replaceInArray(r.members, candidates);
-			return members === r.members ? rule : ({ ...r, members } as Rule<'evaluate'>);
-		}
-		case CHOICE: {
-			const r = rule as ChoiceRule<'evaluate'>;
-			const members = replaceInArray(r.members, candidates);
-			return members === r.members ? rule : ({ ...r, members } as Rule<'evaluate'>);
-		}
-		case OPTIONAL: {
-			const r = rule as OptionalRule<'evaluate'>;
-			const content = replacePatterns(r.content, candidates);
-			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
-		}
-		case REPEAT: {
-			const r = rule as RepeatRule<'evaluate'>;
-			const content = replacePatterns(r.content, candidates);
-			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
-		}
-		case REPEAT1: {
-			const r = rule as Repeat1Rule<'evaluate'>;
-			const content = replacePatterns(r.content, candidates);
-			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
-		}
-		case FIELD: {
-			const r = rule as FieldRule<'evaluate'>;
-			const content = replacePatterns(r.content, candidates);
-			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
-		}
-		default:
-			return rule;
-	}
-}
-
-function replaceInArray(members: Rule<'evaluate'>[], candidates: PatternCandidate[]): Rule<'evaluate'>[] {
-	let changed = false;
-	const out: Rule<'evaluate'>[] = members.map((m) => {
-		const r = replacePatterns(m, candidates);
-		if (r !== m) changed = true;
-		return r;
-	});
-	return changed ? out : members;
-}
-
-function patternRulesEqual(a: Rule<'evaluate'>, b: Rule<'evaluate'>): boolean {
-	if (a.type !== b.type) return false;
-	switch (a.type) {
-		case STRING:
-			return a.value === (b as StringRule<'evaluate'>).value;
-		case PATTERN:
-			return a.value === (b as PatternRule<'evaluate'>).value;
-		case SYMBOL:
-			return a.name === (b as SymbolRule<'evaluate'>).name;
-		case SEQ: {
-			const bSeq = b as SeqRule<'evaluate'>;
-			return (
-				a.members.length === bSeq.members.length && a.members.every((m, i) => patternRulesEqual(m, bSeq.members[i]!))
-			);
-		}
-		case CHOICE: {
-			const bCh = b as ChoiceRule<'evaluate'>;
-			return (
-				a.members.length === bCh.members.length && a.members.every((m, i) => patternRulesEqual(m, bCh.members[i]!))
-			);
-		}
-		case OPTIONAL:
-			return patternRulesEqual(a.content, (b as OptionalRule<'evaluate'>).content);
-		case REPEAT: {
-			const bRep = b as RepeatRule<'evaluate'>;
-			return a.separator === bRep.separator && patternRulesEqual(a.content, bRep.content);
-		}
-		case REPEAT1: {
-			const bRep = b as Repeat1Rule<'evaluate'>;
-			return a.separator === bRep.separator && patternRulesEqual(a.content, bRep.content);
-		}
-		case FIELD: {
-			const bFld = b as FieldRule<'evaluate'>;
-			return a.name === bFld.name && patternRulesEqual(a.content, bFld.content);
-		}
-		case ALIAS: {
-			const bAl = b as AliasRule<'evaluate'>;
-			return a.named === bAl.named && a.value === bAl.value && patternRulesEqual(a.content, bAl.content);
-		}
-		default:
-			return false;
-	}
-}
-
 function evaluateMetadataCallbacksInScope(opts: GrammarOptions, ctx: EvaluateCtx): void {
 	evaluateMetadataCallbacks(opts, ctx);
 }
@@ -675,18 +459,6 @@ function evaluateRuleFunctions(rules: Record<string, Rule<'evaluate'>>, ctx: Eva
 		const baseRule = baseRules[name];
 		const result = ruleFn.call($, $, baseRule);
 		rules[name] = coerceToRule(result);
-	}
-}
-
-function injectSyntheticRules(
-	rules: Record<string, Rule<'evaluate'>>,
-	ctx: EvaluateCtx,
-	syntheticRules: Map<string, unknown>
-): void {
-	for (const [name, content] of syntheticRules) {
-		if (name in rules) continue;
-		rules[name] = content as Rule<'evaluate'>;
-		ctx.evaluateSynthesized.add(name);
 	}
 }
 

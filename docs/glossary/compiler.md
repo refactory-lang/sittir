@@ -2111,7 +2111,7 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
 
 ```text
 // Filter out body-pattern entries (function values) — those are
-// consumed by applyPatternReplacement and produce alias() rewrites,
+// consumed by wire's pattern injection, which makes alias() rewrites,
 // not lift-based synthesis. Only path-map entries reach link's
 // applyGroupOverrides.
 ```
@@ -2269,7 +2269,7 @@ The grammar's `rules:` entries with a bare body, sorted.
  * resulting rule bodies into the rules map, recording each in `evaluateSynthesized`.
  *
  * @remarks
- * Called AFTER `evaluateRulesAndInjectSynthetics` so the DSL globals are
+ * Called AFTER `evaluateRuleFunctions` so the DSL globals are
  * still injected and a real `$` proxy is available. The fn is evaluated
  * with a fresh proxy so any `$.name` refs inside the fn body resolve
  * correctly (current support: `string(...)` literals and `blank()` —
@@ -2375,208 +2375,6 @@ The grammar's `rules:` entries with a bare body, sorted.
 
 It takes the grammar's file types and stamps them on the raw grammar it builds, and on the stages inside it; the argument is required. A grammar that is not a package (a synthetic one) passes `NO_FILE_TYPES`; a package goes through `evaluatePackage`.
 
-### `packages/codegen/src/compiler/evaluate.ts::evaluateRulesAndInjectSynthetics`
-
-```text
-/**
- * Evaluate all rule functions and inject wire-produced synthetic rules into
- * the shared rules map in a single step.
- *
- * @remarks
- * `wire()` populates its per-invocation context with synthetic-rule bodies
- * as each rule fn runs (variant/alias placeholder resolution deposits content
- * into `wireCtx.deposits`). Injecting immediately after rule evaluation
- * ensures synthetic rules are present before metadata callbacks run — those
- * callbacks may reference hidden rules by symbol in conflict or inline lists.
- *
- * @param opts - Grammar options containing the rule callbacks and optional
- *   `__wireContext__` carrying synthetic rule deposits.
- * @param baseRules - The base grammar's already-evaluated rules, forwarded as
- *   `previous` to each override callback.
- * @param refs - Mutable symbol-reference accumulator shared across rule evaluations.
- * @param rules - Mutable output map where evaluated and synthetic rules are stored.
- */
-```
-
-#### body
-
-```text
-// Evaluate body-pattern group fns and inject hidden rule bodies into
-// `rules` so that `applyPatternReplacement` Path B can find them. The wire
-// path registers these via `applyWirePatternReplacement`, but the sittir
-// compiler (evaluate.ts) path runs independently and needs the same bodies.
-```
-
-```text
-// already present via deposit or override
-```
-
-#### body
-
-```text
-// No wire-side deposit registered `hiddenName` (the guard above would
-// have skipped otherwise), so this local mint has no guaranteed twin.
-```
-
-#### body
-
-```text
-// body fn failed to evaluate in sittir context — skip; wire path handles it
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::applyPatternReplacement`
-
-```text
-/**
- * Detect author-declared pattern rules and replace every matching sub-tree
- * in the grammar with `symbol(<pattern-name>)`.
- *
- * A rule is a pattern candidate when ALL of:
- *   1. Its name is in `authoredRuleNames` (explicitly declared in WireConfig.rules).
- *   2. Its name starts with `_` (hidden — signals "synthesized/internal pattern").
- *   3. Its name is NOT in `baseRules` (it's a NEW rule, not an override of a
- *      base-grammar rule). Overrides are intentional replacements, not patterns.
- *   4. Its body is complex: SEQ with ≥2 members, CHOICE with ≥2 members, or
- *      REPEAT/REPEAT1 wrapping non-trivial content (not a bare string/pattern).
- *      Single STRING / SYMBOL / PATTERN bodies are excluded to prevent false
- *      positives like `_wildcard_pattern: ($) => '_'` matching every `'_'`
- *      literal in the grammar.
- *
- * Replacement walks every rule in the merged grammar (skipping the pattern
- * candidates themselves to prevent self-substitution) and replaces matching
- * sub-trees with `symbol(<pattern-name>)`. The new symbol reference is plain
- * sittir-lowercase like every other symbol produced by `createProxy`.
- *
- * @remarks
- * This runs after `injectSyntheticRules` so the full merged rule set is
- * available, and before the compile boundary prunes orphans so that any pattern-rule
- * body that would have been pruned is instead preserved because it has real
- * content.
- */
-```
-
-#### body
-
-```text
-// Step 1: identify pattern candidates.
-// Path A — legacy `_`-prefix candidates declared in `rules:`.
-```
-
-```text
-// override, not a new pattern
-```
-
-#### body
-
-```text
-// Path B — body-pattern entries in `groups:` whose value is a RuleFn.
-// The author declares the VISIBLE kind name (no `_`); codegen synthesizes
-// the hidden `_<key>` body and rewrites match sites as
-// `alias($._<key>, $.<key>)` so tree-sitter exposes the visible kind as
-// a CST node. The hidden body was already injected into `rules` by
-// wire's `applyWirePatternReplacement` (so the body-pattern fn ran).
-```
-
-#### body
-
-```text
-// Step 2: walk all rules and replace matching sub-trees.
-// Skip the candidate rules themselves to avoid self-substitution.
-```
-
-#### body
-
-```text
-// Preserve existing provenance — rewriting doesn't change authorship.
-```
-
-#### body
-
-```text
-// A Path-B (groups: body-pattern) candidate that is REFERENCED NOWHERE
-// after replacement is a silent failure: elevation-by-replacement is the
-// mechanism's only effect, so its match sites keep their flat shape and
-// the hidden rule orphans away — gates can hold while output regresses
-// (the rust attributed_parameter wildcard-alias incident, 2026-07-25).
-// Reference existence — NOT a local match count — is the signal, because
-// the wire-side `applyWirePatternReplacement` usually rewrites the shared
-// base rules FIRST, leaving nothing for this pass's own matcher while the
-// alias refs it deposited are already present in `rules`. Path-A
-// `_`-prefix rules are excluded: being referenced by name (never matched)
-// is a legitimate use for them.
-```
-
-#### body
-
-```text
-// Ensure pattern candidates themselves have provenance recorded.
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::replacePatterns`
-
-```text
-/**
- * Recursively walk `rule`, replacing any sub-tree that structurally matches
- * a pattern candidate with `symbol(<candidate.name>)`. Returns the same
- * object reference when no replacement occurs (allows cheap change-detection
- * by reference equality in the caller).
- */
-```
-
-#### body
-
-```text
-// Check if this node itself matches any candidate.
-```
-
-#### body
-
-```text
-// Body-pattern groups path: wrap the hidden symbol in an
-// alias() so tree-sitter emits the visible kind as a CST node.
-```
-
-#### body
-
-```text
-// Otherwise recurse into children.
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::replaceInArray`
-
-```text
-/**
- * Map `replacePatterns` over an array, returning the original array when no
- * element changed (cheap reference-equality check for the parent node).
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::patternRulesEqual`
-
-```text
-/**
- * Structural equality for pattern matching. Compares two Rule<'evaluate'> trees
- * recursively. Intentionally ignores the `id` field (assigned later by
- * `buildRuleCatalog`) and provenance/source annotations — only shape matters.
- *
- * Key design choices:
- * - PREC/PREC_LEFT/PREC_RIGHT wrappers: these are stripped by evaluate's
- *   `normalize()` in the sittir runtime, so by the time we see the evaluated
- *   rule body they won't be present. No special handling needed.
- * - ALIAS: not handled — aliases are specific and a pattern wouldn't
- *   meaningfully match an alias target.
- * - ENUM: compared member-by-member on `.value` (identical to rulesEqual).
- * - FIELD: name AND content must match. A field wrapper carrying the same
- *   content but a different name is a different structural pattern.
- */
-```
-
-#### body
-
-```text
-// ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE.
-```
-
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateMetadataCallbacksInScope`
 
 ```text
@@ -2624,31 +2422,6 @@ Calls the grammar's `externals` callback and fills the externals sink, before `g
 
 It records nothing about who authored a rule: every base rule has a wire callback, so a callback says nothing
 about authorship. That question belongs to the stages (`RuleProvenanceStage`) and to wire's own records.
-
-### `packages/codegen/src/compiler/evaluate.ts::injectSyntheticRules`
-
-```text
-/**
- * Inject synthetic rules created by alias() placeholders in transform patches
- * into the shared rules map.
- *
- * @param syntheticRules - Map of synthetic rule name → rule content produced
- *   by wire()'s rule-fn wrapper.
- * @param rules - Mutable output map to receive the synthetic rules.
- * @remarks
- * Synthetic rules are hidden variant rules for nested-alias polymorphs,
- * created when transform patches use alias() placeholders.
- *
- * Only fills keys not already populated by `evaluateRuleFunctions`. A
- * deferred-content fn registered by `wire/injectPlaceholderHiddenRules`
- * already ran and wrote the deposited body to `rules[name]` — re-writing
- * from `syntheticRules` would be a no-op for that case but a REGRESSION
- * for a nested-polymorph parent where compose's fn ran at that key and
- * further transformed the deposited body (e.g. `_visibility_modifier_pub`
- * — the outer's deposit + an inner variant split). Skipping preserves
- * the transform; the raw deposit is still correct when no compose ran.
- */
-```
 
 ### `packages/codegen/src/compiler/evaluate.ts::inheritBaseGrammarMetadata`
 
@@ -5626,7 +5399,7 @@ collector parameter.
  * The evaluate-phase ctx, where cross-node state lives. Constructed ONCE per
  * grammarFn invocation; every field is always available there, so all are
  * required. Pass-LOCAL derived state (externalSet, the field-enum sweep
- * maps, pattern candidates) stays in explicit parameters.
+ * maps) stays in explicit parameters.
  */
 ```
 
@@ -5688,14 +5461,6 @@ The names of the rules this evaluation added itself, filled as each is injected.
 /** Setter for the word-rule name. */
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::bodyPatternZeroMatches`
-
-```text
-/** Body-pattern (`groups:`) hidden names whose pattern matched zero
-	 *  positions in `applyPatternReplacement` — surfaced as the
-	 *  `body-pattern-zero-match` diagnostic. Mutated in place (mirrors `refs`). */
-```
-
 ### `packages/codegen/src/compiler/evaluate.ts::FieldEnumOccurrence`
 
 ```text
@@ -5748,27 +5513,6 @@ The names of the rules this evaluation added itself, filled as each is injected.
 
 ```text
 /** Field sites with conflicting member sets — left inline. */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::PatternCandidate`
-
-```text
-/**
- * A pattern candidate: an author-declared `_`-prefixed rule whose body is
- * complex enough to serve as a structural replacement target.
- *
- * When `aliasAs` is set, replacement sites emit
- * `alias($._<name>, $.<aliasAs>)` so tree-sitter exposes a visible CST
- * node at each match. This is the body-pattern-groups path. Without
- * `aliasAs`, replacement emits a bare hidden `symbol(<name>)` reference
- * (the legacy `_`-prefix path).
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Wire-phase pattern find-and-replace
-// ---------------------------------------------------------------------------
 ```
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::collectReferences`
@@ -6336,8 +6080,9 @@ The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible r
 
 ```text
 /**
-	 * `groups:` body-pattern entries (hidden `_<key>` names) whose pattern
-	 * matched ZERO positions during evaluate's `applyPatternReplacement` —
+	 * `groups:` body-pattern entries (hidden `_<key>` names) that no final
+	 * rule of their layer references, as the layer pass finds them
+	 * (`dsl/wire/wire.ts::unmatchedGroupPatterns`) —
 	 * the elevation they declare silently never fired. Surfaced as the
 	 * `body-pattern-zero-match` diagnostic by
 	 * `collectGrammarDiagnosticsForGrammar`.
@@ -7836,7 +7581,7 @@ The global `grammar()` during evaluation, under the DSL's contract: `grammar(opt
 `grammar(base, options)` to extend a `grammar()` result. The base is told apart from options by its `grammar`
 property, and a call that mixes the two shapes throws. It reads the base's `name` and `externals`, calls the
 `externals` callback, and only then reads the base's rules and other lists, the order tree-sitter's `dsl.js` reads in
-(`dsl/layer.ts::VERIFIED_TREE_SITTER`): a layer's pass runs inside that call and completes the base.
+(`dsl/layer.ts::VERIFIED_TREE_SITTER`): a layer's pass runs inside that call and completes the base. Its `bodyPatternZeroMatches` are the base's, then the ones the pass found in its own layer (`dsl/wire/wire.ts::WireContext.bodyPatternZeroMatches`).
 
 #### body
 
@@ -9178,18 +8923,6 @@ The grammar's `reserved` field as tree-sitter has it: each wordset name mapped t
 	 * `WireConfig.factoryInline`. Carried by name through link and stamped
 	 * onto the assembled node as `factoryInline`.
 	 */
-```
-
-### `packages/codegen/src/compiler/types.ts::DesugarDivergenceEvent`
-
-```text
-/**
- * A mint at an evaluate-only synthesis site (the body-pattern-group fallback
- * in `evaluateRulesAndInjectSynthetics`)
- * that fired without a matching wire-side deposit for the same name — the
- * dual-execution divergence the kindid invariant depends on these sites
- * staying free of. See `fromDesugarDivergence` in grammar-diagnostics.ts.
- */
 ```
 
 ### `packages/codegen/src/compiler/types.ts::LinkedGrammar.terminalAliasWireIds`

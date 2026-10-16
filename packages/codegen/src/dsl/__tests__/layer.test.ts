@@ -207,6 +207,22 @@ describe('the layer record', () => {
 	});
 });
 
+describe('a groups: entry in a layer', () => {
+	it('whose body the final rules nowhere hold is a bodyPatternZeroMatches name, of its layer and the layer above, but not of its base', async () => {
+		await withDslGlobals(async () => {
+			const first = layer(upstream(), {
+				rules: { pair: ($: Symbols) => seq('(', $.item!, ')') },
+				groups: { held_group: ($: Symbols) => seq('(', $.item!, ')'), orphan_group: () => seq('a', 'b') }
+			});
+			const second = layer(first, {});
+			const evaluated = (result: GrammarResult): EvaluatedGrammar => result.grammar as unknown as EvaluatedGrammar;
+			expect(evaluated(first).bodyPatternZeroMatches).toEqual(['_orphan_group']);
+			expect(evaluated(second).bodyPatternZeroMatches).toEqual(['_orphan_group']);
+			expect(evaluated(first).stages?.enriched.grammar.bodyPatternZeroMatches).toBeUndefined();
+		});
+	});
+});
+
 describe('an edits key that names no rule', () => {
 	it('is edit-site-missing on the record, and the layer drops the entry while its other edits apply', async () => {
 		await withDslGlobals(async () => {

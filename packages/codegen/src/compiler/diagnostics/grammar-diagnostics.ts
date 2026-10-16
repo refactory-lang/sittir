@@ -12,7 +12,7 @@ import { makeSlotGroupingCollector } from '../simplify.ts';
 import { diagnoseRepeatedSeqGrouping, type SlotGroupingDiagnostic } from './slot-grouping.ts';
 import { isLiteralOnlyRule, isTerminalRootRule } from '../../dsl/rule-transforms.ts';
 import { boundNameOf } from '../../dsl/bind.ts';
-import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, DesugarDivergenceEvent, ReservedWordsets, RuleCatalog } from '../types.ts';
+import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, ReservedWordsets, RuleCatalog } from '../types.ts';
 import {
 	kindCatalogOf,
 	predictedEntriesOf,
@@ -169,23 +169,6 @@ export function fromBodyPatternZeroMatch(grammar: string, hiddenName: string): G
 		ownerKind: hiddenName,
 		message: `groups: body-pattern '${hiddenName}' matched no base-grammar position — the visible-group elevation it declares never fired, so its match sites keep their flat (un-elevated) shape.`,
 		proposal: `The pattern body must remain STRUCTURALLY IDENTICAL to the base-grammar sub-tree it targets. If the base grammar changed (or the entry's body was edited), re-align the body — or delete the entry if the pattern is obsolete.`,
-		canProceed: true
-	};
-}
-
-const DESUGAR_DIVERGENCE_DESCRIPTIONS: Record<DesugarDivergenceEvent['site'], string> = {
-	'body-pattern-group': "evaluateRulesAndInjectSynthetics's body-pattern-group fallback fired with no wire-side deposit"
-};
-
-export function fromDesugarDivergence(grammar: string, event: DesugarDivergenceEvent): GrammarDiagnostic {
-	return {
-		scope: 'grammar',
-		code: `desugar-divergence-${event.site}`,
-		severity: 'warning',
-		grammar,
-		ownerKind: event.name,
-		message: `${DESUGAR_DIVERGENCE_DESCRIPTIONS[event.site]}: '${event.name}'. Tree-sitter's separate execution of this grammar never registers this rule, so it has no parser-issued kindId — a phantom kind by construction.`,
-		proposal: `Route this synthesis through the DSL layer (enrich/wire) pre-generate, so both executions mint the same rule, instead of leaving it to this evaluate-only fallback.`,
 		canProceed: true
 	};
 }
@@ -511,7 +494,6 @@ export function evaluateRecords(raw: RawGrammar): GrammarDiagnostic[] {
 		...predictionRecords(raw),
 		...unexpectableExpectEntries(raw.name, raw.expectDiagnostics),
 		...(raw.bodyPatternZeroMatches ?? []).map((name) => fromBodyPatternZeroMatch(raw.name, name)),
-		...(raw.desugarDivergences ?? []).map((event) => fromDesugarDivergence(raw.name, event)),
 		...(raw.layerDiagnostics ?? [])
 	]);
 }

@@ -30,7 +30,7 @@ import {
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { assertNoRenamedExternal, liftRenames, resolveLiftNames, type LiftName } from './lift-names.ts';
-import { aliasOf, isComplexBody, isParserHiddenName, onlyAliasedSymbols, rulesEqual, type SymbolSource } from '../rule-patterns.ts';
+import { aliasOf, isComplexBody, isParserHiddenName, onlyAliasedSymbols, rulesEqual, symbolNames, type SymbolSource } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
 import { getEnrichElementSupertypes, getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichMints, getEnrichTextTokens, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, nativeRuleFn, type AuthoredFieldSite, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
@@ -108,6 +108,7 @@ export interface WireContext {
 	readonly source: unknown;
 	evaluatedExternals: ReadonlySet<string>;
 	evaluatedBodies?: ReadonlyMap<string, unknown>;
+	bodyPatternZeroMatches?: readonly string[];
 	readonly layer: WireLayer | undefined;
 }
 
@@ -1447,6 +1448,22 @@ function applyWireVisibleExternalsRewrite(
 	for (const [name, fn] of Object.entries(rules)) {
 		rules[name] = buildVisibleExternalsRewritingFn(fn, hiddenToVisible);
 	}
+}
+
+export function unmatchedGroupPatterns(
+	rules: Readonly<Record<string, { readonly type: string }>>,
+	baseRules: Readonly<Record<string, unknown>>,
+	context: Pick<WireContext, 'authoredRuleNames' | 'groups'>
+): string[] {
+	const complex = (name: string): boolean => Object.hasOwn(rules, name) && isComplexBody(rules[name]!);
+	const groups = Object.entries(context.groups ?? {}).flatMap(([key, value]) =>
+		typeof value === 'function' && complex(declaredGroupMintName(key)) ? [declaredGroupMintName(key)] : []
+	);
+	if (groups.length === 0) return [];
+	const patterns = new Set([...[...context.authoredRuleNames].filter((name) => name.startsWith('_') && !Object.hasOwn(baseRules, name) && complex(name)), ...groups]);
+	const held = new Set<string>();
+	for (const [name, body] of Object.entries(rules)) if (!patterns.has(name)) symbolNames(body, held);
+	return groups.filter((name) => !held.has(name));
 }
 
 export function applyWirePatternReplacement(

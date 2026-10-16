@@ -33,6 +33,7 @@ import {
 	namedSymbols,
 	protectedWireRuleNames,
 	symbolNamesOf,
+	unmatchedGroupPatterns,
 	wireImpl,
 	type EditsCheck,
 	type IsShaped,
@@ -394,6 +395,7 @@ function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx):
 	const deadMints = new Set([...(ctx.inherited?.deadMints ?? []), ...dead]);
 	const liftNames = new Map<string, LiftName>([...(ctx.inherited?.liftNames ?? []), ...wire.liftNames]);
 	const sections = resolutionSections(ctx.resolutions);
+	wire.bodyPatternZeroMatches = unmatchedGroupPatterns(rules, baseRulesOf(ctx.base) ?? {}, wire);
 	const record: LayerRecord = {
 		depth,
 		upstream: ctx.upstream,

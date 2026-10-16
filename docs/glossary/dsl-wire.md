@@ -582,11 +582,9 @@ patched a reference to it in.
  * matches a pattern candidate with a SYMBOL reference. Returns the original
  * object reference when nothing changed (cheap change-detection for the caller).
  *
- * Always emits a bare tree-sitter-native `{type:'SYMBOL', name}` — this
- * function (via `applyWirePatternReplacement`) only ever runs on the
- * tree-sitter-CLI path (evaluate.ts's `applyPatternReplacement` is the
- * separate sittir-pipeline counterpart), so there is no sittir-runtime
- * `hidden`/`inline` stamping to preserve here.
+ * Always emits a bare tree-sitter-native `{type:'SYMBOL', name}`. The layer
+ * pass runs it (via `applyWirePatternReplacement`) under both runtimes, and
+ * sittir's compile boundary canonicalizes the reference like every rule body.
  *
  * @param rule - The rule body to search (RuntimeRule, any shape).
  * @param candidates - The list of detected pattern candidates.
@@ -624,6 +622,10 @@ only when a replacement happens.
 ```text
 // Recurse into children.
 ```
+
+### `packages/codegen/src/dsl/wire/wire.ts::unmatchedGroupPatterns`
+
+The `groups:` entries whose hidden rule (`_<key>`) no rule of a layer's final rules references, in declaration order: elevations that never fired. An entry counts only when its rule has a complex body (`rule-patterns.ts::isComplexBody`). A reference from inside a pattern rule does not count: a declared group, or an authored hidden rule with a complex body that the base lacks. The layer pass asks it over its final rules, after the dead mints are blanked (`layer.ts::completeLayer`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::withStringGlobalShim`
 
@@ -705,20 +707,15 @@ The `visibleExternals:` config `wire()` runs with, and the whitespace collisions
  * Detect author-declared pattern rules and wrap all non-pattern rule fns so
  * their outputs have matching sub-trees replaced with SYMBOL references.
  *
- * This is the tree-sitter-runtime counterpart of evaluate.ts's
- * `applyPatternReplacement`. Whereas evaluate.ts can run a post-evaluation
- * pass over already-computed Rule<'evaluate'> objects, wire.ts must wrap rule fns because
- * tree-sitter evaluates them lazily one by one.
+ * It is the one pattern injection, for both runtimes: the layer pass
+ * evaluates every wrapper once, inside wire's externals entry.
  *
  * A candidate is an authored `_`-prefixed rule whose evaluated body is
  * complex (SEQ ≥2, CHOICE ≥2, or REPEAT with non-trivial content). Nothing
  * is evaluated when the wrappers are installed: the first call of any wrapper
  * evaluates every authored rule once with the runtime's own builder, hidden
  * rules first, and detection reads those bodies.
- *
- * Note: evaluate.ts's post-evaluation `applyPatternReplacement` pass already
- * handles the sittir-pipeline path (after all rule fns have run). This wire.ts
- * pass handles the tree-sitter-CLI path, where evaluate.ts does not run.
+
  */
 ```
 
@@ -1683,6 +1680,10 @@ The lists the entry evaluated (`evaluateWireLists`); absent until the runtime ca
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.evaluatedBodies`
 
 The body of every rule callback as the entry evaluated it, in key order; absent until the runtime calls the entry.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.bodyPatternZeroMatches`
+
+The layer's own `groups:` entries that its final rules nowhere reference, set by the layer pass at completion (`layer.ts::completeLayer`, `unmatchedGroupPatterns`). The runtime's `grammar()` call reads it after the pass; a context no layer pass ran over leaves it unset.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.evaluatedExternals`
 
