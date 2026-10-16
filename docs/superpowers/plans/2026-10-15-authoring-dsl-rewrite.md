@@ -668,6 +668,8 @@ Ruled (maintainer): the TypeScript grammar authors ECMAScript's productions for 
 - **Rules:** `method_definition` (class members and object literals), `method_signature` and `abstract_method_signature`. Each takes the same three arms: plain, get and set.
 - **Census:** the 11 `accessor-arity` rows, plus `async get x() {}`. A generator getter already errors, and a constructor written as a getter is an early error.
 - **Verbs:** the getter and the setter are named arms, `variant(name, rule)` (Stage 4), written with `replace` (Stage 4) and `copy()` (Stage 6). The builder-contexts table then has real accessor kinds.
+- **Excluded slots (ruled):** on all three rules, neither the getter nor the setter takes `async`, the generator `*`, type parameters, `?` or `readonly`, and the setter takes no return type. The auto-accessor (`accessor x`, the `declaration.property` claim) takes no `declare`, `readonly` or `?`. `abstract accessor x` is valid and stays. The accessor kinds then hold none of those slots, so their routes drop them, and the vocabulary disagreements stay empty. The red test gains the `?` and `readonly` accessor forms and the auto-accessor's three, with `abstract accessor x` among the valid neighbours.
+- **The getter's return type (ruled):** the getter reads its return type as `type`, through a route scoped to the getter's claim (`bindings/routes.ts::membersOf`) and the claim's `return_type: (_)? @type` capture in `packages/typescript/bindings.scm`. Member routes are per grammar kind, so the capture with no claim scope would give `declaration.method` a `type` too.
 
 **Before it:**
 - Merge, never rebase:
@@ -679,8 +681,9 @@ Ruled (maintainer): the TypeScript grammar authors ECMAScript's productions for 
 **Gate:** valid input parses to identical trees, the accessor census rows close, and the standard gates.
 
 - [ ] **Step 1:** Merge, regenerate, and re-record the baseline. Report any moved file the merged commits don't explain.
-- [ ] **Step 2:** Run the acceptance test. The 12 excluded forms fail and the 10 valid neighbours pass.
-- [ ] **Step 3:** Author the three rules with the verbs. The acceptance test passes. Check the parse trees of the valid corpus and the rows against the baseline.
+- [ ] **Step 2:** Extend the acceptance test by the excluded slots above, and run it. The excluded forms fail and the valid neighbours pass.
+- [ ] **Step 3:** Author the three rules and the auto-accessor with the verbs. The acceptance test passes. Check the parse trees of the valid corpus and the rows against the baseline.
+- [ ] **Step 3b:** Scope the getter's `type` route to its claim and add the capture. `declaration.method` holds no `type`, the getter does, and `bindings-inventory --check` reports no disagreement.
 - [ ] **Step 4:** Commit, with the gate in the message.
 
 ---
