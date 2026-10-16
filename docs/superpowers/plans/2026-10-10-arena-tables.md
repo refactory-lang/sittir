@@ -468,7 +468,7 @@ Commit the probes and the README. Open the PR into `feat/typed-reader` with its 
 Detailed against master `591b07885`, where 3a has merged (the trivia table, depth members, inferred options, the format record retired). 3b has two halves separated by a measurement and readiness milestone:
 
 - **3b-i, measurement and parity.** Tasks 6–10 implement the record representation beside the temporary object transport, check equivalence, and report comparative performance. Numbers select optimizations, not whether packed AST is adopted.
-- **3b-ii, definitive-format cutover.** Detail this against the measured implementation: direct immutable built records, parsed records, native built trivia and removal of the object codec. Correctness, source fidelity, lifetime and memory safety must pass before cutover.
+- **3b-ii, definitive-format cutover.** Detail this against the measured implementation: direct immutable built records, parsed records and removal of the object codec. Correctness, source fidelity, lifetime and memory safety must pass before cutover.
 
 **Branch.** `feat/records`, cut from master. Every task is a commit series. The 3b-i PR reports regressions and optimization actions. A performance miss creates an investigation and retest, not an automatic stop or request to reconsider the architecture. Correctness or safety defects block the affected implementation until fixed. Master is merged in when it moves, never rebased.
 
@@ -541,7 +541,7 @@ Each record prototype and measuring tool the arena steps already hold, with its 
   The glossary entry for `shareIdenticalChoices` lists the three facts.
 - **Match-all in the engine is not one call.** `$descendants` returns a JSON batch of coordinates (`engine.descendants`), and each match is then read by its own `engine.read` (`packages/common/src/engine.ts`, `tree.query.descendants` and `readAt`). The probe's "every match in one call" has no engine counterpart on the object wire. Task 8 adds one for both wires (ruling 2).
 - **A transport's `$_layout` is wire too.** `TransportLayout` crosses with every node: `edges`, `gap`, `flank`, `at`, `span`, `sides`, `changed`, `units`, and, on built nodes, `trivia`. The probe had none of it. The record layout must place it, which Task 7 does as a side record.
-- **Built-node trivia today** is written by `setTriviaData` (`packages/common/src/utils.ts`, from `rebuilt` and the trivia writer `write`). It crosses as `TransportLayout::trivia` (`TransportTrivia`, `TriviaEntry`). 3b-ii moves it into the built nodes' native trivia table.
+- **Built-node trivia today** is written by `setTriviaData` (`packages/common/src/utils.ts`, from `rebuilt` and the trivia writer `write`). It crosses as `TransportLayout::trivia` (`TransportTrivia`, `TriviaEntry`). Under arena storage it is in the built nodes' native trivia table (Task 8); the object wire keeps crossing it until the cutover.
 - **The shared-arena spec's § What the JavaScript wrap keeps** now defines eager immutable built records after cutover. Fields encoded at render are strictly transitional object-wire behavior, not a pending option.
 
 ### Rulings (the maintainer, 2026-10-12; ruling 1.1 revised the same day)
@@ -582,7 +582,7 @@ Shared by Tasks 7 to 10. These are proposals that Task 7 fixes as codegen facts.
   - A record's address is (chunk, word): one `f64`-safe number, `chunk * 2^20 + word`.
 - **The source bytes** (ruling 1.1). A tree's UTF-8 source, held natively, crosses to JavaScript as one external `ArrayBuffer` over that memory, finalized with the tree. It is made on the first `$text` or source-bytes access (`TreeHandle.bytes()`), never at parse, and never copied. `TreeHandle.text(span)` decodes a byte span from it.
 - **A record.** Word 0 is the kind's grammar id and word 1 the side record's address (0 for none). Next come the kind's presence words, if it has presence slots, and then each other slot's cell at its stamped `word`.
-  - A parsed record's side record carries `at` (tree, index, end) and the layout facts the reader stamps. A built record's carries `edges`, `gap`, `flank`, `sides`, `changed` and `units`. A built node's trivia is not in its records: from 3b-ii it is in the built nodes' native trivia table.
+  - A parsed record's side record carries `at` (tree, index, end) and the layout facts the reader stamps. A built record's carries `edges`, `gap`, `flank`, `sides`, `changed` and `units`. A built node's trivia is not in its records: it is in the built nodes' native trivia table (Task 8).
   - The record names its tree once, on the arena, so a parsed cell names no tree.
 - **A cell.** Its width is stamped per slot by codegen, from the widest form the slot admits: five for a coordinate, as the probe's cell (tag, kind, index, start, end), and four for a parsed leaf (tag, kind, byte start and end, by ruling 1.1) or a built leaf. Tags:
   - 0, absent;
@@ -675,7 +675,8 @@ raw-string routing metadata where the type alone cannot express its parser behav
 - Test: macro tests, `rust/crates/sittir-core/tests/`, and `sittir-parity-tests`.
 
 **Steps.**
-1. Write `arena.rs` (Interfaces): chunks, addresses, the side record, the string table of ruling 1.2, and the tree's lazily made source buffer of ruling 1.1.
+1. Write `arena.rs` (Interfaces): chunks, addresses, the side record, the string table of ruling 1.2, and the tree's lazily made source buffer of ruling 1.1. A run longer than a shared chunk gets a chunk of its own, sized to fit, so it still never straddles chunks; a chunk holding one oversize run is addressed at its word 0, inside the `chunk << 20 | word` packing.
+1a. **The built nodes' native trivia table** (the maintainer, 2026-10-16: moved here from 3b-ii, so `render_record` parity holds on every fixture and nothing is written to be thrown away). One table per engine, beside its built-record arena, keyed by record address and side (leading, trailing, inner), holding each side's entries and the unit sides. It is outside the record: writing a side updates the table, never the immutable record or a record that shares it. A parsed node placed in a built holder keeps its sides in its tree's table. The record writer moves a built transport's `$_layout.trivia` and `units` into it; the record reader and `render_record` read them back from it.
 2. The derive expands, per declaration:
    - a record writer (transport → records, children before parents);
    - a record reader (records → transport), which bounds-checks every word it reads and refuses any malformed cell;
@@ -729,8 +730,7 @@ Detail against the measured implementation after Task 10 and the resulting optim
   - Verification 12 (each crate's compile time, peak memory, binary size and `transport.rs` lines) and Verification 13 (type-check time) are re-taken before and after.
 - **Eager immutable built records are required.** Builders append kind-specific packed records; accessors read them, and updates publish new records. `$with` reuses unchanged child addresses, including shared children, without mutating the original record. There is no in-place node setter option. Reclaim unreferenced records/chunks only while preserving the lifetime of all live snapshots and views.
 - **Parsed units are records.** A parsed unit (a variant with no fields, such as `;`) reads as a reference to its record, not a bare kind-id number, so it has identity: alignment matches units by record as it matches read nodes, and the `is` guards classify them.
-- **Built nodes' trivia in their own native table** (the trivia-table spec's § 7.1).
-  - A built node's sides move from the node into the built nodes' trivia table, keyed by record address and side, and travel with it. Writing a side updates the table; the node's record stays immutable, and no record that shares it changes. A built holder keeps nothing for its children. A parsed node placed in a built holder keeps its sides in its tree's table. The render reads trivia from native storage only.
+- **Built nodes' trivia, native only.** The table lands in Task 8 (the trivia-table spec's § 7.1). At the cutover the render reads trivia from native storage only, and a built holder keeps nothing for its children.
   - **Retires:** `$_layout.trivia`, `setTriviaData` and the trivia writer's client store; `TransportLayout::trivia`, `TransportTrivia` and `TriviaEntry` with their napi decode.
 - **A native file-based parse** (the maintainer, 2026-10-12). `parseFile(path)`, only for grammars that declare file types: native code reads the file, JavaScript gets records, and text decodes lazily from the shared source bytes, so the source never exists as a JavaScript string. Its API shape (the name, options, errors for an unreadable file, and encoding and BOM handling) is designed here and goes to the maintainer before code.
 - **The typed model's name** (prior art 7). Once the structs are views over records or stay structs, they are renamed across the attribute, `ReadTransport`, `TransportLayout`, the macro crate, the emitters, every generated `…Transport`, and the glossary and specs, in one commit series with no other change.

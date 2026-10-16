@@ -28,6 +28,8 @@ pub mod query;
 pub mod non_empty;
 pub use non_empty::NonEmptyVec;
 pub mod read;
+#[cfg(feature = "records")]
+pub mod arena;
 pub mod record;
 pub mod render;
 pub mod slot;

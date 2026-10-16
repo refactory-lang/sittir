@@ -17,6 +17,10 @@ read-debug-checks = []
 # default so `cargo test -p sittir-core` builds without Node.js symbols.
 napi-bindings = ["dep:napi", "dep:napi-derive"]
 
+# The record codec and its entry points, beside the object codec: additive,
+# never switching or removing the object wire.
+records = []
+
 [dependencies]
 regex = "1"
 sittir-transport-macros = { path = "../sittir-transport-macros" }
