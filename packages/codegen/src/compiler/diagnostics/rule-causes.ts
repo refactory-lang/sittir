@@ -169,15 +169,15 @@ function derivesForm(
 				return [...new Set([at, ...ends(node.content, at)])];
 			case REPEAT:
 			case REPEAT1: {
-				const reached = new Set<number>(node.type === REPEAT ? [at] : []);
+				const seen = new Set<number>(node.type === REPEAT ? [at] : []);
 				let frontier = [at];
 				while (frontier.length > 0) {
 					frontier = [...new Set(frontier.flatMap((start) => ends(node.content, start)))].filter(
-						(end) => !reached.has(end)
+						(end) => !seen.has(end)
 					);
-					for (const end of frontier) reached.add(end);
+					for (const end of frontier) seen.add(end);
 				}
-				return [...reached];
+				return [...seen];
 			}
 			case FIELD:
 			case ALIAS:
