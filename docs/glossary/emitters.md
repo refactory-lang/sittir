@@ -2431,162 +2431,6 @@ would. A `'direct'` kind still takes `children[0]` into its strict factory.
 into a direct kind's list target and otherwise hands the array to
 `_wrapWithChildren`. One element resolver per kind, in its coercer.
 
-### `packages/codegen/src/emitters/ir.ts::emitSynonymAliases`
-
-Emits the role-named getters on `synonym` (`function`, `class`, `method`, `module`, `interface`), each returning the `ir` member for the role's primary kind. Each getter is annotated with the `ir` member type it returns, `(typeof ir)['<key>']`. `ir` carries an explicit annotation, so the indexed type resolves without inference; left inferred, a large overlay surface (rust's `struct_item` with its whole-arm variants) exceeds what the declaration emitter will serialize (TS7056).
-
-### `packages/codegen/src/emitters/ir.ts::bundleExpr`
-
-```text
-/**
- * Factory+from bundle expression, shared by flat and grouped emission.
- * Kinds with refine() metadata carry per-form bundles keyed by the form's
- * camelCase short name (e.g. `ir.interfaceBody.curly`). Branches call the
- * loose `from()` path by default and expose the raw factory as `.strict`.
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::resolveRoleNodes`
-
-```text
-/**
- * Resolve role kinds to concrete AssembledNode entries that exist in the
- * nodeMap. Filters out candidate kinds that don't have a node entry.
- *
- * Also probes the hidden (`_`-prefixed) variant of each kind name, since
- * tree-sitter SCM captures reference unprefixed names but the grammar's
- * internal representation may use the hidden prefix (e.g. `type_identifier`
- * in SCM → `_type_identifier` in grammar).
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Role-synonym namespace — native JS value → node, keyed by semantic role
-// ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/emitters/ir.ts::isLeafFactory`
-
-```text
-/**
- * A leaf kind with a build function: a pattern or a keyword. An
- * enum-of-literals is a leaf but mints no factory (`rawFactoryName` is
- * undefined) — its members are spelled as kind ids.
- */
-```
-
-#### token interior
-
-```text
-A lexed kind with a bare content slot is a leaf factory for the role synonyms; it is called through its hoisted factory.
-```
-
-### `packages/codegen/src/emitters/ir.ts::returnTypeExpr`
-
-```text
-/**
- * Build the ReturnType expression for a factory. Uses `ReturnType<typeof F.xxx>`
- * so the type tracks the fluent methods attached by withMethods. A build
- * constant (`isBuilderTextLeaf`) is not called, so its type is `typeof F.xxx`.
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitFromNamespace`
-
-```text
-/**
- * Emit the `from` const — canonical factories that accept native JS values
- * and resolve to grammar-specific UntypedNode kinds.
- *
- * Emitted as `export const from = { ... } as const` for tree-shakeable
- * standalone access (`from.boolean(...)`) and also referenced inside the
- * `ir` object for `ir.synonym.boolean(...)` access.
- *
- * @returns Lines to prepend before the `ir` const. Empty if no roles have kinds.
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitFromBoolean`
-
-```text
-/**
- * `from.boolean(value: boolean)` — resolves `true`/`false` to the grammar's
- * boolean kind. Handles three shapes:
- * - Enum leaf: `booleanLiteral('true' | 'false')` (Rust)
- * - Keyword pair: `true_()` / `false_()` (Python, TypeScript)
- * - Single leaf: direct factory call
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitFromNumber`
-
-```text
-/**
- * `from.number(value: number)` — resolves integers to integer-kind, floats to
- * float-kind. When only one number kind exists, routes everything there.
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitFromString`
-
-```text
-/**
- * `from.string(value: string)` — routes to the primary string kind.
- *
- * Most grammars have branch string nodes (with escape sequences, content
- * children). For these, the canonical factory composes the branch: it wraps
- * the input text in a string-content leaf and passes it to the branch
- * factory. Only emitted when a composition path exists.
- *
- * Heuristic for primary string kind: the first kind whose name contains
- * `string` (not `char`, `raw`, `template`, `regex`). This picks
- * `string_literal` for Rust and `string` for TypeScript/Python.
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitFromComment`
-
-```text
-/**
- * `from.comment(text: string)` — routes to line/block comment kinds.
- * Discriminates by prefix: `//` or `#` → line comment, `/*` → block comment.
- * When only one comment kind exists, routes everything there.
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitFromType`
-
-```text
-/**
- * `from.type(name: string)` — routes to the grammar's type-identifier kind.
- * Excludes `type.builtin` kinds. When the type kind is a branch that takes
- * an identifier child, composes `F.typeIdentifier(F.identifier(name))`.
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitFromIdentifier`
-
-```text
-/**
- * `from.identifier(name: string)` — routes to the grammar's `identifier` kind.
- *
- * Looks for the `identifier` kind in the `variable` role. Does not exclude
- * `variable.builtin` since some grammars (TypeScript) capture `identifier`
- * under both `@variable` and `@variable.builtin`.
- */
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitFromAliases`
-
-```text
-/**
- * Emit definition-role aliases — `from.function`, `from.class`, etc.
- * These are direct references to the grammar-specific `ir.*` entry,
- * not wrapper functions. E.g., `from.function = ir.functionItem`.
- */
-```
-
 ### `packages/codegen/src/emitters/kind-discriminant.ts::kindIdMemberName`
 
 ```text
@@ -4627,7 +4471,7 @@ transport node.
 /**
  * `classifyChildFactorySurface` is module-private on purpose. It answers
  * one structural question — does this kind construct from children, and
- * if so by spread or directly — and five unrelated decisions used to read
+ * if so by spread or directly — and four unrelated decisions used to read
  * that single answer:
  *
  *   factoryTakesSpreadChildren   factories.ts: does the factory take
@@ -4638,12 +4482,10 @@ transport node.
  *                                forwarded to?
  *   testConstructsWithChildren   test.ts: may a generated test construct
  *                                this with children?
- *   irNamespacesChildFactory     ir.ts: does a leaf factory under this
- *                                parent get namespaced?
  *
  * They agree today, and each is a one-line delegation because of that.
  * The names exist so they can stop agreeing: widening the shared
- * classifier for one consumer used to re-shape the other four silently —
+ * classifier for one consumer used to re-shape the other three silently —
  * narrowing it once emptied `_wrapKindIds` and broke array auto-wrap at
  * runtime, and re-broadening it moved named kinds into the child coercer
  * and cost them their dual-surface tolerance. A consumer whose question
@@ -4831,14 +4673,6 @@ their individual leaf ids.
 
 ```text
 /** May a generated test construct this kind with children? Delegates to the module-private `classifyChildFactorySurface`;
- *  named separately so this consumer's answer can change without
- *  re-shaping the other five. */
-```
-
-### `packages/codegen/src/emitters/shared.ts::irNamespacesChildFactory`
-
-```text
-/** Does a leaf factory under this parent get namespaced? Delegates to the module-private `classifyChildFactorySurface`;
  *  named separately so this consumer's answer can change without
  *  re-shaping the other five. */
 ```
@@ -8501,8 +8335,8 @@ One encoding per slot, derived from `enumArmsOf`. Presence slots come first (`ke
  * their `TSKindId.X` references — `number` when none resolves or
  * `kindEntries` is absent. Whether the enum has a parser symbol of its own
  * (rust `boolean_literal`) or not (`_primitive_type`) makes no difference:
- * the slot stores a member id either way, so the type alias, the form
- * constructor's `value:` parameter and the boolean synonym all read this.
+ * the slot stores a member id either way, so the type alias and the form
+ * constructor's `value:` parameter both read this.
  * @param node - The `AssembledEnum` node whose member discriminant to build.
  * @param kindEntries - Catalog entries for TSKindId lookup; `undefined` for
  *   legacy callers without parser.c metadata.
@@ -11710,7 +11544,7 @@ The argument row of an own-text leaf, as both its `BuildArgs` and its `LooseArgs
 
 ### `packages/codegen/src/emitters/ir.ts::emitIr`
 
-Prints the `ir` module from the model's plan (`irPlanOf`): the supertype groups as top-level consts, then the frozen `ir` table — bundled node factories, the variant parents, keyword factories, own-text leaves, leaf node factories, the group namespaces and `synonym`. Which kinds appear, under what key and through which factory export is the plan's decision (`deriveIrPlan`); the emitter adds only the role synonyms, which come from the grammar's roles rather than the model.
+Prints the `ir` module from the model's plan (`irPlanOf`): the supertype groups as top-level consts, then the frozen `ir` table — bundled node factories, the variant parents, keyword factories, own-text leaves, leaf node factories and the group namespaces. Which kinds appear, under what key and through which factory export is the plan's decision (`deriveIrPlan`); the emitter only prints it.
 
 No emitted code attaches properties to a factory: a factory is shared under every key that reaches it, so a mutation made for one key shows under all of them.
 
@@ -11748,13 +11582,6 @@ No emitted code attaches properties to a factory: a factory is shared under ever
 #### body
 
 ```text
-// ------------------------------------------------------------------
-// Role synonyms — native JS value → this grammar's node for that role.
-// Grammar-agnostic construction from native JS values, keyed by the
-// semantic role a kind plays rather than by its grammar-specific name.
-// Emitted BEFORE `ir` so it can be referenced as `ir.synonym`.
-// Also exported standalone for tree-shakeable `synonym.boolean(...)`.
-// ------------------------------------------------------------------
 // ----------------------------------------------------------------------
 // Flat `ir.*` namespace — every grammar kind by camelCase short name.
 // ----------------------------------------------------------------------
@@ -11767,135 +11594,7 @@ No emitted code attaches properties to a factory: a factory is shared under ever
 // hoisted bundle consts above.
 ```
 
-`ir` and `synonym` are frozen tables: the emitted module is the one place each is built, and nothing writes to either afterwards.
-
-### `packages/codegen/src/emitters/ir.ts::emitSynonymBoolean`
-
-#### body
-
-```text
-// Strategy 1: single leaf factory that accepts text
-```
-
-#### body
-
-```text
-// Strategy 2: keyword pair — look for `true` and `false` keyword kinds
-```
-
-#### body
-
-```text
-// Strategy 3: single factory (whatever it is)
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitSynonymNumber`
-
-#### body
-
-```text
-// Identify integer and float kinds via the number.float sub-role
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitSynonymString`
-
-#### body
-
-```text
-// Find the primary string kind — prefer kinds containing "string"
-// but not "char", "raw", "template", "regex"
-```
-
-#### body
-
-```text
-// If it's a leaf, emit directly
-```
-
-#### body
-
-```text
-// Branch string: look for a string-content leaf child to compose. Only
-// when the branch is container-shaped (`classifyChildFactorySurface`
-// 'direct'/'spread' — a single positional child, or `...children`,
-// either of which accepts one positional argument the same way) —
-// composing via a hardcoded `{ children: [...] }` config object here
-// previously assumed a calling convention the factory doesn't have.
-```
-
-#### body
-
-```text
-// Otherwise: skip — too complex to auto-compose
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitSynonymComment`
-
-Emits `synonym.comment` from the grammar's trivia kinds (a trivia supertype contributes its subtypes). Each kind is reached through its stamped `builderPath` on `ir` (`ir.commentLine`), never by splicing a name; a trivia kind with no builder path is refused. With more than one leaf comment kind, the line comment is the one whose text ends only at a line break (`lineTerminatedKinds`) and the block comment one that does not (typescript `comment_line` and `comment_block`).
-
-#### body
-
-```text
-// Find leaf comment kinds (Python/TS: `comment(text)`)
-```
-
-#### body
-
-```text
-// Single leaf comment kind — route everything there
-```
-
-#### body
-
-```text
-// No leaf comment kinds — branch/polymorph comment kinds (e.g. Rust's
-// line_comment polymorph, block_comment branch) are too complex to
-// auto-compose in a canonical factory. Skip emission.
-// Users should call the grammar-specific `ir.lineComment(...)` /
-// `ir.blockComment(...)` factories directly.
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitSynonymType`
-
-#### body
-
-```text
-// Get type kinds, excluding builtin types
-```
-
-#### body
-
-```text
-// Find the type-identifier node (not plain `identifier`).
-// Probe both bare and hidden-prefixed names since SCM captures use
-// unprefixed names but the grammar may use `_type_identifier`.
-```
-
-#### body
-
-```text
-// No type-specific kind — check if `identifier` is the only option
-```
-
-#### body
-
-```text
-// Simple leaf type factory
-```
-
-#### body
-
-```text
-// Branch type-identifier — compose with identifier factory
-```
-
-### `packages/codegen/src/emitters/ir.ts::emitSynonymIdentifier`
-
-#### body
-
-```text
-// Find the `identifier` kind specifically — not `this`, `super`, `self`
-```
+`ir` is a frozen table: the emitted module is the one place it is built, and nothing writes to it afterwards.
 
 ### `packages/codegen/src/emitters/from.ts::module`
 
@@ -14974,12 +14673,6 @@ The key under which a lexed kind's per-slot guard regex is registered.
 A lexed kind serializes its `interior` beside its slots, from the same derivation the runtime table uses.
 
 A kind with a full form serializes it (`fullForm`, its literal `open` and `close` texts), the same stamp the coercer's full-form acceptance reads. The source emitter spells a text-only read entry with it.
-```
-
-### `packages/codegen/src/emitters/ir.ts::factoryRef`
-
-```text
-A text leaf is called through its raw builder, and so is any other kind with one surface; a lexed kind with a coercing entry is called through its hoisted factory, which coerces the bare content.
 ```
 
 ### `packages/codegen/src/emitters/test.ts::patternSlotDummy`

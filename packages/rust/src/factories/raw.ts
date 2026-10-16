@@ -8505,22 +8505,22 @@ export function buildExpressionStatementWithSemi(value: Admit<T.Expression>): T.
 }
 
 export function buildForeignModItemSemi(config: Partial<T.ForeignModItemSemi.Config> = {}): T.ForeignModItemSemi.Bound {
-	const _visibility_modifier = config.visibilityModifier;
+	const _unsafe = strictBooleanStorage(config.unsafe);
 	const _extern_modifier = orDefault(config.externModifier, () => buildExternModifier());
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ForeignModItemSemi as const,
 		$source: 2 as const,
 		$named: true as const,
-		_visibility_modifier,
+		_unsafe,
 		_extern_modifier,
 		$with: {
-			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildForeignModItemSemi({ ...config, visibilityModifier: value })),
+			unsafe: (value?: Admit<NonNullable<T.ForeignModItemSemi.Config>['unsafe']>) =>
+				rebuilt(node, handle, () => buildForeignModItemSemi({ ...config, unsafe: value })),
 			externModifier: (value: Admit<T.ExternModifier>) =>
 				rebuilt(node, handle, () => buildForeignModItemSemi({ ...config, externModifier: value }))
 		},
-		visibilityModifier: () => hydrateStoredSlot(node, '_visibility_modifier'),
+		unsafe: () => _unsafe,
 		externModifier: () => hydrateStoredSlot(node, '_extern_modifier'),
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -8533,7 +8533,7 @@ export function buildForeignModItemSemi(config: Partial<T.ForeignModItemSemi.Con
 }
 
 export function buildForeignModItemBody(config: Partial<T.ForeignModItemBody.Config> = {}): T.ForeignModItemBody.Bound {
-	const _visibility_modifier = config.visibilityModifier;
+	const _unsafe = strictBooleanStorage(config.unsafe);
 	const _extern_modifier = orDefault(config.externModifier, () => buildExternModifier());
 	const _body = orDefault(config.body, () => buildDeclarationList());
 	const handle = currentHandle();
@@ -8541,18 +8541,18 @@ export function buildForeignModItemBody(config: Partial<T.ForeignModItemBody.Con
 		$type: TSKindId.ForeignModItemBody as const,
 		$source: 2 as const,
 		$named: true as const,
-		_visibility_modifier,
+		_unsafe,
 		_extern_modifier,
 		_body,
 		$with: {
-			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
-				rebuilt(node, handle, () => buildForeignModItemBody({ ...config, visibilityModifier: value })),
+			unsafe: (value?: Admit<NonNullable<T.ForeignModItemBody.Config>['unsafe']>) =>
+				rebuilt(node, handle, () => buildForeignModItemBody({ ...config, unsafe: value })),
 			externModifier: (value: Admit<T.ExternModifier>) =>
 				rebuilt(node, handle, () => buildForeignModItemBody({ ...config, externModifier: value })),
 			body: (value: Admit<T.DeclarationList>) =>
 				rebuilt(node, handle, () => buildForeignModItemBody({ ...config, body: value }))
 		},
-		visibilityModifier: () => hydrateStoredSlot(node, '_visibility_modifier'),
+		unsafe: () => _unsafe,
 		externModifier: () => hydrateStoredSlot(node, '_extern_modifier'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
@@ -10056,6 +10056,24 @@ export const buildIndent: TSKindId.Indent = TSKindId.Indent;
 
 export const buildDedent: TSKindId.Dedent = TSKindId.Dedent;
 
+export function buildStringClose(text: string): T.StringClose.Bound {
+	if (text.length === 0) throw new Error(`string_close: text must be non-empty`);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.StringClose as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text,
+		$render: () => renderText(handle, node),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.StringClose.Bound;
+}
+
 export function buildErrorSentinel(text: string): T.ErrorSentinel.Bound {
 	if (text.length === 0) throw new Error(`_error_sentinel: text must be non-empty`);
 	const handle = currentHandle();
@@ -10401,6 +10419,7 @@ export type FluentKindMap = {
 	_double_blankline: T.DoubleBlankline;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
+	string_close: T.StringClose;
 	_error_sentinel: T.ErrorSentinel;
 	type_identifier: T.TypeIdentifier.Bound;
 	field_identifier: T.FieldIdentifier.Bound;
@@ -10668,6 +10687,7 @@ export const _factoryMap = {
 	_double_blankline: buildDoubleBlankline,
 	_indent: buildIndent,
 	_dedent: buildDedent,
+	string_close: buildStringClose,
 	_error_sentinel: buildErrorSentinel,
 	type_identifier: buildTypeIdentifier,
 	field_identifier: buildFieldIdentifier,

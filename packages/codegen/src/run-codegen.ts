@@ -86,11 +86,15 @@ export async function runStandaloneSteps(opts: CodegenOptions): Promise<void> {
 	if (opts.tsGenerate) {
 		await runTreeSitterGenerate(pkg);
 	}
-	if (opts.compileParser) {
-		console.log(`Compiling ${grammar} parser to WASM...`);
-		const { buildParserWasm } = await import('./transpile/compile-parser.ts');
-		console.log(`  → ${buildParserWasm(pkg.dir)}`);
-	}
+	if (opts.compileParser) await compileParsers(grammar, pkg);
+}
+
+async function compileParsers(grammar: string, pkg: GrammarPackage): Promise<void> {
+	console.log(`Compiling ${grammar} parser to WASM...`);
+	const { buildParserWasm, ensureUpstreamWasm } = await import('./transpile/compile-parser.ts');
+	console.log(`  → ${buildParserWasm(pkg.dir)}`);
+	const upstream = ensureUpstreamWasm(pkg.dir);
+	console.log(`  → ${upstream.wasmPath}${upstream.built ? '' : ' (current)'}`);
 }
 
 export interface PreflightOutcome {
@@ -442,9 +446,7 @@ async function runFullRegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		console.log(`Transpiling ${grammar} overrides...`);
 		console.log(`  → ${transpileOverrides({ package: pkg }).outputPath}`);
 		await runTreeSitterGenerate(pkg);
-		console.log(`Compiling ${grammar} parser to WASM...`);
-		const { buildParserWasm } = await import('./transpile/compile-parser.ts');
-		console.log(`  → ${buildParserWasm(pkg.dir)}`);
+		await compileParsers(grammar, pkg);
 	}
 
 	return runCodegen(opts);

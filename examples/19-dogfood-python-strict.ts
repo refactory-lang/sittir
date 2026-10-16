@@ -35,8 +35,8 @@ const id = (text: string) => engine.build.identifier(text);
 /** The shebang and module docstring, which the reader carries as comments. */
 export function headerStrict() {
 	return [
-		engine.build.synonym.comment('!/usr/bin/env python3'),
-		engine.build.synonym.comment(' """Cross-tree probe-kind sweep for regression diffing."""'),
+		engine.build.comment('!/usr/bin/env python3'),
+		engine.build.comment(' """Cross-tree probe-kind sweep for regression diffing."""'),
 	];
 }
 

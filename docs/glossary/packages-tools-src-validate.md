@@ -647,7 +647,7 @@ A grammar's reparse wrappers: an identity wrapper for the node model's root kind
 
 ### `packages/tools/src/validate/common.ts::upstreamWasmPath`
 
-The upstream `tree-sitter-<grammar>` package's own wasm, resolved from the grammar package's directory. A grammar with no upstream wasm (an unknown name, or a grammar that ships none) yields `undefined`; the compiled `.sittir/parser.wasm` is the other source and is preferred.
+The upstream judge: `.sittir/upstream.wasm`, the unmodified grammar sittir builds on, built by the regen with the same CLI. The upstream package's published wasm stands in only when that file is absent; a grammar with neither is an error naming the gen command. An unknown name yields `undefined`.
 
 ### `packages/tools/src/validate/common.ts::nativeNodeIsKind`
 

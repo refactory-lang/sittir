@@ -590,11 +590,11 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 ]);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
-	33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 54, 55, 56, 57, 58, 59, 60, 61, 62,
+	33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 55, 56, 57, 58, 59, 60, 61, 62,
 	63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91,
 	92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116,
-	117, 118, 119, 122, 123, 125, 126, 127, 129, 130, 131, 136, 137, 138, 139, 140, 155, 157, 163, 164, 168, 169, 170,
-	171, 172, 173, 174, 175, 178, 186, 244, 254, 281, 321, 336, 338, 339, 341, 361, 362, 363, 364, 421, 426
+	117, 118, 119, 122, 123, 125, 126, 127, 129, 130, 131, 136, 137, 138, 139, 140, 156, 163, 164, 168, 169, 170, 171,
+	172, 173, 174, 175, 178, 186, 244, 254, 281, 321, 336, 338, 339, 341, 361, 362, 363, 364, 421, 426
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	expression_statement: new Set([
@@ -603,9 +603,9 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 394
 	]),
 	non_special_token: new Set([
-		1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 54,
-		55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84,
-		85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110, 111, 112, 115,
+		1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+		56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85,
+		86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111, 112, 113, 116,
 		117, 118, 125, 126, 127, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162,
 		332, 333, 336, 341, 361, 362
 	]),
@@ -614,41 +614,41 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	enum_variant_list: new Set([200, 343, 428]),
 	field_declaration_list: new Set([202, 344, 427]),
 	ordered_field_declaration_list: new Set([
-		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 240, 242, 243, 244, 246, 248,
+		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
 		252, 254, 255, 256, 259, 265, 341, 345, 351, 388, 389, 432, 468
 	]),
 	where_clause: new Set([212, 346]),
 	removed_trait_bound: new Set([
-		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 240, 242, 243, 244, 246, 248,
+		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
 		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 468
 	]),
 	type_parameters: new Set([128, 220, 221, 222, 347, 430]),
 	use_list: new Set([1, 125, 126, 127, 128, 226, 227, 228, 229, 263, 348, 360]),
 	use_wildcard: new Set([1, 125, 126, 127, 128, 263, 360]),
 	parameters: new Set([
-		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 231, 232, 233, 240, 242, 243,
+		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 231, 232, 233, 240, 242, 243,
 		244, 246, 248, 252, 254, 255, 256, 259, 265, 341, 349, 351, 388, 389, 429, 468
 	]),
 	extern_modifier: new Set([332]),
 	visibility_modifier: new Set([1, 125, 126, 127, 128, 263, 379, 380, 381]),
 	bracketed_type: new Set([
-		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 238, 240, 242, 243, 244, 246,
+		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 238, 240, 242, 243, 244, 246,
 		248, 252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 468
 	]),
 	lifetime: new Set([1]),
 	for_lifetimes: new Set([1, 239, 350]),
 	tuple_type: new Set([
-		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 240, 242, 243, 244, 246, 248,
+		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
 		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 468
 	]),
 	use_bounds: new Set([1, 239, 352, 468]),
 	type_arguments: new Set([
-		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 128, 141, 142, 143, 144, 145, 146,
+		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 117, 118, 128, 141, 142, 143, 144, 145, 146,
 		147, 148, 149, 150, 162, 217, 218, 239, 240, 242, 243, 244, 246, 248, 251, 252, 254, 255, 256, 259, 265, 313, 332,
 		333, 336, 341, 351, 353, 388, 389, 433, 468
 	]),
 	dynamic_type: new Set([
-		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 240, 242, 243, 244, 246, 248,
+		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
 		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 468
 	]),
 	try_expression: new Set([
@@ -715,30 +715,30 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
 	]),
 	negative_literal: new Set([141, 142, 143, 144, 162]),
-	line_comment: new Set([156, 166, 399, 400, 401]),
+	line_comment: new Set([155, 166, 399, 400, 401]),
 	block_comment: new Set([165, 402, 403, 404]),
 	macro_rules: new Set([181]),
 	enum_variant_list_elements: new Set([200, 428]),
 	field_declaration_list_elements: new Set([202, 427]),
 	ordered_field_declaration_list_elements: new Set([
-		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 240, 242, 243, 244, 246, 248,
+		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
 		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 432, 468
 	]),
 	where_predicates: new Set([212]),
 	type_parameters_elements: new Set([128, 220, 221, 222, 430]),
 	use_clauses: new Set([1, 125, 126, 127, 128, 226, 227, 228, 229, 263, 348, 360]),
 	parameters_elements: new Set([
-		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 231, 232, 233, 240, 242, 243,
+		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 231, 232, 233, 240, 242, 243,
 		244, 246, 248, 252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 429, 468
 	]),
 	lifetimes: new Set([1, 239]),
 	types: new Set([
-		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 240, 242, 243, 244, 246, 248,
+		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
 		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 468
 	]),
 	use_bounds_elements: new Set([1, 239, 468]),
 	type_arguments_elements: new Set([
-		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 117, 118, 128, 141, 142, 143, 144, 145, 146,
+		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 117, 118, 128, 141, 142, 143, 144, 145, 146,
 		147, 148, 149, 150, 162, 217, 218, 239, 240, 242, 243, 244, 246, 248, 251, 252, 254, 255, 256, 259, 265, 313, 332,
 		333, 336, 341, 351, 388, 389, 433, 468
 	]),
@@ -799,11 +799,11 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
 	]),
 	pointer_type_const: new Set([
-		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 240, 242, 243, 244, 246, 248,
+		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
 		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 468
 	]),
 	pointer_type_mut: new Set([
-		1, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 128, 217, 218, 240, 242, 243, 244, 246, 248,
+		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
 		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 468
 	]),
 	range_expression_postfix: new Set([
@@ -874,9 +874,8 @@ const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
 	50: ['_token_keywords'],
 	51: ['_token_keywords'],
 	52: ['_token_keywords'],
-	54: ['token_tree_punctuation'],
-	55: ['_token_keywords'],
-	58: ['primitive_type'],
+	55: ['token_tree_punctuation'],
+	56: ['_token_keywords'],
 	59: ['primitive_type'],
 	60: ['primitive_type'],
 	61: ['primitive_type'],
@@ -893,7 +892,7 @@ const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
 	72: ['primitive_type'],
 	73: ['primitive_type'],
 	74: ['primitive_type'],
-	75: ['token_tree_punctuation'],
+	75: ['primitive_type'],
 	76: ['token_tree_punctuation'],
 	77: ['token_tree_punctuation'],
 	78: ['token_tree_punctuation'],
@@ -916,19 +915,20 @@ const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
 	95: ['token_tree_punctuation'],
 	96: ['token_tree_punctuation'],
 	97: ['token_tree_punctuation'],
-	98: ['_token_keywords'],
-	100: ['token_tree_punctuation'],
-	101: ['_token_keywords'],
-	103: ['_token_keywords'],
+	98: ['token_tree_punctuation'],
+	99: ['_token_keywords'],
+	101: ['token_tree_punctuation'],
+	102: ['_token_keywords'],
 	104: ['_token_keywords'],
 	105: ['_token_keywords'],
-	107: ['_token_keywords'],
+	106: ['_token_keywords'],
 	108: ['_token_keywords'],
-	109: ['token_tree_punctuation'],
-	110: ['_token_keywords'],
+	109: ['_token_keywords'],
+	110: ['token_tree_punctuation'],
 	111: ['_token_keywords'],
 	112: ['_token_keywords'],
-	115: ['token_tree_punctuation'],
+	113: ['_token_keywords'],
+	116: ['token_tree_punctuation'],
 	117: ['boolean_literal'],
 	118: ['boolean_literal'],
 	130: ['token_tree_punctuation'],
@@ -9169,10 +9169,10 @@ export function coerceToExpressionStatementWithSemi(
 	);
 }
 
-export function resolveForeignModItemSemi_visibilityModifier(
-	value: T.ForeignModItemSemi.LooseConfig['visibilityModifier']
-): Admit<T.ForeignModItemSemi['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+export function resolveForeignModItemSemi_unsafe(
+	value: T.ForeignModItemSemi.LooseConfig['unsafe']
+): Admit<T.ForeignModItemSemi['_unsafe']> {
+	return _resolveBooleanKeyword(value);
 }
 
 export function resolveForeignModItemSemi_externModifier(
@@ -9187,15 +9187,15 @@ export function coerceToForeignModItemSemi(
 	if (!_isLooseConfig<T.ForeignModItemSemi.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildForeignModItemSemi>;
 	return F.buildForeignModItemSemi({
-		visibilityModifier: resolveForeignModItemSemi_visibilityModifier(input?.visibilityModifier),
+		unsafe: resolveForeignModItemSemi_unsafe(input?.unsafe),
 		externModifier: resolveForeignModItemSemi_externModifier(input?.externModifier) ?? F.buildExternModifier()
 	});
 }
 
-export function resolveForeignModItemBody_visibilityModifier(
-	value: T.ForeignModItemBody.LooseConfig['visibilityModifier']
-): Admit<T.ForeignModItemBody['_visibility_modifier']> {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
+export function resolveForeignModItemBody_unsafe(
+	value: T.ForeignModItemBody.LooseConfig['unsafe']
+): Admit<T.ForeignModItemBody['_unsafe']> {
+	return _resolveBooleanKeyword(value);
 }
 
 export function resolveForeignModItemBody_externModifier(
@@ -9216,7 +9216,7 @@ export function coerceToForeignModItemBody(
 	if (!_isLooseConfig<T.ForeignModItemBody.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildForeignModItemBody>;
 	return F.buildForeignModItemBody({
-		visibilityModifier: resolveForeignModItemBody_visibilityModifier(input?.visibilityModifier),
+		unsafe: resolveForeignModItemBody_unsafe(input?.unsafe),
 		externModifier: resolveForeignModItemBody_externModifier(input?.externModifier) ?? F.buildExternModifier(),
 		body: resolveForeignModItemBody_body(input?.body) ?? F.buildDeclarationList()
 	});

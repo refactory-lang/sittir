@@ -595,11 +595,11 @@ export const querySlots: QuerySlots = Object.freeze({
 	393: [['rangeExpressionBare', 0]],
 	394: [['expression', 0]],
 	395: [
-		['visibilityModifier', 0],
+		['unsafe', 0, 'unsafe'],
 		['externModifier', 1]
 	],
 	396: [
-		['visibilityModifier', 0],
+		['unsafe', 0, 'unsafe'],
 		['externModifier', 1],
 		['body', 2]
 	],
@@ -2009,7 +2009,7 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'foreign_mod_item_semi',
 		required: [['_extern_modifier', 'externModifier']],
 		nodeOnly: [
-			['_visibility_modifier', 'ForeignModItemSemi.visibilityModifier', 'a built VisibilityModifier'],
+			['_unsafe', 'ForeignModItemSemi.unsafe', 'a boolean'],
 			['_extern_modifier', 'ForeignModItemSemi.externModifier', 'a built ExternModifier']
 		]
 	},
@@ -2020,7 +2020,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'body']
 		],
 		nodeOnly: [
-			['_visibility_modifier', 'ForeignModItemBody.visibilityModifier', 'a built VisibilityModifier'],
+			['_unsafe', 'ForeignModItemBody.unsafe', 'a boolean'],
 			['_extern_modifier', 'ForeignModItemBody.externModifier', 'a built ExternModifier'],
 			['_body', 'ForeignModItemBody.body', 'a built DeclarationList']
 		]

@@ -8,7 +8,6 @@ import type { Rule as EvaluatedRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { collectGeneratedKindEntries, type GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { EmittedTemplates } from './templates.ts';
-import type { GrammarRoles } from '../scm/extract-roles.ts';
 import type { RenderModuleBundle } from './render-module.ts';
 import type { GrammarName } from '../grammars.ts';
 
@@ -54,7 +53,7 @@ export interface EmitAllConfig {
 	synthesizedKinds?: ReadonlySet<string>;
 	strict?: boolean;
 	triviaKinds?: string[];
-	grammarRoles?: GrammarRoles;
+	rootKind?: string;
 	emitRenderModule?: boolean;
 	expectTestFailures?: Readonly<Record<string, string>>;
 	reparseHosts?: ReparseHostsConfig;
@@ -111,7 +110,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		synthesizedKinds,
 		strict,
 		triviaKinds,
-		grammarRoles,
+		rootKind,
 		emitRenderModule,
 		expectTestFailures,
 		reparseHosts,
@@ -157,7 +156,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		kindEntries,
 		inlineKinds,
 		synthesizedKinds,
-		rootKind: grammarRoles?.get('root')[0]
+		rootKind
 	});
 
 	const renderRules = resolvedRules?.seamed;
@@ -213,7 +212,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	});
 	const consts = emitConsts({ grammar, nodeMap });
 	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }) : renderOptionsModule({ indentChars: indentChars(nodeMap), newlineArms: newlineArms(nodeMap) });
-	const irNamespace = emitIr({ grammar, nodeMap, grammarRoles });
+	const irNamespace = emitIr({ grammar, nodeMap });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures, renderBodies: templates.bodies });
 	const utils = emitClientUtils({ grammar, nodeMap, triviaKinds, structure: factoryEmitter.structure });

@@ -52,7 +52,7 @@ import {
 	type GrammarModules,
 	type Hydrate
 } from '../grammar-internals.ts';
-import { grammarPackageDir, grammarRequire, isGrammar, upstreamPackage } from '@sittir/codegen/grammars';
+import { UPSTREAM_WASM, grammarPackageDir, grammarRequire, isGrammar, upstreamPackage } from '@sittir/codegen/grammars';
 import { CORPUS_ROOT, localCorpusPath, upstreamCorpusDir } from '../corpus/layout.ts';
 import type {
 	CodegenSurface,
@@ -389,11 +389,15 @@ export function wrapForReparse(
 
 export function upstreamWasmPath(grammar: string): string | undefined {
 	if (!isGrammar(grammar)) return undefined;
+	const built = join(grammarPackageDir(grammar), '.sittir', UPSTREAM_WASM);
+	if (existsSync(built)) return built;
 	const upstream = upstreamPackage(grammar);
 	try {
 		return grammarRequire(grammar).resolve(`${upstream}/${upstream}.wasm`);
 	} catch {
-		return undefined;
+		throw new Error(
+			`no upstream parser for '${grammar}': neither .sittir/${UPSTREAM_WASM} nor a published ${upstream}.wasm; build it with \`pnpm exec tsx packages/cli/src/cli.ts gen --grammar ${grammar} --compile-parser\``
+		);
 	}
 }
 

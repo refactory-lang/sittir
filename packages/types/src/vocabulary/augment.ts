@@ -902,26 +902,8 @@ declare module './declaration.ts' {
 		interface Module<G extends GrammarContext<G>> extends moduleDeclarations.Declaration.Module<G> {}
 		namespace Module {
 			interface External<G extends GrammarContext<G>> extends moduleDeclarations.Declaration.Module.External<G> {}
-			interface Foreign<G extends GrammarContext<G>> extends foreignFunctionInterface.Declaration.Module.Foreign<G> {}
-			namespace Foreign {
-				interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Module.Foreign.Private<G> {}
-				interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Module.Foreign.Public<G> {}
-				namespace Public {
-					interface Internal<G extends GrammarContext<G>> extends visibility.Declaration.Module.Foreign.Public
-						.Internal<G> {}
-					interface Restricted<G extends GrammarContext<G>> extends visibility.Declaration.Module.Foreign.Public
-						.Restricted<G> {}
-					type Any<G extends GrammarContext<G>> =
-						| V.Declaration.Module.Foreign.Public<G>
-						| V.Declaration.Module.Foreign.Public.Internal<G>
-						| V.Declaration.Module.Foreign.Public.Restricted<G>;
-				}
-				type Any<G extends GrammarContext<G>> =
-					| V.Declaration.Module.Foreign<G>
-					| V.Declaration.Module.Foreign.Private<G>
-					| V.Declaration.Module.Foreign.Public<G>
-					| V.Declaration.Module.Foreign.Public.Internal<G>
-					| V.Declaration.Module.Foreign.Public.Restricted<G>;
+			interface Foreign<G extends GrammarContext<G>> extends foreignFunctionInterface.Declaration.Module.Foreign<G> {
+				readonly unsafe?: gate.In<G, features.UnsafeCode, unsafeCode.Declaration.Module.Foreign<G>['unsafe']>;
 			}
 			interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Module.Private<G> {}
 			interface Public<G extends GrammarContext<G>> extends visibility.Declaration.Module.Public<G> {}
@@ -937,10 +919,6 @@ declare module './declaration.ts' {
 				| V.Declaration.Module<G>
 				| V.Declaration.Module.External<G>
 				| V.Declaration.Module.Foreign<G>
-				| V.Declaration.Module.Foreign.Private<G>
-				| V.Declaration.Module.Foreign.Public<G>
-				| V.Declaration.Module.Foreign.Public.Internal<G>
-				| V.Declaration.Module.Foreign.Public.Restricted<G>
 				| V.Declaration.Module.Private<G>
 				| V.Declaration.Module.Public<G>
 				| V.Declaration.Module.Public.Internal<G>
@@ -1518,10 +1496,6 @@ declare module './declaration.ts' {
 			| V.Declaration.Module<G>
 			| V.Declaration.Module.External<G>
 			| V.Declaration.Module.Foreign<G>
-			| V.Declaration.Module.Foreign.Private<G>
-			| V.Declaration.Module.Foreign.Public<G>
-			| V.Declaration.Module.Foreign.Public.Internal<G>
-			| V.Declaration.Module.Foreign.Public.Restricted<G>
 			| V.Declaration.Module.Private<G>
 			| V.Declaration.Module.Public<G>
 			| V.Declaration.Module.Public.Internal<G>

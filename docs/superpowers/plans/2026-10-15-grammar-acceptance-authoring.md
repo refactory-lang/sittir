@@ -153,6 +153,7 @@ Every task adds witnesses to one `reauthored('accepts-invalid-syntax', [...], bo
 
 **Rules:** `method_definition`, `method_signature`, `abstract_method_signature`.
 **Census rows:** every `accessor-arity` row.
+**Executed by:** the authoring-DSL rewrite, as its Stage 6b (`docs/superpowers/plans/2026-10-15-authoring-dsl-rewrite.md`), written with `variant(name, rule)`, `replace` and `copy`. This plan does not run it separately; the tasks that depend on it wait for that stage.
 
 This task is the authoring the user has already ruled on: the getter's and the setter's own parameter rules, keeping the `get`/`set` field. Each rule becomes three arms:
 
