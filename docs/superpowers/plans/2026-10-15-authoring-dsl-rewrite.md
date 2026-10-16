@@ -82,6 +82,7 @@ No behaviour change. Its deliverables let every later stage prove it is byte-ide
 - [ ] **Step 4: Compare the grammar-level outputs with 946114382's blobs.** These are `grammar.json`, `parser.c`, `node-types.json`, `parser.wasm`, `resolutions.json`, `grammar.bindings.ts` and `.sittir/grammar.js`, for all five grammars.
   - Use `git hash-object` against the manifest's blob ids.
   - Any difference stops the work and is reported.
+  - The baseline is recorded (Task 0.1, Step 4) only after every one of these outputs equals its 946114382 blob.
 - [ ] **Step 5: Run the standing gates.** Compare the rows with `reshape-gate-rows-946114382.txt`, and report any moved row to brainstorm before the baseline is accepted.
 - [ ] **Step 6: Commit the merge** with the regenerated outputs. Send coordinate the three hand-resolved files for review.
 
@@ -271,6 +272,15 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 - [ ] **Step 1: Rename `patches` to `edits`, with no other change.** Regenerate all five grammars. `tool output-gate --check` shows no difference. Commit.
 - [ ] **Step 2: Write the failing tests.**
   - Reading a pending base's `rules` before completion throws, while its `name` and `externals` read.
+  - **The hook's guards** (spec §1.2):
+    - reading `options.rules` before the pass has run throws, naming tree-sitter 0.26.9;
+    - calling the externals callback twice with one handle refuses;
+    - `enrich(base)` refuses a base that carries an unconsumed handle;
+    - the pinned CLI, run over the fixture chain, records the pass running once, before `$` is built. The test asserts the CLI's version is 0.26.9 and says, on failure, that the call order must be verified again.
+  - **The record** (spec §1.6):
+    - the fixture's `grammar.json` from the CLI carries no trace of the record. Give the record a sentinel string and assert it is absent from the file;
+    - a layer whose `rules:` overrides the start rule, and one whose entry edits the start rule, still carry the record on the result's first rule;
+    - a start rule whose body is a bare string still carries it.
   - A fixture chain (a small upstream grammar, a layer 1 with a group and an edit, and a layer 2 with a field entry) gives the same rules, rule order and lists from sittir's `evaluate()` and from the pinned CLI's `tree-sitter generate`. Compare `grammar.json` from the CLI with the evaluated grammar's parser input.
   - Layer 2's record is read from the result's start rule in both runtimes.
   - `grammarFn` calls the externals callback before it reads the base's rules. Assert with a spy on a pending base.
@@ -554,7 +564,7 @@ Task 0.3 must have shown that the top layer's check passes. Otherwise this stage
 
 ## Stage 9: the `rename` verb
 
-**Gate:** byte-identical to Stage 8's commit, rows equal. No layer uses the verb.
+**Gate:** byte-identical to Stage 8's commit, rows equal. No layer uses the verb, so it adds no rule, and `parser.c`'s symbol table is unchanged for every grammar.
 
 ### Task 9.1
 

@@ -100,6 +100,12 @@ The externals callback is therefore the one point where a layer sees its base be
 
 The two halves share only that handle. No state is ambient: two layers evaluated in one process, or one layer evaluated twice, never share a pending base.
 
+**Guards.** The hook rests on the order in which tree-sitter's `dsl.js` calls the callbacks. That order is internal to tree-sitter, so a change to it must fail loudly, never skip the pass:
+- `options.rules` throws if it is read before the pass has run. The message names the tree-sitter version the order was verified against (0.26.9).
+- The handle is consumed once. The externals callback refuses a handle it has already consumed, so the pass cannot run twice.
+- `enrich(base)` refuses a base that carries a handle no pass consumed.
+- A test runs the pinned CLI over a fixture chain and asserts the pass ran once, before `$` was built. Bumping tree-sitter's version fails that test until the order is verified again.
+
 ### 1.3 One layer
 
 The layer pass runs five steps. They are the same at every depth and in both runtimes.
@@ -199,6 +205,10 @@ Instead, a completed layer's result carries one non-enumerable **layer record**.
 - Both runtimes keep a rule callback's return value by identity: tree-sitter's `normalize` and sittir's `coerceToRule` return a rule object unchanged.
 - So the layer's callback for its start rule, the grammar's first rule, returns a fresh copy of that rule's body that carries the record under a symbol key. `layerRecordOf(result)` reads it there.
 - JSON serialization skips symbol keys, so `grammar.json` never sees the record. An upstream grammar has none.
+- **The pass owns the start rule's callback.**
+  - When `rules:` overrides the start rule, or an entry edits it, the pass evaluates both as it does for any rule. It then attaches the record to the final body.
+  - The pass returns every body already normalized. A bare string or pattern becomes its `STRING` or `PATTERN` object first, so the runtime keeps the object it is given.
+  - `rename` refuses the start rule (§3.3), so the first rule is always the start rule.
 
 | field | contents | across layers |
 | --- | --- | --- |
@@ -409,7 +419,7 @@ It is refused with `rename-invalid` when:
 - the rename flips hiddenness;
 - the grammar already has the target name. That makes it a merge, which the stage-2 merge rules handle.
 
-No layer uses it yet. The derived kind renames stay data (§2.4), and the generator never writes a `rename` entry.
+No layer uses it yet. The derived kind renames stay data (§2.4), and the generator never writes a `rename` entry. Where `rename` is unused, which today is everywhere, it adds no rule, and `parser.c`'s symbol table is unchanged.
 
 ### 3.4 Declarations that are not edits
 
