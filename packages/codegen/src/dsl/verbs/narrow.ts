@@ -1,5 +1,7 @@
+import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import {
 	aliasOf,
+	countSymbols,
 	isParserHiddenName,
 	isRecord,
 	OPAQUE_RULES,
@@ -11,25 +13,33 @@ import {
 	unwrapPrec,
 	type GrammarRecord
 } from '../rule-patterns.ts';
-import { applyCopy, VerbRefusal, type VerbCtx } from './copy.ts';
-import type { CopyOrigin, LeadMatch, LeadWithin } from './effects.ts';
+import { applyPathInRules, ApplyPathSkip, parsePath } from '../transform/transform-path.ts';
+import { applyCopy, applyEntry, VerbRefusal, type VerbCtx } from './copy.ts';
+import type { LeadMatch, LeadWithin, NarrowingOrigin } from './effects.ts';
 
-export interface ItemPositions {
+export interface SitePositions {
 	readonly counts: ReadonlyMap<string, number>;
 	readonly holders: ReadonlyMap<string, ReadonlySet<string>>;
 }
 
-export const NO_POSITIONS: ItemPositions = { counts: new Map(), holders: new Map() };
+export const NO_POSITIONS: SitePositions = { counts: new Map(), holders: new Map() };
 
 export type NarrowDirection = 'keep' | 'except';
 
 export interface NarrowSite {
 	readonly ref: unknown;
 	readonly context: string;
-	readonly origin: CopyOrigin;
+	readonly origin: NarrowingOrigin;
 	readonly reach: Set<string>;
 	readonly sites: ReadonlyMap<string, number>;
-	readonly positions: ItemPositions;
+	readonly positions: SitePositions;
+}
+
+export interface NarrowEntry {
+	readonly owner: string;
+	readonly path: string;
+	readonly direction: NarrowDirection;
+	readonly admits: readonly LeadMatch[];
 }
 
 interface Narrowing {
@@ -38,10 +48,52 @@ interface Narrowing {
 	readonly keep: boolean;
 }
 
+export function applyNarrows(entries: readonly NarrowEntry[], ctx: VerbCtx): void {
+	for (const entry of entries)
+		applyEntry(ctx, { ownerKind: entry.owner, name: `narrow '${entry.owner}' at '${entry.path}'`, details: { kind: entry.owner, path: entry.path } }, () =>
+			applyNarrowEntry(entry, ctx)
+		);
+}
+
+function applyNarrowEntry({ owner, path, direction, admits }: NarrowEntry, ctx: VerbCtx): void {
+	const origin: NarrowingOrigin = { kind: 'narrow', owner, path };
+	const sites = countSymbols(Object.values(ctx.rules));
+	const reach = withinKinds(admits);
+	const missing = (): VerbRefusal => new VerbRefusal('edit-site-missing', `the path names no member of '${owner}'`);
+	let sited = false;
+	try {
+		applyPathInRules(ctx.rules, owner, parsePath(path), (member) => {
+			sited = true;
+			const positions = sitePositions(member, ctx, reach, 'the site');
+			const narrowed = applyNarrow({ ref: member, context: owner, origin, reach: new Set(), sites, positions }, admits, direction, ctx);
+			if (narrowed === undefined) throw new VerbRefusal('narrow-invalid', 'it leaves the site no arm');
+			holdReached(positions, origin, ctx);
+			return narrowed as RuntimeRule;
+		});
+	} catch (error) {
+		throw error instanceof ApplyPathSkip ? missing() : error;
+	}
+	if (!sited) throw missing();
+}
+
+function withinKinds(admits: readonly LeadMatch[], out: Set<string> = new Set()): Set<string> {
+	for (const admit of admits) if (admit.within !== undefined) withinKinds(admit.within.admits, out.add(admit.kind));
+	return out;
+}
+
 export function applyNarrow(site: NarrowSite, admits: readonly LeadMatch[], direction: NarrowDirection, ctx: VerbCtx): unknown {
 	const keep = direction === 'keep';
 	return narrowRef({ ctx, site, keep }, site.ref, admits, !keep);
 }
+
+export function holdReached(positions: SitePositions, origin: NarrowingOrigin, ctx: VerbCtx): void {
+	for (const name of positions.counts.keys()) if (!ctx.reached.has(name)) ctx.reached.set(name, origin);
+}
+
+const siteNoun = (origin: NarrowingOrigin): string => (origin.kind === 'lead' ? 'the item' : 'the site');
+
+const heldBy = (origin: NarrowingOrigin): string =>
+	origin.kind === 'lead' ? `the lead on '${origin.list}' holds it in its item` : `the narrow on '${origin.owner}' at '${origin.path}' holds it at its site`;
 
 function copyFor(n: Narrowing, source: string, body: unknown, shown?: { readonly display: string; readonly admitted: string }): string {
 	return applyCopy({ source, part: '.', context: n.site.context, body, origin: n.site.origin, ...shown }, n.ctx);
@@ -82,7 +134,7 @@ function narrowRef(n: Narrowing, ref: unknown, admits: readonly LeadMatch[], exc
 		if (inPlace && !isParserHiddenName(name)) {
 			const count = site.positions.counts.get(name) ?? 0;
 			const holders = [...(site.positions.holders.get(name) ?? [])].sort();
-			if (count > 1) throw new VerbRefusal('narrow-invalid', `'${kind}' narrows in place, but the item holds it at ${count} positions (in ${holders.join(', ')})`);
+			if (count > 1) throw new VerbRefusal('narrow-invalid', `'${kind}' narrows in place, but ${siteNoun(site.origin)} holds it at ${count} positions (in ${holders.join(', ')})`);
 		}
 		if (inPlace) {
 			narrowInPlace(n, name, body);
@@ -198,7 +250,7 @@ function narrowWithin(n: Narrowing, kind: string, body: unknown, within: LeadWit
 	return visit(body);
 }
 
-export function itemPositions(item: unknown, ctx: VerbCtx, reach: ReadonlySet<string>): ItemPositions {
+export function sitePositions(site: unknown, ctx: VerbCtx, reach: ReadonlySet<string>, top: string): SitePositions {
 	const counts = new Map<string, number>();
 	const holders = new Map<string, Set<string>>();
 	const expands = (name: string): boolean => name in ctx.rules && (reach.has(name) || ctx.transparent(name));
@@ -216,12 +268,12 @@ export function itemPositions(item: unknown, ctx: VerbCtx, reach: ReadonlySet<st
 			walk(node.content, path, holder);
 		}
 	};
-	walk(item, [], 'the list item');
+	walk(site, [], top);
 	return { counts, holders };
 }
 
 function narrowInPlace(n: Narrowing, name: string, body: unknown): void {
 	const holder = n.ctx.reached.get(name);
-	if (holder !== undefined) throw new VerbRefusal('edit-site-conflict', `'${name}' narrows in place, but the lead on '${holder}' holds it in its item`);
+	if (holder !== undefined) throw new VerbRefusal('edit-site-conflict', `'${name}' narrows in place, but ${heldBy(holder)}`);
 	n.ctx.rules[name] = body;
 }

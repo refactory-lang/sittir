@@ -639,6 +639,15 @@ export function symbolNames(rule: unknown, out: Set<string> = new Set()): Set<st
 	return out;
 }
 
+export function countSymbols(rule: unknown, sites: Map<string, number> = new Map()): Map<string, number> {
+	if (Array.isArray(rule)) for (const r of rule) countSymbols(r, sites);
+	else if (isRecord(rule)) {
+		if (rule.type === 'SYMBOL' && typeof rule.name === 'string') sites.set(rule.name, (sites.get(rule.name) ?? 0) + 1);
+		for (const value of Object.values(rule)) countSymbols(value, sites);
+	}
+	return sites;
+}
+
 export function fieldNames(rule: unknown, out: Set<string> = new Set()): Set<string> {
 	if (Array.isArray(rule)) for (const r of rule) fieldNames(r, out);
 	else if (isRecord(rule)) {

@@ -1,10 +1,14 @@
-import { describe, expect, it } from 'vitest';
-import { match } from '../primitives/narrow.ts';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { match, narrow } from '../primitives/narrow.ts';
+import { makeRuleMetadata } from '../rule-metadata.ts';
+import { transform } from '../transform/transform.ts';
 import { refusalOf, verbCtxOf, type VerbCtx } from '../verbs/copy.ts';
-import type { CopyOrigin, LeadMatch } from '../verbs/effects.ts';
-import { applyNarrow, NO_POSITIONS, type NarrowDirection } from '../verbs/narrow.ts';
+import type { LeadMatch, NarrowingOrigin } from '../verbs/effects.ts';
+import { applyNarrow, applyNarrows, NO_POSITIONS, type NarrowDirection, type NarrowEntry } from '../verbs/narrow.ts';
+import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 
 const sym = (name: string) => ({ type: 'SYMBOL', name });
+const groupRef = (name: string) => ({ ...sym(name), metadata: makeRuleMetadata({ symbolSource: 'group-lift' }) });
 const str = (value: string) => ({ type: 'STRING', value });
 const field = (name: string, content: unknown) => ({ type: 'FIELD', name, content });
 const seq = (...members: unknown[]) => ({ type: 'SEQ', members });
@@ -12,7 +16,7 @@ const choice = (...members: unknown[]) => ({ type: 'CHOICE', members });
 const repeat = (content: unknown) => ({ type: 'REPEAT', content });
 const alias = (content: unknown, value: string) => ({ type: 'ALIAS', content, named: true, value });
 
-const origin: CopyOrigin = { kind: 'narrow', owner: 'owner', path: 'x:' };
+const origin: NarrowingOrigin = { kind: 'narrow', owner: 'owner', path: 'x:' };
 
 const grammar = (rules: Record<string, unknown> = {}) =>
 	verbCtxOf({
@@ -132,11 +136,89 @@ describe("narrow's refusals", () => {
 
 	it('a rule an earlier narrowing reached, changed in place, is edit-site-conflict', () => {
 		const ctx = grammar();
-		ctx.reached.set('_choice', 'rows');
+		ctx.reached.set('_choice', { kind: 'lead', list: 'rows', item: 'item', field: 'receiver', admits: [] });
 		expect(refusal(ctx, () => narrowAt(ctx, sym('_choice'), [match('a')], 'except', new Map([['_choice', 1]])))).toEqual([
 			'edit-site-conflict',
 			"'_choice' narrows in place, but the lead on 'rows' holds it in its item"
 		]);
 		expect(ctx.rules._choice).toEqual(choice(sym('a'), sym('b'), sym('c')));
+	});
+});
+
+const entry = (owner: string, path: string, direction: NarrowDirection, ...admits: LeadMatch[]): NarrowEntry => ({ owner, path, direction, admits });
+
+const diagnosticsOf = (ctx: VerbCtx) => ctx.diagnostics.map((diagnostic) => [diagnostic.code, diagnostic.message]);
+
+describe('the narrow entry', () => {
+	beforeAll(() => installFakeDsl());
+	afterAll(() => restoreFakeDsl());
+
+	it("narrows the member its path names, copying in the context of the entry's kind", () => {
+		const ctx = grammar();
+		applyNarrows([entry('owner', 'x:', 'keep', match('a'), match('b'))], ctx);
+		expect(ctx.diagnostics).toEqual([]);
+		expect(ctx.rules.owner).toEqual(field('x', sym('_choice_owner')));
+		expect(ctx.rules._choice_owner).toEqual(choice(sym('a'), sym('b')));
+		expect(ctx.effects).toEqual([
+			expect.objectContaining({ kind: 'copy', copy: '_choice_owner', source: '_choice', context: 'owner', origin: { kind: 'narrow', owner: 'owner', path: 'x:' } })
+		]);
+	});
+
+	it('narrows except in place where its site alone reaches the rule, and copies the rule otherwise', () => {
+		const alone = grammar({ pair: seq(field('left', sym('a')), str(':'), field('right', sym('b'))) });
+		applyNarrows([entry('owner', 'x:', 'except', match('a'))], alone);
+		expect([alone.rules.owner, alone.rules._choice]).toEqual([field('x', sym('_choice')), choice(sym('b'), sym('c'))]);
+		const shared = grammar();
+		applyNarrows([entry('owner', 'x:', 'except', match('a'))], shared);
+		expect([shared.rules.owner, shared.rules._choice, shared.rules._choice_owner]).toEqual([
+			field('x', sym('_choice_owner')),
+			choice(sym('a'), sym('b'), sym('c')),
+			choice(sym('b'), sym('c'))
+		]);
+	});
+
+	it('narrows inside an enrich group lift its path passes through', () => {
+		const ctx = grammar({ owner: seq(str('('), groupRef('_owner_group'), str(')')), _owner_group: field('x', sym('_choice')) });
+		applyNarrows([entry('owner', '1/x:', 'keep', match('c'))], ctx);
+		expect(ctx.diagnostics).toEqual([]);
+		expect([ctx.rules.owner, ctx.rules._owner_group]).toEqual([seq(str('('), groupRef('_owner_group'), str(')')), field('x', sym('c'))]);
+	});
+
+	it('refuses, leaving no trace, a path that names no member and a narrowing that leaves the site no arm', () => {
+		const ctx = grammar();
+		const before = structuredClone(ctx.rules);
+		applyNarrows([entry('owner', '(missing)', 'keep', match('a')), entry('owner', 'x:', 'keep', match('pair'))], ctx);
+		expect(diagnosticsOf(ctx)).toEqual([
+			['edit-site-missing', "narrow 'owner' at '(missing)': the path names no member of 'owner'"],
+			['narrow-invalid', "narrow 'owner' at 'x:': it leaves the site no arm"]
+		]);
+		expect(ctx.rules).toEqual(before);
+		expect([ctx.effects, ctx.created]).toEqual([[], []]);
+	});
+
+	it('refuses a visible kind narrowed in place at several positions of the site', () => {
+		const ctx = grammar({ owner: field('x', choice(sym('pair'), choice(sym('a'), sym('pair')))) });
+		applyNarrows([entry('owner', 'x:', 'except', match('pair', { left: [match('a')] }))], ctx);
+		expect(diagnosticsOf(ctx)).toEqual([['narrow-invalid', "narrow 'owner' at 'x:': 'pair' narrows in place, but the site holds it at 2 positions (in the site)"]]);
+	});
+
+	it('is edit-site-conflict when it narrows in place a rule an earlier narrow entry reached', () => {
+		const ctx = grammar({
+			owner: field('x', sym('_outer')),
+			_outer: choice(sym('_choice'), sym('d')),
+			d: str('d'),
+			pair: seq(field('left', sym('a')), str(':'), field('right', sym('b')))
+		});
+		applyNarrows([entry('owner', 'x:', 'keep', match('a'), match('d')), entry('_outer', '0', 'except', match('b'))], ctx);
+		expect(diagnosticsOf(ctx)).toEqual([
+			['edit-site-conflict', "narrow '_outer' at '0': '_choice' narrows in place, but the narrow on 'owner' at 'x:' holds it at its site"]
+		]);
+		expect(ctx.rules._choice).toEqual(choice(sym('a'), sym('b'), sym('c')));
+	});
+
+	it('applies only in a layer pass', () => {
+		expect(() => transform(field('x', sym('_choice')) as never, { 'x:': narrow(match('a')) })).toThrow(
+			"narrow at 'x:': a narrow entry applies in a layer pass, as an edits entry"
+		);
 	});
 });

@@ -4,7 +4,7 @@ import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { undisplayedKindAddress } from '../arm-names.ts';
 import type { EnrichRuleOrigin } from '../enrich-ctx.ts';
 import { isParserHiddenName, isRecord, listedNames, listEntryName, rulesEqual, supertypesOf, type GrammarRecord } from '../rule-patterns.ts';
-import type { CopyOrigin, Effect } from './effects.ts';
+import type { CopyOrigin, Effect, NarrowingOrigin } from './effects.ts';
 
 export type VerbRefusalCode = 'edit-site-missing' | 'edit-entry-invalid' | 'narrow-invalid' | 'edit-site-conflict' | 'rule-name-taken';
 
@@ -49,7 +49,7 @@ export interface VerbCtx {
 	readonly transparent: (name: string) => boolean;
 	readonly effects: Effect[];
 	readonly created: string[];
-	readonly reached: Map<string, string>;
+	readonly reached: Map<string, NarrowingOrigin>;
 	readonly groups: GroupMints;
 	readonly diagnostics: GrammarDiagnostic[];
 }
@@ -104,6 +104,27 @@ export function refusalOf(ctx: VerbCtx, apply: () => void): VerbRefusal | undefi
 		for (const name of ctx.groups.origins.keys()) if (!origins.has(name)) ctx.groups.origins.delete(name);
 		return error;
 	}
+}
+
+export interface EntryLabel {
+	readonly ownerKind: string;
+	readonly name: string;
+	readonly details: Record<string, unknown>;
+}
+
+export function applyEntry(ctx: VerbCtx, label: EntryLabel, apply: () => void): void {
+	const refusal = refusalOf(ctx, apply);
+	if (refusal === undefined) return;
+	ctx.diagnostics.push({
+		scope: 'grammar',
+		code: refusal.code,
+		severity: 'fail',
+		canProceed: false,
+		grammar: ctx.name,
+		ownerKind: label.ownerKind,
+		message: `${label.name}: ${refusal.reason}`,
+		details: label.details
+	});
 }
 
 export interface CopyRequest {

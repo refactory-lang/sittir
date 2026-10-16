@@ -29,6 +29,8 @@ export type CopyOrigin =
 	| { readonly kind: 'narrow'; readonly owner: string; readonly path: string }
 	| (Lead & { readonly kind: 'lead' });
 
+export type NarrowingOrigin = Extract<CopyOrigin, { readonly kind: 'narrow' | 'lead' }>;
+
 export interface SegmentEffect {
 	readonly kind: 'segment';
 	readonly owner: string;

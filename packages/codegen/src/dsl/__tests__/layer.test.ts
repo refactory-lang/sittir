@@ -9,7 +9,7 @@ import { evaluate, evaluateDsl, withDslGlobals } from '../../compiler/evaluate.t
 import type { EvaluatedGrammar } from '../../compiler/types.ts';
 import { canonical } from '../../transpile/evaluate-for-derivation.ts';
 import { runTreeSitterCliCapturing, treeSitterCliVersion } from '../../transpile/tree-sitter-cli.ts';
-import { alias, field, match } from '../dsl-authoring.ts';
+import { alias, field, match, narrow } from '../dsl-authoring.ts';
 import type { GrammarResult } from '../enrich.ts';
 import type { SymbolRule } from '../../grammar-shapes/grammar-json.ts';
 import { layerOptions, pendingBase } from '../layer.ts';
@@ -249,6 +249,75 @@ describe('a lead entry in a layer', () => {
 			expect(Object.keys(refused.grammar.rules)).toEqual(Object.keys(plain.grammar.rules));
 			expect(layerRecordOf(refused)?.diagnostics).toEqual([
 				expect.objectContaining({ code: 'narrow-invalid', severity: 'fail', ownerKind: 'params', message: "lead 'params.receiver': it admits no item of the list" })
+			]);
+		});
+	});
+});
+
+describe('a narrow entry in a layer', () => {
+	const choices = (rules: Record<string, unknown> = {}): GrammarResult =>
+		upstream({
+			program: ($: Symbols) => repeat(choice($.pair!, $.single!, $.function_item!)),
+			pair: ($: Symbols) => seq('(', field('left', $._choice!), ')'),
+			single: ($: Symbols) => seq('<', $.a!, '>'),
+			_choice: ($: Symbols) => choice($.a!, $.b!, $.c!),
+			a: () => 'a',
+			b: () => 'b',
+			c: () => 'c',
+			function_item: ($: Symbols) => seq('fn', field('parameters', $.params!)),
+			params: ($: Symbols) => seq(field('item', $._param!), repeat(seq(',', field('item', $._param!)))),
+			_param: ($: Symbols) => choice($.self_param!, $.param!),
+			self_param: () => 'self',
+			param: () => /[a-z]+/,
+			...rules
+		});
+	const EXCEPT_B = { pair: { '1/left:': narrow.except(match('b')) } };
+	const shape = (rule: unknown): unknown => JSON.parse(JSON.stringify(rule, (key, value: unknown) => (['metadata', 'annotations', 'inline'].includes(key) ? undefined : value)));
+
+	it("narrows in place over the rules as the layer's own edits leave them, so an edit the layer made to the rule stays", async () => {
+		await withDslGlobals(async () => {
+			const result = layer(choices(), { edits: { ...EXCEPT_B, _choice: { '2': alias('see') } } });
+			expect(layerRecordOf(result)?.diagnostics).toEqual([]);
+			expect(shape(result.grammar.rules._choice)).toEqual({
+				type: 'CHOICE',
+				members: [
+					{ type: 'SYMBOL', name: 'a' },
+					{ type: 'ALIAS', content: { type: 'SYMBOL', name: 'c' }, named: true, value: 'see' }
+				]
+			});
+		});
+	});
+
+	it("decides what its site alone reaches over the layer's own rules, so a rule the layer shares is copied", async () => {
+		await withDslGlobals(async () => {
+			const result = layer(choices(), { edits: EXCEPT_B, rules: { single: ($: Symbols) => seq('<', $._choice!, '>') } });
+			const { rules } = result.grammar;
+			expect(shape(rules._choice)).toEqual({ type: 'CHOICE', members: [{ type: 'SYMBOL', name: 'a' }, { type: 'SYMBOL', name: 'b' }, { type: 'SYMBOL', name: 'c' }] });
+			expect(shape(rules._choice_pair)).toEqual({ type: 'CHOICE', members: [{ type: 'SYMBOL', name: 'a' }, { type: 'SYMBOL', name: 'c' }] });
+			expect(JSON.stringify(rules.pair)).toContain('"_choice_pair"');
+			expect(layerRecordOf(result)?.effects).toContainEqual(
+				expect.objectContaining({ kind: 'copy', copy: '_choice_pair', source: '_choice', context: 'pair', origin: { kind: 'narrow', owner: 'pair', path: '1/left:' } })
+			);
+		});
+	});
+
+	it('applies before the leads, so its copies come ahead of theirs', async () => {
+		await withDslGlobals(async () => {
+			const edits = { params: { '.': lead('item', 'receiver', match('self_param')) }, pair: { '1/left:': narrow(match('a'), match('b')) } };
+			const result = layer(layer(choices(), {}), { edits });
+			expect(layerRecordOf(result)?.diagnostics).toEqual([]);
+			expect(Object.keys(result.grammar.rules).slice(-3)).toEqual(['_choice_pair', '_params_receiver', 'params_receiver_group']);
+		});
+	});
+
+	it('records a refused narrow with its code, and drops the entry', async () => {
+		await withDslGlobals(async () => {
+			const plain = layer(choices(), {});
+			const refused = layer(choices(), { edits: { pair: { '1/left:': narrow(match('missing')) } } });
+			expect(Object.keys(refused.grammar.rules)).toEqual(Object.keys(plain.grammar.rules));
+			expect(shape(refused.grammar.rules.pair)).toEqual(shape(plain.grammar.rules.pair));
+			expect(layerRecordOf(refused)?.diagnostics).toEqual([
+				expect.objectContaining({ code: 'narrow-invalid', severity: 'fail', ownerKind: 'pair', message: "narrow 'pair' at '1/left:': it leaves the site no arm" })
 			]);
 		});
 	});

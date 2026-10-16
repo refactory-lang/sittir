@@ -20,6 +20,10 @@ A leading-element split of a separated list: the list rule, its item field, the 
 
 What made a copy, which decides what the copy inherits and which projection lists it. A `path` (an edit path that enters a rule) or a `copy` (`copy()` itself) makes a form that keeps its source's shape, so the copy takes its source's options and labels. A `narrow` or a `lead` makes a form with a new shape, which inherits nothing. A `lead` origin is the `Lead` entry as the layer resolved it, in this layer's field names, which the lead's `bindingEffects` entry repeats.
 
+### `packages/codegen/src/dsl/verbs/effects.ts::NarrowingOrigin`
+
+The origin of a narrowing: a `narrow` entry or a `lead`. A rule a narrowing reaches is marked with it (`verbs/copy.ts::VerbCtx`), so a later narrowing that would change the rule in place can name the one that holds it.
+
 ### `packages/codegen/src/dsl/verbs/effects.ts::SegmentEffect`
 
 A field edit's effect on option paths: under the kind `owner`, the slot segment `from` (a field's `name:`, a wrapped child's `kind:` or a token's quoted text) is now `to`. Wire records one per field edit, with the owner the edit names; `effectsForOwners` gives it to every rule that reaches that owner.
@@ -210,7 +214,7 @@ The groups the leads in one context name, their origins, and the dedupe map of e
 
 ### `packages/codegen/src/dsl/verbs/copy.ts::VerbCtx`
 
-The state the verbs work on: the grammar view they read lists and names from; its rules, which the verbs edit in place; the supertype and inline lists the copies join (`mintLists`); the supertype names a walk stops at; whether the parse tree shows a rule (`transparent`: a hidden name, a supertype or an inline rule); the effects the verbs record; the rules they create, in creation order; each rule a lead's item holds, mapped to that lead's list (`reached`); the groups they name (`GroupMints`); and the diagnostics a refusal joins. The layer's context extends it (`layer.ts::LayerCtx`).
+The state the verbs work on: the grammar view they read lists and names from; its rules, which the verbs edit in place; the supertype and inline lists the copies join (`mintLists`); the supertype names a walk stops at; whether the parse tree shows a rule (`transparent`: a hidden name, a supertype or an inline rule); the effects the verbs record; the rules they create, in creation order; each rule an earlier narrowing reached, mapped to that narrowing's origin (`reached`); the groups they name (`GroupMints`); and the diagnostics a refusal joins. The layer's context extends it (`layer.ts::LayerCtx`).
 
 ### `packages/codegen/src/dsl/verbs/copy.ts::VerbLog`
 
@@ -223,6 +227,14 @@ A verb context over a grammar view: its rules (a copy, unless the caller hands t
 ### `packages/codegen/src/dsl/verbs/copy.ts::refusalOf`
 
 Applies `apply` and returns the `VerbRefusal` it throws, after undoing all it did: the rules it added or changed, the effects, created names and list entries it appended, the rules it marked reached, and the groups it registered. Any other error passes through. A refused entry so leaves the context as it found it, and the entries after it apply as if it were absent.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::EntryLabel`
+
+How an entry's refusal is reported: the kind it is filed under, the name its message starts with, and the details it carries.
+
+### `packages/codegen/src/dsl/verbs/copy.ts::applyEntry`
+
+Applies one entry of the whole-grammar phase (`refusalOf`). A refused entry leaves no trace and joins the diagnostics as a blocking diagnostic with its verb code and the message `<name>: <reason>`.
 
 ### `packages/codegen/src/dsl/verbs/copy.ts::CopyRequest`
 
@@ -240,13 +252,13 @@ The source a recorded copy was made from, or `undefined` when no copy effect nam
 
 Makes one copy and returns its name. A name the rules already hold is reused when the effects record it as a copy of the same source with an equal body (`rule-patterns.ts::rulesEqual`): one copy per source, part and context. Another body is `edit-site-conflict`, and a rule that is no copy of this source is `rule-name-taken`. A new copy follows every other rule; its name joins the created list and every supertype and inline list its source is in, and its copy effect the effects.
 
-### `packages/codegen/src/dsl/verbs/narrow.ts::ItemPositions`
+### `packages/codegen/src/dsl/verbs/narrow.ts::SitePositions`
 
-How many positions of a site's own structure each rule name occupies, and which rules (or the site's expression itself, `the list item`) hold it.
+How many positions of a site's own structure each rule name occupies, and which rules (or the site's expression itself, as the caller names it) hold it.
 
 ### `packages/codegen/src/dsl/verbs/narrow.ts::NO_POSITIONS`
 
-The empty `ItemPositions`, for a narrowing that never narrows in place (`keep`).
+The empty `SitePositions`, for a narrowing that never narrows in place (`keep`).
 
 ### `packages/codegen/src/dsl/verbs/narrow.ts::NarrowDirection`
 
@@ -254,15 +266,48 @@ What a narrowing keeps at its site: `keep` keeps only the admitted arms (`narrow
 
 ### `packages/codegen/src/dsl/verbs/narrow.ts::NarrowSite`
 
-One site a narrowing applies to: the reference it narrows, the context its copies are named for, the copies' origin, the rules the narrowing walked (`reach`, which a lead's two sides share), and for `except` each rule's reference count (`sites`, which decides whether a hidden rule is the site's own) and the site's positions (`ItemPositions`).
+One site a narrowing applies to: the reference it narrows, the context its copies are named for, the narrowing's origin (`verbs/effects.ts::NarrowingOrigin`), the rules the narrowing walked (`reach`, which a lead's two sides share), and for `except` each rule's reference count (`sites`, which decides whether a hidden rule is the site's own) and the site's positions (`SitePositions`).
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::NarrowEntry`
+
+A `narrow` entry as wire queues it: the kind whose `edits` entry it is, its path, its direction and its admits.
 
 ### `packages/codegen/src/dsl/verbs/narrow.ts::Narrowing`
 
 The state one narrowing works in: the verb context, the site, and whether it keeps the admits.
 
+### `packages/codegen/src/dsl/verbs/narrow.ts::applyNarrows`
+
+The layer's `narrow` entries, in the order wire queued them, each applied as an entry (`verbs/copy.ts::applyEntry`) under the message `narrow '<kind>' at '<path>'`. They run in the whole-grammar phase with the path edits, before the leads, so each sees the rules as the layer's own edits left them.
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::applyNarrowEntry`
+
+Applies one `narrow` entry at the member its path names in its kind's rule (`transform/transform-path.ts::applyPathInRules`), so a path sees through the rule's own enrich lifts as every edit path does.
+- The copies are in the context of the entry's kind, with the entry as their origin.
+- Whether a hidden rule is the site's own is read from every rule's references (`rule-patterns.ts::countSymbols`), counted once for the entry, before it applies.
+- The site's positions are counted on each member before it narrows (`sitePositions`), expanding the kinds the admits restrict (`withinKinds`); the expression itself is `the site`.
+- A narrowing that leaves the member nothing is `narrow-invalid`. Each rule the site holds is then marked reached by the entry (`holdReached`).
+- A path that names no member is `edit-site-missing`: the path model reports one as `transform/transform-path.ts::ApplyPathSkip`. A field segment that names another field stays the path model's hard error, as it is for every entry.
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::withinKinds`
+
+The kinds an admit list restricts (`within`), at any depth: the visible kinds a narrowing walks into, so a site's positions count what they hold.
+
 ### `packages/codegen/src/dsl/verbs/narrow.ts::applyNarrow`
 
-Narrows a site's reference to what the admits allow (`keep`) or to everything else (`except`), and returns the narrowed reference, or `undefined` when nothing of it is left: the caller words that refusal for its own surface, as a lead's head does ('it admits no item of the list') and its rest ('it leaves the list no item'). Under `except` the walk starts exclusive, so a hidden rule only the site reaches narrows in place.
+Narrows a site's reference to what the admits allow (`keep`) or to everything else (`except`), and returns the narrowed reference, or `undefined` when nothing of it is left: the caller words that refusal for its own surface, as a lead's head does ('it admits no item of the list'), its rest ('it leaves the list no item') and a `narrow` entry ('it leaves the site no arm'). Under `except` the walk starts exclusive, so a hidden rule only the site reaches narrows in place.
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::holdReached`
+
+Marks each rule a site holds as reached by its narrowing (`VerbCtx.reached`), unless an earlier one already holds it, so a later narrowing cannot change it in place.
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::siteNoun`
+
+How a refusal names the narrowed site: a lead's `the item`, or a `narrow` entry's `the site`.
+
+### `packages/codegen/src/dsl/verbs/narrow.ts::heldBy`
+
+How an `edit-site-conflict` names the narrowing that holds a rule: `the lead on '<list>' holds it in its item`, or `the narrow on '<kind>' at '<path>' holds it at its site`.
 
 ### `packages/codegen/src/dsl/verbs/narrow.ts::copyFor`
 
@@ -286,7 +331,7 @@ Narrows one reference, or returns `undefined` when nothing of it is left.
 - A visible kind the admits do not name stays under `except` and goes under `keep`. A kind admitted twice is `narrow-invalid`. A supertype or inline rule whose name reads visible is still a kind here, so one that holds an admitted kind (`admittedInside`) is refused rather than split.
 - A kind admitted with no restriction is kept whole, renamed to `as` when the match gives one (`renamedKind`), and goes under `except`.
 - A kind admitted with a restriction must have a rule to narrow; an alias of a literal is `narrow-invalid`.
-- A kind admitted with a restriction is narrowed by `narrowWithin`. `keep` always copies it, `_<rule>_<context>`, shown as `as` or else as `<kind>_<context>`, so a form never takes its kind's own name. `except` narrows a visible kind in place, losing its admitted forms wherever else the grammar uses it, but only when the site holds it at no other position (`ItemPositions`): a second position would lose forms on both sides, so that is `narrow-invalid`. Every in-place narrowing goes through `narrowInPlace`. A hidden rule is narrowed in place only when `exclusiveTo` allows, and copied in the site's context otherwise.
+- A kind admitted with a restriction is narrowed by `narrowWithin`. `keep` always copies it, `_<rule>_<context>`, shown as `as` or else as `<kind>_<context>`, so a form never takes its kind's own name. `except` narrows a visible kind in place, losing its admitted forms wherever else the grammar uses it, but only when the site holds it at no other position (`SitePositions`): a second position would lose forms on both sides, so that is `narrow-invalid`. Every in-place narrowing goes through `narrowInPlace`. A hidden rule is narrowed in place only when `exclusiveTo` allows, and copied in the site's context otherwise.
 - A choice narrows each arm and keeps the arms left in their order; one arm left stands alone.
 - A hidden rule (`isDescended`) narrows its body. A body that narrows to one reference is that reference; any other narrowed body is narrowed in place or copied, as above.
 - Anything else stays under `except` and goes under `keep`, unless it holds an admitted kind (`admittedInside`): a sequence, a supertype or a field the walk cannot divide would put that kind on both sides, so it is `narrow-invalid`.
@@ -299,28 +344,28 @@ The first admitted kind a rule holds as a child of the node it sits in: through 
 
 Narrows a kind's body to a match's restriction. The restriction's position is the field it names, or for an unfielded child a choice holding an admitted kind, found in the body or in a hidden rule it descends into. The kind must hold exactly one such position, outside any repeat: two sides cannot split a position the kind holds more than once (twice in its body, under a repeat, or through a recursive hidden rule, which shows as two), so those are `narrow-invalid`, as is a restriction with no position. The position is narrowed by `narrowRef`, and a position left empty is `narrow-invalid`. Under `keep`, an alternative that does not hold the position goes, and an optional holding it becomes required, since a claim that tests the position needs it present; `except` keeps every alternative. A hidden rule on the way is narrowed in place or copied, by the same rule as `narrowRef`'s.
 
-### `packages/codegen/src/dsl/verbs/narrow.ts::itemPositions`
+### `packages/codegen/src/dsl/verbs/narrow.ts::sitePositions`
 
-The positions each rule name occupies in the item's own structure, read on the grammar as `keep` left it, before `except` narrows anything. The walk starts at the item expression and expands the rules the narrowing walked (`NarrowSite.reach`) and every rule the parse tree does not show (a hidden name, or a supertype or inline rule of any name), since those are the item's structure; a visible kind outside the reach is a node of its own, and what it holds is not counted. Each symbol occurrence is a position, a rule already on the walk's path not expanded again. So a kind the item holds at two fields, through a hidden rule it holds twice, or inside itself has more than one position; the narrowed position is one, so any other refuses. A position under a repeat or a recursion in the restriction's own path never gets here: `narrowWithin` refuses the first, and `narrowRef` the second, as a sequence it cannot divide. Rust's item also reaches `parameter` through the expressions nested in it, at a closure's parameters, which this walk leaves outside: the in-place narrowing may lose forms there.
+The positions each rule name occupies in a site's own structure, counted before `except` narrows anything: a lead's item on the grammar as its head (`keep`) left it, a `narrow` entry's member before it applies. The walk starts at the site's expression, which the caller names (`top`), and expands the rules the narrowing walks (`reach`: what a lead's head walked, or the kinds a `narrow` entry's admits restrict) and every rule the parse tree does not show (a hidden name, or a supertype or inline rule of any name), since those are the site's structure; a visible kind outside the reach is a node of its own, and what it holds is not counted. Each symbol occurrence is a position, a rule already on the walk's path not expanded again. So a kind the site holds at two fields, through a hidden rule it holds twice, or inside itself has more than one position; the narrowed position is one, so any other refuses. A position under a repeat or a recursion in the restriction's own path never gets here: `narrowWithin` refuses the first, and `narrowRef` the second, as a sequence it cannot divide. Rust's lead item also reaches `parameter` through the expressions nested in it, at a closure's parameters, which this walk leaves outside: the in-place narrowing may lose forms there.
 
 ### `packages/codegen/src/dsl/verbs/narrow.ts::narrowInPlace`
 
-Writes a rule `except` narrows in place, unless an earlier lead's item holds it (`VerbCtx.reached`): narrowing it would take forms from that lead's item after its split, so it is `edit-site-conflict`.
+Writes a rule `except` narrows in place, unless an earlier narrowing reached it (`VerbCtx.reached`), at a lead's item or a `narrow` entry's site: narrowing it would take forms from that site after it was narrowed, so it is `edit-site-conflict`, naming the narrowing that holds it (`heldBy`).
 
 ### `packages/codegen/src/dsl/verbs/lead.ts::applyLeads`
 
-The whole-grammar phase of a layer's lead entries, in the order wire queued them. Each entry's item field and admits are first read through the layer's own field effects (`verbs/effects.ts::boundFieldNameOf`, `verbs/effects.ts::bindMatch`), since an entry names the base's fields. A refused lead leaves no trace (`verbs/copy.ts::refusalOf`) and joins the diagnostics with its verb code and the message `lead '<list>.<field>': <reason>`. The leads' groups then follow every lead copy (`appendLeadGroups`).
+The whole-grammar phase of a layer's lead entries, in the order wire queued them. Each entry's item field and admits are first read through the layer's own field effects (`verbs/effects.ts::boundFieldNameOf`, `verbs/effects.ts::bindMatch`), since an entry names the base's fields. Each applies as an entry (`verbs/copy.ts::applyEntry`): a refused lead leaves no trace and joins the diagnostics with its verb code and the message `lead '<list>.<field>': <reason>`. The leads' groups then follow every lead copy (`appendLeadGroups`).
 
 ### `packages/codegen/src/dsl/verbs/lead.ts::applyLead`
 
 Applies one lead to the context:
 - The list must be a rule, or the lead is `edit-site-missing`, and a separated list whose element is the lead's item field, as the derivation reads it (`rule-patterns.ts::fieldedHeadListOf`), with no leading separator and no mandatory trailing one; otherwise it is `edit-entry-invalid`.
-- The head: `keep` narrows the item to what the lead admits, in the context of the lead's field (`verbs/narrow.ts::applyNarrow`). The rest: `except` narrows it to everything else, in the context of the item field, after the item's positions are counted on the grammar as the head left it (`verbs/narrow.ts::itemPositions`), with each rule's references (`referenceSites`). Every item of the plain list holds the rest (`replaceItems`). A lead that admits no item, or leaves the list none, is `narrow-invalid`.
+- The head: `keep` narrows the item to what the lead admits, in the context of the lead's field (`verbs/narrow.ts::applyNarrow`). The rest: `except` narrows it to everything else, in the context of the item field, after the item's positions are counted on the grammar as the head left it (`verbs/narrow.ts::sitePositions`, the expression named `the list item`), with each rule's references (`referenceSites`). Every item of the plain list holds the rest (`replaceItems`). A lead that admits no item, or leaves the list none, is `narrow-invalid`.
 - The owners are the rules other than the list and the lead copies made so far. They must hold the list only as a field's whole content (`listSites`), all under one field name; otherwise the lead is `edit-entry-invalid`.
 - The group is `seq(SEP, optional(field(F, <list>)))`, where `SEP` is the list's separator and `F` the owners' field, the field required when the list takes no trailing separator, named as enrich's automatic-group primitive names it, `<list>_<field>_group` (`automatic-groups.ts::visibleGroupSynthName`). A group it cannot name is `edit-entry-invalid`.
 - The receiver form is a copy of the list in the context of the lead's field, `_<list>_<field>`, shown as `<list>_<field>`, with the body `seq(field(<field>, HEAD), optional(group))`, its optionals in the list's own spelling (`optionalSpelling`).
 - Every owner field that held the list then holds a choice of the plain list and the receiver form (`withReceiverForm`), so the parser takes the receiver only first.
-- Each rule the item holds is marked reached for this list (`VerbCtx.reached`), so a later lead cannot narrow it in place.
+- Each rule the item holds is marked reached by this lead (`verbs/narrow.ts::holdReached`), so a later narrowing cannot narrow it in place.
 
 The lead records no effect of its own: its copies carry it as their origin, and its `bindingEffects` entry is projected from them (`verbs/effects.ts::leadEffectOf`).
 
@@ -352,10 +397,6 @@ The fields of `owner` whose whole content is the list. An owner that holds the l
 
 The rule with every field that holds the list holding a choice of the list and the receiver form.
 
-### `packages/codegen/src/dsl/verbs/lead.ts::countSymbols`
-
-How many times each rule name occurs as a symbol in a rule, each occurrence apart.
-
 ### `packages/codegen/src/dsl/verbs/lead.ts::referenceSites`
 
-How many places reference each rule, counted after the head has copied its forms, so a form that still holds a hidden rule keeps it from narrowing in place. Every symbol in every rule counts, each occurrence apart, except the list's own: the rest narrows every item of the list alike, so the list counts its item expression once (each occurrence in it apart) and its separator once.
+How many places reference each rule (`rule-patterns.ts::countSymbols`), counted after the head has copied its forms, so a form that still holds a hidden rule keeps it from narrowing in place. Every symbol in every rule counts, each occurrence apart, except the list's own: the rest narrows every item of the list alike, so the list counts its item expression once (each occurrence in it apart) and its separator once.

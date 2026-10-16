@@ -957,7 +957,7 @@ Partitions the config's `rules:` functions into `ruleCauses` and
 
 One `edits:` entry: the owner kind it patches, its path key, and the form
 of its placeholder (`PatchForm`: `field`, `variant`, `alias`, `rule`,
-`default`, `group`, `flatten`, `regex`, `preference`, `lead`, or `literal` for a raw
+`default`, `group`, `flatten`, `regex`, `preference`, `narrow`, `lead`, or `literal` for a raw
 rule value), with the placeholder's name where it has one. `lifts` names the enrich lifts the entry rewrote or
 renamed while it applied (`WireContext.liftClaims`), so the diagnostic records credit it with the records those
 lifts own.
@@ -1644,7 +1644,7 @@ The layer pass's handle (`WireLayer`), where wire's refusals and the lead entrie
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireLayer`
 
-What a layer pass hands wire: the layer's name, the diagnostics list wire's refusals join, and the lead entries wire queues for the whole-grammar phase, in the order it evaluates them.
+What a layer pass hands wire: the layer's name, the diagnostics list wire's refusals join, and the `narrow` and lead entries wire queues for the whole-grammar phase, each in the order it evaluates them.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireRefusal`
 
@@ -1661,6 +1661,10 @@ Records a refusal against the wire context the running rule callback evaluates i
 ### `packages/codegen/src/dsl/wire/wire.ts::wireQueueLead`
 
 Queues a lead entry for the layer's whole-grammar phase, its list the kind whose callback is running, as a `verbs/effects.ts::Lead`. Outside a layer pass the entry has no phase to run in, so it throws.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireQueueNarrow`
+
+Queues a `narrow` entry for the layer's whole-grammar phase, as a `verbs/narrow.ts::NarrowEntry` of the kind whose callback is running, with its path. Outside a layer pass the entry has no phase to run in, so it throws.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.editedMints`
 

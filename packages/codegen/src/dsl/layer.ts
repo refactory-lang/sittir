@@ -21,6 +21,7 @@ import { baseRulesOf } from './shared.ts';
 import { verbCtxOf, type VerbCtx } from './verbs/copy.ts';
 import { effectsForOwners, rewriteInherited, type AliasEffect, type Effect, type SegmentEffect } from './verbs/effects.ts';
 import { applyLeads } from './verbs/lead.ts';
+import { applyNarrows } from './verbs/narrow.ts';
 import { deadEnrichMints, withoutDeadNames } from './wire/dead-mints.ts';
 import { derivationRecordsOf } from './wire/derivation-records.ts';
 import type { LiftName } from './wire/lift-names.ts';
@@ -283,7 +284,7 @@ export function runLayerPass(base: PendingBase<unknown>, config: LayerConfig): L
 	const diagnostics = [...(inherited?.diagnostics ?? [])];
 	const completed = intake(source, { config, name, inherited, diagnostics });
 	completePendingBase(base, completed);
-	const layer: WireLayer = { name, diagnostics, leads: [] };
+	const layer: WireLayer = { name, diagnostics, narrows: [], leads: [] };
 	const wired = wireImpl(wireConfigOf(config, { name, inherited }), completed, source, layer);
 	const wire = wired.__wireContext__!;
 	const anyName = layerSymbols();
@@ -308,6 +309,7 @@ export function runLayerPass(base: PendingBase<unknown>, config: LayerConfig): L
 		protectedNames: protectedWireRuleNames(wired),
 		symbols
 	};
+	applyNarrows(layer.narrows, ctx);
 	applyLeads(layer.leads, ctx);
 	return completeLayer(evaluated, ctx);
 }

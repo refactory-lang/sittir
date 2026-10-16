@@ -546,7 +546,7 @@ calls.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::applyPathPatches`
 
-Applies a path-keyed patch set: a `lead` entry goes to `queueLeadEntry`; every other non-variant entry applies at its path, each as its own active patch site
+Applies a path-keyed patch set: a `narrow` entry is queued, with its path, for the layer's whole-grammar phase (`wire/wire.ts::wireQueueNarrow`), and a `lead` entry goes to `queueLeadEntry`; neither walks its path here. Every other non-variant entry applies at its path, each as its own active patch site
 (`wireWithPatchSites`), then the `variant()` entries together (`applyVariantPatches`), then sibling
 defaults an `arm.default` entry displaced are cleared.
 
@@ -1717,6 +1717,10 @@ stripped.
 ```text
 // Exhaustiveness guard — TypeScript narrows `head` to `never` here.
 ```
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::applyPathInRules`
+
+Applies a patch at a path in one rule of a rule set, after wire has evaluated it: the whole-grammar phase's path walk. The walk runs in a wire context whose base is the rule set, so an enrich lift the path passes through reads its body from the set, and each lift body the patch rewrote is written back beside the rule.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::walkKindMatch`
 

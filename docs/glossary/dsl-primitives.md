@@ -692,7 +692,7 @@ The placeholder builder for one direction.
 
 ### `packages/codegen/src/dsl/primitives/narrow.ts::narrow`
 
-`narrow(...admits)` keeps only the admitted arms at its entry's site, and `narrow.except(...admits)` every other arm (`verbs/narrow.ts::applyNarrow`).
+`narrow(...admits)` keeps only the admitted arms at its entry's site, and `narrow.except(...admits)` every other arm. The entry is queued with the layer's path edits and applies in its whole-grammar phase, before the leads, over the rules as the layer's own edits left them (`verbs/narrow.ts::applyNarrows`).
 
 ### `packages/codegen/src/dsl/primitives/narrow.ts::withinOf`
 

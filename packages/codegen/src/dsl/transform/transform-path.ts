@@ -10,7 +10,7 @@ import {
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { readRuleMetadata } from '../rule-metadata.ts';
-import { wireGetLiftBody, wireSetLiftBody, wireWithLiftScope } from '../wire/wire.ts';
+import { wireGetLiftBody, wireSetLiftBody, wireWithLiftScope, withWireContext } from '../wire/wire.ts';
 
 interface RuntimeDsl {
 	seq?: (...members: RuntimeRule[]) => RuntimeRule;
@@ -174,6 +174,17 @@ export function applyPath(
 			throw new Error(`applyPath: unknown segment kind '${(_exhaustive as PathSegment).kind}'`);
 		}
 	}
+}
+
+export function applyPathInRules(
+	rules: Record<string, unknown>,
+	kind: string,
+	segments: readonly PathSegment[],
+	patch: (member: RuntimeRule) => RuntimeRule
+): void {
+	const { result, ctx } = withWireContext(kind, () => applyPath(rules[kind] as RuntimeRule, segments, patch), { grammar: { rules } });
+	rules[kind] = result;
+	for (const [name, body] of ctx.liftBodies) rules[name] = body;
 }
 
 function descendThroughPrecWrapper(

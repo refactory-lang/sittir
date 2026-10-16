@@ -7,6 +7,7 @@ import type { ArmDefaultPlaceholder } from '../dsl/primitives/arm.ts';
 import type { FlattenPlaceholder } from '../dsl/primitives/flatten.ts';
 import type { RegexPlaceholder } from '../dsl/primitives/regex.ts';
 import type { LeadPlaceholder } from '../dsl/primitives/lead.ts';
+import type { NarrowPlaceholder } from '../dsl/primitives/narrow.ts';
 import type { FieldLike } from '../types/runtime-shapes.ts';
 
 type PeelPrec<N> = N extends PrecRuleUnion ? PeelPrec<N['content']> : N;
@@ -131,6 +132,7 @@ export type TransformPatchValue =
 	| ArmDefaultPlaceholder
 	| FlattenPlaceholder
 	| RegexPlaceholder
+	| NarrowPlaceholder
 	| LeadPlaceholder;
 
 export type TransformPatchMap = Partial<Record<string, TransformPatchValue>>;

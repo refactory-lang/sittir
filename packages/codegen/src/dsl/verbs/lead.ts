@@ -5,6 +5,7 @@ import { collapseSingletonMintOrdinals, visibleGroupSynthName } from '../automat
 import { makeRuleMetadata } from '../rule-metadata.ts';
 import {
 	aliasOf,
+	countSymbols,
 	fieldedHeadListOf,
 	isRecord,
 	listEntryName,
@@ -16,27 +17,16 @@ import {
 	type SymbolSource
 } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
-import { applyCopy, refusalOf, VerbRefusal, type VerbCtx } from './copy.ts';
-import { bindMatch, boundFieldNameOf, type CopyOrigin, type Lead, type SegmentEffect } from './effects.ts';
-import { applyNarrow, itemPositions, NO_POSITIONS } from './narrow.ts';
+import { applyCopy, applyEntry, VerbRefusal, type VerbCtx } from './copy.ts';
+import { bindMatch, boundFieldNameOf, type Lead, type NarrowingOrigin, type SegmentEffect } from './effects.ts';
+import { applyNarrow, holdReached, NO_POSITIONS, sitePositions } from './narrow.ts';
 
 export function applyLeads(leads: readonly Lead[], ctx: VerbCtx): void {
 	if (leads.length === 0) return;
 	const fieldNameOf = boundFieldNameOf(ctx.effects.filter((effect): effect is SegmentEffect => effect.kind === 'segment'));
 	for (const entry of leads) {
 		const bound: Lead = { ...entry, item: fieldNameOf(entry.list, entry.item), admits: entry.admits.map((admit) => bindMatch(admit, (kind) => kind, fieldNameOf)) };
-		const refusal = refusalOf(ctx, () => applyLead(bound, ctx));
-		if (refusal === undefined) continue;
-		ctx.diagnostics.push({
-			scope: 'grammar',
-			code: refusal.code,
-			severity: 'fail',
-			canProceed: false,
-			grammar: ctx.name,
-			ownerKind: entry.list,
-			message: `lead '${entry.list}.${entry.field}': ${refusal.reason}`,
-			details: { list: entry.list, field: entry.field }
-		});
+		applyEntry(ctx, { ownerKind: entry.list, name: `lead '${entry.list}.${entry.field}'`, details: { list: entry.list, field: entry.field } }, () => applyLead(bound, ctx));
 	}
 	appendLeadGroups(ctx);
 }
@@ -51,11 +41,11 @@ export function applyLead(lead: Lead, ctx: VerbCtx): void {
 	if (shape.leading !== undefined) throw new VerbRefusal('edit-entry-invalid', 'the list takes a leading separator');
 	if (shape.trailing === 'mandatory') throw new VerbRefusal('edit-entry-invalid', 'the list takes a mandatory trailing separator');
 	const element = shape.element as unknown as GrammarRecord;
-	const origin: CopyOrigin = { kind: 'lead', ...lead };
+	const origin: NarrowingOrigin = { kind: 'lead', ...lead };
 	const reach = new Set<string>();
 	const head = applyNarrow({ ref: element.content, context: field, origin, reach, sites: new Map(), positions: NO_POSITIONS }, admits, 'keep', ctx);
 	if (head === undefined) throw new VerbRefusal('narrow-invalid', 'it admits no item of the list');
-	const positions = itemPositions(element.content, ctx, reach);
+	const positions = sitePositions(element.content, ctx, reach, 'the list item');
 	const sites = referenceSites(rules, list, [element.content, shape.separatorRule]);
 	const rest = applyNarrow({ ref: element.content, context: item, origin, reach, sites, positions }, admits, 'except', ctx);
 	if (rest === undefined) throw new VerbRefusal('narrow-invalid', 'it leaves the list no item');
@@ -74,7 +64,7 @@ export function applyLead(lead: Lead, ctx: VerbCtx): void {
 	const display = `${list}_${field}`;
 	const receiverForm = aliasOf(applyCopy({ source: list, part: '.', context: field, body, origin, display }, ctx), display);
 	for (const owner of owners) rules[owner] = withReceiverForm(rules[owner], list, receiverForm);
-	for (const name of positions.counts.keys()) if (!ctx.reached.has(name)) ctx.reached.set(name, list);
+	holdReached(positions, origin, ctx);
 }
 
 export function appendLeadGroups(ctx: VerbCtx): void {
@@ -147,15 +137,6 @@ function withReceiverForm(rule: unknown, list: string, receiverForm: GrammarReco
 	const out: GrammarRecord = {};
 	for (const [key, value] of Object.entries(rule)) out[key] = key === 'members' || key === 'content' ? withReceiverForm(value, list, receiverForm) : value;
 	return out;
-}
-
-function countSymbols(rule: unknown, sites: Map<string, number> = new Map()): Map<string, number> {
-	if (Array.isArray(rule)) for (const r of rule) countSymbols(r, sites);
-	else if (isRecord(rule)) {
-		if (rule.type === 'SYMBOL' && typeof rule.name === 'string') sites.set(rule.name, (sites.get(rule.name) ?? 0) + 1);
-		for (const value of Object.values(rule)) countSymbols(value, sites);
-	}
-	return sites;
 }
 
 function referenceSites(rules: GrammarRecord, list: string, listParts: readonly unknown[]): Map<string, number> {

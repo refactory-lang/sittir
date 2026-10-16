@@ -271,7 +271,7 @@ patch list minted, threaded by `EditsCheck`. What `EditsCheck` consults per writ
 
 A single patch value: a rule or literal (tree-sitter's or the grammar-json
 `GrammarRule` the typed authoring builders return), or a `field` / `alias` /
-`variant` / `arm.default` / `rule` / `flatten` / `regex` / `lead` placeholder.
+`variant` / `arm.default` / `rule` / `flatten` / `regex` / `narrow` / `lead` placeholder.
 
 ### `packages/codegen/src/grammar-shapes/path-type.ts::TransformPatchMap`
 

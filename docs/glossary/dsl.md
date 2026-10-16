@@ -3997,6 +3997,10 @@ A grammar value that is a record (a rule, or a map of rules or names), not an ar
 
 Every symbol name a rule references, at any depth. The grammar bindings use it to tell whether an alias's target holds the aliased kind.
 
+### `packages/codegen/src/dsl/rule-patterns.ts::countSymbols`
+
+How many times each rule name occurs as a symbol in a rule, or in a list of rules, each occurrence apart. The narrowings read a hidden rule's references from it to tell whether a site is the rule's only one.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::fieldNames`
 
 Every field name a rule uses, at any depth.
@@ -7274,7 +7278,7 @@ Wire's config for the layer: the layer's config under its resolved name. Over an
 
 ### `packages/codegen/src/dsl/layer.ts::runLayerPass`
 
-The layer pass, run from the layer's entry. Intake completes the base and the pending base takes the result. Wire's own entry then evaluates the config's rule callbacks and lists once, against the completed base; its refusals join the pass's diagnostics and its lead entries the pass's queue (`wire/wire.ts::WireLayer`). Each body is normalized as tree-sitter normalizes it and laid over the base's rules. The pass evaluates the lists (`evaluatedLists`), builds its context (`LayerCtx`) over the layer's grammar view (`layerView`), with a `$` that knows the rules and the externals and the layer's effects resolved per owner, runs the queued lead entries as the whole-grammar phase (`verbs/lead.ts::applyLeads`), and completes the layer (`completeLayer`).
+The layer pass, run from the layer's entry. Intake completes the base and the pending base takes the result. Wire's own entry then evaluates the config's rule callbacks and lists once, against the completed base; its refusals join the pass's diagnostics and its `narrow` and lead entries the pass's queues (`wire/wire.ts::WireLayer`). Each body is normalized as tree-sitter normalizes it and laid over the base's rules. The pass evaluates the lists (`evaluatedLists`), builds its context (`LayerCtx`) over the layer's grammar view (`layerView`), with a `$` that knows the rules and the externals and the layer's effects resolved per owner, runs the queued entries as the whole-grammar phase, the `narrow` entries (`verbs/narrow.ts::applyNarrows`) and then the leads (`verbs/lead.ts::applyLeads`), and completes the layer (`completeLayer`).
 
 ### `packages/codegen/src/dsl/layer.ts::layerView`
 

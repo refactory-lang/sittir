@@ -74,7 +74,7 @@ describe('refusalOf', () => {
 		const refusal = refusalOf(ctx, () => {
 			applyCopy({ source: '_expression', part: '.', context: 'owner', body: sym('a'), origin }, ctx);
 			ctx.rules.owner = sym('_expression_owner');
-			ctx.reached.set('_expression', 'owner');
+			ctx.reached.set('_expression', { kind: 'narrow', owner: 'owner', path: '.' });
 			throw new VerbRefusal('narrow-invalid', 'refused');
 		});
 		expect(refusal?.reason).toBe('refused');

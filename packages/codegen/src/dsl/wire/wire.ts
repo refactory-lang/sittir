@@ -18,6 +18,8 @@ import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isRulePlaceholder, type RulePlaceholder } from '../primitives/rule.ts';
 import type { LeadPlaceholder } from '../primitives/lead.ts';
+import type { NarrowPlaceholder } from '../primitives/narrow.ts';
+import type { NarrowEntry } from '../verbs/narrow.ts';
 import {
 	ABSENT_VARIANT_NAME,
 	isVariantPlaceholder,
@@ -56,6 +58,7 @@ export type PatchForm =
 	| 'regex'
 	| 'preference'
 	| 'lead'
+	| 'narrow'
 	| 'literal';
 
 export interface PatchSite {
@@ -112,6 +115,7 @@ export interface WireContext {
 export interface WireLayer {
 	readonly name: string;
 	readonly diagnostics: GrammarDiagnostic[];
+	readonly narrows: NarrowEntry[];
 	readonly leads: Lead[];
 }
 
@@ -787,6 +791,13 @@ export function wireQueueLead(entry: LeadPlaceholder): void {
 	if (currentContext?.layer === undefined || list === null || list === undefined)
 		throw new Error(`lead('${entry.item}', '${entry.field}'): a lead entry applies in a layer pass, as the '.' entry of a list kind`);
 	currentContext.layer.leads.push({ list, item: entry.item, field: entry.field, admits: entry.admits });
+}
+
+export function wireQueueNarrow(entry: NarrowPlaceholder, path: string): void {
+	const owner = currentContext?.currentRuleKind;
+	if (currentContext?.layer === undefined || owner === null || owner === undefined)
+		throw new Error(`narrow at '${path}': a narrow entry applies in a layer pass, as an edits entry`);
+	currentContext.layer.narrows.push({ owner, path, direction: entry.direction, admits: entry.admits });
 }
 
 function evaluateWireLists(cfg: WireConfig<any>, ctx: WireEntryCtx & { readonly symbols: Record<string, unknown> }): void {

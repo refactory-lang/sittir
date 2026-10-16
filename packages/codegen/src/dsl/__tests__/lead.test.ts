@@ -112,7 +112,7 @@ interface Applied {
 
 function viaEdits(grammar: GrammarRecord, edits: Edits): Applied {
 	const name = grammar.name as string;
-	const layer: WireLayer = { name, diagnostics: [], leads: [] };
+	const layer: WireLayer = { name, diagnostics: [], narrows: [], leads: [] };
 	enterWired(wireImpl({ name, edits }, grammar, grammar, layer));
 	const ctx = verbCtxOf(grammar, { effects: [], diagnostics: layer.diagnostics });
 	applyLeads(layer.leads, ctx);
