@@ -93,7 +93,7 @@ Each prototype and measurement the arena steps already hold, and what 3a takes f
    - **Not ported:** `bed56e9db`'s `trace-rt` tool, which replays a named corpus entry. It is ported only if Task 4's debugging needs it.
 5. **Standing record-step context.**
    - **Historical ruling 3 measurements inform 3b.** The initial records lost single-node reads (4.8/5.0 µs versus 4.5/4.3) and held about 1.9 KB more per node. These figures motivate optimization, not an adoption veto; correctness and safety still govern cutover.
-   - **The maintainer's eager-built-records option** is to be measured against ruling 5. So nothing in 3a requires document order or contiguous subtree ranges of built records:
+   - **Direct eager immutable built records are the definitive 3b target,** compared with original ruling 5's transitional encoding at render. Nothing in 3a requires document order or contiguous subtree ranges of built records:
      - the table, its written sides and its edited test are a parsed tree's, keyed by descendant index within that tree;
      - a built node's trivia stays on the node until 3b;
      - the render asks a coordinate's tree for its sides, never a built holder.
