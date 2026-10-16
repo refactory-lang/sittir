@@ -10,6 +10,18 @@
 
 **Specs:** `docs/superpowers/specs/2026-10-09-trivia-table-design.md` (§ 1–5, rulings in § 7) and `docs/superpowers/specs/2026-10-01-shared-arena-design.md` (§ The wire, § Trivia, ruling 6.3). A bare § in 3a is the trivia-table spec's. A gap's default spacing is the seam defaults' (`docs/superpowers/specs/2026-09-14-token-seam-defaults-design.md`, over the sites of `docs/superpowers/specs/2026-09-06-punctuation-seam-spacing-design.md`); this plan derives it from them and declares none of its own.
 
+## Definitive-format decision and revised execution gate (2026-10-16)
+
+This plan implements the **canonical grammar-generated packed immutable AST** specified in `2026-10-01-shared-arena-design.md` (§ Architectural decision, 2026-10-16). Earlier language treating record adoption as conditional on outperforming N-API objects is **superseded**. The object codec remains a temporary baseline/fallback while record implementation is optimized and validated; it is not a permanent alternative format. The original measurement results, hypotheses and tasks are retained for traceability.
+
+**Stage 3b-i is a measurement and correctness milestone, not an architectural referendum.** Complete Tasks 6–10 and publish all results even when a record variant loses. A failing performance row creates an optimization follow-up with the measured workload, regression size and suspected cost; it does not cancel 3b-ii or restore the object wire as the target. A demonstrably incorrect, unsafe or catastrophically regressive implementation must not ship; resolve the implementation problem before cutover, retaining the existing transport temporarily if necessary.
+
+**Stage 3b-ii implements the definitive format.** Detail it against the measured branch, then switch constructed nodes to eager immutable, kind-specific packed records, preserving structural sharing on `$with`. The five-word generic cell in Task 7 is an initial codec/measurement vehicle, not a final requirement: assess direct per-kind inline scalar/bit/ID fields, inline fixed-size child references, list runs and UTF-8 offsets. Generated Rust attributes and TypeScript offsets remain derived from one layout pass. Parsed nodes are projected directly from Tree-sitter lazily; unchanged parsed subtrees can remain coordinates. No intermediate JS AST is needed to populate records.
+
+**Required measurement extensions:** report native allocator calls/allocated bytes, occupied record bytes versus chunk capacity/slack, JS `heapUsed`, external buffers, native retained memory and RSS; compare object/record storage with equivalent wrapper forms to isolate prototype/closure effects; include parse → inspect → edit → render, native rebuilt render, single and batch read, repeated member access, small trees, deep recursion, shared children, 10,000 builds, snapshot retention, disposal and chunk growth. An external `ArrayBuffer` is zero-copy exposure, not concurrent shared-memory semantics. Check native backing lifetimes under disposal and garbage collection.
+
+**Deliverable boundaries:** distinguish (a) the packed in-process AST representation, which is definitive, from (b) a future stable persisted/interchange file format, which is not promised by this step. Do not describe immutable arena records as stack-resident; fixed-size fields are inline within heap-backed arena chunks. Keep the existing 3a trivia ownership decisions unchanged.
+
 ## Scope and sequencing
 
 `feat/typed-reader` carries the shared arena's steps 1 and 2: the typed reader (`docs/superpowers/plans/2026-10-05-typed-reader.md`, 1a to 1c-ii) and relative coordinates (`docs/superpowers/plans/2026-10-06-relative-coordinates.md`). This plan is step 3 with both trivia tables, a feature of its own on `feat/arena` that starts after that one lands. Its stages are detailed against the code when each starts: 3a and 3b's gate (3b-i) below, 3b past the gate (3b-ii) still an outline.
@@ -17,7 +29,7 @@
 | PR, on `feat/arena` | Lands | Gate |
 | --- | --- | --- |
 | **3a** | the parsed-tree trivia table: one token walk that assigns each gap's entries to a node's side, and a native table by (node, side) on `ParsedTree`; a parsed node's `$trivia` reads and writes the table, and the render prints parsed trivia from it; snapshots take their sides from it; the reader's placement, trivia on parsed wrappers, the line-gap query, the client edited set, the query-write refusal and the ir validator lane's trivia carriers go | untouched renders and validation rows unchanged in every task, the trivia-placement census recorded; every corpus extra's owner is its tree-sitter parent, and every extra lands in one side or is counted as in none; an edited render's bytes move only where a ruling moves them |
-| **3b** | the record wire: records in both directions, a parsed node's literal over its record, the derive's object codec and the napi impls gone; built nodes' trivia in their records | records match or beat napi objects on read time, one node per call and every match in one call, and on retained heap per node, and beat them on render decode, with the object wire's numbers re-taken beside the records'; then rendered bytes and validation rows unchanged |
+| **3b** | the definitive packed AST record wire: records in both directions, a parsed node's literal over its record, the derive's object codec and the napi impls gone; built nodes' trivia in their records | record and object transport measured like-for-like, optimization regressions recorded and addressed before cutover as warranted; rendered bytes, validation rows, ownership and memory safety unchanged |
 
 ## Global Constraints
 
@@ -695,9 +707,9 @@ raw-string routing metadata where the type alone cannot express its parser behav
 - **heap per tree with and without a text access:** a parse read for structure only (no `$text`, so no source buffer) against the same parse after one `$text`, beside today's tree with its JavaScript source copy;
 - **built nodes, eager records and encoded at render** (ruling 3): build time and heap per node, decode, buffer growth over 10 000 builds, and the in-place against copying setter on a shared child.
 
-**The verdict.** Each gate row, records against objects, is marked met or not met with its numbers. The README states the verdict. The branch's PR opens with it, and brainstorm takes it to the maintainer. A row that is not met stops the step with the branch intact.
+**The verdict.** Each gate row, records against objects, is marked met or not met with its numbers. The README states the verdict. The branch's PR opens with it, and brainstorm takes it to the maintainer. A row that is not met is documented and triaged as an implementation optimization; it does not revoke the definitive-format decision. Correctness or safety failures still block cutover.
 
-## Outline: 3b-ii, past the gate
+## Outline: 3b-ii, definitive packed AST cutover
 
 Detailed against master once the maintainer rules on Task 10's verdict.
 
