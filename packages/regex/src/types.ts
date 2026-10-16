@@ -619,7 +619,7 @@ export interface Pattern {
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.Alternation | T.Term>;
 	};
-	content(): Alternation | Term;
+	readonly content: () => Alternation | Term;
 }
 
 export interface Alternation {
@@ -628,7 +628,7 @@ export interface Alternation {
 	readonly __slotHints__?: {
 		readonly terms: SlotHint<NonEmptyArray<T.Term>, false, true>;
 	};
-	terms(): NonEmptyArray<Term | undefined>;
+	readonly terms: () => NonEmptyArray<Term | undefined>;
 }
 
 export interface Term {
@@ -637,7 +637,7 @@ export interface Term {
 	readonly __slotHints__?: {
 		readonly termGroups: SlotHint<NonEmptyArray<T.TermGroup>, false, true, T.TermGroup.Config>;
 	};
-	termGroups(): NonEmptyArray<TermGroup>;
+	readonly termGroups: () => NonEmptyArray<TermGroup>;
 }
 
 export interface LookaroundAssertion {
@@ -646,7 +646,7 @@ export interface LookaroundAssertion {
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.LookaheadAssertion | T.LookbehindAssertion>;
 	};
-	content(): LookaheadAssertion | LookbehindAssertion;
+	readonly content: () => LookaheadAssertion | LookbehindAssertion;
 }
 
 export interface LookaheadAssertion {
@@ -663,8 +663,8 @@ export interface LookaheadAssertion {
 		readonly content: SlotHint<NonNullable<T.LookaheadAssertion.Config>['content']>;
 		readonly pattern: SlotHint<T.Pattern>;
 	};
-	content(): number;
-	pattern(): Pattern;
+	readonly content: () => number;
+	readonly pattern: () => Pattern;
 }
 
 export interface LookbehindAssertion {
@@ -681,8 +681,8 @@ export interface LookbehindAssertion {
 		readonly content: SlotHint<NonNullable<T.LookbehindAssertion.Config>['content']>;
 		readonly pattern: SlotHint<T.Pattern>;
 	};
-	content(): number;
-	pattern(): Pattern;
+	readonly content: () => number;
+	readonly pattern: () => Pattern;
 }
 
 export interface CharacterClass {
@@ -725,9 +725,9 @@ export interface CharacterClass {
 		>;
 		readonly trailing: SlotHint<NonNullable<T.CharacterClass.Config>['trailing'], true>;
 	};
-	negation(): boolean;
-	leading(): boolean;
-	classAtoms(): readonly (
+	readonly negation: () => boolean;
+	readonly leading: () => boolean;
+	readonly classAtoms: () => readonly (
 		| ClassCharacter
 		| TSKindId.BslashDash
 		| CharacterClassEscape
@@ -737,7 +737,7 @@ export interface CharacterClass {
 		| PosixCharacterClass
 		| ClassRange
 	)[];
-	trailing(): boolean;
+	readonly trailing: () => boolean;
 }
 
 export interface PosixCharacterClass {
@@ -746,7 +746,7 @@ export interface PosixCharacterClass {
 	readonly __slotHints__?: {
 		readonly posixClassName: SlotHint<T.PosixClassName>;
 	};
-	posixClassName(): PosixClassName;
+	readonly posixClassName: () => PosixClassName;
 }
 
 export interface ClassRange {
@@ -761,8 +761,8 @@ export interface ClassRange {
 		readonly start: SlotHint<NonNullable<T.ClassRange.Config>['start']>;
 		readonly end: SlotHint<NonNullable<T.ClassRange.Config>['end']>;
 	};
-	start(): ClassCharacter | CharacterClassEscape | ControlEscape | TSKindId.Dash;
-	end(): ClassCharacter | CharacterClassEscape | ControlEscape | TSKindId.Dash;
+	readonly start: () => ClassCharacter | CharacterClassEscape | ControlEscape | TSKindId.Dash;
+	readonly end: () => ClassCharacter | CharacterClassEscape | ControlEscape | TSKindId.Dash;
 }
 
 export interface AnonymousCapturingGroup {
@@ -774,7 +774,7 @@ export interface AnonymousCapturingGroup {
 	readonly __slotHints__?: {
 		readonly pattern: SlotHint<T.Pattern>;
 	};
-	pattern(): Pattern;
+	readonly pattern: () => Pattern;
 }
 
 export interface NamedCapturingGroup {
@@ -793,9 +793,9 @@ export interface NamedCapturingGroup {
 		readonly groupName: SlotHint<T.GroupName>;
 		readonly pattern: SlotHint<T.Pattern>;
 	};
-	content(): number;
-	groupName(): GroupName;
-	pattern(): Pattern;
+	readonly content: () => number;
+	readonly groupName: () => GroupName;
+	readonly pattern: () => Pattern;
 }
 
 export interface NonCapturingGroup {
@@ -807,7 +807,7 @@ export interface NonCapturingGroup {
 	readonly __slotHints__?: {
 		readonly pattern: SlotHint<T.Pattern>;
 	};
-	pattern(): Pattern;
+	readonly pattern: () => Pattern;
 }
 
 export interface ZeroOrMore {
@@ -819,7 +819,7 @@ export interface ZeroOrMore {
 	readonly __slotHints__?: {
 		readonly lazy: SlotHint<NonNullable<T.ZeroOrMore.Config>['lazy'], true>;
 	};
-	lazy(): boolean;
+	readonly lazy: () => boolean;
 }
 
 export interface OneOrMore {
@@ -831,7 +831,7 @@ export interface OneOrMore {
 	readonly __slotHints__?: {
 		readonly lazy: SlotHint<NonNullable<T.OneOrMore.Config>['lazy'], true>;
 	};
-	lazy(): boolean;
+	readonly lazy: () => boolean;
 }
 
 export interface Optional {
@@ -843,7 +843,7 @@ export interface Optional {
 	readonly __slotHints__?: {
 		readonly lazy: SlotHint<NonNullable<T.Optional.Config>['lazy'], true>;
 	};
-	lazy(): boolean;
+	readonly lazy: () => boolean;
 }
 
 export interface CountQuantifier {
@@ -857,8 +857,8 @@ export interface CountQuantifier {
 		readonly content: SlotHint<T.CountQuantifierArm | T.DecimalDigits>;
 		readonly lazy: SlotHint<NonNullable<T.CountQuantifier.Config>['lazy'], true>;
 	};
-	content(): CountQuantifierArm | DecimalDigits;
-	lazy(): boolean;
+	readonly content: () => CountQuantifierArm | DecimalDigits;
+	readonly lazy: () => boolean;
 }
 
 export interface BackreferenceEscape {
@@ -867,7 +867,7 @@ export interface BackreferenceEscape {
 	readonly __slotHints__?: {
 		readonly groupName: SlotHint<T.GroupName>;
 	};
-	groupName(): GroupName;
+	readonly groupName: () => GroupName;
 }
 
 export interface NamedGroupBackreference {
@@ -876,7 +876,7 @@ export interface NamedGroupBackreference {
 	readonly __slotHints__?: {
 		readonly groupName: SlotHint<T.GroupName>;
 	};
-	groupName(): GroupName;
+	readonly groupName: () => GroupName;
 }
 
 export interface CharacterClassEscape {
@@ -885,7 +885,7 @@ export interface CharacterClassEscape {
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>;
 	};
-	content(): CharacterClassEscapeText1 | CharacterClassEscapeArm | UnicodeCharacterEscape;
+	readonly content: () => CharacterClassEscapeText1 | CharacterClassEscapeArm | UnicodeCharacterEscape;
 }
 
 export interface UnicodePropertyValueExpression {
@@ -899,8 +899,8 @@ export interface UnicodePropertyValueExpression {
 		readonly unicodePropertyValueExpressionGroup: SlotHint<T.UnicodePropertyValueExpressionGroup, true>;
 		readonly unicodePropertyValue: SlotHint<T.UnicodePropertyValue>;
 	};
-	unicodePropertyValueExpressionGroup(): UnicodePropertyValueExpressionGroup | undefined;
-	unicodePropertyValue(): UnicodePropertyValue;
+	readonly unicodePropertyValueExpressionGroup: () => UnicodePropertyValueExpressionGroup | undefined;
+	readonly unicodePropertyValue: () => UnicodePropertyValue;
 }
 
 export interface IdentityEscape {
@@ -909,7 +909,7 @@ export interface IdentityEscape {
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string>;
 	};
-	content(): string;
+	readonly content: () => string;
 }
 
 export interface TermGroup {
@@ -967,7 +967,7 @@ export interface TermGroup {
 		readonly content: SlotHint<NonNullable<T.TermGroup.Config>['content']>;
 		readonly quantifier: SlotHint<T.ZeroOrMore | T.OneOrMore | T.Optional | T.CountQuantifier, true>;
 	};
-	content():
+	readonly content: () =>
 		| TSKindId.StartAssertion
 		| TSKindId.EndAssertion
 		| TSKindId.BoundaryAssertion
@@ -988,7 +988,7 @@ export interface TermGroup {
 		| NamedCapturingGroup
 		| NonCapturingGroup
 		| InlineFlagsGroup;
-	quantifier(): ZeroOrMore | OneOrMore | Optional | CountQuantifier | undefined;
+	readonly quantifier: () => ZeroOrMore | OneOrMore | Optional | CountQuantifier | undefined;
 }
 
 export interface CountQuantifierGroup {
@@ -997,7 +997,7 @@ export interface CountQuantifierGroup {
 	readonly __slotHints__?: {
 		readonly decimalDigits: SlotHint<T.DecimalDigits, true>;
 	};
-	decimalDigits(): DecimalDigits | undefined;
+	readonly decimalDigits: () => DecimalDigits | undefined;
 }
 
 export interface CountQuantifierArm {
@@ -1008,8 +1008,8 @@ export interface CountQuantifierArm {
 		readonly decimalDigits: SlotHint<T.DecimalDigits>;
 		readonly countQuantifierGroup: SlotHint<T.CountQuantifierGroup, true>;
 	};
-	decimalDigits(): DecimalDigits;
-	countQuantifierGroup(): CountQuantifierGroup | undefined;
+	readonly decimalDigits: () => DecimalDigits;
+	readonly countQuantifierGroup: () => CountQuantifierGroup | undefined;
 }
 
 export interface CharacterClassEscapeArm {
@@ -1020,8 +1020,8 @@ export interface CharacterClassEscapeArm {
 		readonly characterClassEscapeText2: SlotHint<T.CharacterClassEscapeText2>;
 		readonly unicodePropertyValueExpression: SlotHint<T.UnicodePropertyValueExpression>;
 	};
-	characterClassEscapeText2(): CharacterClassEscapeText2;
-	unicodePropertyValueExpression(): UnicodePropertyValueExpression;
+	readonly characterClassEscapeText2: () => CharacterClassEscapeText2;
+	readonly unicodePropertyValueExpression: () => UnicodePropertyValueExpression;
 }
 
 export interface UnicodePropertyValueExpressionGroup {
@@ -1033,7 +1033,7 @@ export interface UnicodePropertyValueExpressionGroup {
 	readonly __slotHints__?: {
 		readonly unicodePropertyName: SlotHint<T.UnicodePropertyName | T.UnicodePropertyName.Types>;
 	};
-	unicodePropertyName(): UnicodePropertyName;
+	readonly unicodePropertyName: () => UnicodePropertyName;
 }
 
 export interface InlineFlagsGroupEnable {
@@ -1047,8 +1047,8 @@ export interface InlineFlagsGroupEnable {
 		readonly enabled: SlotHint<T.Flags>;
 		readonly pattern: SlotHint<T.Pattern, true>;
 	};
-	enabled(): Flags;
-	pattern(): Pattern | undefined;
+	readonly enabled: () => Flags;
+	readonly pattern: () => Pattern | undefined;
 }
 
 export interface InlineFlagsGroupToggle {
@@ -1064,9 +1064,9 @@ export interface InlineFlagsGroupToggle {
 		readonly disabled: SlotHint<T.Flags>;
 		readonly pattern: SlotHint<T.Pattern, true>;
 	};
-	enabled(): Flags;
-	disabled(): Flags;
-	pattern(): Pattern | undefined;
+	readonly enabled: () => Flags;
+	readonly disabled: () => Flags;
+	readonly pattern: () => Pattern | undefined;
 }
 
 export interface InlineFlagsGroupDisable {
@@ -1080,8 +1080,8 @@ export interface InlineFlagsGroupDisable {
 		readonly disabled: SlotHint<T.Flags>;
 		readonly pattern: SlotHint<T.Pattern, true>;
 	};
-	disabled(): Flags;
-	pattern(): Pattern | undefined;
+	readonly disabled: () => Flags;
+	readonly pattern: () => Pattern | undefined;
 }
 
 export interface Lazy {
@@ -1094,7 +1094,7 @@ export interface Lazy {
 		readonly content: SlotHint<NonNullable<TSKindId.Qmark>>;
 	};
 	readonly __aliasContent__?: Lazy.Types;
-	content(): number;
+	readonly content: () => number;
 }
 
 export interface UnicodePropertyName {
@@ -1104,7 +1104,7 @@ export interface UnicodePropertyName {
 		readonly content: SlotHint<T.UnicodePropertyValue>;
 	};
 	readonly __aliasContent__?: UnicodePropertyName.Types;
-	content(): UnicodePropertyValue;
+	readonly content: () => UnicodePropertyValue;
 }
 
 // Leaf node types

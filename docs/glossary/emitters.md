@@ -9094,6 +9094,8 @@ After the namespaces, one `Empty<TypeName>` interface per empty form. It extends
 
 A storage key is optional exactly when its slot is a single optional value: a list's key never is, a possibly-empty list storing `readonly (X)[]` (`[]` when empty) and a `repeat1` list `NonEmptyArray<X>`. A builder input still omits a possibly-empty list: `ConfigOf` and `LooseConfigOf` take input optionality from `RequiredKeys`, which leaves such a list out, and the factory stores `[]`.
 
+Every member of a node interface is `readonly`, its slot getters included: a getter is declared `readonly <name>: () => T` rather than with method syntax, which TypeScript lets a caller reassign, so nothing on a node surface can be swapped without a cast.
+
 #### body
 
 ```text

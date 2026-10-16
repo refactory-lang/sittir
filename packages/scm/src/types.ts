@@ -536,7 +536,7 @@ export interface Program {
 	readonly __slotHints__?: {
 		readonly definitions: SlotHint<T.Definition[], false, true>;
 	};
-	definitions(): readonly Definition[];
+	readonly definitions: () => readonly Definition[];
 }
 
 export interface EscapeSequence {
@@ -545,7 +545,7 @@ export interface EscapeSequence {
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string>;
 	};
-	content(): string;
+	readonly content: () => string;
 }
 
 export interface Capture {
@@ -554,7 +554,7 @@ export interface Capture {
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.ImmediateIdentifier>;
 	};
-	name(): ImmediateIdentifier;
+	readonly name: () => ImmediateIdentifier;
 }
 
 export interface String {
@@ -566,7 +566,7 @@ export interface String {
 	readonly __slotHints__?: {
 		readonly stringContent: SlotHint<T.StringContent, true>;
 	};
-	stringContent(): StringContent | undefined;
+	readonly stringContent: () => StringContent | undefined;
 }
 
 export interface ImmediateString {
@@ -578,7 +578,7 @@ export interface ImmediateString {
 	readonly __slotHints__?: {
 		readonly stringContent: SlotHint<T.StringContent, true>;
 	};
-	stringContent(): StringContent | undefined;
+	readonly stringContent: () => StringContent | undefined;
 }
 
 export interface StringContent {
@@ -587,7 +587,7 @@ export interface StringContent {
 	readonly __slotHints__?: {
 		readonly contents: SlotHint<NonEmptyArray<T.StringContentText | T.EscapeSequence>, false, true>;
 	};
-	contents(): NonEmptyArray<StringContentText | EscapeSequence>;
+	readonly contents: () => NonEmptyArray<StringContentText | EscapeSequence>;
 }
 
 export interface Parameters {
@@ -596,7 +596,7 @@ export interface Parameters {
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonEmptyArray<T.Capture | T.String | T.Identifier>, false, true>;
 	};
-	elements(): NonEmptyArray<Capture | String | Identifier>;
+	readonly elements: () => NonEmptyArray<Capture | String | Identifier>;
 }
 
 export interface Comment {
@@ -605,7 +605,7 @@ export interface Comment {
 	readonly __slotHints__?: {
 		readonly content: SlotHint<string>;
 	};
-	content(): string;
+	readonly content: () => string;
 }
 
 export interface List {
@@ -616,8 +616,8 @@ export interface List {
 		readonly definitions: SlotHint<NonEmptyArray<T.Definition>, false, true>;
 		readonly elements: SlotHint<T.ListElement[], true, true>;
 	};
-	definitions(): NonEmptyArray<Definition>;
-	elements(): readonly ListElement[];
+	readonly definitions: () => NonEmptyArray<Definition>;
+	readonly elements: () => readonly ListElement[];
 }
 
 export interface Grouping {
@@ -628,8 +628,8 @@ export interface Grouping {
 		readonly groupingGroups: SlotHint<NonEmptyArray<T.GroupingGroup>, false, true, T.GroupingGroup.Config>;
 		readonly elements: SlotHint<T.ListElement[], true, true>;
 	};
-	groupingGroups(): NonEmptyArray<GroupingGroup>;
-	elements(): readonly ListElement[];
+	readonly groupingGroups: () => NonEmptyArray<GroupingGroup>;
+	readonly elements: () => readonly ListElement[];
 }
 
 export interface MissingNode {
@@ -640,8 +640,8 @@ export interface MissingNode {
 		readonly name: SlotHint<T.Identifier | T.String, true>;
 		readonly elements: SlotHint<T.ListElement[], true, true>;
 	};
-	name(): Identifier | String | undefined;
-	elements(): readonly ListElement[];
+	readonly name: () => Identifier | String | undefined;
+	readonly elements: () => readonly ListElement[];
 }
 
 export interface AnonymousNode {
@@ -658,8 +658,8 @@ export interface AnonymousNode {
 		readonly name: SlotHint<NonNullable<T.AnonymousNode.Config>['name']>;
 		readonly elements: SlotHint<T.ListElement[], true, true>;
 	};
-	name(): String | TSKindId.Underscore;
-	elements(): readonly ListElement[];
+	readonly name: () => String | TSKindId.Underscore;
+	readonly elements: () => readonly ListElement[];
 }
 
 export interface FieldDefinition {
@@ -670,8 +670,8 @@ export interface FieldDefinition {
 		readonly name: SlotHint<T.Identifier>;
 		readonly definition: SlotHint<T.Definition>;
 	};
-	name(): Identifier;
-	definition(): Definition;
+	readonly name: () => Identifier;
+	readonly definition: () => Definition;
 }
 
 export interface NegatedField {
@@ -680,7 +680,7 @@ export interface NegatedField {
 	readonly __slotHints__?: {
 		readonly identifier: SlotHint<T.Identifier>;
 	};
-	identifier(): Identifier;
+	readonly identifier: () => Identifier;
 }
 
 export interface Predicate {
@@ -702,10 +702,10 @@ export interface Predicate {
 		readonly type: SlotHint<NonNullable<T.Predicate.Config>['type']>;
 		readonly parameters: SlotHint<T.Parameters, true>;
 	};
-	prefix(): number;
-	name(): ImmediateIdentifier;
-	type(): number;
-	parameters(): Parameters | undefined;
+	readonly prefix: () => number;
+	readonly name: () => ImmediateIdentifier;
+	readonly type: () => number;
+	readonly parameters: () => Parameters | undefined;
 }
 
 export interface ListElementQuantifier {
@@ -717,7 +717,7 @@ export interface ListElementQuantifier {
 	readonly __slotHints__?: {
 		readonly quantifier: SlotHint<NonNullable<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>>;
 	};
-	quantifier(): number;
+	readonly quantifier: () => number;
 }
 
 export interface GroupExpressionArm {
@@ -728,8 +728,8 @@ export interface GroupExpressionArm {
 		readonly left: SlotHint<T.Definition | T.GroupExpressionArm>;
 		readonly right: SlotHint<T.Definition | T.GroupExpressionArm>;
 	};
-	left(): Definition | GroupExpressionArm;
-	right(): Definition | GroupExpressionArm;
+	readonly left: () => Definition | GroupExpressionArm;
+	readonly right: () => Definition | GroupExpressionArm;
 }
 
 export interface NamedNodeExpressionArm {
@@ -740,8 +740,8 @@ export interface NamedNodeExpressionArm {
 		readonly left: SlotHint<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>;
 		readonly right: SlotHint<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>;
 	};
-	left(): Definition | NegatedField | NamedNodeExpressionArm;
-	right(): Definition | NegatedField | NamedNodeExpressionArm;
+	readonly left: () => Definition | NegatedField | NamedNodeExpressionArm;
+	readonly right: () => Definition | NegatedField | NamedNodeExpressionArm;
 }
 
 export interface GroupingGroup {
@@ -755,8 +755,8 @@ export interface GroupingGroup {
 		readonly groupExpression: SlotHint<T.Definition | T.GroupExpressionArm>;
 		readonly anchor: SlotHint<NonNullable<T.GroupingGroup.Config>['anchor'], true>;
 	};
-	groupExpression(): Definition | GroupExpressionArm;
-	anchor(): boolean;
+	readonly groupExpression: () => Definition | GroupExpressionArm;
+	readonly anchor: () => boolean;
 }
 
 export interface NamedNodePlain {
@@ -772,9 +772,9 @@ export interface NamedNodePlain {
 		readonly namedNodeGroup: SlotHint<T.NamedNodeGroup, true>;
 		readonly elements: SlotHint<T.ListElement[], true, true>;
 	};
-	name(): Identifier | TSKindId.Underscore;
-	namedNodeGroup(): NamedNodeGroup | undefined;
-	elements(): readonly ListElement[];
+	readonly name: () => Identifier | TSKindId.Underscore;
+	readonly namedNodeGroup: () => NamedNodeGroup | undefined;
+	readonly elements: () => readonly ListElement[];
 }
 
 export interface NamedNodeSupertyped {
@@ -789,10 +789,10 @@ export interface NamedNodeSupertyped {
 		readonly namedNodeGroup: SlotHint<T.NamedNodeGroup, true>;
 		readonly elements: SlotHint<T.ListElement[], true, true>;
 	};
-	supertype(): Identifier;
-	name(): ImmediateIdentifier | ImmediateString;
-	namedNodeGroup(): NamedNodeGroup | undefined;
-	elements(): readonly ListElement[];
+	readonly supertype: () => Identifier;
+	readonly name: () => ImmediateIdentifier | ImmediateString;
+	readonly namedNodeGroup: () => NamedNodeGroup | undefined;
+	readonly elements: () => readonly ListElement[];
 }
 
 export interface NamedNodeGroupChildren {
@@ -810,8 +810,8 @@ export interface NamedNodeGroupChildren {
 			true
 		>;
 	};
-	anchor(): boolean;
-	namedNodeExpressions(): NonEmptyArray<Definition | NegatedField | NamedNodeExpressionArm>;
+	readonly anchor: () => boolean;
+	readonly namedNodeExpressions: () => NonEmptyArray<Definition | NegatedField | NamedNodeExpressionArm>;
 }
 
 export interface NamedNodeGroupAnchoredLast {
@@ -827,9 +827,9 @@ export interface NamedNodeGroupAnchoredLast {
 		readonly namedNodeExpressions: SlotHint<(T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[], true, true>;
 		readonly last: SlotHint<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>;
 	};
-	anchor(): boolean;
-	namedNodeExpressions(): readonly (Definition | NegatedField | NamedNodeExpressionArm)[];
-	last(): Definition | NegatedField | NamedNodeExpressionArm;
+	readonly anchor: () => boolean;
+	readonly namedNodeExpressions: () => readonly (Definition | NegatedField | NamedNodeExpressionArm)[];
+	readonly last: () => Definition | NegatedField | NamedNodeExpressionArm;
 }
 
 // Leaf node types
