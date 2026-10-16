@@ -35,6 +35,7 @@ pnpm run type-check:examples  # type-check the example modules
 pnpm lint                     # oxlint
 pnpm format:check             # oxfmt
 pnpm build                    # full workspace build
+pnpm exec tsx packages/cli/src/cli.ts bootstrap  # build the pinned reader; once per fresh clone, before validate:native
 ```
 
 ## Documentation gates
