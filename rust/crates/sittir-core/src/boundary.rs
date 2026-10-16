@@ -37,6 +37,49 @@ pub unsafe fn required<V: ::napi::bindgen_prelude::FromNapiValue>(
     unsafe { ::napi::bindgen_prelude::from_raw_required_field(env, raw, owner, key_name(key)) }
 }
 
+/// A required whole-number field: read as a double, as `required` reads
+/// one, and narrowed by `napi_engine::checked_whole`, which names the field
+/// in its refusal.
+///
+/// # Safety
+/// `obj` must be a live object in `env`.
+#[cfg(feature = "napi-bindings")]
+pub unsafe fn required_whole<T: TryFrom<u64>>(
+    env: ::napi::sys::napi_env,
+    obj: ::napi::sys::napi_value,
+    key: &'static ::std::ffi::CStr,
+    owner: &'static str,
+) -> ::napi::Result<T> {
+    let value: f64 = unsafe { required(env, obj, key, owner)? };
+    crate::napi_engine::checked_whole(value, Field(owner, key))
+}
+
+/// An optional whole-number field (`required_whole`): `None` when it is
+/// undefined.
+///
+/// # Safety
+/// `obj` must be a live object in `env`.
+#[cfg(feature = "napi-bindings")]
+pub unsafe fn property_whole<T: TryFrom<u64>>(
+    env: ::napi::sys::napi_env,
+    obj: ::napi::sys::napi_value,
+    key: &'static ::std::ffi::CStr,
+    owner: &'static str,
+) -> ::napi::Result<Option<T>> {
+    unsafe { property::<f64>(env, obj, key)? }.map(|value| crate::napi_engine::checked_whole(value, Field(owner, key))).transpose()
+}
+
+/// A field's name in a refusal: its owner and key.
+#[cfg(feature = "napi-bindings")]
+struct Field(&'static str, &'static ::std::ffi::CStr);
+
+#[cfg(feature = "napi-bindings")]
+impl ::std::fmt::Display for Field {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        write!(f, "{} `{}`", self.0, key_name(self.1))
+    }
+}
+
 /// An optional field, read as napi's object derive reads one: `undefined` is
 /// absent, and every other value goes to the field's type, `null` included.
 ///

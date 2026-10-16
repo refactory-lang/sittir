@@ -31,6 +31,7 @@ function queryContext(querySlots: QuerySlots, membership = IDENTITY) {
 	const hooks: QueryHooks = {
 		querySlots,
 		queryFlags: {},
+		querySlotFlags: {},
 		membership,
 		kindName: (kind) => `kind_${kind}`,
 		wrap: (data) => data

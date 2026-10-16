@@ -44,20 +44,20 @@ pub type RenderResult = Result<(), RenderError>;
 /// The grammar's whitespace vocabulary as the writer needs it: the text of
 /// each arm by kind id, and which two ids are the depth arms.
 pub struct WhitespaceTable {
-    pub text_of: fn(u16) -> &'static str,
-    pub indent: u16,
-    pub dedent: u16,
+    pub text_of: fn(KindId) -> &'static str,
+    pub indent: KindId,
+    pub dedent: KindId,
     /// Per kind id, the layout kinds its leaf pattern takes before it (low
     /// byte) and after it (high byte); 0 for a kind with no stamp.
     pub leaf_edges: &'static [u16],
     /// The kind id the grammar gives each gap kind, by `LayoutKinds` bit.
-    pub gaps: &'static [(u8, u16)],
+    pub gaps: &'static [(u8, KindId)],
 }
 
 impl WhitespaceTable {
     /// The gap kind a whitespace kind id is, when it is one (a depth arm or an
     /// unknown id is not).
-    pub fn gap_of(&self, id: u16) -> Option<crate::layout_kinds::LayoutKinds> {
+    pub fn gap_of(&self, id: KindId) -> Option<crate::layout_kinds::LayoutKinds> {
         self.gaps.iter().find(|(_, gap)| *gap == id).map(|(bit, _)| crate::layout_kinds::LayoutKinds(*bit))
     }
 
@@ -71,13 +71,13 @@ impl WhitespaceTable {
 
     /// The layout kinds a leaf of `kind` takes before and after it, when it is stamped.
     pub fn leaf_edges_of(&self, kind: KindId) -> Option<(u8, u8)> {
-        self.leaf_edges.get(kind.0 as usize).copied().filter(|packed| *packed != 0).map(|packed| (packed as u8, (packed >> 8) as u8))
+        self.leaf_edges.get(kind.index()).copied().filter(|packed| *packed != 0).map(|packed| (packed as u8, (packed >> 8) as u8))
     }
 }
 
 /// The live trees a render may slice, keyed by the tag a handle carries.
 pub trait SourceTable {
-    fn source_of(&self, tree_id: u32) -> Option<&Arc<str>>;
+    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>>;
 
     /// The kind of the node a coordinate names, when the table still holds
     /// its tree. A table of bare sources cannot answer and says so.
@@ -90,7 +90,7 @@ pub trait SourceTable {
     /// begin inside a token (`engine::line_starts_inside_tokens`): a slice
     /// re-indented to its new column leaves these lines as they are. A table
     /// of bare sources knows no tokens and answers none.
-    fn line_starts_inside_tokens(&self, coord: &crate::slot::NodeCoordinate) -> Vec<usize> {
+    fn line_starts_inside_tokens(&self, coord: &crate::slot::NodeCoordinate) -> Vec<u32> {
         let _ = coord;
         Vec::new()
     }
@@ -99,7 +99,7 @@ pub trait SourceTable {
     /// `span` in `tree`, the list's own kind being `kind`
     /// (`engine::last_list_child`). A table of bare sources cannot
     /// answer and says so.
-    fn last_list_child_kind(&self, tree: u32, span: crate::types::Span, kind: KindId) -> Option<KindId> {
+    fn last_list_child_kind(&self, tree: crate::types::TreeId, span: crate::types::Span, kind: KindId) -> Option<KindId> {
         let _ = (tree, span, kind);
         None
     }
@@ -134,7 +134,7 @@ pub trait SourceTable {
     /// The separator before the node a coordinate names as an item of its
     /// parent's list slot, where it is not the one the slot renders
     /// (`ParsedTree::separator_before`); none for a table of bare sources.
-    fn separator_before(&self, coord: &crate::slot::NodeCoordinate) -> Option<u16> {
+    fn separator_before(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
         let _ = coord;
         None
     }
@@ -159,14 +159,14 @@ pub trait SourceTable {
     /// (`ResolvedOptions::seat_wrappers`): for each node held by the one
     /// before it, from the coordinate's own, the first that `seat` gives a
     /// site. A table of bare sources knows no nodes and answers none.
-    fn seat_through(&self, coord: &crate::slot::NodeCoordinate, wrappers: &[u16], seat: &dyn Fn(KindId) -> Option<usize>) -> Option<usize> {
+    fn seat_through(&self, coord: &crate::slot::NodeCoordinate, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
         let _ = (coord, wrappers, seat);
         None
     }
 
     /// The live tree `tree` and the context its reads share. A table of bare
     /// sources holds no trees.
-    fn read_ctx(&self, tree: u32) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
+    fn read_ctx(&self, tree: crate::types::TreeId) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
         let _ = tree;
         None
     }
@@ -181,7 +181,7 @@ pub enum CoordinateError {
     /// thread: never parsed here, or already released.
     UnknownTree {
         handle: u64,
-        tree_id: u32,
+        tree_id: crate::types::TreeId,
     },
     BadSpan {
         handle: u64,
@@ -242,11 +242,11 @@ pub trait RenderSink {
     fn leaf_edges(&mut self, leading: u8, trailing: u8) {
         let _ = (leading, trailing);
     }
-    fn site(&mut self, kind: u16);
+    fn site(&mut self, kind: KindId);
     /// A site's arm with the strength its table row gives it; `site` is the
     /// declared-strength form. The default keeps a sink that knows nothing of
     /// strength working as before.
-    fn site_with(&mut self, kind: u16, strength: u8) {
+    fn site_with(&mut self, kind: KindId, strength: u8) {
         let _ = strength;
         self.site(kind);
     }
@@ -261,11 +261,11 @@ pub trait RenderSink {
     /// A spacing site's arm read from the resolved options this sink holds,
     /// with the site's default strength when the arm is its default. Unlike
     /// `site`, which writes a given arm, this names a site and looks it up.
-    fn site_at(&mut self, site: usize);
+    fn site_at(&mut self, site: crate::types::SiteId);
     /// A list's start or end flank site, looked up as `site_at` does. At one
     /// gap, a flank mark beats any other mark of equal strength; a sink that
     /// knows no strengths writes it as a plain site.
-    fn flank_at(&mut self, site: usize) {
+    fn flank_at(&mut self, site: crate::types::SiteId) {
         self.site_at(site);
     }
     /// One side of a kind's edge: the node's stamp when it carries one, else

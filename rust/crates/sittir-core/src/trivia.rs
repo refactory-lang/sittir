@@ -174,9 +174,9 @@ impl TriviaText {
     /// `adjacent` names before and after it (an `ERROR`'s), and `at` where a
     /// snapshot places it.
     pub fn of_source(kind: KindId, source: &str, span: crate::types::Span, adjacent: Option<(crate::types::Span, crate::types::Span)>, at: Option<crate::points::PointSpan>) -> Self {
-        let slice = |run: crate::types::Span| (run.start < run.end).then(|| source[run.start as usize..run.end as usize].to_owned());
+        let slice = |run: crate::types::Span| (run.start < run.end).then(|| source[run.range()].to_owned());
         let (before, after) = adjacent.map_or((None, None), |(before, after)| (slice(before), slice(after)));
-        Self { kind, text: source[span.start as usize..span.end as usize].to_owned(), span: at, before, after }
+        Self { kind, text: source[span.range()].to_owned(), span: at, before, after }
     }
 }
 
@@ -533,9 +533,8 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
 impl ::napi::bindgen_prelude::FromNapiValue for TriviaText {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { crate::boundary::object(env, napi_val)? };
-        let kind: u16 = unsafe { crate::boundary::required(env, obj, c"$type", "TriviaText")? };
         Ok(Self {
-            kind: KindId(kind),
+            kind: unsafe { crate::boundary::required(env, obj, c"$type", "TriviaText")? },
             text: unsafe { crate::boundary::required(env, obj, c"$text", "TriviaText")? },
             span: unsafe { crate::boundary::property(env, obj, c"span")? },
             before: unsafe { crate::boundary::property(env, obj, c"$before")? },

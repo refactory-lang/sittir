@@ -99,7 +99,7 @@ fn assert_roundtrip_parity(
         ),
     };
     // Find the subtree at `wrapped_offset` whose kind equals `pattern`.
-    let subtree = find_subtree_at_offset(tree.root_node(), pattern, wrapped_offset as usize);
+    let subtree = find_subtree_at_offset(tree.root_node(), pattern, wrapped_offset);
     let subtree = match subtree {
         Some(n) => n,
         None => {
@@ -150,9 +150,9 @@ fn assert_roundtrip_parity(
 fn find_subtree_at_offset<'a>(
     node: tree_sitter::Node<'a>,
     target: &str,
-    offset: usize,
+    offset: u32,
 ) -> Option<tree_sitter::Node<'a>> {
-    if node.start_byte() == offset && node.kind() == target {
+    if sittir_core::types::Span::of(&node).start == offset && node.kind() == target {
         return Some(node);
     }
     let mut cursor = node.walk();

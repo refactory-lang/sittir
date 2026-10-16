@@ -232,6 +232,7 @@ function assembleEngine<API extends LanguageAPI>(
 	const queryHooks: QueryHooks = {
 		querySlots: hooks.querySlots,
 		queryFlags: hooks.queryFlags ?? {},
+		querySlotFlags: hooks.querySlotFlags ?? {},
 		membership: hooks.membership,
 		kindName: (kind) => hooks.trivia.kindName(kind),
 		wrap: hooks.wrap

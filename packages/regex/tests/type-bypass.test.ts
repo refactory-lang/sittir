@@ -21,11 +21,11 @@ describe('a value the strict types refuse, given anyway: the default mode trusts
 		expect(() => quantifier(verifying, 1n)).toThrow('CountQuantifier.content: a strict factory takes a built node, not a bigint');
 	});
 
-	it('a hidden helper built outside any engine is never checked, and its optional leaf slot drops a wrong-typed value without a word', () => {
+	it('a hidden helper built outside any engine is never checked, and the native decode refuses a wrong-typed value in its optional leaf slot', () => {
 		const rendered = (digits: unknown) => trusting.render(buildCountQuantifierGroup(digits as never)).toString();
-		expect(rendered(1n)).toBe(',');
-		expect(rendered(true)).toBe(',');
-		expect(rendered({})).toBe(',');
+		expect(() => rendered(1n)).toThrow(/DecimalDigitsTransport: expected a string, a kind id or an object, not a bigint/);
+		expect(() => rendered(true)).toThrow(/DecimalDigitsTransport: expected a string, a kind id or an object, not a boolean/);
+		expect(() => rendered({})).toThrow(/DecimalDigitsTransport: an object carries no `\$text`, and the kind has no fixed text/);
 		expect(rendered('3')).toBe(',3');
 	});
 });
