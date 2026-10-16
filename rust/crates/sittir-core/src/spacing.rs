@@ -725,8 +725,8 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
 
     /// Writes a whitespace kind's arm: a depth move plus its line break for
     /// the depth arms, otherwise the arm's text as a seam of `strength`.
-    fn site_mark(&mut self, kind: u16, strength: u8, flank: bool) {
-        if kind == 0 {
+    fn site_mark(&mut self, kind: crate::types::KindId, strength: u8, flank: bool) {
+        if kind == crate::types::KindId::BLANK {
             return;
         }
         debug_assert!(
@@ -757,7 +757,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// document's end (its `After` edge), where nothing follows; a break the line
     /// already ended satisfies one line break of the edge. A line continuation
     /// held at that gap already ends the line, so it stands.
-    fn root_edge(&mut self, side: crate::options::Side, arm: u16, strength: u8) {
+    fn root_edge(&mut self, side: crate::options::Side, arm: crate::types::KindId, strength: u8) {
         let Some(table) = self.table else {
             return;
         };
@@ -950,7 +950,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     /// a depth move plus its line break for the depth arms, otherwise the
     /// arm's text as a seam. A writer with no table attached treats every
     /// other kind as unknown and writes nothing.
-    fn site(&mut self, kind: u16) {
+    fn site(&mut self, kind: crate::types::KindId) {
         self.site_with(kind, SEAM_DECLARED);
     }
 
@@ -973,7 +973,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         }
     }
 
-    fn site_with(&mut self, kind: u16, strength: u8) {
+    fn site_with(&mut self, kind: crate::types::KindId, strength: u8) {
         self.site_mark(kind, strength, false);
     }
 
@@ -1376,16 +1376,17 @@ mod word_matcher_tests {
 
 #[cfg(test)]
 mod sink_tests {
+    use crate::types::KindId;
     use super::*;
     use crate::render::{RenderSink, WhitespaceTable};
 
-    const TIGHT: u16 = 1;
-    const SPACE: u16 = 2;
-    const NEWLINE: u16 = 3;
-    const BLANK: u16 = 4;
-    const INDENT: u16 = 5;
-    const DEDENT: u16 = 6;
-    fn text_of(kind: u16) -> &'static str {
+    const TIGHT: KindId = KindId(1);
+    const SPACE: KindId = KindId(2);
+    const NEWLINE: KindId = KindId(3);
+    const BLANK: KindId = KindId(4);
+    const INDENT: KindId = KindId(5);
+    const DEDENT: KindId = KindId(6);
+    fn text_of(kind: KindId) -> &'static str {
         match kind {
             TIGHT => "",
             SPACE => " ",
@@ -1398,7 +1399,7 @@ mod sink_tests {
     const TABLE: WhitespaceTable = WhitespaceTable {
         text_of,
         indent: INDENT,
-        dedent: DEDENT, leaf_edges: &[], gaps: &[(1, 1), (2, 2), (8, 3), (16, 4)]
+        dedent: DEDENT, leaf_edges: &[], gaps: &[(1, KindId(1)), (2, KindId(2)), (8, KindId(3)), (16, KindId(4))]
     };
 
     fn run(f: impl FnOnce(&mut SpacingWriter<'_, String>)) -> String {
@@ -1549,7 +1550,7 @@ mod sink_tests {
         assert_eq!(
             run(|w| {
                 w.text("a").unwrap();
-                w.site(0);
+                w.site(KindId(0));
                 w.text("b").unwrap();
             }),
             "a b"
@@ -1878,19 +1879,20 @@ mod sink_tests {
 
 #[cfg(test)]
 mod strength_tests {
+    use crate::types::KindId;
     use super::*;
     use crate::render::{RenderSink, WhitespaceTable};
 
-    fn text_of(kind: u16) -> &'static str {
+    fn text_of(kind: KindId) -> &'static str {
         match kind {
-            1 => "",
-            2 => " ",
-            3 => "\n",
-            4 => "\n\n",
+            KindId(1) => "",
+            KindId(2) => " ",
+            KindId(3) => "\n",
+            KindId(4) => "\n\n",
             _ => "",
         }
     }
-    const TABLE: WhitespaceTable = WhitespaceTable { text_of, indent: 0, dedent: 0 , leaf_edges: &[], gaps: &[(1, 1), (2, 2), (8, 3), (16, 4)]};
+    const TABLE: WhitespaceTable = WhitespaceTable { text_of, indent: KindId(0), dedent: KindId(0) , leaf_edges: &[], gaps: &[(1, KindId(1)), (2, KindId(2)), (8, KindId(3)), (16, KindId(4))]};
 
     fn render(f: impl FnOnce(&mut SpacingWriter<'_, String>)) -> String {
         let mut out = String::new();
@@ -1908,7 +1910,7 @@ mod strength_tests {
         let out = render(|w| {
             w.text("a").unwrap();
             w.hold_line_end(crate::render::LineHold::Break);
-            w.site_with(4, SEAM_DECLARED);
+            w.site_with(KindId(4), SEAM_DECLARED);
             w.text("b").unwrap();
         });
         assert_eq!(out, "a\n\nb");
@@ -1919,7 +1921,7 @@ mod strength_tests {
         let out = render(|w| {
             w.text("a").unwrap();
             w.hold_line_end(crate::render::LineHold::Break);
-            w.site_with(2, SEAM_DECLARED);
+            w.site_with(KindId(2), SEAM_DECLARED);
             w.text("b").unwrap();
         });
         assert_eq!(out, "a\nb");
@@ -1929,13 +1931,13 @@ mod strength_tests {
     fn a_line_break_the_text_before_a_seam_ends_with_counts_toward_it() {
         let out = render(|w| {
             w.text("#!\n").unwrap();
-            w.site_with(4, SEAM_TRIVIA);
+            w.site_with(KindId(4), SEAM_TRIVIA);
             w.text("fn").unwrap();
         });
         assert_eq!(out, "#!\n\nfn");
         let out = render(|w| {
             w.text("#!\n").unwrap();
-            w.site_with(3, SEAM_DECLARED);
+            w.site_with(KindId(3), SEAM_DECLARED);
             w.text("fn").unwrap();
         });
         assert_eq!(out, "#!\nfn");
@@ -1948,9 +1950,9 @@ mod strength_tests {
         // end it floors is still satisfied.
         let out = render(|w| {
             w.text("a").unwrap();
-            w.site_with(4, SEAM_DECLARED);
+            w.site_with(KindId(4), SEAM_DECLARED);
             w.hold_line_end(crate::render::LineHold::Break);
-            w.site_with(3, SEAM_TRIVIA);
+            w.site_with(KindId(3), SEAM_TRIVIA);
             w.text("b").unwrap();
         });
         assert_eq!(out, "a\nb");
@@ -1986,7 +1988,7 @@ mod strength_tests {
         let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident()).with_table(&TABLE).with_document(true);
         w.text("// c").unwrap();
         w.hold_line_end(crate::render::LineHold::Terminated);
-        w.root_edge(crate::options::Side::Before, 1, SEAM_DECLARED);
+        w.root_edge(crate::options::Side::Before, KindId(1), SEAM_DECLARED);
         w.text("fn").unwrap();
         w.finish().unwrap();
         assert_eq!(out, "// c\nfn");
@@ -1998,8 +2000,8 @@ mod strength_tests {
         // cascaded tight edge; the declared mark wins whatever its width.
         let out = render(|w| {
             w.text("=").unwrap();
-            w.site_with(2, SEAM_DECLARED);
-            w.site_with(1, SEAM_CASCADE);
+            w.site_with(KindId(2), SEAM_DECLARED);
+            w.site_with(KindId(1), SEAM_CASCADE);
             w.text("(").unwrap();
         });
         assert_eq!(out, "= (");
@@ -2011,8 +2013,8 @@ mod strength_tests {
         // tight edge; cascade outranks fallback.
         let out = render(|w| {
             w.text("f").unwrap();
-            w.site_with(2, SEAM_FALLBACK);
-            w.site_with(1, SEAM_CASCADE);
+            w.site_with(KindId(2), SEAM_FALLBACK);
+            w.site_with(KindId(1), SEAM_CASCADE);
             w.text("(").unwrap();
         });
         assert_eq!(out, "f(");
@@ -2022,15 +2024,15 @@ mod strength_tests {
     fn within_one_strength_the_wider_mark_still_wins() {
         let out = render(|w| {
             w.text("a").unwrap();
-            w.site_with(1, SEAM_DECLARED);
-            w.site_with(3, SEAM_DECLARED);
+            w.site_with(KindId(1), SEAM_DECLARED);
+            w.site_with(KindId(3), SEAM_DECLARED);
             w.text("b").unwrap();
         });
         assert_eq!(out, "a\nb");
         let tight = render(|w| {
             w.text("x").unwrap();
-            w.site_with(2, SEAM_DECLARED);
-            w.site_with(1, SEAM_DECLARED);
+            w.site_with(KindId(2), SEAM_DECLARED);
+            w.site_with(KindId(1), SEAM_DECLARED);
             w.text(";").unwrap();
         });
         assert_eq!(tight, "x;");
@@ -2042,8 +2044,8 @@ mod strength_tests {
         // space flank; the flank wins though it is narrower.
         let out = render(|w| {
             w.text("{").unwrap();
-            w.site_with(1, SEAM_DECLARED);
-            w.site_mark(2, SEAM_DECLARED, true);
+            w.site_with(KindId(1), SEAM_DECLARED);
+            w.site_mark(KindId(2), SEAM_DECLARED, true);
             w.text("a").unwrap();
         });
         assert_eq!(out, "{ a");
@@ -2053,8 +2055,8 @@ mod strength_tests {
     fn an_equal_strength_face_does_not_replace_a_held_flank() {
         let out = render(|w| {
             w.text("a").unwrap();
-            w.site_mark(2, SEAM_DECLARED, true);
-            w.site_with(1, SEAM_DECLARED);
+            w.site_mark(KindId(2), SEAM_DECLARED, true);
+            w.site_with(KindId(1), SEAM_DECLARED);
             w.text("}").unwrap();
         });
         assert_eq!(out, "a }");
@@ -2066,22 +2068,22 @@ mod strength_tests {
         // tight face in either order, and a declared flank beats a cascaded face.
         let held_face = render(|w| {
             w.text("{").unwrap();
-            w.site_with(1, SEAM_DECLARED);
-            w.site_mark(2, SEAM_CASCADE, true);
+            w.site_with(KindId(1), SEAM_DECLARED);
+            w.site_mark(KindId(2), SEAM_CASCADE, true);
             w.text("b").unwrap();
         });
         assert_eq!(held_face, "{b");
         let held_flank = render(|w| {
             w.text("b").unwrap();
-            w.site_mark(2, SEAM_CASCADE, true);
-            w.site_with(1, SEAM_DECLARED);
+            w.site_mark(KindId(2), SEAM_CASCADE, true);
+            w.site_with(KindId(1), SEAM_DECLARED);
             w.text("}").unwrap();
         });
         assert_eq!(held_flank, "b}");
         let declared_flank = render(|w| {
             w.text("{").unwrap();
-            w.site_with(1, SEAM_CASCADE);
-            w.site_mark(2, SEAM_DECLARED, true);
+            w.site_with(KindId(1), SEAM_CASCADE);
+            w.site_mark(KindId(2), SEAM_DECLARED, true);
             w.text("b").unwrap();
         });
         assert_eq!(declared_flank, "{ b");
@@ -2091,11 +2093,11 @@ mod strength_tests {
     fn a_held_flank_survives_a_take_and_restore() {
         let out = render(|w| {
             w.text("a").unwrap();
-            w.site_mark(2, SEAM_DECLARED, true);
+            w.site_mark(KindId(2), SEAM_DECLARED, true);
             let held = w.take_seam().unwrap();
             assert!(held.flank);
             w.restore_seam(held);
-            w.site_with(1, SEAM_DECLARED);
+            w.site_with(KindId(1), SEAM_DECLARED);
             w.text("}").unwrap();
         });
         assert_eq!(out, "a }");

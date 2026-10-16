@@ -44,20 +44,20 @@ pub type RenderResult = Result<(), RenderError>;
 /// The grammar's whitespace vocabulary as the writer needs it: the text of
 /// each arm by kind id, and which two ids are the depth arms.
 pub struct WhitespaceTable {
-    pub text_of: fn(u16) -> &'static str,
-    pub indent: u16,
-    pub dedent: u16,
+    pub text_of: fn(KindId) -> &'static str,
+    pub indent: KindId,
+    pub dedent: KindId,
     /// Per kind id, the layout kinds its leaf pattern takes before it (low
     /// byte) and after it (high byte); 0 for a kind with no stamp.
     pub leaf_edges: &'static [u16],
     /// The kind id the grammar gives each gap kind, by `LayoutKinds` bit.
-    pub gaps: &'static [(u8, u16)],
+    pub gaps: &'static [(u8, KindId)],
 }
 
 impl WhitespaceTable {
     /// The gap kind a whitespace kind id is, when it is one (a depth arm or an
     /// unknown id is not).
-    pub fn gap_of(&self, id: u16) -> Option<crate::layout_kinds::LayoutKinds> {
+    pub fn gap_of(&self, id: KindId) -> Option<crate::layout_kinds::LayoutKinds> {
         self.gaps.iter().find(|(_, gap)| *gap == id).map(|(bit, _)| crate::layout_kinds::LayoutKinds(*bit))
     }
 
@@ -71,7 +71,7 @@ impl WhitespaceTable {
 
     /// The layout kinds a leaf of `kind` takes before and after it, when it is stamped.
     pub fn leaf_edges_of(&self, kind: KindId) -> Option<(u8, u8)> {
-        self.leaf_edges.get(kind.0 as usize).copied().filter(|packed| *packed != 0).map(|packed| (packed as u8, (packed >> 8) as u8))
+        self.leaf_edges.get(kind.index()).copied().filter(|packed| *packed != 0).map(|packed| (packed as u8, (packed >> 8) as u8))
     }
 }
 
@@ -134,7 +134,7 @@ pub trait SourceTable {
     /// The separator before the node a coordinate names as an item of its
     /// parent's list slot, where it is not the one the slot renders
     /// (`ParsedTree::separator_before`); none for a table of bare sources.
-    fn separator_before(&self, coord: &crate::slot::NodeCoordinate) -> Option<u16> {
+    fn separator_before(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
         let _ = coord;
         None
     }
@@ -242,11 +242,11 @@ pub trait RenderSink {
     fn leaf_edges(&mut self, leading: u8, trailing: u8) {
         let _ = (leading, trailing);
     }
-    fn site(&mut self, kind: u16);
+    fn site(&mut self, kind: KindId);
     /// A site's arm with the strength its table row gives it; `site` is the
     /// declared-strength form. The default keeps a sink that knows nothing of
     /// strength working as before.
-    fn site_with(&mut self, kind: u16, strength: u8) {
+    fn site_with(&mut self, kind: KindId, strength: u8) {
         let _ = strength;
         self.site(kind);
     }

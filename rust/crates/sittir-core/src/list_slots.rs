@@ -21,7 +21,7 @@ pub enum SlotSide {
 /// A gap's separator: its grammar id and bytes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Separator {
-    pub kind: u16,
+    pub kind: crate::types::KindId,
     pub start: u32,
     pub end: u32,
 }
@@ -75,7 +75,7 @@ pub fn slot_gaps(routed: &Routed, run_at: impl Fn(u32, u32) -> Option<usize>) ->
                         items: (first.index, last.index),
                         before: run_at(first.end, separator.start),
                         after: run_at(separator.end, last.start),
-                        separator: Separator { kind: separator.grammar.0, start: separator.start, end: separator.end },
+                        separator: Separator { kind: separator.grammar, start: separator.start, end: separator.end },
                     })
                 })
                 .collect();
@@ -128,7 +128,7 @@ mod tests {
         let [slot] = slot_gaps(&routed, run_at).try_into().unwrap();
         assert_eq!(slot.key, "_item");
         assert_eq!(slot.gaps.iter().map(|gap| (gap.before, gap.after)).collect::<Vec<_>>(), vec![(Some(0), Some(1)), (Some(2), Some(3))]);
-        assert_eq!(slot.gaps[0].separator, Separator { kind: 2, start: 2, end: 3 });
+        assert_eq!(slot.gaps[0].separator, Separator { kind: KindId(2), start: 2, end: 3 });
     }
 
     #[test]

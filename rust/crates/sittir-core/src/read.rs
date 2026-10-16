@@ -23,10 +23,17 @@ pub use regex::Captures;
 /// Opt-in parser/model drift diagnostics after typed slot routing.
 pub const DEBUG_READ_CHECKS: bool = cfg!(feature = "read-debug-checks");
 
+/// The kind `node` has in the grammar, the key of every flag, edge and seat
+/// table. The one call of `Node::grammar_id`.
+#[allow(clippy::disallowed_methods)]
+pub fn grammar_id(node: &Node<'_>) -> KindId {
+    KindId(node.grammar_id())
+}
+
 /// The kind the parser shows `node` as: the alias target at an alias site,
-/// else the grammar id. Every flag, edge and seat table is keyed on the
-/// grammar id (`grammar_id()`), never on this one; the display id is for the
-/// places that carry an alias envelope. The one call of `Node::kind_id`.
+/// else the grammar id. Tables are keyed on the grammar id (`grammar_id`),
+/// never on this one; the display id is for the places that carry an alias
+/// envelope. The one call of `Node::kind_id`.
 #[allow(clippy::disallowed_methods)]
 pub fn display_id(node: &Node<'_>) -> KindId {
     KindId(node.kind_id())
@@ -136,7 +143,7 @@ pub trait SideLookup {
     }
     /// The separator before the node at `index` as an item of its parent's
     /// list slot, where it is not the one the slot renders.
-    fn separator(&self, index: u32) -> Option<u16> {
+    fn separator(&self, index: u32) -> Option<KindId> {
         let _ = index;
         None
     }
@@ -342,7 +349,7 @@ impl<'s> ReadCtx<'s> {
 
     /// [`Self::stamped_kind`] of a parsed node.
     pub fn node_kind(&self, node: &tree_sitter::Node<'_>) -> KindId {
-        self.stamped_kind(KindId(node.grammar_id()), display_id(node))
+        self.stamped_kind(grammar_id(node), display_id(node))
     }
 
     /// Where the node the cursor is on came from: each transport's own
@@ -423,7 +430,7 @@ impl Child {
         let node = cursor.node();
         Child {
             index: index_of(cursor),
-            grammar: KindId(node.grammar_id()),
+            grammar: grammar_id(&node),
             display: display_id(&node),
             field: cursor.field_id().map(|field| FieldId(field.get())),
             named: node.is_named(),
@@ -1153,12 +1160,12 @@ mod tests {
 
     #[test]
     fn a_relaxed_keyword_stamps_its_display_and_a_plain_token_stamps_its_grammar_id() {
-        const WORD: u16 = 1;
-        const RELAXED: u16 = 40;
-        let ctx = ReadCtx::new("", 1, |_| false).with_relaxes(|grammar, display| display.0 == WORD && grammar.0 == RELAXED);
-        assert_eq!(ctx.stamped_kind(KindId(RELAXED), KindId(WORD)), KindId(WORD), "the relaxed keyword reads as the word rule");
-        assert_eq!(ctx.stamped_kind(KindId(RELAXED), KindId(RELAXED)), KindId(RELAXED), "the same token undisplayed reads as itself");
-        assert_eq!(ctx.stamped_kind(KindId(41), KindId(WORD)), KindId(41), "another token displayed as the word rule is not relaxed");
+        const WORD: KindId = KindId(1);
+        const RELAXED: KindId = KindId(40);
+        let ctx = ReadCtx::new("", 1, |_| false).with_relaxes(|grammar, display| display == WORD && grammar == RELAXED);
+        assert_eq!(ctx.stamped_kind(RELAXED, WORD), WORD, "the relaxed keyword reads as the word rule");
+        assert_eq!(ctx.stamped_kind(RELAXED, RELAXED), RELAXED, "the same token undisplayed reads as itself");
+        assert_eq!(ctx.stamped_kind(KindId(41), WORD), KindId(41), "another token displayed as the word rule is not relaxed");
     }
 
     #[test]

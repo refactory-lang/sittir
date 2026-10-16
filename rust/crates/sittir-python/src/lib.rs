@@ -60,7 +60,7 @@ impl EngineGrammar for PythonGrammar {
 
     type Trivia = render::transport::TriviaTransport;
 
-    fn whitespace(self) -> (&'static sittir_core::render::WhitespaceTable, &'static [u16]) {
+    fn whitespace(self) -> (&'static sittir_core::render::WhitespaceTable, &'static [sittir_core::types::KindId]) {
         (&render::options::WHITESPACE, render::options::LAYOUT_KINDS)
     }
 

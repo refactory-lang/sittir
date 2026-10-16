@@ -67,7 +67,7 @@ impl ChangedEdges {
 /// One edge seam's resolved arm and the strength it carries into the writer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SeamArm {
-    pub arm: u16,
+    pub arm: crate::types::KindId,
     pub strength: u8,
     /// Close a depth before writing the arm. No fill sets it; it stays for
     /// the niche it gives `Option<SeamArm>`, which keeps a coordinate's edges,
@@ -362,6 +362,7 @@ pub(crate) unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: NodeC
 
 #[cfg(test)]
 mod tests {
+    use crate::types::KindId;
     use super::SlotValue;
     use crate::engine::encode_handle;
     use crate::render::{render_to_string, Render, RenderResult, RenderSink, WhitespaceTable};
@@ -437,9 +438,9 @@ mod tests {
         use crate::options::{EdgeSite, ResolvedOptions, SiteSpec, NO_SITE};
         use crate::prepare::{Prepare, RenderContext};
         use crate::spacing::{SEAM_CASCADE, SEAM_DECLARED, SEAM_FALLBACK};
-        const TIGHT: u16 = 1;
-        const SPACE: u16 = 2;
-        fn text_of(kind: u16) -> &'static str {
+        const TIGHT: KindId = KindId(1);
+        const SPACE: KindId = KindId(2);
+        fn text_of(kind: KindId) -> &'static str {
             if kind == SPACE {
                 " "
             } else {
@@ -448,8 +449,8 @@ mod tests {
         }
         const EDGE_TABLE: WhitespaceTable = WhitespaceTable {
             text_of,
-            indent: 0,
-            dedent: 0, leaf_edges: &[], gaps: &[(1, 1), (2, 2)]
+            indent: KindId(0),
+            dedent: KindId(0), leaf_edges: &[], gaps: &[(1, KindId(1)), (2, KindId(2))]
         };
         static EDGES: [EdgeSite; 1] = [EdgeSite { before: 0, after: NO_SITE, before_arms: &[], after_arms: &[] }];
         static EDGE_ROWS: [u16; 10] = [NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 0];
@@ -589,13 +590,13 @@ mod tests {
         assert!(!coord.kind_in(&w, &[WORD_KIND]));
     }
 
-    fn text_of(_: u16) -> &'static str {
+    fn text_of(_: KindId) -> &'static str {
         ""
     }
     const TABLE: WhitespaceTable = WhitespaceTable {
         text_of,
-        indent: 0,
-        dedent: 0, leaf_edges: &[], gaps: &[]
+        indent: KindId(0),
+        dedent: KindId(0), leaf_edges: &[], gaps: &[]
     };
 
     fn rendered(value: &dyn Render) -> String {

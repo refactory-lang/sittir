@@ -10,7 +10,7 @@
 
 use ::sittir_core::view::{KindOf, KindTest, View, ListView, NO_ITEMS};
 use ::sittir_core::render::Render;
-use ::sittir_core::types::{Source, Span};
+use ::sittir_core::types::{KindId, Source, Span};
 
 use ::sittir_core::layout::Layout as _;
 use ::sittir_core::options::Edged as _;
@@ -2052,7 +2052,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             AnyTransport::Program(t) => t.source_separator(ctx),
             AnyTransport::HashBangLine(t) => t.source_separator(ctx),
@@ -2547,7 +2547,7 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
             TriviaTransport::Text(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TriviaTransport::CommentLine(t) => t.source_separator(ctx),
             TriviaTransport::CommentBlock(t) => t.source_separator(ctx),
@@ -2670,7 +2670,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementTransport {
             ExportStatementTransport::ExportStatementNamespaceExport(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ExportStatementTransport::ExportStatementDefault(t) => t.source_separator(ctx),
             ExportStatementTransport::ExportStatementEqualsExport(t) => t.source_separator(ctx),
@@ -2794,7 +2794,7 @@ impl ::sittir_core::prepare::Prepare for DeclarationTransport {
             DeclarationTransport::AmbientDeclaration(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             DeclarationTransport::FunctionDeclaration(t) => t.source_separator(ctx),
             DeclarationTransport::GeneratorFunctionDeclaration(t) => t.source_separator(ctx),
@@ -2891,7 +2891,7 @@ impl ::sittir_core::prepare::Prepare for ImportSpecifierTransport {
             ImportSpecifierTransport::ImportSpecifierAs(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ImportSpecifierTransport::ImportSpecifierName(t) => t.source_separator(ctx),
             ImportSpecifierTransport::ImportSpecifierAs(t) => t.source_separator(ctx),
@@ -3036,7 +3036,7 @@ impl ::sittir_core::prepare::Prepare for StatementTransport {
             StatementTransport::LabeledStatement(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             StatementTransport::ExportStatement(t) => t.source_separator(ctx),
             StatementTransport::ImportStatement(t) => t.source_separator(ctx),
@@ -3126,7 +3126,7 @@ impl ::sittir_core::prepare::Prepare for VariableDeclaratorTransport {
             VariableDeclaratorTransport::VariableDeclaratorDefinite(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             VariableDeclaratorTransport::VariableDeclaratorPlain(t) => t.source_separator(ctx),
             VariableDeclaratorTransport::VariableDeclaratorDefinite(t) => t.source_separator(ctx),
@@ -3185,7 +3185,7 @@ impl ::sittir_core::prepare::Prepare for ForHeaderTransport {
             ForHeaderTransport::ForHeaderLetConstKind(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ForHeaderTransport::ForHeaderLhs(t) => t.source_separator(ctx),
             ForHeaderTransport::ForHeaderVarKind(t) => t.source_separator(ctx),
@@ -3241,7 +3241,7 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionTransport {
             ParenthesizedExpressionTransport::ParenthesizedExpressionSequence(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ParenthesizedExpressionTransport::ParenthesizedExpressionTyped(t) => t.source_separator(ctx),
             ParenthesizedExpressionTransport::ParenthesizedExpressionSequence(t) => t.source_separator(ctx),
@@ -3372,7 +3372,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionTransport {
             ExpressionTransport::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ExpressionTransport::AsExpression(t) => t.source_separator(ctx),
             ExpressionTransport::SatisfiesExpression(t) => t.source_separator(ctx),
@@ -3570,7 +3570,7 @@ impl ::sittir_core::prepare::Prepare for PrimaryExpressionTransport {
             PrimaryExpressionTransport::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             PrimaryExpressionTransport::SubscriptExpression(t) => t.source_separator(ctx),
             PrimaryExpressionTransport::MemberExpression(t) => t.source_separator(ctx),
@@ -3702,7 +3702,7 @@ impl ::sittir_core::prepare::Prepare for CallExpressionTransport {
             CallExpressionTransport::CallExpressionMember(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             CallExpressionTransport::CallExpressionCall(t) => t.source_separator(ctx),
             CallExpressionTransport::CallExpressionTemplateCall(t) => t.source_separator(ctx),
@@ -3766,7 +3766,7 @@ impl ::sittir_core::prepare::Prepare for UpdateExpressionTransport {
             UpdateExpressionTransport::UpdateExpressionPrefix(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             UpdateExpressionTransport::UpdateExpressionPostfix(t) => t.source_separator(ctx),
             UpdateExpressionTransport::UpdateExpressionPrefix(t) => t.source_separator(ctx),
@@ -3827,7 +3827,7 @@ impl ::sittir_core::prepare::Prepare for StringTransport {
             StringTransport::StringSingle(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             StringTransport::StringDouble(t) => t.source_separator(ctx),
             StringTransport::StringSingle(t) => t.source_separator(ctx),
@@ -3923,7 +3923,7 @@ impl ::sittir_core::prepare::Prepare for NumberTransport {
             NumberTransport::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             NumberTransport::NumberHex(t) => t.source_separator(ctx),
             NumberTransport::NumberFloatPoint(t) => t.source_separator(ctx),
@@ -4007,7 +4007,7 @@ impl ::sittir_core::prepare::Prepare for MetaPropertyTransport {
             MetaPropertyTransport::MetaPropertyImportMeta(_) => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             MetaPropertyTransport::MetaPropertyNewTarget(_) => None,
             MetaPropertyTransport::MetaPropertyImportMeta(_) => None,
@@ -4068,7 +4068,7 @@ impl ::sittir_core::prepare::Prepare for PatternTransport {
             PatternTransport::RestPattern(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             PatternTransport::LhsExpression(t) => t.source_separator(ctx),
             PatternTransport::RestPattern(t) => t.source_separator(ctx),
@@ -4147,7 +4147,7 @@ impl ::sittir_core::prepare::Prepare for TypeTransport {
             TypeTransport::TypeQueryCallExpressionInTypeAnnotation(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TypeTransport::PrimaryType(t) => t.source_separator(ctx),
             TypeTransport::FunctionType(t) => t.source_separator(ctx),
@@ -4298,7 +4298,7 @@ impl ::sittir_core::prepare::Prepare for PrimaryTypeTransport {
             PrimaryTypeTransport::UnionType(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             PrimaryTypeTransport::ParenthesizedType(t) => t.source_separator(ctx),
             PrimaryTypeTransport::PredefinedType(t) => t.source_separator(ctx),
@@ -4426,7 +4426,7 @@ impl ::sittir_core::prepare::Prepare for ClassBodyMemberTransport {
             ClassBodyMemberTransport::EmptyMember(_) => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ClassBodyMemberTransport::ClassBodyMemberMethod(t) => t.source_separator(ctx),
             ClassBodyMemberTransport::ClassBodyMemberMethodSig(t) => t.source_separator(ctx),
@@ -4486,7 +4486,7 @@ impl ::sittir_core::prepare::Prepare for EnumBodyElementTransport {
             EnumBodyElementTransport::EnumAssignment(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             EnumBodyElementTransport::EnumBodyElementName(t) => t.source_separator(ctx),
             EnumBodyElementTransport::EnumAssignment(t) => t.source_separator(ctx),
@@ -4540,7 +4540,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultTransport {
             ExportStatementDefaultTransport::ExportStatementDefaultDeclaration(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ExportStatementDefaultTransport::ExportStatementDefaultFrom(t) => t.source_separator(ctx),
             ExportStatementDefaultTransport::ExportStatementDefaultDeclaration(t) => t.source_separator(ctx),
@@ -4611,7 +4611,7 @@ impl ::sittir_core::prepare::Prepare for NumberBigintTransport {
             NumberBigintTransport::NumberBigintDecimal(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             NumberBigintTransport::NumberBigintHex(t) => t.source_separator(ctx),
             NumberBigintTransport::NumberBigintBinary(t) => t.source_separator(ctx),
@@ -4689,7 +4689,7 @@ impl ::sittir_core::prepare::Prepare for NamespaceExportModuleExportNameTranspor
             NamespaceExportModuleExportNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             NamespaceExportModuleExportNameTransportSlot::Identifier(t) => t.source_separator(ctx),
             NamespaceExportModuleExportNameTransportSlot::StringDouble(t) => t.source_separator(ctx),
@@ -4862,7 +4862,7 @@ impl ::sittir_core::prepare::Prepare for ImportStatementFromClauseTransportSlot 
             ImportStatementFromClauseTransportSlot::StringSingle(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ImportStatementFromClauseTransportSlot::ImportStatementClauseFrom(t) => t.source_separator(ctx),
             ImportStatementFromClauseTransportSlot::ImportRequireClause(t) => t.source_separator(ctx),
@@ -4974,7 +4974,7 @@ impl ::sittir_core::prepare::Prepare for ImportClauseContentTransportSlot {
             ImportClauseContentTransportSlot::ImportClauseDefaultImport(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ImportClauseContentTransportSlot::NamespaceImport(t) => t.source_separator(ctx),
             ImportClauseContentTransportSlot::NamedImports(t) => t.source_separator(ctx),
@@ -5356,7 +5356,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementExpressionTransportS
             ExpressionStatementExpressionTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ExpressionStatementExpressionTransportSlot::AsExpression(t) => t.source_separator(ctx),
             ExpressionStatementExpressionTransportSlot::SatisfiesExpression(t) => t.source_separator(ctx),
@@ -6081,7 +6081,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerTransportSlot {
             ForStatementInitializerTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ForStatementInitializerTransportSlot::LexicalDeclaration(t) => t.source_separator(ctx),
             ForStatementInitializerTransportSlot::VariableDeclaration(t) => t.source_separator(ctx),
@@ -6591,7 +6591,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementConditionTransportSlot {
             ForStatementConditionTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ForStatementConditionTransportSlot::AsExpression(t) => t.source_separator(ctx),
             ForStatementConditionTransportSlot::SatisfiesExpression(t) => t.source_separator(ctx),
@@ -7190,7 +7190,7 @@ impl ::sittir_core::prepare::Prepare for LabeledStatementLabelTransportSlot {
             LabeledStatementLabelTransportSlot::LetKeyword => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             LabeledStatementLabelTransportSlot::StatementIdentifier(t) => t.source_separator(ctx),
             LabeledStatementLabelTransportSlot::DeclareKeyword => None,
@@ -7310,7 +7310,7 @@ impl ::sittir_core::prepare::Prepare for SwitchBodyCasesTransportSlot {
             SwitchBodyCasesTransportSlot::SwitchDefault(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             SwitchBodyCasesTransportSlot::SwitchCase(t) => t.source_separator(ctx),
             SwitchBodyCasesTransportSlot::SwitchDefault(t) => t.source_separator(ctx),
@@ -7640,7 +7640,7 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionExpressionTransportSlot 
             YieldExpressionExpressionTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             YieldExpressionExpressionTransportSlot::YieldExpressionDelegate(t) => t.source_separator(ctx),
             YieldExpressionExpressionTransportSlot::AsExpression(t) => t.source_separator(ctx),
@@ -7976,7 +7976,7 @@ impl ::sittir_core::prepare::Prepare for ObjectPropertiesTransportSlot {
             ObjectPropertiesTransportSlot::LetKeyword => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ObjectPropertiesTransportSlot::Pair(t) => t.source_separator(ctx),
             ObjectPropertiesTransportSlot::SpreadElement(t) => t.source_separator(ctx),
@@ -8225,7 +8225,7 @@ impl ::sittir_core::prepare::Prepare for ObjectPatternPropertiesTransportSlot {
             ObjectPatternPropertiesTransportSlot::LetKeyword => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ObjectPatternPropertiesTransportSlot::PairPattern(t) => t.source_separator(ctx),
             ObjectPatternPropertiesTransportSlot::RestPattern(t) => t.source_separator(ctx),
@@ -8469,7 +8469,7 @@ impl ::sittir_core::prepare::Prepare for ObjectAssignmentPatternLeftTransportSlo
             ObjectAssignmentPatternLeftTransportSlot::LetKeyword => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ObjectAssignmentPatternLeftTransportSlot::ShorthandPropertyIdentifierPattern(t) => t.source_separator(ctx),
             ObjectAssignmentPatternLeftTransportSlot::ObjectPattern(t) => t.source_separator(ctx),
@@ -8868,7 +8868,7 @@ impl ::sittir_core::prepare::Prepare for ArrayElementsTransportSlot {
             ArrayElementsTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ArrayElementsTransportSlot::AsExpression(t) => t.source_separator(ctx),
             ArrayElementsTransportSlot::SatisfiesExpression(t) => t.source_separator(ctx),
@@ -9089,7 +9089,7 @@ impl ::sittir_core::prepare::Prepare for ArrayPatternElementsTransportSlot {
             ArrayPatternElementsTransportSlot::AssignmentPattern(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ArrayPatternElementsTransportSlot::LhsExpression(t) => t.source_separator(ctx),
             ArrayPatternElementsTransportSlot::RestPattern(t) => t.source_separator(ctx),
@@ -9154,7 +9154,7 @@ impl ::sittir_core::prepare::Prepare for NestedIdentifierObjectTransportSlot {
             NestedIdentifierObjectTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             NestedIdentifierObjectTransportSlot::Identifier(t) => t.source_separator(ctx),
             NestedIdentifierObjectTransportSlot::NestedIdentifier(t) => t.source_separator(ctx),
@@ -9214,7 +9214,7 @@ impl ::sittir_core::prepare::Prepare for ClassHeritageContentTransportSlot {
             ClassHeritageContentTransportSlot::ImplementsClause(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ClassHeritageContentTransportSlot::ClassHeritageExtendsClause(t) => t.source_separator(ctx),
             ClassHeritageContentTransportSlot::ImplementsClause(t) => t.source_separator(ctx),
@@ -9276,7 +9276,7 @@ impl ::sittir_core::prepare::Prepare for FunctionExpressionReturnTypeTransportSl
             FunctionExpressionReturnTypeTransportSlot::TypePredicateAnnotation(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             FunctionExpressionReturnTypeTransportSlot::TypeAnnotation(t) => t.source_separator(ctx),
             FunctionExpressionReturnTypeTransportSlot::AssertsAnnotation(t) => t.source_separator(ctx),
@@ -9609,7 +9609,7 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionBodyTransportSlot {
             ArrowFunctionBodyTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ArrowFunctionBodyTransportSlot::AsExpression(t) => t.source_separator(ctx),
             ArrowFunctionBodyTransportSlot::SatisfiesExpression(t) => t.source_separator(ctx),
@@ -9825,7 +9825,7 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionContentTransportSlot {
             ArrowFunctionContentTransportSlot::CallSignature(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ArrowFunctionContentTransportSlot::ArrowFunctionParameter(t) => t.source_separator(ctx),
             ArrowFunctionContentTransportSlot::CallSignature(t) => t.source_separator(ctx),
@@ -10155,7 +10155,7 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionObjectTransportSlot {
             MemberExpressionObjectTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             MemberExpressionObjectTransportSlot::AsExpression(t) => t.source_separator(ctx),
             MemberExpressionObjectTransportSlot::SatisfiesExpression(t) => t.source_separator(ctx),
@@ -10422,7 +10422,7 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionPropertyTransportSlot {
             MemberExpressionPropertyTransportSlot::PropertyIdentifier(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             MemberExpressionPropertyTransportSlot::PrivatePropertyIdentifier(t) => t.source_separator(ctx),
             MemberExpressionPropertyTransportSlot::PropertyIdentifier(t) => t.source_separator(ctx),
@@ -10747,7 +10747,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptExpressionObjectTransportSlot 
             SubscriptExpressionObjectTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             SubscriptExpressionObjectTransportSlot::AsExpression(t) => t.source_separator(ctx),
             SubscriptExpressionObjectTransportSlot::SatisfiesExpression(t) => t.source_separator(ctx),
@@ -10991,7 +10991,7 @@ impl ::sittir_core::prepare::Prepare for LhsExpressionContentTransportSlot {
             LhsExpressionContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             LhsExpressionContentTransportSlot::MemberExpression(t) => t.source_separator(ctx),
             LhsExpressionContentTransportSlot::SubscriptExpression(t) => t.source_separator(ctx),
@@ -11071,7 +11071,7 @@ impl ::sittir_core::prepare::Prepare for AssignmentExpressionLeftTransportSlot {
             AssignmentExpressionLeftTransportSlot::LhsExpression(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             AssignmentExpressionLeftTransportSlot::ParenthesizedExpressionTyped(t) => t.source_separator(ctx),
             AssignmentExpressionLeftTransportSlot::ParenthesizedExpressionSequence(t) => t.source_separator(ctx),
@@ -11156,7 +11156,7 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentExpressionLeftTransp
             AugmentedAssignmentExpressionLeftTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             AugmentedAssignmentExpressionLeftTransportSlot::MemberExpression(t) => t.source_separator(ctx),
             AugmentedAssignmentExpressionLeftTransportSlot::SubscriptExpression(t) => t.source_separator(ctx),
@@ -11590,7 +11590,7 @@ impl ::sittir_core::prepare::Prepare for TemplateStringElementsTransportSlot {
             TemplateStringElementsTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TemplateStringElementsTransportSlot::TemplateChars(t) => t.source_separator(ctx),
             TemplateStringElementsTransportSlot::EscapeSequence(t) => t.source_separator(ctx),
@@ -11668,7 +11668,7 @@ impl ::sittir_core::prepare::Prepare for DecoratorExpressionTransportSlot {
             DecoratorExpressionTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             DecoratorExpressionTransportSlot::Identifier(t) => t.source_separator(ctx),
             DecoratorExpressionTransportSlot::DecoratorMemberExpression(t) => t.source_separator(ctx),
@@ -11739,7 +11739,7 @@ impl ::sittir_core::prepare::Prepare for DecoratorMemberExpressionObjectTranspor
             DecoratorMemberExpressionObjectTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             DecoratorMemberExpressionObjectTransportSlot::Identifier(t) => t.source_separator(ctx),
             DecoratorMemberExpressionObjectTransportSlot::DecoratorMemberExpression(t) => t.source_separator(ctx),
@@ -12028,7 +12028,7 @@ impl ::sittir_core::prepare::Prepare for MethodDefinitionNameTransportSlot {
             MethodDefinitionNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             MethodDefinitionNameTransportSlot::PropertyIdentifier(t) => t.source_separator(ctx),
             MethodDefinitionNameTransportSlot::PrivatePropertyIdentifier(t) => t.source_separator(ctx),
@@ -12294,7 +12294,7 @@ impl ::sittir_core::prepare::Prepare for DecoratorParenthesizedExpressionExpress
             DecoratorParenthesizedExpressionExpressionTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             DecoratorParenthesizedExpressionExpressionTransportSlot::Identifier(t) => t.source_separator(ctx),
             DecoratorParenthesizedExpressionExpressionTransportSlot::DecoratorMemberExpression(t) => t.source_separator(ctx),
@@ -12479,7 +12479,7 @@ impl ::sittir_core::prepare::Prepare for AsExpressionTypeAnnotationTransportSlot
             AsExpressionTypeAnnotationTransportSlot::ConstKeyword => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             AsExpressionTypeAnnotationTransportSlot::ParenthesizedType(t) => t.source_separator(ctx),
             AsExpressionTypeAnnotationTransportSlot::PredefinedType(t) => t.source_separator(ctx),
@@ -12683,7 +12683,7 @@ impl ::sittir_core::prepare::Prepare for AmbientDeclarationContentTransportSlot 
             AmbientDeclarationContentTransportSlot::AmbientDeclarationModule(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             AmbientDeclarationContentTransportSlot::FunctionDeclaration(t) => t.source_separator(ctx),
             AmbientDeclarationContentTransportSlot::GeneratorFunctionDeclaration(t) => t.source_separator(ctx),
@@ -12797,7 +12797,7 @@ impl ::sittir_core::prepare::Prepare for ModuleNameTransportSlot {
             ModuleNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ModuleNameTransportSlot::StringDouble(t) => t.source_separator(ctx),
             ModuleNameTransportSlot::StringSingle(t) => t.source_separator(ctx),
@@ -12912,7 +12912,7 @@ impl ::sittir_core::prepare::Prepare for ExtendsTypeClauseTypeTransportSlot {
             ExtendsTypeClauseTypeTransportSlot::GenericType(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ExtendsTypeClauseTypeTransportSlot::TypeIdentifier(t) => t.source_separator(ctx),
             ExtendsTypeClauseTypeTransportSlot::NestedTypeIdentifier(t) => t.source_separator(ctx),
@@ -13022,7 +13022,7 @@ impl ::sittir_core::prepare::Prepare for RequiredParameterPatternTransportSlot {
             RequiredParameterPatternTransportSlot::This(_) => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             RequiredParameterPatternTransportSlot::LhsExpression(t) => t.source_separator(ctx),
             RequiredParameterPatternTransportSlot::RestPattern(t) => t.source_separator(ctx),
@@ -13087,7 +13087,7 @@ impl ::sittir_core::prepare::Prepare for TypeQueryMemberExpressionInTypeAnnotati
             TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot::Import => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => t.source_separator(ctx),
             TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.source_separator(ctx),
@@ -13147,7 +13147,7 @@ impl ::sittir_core::prepare::Prepare for TypeQueryCallExpressionInTypeAnnotation
             TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot::Import => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(t) => t.source_separator(ctx),
             TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot::Import => None,
@@ -13215,7 +13215,7 @@ impl ::sittir_core::prepare::Prepare for AssertsValueTransportSlot {
             AssertsValueTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             AssertsValueTransportSlot::TypePredicate(t) => t.source_separator(ctx),
             AssertsValueTransportSlot::Identifier(t) => t.source_separator(ctx),
@@ -13283,7 +13283,7 @@ impl ::sittir_core::prepare::Prepare for TupleParameterNameTransportSlot {
             TupleParameterNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TupleParameterNameTransportSlot::Identifier(t) => t.source_separator(ctx),
             TupleParameterNameTransportSlot::RestPattern(t) => t.source_separator(ctx),
@@ -13435,7 +13435,7 @@ impl ::sittir_core::prepare::Prepare for TemplateTypeTypeTransportSlot {
             TemplateTypeTypeTransportSlot::ExistentialType(_) => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TemplateTypeTypeTransportSlot::ParenthesizedType(t) => t.source_separator(ctx),
             TemplateTypeTypeTransportSlot::PredefinedType(t) => t.source_separator(ctx),
@@ -13551,7 +13551,7 @@ impl ::sittir_core::prepare::Prepare for TemplateLiteralTypeElementsTransportSlo
             TemplateLiteralTypeElementsTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TemplateLiteralTypeElementsTransportSlot::TemplateChars(t) => t.source_separator(ctx),
             TemplateLiteralTypeElementsTransportSlot::TemplateType(t) => t.source_separator(ctx),
@@ -13611,7 +13611,7 @@ impl ::sittir_core::prepare::Prepare for GenericTypeNameTransportSlot {
             GenericTypeNameTransportSlot::NestedTypeIdentifier(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             GenericTypeNameTransportSlot::TypeIdentifier(t) => t.source_separator(ctx),
             GenericTypeNameTransportSlot::NestedTypeIdentifier(t) => t.source_separator(ctx),
@@ -13679,7 +13679,7 @@ impl ::sittir_core::prepare::Prepare for TypePredicateNameTransportSlot {
             TypePredicateNameTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TypePredicateNameTransportSlot::Identifier(t) => t.source_separator(ctx),
             TypePredicateNameTransportSlot::PredefinedType(t) => t.source_separator(ctx),
@@ -13763,7 +13763,7 @@ impl ::sittir_core::prepare::Prepare for TypeQueryMemberExpressionObjectTranspor
             TypeQueryMemberExpressionObjectTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TypeQueryMemberExpressionObjectTransportSlot::Identifier(t) => t.source_separator(ctx),
             TypeQueryMemberExpressionObjectTransportSlot::TypeQuerySubscriptExpression(t) => t.source_separator(ctx),
@@ -13948,7 +13948,7 @@ impl ::sittir_core::prepare::Prepare for TypeQuerySubscriptExpressionIndexTransp
             TypeQuerySubscriptExpressionIndexTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TypeQuerySubscriptExpressionIndexTransportSlot::PredefinedType(t) => t.source_separator(ctx),
             TypeQuerySubscriptExpressionIndexTransportSlot::StringDouble(t) => t.source_separator(ctx),
@@ -14059,7 +14059,7 @@ impl ::sittir_core::prepare::Prepare for TypeQueryCallExpressionFunctionTranspor
             TypeQueryCallExpressionFunctionTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TypeQueryCallExpressionFunctionTransportSlot::Identifier(t) => t.source_separator(ctx),
             TypeQueryCallExpressionFunctionTransportSlot::TypeQueryMemberExpression(t) => t.source_separator(ctx),
@@ -14151,7 +14151,7 @@ impl ::sittir_core::prepare::Prepare for TypeQueryExpressionTransportSlot {
             TypeQueryExpressionTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TypeQueryExpressionTransportSlot::TypeQuerySubscriptExpression(t) => t.source_separator(ctx),
             TypeQueryExpressionTransportSlot::TypeQueryMemberExpression(t) => t.source_separator(ctx),
@@ -14312,7 +14312,7 @@ impl ::sittir_core::prepare::Prepare for LiteralTypeContentTransportSlot {
             LiteralTypeContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             LiteralTypeContentTransportSlot::LiteralTypeNegativeNumber(t) => t.source_separator(ctx),
             LiteralTypeContentTransportSlot::NumberHex(t) => t.source_separator(ctx),
@@ -14696,7 +14696,7 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeReturnTypeTransportSlot {
             FunctionTypeReturnTypeTransportSlot::ExistentialType(_) => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             FunctionTypeReturnTypeTransportSlot::ParenthesizedType(t) => t.source_separator(ctx),
             FunctionTypeReturnTypeTransportSlot::PredefinedType(t) => t.source_separator(ctx),
@@ -14828,7 +14828,7 @@ impl ::sittir_core::prepare::Prepare for FormalParametersElementsItemTransportSl
             FormalParametersElementsItemTransportSlot::OptionalParameter(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             FormalParametersElementsItemTransportSlot::RequiredParameter(t) => t.source_separator(ctx),
             FormalParametersElementsItemTransportSlot::OptionalParameter(t) => t.source_separator(ctx),
@@ -15022,7 +15022,7 @@ impl ::sittir_core::prepare::Prepare for TupleTypeMembersItemTransportSlot {
             TupleTypeMembersItemTransportSlot::ExistentialType(_) => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TupleTypeMembersItemTransportSlot::TupleParameter(t) => t.source_separator(ctx),
             TupleTypeMembersItemTransportSlot::OptionalTupleParameter(t) => t.source_separator(ctx),
@@ -15160,7 +15160,7 @@ impl ::sittir_core::prepare::Prepare for ImportClauseGroupContentTransportSlot {
             ImportClauseGroupContentTransportSlot::NamedImports(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ImportClauseGroupContentTransportSlot::NamespaceImport(t) => t.source_separator(ctx),
             ImportClauseGroupContentTransportSlot::NamedImports(t) => t.source_separator(ctx),
@@ -15227,7 +15227,7 @@ impl ::sittir_core::prepare::Prepare for CatchClauseGroupParameterTransportSlot 
             CatchClauseGroupParameterTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             CatchClauseGroupParameterTransportSlot::Identifier(t) => t.source_separator(ctx),
             CatchClauseGroupParameterTransportSlot::ObjectPattern(t) => t.source_separator(ctx),
@@ -15379,7 +15379,7 @@ impl ::sittir_core::prepare::Prepare for ObjectTypeContentItemTransportSlot {
             ObjectTypeContentItemTransportSlot::MethodSignature(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ObjectTypeContentItemTransportSlot::ExportStatementDefaultFrom(t) => t.source_separator(ctx),
             ObjectTypeContentItemTransportSlot::ExportStatementDefaultDeclaration(t) => t.source_separator(ctx),
@@ -15821,7 +15821,7 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionInLeftTransportSlot {
             BinaryExpressionInLeftTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             BinaryExpressionInLeftTransportSlot::AsExpression(t) => t.source_separator(ctx),
             BinaryExpressionInLeftTransportSlot::SatisfiesExpression(t) => t.source_separator(ctx),
@@ -16145,7 +16145,7 @@ impl ::sittir_core::prepare::Prepare for ClassBodyMemberDeclarationMemberTranspo
             ClassBodyMemberDeclarationMemberTransportSlot::PublicFieldDefinition(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ClassBodyMemberDeclarationMemberTransportSlot::AbstractMethodSignature(t) => t.source_separator(ctx),
             ClassBodyMemberDeclarationMemberTransportSlot::IndexSignatureColon(t) => t.source_separator(ctx),
@@ -16314,7 +16314,7 @@ impl ::sittir_core::prepare::Prepare for IndexSignatureColonTypeTransportSlot {
             IndexSignatureColonTypeTransportSlot::OptingTypeAnnotation(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             IndexSignatureColonTypeTransportSlot::TypeAnnotation(t) => t.source_separator(ctx),
             IndexSignatureColonTypeTransportSlot::OmittingTypeAnnotation(t) => t.source_separator(ctx),
@@ -16673,7 +16673,7 @@ impl ::sittir_core::prepare::Prepare for CallExpressionTemplateCallFunctionTrans
             CallExpressionTemplateCallFunctionTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             CallExpressionTemplateCallFunctionTransportSlot::SubscriptExpression(t) => t.source_separator(ctx),
             CallExpressionTemplateCallFunctionTransportSlot::MemberExpression(t) => t.source_separator(ctx),
@@ -16849,7 +16849,7 @@ impl ::sittir_core::prepare::Prepare for StringDoubleElementsTransportSlot {
             StringDoubleElementsTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             StringDoubleElementsTransportSlot::UnescapedDoubleStringFragment(t) => t.source_separator(ctx),
             StringDoubleElementsTransportSlot::EscapeSequence(t) => t.source_separator(ctx),
@@ -16914,7 +16914,7 @@ impl ::sittir_core::prepare::Prepare for StringSingleElementsTransportSlot {
             StringSingleElementsTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             StringSingleElementsTransportSlot::UnescapedSingleStringFragment(t) => t.source_separator(ctx),
             StringSingleElementsTransportSlot::EscapeSequence(t) => t.source_separator(ctx),
@@ -17121,7 +17121,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultFromContentTransp
             ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultFromClauseFrom(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultFromStarFrom(t) => t.source_separator(ctx),
             ExportStatementDefaultFromContentTransportSlot::ExportStatementDefaultFromNsFrom(t) => t.source_separator(ctx),
@@ -17246,7 +17246,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationConten
             ExportStatementDefaultDeclarationContentTransportSlot::ExportStatementDefaultDeclarationDefaultKw(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ExportStatementDefaultDeclarationContentTransportSlot::FunctionDeclaration(t) => t.source_separator(ctx),
             ExportStatementDefaultDeclarationContentTransportSlot::GeneratorFunctionDeclaration(t) => t.source_separator(ctx),
@@ -17407,7 +17407,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationDefaul
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::ExportStatementDefaultDeclarationDefaultKwValue(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::FunctionDeclaration(t) => t.source_separator(ctx),
             ExportStatementDefaultDeclarationDefaultKwContentTransportSlot::GeneratorFunctionDeclaration(t) => t.source_separator(ctx),
@@ -17552,7 +17552,7 @@ impl ::sittir_core::prepare::Prepare for ForHeaderLhsLeftTransportSlot {
             ForHeaderLhsLeftTransportSlot::ParenthesizedExpressionSequence(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ForHeaderLhsLeftTransportSlot::LhsExpression(t) => t.source_separator(ctx),
             ForHeaderLhsLeftTransportSlot::ParenthesizedExpressionTyped(t) => t.source_separator(ctx),
@@ -17800,7 +17800,7 @@ impl ::sittir_core::prepare::Prepare for StatementIdentifierContentTransportSlot
             StatementIdentifierContentTransportSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             StatementIdentifierContentTransportSlot::Identifier(t) => t.source_separator(ctx),
             StatementIdentifierContentTransportSlot::DeclareKeyword => None,
@@ -17908,7 +17908,7 @@ pub struct ProgramTransport {
     #[slot(field = field::STATEMENTS, word = 7, width = 2, run = 5)]
     pub statements: Vec<::sittir_core::SlotValue<StatementTransport>>,
     #[wire(key = "_statements_separator_space")]
-    pub statements_separator_space: Option<u16>,
+    pub statements_separator_space: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ProgramTransport {
@@ -17949,7 +17949,7 @@ impl ::sittir_core::prepare::Prepare for ProgramTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -17997,7 +17997,7 @@ impl ::sittir_core::prepare::Prepare for HashBangLineTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -18046,7 +18046,7 @@ impl ::sittir_core::prepare::Prepare for NamespaceExportTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -18095,7 +18095,7 @@ impl ::sittir_core::prepare::Prepare for ExportClauseTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -18152,7 +18152,7 @@ impl ::sittir_core::prepare::Prepare for ExportSpecifierTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -18242,7 +18242,7 @@ impl ::sittir_core::prepare::Prepare for ImportStatementTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -18290,7 +18290,7 @@ impl ::sittir_core::prepare::Prepare for ImportClauseTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -18339,7 +18339,7 @@ impl ::sittir_core::prepare::Prepare for NamespaceImportTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -18388,7 +18388,7 @@ impl ::sittir_core::prepare::Prepare for NamedImportsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -18445,7 +18445,7 @@ impl ::sittir_core::prepare::Prepare for ImportAttributeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -18499,7 +18499,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -18522,9 +18522,9 @@ pub struct VariableDeclarationTransport {
     #[slot(field = field::TERMINATOR, word = 4, width = 5)]
     pub terminator: Option<::sittir_core::SlotValue<VariableDeclarationTerminatorTransportSlot>>,
     #[wire(key = "_declarators_separator_space_before")]
-    pub declarators_separator_space_before: Option<u16>,
+    pub declarators_separator_space_before: Option<KindId>,
     #[wire(key = "_declarators_separator_space_after")]
-    pub declarators_separator_space_after: Option<u16>,
+    pub declarators_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for VariableDeclarationTransport {
@@ -18561,7 +18561,7 @@ impl ::sittir_core::prepare::Prepare for VariableDeclarationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -18587,9 +18587,9 @@ pub struct LexicalDeclarationTransport {
     #[slot(field = field::TERMINATOR, word = 9, width = 5)]
     pub terminator: Option<::sittir_core::SlotValue<LexicalDeclarationTerminatorTransportSlot>>,
     #[wire(key = "_declarators_separator_space_before")]
-    pub declarators_separator_space_before: Option<u16>,
+    pub declarators_separator_space_before: Option<KindId>,
     #[wire(key = "_declarators_separator_space_after")]
-    pub declarators_separator_space_after: Option<u16>,
+    pub declarators_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for LexicalDeclarationTransport {
@@ -18631,7 +18631,7 @@ impl ::sittir_core::prepare::Prepare for LexicalDeclarationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -18654,7 +18654,7 @@ pub struct StatementBlockTransport {
     #[slot(field = field::TERMINATOR, word = 4, width = 5)]
     pub terminator: Option<::sittir_core::SlotValue<StatementBlockTerminatorTransportSlot>>,
     #[wire(key = "_statements_separator_space")]
-    pub statements_separator_space: Option<u16>,
+    pub statements_separator_space: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for StatementBlockTransport {
@@ -18690,7 +18690,7 @@ impl ::sittir_core::prepare::Prepare for StatementBlockTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -18739,7 +18739,7 @@ impl ::sittir_core::prepare::Prepare for ElseClauseTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -18796,7 +18796,7 @@ impl ::sittir_core::prepare::Prepare for IfStatementTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -18849,7 +18849,7 @@ impl ::sittir_core::prepare::Prepare for SwitchStatementTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -18910,7 +18910,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -18967,7 +18967,7 @@ impl ::sittir_core::prepare::Prepare for ForInStatementTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -19020,7 +19020,7 @@ impl ::sittir_core::prepare::Prepare for WhileStatementTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -19078,7 +19078,7 @@ impl ::sittir_core::prepare::Prepare for DoStatementTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -19135,7 +19135,7 @@ impl ::sittir_core::prepare::Prepare for TryStatementTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -19188,7 +19188,7 @@ impl ::sittir_core::prepare::Prepare for WithStatementTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -19242,7 +19242,7 @@ impl ::sittir_core::prepare::Prepare for BreakStatementTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -19296,7 +19296,7 @@ impl ::sittir_core::prepare::Prepare for ContinueStatementTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -19346,7 +19346,7 @@ impl ::sittir_core::prepare::Prepare for DebuggerStatementTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -19400,7 +19400,7 @@ impl ::sittir_core::prepare::Prepare for ReturnStatementTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -19454,7 +19454,7 @@ impl ::sittir_core::prepare::Prepare for ThrowStatementTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -19495,7 +19495,7 @@ impl ::sittir_core::prepare::Prepare for EmptyStatementTransport {
             EmptyStatementTransport::EmptyStatement(_) => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             EmptyStatementTransport::EmptyStatement(_) => None,
         }
@@ -19555,7 +19555,7 @@ impl ::sittir_core::prepare::Prepare for LabeledStatementTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -19575,7 +19575,7 @@ pub struct SwitchBodyTransport {
     #[slot(field = field::CASES, word = 2, width = 2, run = 5)]
     pub cases: Vec<::sittir_core::SlotValue<SwitchBodyCasesTransportSlot>>,
     #[wire(key = "_cases_separator_space")]
-    pub cases_separator_space: Option<u16>,
+    pub cases_separator_space: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for SwitchBodyTransport {
@@ -19609,7 +19609,7 @@ impl ::sittir_core::prepare::Prepare for SwitchBodyTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -19632,7 +19632,7 @@ pub struct SwitchCaseTransport {
     #[slot(field = field::BODY, word = 7, width = 2, run = 5)]
     pub body: Vec<::sittir_core::SlotValue<StatementTransport>>,
     #[wire(key = "_body_separator_space")]
-    pub body_separator_space: Option<u16>,
+    pub body_separator_space: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for SwitchCaseTransport {
@@ -19667,7 +19667,7 @@ impl ::sittir_core::prepare::Prepare for SwitchCaseTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -19687,7 +19687,7 @@ pub struct SwitchDefaultTransport {
     #[slot(field = field::BODY, word = 2, width = 2, run = 5)]
     pub body: Vec<::sittir_core::SlotValue<StatementTransport>>,
     #[wire(key = "_body_separator_space")]
-    pub body_separator_space: Option<u16>,
+    pub body_separator_space: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for SwitchDefaultTransport {
@@ -19721,7 +19721,7 @@ impl ::sittir_core::prepare::Prepare for SwitchDefaultTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -19774,7 +19774,7 @@ impl ::sittir_core::prepare::Prepare for CatchClauseTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -19823,7 +19823,7 @@ impl ::sittir_core::prepare::Prepare for FinallyClauseTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -19872,7 +19872,7 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -19892,9 +19892,9 @@ pub struct ObjectTransport {
     #[slot(field = field::PROPERTIES, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub properties: Vec<Option<::sittir_core::SlotValue<ObjectPropertiesTransportSlot>>>,
     #[wire(key = "_properties_separator_space_before")]
-    pub properties_separator_space_before: Option<u16>,
+    pub properties_separator_space_before: Option<KindId>,
     #[wire(key = "_properties_separator_space_after")]
-    pub properties_separator_space_after: Option<u16>,
+    pub properties_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ObjectTransport {
@@ -19929,7 +19929,7 @@ impl ::sittir_core::prepare::Prepare for ObjectTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -19949,9 +19949,9 @@ pub struct ObjectPatternTransport {
     #[slot(field = field::PROPERTIES, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub properties: Vec<Option<::sittir_core::SlotValue<ObjectPatternPropertiesTransportSlot>>>,
     #[wire(key = "_properties_separator_space_before")]
-    pub properties_separator_space_before: Option<u16>,
+    pub properties_separator_space_before: Option<KindId>,
     #[wire(key = "_properties_separator_space_after")]
-    pub properties_separator_space_after: Option<u16>,
+    pub properties_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ObjectPatternTransport {
@@ -19986,7 +19986,7 @@ impl ::sittir_core::prepare::Prepare for ObjectPatternTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -20039,7 +20039,7 @@ impl ::sittir_core::prepare::Prepare for AssignmentPatternTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -20092,7 +20092,7 @@ impl ::sittir_core::prepare::Prepare for ObjectAssignmentPatternTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -20112,9 +20112,9 @@ pub struct ArrayTransport {
     #[slot(field = field::ELEMENTS, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub elements: Vec<Option<::sittir_core::SlotValue<ArrayElementsTransportSlot>>>,
     #[wire(key = "_elements_separator_space_before")]
-    pub elements_separator_space_before: Option<u16>,
+    pub elements_separator_space_before: Option<KindId>,
     #[wire(key = "_elements_separator_space_after")]
-    pub elements_separator_space_after: Option<u16>,
+    pub elements_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ArrayTransport {
@@ -20149,7 +20149,7 @@ impl ::sittir_core::prepare::Prepare for ArrayTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -20169,9 +20169,9 @@ pub struct ArrayPatternTransport {
     #[slot(field = field::ELEMENTS, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub elements: Vec<Option<::sittir_core::SlotValue<ArrayPatternElementsTransportSlot>>>,
     #[wire(key = "_elements_separator_space_before")]
-    pub elements_separator_space_before: Option<u16>,
+    pub elements_separator_space_before: Option<KindId>,
     #[wire(key = "_elements_separator_space_after")]
-    pub elements_separator_space_after: Option<u16>,
+    pub elements_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ArrayPatternTransport {
@@ -20206,7 +20206,7 @@ impl ::sittir_core::prepare::Prepare for ArrayPatternTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -20259,7 +20259,7 @@ impl ::sittir_core::prepare::Prepare for NestedIdentifierTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -20291,7 +20291,7 @@ pub struct ClassTransport {
     #[slot(field = field::BODY, word = 19, width = 5)]
     pub body: ::sittir_core::SlotValue<ClassBodyTransport>,
     #[wire(key = "_decorator_separator_space")]
-    pub decorator_separator_space: Option<u16>,
+    pub decorator_separator_space: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ClassTransport {
@@ -20329,7 +20329,7 @@ impl ::sittir_core::prepare::Prepare for ClassTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -20364,7 +20364,7 @@ pub struct ClassDeclarationTransport {
     #[slot(field = field::TERMINATOR, word = 24, width = 5)]
     pub terminator: Option<::sittir_core::SlotValue<StatementBlockTerminatorTransportSlot>>,
     #[wire(key = "_decorator_separator_space")]
-    pub decorator_separator_space: Option<u16>,
+    pub decorator_separator_space: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ClassDeclarationTransport {
@@ -20404,7 +20404,7 @@ impl ::sittir_core::prepare::Prepare for ClassDeclarationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -20452,7 +20452,7 @@ impl ::sittir_core::prepare::Prepare for ClassHeritageTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -20521,7 +20521,7 @@ impl ::sittir_core::prepare::Prepare for FunctionExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -20595,7 +20595,7 @@ impl ::sittir_core::prepare::Prepare for FunctionDeclarationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -20664,7 +20664,7 @@ impl ::sittir_core::prepare::Prepare for GeneratorFunctionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -20738,7 +20738,7 @@ impl ::sittir_core::prepare::Prepare for GeneratorFunctionDeclarationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -20795,7 +20795,7 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -20880,7 +20880,7 @@ impl ::sittir_core::prepare::Prepare for NewExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -20929,7 +20929,7 @@ impl ::sittir_core::prepare::Prepare for AwaitExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -20986,7 +20986,7 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -21043,7 +21043,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -21091,7 +21091,7 @@ impl ::sittir_core::prepare::Prepare for LhsExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -21148,7 +21148,7 @@ impl ::sittir_core::prepare::Prepare for AssignmentExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -21205,7 +21205,7 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentExpressionTransport 
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -21254,7 +21254,7 @@ impl ::sittir_core::prepare::Prepare for SpreadElementTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -21311,7 +21311,7 @@ impl ::sittir_core::prepare::Prepare for TernaryExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -21371,7 +21371,7 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -21428,7 +21428,7 @@ impl ::sittir_core::prepare::Prepare for UnaryExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -21448,9 +21448,9 @@ pub struct SequenceExpressionTransport {
     #[slot(field = field::EXPRESSION, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub expression: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_expression_separator_space_before")]
-    pub expression_separator_space_before: Option<u16>,
+    pub expression_separator_space_before: Option<KindId>,
     #[wire(key = "_expression_separator_space_after")]
-    pub expression_separator_space_after: Option<u16>,
+    pub expression_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for SequenceExpressionTransport {
@@ -21485,7 +21485,7 @@ impl ::sittir_core::prepare::Prepare for SequenceExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -21531,7 +21531,7 @@ impl ::sittir_core::prepare::Prepare for UnescapedDoubleStringFragmentTransport 
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -21577,7 +21577,7 @@ impl ::sittir_core::prepare::Prepare for UnescapedSingleStringFragmentTransport 
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -21625,7 +21625,7 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -21675,7 +21675,7 @@ impl ::sittir_core::prepare::Prepare for TemplateStringTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -21724,7 +21724,7 @@ impl ::sittir_core::prepare::Prepare for TemplateSubstitutionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -21777,7 +21777,7 @@ impl ::sittir_core::prepare::Prepare for RegexTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -21823,7 +21823,7 @@ impl ::sittir_core::prepare::Prepare for RegexPatternTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -21869,7 +21869,7 @@ impl ::sittir_core::prepare::Prepare for RegexFlagsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -21915,7 +21915,7 @@ impl ::sittir_core::prepare::Prepare for IdentifierTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -21963,7 +21963,7 @@ impl ::sittir_core::prepare::Prepare for PrivatePropertyIdentifierTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -22004,7 +22004,7 @@ impl ::sittir_core::prepare::Prepare for ThisTransport {
             ThisTransport::This(_) => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ThisTransport::This(_) => None,
         }
@@ -22052,7 +22052,7 @@ impl ::sittir_core::prepare::Prepare for SuperTransport {
             SuperTransport::Super(_) => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             SuperTransport::Super(_) => None,
         }
@@ -22100,7 +22100,7 @@ impl ::sittir_core::prepare::Prepare for TrueTransport {
             TrueTransport::True(_) => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TrueTransport::True(_) => None,
         }
@@ -22148,7 +22148,7 @@ impl ::sittir_core::prepare::Prepare for FalseTransport {
             FalseTransport::False(_) => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             FalseTransport::False(_) => None,
         }
@@ -22196,7 +22196,7 @@ impl ::sittir_core::prepare::Prepare for NullTransport {
             NullTransport::Null(_) => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             NullTransport::Null(_) => None,
         }
@@ -22244,7 +22244,7 @@ impl ::sittir_core::prepare::Prepare for UndefinedTransport {
             UndefinedTransport::Undefined(_) => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             UndefinedTransport::Undefined(_) => None,
         }
@@ -22271,9 +22271,9 @@ pub struct ArgumentsTransport {
     #[slot(field = field::ELEMENTS, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub elements: Vec<Option<::sittir_core::SlotValue<ArrayElementsTransportSlot>>>,
     #[wire(key = "_elements_separator_space_before")]
-    pub elements_separator_space_before: Option<u16>,
+    pub elements_separator_space_before: Option<KindId>,
     #[wire(key = "_elements_separator_space_after")]
-    pub elements_separator_space_after: Option<u16>,
+    pub elements_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ArgumentsTransport {
@@ -22308,7 +22308,7 @@ impl ::sittir_core::prepare::Prepare for ArgumentsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -22357,7 +22357,7 @@ impl ::sittir_core::prepare::Prepare for DecoratorTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -22410,7 +22410,7 @@ impl ::sittir_core::prepare::Prepare for DecoratorMemberExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -22467,7 +22467,7 @@ impl ::sittir_core::prepare::Prepare for DecoratorCallExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -22487,7 +22487,7 @@ pub struct ClassBodyTransport {
     #[slot(field = field::MEMBERS, word = 2, width = 2, run = 5)]
     pub members: Vec<::sittir_core::SlotValue<ClassBodyMemberTransport>>,
     #[wire(key = "_members_separator_space")]
-    pub members_separator_space: Option<u16>,
+    pub members_separator_space: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ClassBodyTransport {
@@ -22521,7 +22521,7 @@ impl ::sittir_core::prepare::Prepare for ClassBodyTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -22570,7 +22570,7 @@ impl ::sittir_core::prepare::Prepare for FormalParametersTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -22624,7 +22624,7 @@ impl ::sittir_core::prepare::Prepare for ClassStaticBlockTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -22673,7 +22673,7 @@ impl ::sittir_core::prepare::Prepare for RestPatternTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -22766,7 +22766,7 @@ impl ::sittir_core::prepare::Prepare for MethodDefinitionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -22819,7 +22819,7 @@ impl ::sittir_core::prepare::Prepare for PairTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -22872,7 +22872,7 @@ impl ::sittir_core::prepare::Prepare for PairPatternTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -22921,7 +22921,7 @@ impl ::sittir_core::prepare::Prepare for ComputedPropertyNameTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -22974,7 +22974,7 @@ pub struct PublicFieldDefinitionTransport {
     #[slot(field = field::VALUE, word = 25, width = 5)]
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_decorator_separator_space")]
-    pub decorator_separator_space: Option<u16>,
+    pub decorator_separator_space: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for PublicFieldDefinitionTransport {
@@ -23019,7 +23019,7 @@ impl ::sittir_core::prepare::Prepare for PublicFieldDefinitionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -23068,7 +23068,7 @@ impl ::sittir_core::prepare::Prepare for NonNullExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -23157,7 +23157,7 @@ impl ::sittir_core::prepare::Prepare for MethodSignatureTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -23234,7 +23234,7 @@ impl ::sittir_core::prepare::Prepare for AbstractMethodSignatureTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -23304,7 +23304,7 @@ impl ::sittir_core::prepare::Prepare for FunctionSignatureTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -23353,7 +23353,7 @@ impl ::sittir_core::prepare::Prepare for DecoratorParenthesizedExpressionTranspo
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -23406,7 +23406,7 @@ impl ::sittir_core::prepare::Prepare for TypeAssertionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -23459,7 +23459,7 @@ impl ::sittir_core::prepare::Prepare for AsExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -23512,7 +23512,7 @@ impl ::sittir_core::prepare::Prepare for SatisfiesExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -23565,7 +23565,7 @@ impl ::sittir_core::prepare::Prepare for InstantiationExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -23618,7 +23618,7 @@ impl ::sittir_core::prepare::Prepare for ImportRequireClauseTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -23638,9 +23638,9 @@ pub struct ExtendsClauseTransport {
     #[slot(field = field::TYPES, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub types: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExtendsClauseSingleTransport>>,
     #[wire(key = "_types_separator_space_before")]
-    pub types_separator_space_before: Option<u16>,
+    pub types_separator_space_before: Option<KindId>,
     #[wire(key = "_types_separator_space_after")]
-    pub types_separator_space_after: Option<u16>,
+    pub types_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ExtendsClauseTransport {
@@ -23675,7 +23675,7 @@ impl ::sittir_core::prepare::Prepare for ExtendsClauseTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -23728,7 +23728,7 @@ impl ::sittir_core::prepare::Prepare for ExtendsClauseSingleTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -23748,9 +23748,9 @@ pub struct ImplementsClauseTransport {
     #[slot(field = field::TYPE, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub type_: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TypeTransport>>,
     #[wire(key = "_type_separator_space_before")]
-    pub type_separator_space_before: Option<u16>,
+    pub type_separator_space_before: Option<KindId>,
     #[wire(key = "_type_separator_space_after")]
-    pub type_separator_space_after: Option<u16>,
+    pub type_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ImplementsClauseTransport {
@@ -23785,7 +23785,7 @@ impl ::sittir_core::prepare::Prepare for ImplementsClauseTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -23834,7 +23834,7 @@ impl ::sittir_core::prepare::Prepare for AmbientDeclarationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -23866,7 +23866,7 @@ pub struct AbstractClassDeclarationTransport {
     #[slot(field = field::BODY, word = 19, width = 5)]
     pub body: ::sittir_core::SlotValue<ClassBodyTransport>,
     #[wire(key = "_decorator_separator_space")]
-    pub decorator_separator_space: Option<u16>,
+    pub decorator_separator_space: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for AbstractClassDeclarationTransport {
@@ -23904,7 +23904,7 @@ impl ::sittir_core::prepare::Prepare for AbstractClassDeclarationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -23957,7 +23957,7 @@ impl ::sittir_core::prepare::Prepare for ModuleTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -24010,7 +24010,7 @@ impl ::sittir_core::prepare::Prepare for InternalModuleTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -24068,7 +24068,7 @@ impl ::sittir_core::prepare::Prepare for ImportAliasTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -24121,7 +24121,7 @@ impl ::sittir_core::prepare::Prepare for NestedTypeIdentifierTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -24182,7 +24182,7 @@ impl ::sittir_core::prepare::Prepare for InterfaceDeclarationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -24202,9 +24202,9 @@ pub struct ExtendsTypeClauseTransport {
     #[slot(field = field::TYPE, separator = kind::COMMA, word = 2, width = 2, run = 5)]
     pub type_: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<ExtendsTypeClauseTypeTransportSlot>>,
     #[wire(key = "_type_separator_space_before")]
-    pub type_separator_space_before: Option<u16>,
+    pub type_separator_space_before: Option<KindId>,
     #[wire(key = "_type_separator_space_after")]
-    pub type_separator_space_after: Option<u16>,
+    pub type_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ExtendsTypeClauseTransport {
@@ -24239,7 +24239,7 @@ impl ::sittir_core::prepare::Prepare for ExtendsTypeClauseTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -24296,7 +24296,7 @@ impl ::sittir_core::prepare::Prepare for EnumDeclarationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -24345,7 +24345,7 @@ impl ::sittir_core::prepare::Prepare for EnumBodyTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -24398,7 +24398,7 @@ impl ::sittir_core::prepare::Prepare for EnumAssignmentTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -24460,7 +24460,7 @@ impl ::sittir_core::prepare::Prepare for TypeAliasDeclarationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -24566,7 +24566,7 @@ pub struct RequiredParameterTransport {
     #[slot(field = field::VALUE, word = 20, width = 5)]
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_decorator_separator_space")]
-    pub decorator_separator_space: Option<u16>,
+    pub decorator_separator_space: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for RequiredParameterTransport {
@@ -24606,7 +24606,7 @@ impl ::sittir_core::prepare::Prepare for RequiredParameterTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -24644,7 +24644,7 @@ pub struct OptionalParameterTransport {
     #[slot(field = field::VALUE, word = 20, width = 5)]
     pub value: Option<::sittir_core::SlotValue<ExpressionTransport>>,
     #[wire(key = "_decorator_separator_space")]
-    pub decorator_separator_space: Option<u16>,
+    pub decorator_separator_space: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for OptionalParameterTransport {
@@ -24684,7 +24684,7 @@ impl ::sittir_core::prepare::Prepare for OptionalParameterTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -24733,7 +24733,7 @@ impl ::sittir_core::prepare::Prepare for OmittingTypeAnnotationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -24782,7 +24782,7 @@ impl ::sittir_core::prepare::Prepare for AddingTypeAnnotationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -24831,7 +24831,7 @@ impl ::sittir_core::prepare::Prepare for OptingTypeAnnotationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -24880,7 +24880,7 @@ impl ::sittir_core::prepare::Prepare for TypeAnnotationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -24933,7 +24933,7 @@ impl ::sittir_core::prepare::Prepare for TypeQueryMemberExpressionInTypeAnnotati
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -24986,7 +24986,7 @@ impl ::sittir_core::prepare::Prepare for TypeQueryCallExpressionInTypeAnnotation
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -25035,7 +25035,7 @@ impl ::sittir_core::prepare::Prepare for AssertsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -25084,7 +25084,7 @@ impl ::sittir_core::prepare::Prepare for AssertsAnnotationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -25137,7 +25137,7 @@ impl ::sittir_core::prepare::Prepare for TupleParameterTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -25190,7 +25190,7 @@ impl ::sittir_core::prepare::Prepare for OptionalTupleParameterTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -25239,7 +25239,7 @@ impl ::sittir_core::prepare::Prepare for OptionalTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -25288,7 +25288,7 @@ impl ::sittir_core::prepare::Prepare for RestTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -25349,7 +25349,7 @@ impl ::sittir_core::prepare::Prepare for ConstructorTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -25398,7 +25398,7 @@ impl ::sittir_core::prepare::Prepare for TemplateTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -25448,7 +25448,7 @@ impl ::sittir_core::prepare::Prepare for TemplateLiteralTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -25501,7 +25501,7 @@ impl ::sittir_core::prepare::Prepare for InferTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -25562,7 +25562,7 @@ impl ::sittir_core::prepare::Prepare for ConditionalTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -25615,7 +25615,7 @@ impl ::sittir_core::prepare::Prepare for GenericTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -25668,7 +25668,7 @@ impl ::sittir_core::prepare::Prepare for TypePredicateTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -25717,7 +25717,7 @@ impl ::sittir_core::prepare::Prepare for TypePredicateAnnotationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -25774,7 +25774,7 @@ impl ::sittir_core::prepare::Prepare for TypeQueryMemberExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -25831,7 +25831,7 @@ impl ::sittir_core::prepare::Prepare for TypeQuerySubscriptExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -25884,7 +25884,7 @@ impl ::sittir_core::prepare::Prepare for TypeQueryCallExpressionTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -25937,7 +25937,7 @@ impl ::sittir_core::prepare::Prepare for TypeQueryInstantiationExpressionTranspo
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -25986,7 +25986,7 @@ impl ::sittir_core::prepare::Prepare for TypeQueryTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -26035,7 +26035,7 @@ impl ::sittir_core::prepare::Prepare for IndexTypeQueryTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -26088,7 +26088,7 @@ impl ::sittir_core::prepare::Prepare for LookupTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -26145,7 +26145,7 @@ impl ::sittir_core::prepare::Prepare for MappedTypeClauseTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -26193,7 +26193,7 @@ impl ::sittir_core::prepare::Prepare for LiteralTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -26234,7 +26234,7 @@ impl ::sittir_core::prepare::Prepare for ExistentialTypeTransport {
             ExistentialTypeTransport::ExistentialType(_) => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ExistentialTypeTransport::ExistentialType(_) => None,
         }
@@ -26290,7 +26290,7 @@ impl ::sittir_core::prepare::Prepare for FlowMaybeTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -26339,7 +26339,7 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -26456,7 +26456,7 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -26517,7 +26517,7 @@ impl ::sittir_core::prepare::Prepare for ObjectTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -26574,7 +26574,7 @@ impl ::sittir_core::prepare::Prepare for CallSignatureTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -26647,7 +26647,7 @@ impl ::sittir_core::prepare::Prepare for PropertySignatureTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -26696,7 +26696,7 @@ impl ::sittir_core::prepare::Prepare for TypeParametersTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -26757,7 +26757,7 @@ impl ::sittir_core::prepare::Prepare for TypeParameterTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -26806,7 +26806,7 @@ impl ::sittir_core::prepare::Prepare for DefaultTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -26863,7 +26863,7 @@ impl ::sittir_core::prepare::Prepare for ConstraintTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -26924,7 +26924,7 @@ impl ::sittir_core::prepare::Prepare for ConstructSignatureTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -26973,7 +26973,7 @@ impl ::sittir_core::prepare::Prepare for ArrayTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -27022,7 +27022,7 @@ impl ::sittir_core::prepare::Prepare for TupleTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -27071,7 +27071,7 @@ impl ::sittir_core::prepare::Prepare for ReadonlyTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -27124,7 +27124,7 @@ impl ::sittir_core::prepare::Prepare for UnionTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -27177,7 +27177,7 @@ impl ::sittir_core::prepare::Prepare for IntersectionTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -27234,7 +27234,7 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -27257,9 +27257,9 @@ pub struct ExportSpecifiersTransport {
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
     #[wire(key = "_item_separator_space_before")]
-    pub item_separator_space_before: Option<u16>,
+    pub item_separator_space_before: Option<KindId>,
     #[wire(key = "_item_separator_space_after")]
-    pub item_separator_space_after: Option<u16>,
+    pub item_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ExportSpecifiersTransport {
@@ -27288,14 +27288,14 @@ impl ::sittir_core::prepare::Prepare for ExportSpecifiersTransport {
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_EXPORT_SPECIFIERS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_EXPORT_SPECIFIERS_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_EXPORT_SPECIFIERS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(376), &[14], ctx.options.delimiter[options::DELIM_EXPORT_SPECIFIERS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(376), &[::sittir_core::types::KindId(14)], ctx.options.delimiter[options::DELIM_EXPORT_SPECIFIERS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -27318,9 +27318,9 @@ pub struct ImportSpecifiersTransport {
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
     #[wire(key = "_item_separator_space_before")]
-    pub item_separator_space_before: Option<u16>,
+    pub item_separator_space_before: Option<KindId>,
     #[wire(key = "_item_separator_space_after")]
-    pub item_separator_space_after: Option<u16>,
+    pub item_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ImportSpecifiersTransport {
@@ -27349,14 +27349,14 @@ impl ::sittir_core::prepare::Prepare for ImportSpecifiersTransport {
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_IMPORT_SPECIFIERS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_IMPORT_SPECIFIERS_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_IMPORT_SPECIFIERS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(377), &[14], ctx.options.delimiter[options::DELIM_IMPORT_SPECIFIERS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(377), &[::sittir_core::types::KindId(14)], ctx.options.delimiter[options::DELIM_IMPORT_SPECIFIERS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -27379,9 +27379,9 @@ pub struct FormalParametersElementsTransport {
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
     #[wire(key = "_item_separator_space_before")]
-    pub item_separator_space_before: Option<u16>,
+    pub item_separator_space_before: Option<KindId>,
     #[wire(key = "_item_separator_space_after")]
-    pub item_separator_space_after: Option<u16>,
+    pub item_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for FormalParametersElementsTransport {
@@ -27410,14 +27410,14 @@ impl ::sittir_core::prepare::Prepare for FormalParametersElementsTransport {
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_FORMAL_PARAMETERS_ELEMENTS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(379), &[14], ctx.options.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(379), &[::sittir_core::types::KindId(14)], ctx.options.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -27465,7 +27465,7 @@ impl ::sittir_core::prepare::Prepare for EnumBodyElementNameTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -27488,9 +27488,9 @@ pub struct EnumBodyElementsTransport {
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
     #[wire(key = "_item_separator_space_before")]
-    pub item_separator_space_before: Option<u16>,
+    pub item_separator_space_before: Option<KindId>,
     #[wire(key = "_item_separator_space_after")]
-    pub item_separator_space_after: Option<u16>,
+    pub item_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for EnumBodyElementsTransport {
@@ -27519,14 +27519,14 @@ impl ::sittir_core::prepare::Prepare for EnumBodyElementsTransport {
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ENUM_BODY_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_ENUM_BODY_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_ENUM_BODY_ELEMENTS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(382), &[14], ctx.options.delimiter[options::DELIM_ENUM_BODY_ELEMENTS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(382), &[::sittir_core::types::KindId(14)], ctx.options.delimiter[options::DELIM_ENUM_BODY_ELEMENTS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -27549,9 +27549,9 @@ pub struct TypesTransport {
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
     #[wire(key = "_item_separator_space_before")]
-    pub item_separator_space_before: Option<u16>,
+    pub item_separator_space_before: Option<KindId>,
     #[wire(key = "_item_separator_space_after")]
-    pub item_separator_space_after: Option<u16>,
+    pub item_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for TypesTransport {
@@ -27580,14 +27580,14 @@ impl ::sittir_core::prepare::Prepare for TypesTransport {
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TYPES_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TYPES_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_TYPES_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(383), &[14], ctx.options.delimiter[options::DELIM_TYPES_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(383), &[::sittir_core::types::KindId(14)], ctx.options.delimiter[options::DELIM_TYPES_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -27610,9 +27610,9 @@ pub struct TypeParametersElementsTransport {
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
     #[wire(key = "_item_separator_space_before")]
-    pub item_separator_space_before: Option<u16>,
+    pub item_separator_space_before: Option<KindId>,
     #[wire(key = "_item_separator_space_after")]
-    pub item_separator_space_after: Option<u16>,
+    pub item_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for TypeParametersElementsTransport {
@@ -27641,14 +27641,14 @@ impl ::sittir_core::prepare::Prepare for TypeParametersElementsTransport {
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_TYPE_PARAMETERS_ELEMENTS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(384), &[14], ctx.options.delimiter[options::DELIM_TYPE_PARAMETERS_ELEMENTS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(384), &[::sittir_core::types::KindId(14)], ctx.options.delimiter[options::DELIM_TYPE_PARAMETERS_ELEMENTS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -27671,9 +27671,9 @@ pub struct TupleTypeMembersTransport {
     #[flank(trailing = 0)]
     pub delimiter: Option<u8>,
     #[wire(key = "_item_separator_space_before")]
-    pub item_separator_space_before: Option<u16>,
+    pub item_separator_space_before: Option<KindId>,
     #[wire(key = "_item_separator_space_after")]
-    pub item_separator_space_after: Option<u16>,
+    pub item_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for TupleTypeMembersTransport {
@@ -27702,14 +27702,14 @@ impl ::sittir_core::prepare::Prepare for TupleTypeMembersTransport {
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_TYPE_MEMBERS_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_TUPLE_TYPE_MEMBERS_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_TUPLE_TYPE_MEMBERS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(385), &[14], ctx.options.delimiter[options::DELIM_TUPLE_TYPE_MEMBERS_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(385), &[::sittir_core::types::KindId(14)], ctx.options.delimiter[options::DELIM_TUPLE_TYPE_MEMBERS_ITEM], ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -27758,7 +27758,7 @@ impl ::sittir_core::prepare::Prepare for ImportClauseGroupTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -27811,7 +27811,7 @@ impl ::sittir_core::prepare::Prepare for CatchClauseGroupTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -27860,7 +27860,7 @@ impl ::sittir_core::prepare::Prepare for AmbientDeclarationGlobalTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -27918,7 +27918,7 @@ impl ::sittir_core::prepare::Prepare for AmbientDeclarationModuleTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -27942,11 +27942,11 @@ pub struct ObjectTypeContentTransport {
     pub delimiter: Option<u8>,
     #[wire(key = "_separator")]
     #[separator_kind(candidates = [kind::COMMA, kind::SEMI])]
-    pub separator_kind: Option<u16>,
+    pub separator_kind: Option<KindId>,
     #[wire(key = "_item_separator_space_before")]
-    pub item_separator_space_before: Option<u16>,
+    pub item_separator_space_before: Option<KindId>,
     #[wire(key = "_item_separator_space_after")]
-    pub item_separator_space_after: Option<u16>,
+    pub item_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ObjectTypeContentTransport {
@@ -27975,7 +27975,7 @@ impl ::sittir_core::prepare::Prepare for ObjectTypeContentTransport {
         self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_OBJECT_TYPE_CONTENT_ITEM_SEPARATOR_SPACE_BEFORE].arm);
         self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_OBJECT_TYPE_CONTENT_ITEM_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_OBJECT_TYPE_CONTENT_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(390), &[14, 20], ctx.options.delimiter[options::DELIM_OBJECT_TYPE_CONTENT_ITEM], ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(390), &[::sittir_core::types::KindId(14), ::sittir_core::types::KindId(20)], ctx.options.delimiter[options::DELIM_OBJECT_TYPE_CONTENT_ITEM], ctx));
         if let Some(kind) = ::sittir_core::layout::Layout::slot(&self.layout, "_item").and_then(|slot| slot.separator).and_then(Self::separator_kind_of) {
             self.separator_kind.get_or_insert(kind);
         }
@@ -27987,7 +27987,7 @@ impl ::sittir_core::prepare::Prepare for ObjectTypeContentTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -28041,7 +28041,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementNamespaceExportTransport
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -28095,7 +28095,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementEqualsExportTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -28143,7 +28143,7 @@ impl ::sittir_core::prepare::Prepare for CommentLineTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -28191,7 +28191,7 @@ impl ::sittir_core::prepare::Prepare for CommentBlockTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -28240,7 +28240,7 @@ impl ::sittir_core::prepare::Prepare for LiteralTypeNegativeNumberTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -28292,7 +28292,7 @@ impl ::sittir_core::prepare::Prepare for NumberHexTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -28356,7 +28356,7 @@ impl ::sittir_core::prepare::Prepare for NumberFloatPointTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -28416,7 +28416,7 @@ impl ::sittir_core::prepare::Prepare for NumberFloatLeadingPointTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -28476,7 +28476,7 @@ impl ::sittir_core::prepare::Prepare for NumberFloatScientificTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -28522,7 +28522,7 @@ impl ::sittir_core::prepare::Prepare for NumberDecimalTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -28574,7 +28574,7 @@ impl ::sittir_core::prepare::Prepare for NumberBinaryTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -28626,7 +28626,7 @@ impl ::sittir_core::prepare::Prepare for NumberOctalTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -28674,7 +28674,7 @@ impl ::sittir_core::prepare::Prepare for NumberBigintHexTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -28722,7 +28722,7 @@ impl ::sittir_core::prepare::Prepare for NumberBigintBinaryTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -28770,7 +28770,7 @@ impl ::sittir_core::prepare::Prepare for NumberBigintOctalTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -28818,7 +28818,7 @@ impl ::sittir_core::prepare::Prepare for NumberBigintDecimalTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -28871,7 +28871,7 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionInTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -28912,7 +28912,7 @@ impl ::sittir_core::prepare::Prepare for EmptyMemberTransport {
             EmptyMemberTransport::EmptyMember(_) => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             EmptyMemberTransport::EmptyMember(_) => None,
         }
@@ -28945,7 +28945,7 @@ pub struct ClassBodyMemberMethodTransport {
     #[slot(field = field::TERMINATOR, word = 9, width = 5)]
     pub terminator: Option<::sittir_core::SlotValue<ClassBodyMemberMethodTerminatorTransportSlot>>,
     #[wire(key = "_decorator_separator_space")]
-    pub decorator_separator_space: Option<u16>,
+    pub decorator_separator_space: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ClassBodyMemberMethodTransport {
@@ -28982,7 +28982,7 @@ impl ::sittir_core::prepare::Prepare for ClassBodyMemberMethodTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -29035,7 +29035,7 @@ impl ::sittir_core::prepare::Prepare for ClassBodyMemberMethodSigTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -29089,7 +29089,7 @@ impl ::sittir_core::prepare::Prepare for ClassBodyMemberDeclarationTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -29154,7 +29154,7 @@ impl ::sittir_core::prepare::Prepare for IndexSignatureColonTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -29215,7 +29215,7 @@ impl ::sittir_core::prepare::Prepare for IndexSignatureMappedTypeClauseTransport
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -29268,7 +29268,7 @@ impl ::sittir_core::prepare::Prepare for ImportStatementClauseFromTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -29317,7 +29317,7 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionDelegateTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -29398,7 +29398,7 @@ impl ::sittir_core::prepare::Prepare for ImportSpecifierNameTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -29455,7 +29455,7 @@ impl ::sittir_core::prepare::Prepare for ImportSpecifierAsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -29508,7 +29508,7 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionTypedTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -29557,7 +29557,7 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionSequenceTranspor
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -29614,7 +29614,7 @@ impl ::sittir_core::prepare::Prepare for CallExpressionCallTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -29667,7 +29667,7 @@ impl ::sittir_core::prepare::Prepare for CallExpressionTemplateCallTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -29724,7 +29724,7 @@ impl ::sittir_core::prepare::Prepare for CallExpressionMemberTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -29774,7 +29774,7 @@ impl ::sittir_core::prepare::Prepare for StringDoubleTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -29824,7 +29824,7 @@ impl ::sittir_core::prepare::Prepare for StringSingleTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -29881,7 +29881,7 @@ impl ::sittir_core::prepare::Prepare for UpdateExpressionPostfixTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -29938,7 +29938,7 @@ impl ::sittir_core::prepare::Prepare for UpdateExpressionPrefixTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -29986,7 +29986,7 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionParameterTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -30039,7 +30039,7 @@ impl ::sittir_core::prepare::Prepare for ClassHeritageExtendsClauseTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -30092,7 +30092,7 @@ impl ::sittir_core::prepare::Prepare for ImportClauseDefaultImportTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -30150,7 +30150,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultFromTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -30173,7 +30173,7 @@ pub struct ExportStatementDefaultDeclarationTransport {
     #[slot(word = 4, width = 5)]
     pub content: ::sittir_core::SlotValue<ExportStatementDefaultDeclarationContentTransportSlot>,
     #[wire(key = "_decorator_separator_space")]
-    pub decorator_separator_space: Option<u16>,
+    pub decorator_separator_space: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for ExportStatementDefaultDeclarationTransport {
@@ -30208,7 +30208,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationTransp
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -30257,7 +30257,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultFromStarFromTrans
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -30310,7 +30310,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultFromNsFromTranspo
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -30363,7 +30363,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultFromClauseFromTra
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -30412,7 +30412,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationDefaul
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -30465,7 +30465,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationDefaul
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -30522,7 +30522,7 @@ impl ::sittir_core::prepare::Prepare for VariableDeclaratorPlainTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -30575,7 +30575,7 @@ impl ::sittir_core::prepare::Prepare for VariableDeclaratorDefiniteTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -30616,7 +30616,7 @@ impl ::sittir_core::prepare::Prepare for MetaPropertyNewTargetTransport {
             MetaPropertyNewTargetTransport::MetaPropertyNewTarget(_) => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             MetaPropertyNewTargetTransport::MetaPropertyNewTarget(_) => None,
         }
@@ -30664,7 +30664,7 @@ impl ::sittir_core::prepare::Prepare for MetaPropertyImportMetaTransport {
             MetaPropertyImportMetaTransport::MetaPropertyImportMeta(_) => None,
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             MetaPropertyImportMetaTransport::MetaPropertyImportMeta(_) => None,
         }
@@ -30728,7 +30728,7 @@ impl ::sittir_core::prepare::Prepare for ForHeaderLhsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -30789,7 +30789,7 @@ impl ::sittir_core::prepare::Prepare for ForHeaderVarKindTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -30855,7 +30855,7 @@ impl ::sittir_core::prepare::Prepare for ForHeaderLetConstKindTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -30901,7 +30901,7 @@ impl ::sittir_core::prepare::Prepare for HtmlCommentTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -30947,7 +30947,7 @@ impl ::sittir_core::prepare::Prepare for JsxTextTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -30993,7 +30993,7 @@ impl ::sittir_core::prepare::Prepare for TemplateCharsTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -31319,7 +31319,7 @@ impl ::sittir_core::prepare::Prepare for TernaryQmarkTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -31365,7 +31365,7 @@ impl ::sittir_core::prepare::Prepare for ErrorRecoveryTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -31413,7 +31413,7 @@ impl ::sittir_core::prepare::Prepare for StatementIdentifierTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -31461,7 +31461,7 @@ impl ::sittir_core::prepare::Prepare for ShorthandPropertyIdentifierTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -31509,7 +31509,7 @@ impl ::sittir_core::prepare::Prepare for ShorthandPropertyIdentifierPatternTrans
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -31557,7 +31557,7 @@ impl ::sittir_core::prepare::Prepare for PropertyIdentifierTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -31605,7 +31605,7 @@ impl ::sittir_core::prepare::Prepare for TypeIdentifierTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -31653,7 +31653,7 @@ impl ::sittir_core::prepare::Prepare for InterfaceBodyTransport {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -38297,8 +38297,8 @@ fn render_program(node: &ProgramTransport, w: &mut dyn ::sittir_core::render::Re
         template: "{}",
         token: "",
         separators: None,
-        before: 0,
-        after: node.statements_separator_space.unwrap_or(0),
+        before: KindId::BLANK,
+        after: node.statements_separator_space.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_PROGRAM_STATEMENTS_START),
@@ -38439,8 +38439,8 @@ fn render_variable_declaration(node: &VariableDeclarationTransport, w: &mut dyn 
         template: "{}",
         token: ",",
         separators: None,
-        before: node.declarators_separator_space_before.unwrap_or(0),
-        after: node.declarators_separator_space_after.unwrap_or(0),
+        before: node.declarators_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.declarators_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_VARIABLE_DECLARATION_DECLARATORS_START),
@@ -38463,8 +38463,8 @@ fn render_lexical_declaration(node: &LexicalDeclarationTransport, w: &mut dyn ::
         template: "{}",
         token: ",",
         separators: None,
-        before: node.declarators_separator_space_before.unwrap_or(0),
-        after: node.declarators_separator_space_after.unwrap_or(0),
+        before: node.declarators_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.declarators_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_LEXICAL_DECLARATION_DECLARATORS_START),
@@ -38488,8 +38488,8 @@ fn render_statement_block(node: &StatementBlockTransport, w: &mut dyn ::sittir_c
         template: "{}",
         token: "",
         separators: None,
-        before: 0,
-        after: node.statements_separator_space.unwrap_or(0),
+        before: KindId::BLANK,
+        after: node.statements_separator_space.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_STATEMENT_BLOCK_STATEMENTS_START),
@@ -38728,8 +38728,8 @@ fn render_switch_body(node: &SwitchBodyTransport, w: &mut dyn ::sittir_core::ren
         template: "{}",
         token: "",
         separators: None,
-        before: 0,
-        after: node.cases_separator_space.unwrap_or(0),
+        before: KindId::BLANK,
+        after: node.cases_separator_space.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_SWITCH_BODY_CASES_START),
@@ -38753,8 +38753,8 @@ fn render_switch_case(node: &SwitchCaseTransport, w: &mut dyn ::sittir_core::ren
         template: "{}",
         token: "",
         separators: None,
-        before: 0,
-        after: node.body_separator_space.unwrap_or(0),
+        before: KindId::BLANK,
+        after: node.body_separator_space.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_SWITCH_CASE_BODY_START),
@@ -38780,8 +38780,8 @@ fn render_switch_default(node: &SwitchDefaultTransport, w: &mut dyn ::sittir_cor
         template: "{}",
         token: "",
         separators: None,
-        before: 0,
-        after: node.body_separator_space.unwrap_or(0),
+        before: KindId::BLANK,
+        after: node.body_separator_space.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_SWITCH_DEFAULT_BODY_START),
@@ -38837,8 +38837,8 @@ fn render_object(node: &ObjectTransport, w: &mut dyn ::sittir_core::render::Rend
         template: "{}",
         token: ",",
         separators: None,
-        before: node.properties_separator_space_before.unwrap_or(0),
-        after: node.properties_separator_space_after.unwrap_or(0),
+        before: node.properties_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.properties_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_OBJECT_PROPERTIES_START),
@@ -38862,8 +38862,8 @@ fn render_object_pattern(node: &ObjectPatternTransport, w: &mut dyn ::sittir_cor
         template: "{}",
         token: ",",
         separators: None,
-        before: node.properties_separator_space_before.unwrap_or(0),
-        after: node.properties_separator_space_after.unwrap_or(0),
+        before: node.properties_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.properties_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_OBJECT_PATTERN_PROPERTIES_START),
@@ -38913,8 +38913,8 @@ fn render_array(node: &ArrayTransport, w: &mut dyn ::sittir_core::render::Render
         template: "{}",
         token: ",",
         separators: None,
-        before: node.elements_separator_space_before.unwrap_or(0),
-        after: node.elements_separator_space_after.unwrap_or(0),
+        before: node.elements_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.elements_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_ARRAY_ELEMENTS_START),
@@ -38938,8 +38938,8 @@ fn render_array_pattern(node: &ArrayPatternTransport, w: &mut dyn ::sittir_core:
         template: "{}",
         token: ",",
         separators: None,
-        before: node.elements_separator_space_before.unwrap_or(0),
-        after: node.elements_separator_space_after.unwrap_or(0),
+        before: node.elements_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.elements_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_ARRAY_PATTERN_ELEMENTS_START),
@@ -38977,8 +38977,8 @@ fn render_class(node: &ClassTransport, w: &mut dyn ::sittir_core::render::Render
         template: "{}",
         token: "",
         separators: None,
-        before: 0,
-        after: node.decorator_separator_space.unwrap_or(0),
+        before: KindId::BLANK,
+        after: node.decorator_separator_space.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_CLASS_DECORATOR_START),
@@ -39008,8 +39008,8 @@ fn render_class_declaration(node: &ClassDeclarationTransport, w: &mut dyn ::sitt
         template: "{}",
         token: "",
         separators: None,
-        before: 0,
-        after: node.decorator_separator_space.unwrap_or(0),
+        before: KindId::BLANK,
+        after: node.decorator_separator_space.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_CLASS_DECLARATION_DECORATOR_START),
@@ -39332,8 +39332,8 @@ fn render_sequence_expression(node: &SequenceExpressionTransport, w: &mut dyn ::
         template: "{}",
         token: ",",
         separators: None,
-        before: node.expression_separator_space_before.unwrap_or(0),
-        after: node.expression_separator_space_after.unwrap_or(0),
+        before: node.expression_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.expression_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_SEQUENCE_EXPRESSION_EXPRESSION_START),
@@ -39370,8 +39370,8 @@ fn render_template_string(node: &TemplateStringTransport, w: &mut dyn ::sittir_c
         template: "{}",
         token: "",
         separators: None,
-        before: 0,
-        after: 0,
+        before: KindId::BLANK,
+        after: KindId::BLANK,
         leading: false,
         trailing: false,
         head: None,
@@ -39437,8 +39437,8 @@ fn render_arguments(node: &ArgumentsTransport, w: &mut dyn ::sittir_core::render
         template: "{}",
         token: ",",
         separators: None,
-        before: node.elements_separator_space_before.unwrap_or(0),
-        after: node.elements_separator_space_after.unwrap_or(0),
+        before: node.elements_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.elements_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_ARGUMENTS_ELEMENTS_START),
@@ -39497,8 +39497,8 @@ fn render_class_body(node: &ClassBodyTransport, w: &mut dyn ::sittir_core::rende
         template: "{}",
         token: "",
         separators: None,
-        before: 0,
-        after: node.members_separator_space.unwrap_or(0),
+        before: KindId::BLANK,
+        after: node.members_separator_space.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_CLASS_BODY_MEMBERS_START),
@@ -39664,8 +39664,8 @@ fn render_public_field_definition(node: &PublicFieldDefinitionTransport, w: &mut
         template: "{}",
         token: "",
         separators: None,
-        before: 0,
-        after: node.decorator_separator_space.unwrap_or(0),
+        before: KindId::BLANK,
+        after: node.decorator_separator_space.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_PUBLIC_FIELD_DEFINITION_DECORATOR_START),
@@ -39943,8 +39943,8 @@ fn render_extends_clause(node: &ExtendsClauseTransport, w: &mut dyn ::sittir_cor
         template: "{}",
         token: ",",
         separators: None,
-        before: node.types_separator_space_before.unwrap_or(0),
-        after: node.types_separator_space_after.unwrap_or(0),
+        before: node.types_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.types_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_EXTENDS_CLAUSE_TYPES_START),
@@ -39975,8 +39975,8 @@ fn render_implements_clause(node: &ImplementsClauseTransport, w: &mut dyn ::sitt
         template: "{}",
         token: ",",
         separators: None,
-        before: node.type_separator_space_before.unwrap_or(0),
-        after: node.type_separator_space_after.unwrap_or(0),
+        before: node.type_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.type_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_IMPLEMENTS_CLAUSE_TYPE_START),
@@ -40008,8 +40008,8 @@ fn render_abstract_class_declaration(node: &AbstractClassDeclarationTransport, w
         template: "{}",
         token: "",
         separators: None,
-        before: 0,
-        after: node.decorator_separator_space.unwrap_or(0),
+        before: KindId::BLANK,
+        after: node.decorator_separator_space.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_ABSTRACT_CLASS_DECLARATION_DECORATOR_START),
@@ -40111,8 +40111,8 @@ fn render_extends_type_clause(node: &ExtendsTypeClauseTransport, w: &mut dyn ::s
         template: "{}",
         token: ",",
         separators: None,
-        before: node.type_separator_space_before.unwrap_or(0),
-        after: node.type_separator_space_after.unwrap_or(0),
+        before: node.type_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.type_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_EXTENDS_TYPE_CLAUSE_TYPE_START),
@@ -40201,8 +40201,8 @@ fn render_required_parameter(node: &RequiredParameterTransport, w: &mut dyn ::si
         template: "{}",
         token: "",
         separators: None,
-        before: 0,
-        after: node.decorator_separator_space.unwrap_or(0),
+        before: KindId::BLANK,
+        after: node.decorator_separator_space.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_REQUIRED_PARAMETER_DECORATOR_START),
@@ -40246,8 +40246,8 @@ fn render_optional_parameter(node: &OptionalParameterTransport, w: &mut dyn ::si
         template: "{}",
         token: "",
         separators: None,
-        before: 0,
-        after: node.decorator_separator_space.unwrap_or(0),
+        before: KindId::BLANK,
+        after: node.decorator_separator_space.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_OPTIONAL_PARAMETER_DECORATOR_START),
@@ -40453,8 +40453,8 @@ fn render_template_literal_type(node: &TemplateLiteralTypeTransport, w: &mut dyn
         template: "{}",
         token: "",
         separators: None,
-        before: 0,
-        after: 0,
+        before: KindId::BLANK,
+        after: KindId::BLANK,
         leading: false,
         trailing: false,
         head: None,
@@ -40911,8 +40911,8 @@ fn render_export_specifiers(node: &ExportSpecifiersTransport, w: &mut dyn ::sitt
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(0),
-        after: node.item_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         head: Some(options::SITE_EXPORT_SPECIFIERS_ITEM_START),
@@ -40931,8 +40931,8 @@ fn render_import_specifiers(node: &ImportSpecifiersTransport, w: &mut dyn ::sitt
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(0),
-        after: node.item_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         head: Some(options::SITE_IMPORT_SPECIFIERS_ITEM_START),
@@ -40951,8 +40951,8 @@ fn render_formal_parameters_elements(node: &FormalParametersElementsTransport, w
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(0),
-        after: node.item_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         head: Some(options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_START),
@@ -40977,8 +40977,8 @@ fn render_enum_body_elements(node: &EnumBodyElementsTransport, w: &mut dyn ::sit
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(0),
-        after: node.item_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         head: Some(options::SITE_ENUM_BODY_ELEMENTS_ITEM_START),
@@ -40997,8 +40997,8 @@ fn render_types(node: &TypesTransport, w: &mut dyn ::sittir_core::render::Render
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(0),
-        after: node.item_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         head: Some(options::SITE_TYPES_ITEM_START),
@@ -41017,8 +41017,8 @@ fn render_type_parameters_elements(node: &TypeParametersElementsTransport, w: &m
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(0),
-        after: node.item_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         head: Some(options::SITE_TYPE_PARAMETERS_ELEMENTS_ITEM_START),
@@ -41037,8 +41037,8 @@ fn render_tuple_type_members(node: &TupleTypeMembersTransport, w: &mut dyn ::sit
         template: "{}",
         token: ",",
         separators: None,
-        before: node.item_separator_space_before.unwrap_or(0),
-        after: node.item_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         head: Some(options::SITE_TUPLE_TYPE_MEMBERS_ITEM_START),
@@ -41106,14 +41106,14 @@ fn render_ambient_declaration_module(node: &AmbientDeclarationModuleTransport, w
 }
 
 fn render_object_type_content(node: &ObjectTypeContentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let item_separator: fn(u16) -> &'static str = |kind| match kind { 14 => ",", 20 => ";", _ => ";" };
+    let item_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(14) => ",", KindId(20) => ";", _ => ";" };
     let item = ListView {
         items: &node.item,
         template: "{}",
         token: node.separator_kind.map_or(";", item_separator),
         separators: Some((::sittir_core::layout::slot_tokens(node.layout.as_deref(), "_item"), item_separator)),
-        before: node.item_separator_space_before.unwrap_or(0),
-        after: node.item_separator_space_after.unwrap_or(0),
+        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
         leading: node.delimiter.map(|d| d & 1 != 0).unwrap_or(false),
         trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),
         head: Some(options::SITE_OBJECT_TYPE_CONTENT_ITEM_START),
@@ -41341,8 +41341,8 @@ fn render_class_body_member_method(node: &ClassBodyMemberMethodTransport, w: &mu
         template: "{}",
         token: "",
         separators: None,
-        before: 0,
-        after: node.decorator_separator_space.unwrap_or(0),
+        before: KindId::BLANK,
+        after: node.decorator_separator_space.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_CLASS_BODY_MEMBER_METHOD_DECORATOR_START),
@@ -41555,8 +41555,8 @@ fn render_string_double(node: &StringDoubleTransport, w: &mut dyn ::sittir_core:
         template: "{}",
         token: "",
         separators: None,
-        before: 0,
-        after: 0,
+        before: KindId::BLANK,
+        after: KindId::BLANK,
         leading: false,
         trailing: false,
         head: None,
@@ -41577,8 +41577,8 @@ fn render_string_single(node: &StringSingleTransport, w: &mut dyn ::sittir_core:
         template: "{}",
         token: "",
         separators: None,
-        before: 0,
-        after: 0,
+        before: KindId::BLANK,
+        after: KindId::BLANK,
         leading: false,
         trailing: false,
         head: None,
@@ -41666,8 +41666,8 @@ fn render_export_statement_default_declaration(node: &ExportStatementDefaultDecl
         template: "{}",
         token: "",
         separators: None,
-        before: 0,
-        after: node.decorator_separator_space.unwrap_or(0),
+        before: KindId::BLANK,
+        after: node.decorator_separator_space.unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
         head: Some(options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DECORATOR_START),

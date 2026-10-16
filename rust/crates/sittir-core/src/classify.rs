@@ -3,6 +3,7 @@
 //! so the value is exactly what an options address could have named.
 
 use crate::render::WhitespaceTable;
+use crate::types::KindId;
 use crate::spacing::seam_rank;
 
 /// The admitted arm spelled as `ws`, else the one whose text has its seam
@@ -11,12 +12,12 @@ use crate::spacing::seam_rank;
 /// spelling and has no class. Depth arms never classify: indentation is the
 /// writer's depth tracking, not a gap's spelling, and both depth arms spell
 /// a plain break, so they are excluded by kind id and never by text.
-pub fn classify_whitespace(ws: &str, allowed: &[u16], table: &WhitespaceTable) -> Option<u16> {
+pub fn classify_whitespace(ws: &str, allowed: &[KindId], table: &WhitespaceTable) -> Option<KindId> {
     if !ws.chars().all(char::is_whitespace) {
         return None;
     }
     let want = seam_rank(ws);
-    let ranked: Vec<(u16, usize)> = allowed
+    let ranked: Vec<(KindId, usize)> = allowed
         .iter()
         .copied()
         .filter(|&arm| arm != table.indent && arm != table.dedent)

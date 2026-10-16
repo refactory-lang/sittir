@@ -7,19 +7,83 @@
 
 use serde::{Deserialize, Serialize};
 
-/// Numeric runtime kind discriminant. The wire shape (`$type` on
-/// `AnyTransport` JSON) uses this directly. Per the KindID runtime
-/// migration design (2026-04-30): u16 is wide enough for any
-/// tree-sitter grammar's parser symbol space (rust grammar ≈ 411
-/// symbols, well under u16 max = 65535).
-///
-/// `KindId` is a transparent newtype so `serde` decodes JSON numeric
-/// `$type` directly into it without an enum variant table — per-
-/// grammar `AnyTransport` enums dispatch on the inner u16.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, ::serde::Serialize, ::serde::Deserialize)]
-#[serde(transparent)]
-#[repr(transparent)]
-pub struct KindId(pub u16);
+/// Declares a numeric id of one domain: a transparent newtype over its
+/// width, so ids of two domains never pass for each other. It crosses serde
+/// and the napi boundary as a plain number, and `index` is the one widening
+/// to `usize` for a table the id keys.
+macro_rules! id_newtype {
+    ($(#[$meta:meta])* $name:ident($repr:ty)) => {
+        $(#[$meta])*
+        #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, ::serde::Serialize, ::serde::Deserialize)]
+        #[serde(transparent)]
+        #[repr(transparent)]
+        pub struct $name(pub $repr);
+
+        impl $name {
+            pub const fn new(id: $repr) -> Self {
+                Self(id)
+            }
+            pub const fn get(self) -> $repr {
+                self.0
+            }
+            /// The id as an index into a table it keys.
+            pub const fn index(self) -> usize {
+                self.0 as usize
+            }
+        }
+
+        impl ::std::fmt::Display for $name {
+            fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+                ::std::fmt::Display::fmt(&self.0, f)
+            }
+        }
+
+        impl From<$repr> for $name {
+            fn from(id: $repr) -> Self {
+                Self(id)
+            }
+        }
+
+        impl From<$name> for $repr {
+            fn from(id: $name) -> $repr {
+                id.0
+            }
+        }
+
+        #[cfg(feature = "napi-bindings")]
+        impl napi::bindgen_prelude::FromNapiValue for $name {
+            unsafe fn from_napi_value(env: napi::sys::napi_env, val: napi::sys::napi_value) -> napi::Result<Self> {
+                unsafe { <$repr as napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, val) }.map(Self)
+            }
+        }
+
+        #[cfg(feature = "napi-bindings")]
+        impl napi::bindgen_prelude::ToNapiValue for $name {
+            unsafe fn to_napi_value(env: napi::sys::napi_env, val: Self) -> napi::Result<napi::sys::napi_value> {
+                unsafe { <$repr as napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, val.0) }
+            }
+        }
+
+        #[cfg(feature = "napi-bindings")]
+        impl napi::bindgen_prelude::ValidateNapiValue for $name {}
+
+        #[cfg(feature = "napi-bindings")]
+        impl napi::bindgen_prelude::TypeName for $name {
+            fn type_name() -> &'static str {
+                "number"
+            }
+            fn value_type() -> napi::ValueType {
+                napi::ValueType::Number
+            }
+        }
+    };
+}
+
+id_newtype! {
+    /// A kind id: the parser's symbol for a node or token kind, the `$type`
+    /// a transport carries. u16 is tree-sitter's own `TSSymbol` width.
+    KindId(u16)
+}
 
 impl KindId {
     /// tree-sitter's builtin ERROR symbol (`ts_builtin_sym_error`): the kind
@@ -27,36 +91,22 @@ impl KindId {
     /// tree-sitter itself, not by any grammar, so every grammar shares it.
     pub const ERROR: KindId = KindId(u16::MAX);
 
-    pub const fn new(id: u16) -> Self {
-        Self(id)
-    }
-    pub const fn get(self) -> u16 {
-        self.0
+    /// The blank kind: no node. An optional choice site's empty arm, and the
+    /// arm a spacing site writes nothing for.
+    pub const BLANK: KindId = KindId(0);
+}
+
+impl Default for KindId {
+    fn default() -> Self {
+        Self::BLANK
     }
 }
 
-impl ::std::fmt::Display for KindId {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        ::std::fmt::Display::fmt(&self.0, f)
-    }
+id_newtype! {
+    /// A parser field id: the index of a field name in `parser.c`'s field
+    /// table, the value `TreeCursor::field_id` returns for a child tagged with it.
+    FieldId(u16)
 }
-
-impl From<u16> for KindId {
-    fn from(id: u16) -> Self {
-        Self(id)
-    }
-}
-
-impl From<KindId> for u16 {
-    fn from(id: KindId) -> u16 {
-        id.0
-    }
-}
-
-/// A parser field id: the index of a field name in `parser.c`'s field table,
-/// the value `TreeCursor::field_id` returns for a child tagged with it.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct FieldId(pub u16);
 
 /// Where a node originated. `Ts` = read from a tree-sitter tree; `Sg` =
 /// ast-grep path; `Factory` = constructed on the TS side.

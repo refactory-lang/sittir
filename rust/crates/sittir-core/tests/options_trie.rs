@@ -1,3 +1,4 @@
+use sittir_core::KindId;
 use sittir_core::options::{AddressNode, OptionSites, OptionTables, Options, ResolvedOptions, SiteRef, SiteSpec};
 use sittir_core::slot::SeamArm;
 use sittir_core::spacing::SEAM_DECLARED;
@@ -11,8 +12,8 @@ static ADDRESSES: &[AddressNode] = &[AddressNode::Branch {
     ],
 }];
 
-fn allowed(site: usize) -> &'static [u16] {
-    if site == 0 { &[1, 7, 9, 20, 21] } else { &[1, 7, 20, 21] }
+fn allowed(site: usize) -> &'static [KindId] {
+    if site == 0 { &[KindId(1), KindId(7), KindId(9), KindId(20), KindId(21)] } else { &[KindId(1), KindId(7), KindId(20), KindId(21)] }
 }
 
 fn delimiter_allowed(_site: usize) -> u8 {
@@ -28,8 +29,8 @@ impl OptionSites for Sites {
         allowed,
         delimiter_allowed,
         depth_sites: &[("a", &[0, 1])],
-        indent: 20,
-        dedent: 21,
+        indent: KindId(20),
+        dedent: KindId(21),
         indent_chars: " \t",
         newline_arms: &["\n", "\r\n", "\r"],
     };
@@ -49,7 +50,7 @@ impl OptionSites for NoLayoutSites {
     const TABLES: OptionTables = OptionTables { indent_chars: "", newline_arms: &[], ..Sites::TABLES };
 }
 
-static SITES: &[SiteSpec] = &[SiteSpec { default_arm: 1, strength: 0 }, SiteSpec { default_arm: 1, strength: 0 }];
+static SITES: &[SiteSpec] = &[SiteSpec { default_arm: KindId(1), strength: 0 }, SiteSpec { default_arm: KindId(1), strength: 0 }];
 
 fn base() -> ResolvedOptions {
     ResolvedOptions { spacing: ResolvedOptions::default_spacing(SITES), delimiter: vec![0], sites: SITES, ..ResolvedOptions::default() }
@@ -63,15 +64,15 @@ fn resolve(json: &str) -> Result<ResolvedOptions, String> {
 #[test]
 fn a_leaf_sets_every_site_it_names() {
     let table = resolve(r#"{ "a": { "x": 7 } }"#).unwrap();
-    assert_eq!(table.spacing, vec![SeamArm { arm: 7, strength: SEAM_DECLARED, dedent: false }; 2]);
+    assert_eq!(table.spacing, vec![SeamArm { arm: KindId(7), strength: SEAM_DECLARED, dedent: false }; 2]);
     assert_eq!(table.delimiter, vec![0]);
 }
 
 #[test]
 fn a_value_set_to_the_default_arm_still_writes_at_declared_strength() {
     let table = resolve(r#"{ "a": { "x": 1 } }"#).unwrap();
-    assert_eq!(table.spacing, vec![SeamArm { arm: 1, strength: SEAM_DECLARED, dedent: false }; 2]);
-    assert_eq!(resolve("{}").unwrap().spacing, vec![SeamArm { arm: 1, strength: 0, dedent: false }; 2]);
+    assert_eq!(table.spacing, vec![SeamArm { arm: KindId(1), strength: SEAM_DECLARED, dedent: false }; 2]);
+    assert_eq!(resolve("{}").unwrap().spacing, vec![SeamArm { arm: KindId(1), strength: 0, dedent: false }; 2]);
 }
 
 #[test]

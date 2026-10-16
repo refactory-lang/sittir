@@ -244,8 +244,8 @@ macro_rules! napi_engine {
             /// `treeId` as an item of its parent's list slot, as a grammar id,
             /// where its source spells another than the one the slot renders.
             /// Refuses as `triviaSide` does.
-            #[::napi_derive::napi]
-            pub fn separator_before(&self, tree_id: f64, index: f64) -> ::napi::Result<Option<u16>> {
+            #[::napi_derive::napi(ts_return_type = "import('../src/types.ts').TSKindId | null")]
+            pub fn separator_before(&self, tree_id: f64, index: f64) -> ::napi::Result<Option<$crate::types::KindId>> {
                 with_live_node(tree_id, index, |parsed, index| Ok(parsed.separator_before(index)))
             }
 
@@ -396,8 +396,8 @@ macro_rules! napi_engine {
                 let kinds = kinds
                     .unwrap_or_default()
                     .into_iter()
-                    .map(|k| u16::try_from(k).map_err(|_| ::napi::Error::from_reason(format!("kind {k} is not a kind id"))))
-                    .collect::<::napi::Result<Vec<u16>>>()?;
+                    .map(|k| u16::try_from(k).map($crate::types::KindId).map_err(|_| ::napi::Error::from_reason(format!("kind {k} is not a kind id"))))
+                    .collect::<::napi::Result<Vec<$crate::types::KindId>>>()?;
                 let (tree_id, _) = $crate::engine::decode_handle(from.tree_handle());
                 LIVE_TREES.with(|trees| {
                     let trees = trees.borrow();

@@ -135,7 +135,7 @@ describe('renderTransportDataStruct — separatedList sibling fields', () => {
 		const emitted = emitRenderModule('rust', emittedTemplates({}), nodeMap, GENERATED_ID_TABLES).transportRs.contents;
 
 		expect(emitted).toContain('pub delimiter: Option<u8>,');
-		expect(emitted).toContain('pub separator_kind: Option<u16>,');
+		expect(emitted).toContain('pub separator_kind: Option<KindId>,');
 		expect(emitted).toContain('wire(key = "_delimiter")');
 		expect(emitted).toContain('wire(key = "_separator")');
 	});
@@ -194,7 +194,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 
 		expect(emitted).toContain('leading: node.delimiter.map(|d| d & 1 != 0).unwrap_or(false),');
 		expect(emitted).toContain('trailing: node.delimiter.map(|d| d & 2 != 0).unwrap_or(false),');
-		expect(emitted).toMatch(/let member_separator: fn\(u16\) -> &'static str = \|kind\| match kind \{ 3 => ",", 4 => ";", _ => [^}]+ \};/);
+		expect(emitted).toMatch(/let member_separator: fn\(KindId\) -> &'static str = \|kind\| match kind \{ KindId\(3\) => ",", KindId\(4\) => ";", _ => [^}]+ \};/);
 		expect(emitted).toContain('token: node.separator_kind.map_or(');
 		expect(emitted).toContain('separators: Some((::sittir_core::layout::slot_tokens(node.layout.as_deref(), "_member"), member_separator)),');
 	});

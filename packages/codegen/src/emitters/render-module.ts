@@ -845,7 +845,7 @@ function separatorTextFn(
 	for (const name of candidateKindNames) {
 		const id = kindIdByKind.get(name);
 		if (id === undefined) continue;
-		arms.push(`${id} => ${JSON.stringify(name)}`);
+		arms.push(`KindId(${id}) => ${JSON.stringify(name)}`);
 	}
 	if (arms.length === 0) return undefined;
 	return `|kind| match kind { ${[...arms, `_ => ${fallbackSeparator}`].join(', ')} }`;
@@ -924,9 +924,9 @@ function buildTypedTemplateBody(
 					: undefined;
 			const wireKey = JSON.stringify(slotWireKey(f.storageName));
 			const spacing = spacingFieldExprs(plan, node, f.name);
-			const spaced = (site: string | undefined): string => (site === undefined ? '0' : `${site}.unwrap_or(0)`);
+			const spaced = (site: string | undefined): string => (site === undefined ? 'KindId::BLANK' : `${site}.unwrap_or(KindId::BLANK)`);
 			bound.add(ident);
-			if (separatorText !== undefined) lines.push(`    let ${ident}_separator: fn(u16) -> &'static str = ${separatorText};`);
+			if (separatorText !== undefined) lines.push(`    let ${ident}_separator: fn(KindId) -> &'static str = ${separatorText};`);
 			lines.push(`    let ${ident} = ListView {`);
 			lines.push(`        items: ${items},`);
 			lines.push(`        template: ${template},`);
@@ -1460,7 +1460,7 @@ function commonRustUseImports(): string {
 	lines.push('');
 	lines.push('use ::sittir_core::view::{KindOf, KindTest, View, ListView, NO_ITEMS};');
 	lines.push('use ::sittir_core::render::Render;');
-	lines.push('use ::sittir_core::types::{Source, Span};');
+	lines.push('use ::sittir_core::types::{KindId, Source, Span};');
 	lines.push('');
 	return lines.join('\n');
 }
@@ -2582,7 +2582,7 @@ function prepareEnumImpl(enumName: string, arms: readonly PrepareArm[], reads = 
 					...arms.map((a) => (a.payload ? `            ${enumName}::${a.variant}(t) => t.snapshot_edge(),` : `            ${unit(a)} => None,`)),
 					`        }`,
 					`    }`,
-					`    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {`,
+					`    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {`,
 					`        match self {`,
 					...arms.map((a) => (a.payload ? `            ${enumName}::${a.variant}(t) => t.source_separator(ctx),` : `            ${unit(a)} => None,`)),
 					`        }`,
@@ -3052,7 +3052,7 @@ function prepareStructImpl(
 			const value =
 				trailing === undefined
 					? fallback
-					: `::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(${trailing.kind}), &[${trailing.separators.join(', ')}], ${fallback}, ctx)`;
+					: `::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(${trailing.kind}), &[${trailing.separators.map((id) => `::sittir_core::types::KindId(${id})`).join(', ')}], ${fallback}, ctx)`;
 			body.push(`        self.delimiter.get_or_insert(${value});`);
 		}
 		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
@@ -3077,7 +3077,7 @@ function prepareStructImpl(
 		`    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {`,
 		`        Some(self.layout.edges_mut())`,
 		`    }`,
-		`    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {`,
+		`    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {`,
 		`        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)`,
 		`    }`,
 		`    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {`,
@@ -3215,12 +3215,12 @@ function renderTransportDataStruct(
 				lines.push(wireKeyAttr('_delimiter'), `    #[flank(${flankArgs(node)})]`, '    pub delimiter: Option<u8>,');
 			}
 			if (node.separatorRule !== undefined) {
-				lines.push(wireKeyAttr('_separator'), `    #[separator_kind(${separatorKindArgs(node, read.ctx)})]`, '    pub separator_kind: Option<u16>,');
+				lines.push(wireKeyAttr('_separator'), `    #[separator_kind(${separatorKindArgs(node, read.ctx)})]`, '    pub separator_kind: Option<KindId>,');
 			}
 		}
 		for (const site of synthesizedSpacingSites(plan, node)) {
 			if (!carriesPerNodeValue(site)) continue;
-			lines.push(wireKeyAttr(site.wireKey), `    pub ${rustFieldIdent(site.fieldIdent)}: Option<u16>,`);
+			lines.push(wireKeyAttr(site.wireKey), `    pub ${rustFieldIdent(site.fieldIdent)}: Option<KindId>,`);
 		}
 	} else if (isTerminalNode(node)) {
 		lines.push(...renderLayoutField(), ...renderLeafTextField());

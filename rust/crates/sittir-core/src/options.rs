@@ -19,7 +19,7 @@ pub struct EdgeSite {
 /// that arm's edge uses.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ArmSite {
-    pub arm: u16,
+    pub arm: crate::types::KindId,
     pub site: u16,
 }
 
@@ -66,13 +66,13 @@ pub const KIND_ROOT: u8 = 8;
 /// One spacing site's default arm and the strength a default carries into the writer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SiteSpec {
-    pub default_arm: u16,
+    pub default_arm: crate::types::KindId,
     pub strength: u8,
 }
 
 impl SiteSpec {
     /// `arm` at this site: the default's strength when it is the default, declared otherwise.
-    pub fn seam(&self, arm: u16) -> crate::slot::SeamArm {
+    pub fn seam(&self, arm: crate::types::KindId) -> crate::slot::SeamArm {
         let strength = if arm == self.default_arm { self.strength } else { crate::spacing::SEAM_DECLARED };
         crate::slot::SeamArm { arm, strength, dedent: false }
     }
@@ -86,7 +86,7 @@ impl SiteSpec {
 /// is why the strength is optional.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct EdgeArm {
-    pub arm: u16,
+    pub arm: crate::types::KindId,
     pub strength: Option<u8>,
     /// Close a depth before the arm (`SeamArm::dedent`). The wire never
     /// sends it.
@@ -169,7 +169,7 @@ impl ResolvedOptions {
     /// Resolve `site` to an arm an options object names. A named arm writes at
     /// declared strength even when it is the site's default: the caller chose
     /// it, so it must win a seam merge the default would lose.
-    pub fn set_arm(&mut self, site: usize, arm: u16) {
+    pub fn set_arm(&mut self, site: usize, arm: crate::types::KindId) {
         self.spacing[site] = crate::slot::SeamArm { arm, strength: crate::spacing::SEAM_DECLARED, dedent: false };
     }
 
@@ -189,7 +189,7 @@ impl ResolvedOptions {
             Side::Before => (row.before, row.before_arms),
             Side::After => (row.after, row.after_arms),
         };
-        let site = arm.and_then(|arm| arms.iter().find(|a| a.arm == arm.0)).map_or(shared, |a| a.site);
+        let site = arm.and_then(|arm| arms.iter().find(|a| a.arm == arm)).map_or(shared, |a| a.site);
         self.edge_seam(site, stamped)
     }
 
@@ -262,11 +262,11 @@ impl AddressNode {
 /// The generated facts an options object is read and resolved against.
 pub struct OptionTables {
     pub addresses: &'static [AddressNode],
-    pub allowed: fn(usize) -> &'static [u16],
+    pub allowed: fn(usize) -> &'static [crate::types::KindId],
     pub delimiter_allowed: fn(usize) -> u8,
     pub depth_sites: &'static [(&'static str, &'static [usize])],
-    pub indent: u16,
-    pub dedent: u16,
+    pub indent: crate::types::KindId,
+    pub dedent: crate::types::KindId,
     /// The characters an `indent` unit may be made of: the texts of the
     /// admitted `_space` and `_tab` whitespace members. Empty when the
     /// grammar admits neither, and then `indent` is not an option.
@@ -294,9 +294,6 @@ pub trait OptionObject: Sized {
 
 /// The key of the group holding the whole-render settings.
 pub const LAYOUT_KEY: &str = "layout";
-
-/// The arm id of an optional choice site's blank: the slot holds no token.
-pub const BLANK_ARM: u16 = 0;
 
 /// The settings an options object names, read through a grammar's address
 /// trie and applied over a base table by `resolve`.
@@ -364,7 +361,7 @@ impl<S: OptionSites> Options<S> {
                     }
                 }
                 AddressNode::Spacing { sites, .. } => {
-                    let value = if obj.is_null(&key)? { Some(u32::from(BLANK_ARM)) } else { obj.number(&key)? };
+                    let value = if obj.is_null(&key)? { Some(u32::from(crate::types::KindId::BLANK.get())) } else { obj.number(&key)? };
                     if let Some(value) = value {
                         self.spacing.extend(sites.iter().map(|site| (*site, value)));
                     }
@@ -402,9 +399,12 @@ impl<S: OptionSites> Options<S> {
         }
         for (site, value) in &self.spacing {
             let allowed = (tables.allowed)(site.site);
-            match u16::try_from(*value) {
+            match u16::try_from(*value).map(crate::types::KindId) {
                 Ok(id) if allowed.contains(&id) => table.set_arm(site.site, id),
-                _ => return Err(format!("options: {} does not admit kind id {value} (allowed: {allowed:?})", site.path)),
+                _ => {
+                    let allowed = allowed.iter().map(ToString::to_string).collect::<Vec<_>>().join(", ");
+                    return Err(format!("options: {} does not admit kind id {value} (allowed: [{allowed}])", site.path));
+                }
             }
         }
         for (site, value) in &self.delimiter {
@@ -418,9 +418,9 @@ impl<S: OptionSites> Options<S> {
             let mut depth = 0usize;
             for site in sites.iter() {
                 let value = table.spacing[*site].arm;
-                if tables.indent != 0 && value == tables.indent {
+                if tables.indent != crate::types::KindId::BLANK && value == tables.indent {
                     depth += 1;
-                } else if tables.dedent != 0 && value == tables.dedent {
+                } else if tables.dedent != crate::types::KindId::BLANK && value == tables.dedent {
                     if depth == 0 {
                         return Err(format!("options: {kind} dedents an indent it never opened"));
                     }
@@ -560,7 +560,7 @@ pub fn indent_unit(source: &str) -> Option<String> {
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct InferredOptions {
     pub indent: Option<String>,
-    pub edges: Vec<(usize, u16)>,
+    pub edges: Vec<(usize, crate::types::KindId)>,
 }
 
 impl InferredOptions {

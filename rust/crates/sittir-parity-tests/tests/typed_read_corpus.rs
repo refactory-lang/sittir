@@ -82,7 +82,7 @@ fn a_list_owner_read_at_one_level_brings_its_list() {
         (0..tree.root_node().descendant_count())
             .find(|&r| {
                 cursor.goto_descendant(r);
-                cursor.node().grammar_id() == sittir_rust::render::kind_ids::PARAMETERS.0
+                sittir_core::read::grammar_id(&cursor.node()) == sittir_rust::render::kind_ids::PARAMETERS
             })
             .unwrap() as u32
     };
@@ -98,7 +98,7 @@ fn first_of(tree: &tree_sitter::Tree, kind: sittir_core::KindId) -> u32 {
     (0..tree.root_node().descendant_count())
         .find(|&i| {
             cursor.goto_descendant(i);
-            cursor.node().grammar_id() == kind.0
+            sittir_core::read::grammar_id(&cursor.node()) == kind
         })
         .unwrap() as u32
 }

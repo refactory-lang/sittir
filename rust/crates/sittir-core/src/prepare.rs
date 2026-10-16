@@ -41,8 +41,8 @@ pub trait ArmOf {
 impl<T: crate::view::KindOf, const ADJACENT: bool> ArmOf for SlotValue<T, ADJACENT> {
     fn arm_among(&self, ctx: &RenderContext<'_>, arms: &[crate::options::ArmSite]) -> Option<KindId> {
         match self {
-            SlotValue::Coord(coord) => coord.kind_in(ctx.sources).filter(|kind| arms.iter().any(|a| a.arm == kind.0)),
-            SlotValue::Transport(t) => arms.iter().map(|a| KindId(a.arm)).find(|kind| t.kind_in(&[*kind])),
+            SlotValue::Coord(coord) => coord.kind_in(ctx.sources).filter(|kind| arms.iter().any(|a| a.arm == *kind)),
+            SlotValue::Transport(t) => arms.iter().map(|a| a.arm).find(|kind| t.kind_in(&[*kind])),
         }
     }
 }
@@ -60,10 +60,10 @@ impl<X: ArmOf> ArmOf for Option<X> {
 /// the list's own kind being `kind`). A list rebuilt from none, or a table
 /// that cannot answer, takes `default`, the options table's. The leading
 /// flag is always `default`'s.
-pub fn source_trailing_delimiter<T>(layout: Option<&crate::layout::TransportLayout<T>>, kind: KindId, separators: &[u16], default: u8, ctx: &RenderContext<'_>) -> u8 {
+pub fn source_trailing_delimiter<T>(layout: Option<&crate::layout::TransportLayout<T>>, kind: KindId, separators: &[KindId], default: u8, ctx: &RenderContext<'_>) -> u8 {
     let Some(source) = layout.and_then(|layout| layout.sides.as_ref()) else { return default };
     let Some(last) = ctx.sources.last_list_child_kind(source.tree, source.span, kind) else { return default };
-    (default & !2) | if separators.contains(&last.0) { 2 } else { 0 }
+    (default & !2) | if separators.contains(&last) { 2 } else { 0 }
 }
 
 /// The item at one end of a root's render, as the root's edge reads it: a
@@ -170,12 +170,12 @@ pub fn root_flanks(
     first: Option<EdgeItem<'_>>,
     last: Option<EdgeItem<'_>>,
     root: Option<crate::points::PointSpan>,
-    allowed_before: &[u16],
-    allowed_after: &[u16],
+    allowed_before: &[KindId],
+    allowed_after: &[KindId],
     table: &crate::render::WhitespaceTable,
     ctx: &RenderContext<'_>,
 ) -> Edges {
-    let flank = |item: Option<EdgeItem<'_>>, side: Side, allowed: &[u16]| {
+    let flank = |item: Option<EdgeItem<'_>>, side: Side, allowed: &[KindId]| {
         let source_bytes = |tree: u32, span: crate::types::Span| {
             let source = ctx.sources.source_of(tree)?;
             let bytes = match side {
@@ -276,16 +276,16 @@ pub fn fill_slot_separators<'i, T: Prepare + 'i, L, const ADJACENT: bool>(
     layout: &mut Option<Box<crate::layout::TransportLayout<L>>>,
     slot: &str,
     items: impl Iterator<Item = Option<&'i SlotValue<T, ADJACENT>>>,
-    kind_of: fn(u16) -> Option<u16>,
+    kind_of: fn(KindId) -> Option<KindId>,
     ctx: &RenderContext<'_>,
 ) {
-    let tokens: Vec<Option<u16>> = items.enumerate().map(|(at, item)| item.filter(|_| at > 0)?.source_separator(ctx).and_then(kind_of)).collect();
+    let tokens: Vec<Option<KindId>> = items.enumerate().map(|(at, item)| item.filter(|_| at > 0)?.source_separator(ctx).and_then(kind_of)).collect();
     if tokens.iter().any(Option::is_some) {
         crate::layout::slot_entry(layout, slot).tokens = tokens;
     }
 }
 
-fn set_gap_edge<T: Prepare, const ADJACENT: bool>(item: &mut SlotValue<T, ADJACENT>, side: Side, arm: u16) {
+fn set_gap_edge<T: Prepare, const ADJACENT: bool>(item: &mut SlotValue<T, ADJACENT>, side: Side, arm: KindId) {
     let seam = SeamArm { arm, strength: crate::spacing::SEAM_SLOT, dedent: false };
     match item {
         SlotValue::Coord(coord) => {
@@ -386,7 +386,7 @@ pub trait Prepare {
     /// The separator this value's source spells before it as a list item,
     /// as a grammar id, where it is not the one its slot renders
     /// (`layout::source_separator`).
-    fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<KindId> {
         let _ = ctx;
         None
     }
@@ -455,7 +455,7 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
 
     /// A coordinate's is its source's, while its neighbour before is still
     /// its source's.
-    fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<KindId> {
         match self {
             SlotValue::Transport(t) => t.source_separator(ctx),
             SlotValue::Coord(coord) if coord.writes.as_ref().is_some_and(|writes| writes.changed.leading) => None,
@@ -514,7 +514,7 @@ impl<T: Prepare> Prepare for Option<T> {
         self.as_mut()?.gap_edges()
     }
 
-    fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<KindId> {
         self.as_ref()?.source_separator(ctx)
     }
 }
@@ -536,7 +536,7 @@ impl<T: Prepare> Prepare for Box<T> {
         (**self).gap_edges()
     }
 
-    fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<u16> {
+    fn source_separator(&self, ctx: &RenderContext<'_>) -> Option<KindId> {
         (**self).source_separator(ctx)
     }
 }
@@ -552,6 +552,7 @@ inert!(String, bool, u8, u16);
 
 #[cfg(test)]
 mod tests {
+    use crate::types::KindId;
     use super::root_flanks;
     use crate::options::ResolvedOptions;
     use crate::render::{SourceTable, WhitespaceTable};
@@ -568,10 +569,10 @@ mod tests {
         }
     }
 
-    const TIGHT: u16 = 0;
-    const NEWLINE: u16 = 1;
+    const TIGHT: KindId = KindId(0);
+    const NEWLINE: KindId = KindId(1);
 
-    fn text_of(arm: u16) -> &'static str {
+    fn text_of(arm: KindId) -> &'static str {
         if arm == NEWLINE {
             "\n"
         } else {
@@ -581,15 +582,15 @@ mod tests {
 
     const TABLE: WhitespaceTable = WhitespaceTable {
         text_of,
-        indent: 7,
-        dedent: 8, leaf_edges: &[], gaps: &[(8, 1)]
+        indent: KindId(7),
+        dedent: KindId(8), leaf_edges: &[], gaps: &[(8, KindId(1))]
     };
 
     fn coordinate(start: u32, end: u32) -> NodeCoordinate {
         NodeCoordinate::new(3, 0, 1, Span { start, end })
     }
 
-    fn before_flank(first: &NodeCoordinate, source: &str) -> Option<u16> {
+    fn before_flank(first: &NodeCoordinate, source: &str) -> Option<KindId> {
         let sources = Sources(HashMap::from([(3, Arc::from(source))]));
         let options = ResolvedOptions::default();
         let ctx = RenderContext {
@@ -607,22 +608,22 @@ mod tests {
         assert_eq!(before_flank(&coordinate(1, 4), "\n#!\n"), Some(NEWLINE));
     }
 
-    const COMMA: u16 = 9;
-    const ITEM: u16 = 4;
+    const COMMA: KindId = KindId(9);
+    const ITEM: KindId = KindId(4);
 
     /// A table that holds trees: the list a flank names ends in a child of kind `last`, or the table cannot answer.
-    struct ListTrees(Option<u16>);
+    struct ListTrees(Option<KindId>);
     impl SourceTable for ListTrees {
         fn source_of(&self, _: u32) -> Option<&Arc<str>> {
             None
         }
         fn last_list_child_kind(&self, _: u32, _: Span, _: crate::types::KindId) -> Option<crate::types::KindId> {
-            self.0.map(crate::types::KindId)
+            self.0
         }
     }
 
     /// The delimiter a list rebuilt from one whose source ends in a child of kind `last` (rebuilt from none when not `rebuilt`) takes over the options default `default`.
-    fn trailing(last: Option<u16>, rebuilt: bool, default: u8) -> u8 {
+    fn trailing(last: Option<KindId>, rebuilt: bool, default: u8) -> u8 {
         let sources = ListTrees(last);
         let options = ResolvedOptions::default();
         let ctx = RenderContext { options: &options, sources: &sources, recording: None };

@@ -1,1 +1,4 @@
-disallowed-methods = [{ path = "tree_sitter::Node::kind_id", reason = "kinds are keyed by grammar id; use grammar_id(), or display_id() at an alias envelope" }]
+disallowed-methods = [
+    { path = "tree_sitter::Node::kind_id", reason = "kinds cross as KindId: use read::display_id at an alias envelope, read::grammar_id elsewhere" },
+    { path = "tree_sitter::Node::grammar_id", reason = "kinds cross as KindId: use read::grammar_id" },
+]
