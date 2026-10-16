@@ -17,3 +17,6 @@ overrides:
   'postcss@8': ^8.5.23
   # npm never published v0.24.2 (tree-sitter-rust#318); every dependent takes the tag.
   tree-sitter-rust: github:tree-sitter/tree-sitter-rust#v0.24.2
+# tree-sitter-typescript 0.23.2 extends tree-sitter-javascript ^0.23.1, which authors no
+# `reserved` block; 0.25.0 is the first release that does, and typescript inherits it.
+  'tree-sitter-typescript>tree-sitter-javascript': 0.25.0

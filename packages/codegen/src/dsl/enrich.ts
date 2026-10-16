@@ -163,7 +163,7 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 		if (!rule) continue;
 		enrichedRules[name] = flattenedListBody(rule, ctx.sourceSymbols);
 	}
-	const literalAliasStorage = mintInlineLiteralAliasStorage(enrichedRules);
+	const literalAliasStorage = mintInlineLiteralAliasStorage(enrichedRules, { word: ctx.word ?? undefined });
 	Object.assign(enrichedRules, literalAliasStorage.rules);
 	for (const name of literalAliasStorage.storageNames) ruleOrigins.set(name, { kind: 'literal-alias-storage' });
 	Object.assign(enrichedRules, liftAliasedHiddenRuleBodies(enrichedRules));
@@ -2390,7 +2390,8 @@ function fieldOwnerPrefixedLists(
 			case 'PREC':
 			case 'PREC_LEFT':
 			case 'PREC_RIGHT':
-			case 'PREC_DYNAMIC': {
+			case 'PREC_DYNAMIC':
+			case 'RESERVED': {
 				const walked = walk(node.content, path);
 				return walked === node.content ? node : (withContent(node as object, walked as Rule) as AnyRule);
 			}

@@ -99,15 +99,15 @@ pub const CHARACTER_CLASS_REPEAT1: KindId = KindId(88);
 pub const _LAZY: KindId = KindId(89);
 pub const _UNICODE_PROPERTY_NAME: KindId = KindId(90);
 pub const ERROR: KindId = KindId(65535);
-const _: () = assert!(ERROR.0 == KindId::ERROR.0);
+const _: () = assert!(ERROR.get() == KindId::ERROR.get());
 
 /// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, and the depth members a layout run's excess indentation reads as.
 pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_core::trivia_table::SurfaceKinds {
     lists: &[],
-    units: &[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 40, 47, 48, 49, 50, 54, 82],
+    units: &[KindId(2), KindId(3), KindId(4), KindId(5), KindId(6), KindId(7), KindId(8), KindId(9), KindId(10), KindId(11), KindId(13), KindId(14), KindId(15), KindId(16), KindId(17), KindId(19), KindId(21), KindId(22), KindId(23), KindId(24), KindId(25), KindId(26), KindId(27), KindId(28), KindId(29), KindId(30), KindId(31), KindId(32), KindId(33), KindId(40), KindId(47), KindId(48), KindId(49), KindId(50), KindId(54), KindId(82)],
     layout: &[],
-    indent: 0,
-    dedent: 0,
+    indent: KindId(0),
+    dedent: KindId(0),
     depth: super::options::DEPTH_REGIONS,
 };
 
@@ -116,6 +116,9 @@ pub const ROOT_KINDS: &[KindId] = &[KindId(51)];
 
 /// The keyword tokens the grammar aliases to its word rule: a node of one of them, displayed as the word rule, reads as the word rule.
 pub const RELAXED_KEYWORDS: &[KindId] = &[];
+
+/// The display ids that stand for the word rule (an alias of it) and the keyword tokens aliased to each.
+pub const RELAXED_DISPLAYS: &[(KindId, &[KindId])] = &[];
 
 /// Whether a node with this grammar id and display id is a relaxed keyword (`ReadCtx::relaxes`).
 pub fn relaxes(grammar: KindId, display: KindId) -> bool {

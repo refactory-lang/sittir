@@ -15,6 +15,8 @@ A **relaxation site** is a named alias whose display is the grammar's `word` rul
 
 On master every alias to the word rule in the three grammars is a relaxation site: python 7, rust 75, typescript 122.
 
+A display that is itself an alias of the word rule (typescript's `property_identifier`, `statement_identifier`, `shorthand_property_identifier` and its pattern) counts as the word for recognition: a word-shaped literal aliased to it is a relaxation site too. The slot holds the display alias, and the node reads as that display over identifier content with the keyword's text. The generated `relaxes` and the node model's `relaxes` table carry the tokens per display; the validators compare nodes by that read identity.
+
 Enrich does not mint a storage for a relaxation site (`mintInlineLiteralAliasStorage` skips it), so the grammar keeps the in-place alias upstream wrote. With no mint, no display mixes terminal and nonterminal storages. The invariant that a display has one parser identity stands unchanged: `identifier` sits over terminal storages only, as the alias-identity spec already allows. A diagnostic that reads alias sites treats a stamped relaxation site as known, never as a fault.
 
 ## Link and the model

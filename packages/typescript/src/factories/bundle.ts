@@ -38,6 +38,10 @@ export const lexicalDeclaration = bundle(F.buildLexicalDeclaration, C.coerceToLe
 	key: 'lexicalDeclaration',
 	max: 2
 });
+export const usingDeclaration = bundle(F.buildUsingDeclaration, C.coerceToUsingDeclaration, {
+	key: 'usingDeclaration',
+	max: 2
+});
 export const statementBlock = bundle(F.buildStatementBlock, C.coerceToStatementBlock);
 export const elseClause = bundle(F.buildElseClause, C.coerceToElseClause, { key: 'elseClause', max: 1 });
 export const ifStatement = bundle(F.buildIfStatement, C.coerceToIfStatement, { key: 'ifStatement', max: 1 });
@@ -539,6 +543,10 @@ export const forHeaderVarKind = bundle(F.buildForHeaderVarKind, C.coerceToForHea
 export const forHeaderLetConstKind = bundle(F.buildForHeaderLetConstKind, C.coerceToForHeaderLetConstKind, {
 	key: 'forHeaderLetConstKind',
 	max: 2
+});
+export const forHeaderUsingKind = bundle(F.buildForHeaderUsingKind, C.coerceToForHeaderUsingKind, {
+	key: 'forHeaderUsingKind',
+	max: 1
 });
 export const receiverParameterDeclaration = bundle(
 	F.buildReceiverParameterDeclaration,

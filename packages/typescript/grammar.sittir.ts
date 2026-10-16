@@ -19,6 +19,7 @@ import {
 	preference,
 	regex,
 	prec,
+	reserved,
 	token,
 	reauthored,
 	vocabulary,
@@ -563,7 +564,9 @@ export default sittirGrammar(base, {
 			'1/0': variant('lhs'),
 			'1/1': variant('var_kind'),
 			'1/2': variant('let_const_kind'),
-			'1/2/2': field('terminator')
+			'1/2/2': field('terminator'),
+			'1/3': variant('using_kind'),
+			'1/3/2': field('terminator')
 		}
 	},
 	extras: ($, previous) => [...(previous ?? [])],
@@ -610,13 +613,58 @@ export default sittirGrammar(base, {
 			)
 		})),
 
+		member_expression: reauthored(
+			'rejects-valid-syntax',
+			[
+				{
+					text: 'a?.for;',
+					form: [{ symbol: 'expression' }, { symbol: 'optional_chain' }, 'for'],
+					kind: 'member_expression'
+				}
+			],
+			($, original) => {
+				const keywordProperties = ['break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'export', 'extends', 'false', 'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof', 'new', 'null', 'return', 'super', 'switch', 'this', 'throw', 'true', 'try', 'typeof', 'var', 'void', 'while', 'with', 'get', 'set', 'async', 'await', 'static', 'let'];
+				const widen = (rule: any): any => {
+					if (rule.type === 'ALIAS' && rule.value === 'property_identifier') {
+						return choice(rule, ...keywordProperties.map((value) => ({ ...rule, content: { type: 'STRING', value } })));
+					}
+					if (Array.isArray(rule.members)) return { ...rule, members: rule.members.map(widen) };
+					if (rule.content !== undefined) return { ...rule, content: widen(rule.content) };
+					return rule;
+				};
+				return widen(original);
+			}
+		),
+
+		decorator_member_expression: reauthored(
+			'rejects-valid-syntax',
+			[
+				{
+					text: '@(super.decorate) method() {}',
+					form: ['super', '.', { symbol: 'identifier' }],
+					kind: 'decorator_member_expression'
+				}
+			],
+			($) =>
+				prec(
+					'member',
+					seq(
+						field('object', choice($.identifier, $.super, $.decorator_member_expression)),
+						'.',
+						field('property', alias($.identifier, $.property_identifier))
+					)
+				)
+		),
+
 		export_statement: reauthored(
 			'rejects-valid-syntax',
-			{
-				text: "export type * from './x.ts';",
-				form: ['export', 'type', '*', 'from', { symbol: 'string' }, ';'],
-				kind: 'export_statement'
-			},
+			[
+				{
+					text: "export type * from './x.ts';",
+					form: ['export', 'type', '*', 'from', { symbol: 'string' }, ';'],
+					kind: 'export_statement'
+				}
+			],
 			($) =>
 				choice(
 					choice(

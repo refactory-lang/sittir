@@ -111,7 +111,8 @@ export function diagnoseGrammar(cfg: DiagnoseGrammarConfig): GrammarDiagnosis {
 			grammar,
 			raw: evaluated,
 			enriched: stages?.enriched,
-			upstreamRules: evaluated.stages?.raw.grammar.rules
+			upstreamRules: evaluated.stages?.raw.grammar.rules,
+			authoredRules: evaluated.rules
 		}),
 		...conflictRecords(evaluated),
 		...dynamicPrecedenceRecords(evaluated)

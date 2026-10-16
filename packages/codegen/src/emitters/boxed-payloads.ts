@@ -46,6 +46,7 @@ export const BOXED_PAYLOADS: Readonly<Record<string, readonly string[]>> = {
 		'ExportStatementDefaultDeclarationTransport',
 		'ForHeaderLetConstKindTransport',
 		'ForHeaderLhsTransport',
+		'ForHeaderUsingKindTransport',
 		'ForHeaderVarKindTransport',
 		'ForStatementTransport',
 		'FunctionDeclarationTransport',

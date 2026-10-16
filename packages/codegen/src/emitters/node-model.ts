@@ -24,6 +24,7 @@ import { hasOneSurface } from '../compiler/model/ir-surface.ts';
 import { resolveFieldStorageInfo, compareOrdinal } from './shared.ts';
 import { anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
+import { relaxationTable, type RelaxationTable } from './kind-id-rust.ts';
 import { bareAcceptClosure, transparentEnvelopeTextLeaves } from './from.ts';
 import { interiorOf, type NodeInterior } from './interior.ts';
 import { declaredDelimiterDefault } from './factories.ts';
@@ -149,6 +150,7 @@ export interface SerializedNodeModel {
 	displayUnions: Readonly<Record<string, readonly DisplayUnionMember[]>>;
 	factorySlots: Readonly<Record<string, Readonly<Record<string, FactorySlotMeta>>>>;
 	spelledTrivia: SpelledTriviaTable | null;
+	relaxes: RelaxationTable | null;
 	nodes: SerializedNode[];
 }
 
@@ -207,6 +209,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		displayUnions: Object.fromEntries(nodeMap.displayUnions ?? []),
 		factorySlots: factoryData.factorySlots,
 		spelledTrivia: spelledTriviaTable(nodeMap) ?? null,
+		relaxes: kindEntries === undefined ? null : relaxationTable(nodeMap, kindEntries),
 		nodes
 	};
 }

@@ -13,7 +13,7 @@ use sittir_python::render::transport::{
 
 struct NoSources;
 impl SourceTable for NoSources {
-    fn source_of(&self, _tree_id: u32) -> Option<&Arc<str>> {
+    fn source_of(&self, _tree_id: sittir_core::types::TreeId) -> Option<&Arc<str>> {
         None
     }
 }

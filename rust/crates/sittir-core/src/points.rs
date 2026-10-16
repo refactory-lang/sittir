@@ -66,10 +66,10 @@ impl PointSpan {
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::FromNapiValue for Point {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
-        use crate::boundary::{object, required};
+        use crate::boundary::{object, required_whole};
         unsafe {
             let obj = object(env, napi_val)?;
-            Ok(Point { row: required(env, obj, c"row", "a span point")?, column: required(env, obj, c"column", "a span point")? })
+            Ok(Point { row: required_whole(env, obj, c"row", "a span point")?, column: required_whole(env, obj, c"column", "a span point")? })
         }
     }
 }
@@ -106,34 +106,34 @@ impl ::napi::bindgen_prelude::ToNapiValue for PointSpan {
 /// shared by every render of that source.
 #[derive(Debug, Clone)]
 pub struct LineTable {
-    starts: Vec<usize>,
-    len: usize,
+    starts: Vec<u32>,
+    len: u32,
 }
 
 impl LineTable {
     pub fn new(source: &str) -> Self {
         let mut starts = vec![0];
-        starts.extend(source.bytes().enumerate().filter(|&(_, b)| b == b'\n').map(|(i, _)| i + 1));
-        Self { starts, len: source.len() }
+        starts.extend(source.bytes().enumerate().filter(|&(_, b)| b == b'\n').map(|(i, _)| i as u32 + 1));
+        Self { starts, len: crate::types::Span::whole(source).end }
     }
 
     /// The point of byte offset `byte`, or `None` past the source's end.
-    pub fn point(&self, byte: usize) -> Option<Point> {
+    pub fn point(&self, byte: u32) -> Option<Point> {
         if byte > self.len {
             return None;
         }
         let row = self.starts.partition_point(|&start| start <= byte) - 1;
-        Some(Point { row: row as u32, column: (byte - self.starts[row]) as u32 })
+        Some(Point { row: row as u32, column: byte - self.starts[row] })
     }
 
     /// The byte offset of `point`, or `None` when its row does not exist or
     /// its column runs past the row's end. A row's last column is its `\n`,
     /// or the source's end on the last row, as `point` returns for that byte.
-    pub fn byte(&self, point: Point) -> Option<usize> {
+    pub fn byte(&self, point: Point) -> Option<u32> {
         let row = point.row as usize;
         let start = *self.starts.get(row)?;
         let row_end = self.starts.get(row + 1).map_or(self.len, |next| *next - 1);
-        let byte = start + point.column as usize;
+        let byte = start.checked_add(point.column)?;
         (byte <= row_end).then_some(byte)
     }
 }
@@ -189,10 +189,16 @@ mod tests {
     }
 
     #[test]
+    fn a_column_past_the_offset_width_names_no_byte() {
+        let lines = LineTable::new("\na");
+        assert_eq!(lines.byte(p(1, u32::MAX)), None);
+    }
+
+    #[test]
     fn point_and_byte_invert_each_other_over_a_source() {
         let src = "fn f() {\n    x\n}\n";
         let lines = LineTable::new(src);
-        for byte in 0..=src.len() {
+        for byte in 0..=crate::types::Span::whole(src).end {
             let point = lines.point(byte).unwrap();
             assert_eq!(lines.byte(point), Some(byte), "byte {byte}");
         }

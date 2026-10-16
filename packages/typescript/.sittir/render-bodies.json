@@ -2869,6 +2869,70 @@
 			"field": "for_header_lhs_after"
 		}
 	],
+	"for_header_using_kind": [
+		{
+			"kind": "seam",
+			"field": "for_header_using_kind_before"
+		},
+		{
+			"kind": "text",
+			"text": "("
+		},
+		{
+			"kind": "seam",
+			"field": "lparen_after"
+		},
+		{
+			"kind": "slot",
+			"name": "kind"
+		},
+		{
+			"kind": "slot",
+			"name": "left"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "terminator",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "terminator"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "operator_before"
+		},
+		{
+			"kind": "slot",
+			"name": "operator"
+		},
+		{
+			"kind": "seam",
+			"field": "operator_after"
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		},
+		{
+			"kind": "seam",
+			"field": "rparen_before"
+		},
+		{
+			"kind": "text",
+			"text": ")"
+		},
+		{
+			"kind": "seam",
+			"field": "for_header_using_kind_after"
+		}
+	],
 	"for_header_var_kind": [
 		{
 			"kind": "seam",
@@ -8464,6 +8528,28 @@
 		{
 			"kind": "seam",
 			"field": "update_expression_prefix_after"
+		}
+	],
+	"using_declaration": [
+		{
+			"kind": "seam",
+			"field": "using_declaration_before"
+		},
+		{
+			"kind": "slot",
+			"name": "kind"
+		},
+		{
+			"kind": "slot",
+			"name": "variable_declarator"
+		},
+		{
+			"kind": "slot",
+			"name": "automatic_semicolon"
+		},
+		{
+			"kind": "seam",
+			"field": "using_declaration_after"
 		}
 	],
 	"variable_declaration": [

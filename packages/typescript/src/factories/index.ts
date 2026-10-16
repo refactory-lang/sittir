@@ -22,6 +22,9 @@ export const variableDeclaration: Hoisted<typeof O.variableDeclaration> = hoistA
 export const lexicalDeclaration: Hoisted<typeof O.lexicalDeclaration> = hoistAs<typeof O.lexicalDeclaration>(
 	O.lexicalDeclaration
 );
+export const usingDeclaration: Hoisted<typeof O.usingDeclaration> = hoistAs<typeof O.usingDeclaration>(
+	O.usingDeclaration
+);
 export const statementBlock: Hoisted<typeof O.statementBlock> = hoistAs<typeof O.statementBlock>(O.statementBlock);
 export const elseClause: Hoisted<typeof O.elseClause> = hoistAs<typeof O.elseClause>(O.elseClause);
 export const ifStatement: Hoisted<typeof O.ifStatement> = hoistAs<typeof O.ifStatement>(O.ifStatement);
@@ -391,6 +394,9 @@ export const forHeaderVarKind: Hoisted<typeof O.forHeaderVarKind> = hoistAs<type
 );
 export const forHeaderLetConstKind: Hoisted<typeof O.forHeaderLetConstKind> = hoistAs<typeof O.forHeaderLetConstKind>(
 	O.forHeaderLetConstKind
+);
+export const forHeaderUsingKind: Hoisted<typeof O.forHeaderUsingKind> = hoistAs<typeof O.forHeaderUsingKind>(
+	O.forHeaderUsingKind
 );
 export const receiverParameterDeclaration: Hoisted<typeof O.receiverParameterDeclaration> = hoistAs<
 	typeof O.receiverParameterDeclaration

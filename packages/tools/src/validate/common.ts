@@ -483,6 +483,8 @@ export interface LoadedNodeModel {
 	/** Each list kind whose separator is chosen per instance, with the separators it may hold. */
 	readonly listSeparators: Record<string, readonly string[]>;
 	readonly fullForms: Record<string, ModelFullForm>;
+	/** Whether a node with these grammar and display ids is a relaxed keyword: the model's table read as the generated reader reads it. */
+	readonly relaxes: (grammar: number, display: number) => boolean;
 }
 
 export interface ModelFullForm {
@@ -490,9 +492,27 @@ export interface ModelFullForm {
 	readonly close: { readonly texts: readonly string[] };
 }
 
+interface RelaxationFacts {
+	readonly word?: { readonly display: number; readonly tokens: readonly number[] };
+	readonly displays: readonly { readonly display: number; readonly tokens: readonly number[] }[];
+}
+
+/**
+ * Whether a node with these grammar and display ids reads as its display id:
+ * a relaxed keyword of the word rule (`relaxes` in kind_ids.rs), or any node
+ * shown as an alias of the word rule, whose display the reader stamps.
+ */
+export function relaxesOf(table: RelaxationFacts | null | undefined): (grammar: number, display: number) => boolean {
+	return (grammar, display) =>
+		table !== undefined &&
+		table !== null &&
+		((table.word?.display === display && table.word.tokens.includes(grammar)) || table.displays.some((site) => site.display === display));
+}
+
 interface ParsedNodeModel {
 	displayUnions?: DisplayFamilies;
 	root?: string | null;
+	relaxes?: RelaxationFacts | null;
 	nodes?: ReadonlyArray<{
 		kind: string;
 		irKey?: string;
@@ -562,7 +582,8 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	listDefaults: {},
 	listElementKinds: {},
 	listSeparators: {},
-	fullForms: {}
+	fullForms: {},
+	relaxes: () => false
 };
 
 export function readNodeModelFile(grammar: string): string | undefined {
@@ -694,7 +715,8 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		listDefaults,
 		listElementKinds,
 		listSeparators,
-		fullForms
+		fullForms,
+		relaxes: relaxesOf(model.relaxes)
 	};
 }
 
@@ -978,6 +1000,7 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 export type { FactoryEntry, Hydrate } from '../grammar-internals.ts';
 
 export interface NodeToConfigOpts {
+	readonly placeText?: boolean;
 	readonly shownKind?: string;
 	readonly interiorOf?: (kind: string) => TokenInterior | undefined;
 	readonly tree?: TreeHandle;
@@ -1040,6 +1063,10 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	const { tree, factoryMap, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts;
 	if (shouldHaltRecursion(_depth, tree, factoryMap)) return child;
 	const hydrated = hydrateForConfig(c, opts);
+	if (opts.placeText === true && _parentKind !== undefined && opts.factoryShapes?.[_parentKind] === 'placed') {
+		const text = readNodeText(hydrated, opts);
+		if (text !== '') return text;
+	}
 	const rawTypeId = hydrated.$type ?? c.$type;
 	const rawKind =
 		rawTypeId !== undefined
@@ -1079,9 +1106,13 @@ function soleWrappedNode(hydrated: ReadNodeLike, opts: NodeToConfigOpts): ReadNo
 
 function readNodeText(node: ReadNodeLike, opts: NodeToConfigOpts): string {
 	if (typeof node.$text === 'string') return node.$text;
-	const source = opts.tree?.source;
+	const source = (opts.tree ?? treeOf(node as object))?.source;
 	const span = spanOf(node);
-	return span !== undefined && source !== undefined ? sliceSpan(source, span) : '';
+	if (span !== undefined && source !== undefined) return sliceSpan(source, span);
+	const rec = node as unknown as Record<string, unknown>;
+	const keys = Object.keys(rec).filter((k) => k.startsWith('_') && rec[k] !== undefined);
+	const wrapped = keys.length === 1 ? rec[keys[0]!] : undefined;
+	return wrapped !== null && typeof wrapped === 'object' && !Array.isArray(wrapped) ? readNodeText(wrapped as ReadNodeLike, opts) : '';
 }
 
 function hydrateForConfig(c: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike {
@@ -1775,6 +1806,7 @@ export interface FactoryDispatchOpts {
 	readonly kindNameFromId?: (id: number) => string | undefined;
 	readonly tree?: unknown;
 	readonly hydrate?: Hydrate;
+	readonly placeText?: boolean;
 }
 
 export function buildFactoryNodeFromReference(
@@ -1800,7 +1832,8 @@ export function buildFactoryNodeFromReference(
 		namedChildKindHints: opts.namedChildKindHints,
 		kindNameFromId: opts.kindNameFromId,
 		tree: opts.tree,
-		hydrate: opts.hydrate
+		hydrate: opts.hydrate,
+		placeText: opts.placeText
 	} as NodeToConfigOpts;
 	return buildWithFactory(referenceData, kind, factory, configOpts);
 }

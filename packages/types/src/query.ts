@@ -1,5 +1,5 @@
 import type { IsBooleanKeyword } from './keyword-presence.ts';
-import type { FlagsHintOf, SlotHint, SlotHintsOf } from './node-surface.ts';
+import type { FlagsHintOf, SlotFlagsHintOf, SlotHint, SlotHintsOf } from './node-surface.ts';
 
 /**
  * A slot by its number in each kind that has it, keyed by stamped kind id: the slot's position among the kind's transport
@@ -52,6 +52,21 @@ export type QueryPlan<S extends QuerySubject = SlotSubject> =
 /** Each kind's flags, by stamped kind id: the plan that tests the flag on a node of the kind, or `null` for a flag that depends on the node's context. */
 export type QueryFlags = Readonly<Record<number, Readonly<Record<string, QueryPlan | null>>>>;
 
+/**
+ * A flag one kind declares in a way a slot test cannot read: through the node's own slots (`context: false`), or through its
+ * context (`context: true`).
+ */
+export interface SlotFlagRefusal {
+	readonly kind: number;
+	readonly context: boolean;
+}
+
+/**
+ * The flags the values of each kind's slots can carry, by stamped kind id and slot accessor: the types of the kinds the slot
+ * can hold that always carry the flag, or the kind that declares it in a way a slot test cannot read.
+ */
+export type QuerySlotFlags = Readonly<Record<number, Readonly<Record<string, Readonly<Record<string, readonly number[] | SlotFlagRefusal>>>>>>;
+
 declare const CONDITION: unique symbol;
 
 /** A recorded `where` condition, combined with others by `and`, `or` and `not`. Only a recorder makes one. */
@@ -65,8 +80,8 @@ export interface Cond {
 	not(): Cond;
 }
 
-/** One slot of a `where` recorder. A comparison holds when some value in the slot has the text or matches. */
-export interface SlotRef {
+/** One slot of a `where` recorder. A comparison holds when some value in the slot has the text or matches, or carries the flag. */
+export interface SlotRef<F extends string = never> {
 	/** Holds when a value in the slot has exactly `text`. */
 	eq(text: string): Cond;
 	/**
@@ -75,6 +90,13 @@ export interface SlotRef {
 	 * @throws When `pattern` carries a flag, or uses syntax the native matcher cannot compile (a back-reference, a look-around).
 	 */
 	match(pattern: RegExp): Cond;
+	/**
+	 * Holds when a value in the slot is of a kind that always carries the vocabulary flag `flag`, such as an enum member whose
+	 * fixed text spells it.
+	 *
+	 * @throws When no kind the slot can hold declares `flag`, or one declares it only through its own slots or its context.
+	 */
+	is(flag: F): Cond;
 }
 
 /** One boolean slot of a `where` recorder: the slot holds a keyword's presence. */
@@ -97,10 +119,12 @@ type SlotRefOf<N, S> = N extends unknown
 		? SlotHintsOf<N>[S] extends SlotHint<infer I, boolean, boolean, unknown>
 			? IsBooleanKeyword<NonNullable<I>> extends true
 				? PresenceRef
-				: SlotRef
-			: SlotRef
+				: SlotRef<SlotFlagOf<N, S>>
+			: SlotRef<SlotFlagOf<N, S>>
 		: never
 	: never;
+
+type SlotFlagOf<N, S> = S extends keyof SlotFlagsHintOf<N> ? SlotFlagsHintOf<N>[S] & string : never;
 
 type SharedFlags<N> = (N extends unknown ? (flags: FlagsHintOf<N>) => void : never) extends (flags: infer F) => void ? F : never;
 

@@ -6322,6 +6322,14 @@ the new reduction point needs is authored as an override on the minted
 rule, which the grammar sees as `original`.
 ```
 
+### `packages/codegen/src/dsl/rule-transforms.ts::WordDisplayCtx`
+
+The grammar's word rule, which decides which displays are aliases of it.
+
+### `packages/codegen/src/dsl/rule-transforms.ts::wordDisplaysOf`
+
+The displays some rule aliases the word rule to (`alias($.identifier, $.property_identifier)`). A literal aliased to one of them is a relaxation site, so it gets no minted storage and link reads it as the display over the word. Link asks the same function for its word displays, so the two phases cannot disagree.
+
 ### `packages/codegen/src/dsl/rule-transforms.ts::InlineTextTokens`
 
 The result of `mintInlineTextTokens`: the rewritten rules and the text-token rule names it minted.

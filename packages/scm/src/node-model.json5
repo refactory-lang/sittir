@@ -433,6 +433,9 @@
   "spelledTrivia": {
     "reason": "ir.comment is one kind, 'comment'"
   },
+  "relaxes": {
+    "displays": []
+  },
   "nodes": [
     {
       "kind": "MISSING_keyword",

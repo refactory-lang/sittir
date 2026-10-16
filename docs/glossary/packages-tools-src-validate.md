@@ -1781,6 +1781,14 @@ Why a kind without a host is excluded from a rendering row: `hidden-kind` when t
 
 The reparsed node of a kind at the splice offset. The kind is a grammar id wherever the source node is known, since a named rule and the keyword token it wraps share a name and a range but not an id; a name stands in only where there is no source node. Lookups run in order: past the candidate's own leading trivia (mapped through the indentation the host added to the lines before it), at the splice offset itself (a list kind's leading trivia belongs to its first element), and last at a node of the kind that starts inside the whitespace run just before the hole and spans it (a block node starts at the line break before its first line). Each requires the kind.
 
+### `packages/tools/src/validate/read-render-parse.ts::readIdentityOf`
+
+The id a parsed node reads as: its display id where the model's relaxation table says the node is a relaxed keyword or is shown as an alias of the word rule, else its grammar id. Host derivation, the reparse lookup and the structural AST compare use it, so a relaxed keyword equals its target and two spellings of one name share a host.
+
+### `packages/tools/src/validate/common.ts::relaxesOf`
+
+The generated reader's relaxation predicate over the node model's `relaxes` table.
+
 ### `packages/tools/src/validate/read-render-parse.ts::candidateData`
 
 The candidate as its own source span has it. Its leading and trailing sides lie outside the span, where its parent renders them, so a candidate rendered alone leaves both out and keeps its inner side. The full-source lanes render those sides in place. A side the table gives a node can lie where a reparse of the node alone would take it inside (python's comment between `case …:` and its body's first statement is the body's leading side, which a reparsed block absorbs), so keeping it would compare an extra the source node never had. The candidate is an edit of its node (`markEdited`) holding its sides with both outer ones empty, so a parsed candidate renders from its storage rather than as its coordinate, which the render would frame with the sides its tree's table gives it, and a filled side (`$_layout.sides`) never restores them. `renderReparse` applies it first, so the read-render-parse, factory and ir lanes prepare a candidate in one place. The render fixtures the validator captures take their input through it too, so a fixture's input renders to the output it records.

@@ -5,9 +5,11 @@ import type {
 	PresenceRef,
 	QueryFlags,
 	QueryPlan,
+	QuerySlotFlags,
 	QuerySlots,
 	QuerySubject,
 	Recorder,
+	SlotFlagRefusal,
 	SlotRef,
 	SlotSubject,
 	StepAnchor,
@@ -41,6 +43,7 @@ export interface TreeQuery {
 export interface QueryHooks {
 	readonly querySlots: QuerySlots;
 	readonly queryFlags: QueryFlags;
+	readonly querySlotFlags: QuerySlotFlags;
 	readonly membership: KindMembership;
 	readonly kindName: (kind: number) => string | undefined;
 	readonly wrap: (data: unknown, tree: unknown) => unknown;
@@ -151,6 +154,34 @@ function everyFlag(table: QueryFlags): ReadonlySet<string> {
 }
 
 const ALWAYS: QueryPlan = Object.freeze({ op: 'and', of: Object.freeze([]) });
+
+function everySlotFlag(table: QuerySlotFlags, slot: string): ReadonlySet<string> {
+	return new Set(Object.values(table).flatMap((slots) => Object.keys(slots[slot] ?? {})));
+}
+
+type SlotFlagRow = QuerySlotFlags[number][string] | undefined;
+
+function slotFlagRef(context: Context, slot: string, subject: SlotSubject, row: SlotFlagRow): (flag: string) => Cond {
+	return (flag) => {
+		if (typeof flag !== 'string') refuse(`query: ${slot}.is takes the name of a flag`);
+		const held = row?.[flag];
+		if (held === undefined) refuse(`query: no kind ${slot} holds declares the flag ${flag}`);
+		if ('kind' in held) {
+			const { kind, context: contextual } = held as SlotFlagRefusal;
+			const on = `${flag} on ${kindLabel(context, kind)}, which ${slot} holds`;
+			refuse(contextual ? `query: ${on}, depends on the node's context` : `query: ${on}, depends on that node's slots; a slot test reads only the flags a kind always carries`);
+		}
+		return cond({ op: 'is', slots: subject.slots, types: held as readonly number[] });
+	};
+}
+
+function shapeFlagRef(context: Context, slot: string): (flag: string) => Cond {
+	return (flag) => {
+		if (typeof flag !== 'string') refuse(`query: ${slot}.is takes the name of a flag`);
+		if (!everySlotFlag(context.hooks.querySlotFlags, slot).has(flag)) refuse(`query: no kind a ${slot} slot of this grammar holds declares the flag ${flag}`);
+		return cond(ALWAYS);
+	};
+}
 
 function flagRef(context: Context, kind: number | undefined, owner: string): (flag: string) => Cond {
 	return (flag) => {
@@ -622,8 +653,9 @@ function cond(plan: QueryPlan): Cond {
 	}) as unknown as Cond;
 }
 
-function slotRef(slot: string, subject: SlotSubject): SlotRef {
+function slotRef(slot: string, subject: SlotSubject, is: (flag: string) => Cond): SlotRef<string> {
 	return Object.freeze({
+		is,
 		eq(text: string) {
 			if (typeof text !== 'string') refuse(`query: ${slot}.eq takes the text to compare`);
 			return cond({ op: 'eq', slots: subject.slots, text });
@@ -650,15 +682,16 @@ function presenceRef(slot: string, subject: SlotSubject, keyword: string): Prese
 	});
 }
 
-const refOf = (key: string, slot: QuerySlot): SlotRef | PresenceRef =>
-	slot.keyword === undefined ? slotRef(key, slot.subject) : presenceRef(key, slot.subject, slot.keyword);
+const refOf = (context: Context, key: string, slot: QuerySlot, row: SlotFlagRow): SlotRef<string> | PresenceRef =>
+	slot.keyword === undefined ? slotRef(key, slot.subject, slotFlagRef(context, key, slot.subject, row)) : presenceRef(key, slot.subject, slot.keyword);
 
-function shapeRef(slot: string): SlotRef {
-	const text = slotRef(slot, NO_SLOT);
+function shapeRef(context: Context, slot: string): SlotRef<string> {
+	const text = slotRef(slot, NO_SLOT, shapeFlagRef(context, slot));
 	const presence = presenceRef(slot, NO_SLOT, slot);
 	return Object.freeze({
 		eq: (value: string) => (typeof value === 'boolean' ? presence.eq(value) : text.eq(value)),
-		match: text.match
+		match: text.match,
+		is: text.is
 	});
 }
 
@@ -666,9 +699,10 @@ function recorder(context: Context, kind: number | undefined): Recorder<unknown>
 	const table = context.hooks.querySlots;
 	const owner = kind === undefined ? 'this grammar' : kindLabel(context, kind);
 	const known = kind === undefined ? undefined : slotsOf(table, kind);
+	const slotFlags = kind === undefined ? undefined : context.hooks.querySlotFlags[kind];
 	const names: ReadonlySet<string> = known === undefined ? everyAccessor(table) : new Set(known.keys());
-	const refFor = (key: string): SlotRef | PresenceRef =>
-		known === undefined ? shapeRef(key) : refOf(`${owner}.${key}`, known.get(key)!);
+	const refFor = (key: string): SlotRef<string> | PresenceRef =>
+		known === undefined ? shapeRef(context, key) : refOf(context, `${owner}.${key}`, known.get(key)!, slotFlags?.[key]);
 	const refuseRecorder = (what: string): never =>
 		refuse(`query: ${what}; a condition reads slots and compares them (c.slot.eq / .match)`);
 	return new Proxy(Object.create(null) as Recorder<unknown>, {

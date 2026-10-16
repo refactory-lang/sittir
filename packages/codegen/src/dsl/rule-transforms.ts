@@ -184,11 +184,31 @@ export function mintInlineTextTokens<R extends AnyRule>(rules: Record<string, R>
 	return { rules: out, mintedNames, owners: ownersOf };
 }
 
-export function mintInlineLiteralAliasStorage<R extends AnyRule>(rules: Record<string, R>): LiteralAliasStorage<R> {
+export interface WordDisplayCtx {
+	readonly word: string | undefined;
+}
+
+export function wordDisplaysOf<R extends AnyRule>(rules: Record<string, R>, ctx: WordDisplayCtx): ReadonlySet<string> {
+	const { word } = ctx;
 	const walker = new SyntacticRuleWalker<R>();
+	const displays = new Set<string>();
+	if (word === undefined) return displays;
+	for (const rule of Object.values(rules)) {
+		walker.fold(rule, displays, (acc, r) => {
+			const alias = r as unknown as NamedAliasShape<R>;
+			if (alias.type === ALIAS && alias.named === true && alias.value && alias.content.type === SYMBOL && (alias.content as unknown as { name: string }).name === word) acc.add(alias.value);
+			return acc;
+		});
+	}
+	return displays;
+}
+
+export function mintInlineLiteralAliasStorage<R extends AnyRule>(rules: Record<string, R>, ctx: WordDisplayCtx): LiteralAliasStorage<R> {
+	const walker = new SyntacticRuleWalker<R>();
+	const wordDisplays = wordDisplaysOf(rules, ctx);
 	const literalAliasOf = (r: R): { display: string; body: R; literals: string } | undefined => {
 		const alias = r as unknown as NamedAliasShape<R>;
-		if (alias.type !== ALIAS || alias.named !== true || !alias.value || Object.hasOwn(rules, alias.value)) return undefined;
+		if (alias.type !== ALIAS || alias.named !== true || !alias.value || Object.hasOwn(rules, alias.value) || wordDisplays.has(alias.value)) return undefined;
 		const arms = choiceArmsOf(innermostNamedAliasContent(alias.content));
 		if (arms === undefined || !arms.every((arm) => arm.type === STRING)) return undefined;
 		const body = { type: CHOICE, members: arms } as unknown as R;

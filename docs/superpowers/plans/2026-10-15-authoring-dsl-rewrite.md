@@ -27,7 +27,8 @@
   - The branch merges to master on the maintainer's word, carrying 2b.
 - **Execution.** The design session executes this plan inline, with superpowers:executing-plans. It uses no subagents.
 - **Byte-identical gates.** Every stage leaves generated output byte-identical to the previous stage's commit, except the exceptions the stage names.
-  - Stage 1's reference is the baseline re-recorded at Task 0.4 (2867fa8ed, spec §10). Its grammar-level outputs equal 946114382's with each nested alias collapsed, and its rows equal the merge's.
+  - Stage 1's reference was recorded at Task 0.4 (2867fa8ed, spec §10). Its grammar-level outputs equal 946114382's with each nested alias collapsed, and its rows equal the merge's.
+  - A master merge re-records the reference at the merge, and every file the merge moves must be explained by the merged commits. The current reference is 2adb24cf3's: the master merge's (777411578, below Task 1.1), with Task 1.2 Step 1's accepted consequence.
   - A failed gate stops the stage for review. Nothing is reverted to make a gate pass.
 - **Erasable syntax only** in `grammar.sittir.ts`, `grammar.bindings.ts` and every module they import: no enums, no namespaces with values, no parameter properties.
 - **Generated outputs are never hand-edited;** regenerate them. The generated layer is written only by `bindings-inventory --write`.
@@ -208,14 +209,14 @@ In this stage, the intake over a completed layer still re-enriches its base with
 
 **Gate:** spec §10. Run:
 ```
-tool output-gate --check scratchpad/handoffs/reshape-gate-manifest-2867fa8ed.txt \
+tool output-gate --check scratchpad/handoffs/reshape-gate-manifest-2adb24cf3.txt \
   --except packages/rust/grammar.bindings.ts --except packages/typescript/grammar.bindings.ts --except packages/python/grammar.bindings.ts \
   --except packages/rust/.sittir/grammar.js --except packages/typescript/.sittir/grammar.js --except packages/python/.sittir/grammar.js \
   --except packages/rust/.sittir/src/grammar.json:splitFrom,leadFrom,bindingEffects \
   --except packages/typescript/.sittir/src/grammar.json:splitFrom,leadFrom,bindingEffects \
   --except packages/python/.sittir/src/grammar.json:splitFrom,bindingEffects
 ```
-Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshots-2867fa8ed/`. The rows must equal `reshape-gate-rows-2867fa8ed.txt`.
+Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshots-2adb24cf3/`. The rows must equal `reshape-gate-rows-2adb24cf3.txt`.
 
 ### Task 1.1: the layer record and the effect table
 
@@ -288,6 +289,16 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 - [x] **Step 4: Run the tests and the existing `split-layout`, `lead-grammar` and `grammar-bindings` tests.** All pass.
 - [x] **Step 5: Write the glossary entries and commit.**
 
+### The master merge after Task 1.1
+
+**Landed** on `feat/authoring-dsl`: fd351a017 merges master at 396d7fb4c (the structure verifier, `ir.synonym` removed, tree-sitter-rust pinned to v0.24.2, the `node_modules` symlinks untracked). 777411578 fixes the from check the merge exposed.
+- The from check derived a display-merged node's config under its display name, which has no slot table. Python's `lambda` and `lambda_within_for_in_clause` built empty and passed, until master's `'runtime'` verifier refused them (fromPass 178/180). The check now resolves the storage kind, for the node and every child it holds.
+- The reference is re-recorded at 777411578: `scratchpad/handoffs/reshape-gate-manifest-777411578.txt` (255 files), `reshape-snapshots-777411578/` and `reshape-gate-rows-777411578.txt`. Against 2867fa8ed:
+  - only rust's grammar-level outputs, its crate and its evaluated grammar move, from the pin;
+  - every grammar's emitted package moves, from the verifier and the `ir.synonym` removal, and each grammar gains `.sittir/upstream.json` and `upstream.wasm`;
+  - the three bindings layers move in their hash only;
+  - the rows equal 2867fa8ed's, except rust's, which add master's deltas.
+
 ### Task 1.2: the pending base and the layer pass
 
 **Files:**
@@ -330,8 +341,9 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   - the conflict sets, which the `conflicts` callback returns (spec §6);
   - the record, on the start rule's body.
 
-- [ ] **Step 1: Rename `patches` to `edits`, with no other change.** Regenerate all five grammars. `tool output-gate --check` shows no difference. Commit.
-- [ ] **Step 2: Write the failing tests.**
+- [x] **Step 1: Rename `patches` to `edits`, with no other change.** Regenerate all five grammars. `tool output-gate --check` shows no difference. Commit.
+  - **Landed:** 2adb24cf3. Accepted as a consequence: the grammar diagnostics name the key in their messages, so the four `grammar-diagnostics.json` files move by that one word (python 4 messages, typescript 3, rust 1, scm 1). Helper names that say patch are unchanged. The reference is re-recorded at 2adb24cf3; its snapshots and rows equal 777411578's.
+- [x] **Step 2: Write the failing tests.**
   - Reading a pending base's `rules` before completion throws, while its `name` and `externals` read.
   - **The hook's guards** (spec §1.2):
     - reading `options.rules` before the pass has run throws, naming tree-sitter 0.26.9;
@@ -349,10 +361,17 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   - Each config callback runs exactly once per evaluation, counted with a spy.
   - `contexts` given to a layer never reaches the runtime's options.
   - `wire({ edits: { missing: … } })` over a fixture base is a type error. Write it as a type test with `@ts-expect-error`.
-- [ ] **Step 3: Run them and confirm they fail.**
-- [ ] **Step 4: Implement.**
-- [ ] **Step 5: Switch scm and regex** to the stock shape, regenerate both, and run `tool output-gate --check`. There is no difference for scm or regex, and their snapshots are equal.
-- [ ] **Step 6: Run the suite. Write the glossary entries, and commit.**
+- [x] **Step 3: Run them and confirm they fail.**
+- [x] **Step 4: Implement.**
+- [x] **Step 5: Switch scm and regex** to the stock shape, regenerate both, and run `tool output-gate --check`. There is no difference for scm or regex, and their snapshots are equal.
+- [x] **Step 6: Run the suite. Write the glossary entries, and commit.**
+  - **Landed:** b30ee9058 on `feat/authoring-dsl`. Every gate is against the 2adb24cf3 reference and equal: the output gate, the snapshots, the rows, the bindings inventory and the grammar type-check ratchet. Where it differs from the steps above:
+    - **The type test.** The user ruled (via brainstorm) that `EditsCheck` stays the current check, so an `edits` key that the typed base lacks type-checks. The test pins an `edits` path that a base kind lacks instead (spec §2.1).
+    - **`edit-site-missing`.** A key that names no rule when the layer evaluates is now this blocking diagnostic, built in this task: it records on the layer record and reaches the compile gate. Four keys name a kind their own layer mints, and each finds its minted body. The strict check over the layer's whole namespace is filed as an issue; it waits on a typed derivation of enrich's mints.
+    - **Evaluation.** Wire's externals entry (`evaluatingExternals`) evaluates the rule callbacks and the `extras`, `supertypes` and `precedences` lists once, and `recordingExternals` goes with `wrapRuleHook`. The record also carries the conflict-derivation records and the pass's diagnostics. `deadEnrichMints` takes the layer's grammar view and the mints.
+    - **Extras.** The authored `extras` callback runs once: at the first layer, enrich evaluates it against the base's list, and wire gets no `extras` key.
+    - **Not yet once.** `groups`, `visibleExternals` and `renderAs` are still evaluated more than once per evaluation: 4, 5 and 3 times on a fixture layer. evaluate's drains account for some, and wire's own readers of the three keys account for the rest. Task 2.2 Step 2 brings each to one.
+    - **Bootstrap test.** The composition test in `bootstrap-templates.test.ts` accepts `sittirGrammar` until the switch, but the template itself must be in the stock shape.
 
 ### Task 1.3: `copy`, `narrow` and the `lead` helper
 
@@ -361,7 +380,7 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 - Create: `packages/codegen/src/dsl/verbs/narrow.ts`. `applyNarrow(site, admits, direction: 'keep' | 'except', ctx: LayerCtx)` carries the spec §5.1 policies. It is built from `narrowRef`, `narrowWithin`, `admittedInside`, `itemPositions` and `narrowInPlace`, moved.
 - Create: `packages/codegen/src/dsl/verbs/lead.ts`. `applyLead(list, entry, ctx: LayerCtx)` composes `applyNarrow`, `applyCopy`, replace and alias, as spec §5.2 lists. The group comes from `visibleGroupSynthName`, as today.
 - Create: `packages/codegen/src/dsl/primitives/narrow.ts` (`narrow(...admits)`, `narrow.except(...admits)`) and `packages/codegen/src/dsl/primitives/lead.ts` (`lead(item, field, ...admits)`). `match` moves here from `bind.ts`.
-- Modify: `packages/codegen/src/dsl/transform/transform.ts`. `resolvePatch` queues a `lead` placeholder for the whole-grammar phase, and applies a `narrow` placeholder at its site.
+- Modify: `packages/codegen/src/dsl/transform/transform.ts`. Path mode queues `narrow` and `lead` placeholders for the whole-grammar phase (spec §1.3). A `narrow` entry is queued with the path edits, before the leads, and applies at its site over the rules as the layer's own edits leave them.
 - Modify: `packages/codegen/src/dsl/rule-patterns.ts`. `bind.ts`'s private shape helpers (`unprecedenced`, `refRule`, `refKind`, its record walkers) fold into the shared predicates (spec §7). A helper with no shared equivalent moves here.
 - Test: migrate `packages/codegen/src/dsl/__tests__/lead-grammar.test.ts` to entries. Add `packages/codegen/src/dsl/__tests__/narrow.test.ts` and `copy.test.ts`. Extend `packages/codegen/src/bindings/__tests__/production-leads.test.ts`.
 
@@ -373,19 +392,29 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   - copy effects whose origin is the lead entry;
   - no lead effect.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - Every case in `lead-grammar.test.ts`, rewritten as `edits: { L: { '.': lead(…) } }`, gives the same rules. Each refusal gives the code from spec §5.2's table and keeps today's reason text in its message.
   - **Review Focus 1:** on the rust and typescript layer-1 results, the helper gives exactly `leadGrammar`'s rules, rule order and names. Rust's last rules are `_kw_raw`, `_parameter_receiver`, `_attributed_parameter_receiver`, `_parameters_elements_receiver`, `parameters_elements_receiver_group`.
   - `narrow` keeps only the admits at a site and copies what it changes. `narrow.except` narrows an exclusive hidden rule in place and copies a shared one.
   - Each of `narrow`'s refusals in spec §5.1 is pinned.
   - A whole copy of a supertype member joins the supertype list, and a second copy in one context returns the same reference.
   - A `lead` entry at any path but `.` is `edit-entry-invalid`.
-- [ ] **Step 2: Run them and confirm they fail.**
-- [ ] **Step 3: Implement.**
+- [x] **Step 2: Run them and confirm they fail.**
+- [x] **Step 3: Implement.**
   - Map the entry's `item` and admits through the layer's own field effects (`boundFieldNameOf`) before applying, as `bindGrammar` does.
   - Append the groups after all leads' copies, as `leadGrammar` does.
-- [ ] **Step 4: Run the tests and `lead-facts.test.ts`.** Then switch `lead-facts.ts` to read the copy effects and the receiver form's body (spec §5.2, facts). Its tests keep their expectations.
-- [ ] **Step 5: Glossary entries; commit.**
+- [x] **Step 4: Run the tests and `lead-facts.test.ts`.** Then switch `lead-facts.ts` to read the copy effects and the receiver form's body (spec §5.2, facts). Its tests keep their expectations.
+- [x] **Step 5: Glossary entries; commit.**
+  - **Landed:** 897351f78 (the verbs, the lead entry and the adapter) and 36f1570c4 (the narrow entry) on `feat/authoring-dsl`. For each, every gate is against the 2adb24cf3 reference and equal: the output gate, the snapshots, the rows, the bindings inventory and the grammar type-check ratchet. Where it differs from the steps above:
+    - **The verbs' context.** The verbs take a `VerbCtx`, which `LayerCtx` extends, so `leadGrammar` runs them outside a layer until Task 1.5 deletes it. `applyCopy` takes one request (source, part, context, body, origin, and an optional display), and `applyLead` takes the bound `Lead`. A verb refuses with `VerbRefusal`. `refusalOf` undoes everything the refused application did, and `applyEntry` turns the refusal into the entry's diagnostic.
+    - **The lead entry.** Wire queues it on the layer at `.`, and refuses it at any other path. `runLayerPass` applies the queue after wire.
+    - **The narrow entry** (the user's ruling, via brainstorm): wire queues it with the path edits, and the pass applies it before the leads, at its site over the rules as the layer's own edits leave them. Its path walks the evaluated rule with transform's path model (`applyPathInRules`). A path that names no member is `edit-site-missing`. A test pins that an in-place narrowing keeps an edit the same layer made to the rule.
+    - **`lead-facts.ts`** is unchanged. It reads the `LeadEffect` that `provenanceOf` projects from the copy effects and the receiver form's body.
+    - **Review Focus 1** is pinned on the evaluated grammar's last rules: the lead's copies, then its group. The evaluated grammar keeps synthesized `_kw_` rules that `grammar.json` lacks, so `_kw_raw`'s place before the copies is pinned by the output gate on `grammar.json`.
+    - **For later tasks:**
+      - Task 1.4: the authoring surface's `lead` is still `bind.ts`'s record form, which `grammar.bindings.ts` calls. The switch gives the name to the entry form.
+      - Task 1.4 and Task 1.5: a layer pass records no field or alias effects yet (`recordingBindingEffects` is off outside a binding set), so the bindings layer's effects reach the record only once recording is unconditional. `resolvedEffects` then resolves them per owner over `{ rules }` alone, so `transparentReach` crosses supertypes, where `bindGrammar`'s resolution stops. Once the effects flow, it takes the layer's view with its supertypes, with a test.
+      - The inline `edit()` stage: an inline `transform()` call that holds a `narrow` or `lead` entry queues it against the whole rule of the kind whose callback is running. `edit()` has to carry the site.
 
 ### Task 1.4: the switch: three layers, the generated layer, the entry and module selection
 
@@ -463,7 +492,8 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 - Test (Review Focus 4, a layer's own records): over a fixture chain, a `field()` entry in layer 1 leaves layer 1's own `options` as written, while the same entry in layer 2 rewrites the inherited option path. Both are read from the evaluated grammar.
 
 - [ ] **Step 1:** Write the own-records test and confirm it fails. Implement, then run `tool output-gate --check-snapshot`. Every snapshot is equal.
-- [ ] **Step 2:** Run the suite and the stage gate. Commit.
+- [ ] **Step 2: Each config callback once** (spec §1.3). With the drains gone, wire's readers of `groups`, `visibleExternals` and `renderAs` take what its entry evaluated, so each callback runs once per evaluation. Extend `layer.test.ts`'s spy test to the three.
+- [ ] **Step 3:** Run the suite and the stage gate. Commit.
 
 ### Task 2.3: `injects:` and the record form of `groups:` go
 

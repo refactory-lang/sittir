@@ -55,6 +55,7 @@ import {
 } from '../compiler/model/node-map.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
 import { type KindEntryLike, findEntryForLiteralText, findOwnKindEntry } from '../dsl/symbol-table.ts';
+import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
 import { sameCharMergePairs } from '../compiler/model/first-tokens.ts';
 import type { RenderRule } from '../types/rule.ts';
 
@@ -137,6 +138,55 @@ export function referencedKinds(nodeMap: NodeMap): Set<string> {
 		}
 	}
 	return referenced;
+}
+
+export function aliasPatternLeaf(node: AssembledAlias, nodeMap: NodeMap): AssembledPattern | undefined {
+	if (node.slots.length !== 1) return undefined;
+	const kinds = slotKindNames(node.slots[0]!);
+	if (kinds.length !== 1) return undefined;
+	const leaf = nodeMap.nodes.get(kinds[0]!);
+	return leaf instanceof AssembledPattern && leaf.rawFactoryName !== undefined ? leaf : undefined;
+}
+
+export function placedAlias(node: AssembledNode, nodeMap: NodeMap): node is AssembledAlias {
+	return node instanceof AssembledAlias && unreservedWordFactory(node, nodeMap) !== undefined;
+}
+
+export interface UnreservedWordFactory {
+	readonly name: string;
+	readonly leaf: AssembledPattern;
+}
+
+const placedAliasKinds = new WeakMap<NodeMap, ReadonlySet<string>>();
+
+export function slotAliases(f: AssembledNonterminal, nodeMap: NodeMap): AssembledAlias[] {
+	const aliases: AssembledAlias[] = [];
+	for (const kind of expandAndDedupeContentTypes(slotKindNames(f), nodeMap)) {
+		const node = nodeMap.nodes.get(kind);
+		if (node instanceof AssembledAlias && node.rawFactoryName !== undefined) aliases.push(node);
+	}
+	return aliases;
+}
+
+function placedAliasKindsOf(nodeMap: NodeMap): ReadonlySet<string> {
+	const cached = placedAliasKinds.get(nodeMap);
+	if (cached !== undefined) return cached;
+	const kinds = new Set<string>();
+	for (const node of nodeMap.nodes.values()) {
+		for (const slot of node.slots) {
+			if (slot.reservedWordsets.every((id) => id === GLOBAL_WORDSET)) continue;
+			for (const alias of slotAliases(slot, nodeMap)) kinds.add(alias.kind);
+		}
+	}
+	placedAliasKinds.set(nodeMap, kinds);
+	return kinds;
+}
+
+export function unreservedWordFactory(alias: AssembledAlias, nodeMap: NodeMap): UnreservedWordFactory | undefined {
+	if (!placedAliasKindsOf(nodeMap).has(alias.kind)) return undefined;
+	const leaf = aliasPatternLeaf(alias, nodeMap);
+	if (leaf === undefined || leaf.kind !== nodeMap.word) return undefined;
+	return { name: `${leaf.rawFactoryName}Unreserved`, leaf };
 }
 
 export function slotKindNames(slot: { values: readonly NodeOrTerminal[] }): string[] {
@@ -609,7 +659,8 @@ export function resolveFieldStorageInfo(
 	return field.storageInfo;
 }
 
-export type FactoryShape = 'config' | 'spread' | 'text' | 'constant' | 'direct' | 'elements' | 'forwarded';
+export type ClassifiedFactoryShape = 'config' | 'spread' | 'text' | 'constant' | 'direct' | 'elements' | 'forwarded';
+export type FactoryShape = ClassifiedFactoryShape | 'placed';
 export type ChildFactorySurface = 'direct' | 'spread';
 
 export function stringConstructibleTexts(kind: string, nodeMap: NodeMap): string[] {
@@ -751,10 +802,12 @@ function booleanLeafKinds(nodeMap: NodeMap): BooleanLeafKinds | undefined {
 		return { trueKind: byText.get('true')!, falseKind: byText.get('false')! };
 	}
 	const keywords = new Map<string, string>();
+	const hiddenKeywords = new Map<string, string>();
 	for (const [kind, node] of nodeMap.nodes) {
 		if (node instanceof AssembledKeyword && BOOLEAN_TEXTS.includes(node.text.toLowerCase() as 'true' | 'false'))
-			keywords.set(node.text.toLowerCase(), node.resolvedKind ?? kind);
+			(node.hidden ? hiddenKeywords : keywords).set(node.text.toLowerCase(), node.hidden ? (node.resolvedKind ?? kind) : kind);
 	}
+	for (const [text, kind] of hiddenKeywords) if (!keywords.has(text)) keywords.set(text, kind);
 	if (!BOOLEAN_TEXTS.every((t) => keywords.has(t))) return undefined;
 	return { trueKind: keywords.get('true')!, falseKind: keywords.get('false')! };
 }
@@ -970,7 +1023,7 @@ export function classifyFactoryShape(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	options?: { includeTokenText?: boolean }
-): FactoryShape | null {
+): ClassifiedFactoryShape | null {
 	if (isBuilderTextLeaf(node)) return 'constant';
 	if (node instanceof AssembledPattern || node instanceof AssembledEnum || isWordOrBuilderTextLeaf(node)) return 'text';
 	if (isBuilderlessPunctuationLeaf(node)) return options?.includeTokenText ? 'text' : null;

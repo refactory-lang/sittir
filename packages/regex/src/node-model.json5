@@ -526,6 +526,9 @@
     }
   },
   "spelledTrivia": null,
+  "relaxes": {
+    "displays": []
+  },
   "nodes": [
     {
       "kind": "_blankline",

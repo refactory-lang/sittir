@@ -70,6 +70,12 @@ export interface PrecDynamicRule<C extends GrammarRule = GrammarRule> {
 	readonly content: C;
 }
 
+export interface ReservedRule<C extends GrammarRule = GrammarRule> {
+	readonly type: 'RESERVED';
+	readonly content: C;
+	readonly context_name: string;
+}
+
 export type GrammarRule =
 	| SeqRule<readonly GrammarRule[]>
 	| ChoiceRule<readonly GrammarRule[]>
@@ -86,7 +92,8 @@ export type GrammarRule =
 	| PrecRule<GrammarRule>
 	| PrecLeftRule<GrammarRule>
 	| PrecRightRule<GrammarRule>
-	| PrecDynamicRule<GrammarRule>;
+	| PrecDynamicRule<GrammarRule>
+	| ReservedRule<GrammarRule>;
 
 export type AuthoringRule = GrammarRule | string | RegExp;
 

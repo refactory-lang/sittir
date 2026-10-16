@@ -254,7 +254,7 @@ impl<S: Slot> Render for View<'_, S> {
 pub const NO_ITEMS: &[&str] = &[];
 
 /// The text of a list's separator kind (`ListView::separators`).
-pub type SeparatorText = fn(u16) -> &'static str;
+pub type SeparatorText = fn(crate::types::KindId) -> &'static str;
 
 /// A repeated slot with everything its rendering needs. Between items every
 /// separator part is written; a leading flank writes the token and what
@@ -262,7 +262,7 @@ pub type SeparatorText = fn(u16) -> &'static str;
 /// list's edges never carry whitespace the surrounding template did not ask
 /// for. `head` and `tail` (spacing) sit inside the template's text and, like
 /// it, are written only when there are items. `before`/`after` are whitespace
-/// arms (`0` = none) the list carries; `head`/`tail` are spacing sites the
+/// arms (`KindId::BLANK` = none) the list carries; `head`/`tail` are spacing sites the
 /// writer reads from its resolved options.
 #[derive(Debug, Clone, Copy)]
 pub struct ListView<'a, E: Slot> {
@@ -270,22 +270,22 @@ pub struct ListView<'a, E: Slot> {
     /// The list's surrounding text, `{}` standing for the joined items.
     pub template: &'a str,
     /// Whitespace site written before the separator token.
-    pub before: u16,
+    pub before: crate::types::KindId,
     /// The separator token itself; empty for an unseparated repeat.
     pub token: &'a str,
     /// Each item's own separator by its place, where its source spells
     /// another than `token` (`layout::slot_tokens`), with the text of each
     /// separator kind; `None` for a list whose separator is not chosen per
     /// instance.
-    pub separators: Option<(&'a [Option<u16>], SeparatorText)>,
+    pub separators: Option<(&'a [Option<crate::types::KindId>], SeparatorText)>,
     /// Whitespace site written after the separator token.
-    pub after: u16,
+    pub after: crate::types::KindId,
     pub leading: bool,
     pub trailing: bool,
     /// Spacing site read from the resolved options inside the template, before the first item.
-    pub head: Option<usize>,
+    pub head: Option<crate::types::SiteId>,
     /// Spacing site read from the resolved options inside the template, after the last item.
-    pub tail: Option<usize>,
+    pub tail: Option<crate::types::SiteId>,
     /// The list's slot (its wire key) and the layout holding its unit
     /// items' sides, each item framed by them (`UnitFrames`).
     pub units: Option<(&'a str, &'a dyn UnitFrames)>,

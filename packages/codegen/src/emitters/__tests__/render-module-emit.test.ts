@@ -332,9 +332,9 @@ describe('render options on transports', () => {
 		const src = await getTypescriptTransportRs();
 		const body = extractStructBody(src, 'FormalParametersElementsTransport');
 		expect(body).toContain('wire(key = "_item_separator_space_before")');
-		expect(body).toContain('pub item_separator_space_before: Option<u16>,');
+		expect(body).toContain('pub item_separator_space_before: Option<KindId>,');
 		expect(body).toContain('wire(key = "_item_separator_space_after")');
-		expect(body).toContain('pub item_separator_space_after: Option<u16>,');
+		expect(body).toContain('pub item_separator_space_after: Option<KindId>,');
 		expect(body).toContain('pub delimiter: Option<u8>,');
 		expect(src).not.toContain('ListSpacing');
 	});
@@ -346,13 +346,13 @@ describe('render options on transports', () => {
 		);
 		const listFill = listImpl.slice(0, listImpl.indexOf('\n}\n'));
 		expect(listFill).toContain(
-			'self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);'
+			'self.item_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);'
 		);
 		expect(listFill).toContain(
-			'self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);'
+			'self.item_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);'
 		);
 		expect(listFill).toMatch(
-			/self\.delimiter\.get_or_insert\(::sittir_core::prepare::source_trailing_delimiter\(self\.layout\.as_deref\(\), ::sittir_core::types::KindId\(\d+\), &\[\d+\], ctx\.options\.delimiter\[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM\], ctx\)\);/
+			/self\.delimiter\.get_or_insert\(::sittir_core::prepare::source_trailing_delimiter\(self\.layout\.as_deref\(\), ::sittir_core::types::KindId\(\d+\), &\[::sittir_core::types::KindId\(\d+\)\], ctx\.options\.delimiter_at\(options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM\), ctx\)\);/
 		);
 		const ownerImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for FormalParametersTransport {'));
 		const ownerFill = ownerImpl.slice(0, ownerImpl.indexOf('\n}\n'));
@@ -365,8 +365,8 @@ describe('render options on transports', () => {
 		const src = await getTypescriptTransportRs();
 		const fn = src.slice(src.indexOf('fn render_formal_parameters_elements('));
 		const view = fn.slice(0, fn.indexOf('\n}\n'));
-		expect(view).toContain('before: node.item_separator_space_before.unwrap_or(0),');
-		expect(view).toContain('after: node.item_separator_space_after.unwrap_or(0),');
+		expect(view).toContain('before: node.item_separator_space_before.unwrap_or(KindId::BLANK),');
+		expect(view).toContain('after: node.item_separator_space_after.unwrap_or(KindId::BLANK),');
 		expect(view).toMatch(/token: (match node\.separator_kind \{|",",)/);
 		expect(src).not.toMatch(/ListView \{[^}]*\bseparator: /);
 	});
@@ -375,8 +375,8 @@ describe('render options on transports', () => {
 		const src = await getTypescriptTransportRs();
 		const body = extractStructBody(src, 'ArgumentsTransport');
 		expect(body).not.toContain('wire(key = "_lparen_after")');
-		expect(body).not.toContain('pub lparen_after: Option<u16>,');
-		expect(body).not.toMatch(/pub \w+_(start|end): Option<u16>,/);
+		expect(body).not.toContain('pub lparen_after: Option<KindId>,');
+		expect(body).not.toMatch(/pub \w+_(start|end): Option<KindId>,/);
 		const fillImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for ArgumentsTransport {'));
 		expect(fillImpl.slice(0, fillImpl.indexOf('\n}\n'))).not.toContain('lparen_after');
 		const fn = src.slice(src.indexOf('fn render_arguments('));
@@ -386,8 +386,8 @@ describe('render options on transports', () => {
 		);
 		expect(src).toContain('    w.finish()?;');
 		const binary = extractStructBody(src, 'BinaryExpressionTransport');
-		expect(binary).not.toContain('pub operator_before: Option<u16>,');
-		expect(binary).not.toContain('pub operator_after: Option<u16>,');
+		expect(binary).not.toContain('pub operator_before: Option<KindId>,');
+		expect(binary).not.toContain('pub operator_after: Option<KindId>,');
 		expect(src).not.toContain('pub struct Seamed<T>');
 		expect(src).not.toContain('LiteralSeams');
 		expect(src).not.toContain('ArmSeams');
@@ -424,7 +424,7 @@ describe('render options on transports', () => {
 			const prepare = src.slice(src.indexOf(`impl ::sittir_core::prepare::Prepare for ${name} {`));
 			expect(prepare.slice(0, prepare.indexOf('\n}\n'))).toContain('::sittir_core::prepare::prepare_edges(self, ctx);');
 		}
-		expect(src).not.toMatch(/pub (arguments|statement_block)_(before|after): Option<u16>,/);
+		expect(src).not.toMatch(/pub (arguments|statement_block)_(before|after): Option<KindId>,/);
 		expect(src).not.toContain('self.statement_block_before.get_or_insert');
 		const blockFn = src.slice(src.indexOf('fn render_statement_block('));
 		expect(blockFn.slice(0, blockFn.indexOf('\n}\n'))).toMatch(
@@ -458,7 +458,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 			'::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));'
 		);
 		// The stored layout is set first: the list site and the seats fill only the gaps it left unset.
-		expect(body.indexOf('fill_slot_gaps')).toBeLessThan(body.indexOf('.get_or_insert(ctx.options.spacing['));
+		expect(body.indexOf('fill_slot_gaps')).toBeLessThan(body.indexOf('.get_or_insert(ctx.options.site_arm('));
 		expect(body.indexOf('fill_slot_gaps')).toBeLessThan(body.indexOf('fill_seated_gaps'));
 		expect(transportRs).not.toContain('fill_list_gaps');
 		expect(transportRs).not.toContain('fn source_gap(');
@@ -522,7 +522,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(transportRs).toContain(
 			"fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {"
 		);
-		expect(transportRs).toContain('.get_or_insert(ctx.options.spacing[options::');
+		expect(transportRs).toContain('.get_or_insert(ctx.options.site_arm(options::');
 		expect(transportRs).toContain(
 			"pub fn render_transport_dispatch(transport: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
 		);
@@ -541,17 +541,30 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(transportRs).toMatch(/pub enum EnumVariantBodyTransportSlot \{(?:(?!Verbatim)[^}])*\}/s);
 	});
 
-	it('fills seated sibling gaps through one dense per-slot kind table and a core call; no per-list match block', async () => {
-		const transportRs = await getRustTemplatesRs();
+	it('seats a wrapper through a SeatPath: its unfielded content, or the child its field tags', async () => {
 		const optionsRs = await getRustOptionsRs();
-		const table = optionsRs.slice(optionsRs.indexOf('pub static SEATS_SOURCE_FILE_STATEMENTS: &[u16] = &['));
+		const table = optionsRs.slice(optionsRs.indexOf('pub static SEAT_WRAPPERS: &[Option<SeatPath>] = &['));
 		const cells = table
 			.slice(table.indexOf('\n') + 1, table.indexOf('];'))
 			.split(',')
 			.map((c) => c.trim())
 			.filter(Boolean);
-		expect(cells.filter((c) => c !== 'NO_SITE').length).toBeGreaterThan(0);
-		expect(cells.every((c) => c === 'NO_SITE' || /^\d+$/.test(c))).toBe(true);
+		expect(cells).toContain('Some(SeatPath::Content)');
+		expect(cells.some((c) => /^Some\(SeatPath::Field\(FieldId\([1-9]\d*\)\)\)$/.test(c))).toBe(true);
+		expect(cells.every((c) => c === 'None' || c === 'Some(SeatPath::Content)' || /^Some\(SeatPath::Field\(FieldId\([1-9]\d*\)\)\)$/.test(c))).toBe(true);
+	});
+
+	it('fills seated sibling gaps through one dense per-slot kind table and a core call; no per-list match block', async () => {
+		const transportRs = await getRustTemplatesRs();
+		const optionsRs = await getRustOptionsRs();
+		const table = optionsRs.slice(optionsRs.indexOf('pub static SEATS_SOURCE_FILE_STATEMENTS: &[Option<SiteId>] = &['));
+		const cells = table
+			.slice(table.indexOf('\n') + 1, table.indexOf('];'))
+			.split(',')
+			.map((c) => c.trim())
+			.filter(Boolean);
+		expect(cells.filter((c) => c !== 'None').length).toBeGreaterThan(0);
+		expect(cells.every((c) => c === 'None' || /^Some\(SiteId\(\d+\)\)$/.test(c))).toBe(true);
 		expect(transportRs).toContain(
 			'::sittir_core::prepare::fill_seated_gaps(self.statements.iter_mut().map(Some), options::SEATS_SOURCE_FILE_STATEMENTS, ctx);'
 		);
@@ -567,7 +580,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 			transportRs.indexOf('fn render_block('),
 			transportRs.indexOf('fn render_block(') + 2000
 		);
-		expect(block).toMatch(/after: node\.statements_separator_space\.unwrap_or\(0\),/);
+		expect(block).toMatch(/after: node\.statements_separator_space\.unwrap_or\(KindId::BLANK\),/);
 		expect(block).toMatch(/w\.site_at\(options::SITE_\w+_LBRACE_AFTER\);/);
 		expect(block).toContain('w.text("{")?;');
 		expect(block).toContain('statements.render(w)?;');
@@ -815,7 +828,10 @@ describe('the wire codec facts', () => {
 	it("states an envelope's wire ids", async () => {
 		const src = await getTypescriptTransportRs();
 		const member = src.slice(src.indexOf('pub enum MemberExpressionPropertyTransportSlot {'));
-		expect(member).toMatch(/    #\[kind\(kind::_PROPERTY_IDENTIFIER, display, decodes\(kind::\w+(?:, kind::\w+){21}\)\)\]\n    PropertyIdentifier\(/);
+		const slot = member.slice(0, member.indexOf('\n}\n'));
+		expect(slot).toMatch(/    #\[kind\(kind::_PROPERTY_IDENTIFIER, display\)\]\n    PropertyIdentifier\(/);
+		expect(slot).not.toMatch(/decodes\(/);
+		expect(slot).not.toMatch(/_KEYWORD\)\]/);
 	});
 
 	it('derives the codec alone for trivia', async () => {

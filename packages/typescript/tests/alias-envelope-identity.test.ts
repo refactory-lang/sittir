@@ -14,10 +14,12 @@ function keysOf(source: string): readonly Node[] {
 }
 
 describe('an alias envelope is seated by the kind the parser shows', () => {
-	it('keeps a keyword-spelled property name as a property_identifier around the keyword', () => {
+	it('reads a keyword-spelled property name as an identifier inside the property_identifier envelope', () => {
 		const [key] = keysOf("x = { type: 'css' };\n");
 		expect(key!.$type).toBe(ts.kinds.PropertyIdentifier);
-		expect(key!._content).toBe(ts.kinds.TypeKeyword);
+		const content = key!._content as { $type: number; $text: string };
+		expect(content.$type).toBe(ts.kinds.Identifier);
+		expect(content.$text).toBe('type');
 	});
 
 	it('keeps an identifier-spelled property name as a property_identifier around the identifier', () => {

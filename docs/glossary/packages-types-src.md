@@ -356,7 +356,15 @@ The brand on a keyword-presence slot's boolean storage, carrying the keyword's t
 
 ### `packages/types/src/query.ts::QueryPlan`
 
-The plan language one condition compiles to, which the native walk and `holds` both evaluate. Leaves read the values a slot holds, the slot named by its number in each kind (`SlotSubject`): `eq` and `match` their text, `present` that one exists, and `is` their stamped kind ids. The ids are expanded by membership when the plan is compiled, as `ofType` expands them, so the evaluators compare ids and never names. `child` moves the condition to a node the slot holds, narrowed by an anchor, so a flag spelled inside a wrapper (rust `function_item (function_modifiers "async")`) is still one plan. `not`, `and` and `or` combine. A constant is `and` or `or` over no plans, never an op of its own: a plan that always holds (a flag the kind's own form spells) is `{ op: 'and', of: [] }`, and one that never holds is `{ op: 'or', of: [] }`.
+The plan language one condition compiles to, which the native walk and `holds` both evaluate. Leaves read the values a slot holds, the slot named by its number in each kind (`SlotSubject`): `eq` and `match` their text, `present` that one exists, and `is` their kind ids: the id the read stores for a value it stores as a unit (an enum kind's member, however its node spells it), and the stamped kind id of any other. The ids are expanded by membership when the plan is compiled, as `ofType` expands them, so the evaluators compare ids and never names. `child` moves the condition to a node the slot holds, narrowed by an anchor, so a flag spelled inside a wrapper (rust `function_item (function_modifiers "async")`) is still one plan. `not`, `and` and `or` combine. A constant is `and` or `or` over no plans, never an op of its own: a plan that always holds (a flag the kind's own form spells) is `{ op: 'and', of: [] }`, and one that never holds is `{ op: 'or', of: [] }`.
+
+### `packages/types/src/node-surface.ts::SlotFlagsHintOf`
+
+The vocabulary flags a slot test can read on each of a node type's slots, by slot accessor, read from its `__slotFlags__`, which a bound grammar's `portable.ts` declares on the node interface beside `__flags__` and the parsed surface carries (`SurfaceOf`); `never` for a type with none. It is what types a flag carried by a kind read as a kind-id leaf, which has no node interface of its own.
+
+### `packages/types/src/query.ts::SlotFlagOf`
+
+The flags a slot's `is` takes: the slot's entry in its node type's `SlotFlagsHintOf`, or `never` when the slot has none. `SlotRefOf` passes it to `SlotRef`, per member of a union view, so the flags a union's slot takes are those every member's slot lists.
 
 ### `packages/types/src/query.ts::FlagOf`
 
@@ -365,6 +373,10 @@ The flags a recorder's `is` takes for a view's element type: each member's `Flag
 ### `packages/types/src/query.ts::QueryFlags`
 
 Each kind's vocabulary flags by stamped kind id, each the plan that tests the flag on a node of the kind, or `null` when the flag depends on the node's context (its placement, or a test on its parent), which a node-local plan cannot express. Generated from the bindings (`flagPlansOf`); a grammar without bindings has none.
+
+### `packages/types/src/query.ts::QuerySlotFlags`
+
+Each kind's slot flags by stamped kind id and slot accessor (`slotFlagsOf`): for each flag a kind the slot can hold declares, the types of the kinds that always carry it, which a slot's `is` tests by membership, or a `SlotFlagRefusal` naming the kind that declares it through its own slots or its context, which a membership test cannot read. A slot that holds a kind-id leaf, an enum member whose fixed text spells the flag, is how the flag is reached at all: the leaf is no node a view returns.
 
 ### `packages/types/src/query.ts::StepAnchor`
 

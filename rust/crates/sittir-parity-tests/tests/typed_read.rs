@@ -111,7 +111,7 @@ fn parse_rust(source: &str) -> tree_sitter::Tree {
 
 /// Read the tree's root into `T`, as tree 7, seating no sides.
 fn read<T: ReadTransport>(tree: &tree_sitter::Tree, source: &str, depth: Depth) -> Result<T, ReadError> {
-    T::read(&mut tree.walk(), &ReadCtx::new(source, 7, T::shows), depth)
+    T::read(&mut tree.walk(), &ReadCtx::new(source, sittir_core::types::TreeId(7), T::shows), depth)
 }
 
 /// A tree's trivia table as a read's side lookup, each entry as a parsed
@@ -131,10 +131,10 @@ impl<'t> Table<'t> {
 }
 
 impl SideLookup for Table<'_> {
-    fn side(&self, index: u32, side: sittir_core::trivia_table::TriviaSide, edge_changed: bool) -> Box<dyn std::any::Any> {
+    fn side(&self, index: sittir_core::types::NodeIndex, side: sittir_core::trivia_table::TriviaSide, edge_changed: bool) -> Box<dyn std::any::Any> {
         use sittir_core::trivia_table::Assigned;
-        let ctx = ReadCtx::new(self.source, 7, |_| false);
-        let source = |at: u32| {
+        let ctx = ReadCtx::new(self.source, sittir_core::types::TreeId(7), |_| false);
+        let source = |at: sittir_core::types::NodeIndex| {
             let node = sittir_core::engine::node_at_index(self.tree, at)?;
             let coord = ctx.coordinate(&node, at);
             Some(SideEntry::Source { kind: coord.kind?, span: coord.span, adjacent: None, entry: sittir_core::trivia::TriviaEntry::new(SlotValue::Coord(coord)) })
@@ -160,7 +160,7 @@ impl SideLookup for Table<'_> {
 fn read_seated<T: ReadTransport>(source: &str, kind: KindId, nth: usize, depth: Depth) -> Result<T, ReadError> {
     let tree = parse(&sittir_rust::language(), source);
     let table = Table::of(&tree, source);
-    let read = T::read(&mut find(&tree, kind, nth), &ReadCtx::new(source, 7, T::shows).with_sides(&table), depth);
+    let read = T::read(&mut find(&tree, kind, nth), &ReadCtx::new(source, sittir_core::types::TreeId(7), T::shows).with_sides(&table), depth);
     read
 }
 
@@ -168,9 +168,9 @@ fn read_seated<T: ReadTransport>(source: &str, kind: KindId, nth: usize, depth: 
 fn find(tree: &tree_sitter::Tree, kind: KindId, nth: usize) -> tree_sitter::TreeCursor<'_> {
     let mut cursor = tree.walk();
     let mut seen = 0;
-    for index in 0..tree.root_node().descendant_count() {
-        cursor.goto_descendant(index);
-        if cursor.node().grammar_id() == kind.0 {
+    for index in (0..tree.root_node().descendant_count() as u32).map(sittir_core::types::NodeIndex::new) {
+        sittir_core::read::goto(&mut cursor, index);
+        if sittir_core::read::grammar_id(&cursor.node()) == kind {
             if seen == nth {
                 return cursor;
             }
@@ -188,7 +188,7 @@ fn read_nth<T: ReadTransport>(
     nth: usize,
     depth: Depth,
 ) -> Result<T, ReadError> {
-    T::read(&mut find(tree, kind, nth), &ReadCtx::new(source, 7, T::shows), depth)
+    T::read(&mut find(tree, kind, nth), &ReadCtx::new(source, sittir_core::types::TreeId(7), T::shows), depth)
 }
 
 /// What the read placed on a node beside its own coordinate, which every read
@@ -251,8 +251,8 @@ fn a_child_no_route_takes_is_refused_only_with_debug_checks() {
         let ReadError::Unrouted { kind: parent, child, index } = refused else { panic!("{refused:?}") };
         assert_eq!((parent, child), (kind::FUNCTION_ITEM, kind::BLOCK));
         let mut at = tree.walk();
-        at.goto_descendant(index as usize);
-        assert_eq!(at.node().grammar_id(), kind::BLOCK.0);
+        sittir_core::read::goto(&mut at, index);
+        assert_eq!(sittir_core::read::grammar_id(&at.node()), kind::BLOCK);
         assert!(routes.is_none());
     } else {
         let value = result.unwrap();
@@ -304,7 +304,7 @@ fn past_the_depth_a_child_with_structure_is_its_coordinate() {
     let shallow: File = read(&tree, source, Depth::ONE).unwrap();
     let coord = shallow.statements[0].coord().expect("a coordinate at depth one");
     assert_eq!((coord.span.start, coord.span.end, coord.kind), (0, 20, Some(kind::FUNCTION_ITEM)));
-    assert_eq!(coord.tree, 7);
+    assert_eq!(coord.tree, sittir_core::types::TreeId(7));
     let two: File = read(&tree, source, Depth::Levels(std::num::NonZeroU32::new(2).unwrap())).unwrap();
     let f = function(&two, 0);
     assert_eq!(f.name.transport().unwrap().text, "f", "a leaf is inline");
@@ -445,6 +445,17 @@ fn a_member_spelled_by_two_tokens_reads_as_the_id_both_display() {
     }
 }
 
+#[test]
+fn a_spelled_member_reports_as_its_unit_the_id_its_read_stores() {
+    for (source, stored) in [("declare const x: unique symbol;", ts::UNIQUE), ("declare const x: symbol;", ts::SYMBOL_KEYWORD)] {
+        let tree = parse(&sittir_typescript::language(), source);
+        let mut cursor = find(&tree, ts::PREDEFINED_TYPE, 0);
+        let at = sittir_core::read::index_of(&cursor);
+        assert_eq!(Predefined::unit_id(&mut cursor), Some(stored), "{source}");
+        assert_eq!(sittir_core::read::index_of(&cursor), at, "the cursor ends where it started");
+    }
+}
+
 /// Members `is` and `not` but not `is not`, whose node holds one token of each.
 #[derive(Debug, Clone, Copy, PartialEq, Transport)]
 #[transport(kind = py::_IS_NOT, spelled)]
@@ -470,12 +481,12 @@ fn a_seated_read_keeps_a_unit_stored_child_past_its_depth_a_coordinate_whose_hol
     let source = "fn f() -> ! /* c */ {}";
     let tree = parse_rust(source);
     let table = Table::of(&tree, source);
-    let never = find(&tree, kind::NEVER_TYPE, 0).descendant_index() as u32;
+    let never = sittir_core::read::index_of(&find(&tree, kind::NEVER_TYPE, 0));
     let trailing = table.side(never, sittir_core::trivia_table::TriviaSide::Trailing, false).downcast::<Vec<SideEntry<()>>>().unwrap();
     assert!(matches!(trailing.as_slice(), [SideEntry::Source { span, .. }] if (span.start, span.end) == (12, 19)), "{trailing:?}");
     let f: Typed = read_seated(source, kind::FUNCTION_ITEM, 0, Depth::ONE).unwrap();
     assert!(f.return_type.as_ref().and_then(SlotValue::coord).is_some_and(|coord| coord.index == never));
-    let parameters = find(&tree, kind::PARAMETERS, 0).descendant_index() as u32;
+    let parameters = sittir_core::read::index_of(&find(&tree, kind::PARAMETERS, 0));
     let before = table.side(parameters, sittir_core::trivia_table::TriviaSide::Trailing, false).downcast::<Vec<SideEntry<()>>>().unwrap();
     assert!(before.is_empty(), "the comment does not trail the parameters: {before:?}");
 }
@@ -718,7 +729,7 @@ fn a_row_read_equals_the_same_node_in_a_whole_read_trivia_included() {
     let source = "// lead\nfn f() { fn g() {} } // trail\n";
     let tree = parse_rust(source);
     let table = Table::of(&tree, source);
-    let ctx = ReadCtx::new(source, 7, <File as ReadTransport>::shows).with_sides(&table);
+    let ctx = ReadCtx::new(source, sittir_core::types::TreeId(7), <File as ReadTransport>::shows).with_sides(&table);
     let whole: File = File::read(&mut tree.walk(), &ctx, Depth::All).unwrap();
     let shallow: File = File::read(&mut tree.walk(), &ctx, Depth::ONE).unwrap();
     let index = shallow.statements[0].coord().unwrap().index;
@@ -726,7 +737,7 @@ fn a_row_read_equals_the_same_node_in_a_whole_read_trivia_included() {
     assert_eq!(&outer, function(&whole, 0));
     assert_eq!(trivia_spans(&outer.layout, "leading"), vec![(0, 7)]);
 
-    let inner_row = find(&tree, kind::FUNCTION_ITEM, 1).descendant_index() as u32;
+    let inner_row = sittir_core::read::index_of(&find(&tree, kind::FUNCTION_ITEM, 1));
     let inner: Function = sittir_core::read::read_at::<Function>(&mut tree.walk(), &ctx, inner_row, Depth::All).unwrap();
     let body = function(&whole, 0).body.transport().unwrap();
     assert_eq!(&inner, body.statements[0].transport().unwrap());
@@ -793,8 +804,8 @@ fn a_coordinate_reads_one_level_into_its_generated_transport() {
     use sittir_rust::render::transport::FunctionItemTransport;
     let source = "fn f() { g(); }\n";
     let tree = parse_rust(source);
-    let index = find(&tree, kind::FUNCTION_ITEM, 0).descendant_index() as u32;
-    let ctx = ReadCtx::new(source, 7, <FunctionItemTransport as ReadTransport>::shows);
+    let index = sittir_core::read::index_of(&find(&tree, kind::FUNCTION_ITEM, 0));
+    let ctx = ReadCtx::new(source, sittir_core::types::TreeId(7), <FunctionItemTransport as ReadTransport>::shows);
     let read = FunctionItemTransport::read_coordinate(&tree, &ctx, index).expect("a generated transport reads a coordinate").unwrap();
     let direct = read_nth::<FunctionItemTransport>(&tree, source, kind::FUNCTION_ITEM, 0, Depth::ONE).unwrap();
     assert_eq!(read, direct);

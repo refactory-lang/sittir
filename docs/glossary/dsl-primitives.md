@@ -243,8 +243,13 @@ hoist restructuring the patch forms cannot express) or `'ambiguity'` (a
 precedence or ambiguity fix). It returns `body` itself, tagged; the rule-cause
 diagnostics judge the declaration against the enriched stage.
 
-`reauthored('accepts-other-kind', witness, body)` is the third cause, and the
-only one that takes a witness: the upstream rule accepts a form that is never
+The witnessed causes (`WITNESSED_CAUSES`) take their evidence before the body,
+as a non-empty array of witnesses (`Witnesses`), because one rule can exclude or
+add several forms. The gate judges each witness on its own and names the index
+of the one that fails.
+
+`reauthored('accepts-other-kind', witnesses, body)` is the third cause: the
+upstream rule accepts a form that is never
 this kind, because another rule accepts the same form and the parser always
 picks that one. Python's `tuple` is the case: upstream's rule derives `(a)`,
 which is a parenthesized expression and never a tuple; precedence hides the
@@ -252,7 +257,7 @@ overlap from the parser, so nothing reports it, and the model inherits a tuple
 that needs no comma. The declaration states the claim so it can be checked
 (`OtherKindWitness`).
 
-`reauthored('rejects-valid-syntax', witness, body)` is the fourth cause: the
+`reauthored('rejects-valid-syntax', witnesses, body)` is the fourth cause: the
 upstream parser rejects a form the language allows, and the body adds it. The
 witness is the same `OtherKindWitness` shape read the other way round: `text`
 is source upstream's parser reports an error for, `form` the token sequence the
@@ -262,6 +267,13 @@ and a test checks the text against upstream's own parser (it must error).
 TypeScript's `export type * from` is the case: upstream allows `type` only
 before an export clause.
 
+`reauthored('accepts-invalid-syntax', witnesses, body)` is the fifth cause, the
+mirror of the fourth: the upstream parser accepts a form the language's grammar
+productions exclude, and the body drops it (`InvalidSyntaxWitness`). Only
+productions count. Early errors (context, labels, strict mode, duplicate names)
+are not parser work, and a body that clones a rule per enclosing context to
+enforce one is out of scope.
+
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::OtherKindWitness`
 
 The evidence for `'accepts-other-kind'`: `text`, source the upstream parser
@@ -270,6 +282,30 @@ derive, each item a literal token or `{ symbol }` naming a rule; and `kind`,
 the kind that text always is. The form is checked against upstream's rules when
 the grammar compiles; the text is checked against upstream's own parser by a
 test that covers every declared witness.
+
+### `packages/codegen/src/dsl/primitives/rule-cause.ts::InvalidSyntaxWitness`
+
+The evidence for `'accepts-invalid-syntax'`, the `OtherKindWitness` shape read
+the other way round from `'rejects-valid-syntax'`: `text` is source the language
+rejects and upstream's parser accepts, `form` its token sequence, `kind` the
+upstream rule that derives that form, and `production` the grammar production
+that excludes it, cited from the language's own grammar (an ECMAScript or
+TypeScript spec section, Python's PEG grammar, the Rust Reference). The gate
+checks that upstream's `kind` derives the form and the authored `kind` does not.
+A test checks the text against both parsers: upstream's accepts it, and
+sittir's reports an error that stays within the witness's text when it is
+parsed between two valid statements.
+
+### `packages/codegen/src/dsl/primitives/rule-cause.ts::Witnesses`
+
+A non-empty, read-only array of witnesses. Every witnessed cause takes one, even
+for a single witness, so no cause is a special case.
+
+### `packages/codegen/src/dsl/primitives/rule-cause.ts::WITNESSED_CAUSES`
+
+The causes the gate verifies by witness rather than by a provoking diagnostic.
+`WitnessedCause` is its element type, so the overloads of `reauthored` that take
+witnesses and the gate's `isWitnessVerified` read the same list.
 
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::vocabulary`
 
@@ -676,7 +712,7 @@ A patch placeholder carrying a replacement regex source for the pattern at the p
 
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::SemanticGapWitness`
 
-Evidence for `reauthored('semantic-gap', witness, body)`: the upstream parser's kind, accepted text and grammar form, plus the language meaning that differs from the modeled construction. The gate checks that the kind is unchanged, the upstream rule derives the form, and the meaning is stated. Upstream parser tests verify the text/kind; construction regressions verify the semantic correction. This cause covers the one-element tuple, where `(x)` and `(x,)` share an upstream tuple kind but mean different things in the language. It does not claim to prove language semantics from the grammar.
+Evidence for `reauthored('semantic-gap', witnesses, body)`: the upstream parser's kind, accepted text and grammar form, plus the language meaning that differs from the modeled construction. The gate checks that the kind is unchanged, the upstream rule derives the form, and the meaning is stated. Upstream parser tests verify the text/kind; construction regressions verify the semantic correction. This cause covers the one-element tuple, where `(x)` and `(x,)` share an upstream tuple kind but mean different things in the language. It does not claim to prove language semantics from the grammar.
 
 ### `packages/codegen/src/dsl/primitives/narrow.ts::NarrowPlaceholder`
 

@@ -84,3 +84,4 @@ pub const TYPE_ONLY: FieldId = FieldId(79);
 pub const TYPE_PARAMETERS: FieldId = FieldId(80);
 pub const TYPES: FieldId = FieldId(81);
 pub const VALUE: FieldId = FieldId(82);
+pub const VARIABLE_DECLARATOR: FieldId = FieldId(83);

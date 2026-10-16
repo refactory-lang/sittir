@@ -48,6 +48,33 @@ export function relaxedKeywordIds(nodeMap: NodeMap, entries: readonly KindEnumEn
 	});
 }
 
+export function relaxedDisplayIds(nodeMap: NodeMap, entries: readonly KindEnumEntry[]): [number, number[]][] {
+	return Object.entries(nodeMap.relaxedDisplayLiterals ?? {}).flatMap(([display, literals]) => {
+		const shown = findEntryForKindName(entries, `_${display}`) ?? findEntryForKindName(entries, display);
+		const ids = literals.flatMap((literal) => {
+			const entry = findKindEntryForLiteral(entries, literal);
+			return entry === undefined ? [] : [entry.id];
+		});
+		return shown === undefined || ids.length === 0 ? [] : [[shown.id, ids] as [number, number[]]];
+	});
+}
+
+export interface RelaxationTable {
+	/** The word rule's own display id and the keyword tokens aliased to it. */
+	readonly word?: { readonly display: number; readonly tokens: readonly number[] };
+	/** Each display that is an alias of the word rule, with the keyword tokens aliased to it. */
+	readonly displays: readonly { readonly display: number; readonly tokens: readonly number[] }[];
+}
+
+export function relaxationTable(nodeMap: NodeMap, entries: readonly KindEnumEntry[]): RelaxationTable {
+	const wordId = nodeMap.word === null || nodeMap.word === undefined ? undefined : findEntryForKindName(entries, nodeMap.word)?.id;
+	const tokens = relaxedKeywordIds(nodeMap, entries);
+	return {
+		...(wordId === undefined || tokens.length === 0 ? {} : { word: { display: wordId, tokens } }),
+		displays: relaxedDisplayIds(nodeMap, entries).map(([display, ids]) => ({ display, tokens: ids }))
+	};
+}
+
 export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	const { grammar, nodeMap, generatedIdTables } = config;
 	const entries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
@@ -68,31 +95,37 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	for (const { name, id } of kindConstants(entries)) lines.push(`pub const ${name}: KindId = KindId(${id});`);
 	const errorEntry = entries.find((entry) => entry.id === ERROR_KIND_ID);
 	if (errorEntry === undefined) throw new Error(`kind_ids.rs: ${grammar} has no ${ERROR_KIND_NAME} kind entry`);
-	lines.push(`const _: () = assert!(${kindConstName(errorEntry)}.0 == KindId::ERROR.0);`);
+	lines.push(`const _: () = assert!(${kindConstName(errorEntry)}.get() == KindId::ERROR.get());`);
 	lines.push('');
 	lines.push(`/// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, and the depth members a layout run's excess indentation reads as.`);
 	lines.push(`pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_core::trivia_table::SurfaceKinds {`);
-	lines.push(`    lists: &[${listKindIds(nodeMap).join(', ')}],`);
-	lines.push(`    units: &[${unitKindIds(nodeMap).join(', ')}],`);
-	lines.push(`    layout: &[${layoutMemberKindIds(nodeMap).join(', ')}],`);
+	const kindIds = (ids: readonly number[]): string => ids.map((id) => `KindId(${id})`).join(', ');
+	lines.push(`    lists: &[${kindIds(listKindIds(nodeMap))}],`);
+	lines.push(`    units: &[${kindIds(unitKindIds(nodeMap))}],`);
+	lines.push(`    layout: &[${kindIds(layoutMemberKindIds(nodeMap))}],`);
 	const members = depthMembersOf(nodeMap);
 	const [indent, dedent] = [members.indent, members.dedent].map((kind) => (kind === undefined ? 0 : (findEntryForKindName(entries, kind)?.id ?? 0)));
-	lines.push(`    indent: ${indent},`, `    dedent: ${dedent},`);
+	lines.push(`    indent: KindId(${indent}),`, `    dedent: KindId(${dedent}),`);
 	lines.push(`    depth: super::options::DEPTH_REGIONS,`);
 	lines.push(`};`);
 	lines.push('');
 	lines.push(`/// The grammar's root kinds: a render whose root is one of them is a document.`);
 	lines.push(`pub const ROOT_KINDS: &[KindId] = &[${rootKindIds(nodeMap).map((id) => `KindId(${id})`).join(', ')}];`);
 
-	const wordId = nodeMap.word === null || nodeMap.word === undefined ? undefined : findEntryForKindName(entries, nodeMap.word)?.id;
-	const relaxedIds = relaxedKeywordIds(nodeMap, entries);
+	const table = relaxationTable(nodeMap, entries);
 	lines.push('');
 	lines.push(`/// The keyword tokens the grammar aliases to its word rule: a node of one of them, displayed as the word rule, reads as the word rule.`);
-	lines.push(`pub const RELAXED_KEYWORDS: &[KindId] = &[${relaxedIds.map((id) => `KindId(${id})`).join(', ')}];`);
+	lines.push(`pub const RELAXED_KEYWORDS: &[KindId] = &[${(table.word?.tokens ?? []).map((id) => `KindId(${id})`).join(', ')}];`);
+	lines.push('');
+	lines.push(`/// The display ids that stand for the word rule (an alias of it) and the keyword tokens aliased to each.`);
+	lines.push(`pub const RELAXED_DISPLAYS: &[(KindId, &[KindId])] = &[${table.displays.map(({ display, tokens }) => `(KindId(${display}), &[${tokens.map((id) => `KindId(${id})`).join(', ')}])`).join(', ')}];`);
 	lines.push('');
 	lines.push(`/// Whether a node with this grammar id and display id is a relaxed keyword (\`ReadCtx::relaxes\`).`);
 	lines.push(`pub fn relaxes(grammar: KindId, display: KindId) -> bool {`);
-	lines.push(wordId === undefined || relaxedIds.length === 0 ? `    let _ = (grammar, display);\n    false` : `    display.0 == ${wordId} && RELAXED_KEYWORDS.contains(&grammar)`);
+	const wordClause = table.word === undefined ? undefined : `display == KindId(${table.word.display}) && RELAXED_KEYWORDS.contains(&grammar)`;
+	const displayClause = table.displays.length === 0 ? undefined : `RELAXED_DISPLAYS.iter().any(|(shown, tokens)| *shown == display && tokens.contains(&grammar))`;
+	const clauses = [wordClause, displayClause].filter((clause): clause is string => clause !== undefined);
+	lines.push(clauses.length === 0 ? `    let _ = (grammar, display);\n    false` : `    ${clauses.join(' || ')}`);
 	lines.push(`}`);
 	lines.push('');
 	lines.push(`/// Map a \`KindId\` back to its grammar kind string for diagnostics.`);

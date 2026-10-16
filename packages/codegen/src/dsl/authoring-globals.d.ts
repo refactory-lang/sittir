@@ -15,6 +15,7 @@ import type {
 	PrecLeftRule,
 	PrecRightRule,
 	PrecDynamicRule,
+	ReservedRule,
 	ImmediateTokenRule,
 	BlankRule
 } from '../grammar-shapes/grammar-json.ts';
@@ -44,6 +45,8 @@ declare global {
 		right<R extends AuthoringRule>(value: number | string, rule: R): PrecRightRule<ToGrammarRule<R>>;
 		dynamic<R extends AuthoringRule>(value: number, rule: R): PrecDynamicRule<ToGrammarRule<R>>;
 	};
+
+	function reserved<R extends AuthoringRule>(contextName: string, rule: R): ReservedRule<ToGrammarRule<R>>;
 
 	function alias<R extends AuthoringRule, V extends string>(
 		rule: R,
