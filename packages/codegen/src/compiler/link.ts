@@ -93,6 +93,7 @@ import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { withId, rebaseRuleIds, withKindFacts } from '../dsl/rule-attrs.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
+import { wordDisplaysOf } from '../dsl/rule-transforms.ts';
 import { isAllTextShape } from './assemble.ts';
 import { auxTokenKinds } from './diagnostics/catalog-coverage.ts';
 import { createRuleId } from './rule-catalog.ts';
@@ -924,17 +925,6 @@ function spliceTextLeaves(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
 	return { ...raw, rules };
 }
 
-function wordDisplaysOf(raw: RawGrammar): ReadonlySet<string> {
-	const displays = new Set<string>();
-	if (raw.word === undefined) return displays;
-	const collect = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
-		if (rule.type === ALIAS && rule.named && rule.content.type === SYMBOL && rule.content.name === raw.word) displays.add(rule.value);
-		return rule;
-	};
-	for (const rule of Object.values(raw.rules)) visibilityWalker.map(rule, collect);
-	return displays;
-}
-
 function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
 	const inlineCtx: InlineAtReferenceCtx = {
 		symbols: catalogSymbolSource({ ...symbolFactsOf(raw), kindEntries: ctx.kindEntries }),
@@ -944,7 +934,7 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 	const wordMatcher = compileWordMatcher(raw.word, raw.rules);
 	const relaxedLiterals = new Set<string>();
 	const relaxedDisplayLiterals = new Map<string, Set<string>>();
-	const wordDisplays = wordDisplaysOf(raw);
+	const wordDisplays = wordDisplaysOf(raw.rules, { word: raw.word ?? undefined });
 	const relaxedWord = (rule: Rule<'evaluate'>): Rule<'evaluate'> | undefined => {
 		if (rule.type !== ALIAS || !rule.named || raw.word === undefined || rule.content.type !== STRING) return undefined;
 		const stands = rule.value === raw.word || wordDisplays.has(rule.value);
@@ -961,13 +951,27 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 	};
 	const dedupeWordArms = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
 		if (rule.type !== CHOICE) return rule;
-		const isWordArm = (member: Rule<'evaluate'>): boolean =>
-			(member.type === SYMBOL && member.name === raw.word && member.literal === undefined) ||
-			(member.type === ALIAS && member.named && member.value !== raw.word && wordDisplays.has(member.value) && member.content.type === SYMBOL && member.content.name === raw.word);
-		const arms = rule.members.filter(isWordArm);
-		if (arms.length < 2) return rule;
-		const kept = arms.find((arm) => arm.annotations?.variant === raw.word) ?? arms.find((arm) => arm.annotations !== undefined) ?? arms[0]!;
-		const members = rule.members.filter((member) => !isWordArm(member) || member === kept);
+		const wordArmKey = (member: Rule<'evaluate'>): string | undefined => {
+			if (member.type === SYMBOL && member.name === raw.word && member.literal === undefined) return raw.word;
+			if (member.type === ALIAS && member.named && member.value !== raw.word && wordDisplays.has(member.value) && member.content.type === SYMBOL && member.content.name === raw.word) {
+				return `alias:${member.value}`;
+			}
+			return undefined;
+		};
+		const armsByKey = new Map<string, Rule<'evaluate'>[]>();
+		for (const member of rule.members) {
+			const key = wordArmKey(member);
+			if (key !== undefined) armsByKey.set(key, [...(armsByKey.get(key) ?? []), member]);
+		}
+		const kept = new Map<string, Rule<'evaluate'>>();
+		for (const [key, arms] of armsByKey) {
+			kept.set(key, arms.find((arm) => arm.annotations?.variant === raw.word) ?? arms.find((arm) => arm.annotations !== undefined) ?? arms[0]!);
+		}
+		const members = rule.members.filter((member) => {
+			const key = wordArmKey(member);
+			return key === undefined || kept.get(key) === member;
+		});
+		if (members.length === rule.members.length) return rule;
 		return members.length === 1 ? members[0]! : { ...rule, members };
 	};
 	const stampRef = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
