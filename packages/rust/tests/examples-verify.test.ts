@@ -14,7 +14,6 @@ import { renderMainFunction, renderUntouched, roundTrip } from '../../../example
 import { readSource, readFirstFunction } from '../../../examples/07-read-source.ts';
 import { summarizeTopLevelItems } from '../../../examples/09-type-guards.ts';
 import { dogfoodContract, structuralShape } from '../../../examples/helpers.ts';
-import { rebuildSpliceStrict } from '../../../examples/17-dogfood-rust-strict.ts';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 // The generated rebuild is loaded by a computed path so tsc does not follow
@@ -229,14 +228,6 @@ describe('ir entry ratchet', () => {
 		// enum-of-literals leaves are not, their values being kind ids.)
 		const builders = Object.keys(rs.build).filter((k) => typeof (rs.build as Record<string, unknown>)[k] === 'function');
 		expect(builders.length).toBeLessThanOrEqual(219);
-	});
-});
-
-// The strict half: the same items through `.strict` alone, so each gap lands on
-// the layer that owns it.
-describe('examples/17 dogfood rust — strict factory surface', () => {
-	it('builds the items the public surface can reach', () => {
-		expect(rebuildSpliceStrict().$render()).toContain('pub enum SpliceError');
 	});
 });
 

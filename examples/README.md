@@ -17,9 +17,6 @@ These modules exercise the API on `master`. They are executable TypeScript, not 
 | [14-format-preserving-transform.ts](14-format-preserving-transform.ts) | Replacing a parsed function name |
 | [15-generate-file.ts](15-generate-file.ts) | Building and saving a file |
 | [16-dogfooding.ts](16-dogfooding.ts) | Building source for a generated utility |
-| [17-dogfood-rust-strict.ts](17-dogfood-rust-strict.ts) | A larger Rust reconstruction through strict builders |
-| [18-dogfood-typescript-strict.ts](18-dogfood-typescript-strict.ts) | A larger TypeScript reconstruction through strict builders |
-| [19-dogfood-python-strict.ts](19-dogfood-python-strict.ts) | A larger Python reconstruction through strict builders |
 | [23-read-query-with.ts](23-read-query-with.ts) | Parsed query views, predicates, and ancestor reconstruction |
 
 The numbers are stable identifiers, not a required reading order. The cross-language example explicitly maps selected constructs; it is not a general semantic translator.
