@@ -18,9 +18,9 @@ import { childIndexOf, optionKey, type AddressLeafEntry, type AddressTables, typ
 import { lineBreakTerminatedKinds, lineTerminatedKinds } from '../compiler/model/trivia.ts';
 import { PREFERRED_NEWLINE, indentChars, indentUnitOf, newlineArms } from '../compiler/model/layout-kinds.ts';
 
-export type SeamStrength = 0 | 1 | 2;
+export type SeamStrength = 'Fallback' | 'Cascade' | 'Declared';
 
-export const SEAM_DECLARED: SeamStrength = 2;
+export const SEAM_DECLARED: SeamStrength = 'Declared';
 
 export function seamStrength(origin: SeamOrigin | undefined): SeamStrength {
 	switch (origin) {
@@ -29,10 +29,10 @@ export function seamStrength(origin: SeamOrigin | undefined): SeamStrength {
 		case 'word-default':
 			return SEAM_DECLARED;
 		case 'cascade':
-			return 1;
+			return 'Cascade';
 		case 'fallback':
 		case undefined:
-			return 0;
+			return 'Fallback';
 		default: {
 			const unreachable: never = origin;
 			return unreachable;
@@ -678,7 +678,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	);
 	L.push('/// Per spacing site, in vector order: the arm its table holds by default and the strength that default carries.');
 	L.push('pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[');
-	for (const s of plan.spacingSites) L.push(`    ::sittir_core::options::SiteSpec { default_arm: KindId(${s.defaultId}), strength: ${s.strength} },`);
+	for (const s of plan.spacingSites) L.push(`    ::sittir_core::options::SiteSpec { default_arm: KindId(${s.defaultId}), strength: ::sittir_core::spacing::SeamStrength::${s.strength} },`);
 	L.push('];', '');
 	for (const table of seatTablesOf(plan)) {
 		L.push("/// Per kind id, the site a seated element's after gap reads.");

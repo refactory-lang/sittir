@@ -739,7 +739,7 @@ mod tests {
             }
         }
         const TABLE: crate::render::WhitespaceTable = crate::render::WhitespaceTable { text_of, indent: KindId(0), dedent: KindId(0) , leaf_edges: &[], gaps: &[(1, KindId(1)), (2, KindId(2))]};
-        let tight = Some(EdgeArm { arm: TIGHT, strength: Some(SEAM_TRIVIA), dedent: None });
+        let tight = Some(EdgeArm { arm: TIGHT, strength: Some(SEAM_TRIVIA) });
         let edged = |text, edges| MockTransport {
             text,
             layout: Some(Box::new(TransportLayout { edges: Some(edges), ..Default::default() })),

@@ -123,11 +123,21 @@ pub type SeamRank = usize;
 /// value set on the node) beats one the kind edge took from its edge token's
 /// face (cascade), which beats the bare fallback; rank decides only between
 /// marks of one strength. Depth marks stay above the whole scale.
-pub const SEAM_FALLBACK: u8 = 0;
-pub const SEAM_CASCADE: u8 = 1;
-pub const SEAM_DECLARED: u8 = 2;
-pub const SEAM_SLOT: u8 = 3;
-pub const SEAM_TRIVIA: u8 = 4;
+#[repr(u8)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum SeamStrength {
+    Fallback,
+    Cascade,
+    Declared,
+    Slot,
+    Trivia,
+}
+
+pub const SEAM_FALLBACK: SeamStrength = SeamStrength::Fallback;
+pub const SEAM_CASCADE: SeamStrength = SeamStrength::Cascade;
+pub const SEAM_DECLARED: SeamStrength = SeamStrength::Declared;
+pub const SEAM_SLOT: SeamStrength = SeamStrength::Slot;
+pub const SEAM_TRIVIA: SeamStrength = SeamStrength::Trivia;
 
 /// The rank of a seam's text: empty 2, no break 1, otherwise 2 plus the number
 /// of logical breaks (`\r\n` counts once).
@@ -170,7 +180,7 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     indent_pending: bool,
     indent_armed: bool,
     seam: Option<SeamRank>,
-    seam_strength: u8,
+    seam_strength: SeamStrength,
     seam_set: LayoutKinds,
     seam_pick: LayoutKinds,
     seam_cont: String,
@@ -233,7 +243,7 @@ struct Payload {
 
 struct DeferredRun {
     text: String,
-    end: Option<(u8, Payload)>,
+    end: Option<(SeamStrength, Payload)>,
     line_end: Option<crate::render::LineHold>,
     /// Whether the run opens and ends with verbatim text
     /// (`RenderSink::verbatim`), which writes no seam on that side.
@@ -252,7 +262,7 @@ struct HeldContext {
     indent_pending: bool,
     indent_armed: bool,
     seam: Option<SeamRank>,
-    seam_strength: u8,
+    seam_strength: SeamStrength,
     seam_set: LayoutKinds,
     seam_pick: LayoutKinds,
     seam_cont: String,
@@ -657,7 +667,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self.merge_payload(Payload { set: kinds, pick: kinds.narrowest(), cont: String::new() }, SEAM_DECLARED, false)
     }
 
-    fn merge_seam_with(&mut self, kinds: LayoutKinds, strength: u8) {
+    fn merge_seam_with(&mut self, kinds: LayoutKinds, strength: SeamStrength) {
         self.merge_payload(Payload { set: kinds, pick: kinds.narrowest(), cont: String::new() }, strength, false);
     }
 
@@ -725,7 +735,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
 
     /// Writes a whitespace kind's arm: a depth move plus its line break for
     /// the depth arms, otherwise the arm's text as a seam of `strength`.
-    fn site_mark(&mut self, kind: crate::types::KindId, strength: u8, flank: bool) {
+    fn site_mark(&mut self, kind: crate::types::KindId, strength: SeamStrength, flank: bool) {
         if kind == crate::types::KindId::BLANK {
             return;
         }
@@ -757,7 +767,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// document's end (its `After` edge), where nothing follows; a break the line
     /// already ended satisfies one line break of the edge. A line continuation
     /// held at that gap already ends the line, so it stands.
-    fn root_edge(&mut self, side: crate::options::Side, arm: crate::types::KindId, strength: u8) {
+    fn root_edge(&mut self, side: crate::options::Side, arm: crate::types::KindId, strength: SeamStrength) {
         let Some(table) = self.table else {
             return;
         };
@@ -784,7 +794,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self.seam_is_root = true;
     }
 
-    fn merge_payload(&mut self, payload: Payload, strength: u8, flank: bool) -> bool {
+    fn merge_payload(&mut self, payload: Payload, strength: SeamStrength, flank: bool) -> bool {
         if self.seam_is_root {
             return false;
         }
@@ -973,18 +983,18 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         }
     }
 
-    fn site_with(&mut self, kind: crate::types::KindId, strength: u8) {
+    fn site_with(&mut self, kind: crate::types::KindId, strength: SeamStrength) {
         self.site_mark(kind, strength, false);
     }
 
     fn unsited_edge(&mut self, kind: crate::types::KindId, side: crate::options::Side, stamped: Option<crate::options::EdgeArm>) {
-        let Some(crate::options::EdgeArm { arm, strength: Some(strength), dedent }) = stamped else {
+        let Some(crate::options::EdgeArm { arm, strength: Some(strength) }) = stamped else {
             return;
         };
         if self.options.is_some_and(|options| options.edge_arm(kind, side, None, None).is_some()) {
             return;
         }
-        self.seam_arm(crate::slot::SeamArm { arm, strength, dedent: dedent == Some(true) });
+        self.seam_arm(crate::slot::SeamArm { arm, strength });
     }
 
     fn flank_at(&mut self, site: crate::types::SiteId) {

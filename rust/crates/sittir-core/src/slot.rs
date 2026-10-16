@@ -68,12 +68,7 @@ impl ChangedEdges {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SeamArm {
     pub arm: crate::types::KindId,
-    pub strength: u8,
-    /// Close a depth before writing the arm. No fill sets it; it stays for
-    /// the niche it gives `Option<SeamArm>`, which keeps a coordinate's edges,
-    /// and so the transports that hold coordinates, within their payload
-    /// ceiling.
-    pub dedent: bool,
+    pub strength: crate::spacing::SeamStrength,
 }
 
 /// The seams a kind writes before and after itself.
@@ -399,6 +394,12 @@ mod tests {
     use crate::render::{CoordinateError, SourceTable};
     use crate::slot::NodeCoordinate;
     use crate::spacing::{SpacingWriter, WordMatcher};
+
+    #[test]
+    fn an_optional_seam_arm_keeps_its_niche_in_four_bytes() {
+        assert_eq!(std::mem::size_of::<super::SeamArm>(), 4);
+        assert_eq!(std::mem::size_of::<Option<super::SeamArm>>(), 4);
+    }
     use crate::types::Span;
     use std::collections::HashMap;
     use std::sync::Arc;
@@ -487,7 +488,7 @@ mod tests {
         static EDGE_ROWS: [Option<EdgeRow>; 10] = [None, None, None, None, None, None, None, None, None, Some(EdgeRow(0))];
         static SITES: [SiteSpec; 1] = [SiteSpec { default_arm: TIGHT, strength: SEAM_CASCADE }];
         let sources = Kinded(Sources(HashMap::from([(crate::types::TreeId(1), Arc::from("f()"))])));
-        let render_with = |options: &ResolvedOptions, held: u8| {
+        let render_with = |options: &ResolvedOptions, held: crate::spacing::SeamStrength| {
             let mut slot: SlotValue<Word> = SlotValue::Coord(NodeCoordinate::new(
                 crate::types::TreeId(1),
                 crate::types::NodeIndex(0), crate::types::NodeIndex(1),

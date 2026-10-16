@@ -246,16 +246,12 @@ pub trait RenderSink {
     /// A site's arm with the strength its table row gives it; `site` is the
     /// declared-strength form. The default keeps a sink that knows nothing of
     /// strength working as before.
-    fn site_with(&mut self, kind: KindId, strength: u8) {
+    fn site_with(&mut self, kind: KindId, strength: crate::spacing::SeamStrength) {
         let _ = strength;
         self.site(kind);
     }
-    /// A resolved seam: the depth it closes first (`SeamArm::dedent`), then
-    /// its arm at its strength.
+    /// A resolved seam: its arm at its strength.
     fn seam_arm(&mut self, seam: crate::slot::SeamArm) {
-        if seam.dedent {
-            self.dedent(crate::layout_kinds::LayoutKinds::NONE);
-        }
         self.site_with(seam.arm, seam.strength);
     }
     /// A spacing site's arm read from the resolved options this sink holds,
@@ -437,7 +433,7 @@ pub struct HeldSeam {
     pub kinds: crate::layout_kinds::LayoutKinds,
     pub pick: crate::layout_kinds::LayoutKinds,
     pub cont: String,
-    pub strength: u8,
+    pub strength: crate::spacing::SeamStrength,
     pub token: bool,
     pub flank: bool,
     pub root: bool,
