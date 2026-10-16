@@ -2783,7 +2783,7 @@ function seatWrappersOf(nodeMap: NodeMap, tables: GeneratedIdTables): SeatWrappe
 		const slot = wrapperSlotOf(node);
 		const id = slot === undefined ? undefined : node.kindId;
 		if (slot === undefined || id === undefined) return [];
-		if (slot.isUnnamed) return [{ id, field: 0 }];
+		if (slot.isUnnamed) return [{ id }];
 		const field = fields.get(slot.name!);
 		if (field === undefined) throw new Error(`the wrapper '${node.display.name}' holds its content in '${slot.name}', which has no field id`);
 		return [{ id, field }];

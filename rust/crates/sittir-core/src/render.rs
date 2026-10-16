@@ -159,7 +159,7 @@ pub trait SourceTable {
     /// (`ResolvedOptions::seat_wrappers`): for each node held by the one
     /// before it, from the coordinate's own, the first that `seat` gives a
     /// site. A table of bare sources knows no nodes and answers none.
-    fn seat_through(&self, coord: &crate::slot::NodeCoordinate, wrappers: &[Option<crate::types::FieldId>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
+    fn seat_through(&self, coord: &crate::slot::NodeCoordinate, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
         let _ = (coord, wrappers, seat);
         None
     }

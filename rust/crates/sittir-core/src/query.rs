@@ -318,8 +318,8 @@ mod tests {
             return Ok(Route::Trivia);
         }
         let (_, slots, strict) = TABLES[T];
-        let kind = language().node_kind_for_id(child.grammar.0).unwrap_or("");
-        let field = child.field.and_then(|field| language().field_name_for_id(field.0));
+        let kind = crate::read::kind_name(language(), child.grammar).unwrap_or("");
+        let field = child.field.and_then(|field| crate::read::field_name(language(), field));
         let slot = slots.iter().position(|sel| match sel {
             Sel::Field(name) => field == Some(*name),
             Sel::Kind(name) => field.is_none() && kind == *name,
@@ -343,8 +343,8 @@ mod tests {
         }
     }
 
-    fn id(kind: &str) -> u16 {
-        language().id_for_node_kind(kind, true)
+    fn id(kind: &str) -> KindId {
+        crate::read::kind_named(language(), kind, true)
     }
 
     /// `slots` JSON for slot `n` of each kind.

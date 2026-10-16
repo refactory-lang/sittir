@@ -42,10 +42,18 @@ pub struct ResolvedOptions {
     pub sites: &'static [SiteSpec],
     /// Per kind id, the kind's flags (`KIND_ANON`, `KIND_LINE_TERMINATED`, `KIND_LINE_BREAK_TERMINATED`, `KIND_ROOT`).
     pub kind_flags: &'static [u8],
-    /// Per kind id of a wrapper, the field its seat passes through to the
-    /// node it holds, `FieldId(0)` for its unfielded content; none for any
-    /// other kind (`prepare::fill_seated_gaps`).
-    pub seat_wrappers: &'static [Option<crate::types::FieldId>],
+    /// Per kind id of a wrapper, the way its seat passes through to the node
+    /// it holds; none for any other kind (`prepare::fill_seated_gaps`).
+    pub seat_wrappers: &'static [Option<SeatPath>],
+}
+
+/// How a wrapper's seat reaches the node it holds.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SeatPath {
+    /// Its first named child that is not an extra: the wrapper's unfielded content.
+    Content,
+    /// Its child tagged with the field.
+    Field(crate::types::FieldId),
 }
 
 /// The parser's anonymous kind: a token, never an owner of trivia.

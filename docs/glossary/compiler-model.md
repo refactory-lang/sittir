@@ -4651,7 +4651,7 @@ The name of the arm a registered optional choice slot takes when it holds no tok
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::BLANK_KIND_ID`
 
-The id the blank arm stores and crosses as: 0, which no parser kind holds. The builder, the wrap, the options table and the native slot enum all use it, and the render core's `BLANK_ARM` is the same number.
+The id the blank arm stores and crosses as: 0, which no parser kind holds. The builder, the wrap, the options table and the native slot enum all use it, and the render core's `KindId::BLANK` is the same number.
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::hasBlankArm`
 

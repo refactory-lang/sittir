@@ -340,7 +340,7 @@ fn siblings_counting(tree: &tree_sitter::Tree, index: u32, visited: impl Fn(usiz
     let mut cursor = parent.walk();
     if cursor.goto_first_child() {
         loop {
-            children.push((cursor.node(), cursor.field_id()));
+            children.push((cursor.node(), crate::read::field_id(&cursor)));
             if !cursor.goto_next_sibling() {
                 break;
             }
@@ -349,7 +349,7 @@ fn siblings_counting(tree: &tree_sitter::Tree, index: u32, visited: impl Fn(usiz
     visited(children.len());
     let at = children.iter().position(|(child, _)| child.id() == outer.id()).unwrap_or(0);
     let field = children.get(at).and_then(|&(_, field)| field);
-    let item = |(child, of): &&(tree_sitter::Node<'_>, Option<std::num::NonZeroU16>)| *of == field && crate::trivia_table::holds_sides(child);
+    let item = |(child, of): &&(tree_sitter::Node<'_>, Option<crate::types::FieldId>)| *of == field && crate::trivia_table::holds_sides(child);
     Siblings {
         previous: (parent.start_byte() != node.start_byte()).then(|| children[..at].iter().rev().find(item).map(|(child, _)| sibling(child))).flatten(),
         next: (parent.end_byte() != node.end_byte()).then(|| children[at + 1..].iter().find(item).map(|(child, _)| sibling(child))).flatten(),
@@ -1302,7 +1302,7 @@ impl<G: EngineGrammar> SourceTable for WithoutLayout<'_, G> {
         self.0.framed_span(coord)
     }
 
-    fn seat_through(&self, coord: &NodeCoordinate, wrappers: &[Option<crate::types::FieldId>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
+    fn seat_through(&self, coord: &NodeCoordinate, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
         self.0.seat_through(coord, wrappers, seat)
     }
 
@@ -1548,16 +1548,16 @@ impl<G: EngineGrammar> SourceTable for ParsedTree<G> {
         self.own(coord.tree).is_some_and(|tree| tree.edited_within(coord.index, false))
     }
 
-    fn seat_through(&self, coord: &NodeCoordinate, wrappers: &[Option<crate::types::FieldId>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
+    fn seat_through(&self, coord: &NodeCoordinate, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
         let mut node = node_at_index(&self.own(coord.tree)?.tree, coord.index)?;
         loop {
-            let field = (*wrappers.get(crate::read::grammar_id(&node).index())?)?;
-            node = if field == crate::types::FieldId(0) {
-                let mut cursor = node.walk();
-                let held = node.named_children(&mut cursor).find(|child| !child.is_extra());
-                held?
-            } else {
-                node.child_by_field_id(field.get())?
+            node = match (*wrappers.get(crate::read::grammar_id(&node).index())?)? {
+                crate::options::SeatPath::Content => {
+                    let mut cursor = node.walk();
+                    let held = node.named_children(&mut cursor).find(|child| !child.is_extra());
+                    held?
+                }
+                crate::options::SeatPath::Field(field) => crate::read::child_by_field(&node, field)?,
             };
             if let Some(site) = seat(crate::read::grammar_id(&node)) {
                 return Some(site);
@@ -1638,7 +1638,7 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
         self.get(&coord.tree).is_some_and(|tree| SourceTable::edited_within(tree, coord))
     }
 
-    fn seat_through(&self, coord: &NodeCoordinate, wrappers: &[Option<crate::types::FieldId>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
+    fn seat_through(&self, coord: &NodeCoordinate, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
         self.get(&coord.tree)?.seat_through(coord, wrappers, seat)
     }
 
@@ -1698,7 +1698,7 @@ mod tests {
     /// A test `function_item`'s slots: `name` 0, `return_type` 1.
     fn function_item_route(child: &crate::read::Child) -> Result<crate::read::Route, crate::read::ReadError> {
         let language: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
-        let field = child.field.and_then(|field| language.field_name_for_id(field.0));
+        let field = child.field.and_then(|field| crate::read::field_name(&language, field));
         Ok(match field {
             _ if child.trivia => crate::read::Route::Trivia,
             Some("name") => crate::read::Route::Slot { slot: 0, scalar: false },
@@ -1710,7 +1710,7 @@ mod tests {
     /// A test block's or declaration list's one slot: each `function_item`.
     fn item_route(child: &crate::read::Child) -> Result<crate::read::Route, crate::read::ReadError> {
         let language: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
-        Ok(match language.node_kind_for_id(child.grammar.0) {
+        Ok(match crate::read::kind_name(&language, child.grammar) {
             _ if child.trivia => crate::read::Route::Trivia,
             Some("function_item") => crate::read::Route::Slot { slot: 0, scalar: false },
             _ => crate::read::Route::Layout,
@@ -1747,7 +1747,7 @@ mod tests {
 
         fn router(self, grammar: KindId, _display: KindId) -> Option<crate::read::Router> {
             let language: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
-            match language.node_kind_for_id(grammar.0)? {
+            match crate::read::kind_name(&language, grammar)? {
                 "function_item" => Some(crate::read::Router::Children(function_item_route)),
                 "declaration_list" | "block" => Some(crate::read::Router::Children(item_route)),
                 _ => None,
@@ -1860,7 +1860,7 @@ mod tests {
 
     fn kind_id(name: &str) -> KindId {
         let language: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
-        KindId(language.id_for_node_kind(name, true))
+        crate::read::kind_named(&language, name, true)
     }
 
     fn parsed(source: &str) -> (ParsedTree<TestGrammar>, u64) {

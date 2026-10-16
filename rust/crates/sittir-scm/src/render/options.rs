@@ -1,7 +1,7 @@
 // @generated — render options: site table and resolver. Do not hand-edit.
 
-use ::sittir_core::options::ResolvedOptions;
-use ::sittir_core::types::{EdgeRow, FieldId, FlankId, KindId, SiteId};
+use ::sittir_core::options::{ResolvedOptions, SeatPath};
+use ::sittir_core::types::{EdgeRow, FlankId, KindId, SiteId};
 
 pub const SPACING_SITE_COUNT: usize = 152;
 pub const DELIMITER_SITE_COUNT: usize = 0;
@@ -667,8 +667,8 @@ pub static SEATS_PROGRAM_DEFINITIONS: &[Option<SiteId>] = &[
     None, None, Some(SiteId(132)), None, Some(SiteId(138)), None, None, None, None, None, None, None, None, Some(SiteId(136)), Some(SiteId(137)),
 ];
 
-/// Per kind id of a wrapper, the field its seat passes through: FieldId(0) for its unfielded content.
-pub static SEAT_WRAPPERS: &[Option<FieldId>] = &[
+/// Per kind id of a wrapper, the way its seat passes through to the node it holds.
+pub static SEAT_WRAPPERS: &[Option<SeatPath>] = &[
 ];
 
 pub fn defaults() -> ResolvedOptions {

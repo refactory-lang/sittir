@@ -527,6 +527,19 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(transportRs).toMatch(/pub enum EnumVariantBodyTransportSlot \{(?:(?!Verbatim)[^}])*\}/s);
 	});
 
+	it('seats a wrapper through a SeatPath: its unfielded content, or the child its field tags', async () => {
+		const optionsRs = await getRustOptionsRs();
+		const table = optionsRs.slice(optionsRs.indexOf('pub static SEAT_WRAPPERS: &[Option<SeatPath>] = &['));
+		const cells = table
+			.slice(table.indexOf('\n') + 1, table.indexOf('];'))
+			.split(',')
+			.map((c) => c.trim())
+			.filter(Boolean);
+		expect(cells).toContain('Some(SeatPath::Content)');
+		expect(cells.some((c) => /^Some\(SeatPath::Field\(FieldId\([1-9]\d*\)\)\)$/.test(c))).toBe(true);
+		expect(cells.every((c) => c === 'None' || c === 'Some(SeatPath::Content)' || /^Some\(SeatPath::Field\(FieldId\([1-9]\d*\)\)\)$/.test(c))).toBe(true);
+	});
+
 	it('fills seated sibling gaps through one dense per-slot kind table and a core call; no per-list match block', async () => {
 		const transportRs = await getRustTemplatesRs();
 		const optionsRs = await getRustOptionsRs();

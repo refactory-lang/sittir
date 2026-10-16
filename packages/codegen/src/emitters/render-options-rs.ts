@@ -110,7 +110,7 @@ export interface RenderOptionsPlan {
 
 export interface SeatWrapper {
 	readonly id: number;
-	readonly field: number;
+	readonly field?: number;
 }
 
 const KIND_ANON = 1;
@@ -597,7 +597,14 @@ function denseFlags(name: string, rows: readonly { readonly id: number; readonly
 }
 
 function denseTable(name: string, type: IdType, entries: ReadonlyMap<number, number>): string[] {
-	const cells = Array.from({ length: denseWidth(name, entries.keys()) }, (_, id) => idOrNone(type, entries.get(id)));
+	return denseCells(name, type, new Map([...entries].map(([id, value]) => [id, idLiteral(type, value)])));
+}
+
+function denseCells(name: string, type: string, entries: ReadonlyMap<number, string>): string[] {
+	const cells = Array.from({ length: denseWidth(name, entries.keys()) }, (_, id) => {
+		const cell = entries.get(id);
+		return cell === undefined ? 'None' : `Some(${cell})`;
+	});
 	const L = [`pub static ${name}: &[Option<${type}>] = &[`];
 	for (let i = 0; i < cells.length; i += 16) L.push(`    ${cells.slice(i, i + 16).join(', ')},`);
 	L.push('];', '');
@@ -608,7 +615,8 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	const L: string[] = [];
 	const siteIndex = siteIndexOf(plan);
 	L.push('// @generated — render options: site table and resolver. Do not hand-edit.', '');
-	L.push('use ::sittir_core::options::ResolvedOptions;', 'use ::sittir_core::types::{EdgeRow, FieldId, FlankId, KindId, SiteId};', '');
+	const fieldIds = plan.seatWrappers.some((row) => row.field !== undefined) ? 'FieldId, ' : '';
+	L.push('use ::sittir_core::options::{ResolvedOptions, SeatPath};', `use ::sittir_core::types::{EdgeRow, ${fieldIds}FlankId, KindId, SiteId};`, '');
 	L.push(`pub const SPACING_SITE_COUNT: usize = ${plan.spacingSites.length};`);
 	L.push(`pub const DELIMITER_SITE_COUNT: usize = ${plan.delimiterSites.length};`, '');
 	plan.spacingSites.forEach((s, i) => L.push(`pub const ${s.constName}: SiteId = ${idLiteral('SiteId', i)};`));
@@ -676,8 +684,8 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 		L.push("/// Per kind id, the site a seated element's after gap reads.");
 		L.push(...denseTable(table.name, 'SiteId', new Map(table.rows.map((row) => [row.kindId, row.site]))));
 	}
-	L.push('/// Per kind id of a wrapper, the field its seat passes through: FieldId(0) for its unfielded content.');
-	L.push(...denseTable('SEAT_WRAPPERS', 'FieldId', new Map(plan.seatWrappers.map((row) => [row.id, row.field]))));
+	L.push('/// Per kind id of a wrapper, the way its seat passes through to the node it holds.');
+	L.push(...denseCells('SEAT_WRAPPERS', 'SeatPath', new Map(plan.seatWrappers.map((row) => [row.id, row.field === undefined ? 'SeatPath::Content' : `SeatPath::Field(${idLiteral('FieldId', row.field)})`]))));
 	L.push('pub fn defaults() -> ResolvedOptions {');
 	L.push('    ResolvedOptions {');
 	L.push('        spacing: ResolvedOptions::default_spacing(SITE_SPECS),');

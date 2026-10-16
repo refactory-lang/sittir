@@ -16,7 +16,7 @@ use crate::trivia_table::TriviaSide;
 use crate::types::{FieldId, KindId, Span};
 use std::num::NonZeroU32;
 use std::sync::OnceLock;
-use tree_sitter::{Node, TreeCursor};
+use tree_sitter::{Language, Node, TreeCursor};
 
 pub use regex::Captures;
 
@@ -37,6 +37,39 @@ pub fn grammar_id(node: &Node<'_>) -> KindId {
 #[allow(clippy::disallowed_methods)]
 pub fn display_id(node: &Node<'_>) -> KindId {
     KindId(node.kind_id())
+}
+
+/// The field the cursor's child is tagged with in its parent, none when it is
+/// unfielded. The one call of `TreeCursor::field_id`.
+#[allow(clippy::disallowed_methods)]
+pub fn field_id(cursor: &TreeCursor<'_>) -> Option<FieldId> {
+    cursor.field_id().map(|field| FieldId(field.get()))
+}
+
+/// `node`'s first child tagged with `field`. The one call of
+/// `Node::child_by_field_id`.
+#[allow(clippy::disallowed_methods)]
+pub fn child_by_field<'t>(node: &Node<'t>, field: FieldId) -> Option<Node<'t>> {
+    node.child_by_field_id(field.get())
+}
+
+/// The grammar's name for `field`. The one call of `Language::field_name_for_id`.
+#[allow(clippy::disallowed_methods)]
+pub fn field_name(language: &Language, field: FieldId) -> Option<&'static str> {
+    language.field_name_for_id(field.get())
+}
+
+/// The grammar's name for `kind`. The one call of `Language::node_kind_for_id`.
+#[allow(clippy::disallowed_methods)]
+pub fn kind_name(language: &Language, kind: KindId) -> Option<&'static str> {
+    language.node_kind_for_id(kind.get())
+}
+
+/// The kind the grammar names `name`, named or anonymous; `KindId::BLANK`
+/// when it names none. The one call of `Language::id_for_node_kind`.
+#[allow(clippy::disallowed_methods)]
+pub fn kind_named(language: &Language, name: &str, named: bool) -> KindId {
+    KindId(language.id_for_node_kind(name, named))
 }
 
 /// How many levels a read expands below the node it starts at.
@@ -432,7 +465,7 @@ impl Child {
             index: index_of(cursor),
             grammar: grammar_id(&node),
             display: display_id(&node),
-            field: cursor.field_id().map(|field| FieldId(field.get())),
+            field: field_id(cursor),
             named: node.is_named(),
             trivia: node.is_extra() || node.is_error(),
             descendants: node.descendant_count() as u32,

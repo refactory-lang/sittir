@@ -1,7 +1,7 @@
 // @generated — render options: site table and resolver. Do not hand-edit.
 
-use ::sittir_core::options::ResolvedOptions;
-use ::sittir_core::types::{EdgeRow, FieldId, FlankId, KindId, SiteId};
+use ::sittir_core::options::{ResolvedOptions, SeatPath};
+use ::sittir_core::types::{EdgeRow, FlankId, KindId, SiteId};
 
 pub const SPACING_SITE_COUNT: usize = 1066;
 pub const DELIMITER_SITE_COUNT: usize = 22;
@@ -4107,8 +4107,8 @@ pub static SEATS_UNION_PATTERN_PATTERNS: &[Option<SiteId>] = &[
     None, Some(SiteId(1022)), Some(SiteId(1021)), None, None, None, None, Some(SiteId(1033)), None, None, None, Some(SiteId(1029)),
 ];
 
-/// Per kind id of a wrapper, the field its seat passes through: FieldId(0) for its unfielded content.
-pub static SEAT_WRAPPERS: &[Option<FieldId>] = &[
+/// Per kind id of a wrapper, the way its seat passes through to the node it holds.
+pub static SEAT_WRAPPERS: &[Option<SeatPath>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
@@ -4117,16 +4117,16 @@ pub static SEAT_WRAPPERS: &[Option<FieldId>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-    None, None, None, None, None, Some(FieldId(0)), None, None, None, None, Some(FieldId(0)), None, None, Some(FieldId(0)), None, None,
-    Some(FieldId(0)), Some(FieldId(0)), None, None, None, None, None, None, None, None, Some(FieldId(0)), None, None, None, None, None,
+    None, None, None, None, None, Some(SeatPath::Content), None, None, None, None, Some(SeatPath::Content), None, None, Some(SeatPath::Content), None, None,
+    Some(SeatPath::Content), Some(SeatPath::Content), None, None, None, None, None, None, None, None, Some(SeatPath::Content), None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-    None, None, None, None, None, None, Some(FieldId(0)), None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, Some(SeatPath::Content), None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-    None, None, None, None, None, None, None, None, None, None, None, Some(FieldId(0)), None, None, None, None,
-    None, Some(FieldId(0)), None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, Some(SeatPath::Content), None, None, None, None,
+    None, Some(SeatPath::Content), None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-    None, None, None, None, None, None, None, None, None, None, None, None, None, Some(FieldId(0)),
+    None, None, None, None, None, None, None, None, None, None, None, None, None, Some(SeatPath::Content),
 ];
 
 pub fn defaults() -> ResolvedOptions {
