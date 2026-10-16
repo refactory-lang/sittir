@@ -116,7 +116,7 @@ The layer pass runs five steps. They are the same at every depth and in both run
    - Over a completed layer, the config's enrich inputs reach no enrich. A rule that one of them would have changed is reported by this layer's own check.
 2. **Lowering.** Each `edits` entry becomes a verb application on its kind's rule.
    - Kind K's callback is its own `rules:` callback if it has one, followed by `edit(result, edits[K])`. This is today's patched-parent composition.
-   - An entry whose effect reaches other rules is queued for the whole-grammar phase: a path that enters a rule (§4.2), `lead` (§5.2) and `rename` (§3.3).
+   - An entry whose effect reaches other rules is queued for the whole-grammar phase: a path that enters a rule (§4.2), `narrow` (§5.1), `lead` (§5.2) and `rename` (§3.3).
 3. **Evaluation.**
    - Every callback of the config is evaluated once.
    - Its `$` knows the base's rules, the config's rule names, the externals and every name the entries declare. As in tree-sitter, an unknown name gives the undefined-symbol value: `alias()` accepts it as a new name, and every other use reports it.
@@ -124,7 +124,7 @@ The layer pass runs five steps. They are the same at every depth and in both run
 4. **The whole-grammar phase,** in this order:
    1. lift-name resolution;
    2. pattern injection (`groups:` and authored hidden rules);
-   3. edits along paths that enter rules (§4.2);
+   3. edits along paths that enter rules (§4.2), and `narrow` entries (§5.1);
    4. leads (§5.2);
    5. renames (§3.3).
 
@@ -534,6 +534,8 @@ class_body: {
 `K: { path: narrow(...admits) }` and `K: { path: narrow.except(...admits) }` narrow the choice at the site.
 - The site is a choice of arms, directly or through hidden rules.
 - An admit with `within` reaches into a kind's field, or its unfielded child (§5.3).
+
+The entry applies in the whole-grammar phase, with the paths that enter rules and before the leads (§1.3). It narrows its site over the rules as the layer's own edits leave them, so whether a rule is the site's own, what is copied and what is narrowed in place all take those edits into account.
 
 The two forms differ in what they may change:
 - **`narrow(...)` makes the site a form** that holds only the admitted arms. It changes no rule that another site reaches:

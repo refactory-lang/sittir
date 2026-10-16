@@ -380,7 +380,7 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 - Create: `packages/codegen/src/dsl/verbs/narrow.ts`. `applyNarrow(site, admits, direction: 'keep' | 'except', ctx: LayerCtx)` carries the spec §5.1 policies. It is built from `narrowRef`, `narrowWithin`, `admittedInside`, `itemPositions` and `narrowInPlace`, moved.
 - Create: `packages/codegen/src/dsl/verbs/lead.ts`. `applyLead(list, entry, ctx: LayerCtx)` composes `applyNarrow`, `applyCopy`, replace and alias, as spec §5.2 lists. The group comes from `visibleGroupSynthName`, as today.
 - Create: `packages/codegen/src/dsl/primitives/narrow.ts` (`narrow(...admits)`, `narrow.except(...admits)`) and `packages/codegen/src/dsl/primitives/lead.ts` (`lead(item, field, ...admits)`). `match` moves here from `bind.ts`.
-- Modify: `packages/codegen/src/dsl/transform/transform.ts`. `resolvePatch` queues a `lead` placeholder for the whole-grammar phase, and applies a `narrow` placeholder at its site.
+- Modify: `packages/codegen/src/dsl/transform/transform.ts`. Path mode queues `narrow` and `lead` placeholders for the whole-grammar phase (spec §1.3). A `narrow` entry is queued with the path edits, before the leads, and applies at its site over the rules as the layer's own edits leave them.
 - Modify: `packages/codegen/src/dsl/rule-patterns.ts`. `bind.ts`'s private shape helpers (`unprecedenced`, `refRule`, `refKind`, its record walkers) fold into the shared predicates (spec §7). A helper with no shared equivalent moves here.
 - Test: migrate `packages/codegen/src/dsl/__tests__/lead-grammar.test.ts` to entries. Add `packages/codegen/src/dsl/__tests__/narrow.test.ts` and `copy.test.ts`. Extend `packages/codegen/src/bindings/__tests__/production-leads.test.ts`.
 
@@ -392,19 +392,29 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   - copy effects whose origin is the lead entry;
   - no lead effect.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - Every case in `lead-grammar.test.ts`, rewritten as `edits: { L: { '.': lead(…) } }`, gives the same rules. Each refusal gives the code from spec §5.2's table and keeps today's reason text in its message.
   - **Review Focus 1:** on the rust and typescript layer-1 results, the helper gives exactly `leadGrammar`'s rules, rule order and names. Rust's last rules are `_kw_raw`, `_parameter_receiver`, `_attributed_parameter_receiver`, `_parameters_elements_receiver`, `parameters_elements_receiver_group`.
   - `narrow` keeps only the admits at a site and copies what it changes. `narrow.except` narrows an exclusive hidden rule in place and copies a shared one.
   - Each of `narrow`'s refusals in spec §5.1 is pinned.
   - A whole copy of a supertype member joins the supertype list, and a second copy in one context returns the same reference.
   - A `lead` entry at any path but `.` is `edit-entry-invalid`.
-- [ ] **Step 2: Run them and confirm they fail.**
-- [ ] **Step 3: Implement.**
+- [x] **Step 2: Run them and confirm they fail.**
+- [x] **Step 3: Implement.**
   - Map the entry's `item` and admits through the layer's own field effects (`boundFieldNameOf`) before applying, as `bindGrammar` does.
   - Append the groups after all leads' copies, as `leadGrammar` does.
-- [ ] **Step 4: Run the tests and `lead-facts.test.ts`.** Then switch `lead-facts.ts` to read the copy effects and the receiver form's body (spec §5.2, facts). Its tests keep their expectations.
-- [ ] **Step 5: Glossary entries; commit.**
+- [x] **Step 4: Run the tests and `lead-facts.test.ts`.** Then switch `lead-facts.ts` to read the copy effects and the receiver form's body (spec §5.2, facts). Its tests keep their expectations.
+- [x] **Step 5: Glossary entries; commit.**
+  - **Landed:** 897351f78 (the verbs, the lead entry and the adapter) and 36f1570c4 (the narrow entry) on `feat/authoring-dsl`. For each, every gate is against the 2adb24cf3 reference and equal: the output gate, the snapshots, the rows, the bindings inventory and the grammar type-check ratchet. Where it differs from the steps above:
+    - **The verbs' context.** The verbs take a `VerbCtx`, which `LayerCtx` extends, so `leadGrammar` runs them outside a layer until Task 1.5 deletes it. `applyCopy` takes one request (source, part, context, body, origin, and an optional display), and `applyLead` takes the bound `Lead`. A verb refuses with `VerbRefusal`. `refusalOf` undoes everything the refused application did, and `applyEntry` turns the refusal into the entry's diagnostic.
+    - **The lead entry.** Wire queues it on the layer at `.`, and refuses it at any other path. `runLayerPass` applies the queue after wire.
+    - **The narrow entry** (the user's ruling, via brainstorm): wire queues it with the path edits, and the pass applies it before the leads, at its site over the rules as the layer's own edits leave them. Its path walks the evaluated rule with transform's path model (`applyPathInRules`). A path that names no member is `edit-site-missing`. A test pins that an in-place narrowing keeps an edit the same layer made to the rule.
+    - **`lead-facts.ts`** is unchanged. It reads the `LeadEffect` that `provenanceOf` projects from the copy effects and the receiver form's body.
+    - **Review Focus 1** is pinned on the evaluated grammar's last rules: the lead's copies, then its group. The evaluated grammar keeps synthesized `_kw_` rules that `grammar.json` lacks, so `_kw_raw`'s place before the copies is pinned by the output gate on `grammar.json`.
+    - **For later tasks:**
+      - Task 1.4: the authoring surface's `lead` is still `bind.ts`'s record form, which `grammar.bindings.ts` calls. The switch gives the name to the entry form.
+      - Task 1.4 and Task 1.5: a layer pass records no field or alias effects yet (`recordingBindingEffects` is off outside a binding set), so the bindings layer's effects reach the record only once recording is unconditional. `resolvedEffects` then resolves them per owner over `{ rules }` alone, so `transparentReach` crosses supertypes, where `bindGrammar`'s resolution stops. Once the effects flow, it takes the layer's view with its supertypes, with a test.
+      - The inline `edit()` stage: an inline `transform()` call that holds a `narrow` or `lead` entry queues it against the whole rule of the kind whose callback is running. `edit()` has to carry the site.
 
 ### Task 1.4: the switch: three layers, the generated layer, the entry and module selection
 
