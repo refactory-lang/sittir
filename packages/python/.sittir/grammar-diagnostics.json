@@ -529,7 +529,7 @@
     "code": "patch-without-cause",
     "severity": "error",
     "ownerKind": "dictionary_comprehension",
-    "message": "patches: rule('comprehension_clauses') at 'dictionary_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
+    "message": "edits: rule('comprehension_clauses') at 'dictionary_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
     "canProceed": false,
     "details": {
       "path": "2",
@@ -543,7 +543,7 @@
     "code": "patch-without-cause",
     "severity": "error",
     "ownerKind": "generator_expression",
-    "message": "patches: rule('comprehension_clauses') at 'generator_expression' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
+    "message": "edits: rule('comprehension_clauses') at 'generator_expression' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
     "canProceed": false,
     "details": {
       "path": "2",
@@ -557,7 +557,7 @@
     "code": "patch-without-cause",
     "severity": "error",
     "ownerKind": "list_comprehension",
-    "message": "patches: rule('comprehension_clauses') at 'list_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
+    "message": "edits: rule('comprehension_clauses') at 'list_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
     "canProceed": false,
     "details": {
       "path": "2",
@@ -571,7 +571,7 @@
     "code": "patch-without-cause",
     "severity": "error",
     "ownerKind": "set_comprehension",
-    "message": "patches: rule('comprehension_clauses') at 'set_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
+    "message": "edits: rule('comprehension_clauses') at 'set_comprehension' path '2' resolves nothing: it claims no diagnostic of the enriched stage that wire resolves. Delete the patch so the enriched shape stands",
     "canProceed": false,
     "details": {
       "path": "2",

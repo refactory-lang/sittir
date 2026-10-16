@@ -7,7 +7,7 @@ import { NO_FILE_TYPES } from '../../compiler/upstream-file-types.ts';
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 describe('patch sites are recorded', () => {
-	it('records every patches: entry once, by owner kind, path and placeholder form', async () => {
+	it('records every edits: entry once, by owner kind, path and placeholder form', async () => {
 		const raw = await evaluate(resolve(__dirname, '../../__tests__/fixtures/patch-sites-grammar.ts'), NO_FILE_TYPES);
 		expect(raw.patchSites).toEqual([
 			{ ownerKind: 'host', path: '0', form: 'field', name: 'first' },

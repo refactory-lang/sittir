@@ -169,7 +169,7 @@ export default sittirGrammar(base, {
 		}
 	},
 
-	patches: {
+	edits: {
 		parenthesized_list_splat: { 1: field('content') },
 		list_splat_pattern: { 1: field('target') },
 		dictionary_splat_pattern: { 1: field('target') },

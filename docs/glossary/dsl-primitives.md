@@ -215,7 +215,7 @@ rewritten content is rebuilt in the representation it had
 
 ### `packages/codegen/src/dsl/primitives/rule.ts::rule`
 
-`rule(name, body)` in a `patches:` entry declares a real grammar rule `name`
+`rule(name, body)` in a `edits:` entry declares a real grammar rule `name`
 whose body is `body($)`, and replaces the patched path with a reference to
 it. It is how a patch introduces a rule the base grammar lacks (python's
 `comprehension_clauses`) without a hand-written `rules:` entry. The rule is
@@ -407,23 +407,23 @@ The `arm` namespace exists so the placeholder can be spelled `default`, which
 is a reserved word and therefore illegal as a function name but legal as a
 property. `arm.default` is a value, not a call — it carries no per-site data.
 
-Placed on a choice arm in `patches`, it stamps `annotations.default` on that
+Placed on a choice arm in `edits`, it stamps `annotations.default` on that
 arm, and `resolvePatch` rejects a path whose parent is not a choice. The fact
 then rides the slot's value bag beside `variant`/`variantOf`, which is what
 carries it through an ALIAS collapse; the from emitter reads it as the
 tie-break when several arms admit the same bare value.
 
-    patches: { impl_item: { '3/0/0/0': arm.default } }
+    edits: { impl_item: { '3/0/0/0': arm.default } }
 
 ### `packages/codegen/src/dsl/primitives/group.ts::group`
 
-`group()` is the `patches` declaration that a rule is a form of its parent:
+`group()` is the `edits` declaration that a rule is a form of its parent:
 `resolvePatch` lowers it to `annotations.hoisted` on the addressed rule, the
 same stamp the variant lift and the `groups:` / clause-hoist mints make. The
 path `'.'` addresses the rule itself, so an authored hidden rule a parent
 only aliases can be declared a seat without restating its body:
 
-    patches: { _except_clause_as: { '.': group() } }
+    edits: { _except_clause_as: { '.': group() } }
 
 It carries no data; it is a placeholder like `arm.default`, recognised by
 `isGroupPlaceholder` (`__sittirPlaceholder: 'group'`).
@@ -597,7 +597,7 @@ so a quoted literal may hold a slash. What `OptionsCheck` consults per key.
 
 ```text
 /** Recognises a spacing label — a token with a side, or the empty gap
- *  without one — so wire reads a `patches:` key of that name as a
+ *  without one — so wire reads a `edits:` key of that name as a
  *  separator spacing default rather than a rule to patch. */
 ```
 
@@ -641,7 +641,7 @@ names its token by the kind key, which keeps a keyword's case
 ### `packages/codegen/src/dsl/primitives/spacing.ts::parseSeamLabel`
 
 Recognises a token seam label and never a separator spacing label, so the
-two vocabularies stay disjoint where a name is read back: wire's `patches:`
+two vocabularies stay disjoint where a name is read back: wire's `edits:`
 keys, the render-rules seam detection, and the site collection.
 
 ### `packages/codegen/src/dsl/primitives/spacing.ts::siteKey`
@@ -658,7 +658,7 @@ keys, the render-rules seam detection, and the site collection.
 
 ```text
 /** The kind-level address of an array flank, `<kind>_start` / `<kind>_end`:
- *  the key it is declared under in `patches:`, the key it takes in `Options`
+ *  the key it is declared under in `edits:`, the key it takes in `Options`
  *  and the key the native resolver matches. `parseFlankAddress` reads one
  *  back; wire treats such a key as a flank default only when no rule is
  *  spelled that way. */

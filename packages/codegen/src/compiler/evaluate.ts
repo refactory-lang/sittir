@@ -400,8 +400,8 @@ function drainPatchSitesMetadata(opts: GrammarOptions): readonly PatchSite[] | u
 function departsFromBase(ctx: EvaluateCtx): boolean {
 	const wireCtx = getWireContext(ctx.opts);
 	if (!ctx.isExtension || !wireCtx) return false;
-	const patches = (ctx.opts as { patches?: Record<string, unknown> }).patches;
-	return wireCtx.authoredRuleNames.size > 0 || Object.keys(patches ?? {}).length > 0;
+	const edits = (ctx.opts as { edits?: Record<string, unknown> }).edits;
+	return wireCtx.authoredRuleNames.size > 0 || Object.keys(edits ?? {}).length > 0;
 }
 
 function evaluateStages(enriched: GrammarResult, ctx: EvaluateCtx): EvaluationStages<EvaluatedGrammar> {

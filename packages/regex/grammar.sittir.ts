@@ -11,7 +11,7 @@ import {
 export default sittirGrammar(base, {
 	resolutions,
 	name: 'regex',
-	patches: {
+	edits: {
 		character_class: { '1/0': alias('negation'), 2: field('leading'), 4: field('trailing') },
 		class_range: { 0: field('start'), 2: field('end') },
 		term: { '0/1': field('quantifier') },

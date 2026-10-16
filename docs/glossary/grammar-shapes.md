@@ -265,7 +265,7 @@ map minted rejects, in the first map as in any other.
 
 `true` when `applyPath` would accept path `P` on rule `N`, `false` when it
 would throw; `Minted` (default `never`) is the set of labels earlier maps in a
-patch list minted, threaded by `PatchesCheck`. What `PatchesCheck` consults per written key.
+patch list minted, threaded by `EditsCheck`. What `EditsCheck` consults per written key.
 
 ### `packages/codegen/src/grammar-shapes/path-type.ts::TransformPatchValue`
 
@@ -276,7 +276,7 @@ A single patch value: a rule or literal (tree-sitter's or the grammar-json
 ### `packages/codegen/src/grammar-shapes/path-type.ts::TransformPatchMap`
 
 A patch map for one rule, path key to patch value. Keys are open here; their
-validity is decided per written key by `PatchesCheck`, from the base the
+validity is decided per written key by `EditsCheck`, from the base the
 grammar hands `wire()`.
 
 ### `packages/codegen/src/grammar-shapes/enrich-type.ts::module`

@@ -182,7 +182,7 @@ export default sittirGrammar(base, {
 		}
 	},
 
-	patches: {
+	edits: {
 		decorator: { 1: field('expression') },
 		decorator_parenthesized_expression: { 1: field('expression') },
 		asserts: { 1: field('value') },

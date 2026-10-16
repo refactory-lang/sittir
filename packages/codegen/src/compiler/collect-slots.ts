@@ -337,7 +337,7 @@ function recordUnclassifiableShape(
 		ownerKind: kindForName,
 		message:
 			`[collect-slots] kind '${kindForName ?? '(unknown)'}': member ${member.id ?? '(no id)'} is not a leaf or a ` +
-			`choice of leaves (${bucket}: ${describeArmShape(member)}). Resolve with rule(name, body) in patches: ` +
+			`choice of leaves (${bucket}: ${describeArmShape(member)}). Resolve with rule(name, body) in edits: ` +
 			`naming the structured arm as its own rule`,
 		details: { bucket, shape: describeArmShape(member), ruleId: member.id }
 	});
@@ -388,7 +388,7 @@ function resolveMember(
 								(partition.degenerateNamedArms.length > 0
 									? ` and degenerate arm(s) [${partition.degenerateNamedArms.map(describeArmShape).join(', ')}]`
 									: '') +
-								`. Resolve with variant(name) in patches: splitting the row, until the structured-arm ` +
+								`. Resolve with variant(name) in edits: splitting the row, until the structured-arm ` +
 								`enrich mint gives each structured arm a kind of its own in the union slot.`
 						});
 					} else if (unionRoutingGateB(partition) && ruleId === undefined) {
@@ -414,7 +414,7 @@ function resolveMember(
 										`[${partition.degenerateNamedArms.map(describeArmShape).join(', ')}]` +
 										(repeated
 											? `. The list mixes slot topologies, so its elements cannot be read in order: give each ` +
-												`label-routed arm a kind of its own (variant(name) in patches:)`
+												`label-routed arm a kind of its own (variant(name) in edits:)`
 											: '')
 									: ' (pure union)'),
 							details: {

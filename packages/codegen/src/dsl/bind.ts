@@ -32,7 +32,7 @@ import {
 	type LeadMatch,
 	type LeadWithin
 } from './verbs/effects.ts';
-import type { PatchesConfig } from './wire/wire.ts';
+import type { EditsConfig } from './wire/wire.ts';
 import { collapseSingletonMintOrdinals, visibleGroupSynthName } from './automatic-groups.ts';
 import { withHoistedAnnotation } from './annotations.ts';
 import { makeRuleMetadata } from './rule-metadata.ts';
@@ -84,7 +84,7 @@ export function bindMatch(
 
 export interface Bindings {
 	readonly hash?: string;
-	readonly patches?: PatchesConfig;
+	readonly patches?: EditsConfig;
 	readonly renames?: readonly Rename[];
 	readonly leads?: readonly Lead[];
 	readonly splits?: readonly Split[];
@@ -911,7 +911,7 @@ function patchAliases(value: unknown, out: { from: string; to: string }[] = []):
 	return out;
 }
 
-export function checkBindingPatches(holder: unknown, patches: PatchesConfig | undefined): void {
+export function checkBindingPatches(holder: unknown, patches: EditsConfig | undefined): void {
 	const grammar = isRecord(holder) && isRecord(holder.grammar) ? holder.grammar : isRecord(holder) ? holder : {};
 	for (const { from, to } of patchAliases(patches)) {
 		const issue = aliasTargetIssue(grammar, from, to);

@@ -479,7 +479,7 @@ one splat and is now a parenthesized expression.
 				// the base grammar's arms verbatim (including precedence).
 ```
 
-### `case_pattern` (`packages/python/grammar.sittir.ts`, `patches`)
+### `case_pattern` (`packages/python/grammar.sittir.ts`, `edits`)
 
 ```text
 				// Case-context as-pattern split — same two-rules-one-parse-kind class
@@ -497,7 +497,7 @@ one splat and is now a parenthesized expression.
 				// stripped name `as_pattern` is taken by the expression-context kind.
 ```
 
-### `format_specifier` (`packages/python/grammar.sittir.ts`, `patches`)
+### `format_specifier` (`packages/python/grammar.sittir.ts`, `edits`)
 
 `format_specifier: [{ '1/0/0': token.immediate(prec(1, /[^{}\n]+/)) }, { '1/0': field('elements') }]`.
 The base rule is `seq(':', repeat(choice(token(prec(1, /[^{}\n]+/)), alias(interpolation, format_expression))))`.
@@ -506,7 +506,7 @@ and to neighbouring interpolations. The second fields the repeated choice as
 `elements`; it comes second so the first set's path still reaches the text arm
 beneath it.
 
-### `comprehension_clauses` (`packages/python/grammar.sittir.ts`, `patches`)
+### `comprehension_clauses` (`packages/python/grammar.sittir.ts`, `edits`)
 
 ```text
 				// Comprehension-clause visibility (hidden-repeat-helper class): the

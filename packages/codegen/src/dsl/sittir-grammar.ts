@@ -6,9 +6,9 @@ import {
 	wire,
 	wireBindings,
 	wireBindingEffects,
+	type EditsCheck,
+	type EditsConfig,
 	type OptionsCheck,
-	type PatchesCheck,
-	type PatchesConfig,
 	type WireConfig,
 	type WiredOpts
 } from './wire/wire.ts';
@@ -28,11 +28,11 @@ const unboundRequested = (): boolean => process.env[UNBOUND_ENV] === '1';
 const patchSets = (entry: unknown): readonly unknown[] =>
 	entry === undefined ? [] : Array.isArray(entry) ? entry : [entry];
 
-function markedBindingPatches(bindingPatches: PatchesConfig): PatchesConfig {
+function markedBindingPatches(bindingPatches: EditsConfig): EditsConfig {
 	const out: Record<string, unknown> = {};
 	for (const [kind, entry] of Object.entries(bindingPatches))
 		out[kind] = patchSets(entry).map((set) => markBindingSet(set as object));
-	return out as PatchesConfig;
+	return out as EditsConfig;
 }
 
 function assertEnrichFixpoint(wired: GrammarResult, enriched: unknown): EnrichedGrammar<GrammarResult> {
@@ -89,12 +89,12 @@ function completeLayer(
 
 export function sittirGrammar<
 	B extends GrammarJson,
-	const P = PatchesConfig<EnrichedGrammar<B>>,
+	const P = EditsConfig<EnrichedGrammar<B>>,
 	const O = OptionsConfig
 >(
 	base: B,
 	config: WireConfig<EnrichedGrammar<B>> & {
-		readonly patches?: P & PatchesCheck<EnrichedGrammar<B>, P>;
+		readonly edits?: P & EditsCheck<EnrichedGrammar<B>, P>;
 		readonly options?: O & OptionsCheck<EnrichedGrammar<B>, O>;
 		readonly resolutions: ConflictResolutionsInput;
 		readonly bindings?: Bindings;
@@ -106,7 +106,7 @@ export function sittirGrammar<
 	const enriched = enrich(base, {
 		groupBodies: authoredGroupBodies(wireConfig.groups),
 		extras: wireConfig.extras,
-		fieldSites: authoredFieldSites(wireConfig.patches)
+		fieldSites: authoredFieldSites(wireConfig.edits)
 	});
 	const opts = wire<EnrichedGrammar<B>, P, O>(wireConfig, enriched, base);
 	let result = completeLayer(enriched, opts);

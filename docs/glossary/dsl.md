@@ -3094,7 +3094,7 @@ registered but later unused still counts as a sibling.
 Merge annotations onto a runtime rule. An ALIAS is transparent: the
 annotation lands on its content, which is the rule the alias faces, so a
 stamp on `alias($._x, $.x)` reads back from `$._x`'s body. Lives in its own
-module because both the transform (variant lift, `patches` lowering) and
+module because both the transform (variant lift, `edits` lowering) and
 wire / enrich (the `groups:` and clause-hoist mints) stamp through it, and
 neither may import the other.
 
@@ -4176,7 +4176,7 @@ The owner and every hidden rule it reaches through hidden rules alone, stopping 
  * check requires the SYMBOL's name to equal the rule being processed, so a
  * nested CHOICE inside some OTHER rule's body can never coincidentally match.
  *
- * Field-agnostic because enrich asks before `patches:` fields exist: `wire()`
+ * Field-agnostic because enrich asks before `edits:` fields exist: `wire()`
  * applies patches to the already-enriched rules, and enrich must not lift a
  * fold's arms into rules of their own — a fold is one flat node, not a
  * choice of forms — so the same predicate serves enrich (unfielded) and
@@ -4802,8 +4802,8 @@ Completes the authored grammar through enrich and wire. An absent or unbound bin
 `$` and `previous` exactly as a direct `wire({…}, enrich(base))` call did; in
 `vocabulary()` and `reauthored()` callbacks `$` is grammar-shaped too, where
 the separate-binding form left it unshaped. `P` and `O` infer from the
-`patches` and `options` blocks and are forwarded to `wire` explicitly, so
-`PatchesCheck` and `OptionsCheck` judge the grammar's written keys.
+`edits` and `options` blocks and are forwarded to `wire` explicitly, so
+`EditsCheck` and `OptionsCheck` judge the grammar's written keys.
 
 #### body
 

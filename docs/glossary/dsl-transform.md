@@ -500,7 +500,7 @@ calls.
  *   future grammar-aware path validation; currently a phantom parameter
  *   that lets call sites write `transform<typeof base>(original, ...)`
  *   so the generic surface is uniform with `wire<Base>` /
- *   `PatchesConfig<Base>`.
+ *   `EditsConfig<Base>`.
  */
 ```
 

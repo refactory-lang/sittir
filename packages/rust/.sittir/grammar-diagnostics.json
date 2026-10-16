@@ -449,7 +449,7 @@
     "severity": "error",
     "grammar": "rust",
     "ownerKind": "_let_chain",
-    "message": "[collect-slots] kind '_let_chain': member rule:_let_chain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[5]). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
+    "message": "[collect-slots] kind '_let_chain': member rule:_let_chain:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[5]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
     "canProceed": false,
     "details": {
       "bucket": "choice-with-structured-arms",

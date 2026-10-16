@@ -12,7 +12,7 @@ import {
 export default sittirGrammar(base, {
 	resolutions,
 	name: 'scm',
-	patches: {
+	edits: {
 		grouping: { '1/0/1/0': alias('anchor') },
 		_group_expression: { '1/0': field('left'), '1/2': field('right') },
 		_named_node_expression: { '2/0': field('left'), '2/2': field('right') },

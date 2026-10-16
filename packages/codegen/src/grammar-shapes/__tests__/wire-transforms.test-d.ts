@@ -80,13 +80,13 @@ describe('IsPath accepts what applyPath walks and rejects what it throws on', ()
 
 describe('wire() checks patch keys per rule, from the base it is given', () => {
 	it('accepts authored keys, alone and in the array form, beside rule callbacks', () => {
-		wire({ name: 'rust', patches: { parameter: { '1': field('name') } } }, enriched);
-		wire({ name: 'rust', patches: { or_pattern: [{ '0/0': field('left') }, { '0': variant('binary') }] } }, enriched);
+		wire({ name: 'rust', edits: { parameter: { '1': field('name') } } }, enriched);
+		wire({ name: 'rust', edits: { or_pattern: [{ '0/0': field('left') }, { '0': variant('binary') }] } }, enriched);
 		wire(
 			{
 				name: 'rust',
 				rules: { parameter: ($, previous) => previous },
-				patches: { parameter: { '1': field('name') } }
+				edits: { parameter: { '1': field('name') } }
 			},
 			enriched
 		);
@@ -94,23 +94,23 @@ describe('wire() checks patch keys per rule, from the base it is given', () => {
 
 	it('rejects a key the walker would throw on', () => {
 		// @ts-expect-error — parameter has no member 9
-		wire({ name: 'rust', patches: { parameter: { '9': field('name') } } }, enriched);
+		wire({ name: 'rust', edits: { parameter: { '9': field('name') } } }, enriched);
 		// @ts-expect-error — the second patch set names a member or_pattern's arm 1 lacks
-		wire({ name: 'rust', patches: { or_pattern: [{ '0/0': field('left') }, { '1/9': variant('x') }] } }, enriched);
+		wire({ name: 'rust', edits: { or_pattern: [{ '0/0': field('left') }, { '1/9': variant('x') }] } }, enriched);
 	});
 
 	it('a later map may walk through a label an earlier map minted, and only that label', () => {
-		wire({ name: 'rust', patches: { or_pattern: [{ '1': authoringField('rhs') }, { '1/rhs:/0': variant('x') }] } }, enriched);
+		wire({ name: 'rust', edits: { or_pattern: [{ '1': authoringField('rhs') }, { '1/rhs:/0': variant('x') }] } }, enriched);
 		// @ts-expect-error — no earlier map minted `rhs`
-		wire({ name: 'rust', patches: { or_pattern: [{}, { '1/rhs:/0': variant('x') }] } }, enriched);
+		wire({ name: 'rust', edits: { or_pattern: [{}, { '1/rhs:/0': variant('x') }] } }, enriched);
 		// @ts-expect-error — the earlier map minted `rhs`, not `lhs`
-		wire({ name: 'rust', patches: { or_pattern: [{ '1': authoringField('rhs') }, { '1/lhs:/0': variant('x') }] } }, enriched);
+		wire({ name: 'rust', edits: { or_pattern: [{ '1': authoringField('rhs') }, { '1/lhs:/0': variant('x') }] } }, enriched);
 		// @ts-expect-error — a label is never minted by the map that walks through it
-		wire({ name: 'rust', patches: { or_pattern: [{ '1/rhs:/0': variant('x'), '1': authoringField('rhs') }] } }, enriched);
+		wire({ name: 'rust', edits: { or_pattern: [{ '1/rhs:/0': variant('x'), '1': authoringField('rhs') }] } }, enriched);
 	});
 
 	it('an unshaped base checks nothing', () => {
-		wire({ name: 'loose', patches: { anything: { '99/99': field('x') } } }, emptyBase);
+		wire({ name: 'loose', edits: { anything: { '99/99': field('x') } } }, emptyBase);
 	});
 });
 

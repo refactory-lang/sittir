@@ -178,7 +178,7 @@ describe('post-evaluate invariant', () => {
 				'ruleCauses',
 				'undeclaredRules',
 				'whitespaceCollisions',
-				// Every patches: entry by owner, path and placeholder form — read by the
+				// Every edits: entry by owner, path and placeholder form — read by the
 				// patch-site labelling and the override census.
 				'patchSites',
 				// The base evaluated with no wire config, before and after enrich — read

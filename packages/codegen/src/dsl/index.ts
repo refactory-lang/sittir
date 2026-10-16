@@ -19,7 +19,7 @@ export type { RuleCause, RuleCauseDeclaration } from './primitives/rule-cause.ts
 export type {
 	WireConfig,
 	WiredOpts,
-	PatchesConfig,
+	EditsConfig,
 	PatchMap,
 	RenderAsConfig
 } from './wire/wire.ts';

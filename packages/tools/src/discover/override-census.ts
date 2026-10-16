@@ -1,7 +1,7 @@
 /**
  * discover/override-census -- the grammar's hand-authored departures from its
  * upstream base, and the diagnostic records they resolve: every hand-written
- * `rules:` entry with its declaration, every `patches:` entry labelled
+ * `rules:` entry with its declaration, every `edits:` entry labelled
  * resolving or authoring, and the records folded over the raw, enriched and
  * final stages.
  *
@@ -26,7 +26,7 @@ export async function run(opts: OverrideCensusOptions): Promise<number> {
 	const generatedIdTables = await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar);
 	const compilation = await invoke('compile', 'compileGrammar', { package: grammarPackage(grammar), generatedIdTables });
 	if (compilation.stages === undefined) {
-		process.stderr.write(`${grammar}: declares no rules: or patches:, so nothing departs from the upstream base\n`);
+		process.stderr.write(`${grammar}: declares no rules: or edits:, so nothing departs from the upstream base\n`);
 		return 0;
 	}
 	const records = compilation.diagnosticRecords;

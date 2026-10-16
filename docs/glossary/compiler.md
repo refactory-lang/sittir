@@ -2161,13 +2161,13 @@ are none.
 
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.patchSites`
 
-Every `patches:` entry the grammar applied, by owner kind, path and
+Every `edits:` entry the grammar applied, by owner kind, path and
 placeholder form. Read by the patch-site labelling and the override census.
 
 ### `packages/codegen/src/compiler/evaluate.ts::departsFromBase`
 
 Whether a wired grammar departs from its base: it extends a base and declares at least one
-`rules:` entry or `patches:` entry. A grammar with no base has nothing to depart from. Only such a grammar has hand-authored
+`rules:` entry or `edits:` entry. A grammar with no base has nothing to depart from. Only such a grammar has hand-authored
 departures to judge, so only it pays for the stage evaluations.
 
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateStages`
@@ -8716,7 +8716,7 @@ lifted afterwards.
  *     alias/variant/clause/group)
  *
  * Throws if any segment fails to address. Mirrors path semantics used
- * by `patches:` in `grammar.sittir.ts`.
+ * by `edits:` in `grammar.sittir.ts`.
  */
 ```
 

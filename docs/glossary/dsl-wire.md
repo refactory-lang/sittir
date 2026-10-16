@@ -21,7 +21,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::isRetiredAddressKey`
 
-Whether a top-level `patches:` key is a gap, seam or flank spelling rather
+Whether a top-level `edits:` key is a gap, seam or flank spelling rather
 than a rule. Those forms were retired when the `options:` block learned to
 address a site by its path, and a key that looks like one and names no rule
 would otherwise be taken for a structural patch on a rule that does not
@@ -127,7 +127,7 @@ already-enriched grammar sees the same labels `wire()` itself would.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::patchSetsOf`
 
-A `patches` entry is one patch map or an array of them; this normalizes to the
+A `edits` entry is one patch map or an array of them; this normalizes to the
 array form `transform()` consumes as its rest parameter.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::composeOrSynthesizePatchedParents`
@@ -372,7 +372,7 @@ agree. A `rule()` name is installed as `declaredRuleFn`, every other mint as
  *
  * Registration order is parser symbol order: tree-sitter appends these
  * keys to the base grammar's rule map in insertion order and numbers
- * symbols in that order, so the `patches` block's declaration order —
+ * symbols in that order, so the `edits` block's declaration order —
  * kind by kind, patch set by patch set, value by value — is the order
  * the minted hidden rules take in grammar.json. Reordering entries
  * therefore moves kind ids.
@@ -906,7 +906,7 @@ body-pattern substitution.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::authoredFieldSites`
 
-The sites each kind's authored patches mark with `field()`, each an index path and the field's name, read from `patches:` (every patch map of an entry, in order). Only all-index paths count; a path with a field-name or kind-match segment addresses no fixed position. Enrich receives the map as `fieldSites`, so the token-form hoist knows which choices are fields' values, and an element supertype knows its slot's authored name, before any patch is applied.
+The sites each kind's authored patches mark with `field()`, each an index path and the field's name, read from `edits:` (every patch map of an entry, in order). Only all-index paths count; a path with a field-name or kind-match segment addresses no fixed position. Enrich receives the map as `fieldSites`, so the token-form hoist knows which choices are fields' values, and an element supertype knows its slot's authored name, before any patch is applied.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::baseSupertypeNamesOf`
 
@@ -937,7 +937,7 @@ Partitions the config's `rules:` functions into `ruleCauses` and
 
 ### `packages/codegen/src/dsl/wire/wire.ts::PatchSite`
 
-One `patches:` entry: the owner kind it patches, its path key, and the form
+One `edits:` entry: the owner kind it patches, its path key, and the form
 of its placeholder (`PatchForm`: `field`, `variant`, `alias`, `rule`,
 `default`, `group`, `flatten`, `regex`, `preference`, or `literal` for a raw
 rule value), with the placeholder's name where it has one. `lifts` names the enrich lifts the entry rewrote or
@@ -950,7 +950,7 @@ A patch site's identity, `owner|path|form`: the key of `WireContext.patchSites` 
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.patchSites`
 
-Every `patches:` entry applied under this wire context, keyed by
+Every `edits:` entry applied under this wire context, keyed by
 owner|path|form so an entry recorded by a rule function that runs more than
 once counts once.
 
@@ -1187,7 +1187,7 @@ The lift name → final name view of `liftNames`, in the shape `renameRule` and 
  * Per-kind group-lift map. Each entry's key is either:
  *   1. A parent kind whose rule body contains a sub-rule to lift —
  *      the value is `path → discriminator`, same slash-separated path
- *      semantics as `patches:`; the synthesized hidden kind is
+ *      semantics as `edits:`; the synthesized hidden kind is
  *      `_<parent>_<discriminator>`. (Path-mode — existing behavior.)
  *   2. A visible kind name (NO leading underscore) whose value is a
  *      RuleFn (body-pattern function). Codegen synthesizes the hidden
@@ -1207,7 +1207,7 @@ The lift name → final name view of `liftNames`, in the shape `renameRule` and 
  */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::PatchesConfig`
+### `packages/codegen/src/dsl/wire/wire.ts::EditsConfig`
 
 ```text
 /**
@@ -1240,7 +1240,7 @@ The loose default (`Base = GrammarJson`, rule values the open `GrammarRule`
 union) is the plain `PatchEntry` form the internal pipeline sees. A concrete
 `Base` (an `as const` shape) restricts the kind keys to the grammar's rules
 and the values to `TransformPatchValue`; the path keys stay open here and are
-judged per written key by `PatchesCheck`, which is what keeps this mapped type
+judged per written key by `EditsCheck`, which is what keeps this mapped type
 shallow enough to contextually type the config literal.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::RulesOf`
@@ -1258,16 +1258,16 @@ without end.
 
 One patch map with each written key judged by `IsPath` against the rule.
 A key the walker would throw on maps to an object demanding the property
-`patches: no such path in this rule`, so the error lands on that key and
+`edits: no such path in this rule`, so the error lands on that key and
 names it. A non-literal key (`string`) passes: there is nothing to judge.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::PatchEntryCheck`
 
 `PatchKeyCheck` over one map or over each map of the array form.
 
-### `packages/codegen/src/dsl/wire/wire.ts::PatchesCheck`
+### `packages/codegen/src/dsl/wire/wire.ts::EditsCheck`
 
-The `patches:` block with every key judged against its rule's post-enrich
+The `edits:` block with every key judged against its rule's post-enrich
 shape. Intersected with the written block in `wire()`'s parameter, so an
 invalid key fails assignability at its own line.
 
@@ -1471,7 +1471,7 @@ Wire never applies authored conflict sets: it hands `grammar()` no `conflicts`, 
  *
  * `Base` is the base tree-sitter grammar's type (typically `typeof base`
  * imported from `tree-sitter-<lang>/grammar.js`). Constrains
- * `patches` keys to base rule kinds; `rules` stays
+ * `edits` keys to base rule kinds; `rules` stays
  * permissive (`Partial<Record<BaseKind, RuleFn>> & Record<string, RuleFn>`)
  * to keep the hidden-name escape hatch for synthesized rules
  * (`_kw_<field>`, `_<parent>_<variant>`, `_<alias>`).
@@ -1501,7 +1501,7 @@ Wire never applies authored conflict sets: it hands `grammar()` no `conflicts`, 
  * `wire(config)` is a synchronous transformation of the options object
  * the author passes to `grammar()`. It:
  *
- *   1. Reads the declarative `patches: { kind: { path: placeholder } }`
+ *   1. Reads the declarative `edits: { kind: { path: placeholder } }`
  *      block — the one declarative surface: `field()`, `alias()`,
  *      `variant()` placeholders keyed by path; a kind's entry is a patch
  *      map or an array of them applied in order — and synthesizes or
@@ -1660,7 +1660,7 @@ generic base type only checks the authored config's keys; `wireWithoutConfig` ca
  * Wrap the user's grammar options with wire-managed patch plumbing.
  *
  * @param config - Options to pass to `grammar()` plus the optional
- *   `patches` declaration.
+ *   `edits` declaration.
  * @param base - The enriched-base grammar object. When
  *   `config.groups` declares body-pattern entries (function values), wire
  *   walks every base rule and injects a pattern-replacing override for it.
@@ -1685,8 +1685,8 @@ generic base type only checks the authored config's keys; `wireWithoutConfig` ca
 // No explicit `WireConfig` annotation is needed at the call site.
 ```
 
-The `patches` and `options` blocks are inferred on their own (`P`, `O`) so
-their written keys can be judged by `PatchesCheck` and `OptionsCheck`. They
+The `edits` and `options` blocks are inferred on their own (`P`, `O`) so
+their written keys can be judged by `EditsCheck` and `OptionsCheck`. They
 are inferred separately from the config, not as one type parameter over the
 whole literal, because a type parameter that the contextual type of a
 context-sensitive callback mentions gets fixed before the callbacks are typed
@@ -1901,7 +1901,7 @@ must return a rule, and the body must be a complex structural pattern
 
 ```text
 /**
- * What a `patches:` key may hold: one patch map or a list of patch maps,
+ * What a `edits:` key may hold: one patch map or a list of patch maps,
  * applied in order. The list is read-only so a literal inferred as a tuple
  * fits it.
  */
@@ -1944,7 +1944,7 @@ nests rather than lengthening.
 ### `packages/codegen/src/dsl/wire/options-block.ts::readOptionsBlock`
 
 The `options:` block read into path declarations and address bindings. The top
-level is kind-keyed, as `patches:` is — a bare identifier whose value is a map
+level is kind-keyed, as `edits:` is — a bare identifier whose value is a map
 of paths relative to it. A label's first segment is a virtual kind, so a label
 needs no separate form: `body/before` is `before` under `body`, and every
 top-level key is a kind, some real and some virtual.
@@ -1979,7 +1979,7 @@ patch keys against it, so both read the one naming rule.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::assertNoDeclaredGroupPatches`
 
-Refuses a `patches:` key that names a `groups:` or `injects:` declaration,
+Refuses a `edits:` key that names a `groups:` or `injects:` declaration,
 either by its key or by its registered name (`declaredGroupMintName`). Such a
 body is registered after the patch wrappers are composed, and the registration
 replaces the wrapper under that name, so the patch would be dropped without a
@@ -1988,7 +1988,7 @@ variants are written in that body instead.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::assertNoSpacingAddressPatches`
 
-Refuses a gap, seam or flank spelling as a top-level `patches:` key. Those
+Refuses a gap, seam or flank spelling as a top-level `edits:` key. Those
 were how a default reached every site sharing a label before `options:` could
 address a site by its path; a key that parses as one and names no rule says so
 here rather than falling through to the patch machinery as a rule that does

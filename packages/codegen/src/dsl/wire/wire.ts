@@ -135,15 +135,15 @@ export function wireTextTokenOf(member: unknown): string | undefined {
 }
 
 export function wireTextTokenBody(name: string): RuntimeRule {
-	if (!currentContext) throw new Error(`patches: '${name}': no active wire() context`);
+	if (!currentContext) throw new Error(`edits: '${name}': no active wire() context`);
 	return currentContext.deposits.get(name) ?? currentContext.baseRuleBodies[name]!;
 }
 
 export function wireDepositTextToken(name: string, rewrite: (body: RuntimeRule) => RuntimeRule): void {
-	if (!currentContext) throw new Error(`patches: '${name}': no active wire() context`);
+	if (!currentContext) throw new Error(`edits: '${name}': no active wire() context`);
 	const owners = currentContext.textTokens.get(name) ?? [];
 	if (owners.length > 1) {
-		throw new Error(`patches: a patch through '${name}' would rewrite the text token ${owners.join(', ')} share; patch each owner's site into a token of its own instead`);
+		throw new Error(`edits: an edit through '${name}' would rewrite the text token ${owners.join(', ')} share; edit each owner's site into a token of its own instead`);
 	}
 	currentContext.deposits.set(name, rewrite(currentContext.deposits.get(name) ?? currentContext.baseRuleBodies[name]!));
 }
@@ -374,7 +374,7 @@ type BaseKind<Base extends GrammarJson = GrammarJson> = Base extends {
 export type GroupsConfigValue = Record<string, string> | RuleFn;
 export type GroupsConfig = Partial<Record<string, GroupsConfigValue>>;
 
-export type PatchesConfig<Base extends GrammarJson = GrammarJson> = [GrammarRule] extends [
+export type EditsConfig<Base extends GrammarJson = GrammarJson> = [GrammarRule] extends [
 	Base['rules'][keyof Base['rules']]
 ]
 	? Partial<Record<BaseKind<Base>, PatchEntry>>
@@ -394,7 +394,7 @@ type PatchKeyCheck<Rule, M, Minted extends string> = {
 			? M[Path]
 			: IsPath<Rule, `${Path}`, Minted> extends true
 				? M[Path]
-				: { readonly 'patches: no such path in this rule': `${Path}` }
+				: { readonly 'edits: no such path in this rule': `${Path}` }
 		: M[Path];
 };
 
@@ -421,7 +421,7 @@ type PatchEntryCheck<Rule, E> = E extends readonly unknown[]
 
 type IsShaped<B> = 0 extends 1 & B ? false : [GrammarRule] extends [RulesOf<B>[keyof RulesOf<B>]] ? false : true;
 
-export type PatchesCheck<B, P> = IsShaped<B> extends false
+export type EditsCheck<B, P> = IsShaped<B> extends false
 	? unknown
 	: { readonly [K in keyof P]: K extends keyof RulesOf<B> ? PatchEntryCheck<RulesOf<B>[K], P[K]> : P[K] };
 
@@ -490,7 +490,7 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 		Record<string, Record<string, string> | (($: ShapedSymbols<B>, previous?: GrammarRule) => unknown)>
 	>;
 	readonly injects?: Partial<Record<string, ($: ShapedSymbols<B>, previous?: GrammarRule) => unknown>>;
-	readonly patches?: PatchesConfig<B>;
+	readonly edits?: EditsConfig<B>;
 	readonly options?: OptionsConfig;
 	readonly renderAs?: RenderAsConfig;
 	readonly visibleExternals?: VisibleExternalsConfig;
@@ -520,8 +520,8 @@ type SittirRuleFn = ($: any, previous?: any) => unknown;
 type RuleFn = SittirRuleFn;
 type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 
-export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, const O = OptionsConfig>(
-	config: WireConfig<B> & { readonly patches?: P & PatchesCheck<B, P>; readonly options?: O & OptionsCheck<B, O> },
+export function wire<B extends GrammarJson = any, const P = EditsConfig<B>, const O = OptionsConfig>(
+	config: WireConfig<B> & { readonly edits?: P & EditsCheck<B, P>; readonly options?: O & OptionsCheck<B, O> },
 	base: B,
 	source: unknown = base
 ): WiredOpts {
@@ -532,15 +532,15 @@ export function wireWithoutConfig(name: string, base: GrammarResult): WiredOpts 
 	return wireImpl({ name }, base, base);
 }
 
-export function wireBindings(name: string, base: GrammarResult, patches: PatchesConfig): WiredOpts {
-	return wireImpl({ name, patches }, base, base);
+export function wireBindings(name: string, base: GrammarResult, edits: EditsConfig): WiredOpts {
+	return wireImpl({ name, edits }, base, base);
 }
 
 function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOpts {
 	const baseArg = base as BaseArg | undefined;
 	const { visibleExternals, whitespaceCollisions } = withEnrichedWhitespace(cfg.visibleExternals, base);
-	assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
-	assertNoDeclaredGroupPatches(cfg.patches ?? {}, cfg.groups, cfg.injects);
+	assertNoSpacingAddressPatches(cfg.edits ?? {}, knownRuleNames(cfg, baseArg));
+	assertNoDeclaredGroupPatches(cfg.edits ?? {}, cfg.groups, cfg.injects);
 	const context: WireContext = {
 		deposits: new Map(),
 		ruleBodies: new Map(),
@@ -579,11 +579,11 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		evaluatedExternals: new Set()
 	};
 
-	const patches = cfg.patches ?? {};
+	const edits = cfg.edits ?? {};
 	const outRules: Record<string, RuleFn> = { ...cfg.rules } as Record<string, RuleFn>;
 
-	composeOrSynthesizePatchedParents(outRules, patches, context);
-	injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg), knownRuleNames(cfg, baseArg));
+	composeOrSynthesizePatchedParents(outRules, edits, context);
+	injectPlaceholderHiddenRules(outRules, edits, context, baseExternalNames(baseArg), knownRuleNames(cfg, baseArg));
 	for (const name of context.textTokens.keys()) outRules[name] ??= makeDeferredContentFn(context, name);
 	for (const baseName of Object.keys(context.baseRuleBodies)) {
 		if (!(baseName in outRules)) outRules[baseName] = passthroughBaseRuleFn;
@@ -718,7 +718,6 @@ function knownRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): Readon
 	return new Set([...Object.keys(cfg.rules ?? {}), ...Object.keys(cfg.groups ?? {}), ...Object.keys(baseRules)]);
 }
 
-/// A top-level gap, seam or flank spelling, retired from patches.
 function isRetiredAddressKey(key: string, rules: ReadonlySet<string>): boolean {
 	if (rules.has(key) || rules.has(`_${key}`)) return false;
 	return (
@@ -726,11 +725,11 @@ function isRetiredAddressKey(key: string, rules: ReadonlySet<string>): boolean {
 	);
 }
 
-function assertNoSpacingAddressPatches(patches: PatchesConfig, rules: ReadonlySet<string>): void {
-	for (const key of Object.keys(patches)) {
-		if (!patches[key]) continue;
+function assertNoSpacingAddressPatches(edits: EditsConfig, rules: ReadonlySet<string>): void {
+	for (const key of Object.keys(edits)) {
+		if (!edits[key]) continue;
 		if (isRetiredAddressKey(key, rules)) {
-			throw new Error(`patches: '${key}' is a spacing address; declare it under options: against the site it names`);
+			throw new Error(`edits: '${key}' is a spacing address; declare it under options: against the site it names`);
 		}
 	}
 }
@@ -739,22 +738,22 @@ function declaredGroupMintName(key: string): string {
 	return key.startsWith('_') ? key : `_${key}`;
 }
 
-function assertNoDeclaredGroupPatches(patches: PatchesConfig, groups: GroupsConfig | undefined, injects: GroupsConfig | undefined): void {
+function assertNoDeclaredGroupPatches(edits: EditsConfig, groups: GroupsConfig | undefined, injects: GroupsConfig | undefined): void {
 	for (const [section, declared] of [['groups', groups], ['injects', injects]] as const) {
 		for (const key of Object.keys(declared ?? {})) {
 			for (const patchKey of new Set([key, declaredGroupMintName(key)])) {
-				if (!(patches as Record<string, unknown>)[patchKey]) continue;
+				if (!(edits as Record<string, unknown>)[patchKey]) continue;
 				throw new Error(
-					`patches: '${patchKey}' names the ${section}: declaration '${key}' — its body is declared under ${section}:; write the field()/variant() in that body`
+					`edits: '${patchKey}' names the ${section}: declaration '${key}' — its body is declared under ${section}:; write the field()/variant() in that body`
 				);
 			}
 		}
 	}
 }
 
-export function authoredFieldSites(patches: PatchesConfig | undefined): ReadonlyMap<string, readonly AuthoredFieldSite[]> {
+export function authoredFieldSites(edits: EditsConfig | undefined): ReadonlyMap<string, readonly AuthoredFieldSite[]> {
 	const sites = new Map<string, AuthoredFieldSite[]>();
-	for (const [kind, entry] of Object.entries(patches ?? {})) {
+	for (const [kind, entry] of Object.entries(edits ?? {})) {
 		if (!entry) continue;
 		for (const set of patchSetsOf(entry)) {
 			for (const [key, value] of Object.entries(set)) {
@@ -817,10 +816,10 @@ function nestVariantsByPath(sets: readonly PatchMap[]): readonly PatchMap[] {
 
 function composeOrSynthesizePatchedParents(
 	rules: Record<string, RuleFn>,
-	patches: PatchesConfig,
+	edits: EditsConfig,
 	context: WireContext
 ): void {
-	for (const [kind, entry] of Object.entries(patches)) {
+	for (const [kind, entry] of Object.entries(edits)) {
 		if (!entry) continue;
 		rules[kind] = buildPatchedParentFn(kind, patchSetsOf(entry), rules[kind], context);
 	}
@@ -957,13 +956,13 @@ function baseExternalNames(base: BaseArg | undefined): ReadonlySet<string> {
 
 function injectPlaceholderHiddenRules(
 	rules: Record<string, RuleFn>,
-	patches: PatchesConfig,
+	edits: EditsConfig,
 	context: WireContext,
 	externals: ReadonlySet<string>,
 	known: ReadonlySet<string>
 ): void {
 	const declared = new Set<string>();
-	for (const [kind, entry] of Object.entries(patches)) {
+	for (const [kind, entry] of Object.entries(edits)) {
 		if (!entry) continue;
 		for (const patchMap of patchSetsOf(entry)) {
 			for (const value of Object.values(patchMap)) {

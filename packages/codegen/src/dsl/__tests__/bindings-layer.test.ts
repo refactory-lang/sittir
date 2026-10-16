@@ -34,7 +34,7 @@ describe('the grammar bindings layer', () => {
 		checks.bases.length = 0;
 		const raw = await evaluateTempGrammar(
 			{ extras: '', rules: "holder: $ => seq('(', $.word, ')')" },
-			"patches: { holder: { 1: field('authored') } }, bindings: bindings({ patches: { holder: { 1: field('portable') } } })"
+			"edits: { holder: { 1: field('authored') } }, bindings: bindings({ patches: { holder: { 1: field('portable') } } })"
 		);
 		expect(checks.bases).toHaveLength(1);
 		expect(checks.bases[0]).toContain('"name":"authored"');

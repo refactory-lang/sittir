@@ -18,7 +18,7 @@ export default grammar(
 	wire(
 		{
 			name: 'patch_sites',
-			patches: {
+			edits: {
 				host: { 0: field('first'), 1: rule('helper', ($) => repeat1($.b)) },
 				pick: { '1/0': variant('left'), '1/1': variant('right') }
 			}

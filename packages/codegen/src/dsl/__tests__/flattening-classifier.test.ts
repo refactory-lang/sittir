@@ -31,7 +31,7 @@ describe('flattening classifier', () => {
 	afterAll(() => restoreFakeDsl());
 
 	it('registers a parent whose variants hoist into a pure choice of its own variant rules', () => {
-		const wired = wire<GrammarJson>({ name: 'g', rules: {}, patches: { parent: { '1/0': variant('eq'), '1/1': variant('type') } } }, baseOf(tokenArms));
+		const wired = wire<GrammarJson>({ name: 'g', rules: {}, edits: { parent: { '1/0': variant('eq'), '1/1': variant('type') } } }, baseOf(tokenArms));
 		expect(flattenedSupertypes(wired as never, tokenArms)).toEqual(['parent']);
 	});
 
@@ -40,13 +40,13 @@ describe('flattening classifier', () => {
 			name: 'g',
 			rules: {},
 			extras: (d: any) => [d.parent],
-			patches: { parent: { '1/0': variant('eq'), '1/1': variant('type') } }
+			edits: { parent: { '1/0': variant('eq'), '1/1': variant('type') } }
 		} as never, baseOf(tokenArms));
 		expect(flattenedSupertypes(wired as never, tokenArms)).toEqual([]);
 	});
 
 	it('does not register a parent whose arms stay unmaterialized', () => {
-		const wired = wire<GrammarJson>({ name: 'g', rules: {}, patches: { parent: { '0/0': variant('x'), '0/1': variant('y') } } }, baseOf(bareArms));
+		const wired = wire<GrammarJson>({ name: 'g', rules: {}, edits: { parent: { '0/0': variant('x'), '0/1': variant('y') } } }, baseOf(bareArms));
 		expect(flattenedSupertypes(wired as never, bareArms)).toEqual([]);
 	});
 
@@ -54,7 +54,7 @@ describe('flattening classifier', () => {
 		const wired = wire<GrammarJson>({
 			name: 'g',
 			rules: { other: (d: any) => (globalThis as any).alias(d.inner, d.parent) },
-			patches: { parent: { '1/0': variant('eq'), '1/1': variant('type') } }
+			edits: { parent: { '1/0': variant('eq'), '1/1': variant('type') } }
 		} as never, baseOf(tokenArms));
 		expect(flattenedSupertypes(wired as never, tokenArms)).toEqual([]);
 	});

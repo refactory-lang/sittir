@@ -39,7 +39,7 @@ describe('rule() declares a real rule at a path', () => {
 describe('wire() installs a rule() name as a rule of the grammar', () => {
 	const $ = new Proxy({}, { get: (_t, name: string) => ({ type: 'SYMBOL', name }) });
 	const run = (patches: Record<string, Record<string, unknown>>, rules: Record<string, (...a: never[]) => unknown> = {}) => {
-		const wired = wire<GrammarJson>({ name: 'test', rules: rules as never, patches: patches as never }, baseOf(bases));
+		const wired = wire<GrammarJson>({ name: 'test', rules: rules as never, edits: patches as never }, baseOf(bases));
 		const out: Record<string, unknown> = {};
 		for (const [name, fn] of Object.entries(wired.rules)) out[name] = (fn as (d: unknown, p?: unknown) => unknown)($, bases[name]);
 		const { deposits } = (wired as unknown as { __wireContext__: { deposits: Map<string, unknown> } }).__wireContext__;

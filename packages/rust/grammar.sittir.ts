@@ -207,7 +207,7 @@ export default sittirGrammar(base, {
 		}
 	},
 
-	patches: {
+	edits: {
 		comment: { 0: arm.default },
 		// See docs/rust-grammar-sittir-glossary.md::tuple_expression
 		tuple_expression: {

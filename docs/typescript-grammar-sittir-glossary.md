@@ -535,7 +535,7 @@ them once each, in canonical flat order. The former per-arm kinds and their
 				// throw_statement: seq('throw', _expressions, _semicolon).
 ```
 
-### `function_signature` (`packages/typescript/grammar.sittir.ts`, `patches`)
+### `function_signature` (`packages/typescript/grammar.sittir.ts`, `edits`)
 
 `function_signature: { 4: field('semicolon') }`. The base rule is
 `seq(optional('async'), 'function', field('name'), _call_signature,
@@ -549,7 +549,7 @@ land in one slot.
 `generator_function_declaration` all start with `optional('async')` at
 position 0. Enrich's optional-keyword pass fields it as `async`, the
 same as `arrow_function`, so render preserves `async function …` /
-`async function* …` shapes; no `patches:` entry names it.
+`async function* …` shapes; no `edits:` entry names it.
 
 The promotion only works because `_kw_async` is inlined at every
 reference site (see `inline:`). Un-inlined, the synthesized hidden rule's
@@ -793,7 +793,7 @@ takes one patch per set.
 				// base grammar's conflict resolution carries through.
 ```
 
-### `string` (`packages/typescript/grammar.sittir.ts`, `patches`)
+### `string` (`packages/typescript/grammar.sittir.ts`, `edits`)
 
 `string: [{ '0/2': token.immediate('"'), '1/2': token.immediate("'") }, { 0: variant('double'), 1: variant('single') }]`.
 The base rule is `choice(seq('"', …, '"'), seq("'", …, "'"))`. The first set
@@ -805,7 +805,7 @@ quote style its own template; it comes second so the paths in the first set
 still address the unsplit arms. Keeping the quote literal and its fragment
 token inside one arm leaves no cross-arm lexical ambiguity.
 
-### Template delimiters (`packages/typescript/grammar.sittir.ts`, `patches`)
+### Template delimiters (`packages/typescript/grammar.sittir.ts`, `edits`)
 
 `template_string: { 2: token.immediate('`') }`,
 `template_literal_type: { 2: token.immediate('`') }`,
@@ -833,7 +833,7 @@ The sign of a negative-number literal type binds tight to its number
 upstream `_number` rule is hidden and spliced into the variant, so its
 operator field is addressed there.
 
-### `patches` — `_number` (`packages/typescript/grammar.sittir.ts`)
+### `edits` — `_number` (`packages/typescript/grammar.sittir.ts`)
 
 TypeScript admits no `+` literal type: a numeric literal type takes only a
 `-` sign (`-1`). The patch narrows the operator of the upstream `_number`
@@ -899,7 +899,7 @@ without its entry):
 
 - `unclassifiable-shape` on `binary_expression` and `public_field_definition`:
   a choice with structured arms beside leaves. Resolve with `rule(name, body)`
-  in `patches:` naming the structured arm as its own rule.
+  in `edits:` naming the structured arm as its own rule.
 - `union-slot-mixed-row` on `binary_expression`: a singular row with a
   structured named arm beside union arms. Resolve with `variant(name)`
   splitting the row, until the structured-arm enrich mint gives each
