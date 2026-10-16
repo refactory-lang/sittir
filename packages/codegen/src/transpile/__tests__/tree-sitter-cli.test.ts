@@ -1,17 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { UNBOUND_ENV } from '../../dsl/sittir-grammar.ts';
-import { nodeFloorViolation, treeSitterCliEnv } from '../tree-sitter-cli.ts';
-
-describe('treeSitterCliEnv', () => {
-	it('drops the unbound toggle an evaluation left in the parent environment', () => {
-		const env = treeSitterCliEnv({}, { PATH: '/bin', [UNBOUND_ENV]: '1' });
-		expect(env).toEqual({ PATH: '/bin' });
-	});
-
-	it('passes the unbound toggle a caller asks for', () => {
-		expect(treeSitterCliEnv({ [UNBOUND_ENV]: '1' }, { PATH: '/bin' })).toEqual({ PATH: '/bin', [UNBOUND_ENV]: '1' });
-	});
-});
+import { nodeFloorViolation } from '../tree-sitter-cli.ts';
 
 describe('nodeFloorViolation', () => {
 	it('reads its floor from the codegen package engines', () => {

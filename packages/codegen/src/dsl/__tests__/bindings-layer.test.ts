@@ -2,23 +2,17 @@ import { join } from 'node:path';
 import { createRequire } from 'node:module';
 import { describe, expect, it, vi } from 'vitest';
 import { evaluateDsl, withDslGlobals } from '../../compiler/evaluate.ts';
+import { evaluatePackage } from '../../compiler/evaluate-package.ts';
 import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
 import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
+import { grammarPackage } from '../../grammars.ts';
 import type { GrammarResult } from '../enrich.ts';
 import { enrichFixpoint } from '../layer.ts';
 import { layerRecordOf } from '../layer-record.ts';
 
 const PACKAGES = join(__dirname, '../../../..');
 const require = createRequire(import.meta.url);
-const checks = vi.hoisted(() => ({ count: 0, bases: [] as string[], empty: false }));
-
-vi.mock('../sittir-grammar.ts', async (importOriginal) => {
-	const actual = await importOriginal<typeof import('../sittir-grammar.ts')>();
-	const withBindings = <B extends Parameters<typeof actual.sittirGrammar>[0], P, O>(
-		...[base, config]: Parameters<typeof actual.sittirGrammar<B, P, O>>
-	) => actual.sittirGrammar<B, P, O>(base, { ...config, bindings: checks.empty ? {} : (config.bindings ?? {}) });
-	return { ...actual, sittirGrammar: withBindings };
-});
+const checks = vi.hoisted(() => ({ count: 0, bases: [] as string[] }));
 
 vi.mock('../enrich.ts', async (importOriginal) => {
 	const actual = await importOriginal<typeof import('../enrich.ts')>();
@@ -35,10 +29,9 @@ vi.mock('../enrich.ts', async (importOriginal) => {
 describe('the grammar bindings layer', () => {
 	it('enriches the completed authored layer before any binding edit', async () => {
 		checks.bases.length = 0;
-		const raw = await evaluateTempGrammar(
-			{ extras: '', rules: "holder: $ => seq('(', $.word, ')')" },
-			"edits: { holder: { 1: field('authored') } }, bindings: bindings({ patches: { holder: { 1: field('portable') } } })"
-		);
+		const raw = await evaluateTempGrammar({ extras: '', rules: "holder: $ => seq('(', $.word, ')')" }, "edits: { holder: { 1: field('authored') } }", {
+			bindings: "edits: { holder: { 1: field('portable') } }"
+		});
 		expect(checks.bases).toHaveLength(1);
 		expect(checks.bases[0]).toContain('"name":"authored"');
 		expect(checks.bases[0]).not.toContain('"name":"portable"');
@@ -53,10 +46,8 @@ describe('the grammar bindings layer', () => {
 				entries: $ => seq(field('item', choice($.head, $.tail)), repeat(seq(',', field('item', choice($.head, $.tail))))),
 				head: _ => 'self', tail: _ => 'value'`
 			},
-			`bindings: bindings({
-				patches: { entries: { 0: field('entry'), '1/0/1': field('entry') } },
-				leads: [{ list: 'entries', item: 'entry', field: 'receiver', admits: [{ kind: 'head' }] }]
-			})`
+			'',
+			{ bindings: "edits: { entries: [{ 0: field('entry'), '1/0/1': field('entry') }, { '.': lead('entry', 'receiver', match('head')) }] }" }
 		);
 		expect(raw.leadFrom).toEqual({ _entries_receiver: 'entries' });
 		expect(JSON.stringify(raw.rules._entries_receiver)).toContain('"name":"receiver"');
@@ -75,22 +66,22 @@ describe('the grammar bindings layer', () => {
 			parameter: $ => seq($._name, ':', $.word),
 			_name: $ => seq(field('pattern', choice($.head, $.tail)), '!'), head: _ => 'self', tail: _ => 'value'`
 			},
-			`bindings: bindings({ patches: { _name: { 0: field('name') } }, leads: [{ list: 'entries', item: 'item', field: 'receiver', admits: [{ kind: 'parameter', within: { field: 'pattern', admits: [{ kind: 'head' }] }, as: 'receiver_parameter' }] }] })`
+			'',
+			{
+				bindings:
+					"edits: { _name: { 0: field('name') }, entries: { '.': lead('item', 'receiver', match('parameter', { pattern: [match('head')] }, 'receiver_parameter')) } }"
+			}
 		);
 		expect(raw.bindingEffects).toContainEqual({ kind: 'segment', owner: 'parameter', from: 'pattern:', to: 'name:' });
 	});
 
 	it.each(['rust', 'typescript', 'python'])(
-		"takes %s's wired grammar as a base enrich leaves unchanged",
+		"takes %s's layer 1 as a base enrich leaves unchanged",
 		async (grammar) => {
 			checks.count = 0;
-			checks.empty = true;
-			try {
-				await expect(evaluateDsl(join(PACKAGES, grammar, 'grammar.sittir.ts'))).resolves.toBeDefined();
-				expect(checks.count).toBeGreaterThan(0);
-			} finally {
-				checks.empty = false;
-			}
+			const raw = await evaluatePackage(grammarPackage(grammar));
+			expect(checks.count).toBeGreaterThan(0);
+			expect(raw.layerDiagnostics ?? []).not.toContainEqual(expect.objectContaining({ code: 'layer-not-enrich-fixpoint' }));
 		},
 		240_000
 	);
@@ -107,12 +98,15 @@ describe('the grammar bindings layer', () => {
 		240_000
 	);
 
-	it('refuses a configured layer whose base enrich would reshape', async () => {
+	it('reports a layer whose base enrich would reshape, as a blocking diagnostic of that layer', async () => {
 		checks.count = 0;
-		await expect(
-			evaluateSittirGrammar(require.resolve('tree-sitter-c/grammar.js'), 'c', 'bindings: bindings({})')
-		).rejects.toThrow(
-			/grammar bindings: enrich changes _type_declarator, generic_expression, sized_type_specifier, sized_type_specifier_arm/
+		const raw = await evaluateSittirGrammar(require.resolve('tree-sitter-c/grammar.js'), 'c', '', undefined, { bindings: '' });
+		expect(raw.layerDiagnostics).toContainEqual(
+			expect.objectContaining({
+				code: 'layer-not-enrich-fixpoint',
+				canProceed: false,
+				message: expect.stringMatching(/enrich changes _type_declarator, generic_expression, sized_type_specifier, sized_type_specifier_arm in the layer below 'c'/)
+			})
 		);
 		expect(checks.count).toBeGreaterThan(0);
 	}, 120_000);

@@ -8,8 +8,8 @@ import { parseGenerateOutcome, type GenerateOutcome } from './conflict-summary.t
 import { readConflictResolutions, writeConflictResolutions } from './conflict-resolutions-file.ts';
 import { reuseOrDeriveConflictResolutions, type DerivationResult } from './derive-conflicts.ts';
 import { evaluateForDerivation, type DerivationInputs } from './evaluate-for-derivation.ts';
+import { withScratchEntry } from './scratch-entry.ts';
 import { runTreeSitterCliCapturing } from './tree-sitter-cli.ts';
-import { UNBOUND_ENV } from '../dsl/sittir-grammar.ts';
 
 export interface ConflictResolutionsStore {
 	read(): ConflictResolutionsFile;
@@ -86,7 +86,8 @@ export async function generateWithDerivedConflicts(pkg: GrammarPackage): Promise
 		},
 		inputs: evaluateForDerivation(pkg),
 		runGenerate: async (grammar) => {
-			const run = runTreeSitterCliCapturing(['generate', '--json-summary'], sittirDir, grammar === 'base' ? { [UNBOUND_ENV]: '1' } : {});
+			const args = ['generate', '--json-summary'];
+			const run = grammar === 'base' ? withScratchEntry(pkg, 'sittir', (dir) => runTreeSitterCliCapturing(args, dir)) : runTreeSitterCliCapturing(args, sittirDir);
 			if (run.status === 0) process.stderr.write(run.stderr);
 			return parseGenerateOutcome(run.status, run.stderr);
 		}

@@ -19,7 +19,7 @@ async function evaluateCarve(): Promise<Record<string, unknown>> {
 		);
 		writeFileSync(
 			join(dir, 'grammar.sittir.ts'),
-			`import base from './base.js';\nimport resolutions from './.sittir/resolutions.json' with { type: 'json' };\nimport { sittirGrammar, variant } from ${DSL};\nexport default sittirGrammar(base, { resolutions, name: 'demo', edits: { stmt: { 1: variant('tuple') } } });\n`
+			`import base from './base.js';\nimport resolutions from './.sittir/resolutions.json' with { type: 'json' };\nimport { enrich, variant, wire } from ${DSL};\nexport default grammar(enrich(base), wire({ resolutions, name: 'demo', edits: { stmt: { 1: variant('tuple') } } }));\n`
 		);
 		return (await evaluate(join(dir, 'grammar.sittir.ts'), NO_FILE_TYPES)).rules as Record<string, unknown>;
 	} finally {

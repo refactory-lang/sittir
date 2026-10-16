@@ -1842,7 +1842,11 @@ The option-path segment a `field()` patch renames on the patched kind: an existi
 
 ### `packages/codegen/src/dsl/transform/transform.ts::recordAliasEffect`
 
-A named `alias()` of a symbol renames that kind in option paths; recorded in every layer.
+A named `alias()` of a symbol renames that kind in option paths; recorded in every layer. Above the first layer the alias is also checked (`refuseAliasTarget`).
+
+### `packages/codegen/src/dsl/transform/transform.ts::refuseAliasTarget`
+
+Records an alias edit that `wire/wire.ts::wireAliasTargetIssue` rejects as the layer's blocking `alias-target-invalid` diagnostic (`wire/wire.ts::wireRefuse`), naming the patched kind, the alias and the reason. The edit still applies, so the layer completes and the diagnostic gate reports it with every other refusal.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::reconstructPrec`
 

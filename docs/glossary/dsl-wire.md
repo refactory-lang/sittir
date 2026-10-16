@@ -307,7 +307,7 @@ A `conflicts` list without the groups that name a dead rule.
 
 ### `packages/codegen/src/dsl/wire/dead-mints.ts::blankDeadEnrichMints`
 
-The dead-mint pass. It runs once, in `sittirGrammar`, on the `grammar()` result, and so runs in both runtimes. The dead set is the rules enrich adds (`getEnrichMints`) that the final grammar does not reach (`reachableRuleNames`). The pass covers every way a mint dies without tracking any one of them: a lift renamed onto an authored variant, a lift whose owner the grammar re-authors, a lift left behind by a body rewrite.
+The dead-mint pass over a `grammar()` result. The dead set is the rules enrich adds (`getEnrichMints`) that the final grammar does not reach (`reachableRuleNames`). The pass covers every way a mint dies without tracking any one of them: a lift renamed onto an authored variant, a lift whose owner the grammar re-authors, a lift left behind by a body rewrite.
 
 Each dead rule's map entry is reassigned to the runtime's own `blank()`, and no rule object is changed, so a body another rule shares (a rename copies the body object) is untouched. Reassigning an existing key keeps the key order, which fixes parser symbol ids; the pass asserts the order is unchanged. The dead names are then dropped from `inline`, `supertypes` and `conflicts`, so tree-sitter never sees a list entry that names a blank rule. tree-sitter's generate drops the unreachable blank rule, `pruneOrphanedPlaceholderRules` removes it from grammar.json, and the canonical prune removes it from sittir's grammar.
 
@@ -331,7 +331,7 @@ The `prec.dynamic` values in each rule's body, wherever the wrapper sits, for th
 
 ### `packages/codegen/src/dsl/wire/derivation-records.ts::ConflictConfig`
 
-What the config says about conflicts: the resolutions the grammar imported (`resolutions`, the base sets, and `boundResolutions`, the bound sets the bound grammar carries, empty under an unbound evaluation), and whether it authors a `conflicts` block, which is never applied (`compiler/diagnostics/conflicts.ts::conflictRecords` blocks on it).
+What the config says about conflicts: the resolutions the grammar imported (`resolutions`, the base sets, and `boundResolutions`, the bound sets the layers above the first carry, empty in layer 1), and whether it authors a `conflicts` block, which is never applied (`compiler/diagnostics/conflicts.ts::conflictRecords` blocks on it).
 
 ### `packages/codegen/src/dsl/wire/derivation-records.ts::variantEdgesOf`
 
@@ -352,11 +352,11 @@ What the records are derived from beside the final rules: the upstream grammar, 
 
 ### `packages/codegen/src/dsl/wire/derivation-records.ts::attachDerivationRecords`
 
-Puts `derivationRecordsOf` on a `grammar()` result under `DERIVATION_RECORDS_KEY`, in `sittirGrammar`. The layer pass carries the same records on its layer record.
+Puts `derivationRecordsOf` on a `grammar()` result under `DERIVATION_RECORDS_KEY`. The layer pass carries the same records on its layer record.
 
 ### `packages/codegen/src/dsl/wire/derivation-records.ts::getDerivationRecords`
 
-The records `attachDerivationRecords` put on a grammar; undefined for a grammar not built by `sittirGrammar`.
+The records `attachDerivationRecords` put on a grammar; undefined for a grammar it did not run on.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::symbolNamesOf`
 
@@ -1034,7 +1034,7 @@ The keys of the patch sites whose application is running, set by `wireWithPatchS
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.source`
 
 The upstream base before enrich: `wire()`'s third argument, which defaults to the base it was given, since a
-grammar wired without `sittirGrammar` ran no enrich. Evaluate reads it as the raw stage.
+grammar wired outside a layer pass ran no enrich. Evaluate reads it as the raw stage.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::baseRuleBodiesOf`
 
@@ -1272,6 +1272,8 @@ and the loose `GrammarJson` (rules typed as the open union) do not, and every
 check degrades to `unknown` for them — walking the open union would recurse
 without end.
 
+`dsl/layer.ts::BaseEditsCheck` asks it of the base before enriching it, so the loose base is never enriched at the type level either.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::PatchKeyCheck`
 
 One patch map with each written key judged by `IsPath` against the rule.
@@ -1355,7 +1357,7 @@ are what the shape-free half of the load-time check can promise.
 	 */
 ```
 
-Wire never applies authored conflict sets: it hands `grammar()` no `conflicts`, and `sittirGrammar` sets the final list from the derived resolutions (`dsl/conflict-resolutions.ts::applyConflictResolutions`).
+Wire never applies authored conflict sets: it hands `grammar()` no `conflicts`, and the layer pass sets the final list from the derived resolutions (`dsl/layer.ts::layerConflicts`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::rules`
 
@@ -1644,7 +1646,7 @@ The layer pass's handle (`WireLayer`), where wire's refusals and the lead entrie
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireLayer`
 
-What a layer pass hands wire: the layer's name, the diagnostics list wire's refusals join, and the `narrow` and lead entries wire queues for the whole-grammar phase, each in the order it evaluates them.
+What a layer pass hands wire: the layer's name and depth (1 for the authored layer, one more for each layer above it), the diagnostics list wire's refusals join, and the `narrow` and lead entries wire queues for the whole-grammar phase, each in the order it evaluates them.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireRefusal`
 
@@ -1657,6 +1659,10 @@ Records a refusal as a blocking diagnostic of the grammar on the layer handle, o
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRefuse`
 
 Records a refusal against the wire context the running rule callback evaluates in, naming the layer's grammar.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireAliasTargetIssue`
+
+Why an alias edit from `from` to `to` cannot stand in the running layer, or `undefined`. Layer 1, the authored grammar, may alias freely. A layer above it may not flip hiddenness, and its target may not name a rule of the layer's base: tree-sitter folds an alias whose value names a rule into that rule's kind, so such a target would change the parse; a group that has to share a name with a rule is a merge.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireQueueLead`
 
@@ -1780,9 +1786,9 @@ Neither block holds a function, so neither is fixed early. An explicit type
 argument disables inference for the parameters after it. The base is
 required: without it the base-dependent passes (base-rule passthroughs, enrich
 lift registration, body-pattern replacement over base rules) would silently not
-run. Grammars do not call `wire` directly; `sittirGrammar` composes it with
-`enrich` and `grammar()`, and forwards its own `P` and `O` explicitly so the
-checks judge the grammar's written keys.
+run. Grammars do not call this `wire` directly: the authoring `wire` is the layer's
+options half (`dsl/layer.ts::layerOptions`), whose layer pass runs this wire
+over the enriched base.
 
 Wire writes nothing into the base it is given: every rule it adds or changes
 goes into its own options, and the enriched base stays exactly as enrich
@@ -1964,7 +1970,7 @@ built it, the same object the upstream diagnostic stage reads.
 ### `packages/codegen/src/dsl/wire/wire.ts::authoredGroupBodies`
 
 The evaluated bodies of a config's `groups:` body-pattern entries, through
-`declaredPatterns`. `sittirGrammar` hands them to `enrich` so enrich declines
+`declaredPatterns`. The layer pass hands them to `enrich` (`dsl/layer.ts::intake`) so enrich declines
 any visible group whose whole body an authored pattern covers; wire then
 replaces the pattern where it stands in the enriched rule, and never has a
 minted group to take over.
@@ -2092,7 +2098,7 @@ The grammar's `reparseHosts` block: a template per supertype or kind whose `$r` 
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.bindingEffects`
 
-The field and alias effects the layer's patch sets had, in the order they applied (`verbs/effects.ts::BindingEffect`). The layer pass resolves them per owner into its effect log (`dsl/layer.ts::resolvedEffects`), and `sittirGrammar` reads a bindings layer's through `wireBindingEffects` to rewrite the authored options.
+The field and alias effects the layer's patch sets had, in the order they applied (`verbs/effects.ts::BindingEffect`). The layer pass resolves them per owner into its effect log (`dsl/layer.ts::resolvedEffects`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRecordBindingEffect`
 

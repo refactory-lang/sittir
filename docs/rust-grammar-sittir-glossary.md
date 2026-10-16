@@ -25,22 +25,29 @@ a reference directive fails with TS2688 under this `rootDir`.
 ordinary lexical scoping with sittir's own `AuthoringRule`-typed re-exports of
 the SAME runtime-injected functions: `const`-declared ambient globals don't
 merge as overloads across files the way `declare function` does. `grammar()`
-is not called here at all; `sittirGrammar` calls it.
+is the ambient global this file's default export calls, as tree-sitter's
+own grammars do.
 
-### `sittirGrammar(base, …)` (`packages/rust/grammar.sittir.ts:30`)
+### `grammar(enrich(base), wire({…}))` (`packages/rust/grammar.sittir.ts:29`)
 
-`export default sittirGrammar(base, {…})` composes the grammar in one call:
-enrich runs over the upstream base with the config's authored `groups:`
-patterns visible, so it declines any group a pattern covers; wire runs over
-that enriched base; `grammar()` receives both. There is no separate enriched
-binding to hand to two places, so the base wire sees and the base tree-sitter
-compiles cannot drift apart.
+`export default grammar(enrich(base), wire({…}))` is rust's layer 1, the
+authored layer. `enrich(base)` is the layer's base half: the upstream grammar,
+pending until the layer pass completes it. `wire({…})` is its options half:
+tree-sitter's `grammar()`, or sittir's own when sittir evaluates the file,
+calls the options' `externals` entry first, and there the layer pass enriches
+the base with the config's authored `groups:` patterns visible, so enrich
+declines any group a pattern covers, and wires the config over that enriched
+base. The base wire sees and the base tree-sitter compiles are the one
+completed object, so they cannot drift apart.
 
-Type inference: `B` infers from `base` (typed by `./base.ts`), and the config
-literal is contextually typed against `WireConfig<EnrichedGrammar<B>>`, so
-every rule, transform and groups callback's `$` is a typed
-`ShapedSymbols` and each `previous`/`original` is the precise per-rule
-post-enrich shape, with no `WireConfig` annotation anywhere. `vocabulary()` and
+The generated layer above this one, `grammar.bindings.ts`, imports this file;
+nothing here imports it, so layer 1 evaluates without the grammar bindings.
+
+Type inference: `B` infers from `base` (typed by `./base.ts`) through
+`enrich(base)`, and `wire`'s config literal is contextually typed from
+`grammar()`'s options parameter, so every rule, transform and groups
+callback's `$` is a typed `ShapedSymbols` and each `previous`/`original` is the
+precise per-rule post-enrich shape, with no `WireConfig` annotation anywhere. `vocabulary()` and
 `reauthored()` callbacks get the same shaped `$`. The payload stays inline:
 hoisting it into a separate `const config = {…}` would leave its callback
 params implicitly `any`, since the literal has no contextual type at its

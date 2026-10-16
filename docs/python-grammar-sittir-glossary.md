@@ -12,14 +12,20 @@ the convention this glossary exists to serve — long rationale comments in
 
 ---
 
-### `sittirGrammar(base, …)` (`packages/python/grammar.sittir.ts:27`)
+### `grammar(enrich(base), wire({…}))` (`packages/python/grammar.sittir.ts:38`)
 
-`export default sittirGrammar(base, {…})` composes the grammar in one call:
-enrich runs over the upstream base with the config's authored `groups:`
-patterns visible, so it declines any group a pattern covers; wire runs over
-that enriched base; `grammar()` receives both. There is no separate enriched
-binding to hand to two places, so the base wire sees and the base tree-sitter
-compiles cannot drift apart.
+`export default grammar(enrich(base), wire({…}))` is python's layer 1, the
+authored layer. `enrich(base)` is the layer's base half: the upstream grammar,
+pending until the layer pass completes it. `wire({…})` is its options half:
+tree-sitter's `grammar()`, or sittir's own when sittir evaluates the file,
+calls the options' `externals` entry first, and there the layer pass enriches
+the base with the config's authored `groups:` patterns visible, so enrich
+declines any group a pattern covers, and wires the config over that enriched
+base. The base wire sees and the base tree-sitter compiles are the one
+completed object, so they cannot drift apart.
+
+The generated layer above this one, `grammar.bindings.ts`, imports this file;
+nothing here imports it, so layer 1 evaluates without the grammar bindings.
 
 ### `externals` (`packages/python/grammar.sittir.ts:20`)
 

@@ -3,7 +3,7 @@ import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { grammarPackage, type GrammarPackage } from '@sittir/codegen/grammars';
+import { grammarPackage, layerPath, type GrammarPackage } from '@sittir/codegen/grammars';
 import { transpileOverrides } from '../../codegen/src/transpile/transpile-overrides.ts';
 import { runTreeSitterGenerate } from '../../codegen/src/run-codegen.ts';
 import { conflictResolutionsPath, ensureConflictResolutions } from '../../codegen/src/transpile/conflict-resolutions-file.ts';
@@ -11,7 +11,6 @@ import type { ConflictResolutionsFile } from '../../codegen/src/dsl/conflict-res
 import { loadPackageIdTables } from '../../codegen/src/compiler/generated-metadata.ts';
 import { compileGrammar } from '../../codegen/src/compiler/compile.ts';
 import { evaluatePackage } from '../../codegen/src/compiler/evaluate-package.ts';
-import { packageEntryPath } from '../../codegen/src/compiler/resolve-grammar.ts';
 import { GrammarDiagnosticError } from '../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts';
 import { generate } from '../../codegen/src/compiler/generate.ts';
 import type { GeneratedIdTables } from '../../codegen/src/dsl/symbol-table.ts';
@@ -42,7 +41,7 @@ function writePackage(dir: string, name: string): GrammarPackage {
 	}
 	symlinkSync(dirname(codegenRequire.resolve(`tree-sitter-${name}/package.json`)), join(dir, 'node_modules', `tree-sitter-${name}`), 'dir');
 	const pkg = grammarPackage(name, dir);
-	writeFileSync(packageEntryPath(pkg), entrySource(name, {}));
+	writeFileSync(layerPath(pkg, 'sittir'), entrySource(name, {}));
 	ensureConflictResolutions(pkg);
 	return pkg;
 }
@@ -78,7 +77,7 @@ async function bootstrapEndToEnd(name: string): Promise<{ floors: Record<string,
 
 		const probe = writePackage(join(root, 'packages', 'probe'), name);
 		const floors = floorsOf(await blockedRecords(probe, generatedIdTables));
-		writeFileSync(packageEntryPath(pkg), entrySource(name, floors));
+		writeFileSync(layerPath(pkg, 'sittir'), entrySource(name, floors));
 
 		const compilation = await compileGrammar({ package: pkg, generatedIdTables });
 		const derived = JSON.parse(readFileSync(conflictResolutionsPath(pkg), 'utf8')) as ConflictResolutionsFile;

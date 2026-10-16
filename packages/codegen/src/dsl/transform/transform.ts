@@ -51,6 +51,7 @@ import {
 	wireQueueLead,
 	wireQueueNarrow,
 	wireRefuse,
+	wireAliasTargetIssue,
 	wireGetLiftBody,
 	wireElementSlotOf,
 	wireLiftRenamedTo,
@@ -773,8 +774,21 @@ function recordFieldEffect(name: string, member: RuntimeRule): void {
 
 function recordAliasEffect(patch: PatchValue): void {
 	const alias = patch as { type?: unknown; named?: unknown; value?: unknown; content?: { type?: unknown; name?: unknown } };
-	if (alias.type === 'ALIAS' && alias.named === true && typeof alias.value === 'string' && alias.content?.type === 'SYMBOL' && typeof alias.content.name === 'string')
-		wireRecordBindingEffect({ kind: 'alias', from: alias.content.name, to: alias.value });
+	if (alias.type !== 'ALIAS' || alias.named !== true || typeof alias.value !== 'string' || alias.content?.type !== 'SYMBOL' || typeof alias.content.name !== 'string') return;
+	wireRecordBindingEffect({ kind: 'alias', from: alias.content.name, to: alias.value });
+	refuseAliasTarget(alias.content.name, alias.value);
+}
+
+function refuseAliasTarget(from: string, to: string): void {
+	const issue = wireAliasTargetIssue(from, to);
+	if (issue === undefined) return;
+	const owner = wireGetCurrentRuleKind() ?? '';
+	wireRefuse({
+		code: 'alias-target-invalid',
+		ownerKind: owner,
+		message: `edits: '${owner}': alias '${from}' → '${to}': ${issue}`,
+		details: { kind: owner, from, to }
+	});
 }
 
 function isAliasOfSymbol(patch: PatchValue, member: RuntimeRule): boolean {

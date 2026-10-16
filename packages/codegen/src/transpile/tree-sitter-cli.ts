@@ -2,7 +2,6 @@ import { execFileSync, spawnSync, type StdioOptions } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
-import { UNBOUND_ENV } from '../dsl/sittir-grammar.ts';
 
 const require = createRequire(import.meta.url);
 
@@ -27,24 +26,12 @@ export function treeSitterCliVersion(): string {
 	return treeSitterCliManifest().version;
 }
 
-export function treeSitterCliEnv(
-	requested: Readonly<Record<string, string>>,
-	parent: NodeJS.ProcessEnv = process.env
-): NodeJS.ProcessEnv {
-	const { [UNBOUND_ENV]: _unbound, ...inherited } = parent;
-	return { ...inherited, ...requested };
-}
-
 export function runTreeSitterCli(args: readonly string[], cwd: string, stdio: StdioOptions): void {
-	execFileSync(process.execPath, [treeSitterCliPath(), ...args], { cwd, stdio, env: treeSitterCliEnv({}) });
+	execFileSync(process.execPath, [treeSitterCliPath(), ...args], { cwd, stdio });
 }
 
-export function runTreeSitterCliCapturing(
-	args: readonly string[],
-	cwd: string,
-	env: Readonly<Record<string, string>> = {}
-): { readonly status: number | null; readonly stderr: string } {
-	const run = spawnSync(process.execPath, [treeSitterCliPath(), ...args], { cwd, encoding: 'utf8', maxBuffer: 1 << 28, env: treeSitterCliEnv(env) });
+export function runTreeSitterCliCapturing(args: readonly string[], cwd: string): { readonly status: number | null; readonly stderr: string } {
+	const run = spawnSync(process.execPath, [treeSitterCliPath(), ...args], { cwd, encoding: 'utf8', maxBuffer: 1 << 28 });
 	if (run.error) throw run.error;
 	process.stdout.write(run.stdout);
 	return { status: run.status, stderr: run.stderr };

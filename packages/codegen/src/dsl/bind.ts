@@ -401,32 +401,6 @@ export function leadIssue(grammar: GrammarRecord, leads: readonly Lead[]): strin
 	}
 }
 
-export function aliasTargetIssue(grammar: GrammarRecord, from: string, to: string): string | undefined {
-	const rules = isRecord(grammar.rules) ? grammar.rules : {};
-	if (isParserHiddenName(from) !== isParserHiddenName(to)) return 'flips hiddenness';
-	if (to in rules) return 'the grammar already names the target';
-	return undefined;
-}
-
-function patchAliases(value: unknown, out: { from: string; to: string }[] = []): { from: string; to: string }[] {
-	if (Array.isArray(value)) for (const v of value) patchAliases(v, out);
-	else if (isRecord(value)) {
-		const content = value.content;
-		if (value.type === 'ALIAS' && value.named === true && typeof value.value === 'string' && isRecord(content) && content.type === 'SYMBOL' && typeof content.name === 'string')
-			out.push({ from: content.name, to: value.value });
-		for (const v of Object.values(value)) patchAliases(v, out);
-	}
-	return out;
-}
-
-export function checkBindingPatches(holder: unknown, patches: EditsConfig | undefined): void {
-	const grammar = isRecord(holder) && isRecord(holder.grammar) ? holder.grammar : isRecord(holder) ? holder : {};
-	for (const { from, to } of patchAliases(patches)) {
-		const issue = aliasTargetIssue(grammar, from, to);
-		if (issue !== undefined) throw new Error(`bind: alias '${from}' → '${to}': ${issue}`);
-	}
-}
-
 export function rewriteBindingOptions(grammar: GrammarRecord, effects: readonly BindingEffect[]): GrammarRecord {
 	if (!('options' in grammar) || effects.length === 0) return grammar;
 	const segments = effects.flatMap((e) => (e.kind === 'segment' ? [{ owner: e.owner, from: e.from, to: e.to }] : []));

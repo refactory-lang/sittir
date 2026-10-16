@@ -1,7 +1,7 @@
 import { evaluatePackage } from './evaluate-package.ts';
 import { bindingsPathIn } from '../bindings/facts.ts';
 import { assertBindingsFresh } from '../bindings/hash.ts';
-import { loadBindingsModule } from '../bindings/module.ts';
+import { loadBindingsHash } from '../bindings/module.ts';
 import type { GrammarPackage } from '../grammars.ts';
 import { stampIrSurface } from './model/ir-surface.ts';
 import { hydrateSlotRefs, type AssembledNodeMap } from './assemble.ts';
@@ -42,6 +42,7 @@ export interface CompileGrammarConfig {
 
 export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compilation> {
 	const grammar = cfg.package.name;
+	if (cfg.unbound !== true) assertBindingsFresh(grammar, await loadBindingsHash(cfg.package.dir), bindingsPathIn(cfg.package.dir));
 	const evaluated = await evaluatePackage(cfg.package, { unbound: cfg.unbound });
 	const diagnosis = diagnoseGrammar({
 		grammar,
@@ -51,7 +52,6 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 		allowDiagnostics: cfg.allowDiagnostics
 	});
 	if (!diagnosis.passed) throw new GrammarDiagnosticError(diagnosis.blocked, diagnosis.grammarDiagnostics);
-	if (cfg.unbound !== true) assertBindingsFresh(grammar, (await loadBindingsModule(cfg.package.dir))?.hash, bindingsPathIn(cfg.package.dir));
 	const { stages, grammarDiagnostics, diagnosticRecords } = diagnosis;
 	const { raw, linked, normalized, nodeMap, compilerDiagnostics, slotGroupingDiagnostics } = diagnosis.collected;
 

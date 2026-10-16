@@ -33,11 +33,11 @@ The text tokens enrich minted, each with the rules that reference it (the `text`
 
 ### `packages/codegen/src/dsl/enrich.ts::TEXT_TOKENS_KEY`
 
-The non-enumerable key under which `sittirGrammar` attaches the live text-token names to `result.grammar` (`attachTextTokens`), so they never reach grammar.json.
+The non-enumerable key under which `attachTextTokens` attaches the live text-token names to a grammar, so they never reach grammar.json.
 
 ### `packages/codegen/src/dsl/enrich.ts::attachTextTokens`
 
-Attaches the text-token names to a grammar under `TEXT_TOKENS_KEY`. `sittirGrammar` attaches the minted names that `blankDeadEnrichMints` did not blank.
+Attaches the text-token names to a grammar under `TEXT_TOKENS_KEY`.
 
 ### `packages/codegen/src/dsl/enrich.ts::getTextTokens`
 
@@ -4663,53 +4663,6 @@ Enrich is a fixpoint of its own output, with no record of what it has already do
 
 An override field is a patch's own content and is opaque to the clause hoist and the field-enum synthesis (`isOverrideField`). Enrich never meets one on the first pass, which reads the upstream grammar; only a pass over wired output does.
 
-### `packages/codegen/src/dsl/enrich.ts::isOverrideField`
-
-Whether a field node came from an authored patch (`fieldSource: 'override'`). The clause hoist and the field-enum synthesis leave its content untouched.
-
-### `packages/codegen/src/dsl/enrich.ts::armFieldSites`
-
-The authored field sites under arm `arm` of a distributed token form, with the arm index stripped. The first pass hands each nested token-form hoist this slice of its parent's sites, and a later pass derives the same slice for an arm rule it meets as a root (`tokenFormFieldSites`), so both decide the nested distribution from the same paths.
-
-### `packages/codegen/src/dsl/enrich.ts::tokenFormFieldSites`
-
-The authored field sites of every rule, plus those a token-form arm inherits from its parent: an arm rule (annotated `tokenForm`, referenced from its parent's choice by a symbol whose `variantOf` names the parent) takes `armFieldSites` of the parent's sites at its index, transitively.
-
-### `packages/codegen/src/dsl/enrich.ts::TextTokenTest`
-
-A predicate over rule names: whether the name is a text token an earlier enrich pass minted. The field-wrap stages read such a symbol as the pattern it replaced.
-
-### `packages/codegen/src/dsl/enrich.ts::EnrichAuthoredConfig`
-
-The part of a grammar's authored config enrich reads: `groupBodies`, the
-evaluated `groups:` body patterns (`authoredGroupBodies`), and `extras`, the
-config's `extras:` callback, which decides the extras the final grammar
-lexes (`authoredExtrasOf`). Enrich evaluates it once, and its result carries the list.
-
-`fieldSites` maps each kind to the sites its authored patches mark with `field()` (`authoredFieldSites`): index path and field name. The token-form hoist leaves a choice at one of those paths unsplit, and an element choice under a fielded repeat takes the site's name as its slot (`elementChoiceSlots`).
-
-### `packages/codegen/src/dsl/automatic-groups.ts::coveredByAuthoredGroup`
-
-Whether an authored group pattern covers a would-be visible group's whole
-body, compared with `rulesEqual` after `unwrapPrec`, since enrich registers
-the ambient prec on the lifted body. Read by `visibleGroupSynthName` (every
-synthesized group, list and arm) and by the promote-existing-hidden-rule branch
-of `mintStructuredChoiceArm`; either declines on a match. A pattern covering
-only part of the body declines nothing, and the pattern is replaced inside the
-minted group.
-
-### `packages/codegen/src/dsl/sittir-grammar.ts::sittirGrammar`
-
-Completes the authored grammar through enrich and wire. An absent or unbound bindings layer returns that result. A configured bindings layer enriches that completed result exactly once and refuses every rule change, then wires its own marked patches and applies splits and leads. Both layers share automatic-variant stamping, dead-mint handling and text-token completion. Kind renames stay outside the parser. The final derivation records remain tied to the original upstream base, and the bound conflict resolutions follow the binding edits. The config's `extras:` callback is an enrich input, so wire is given the config without it and hands the runtime the enriched base's list.
-
-`B` infers from the upstream `base`, and the config is contextually typed as
-`WireConfig<EnrichedGrammar<B>>`, so rule callbacks get the grammar-shaped
-`$` and `previous` exactly as a direct `wire({…}, enrich(base))` call did; in
-`vocabulary()` and `reauthored()` callbacks `$` is grammar-shaped too, where
-the separate-binding form left it unshaped. `P` and `O` infer from the
-`edits` and `options` blocks and are forwarded to `wire` explicitly, so
-`EditsCheck` and `OptionsCheck` judge the grammar's written keys.
-
 #### body
 
 ```text
@@ -4912,6 +4865,41 @@ in place, right after its unalias pass — not at the merge, because
 `collapseSingletonMintOrdinals` rereads `clauseGroupRules` after the merge and
 a stamp made there would be lost. The stamp is the declaration link collects
 `hoistedKinds` from; enrich is one of its minting routes.
+
+### `packages/codegen/src/dsl/enrich.ts::isOverrideField`
+
+Whether a field node came from an authored patch (`fieldSource: 'override'`). The clause hoist and the field-enum synthesis leave its content untouched.
+
+### `packages/codegen/src/dsl/enrich.ts::armFieldSites`
+
+The authored field sites under arm `arm` of a distributed token form, with the arm index stripped. The first pass hands each nested token-form hoist this slice of its parent's sites, and a later pass derives the same slice for an arm rule it meets as a root (`tokenFormFieldSites`), so both decide the nested distribution from the same paths.
+
+### `packages/codegen/src/dsl/enrich.ts::tokenFormFieldSites`
+
+The authored field sites of every rule, plus those a token-form arm inherits from its parent: an arm rule (annotated `tokenForm`, referenced from its parent's choice by a symbol whose `variantOf` names the parent) takes `armFieldSites` of the parent's sites at its index, transitively.
+
+### `packages/codegen/src/dsl/enrich.ts::TextTokenTest`
+
+A predicate over rule names: whether the name is a text token an earlier enrich pass minted. The field-wrap stages read such a symbol as the pattern it replaced.
+
+### `packages/codegen/src/dsl/enrich.ts::EnrichAuthoredConfig`
+
+The part of a grammar's authored config enrich reads: `groupBodies`, the
+evaluated `groups:` body patterns (`authoredGroupBodies`), and `extras`, the
+config's `extras:` callback, which decides the extras the final grammar
+lexes (`authoredExtrasOf`). Enrich evaluates it once, and its result carries the list.
+
+`fieldSites` maps each kind to the sites its authored patches mark with `field()` (`authoredFieldSites`): index path and field name. The token-form hoist leaves a choice at one of those paths unsplit, and an element choice under a fielded repeat takes the site's name as its slot (`elementChoiceSlots`).
+
+### `packages/codegen/src/dsl/automatic-groups.ts::coveredByAuthoredGroup`
+
+Whether an authored group pattern covers a would-be visible group's whole
+body, compared with `rulesEqual` after `unwrapPrec`, since enrich registers
+the ambient prec on the lifted body. Read by `visibleGroupSynthName` (every
+synthesized group, list and arm) and by the promote-existing-hidden-rule branch
+of `mintStructuredChoiceArm`; either declines on a match. A pattern covering
+only part of the body declines nothing, and the pattern is replaced inside the
+minted group.
 
 ### `packages/codegen/src/dsl/enrich.ts::applyFieldWrapPasses`
 
@@ -6252,7 +6240,7 @@ The non-enumerable key under which enrich leaves its whitespace sidecar (`Enrich
 
 ### `packages/codegen/src/dsl/enrich.ts::stampWiredVariants`
 
-Labels the rules of a wired grammar that wire created or changed against `base` (the layout supertype excepted, which enrich mints after its own labelling) with `stampAutomaticVariants`, into the wire context's record. It is the same stamping enrich applies to a kind it mints, run on the arms a patch or `groups:` entry authored after enrich, so a later enrich pass finds those arms already labelled. It reads the grammar's supertypes, inline names, externals, extras and word the way enrich reads its base, so it works on either pipeline's `grammar()` result. `sittirGrammar` calls it right after `grammar()`, so tree-sitter's `grammar.json` carries the labels the sittir side reads.
+Labels the rules of a wired grammar that wire created or changed against `base` (the layout supertype excepted, which enrich mints after its own labelling) with `stampAutomaticVariants`, into the wire context's record. It is the same stamping enrich applies to a kind it mints, run on the arms a patch or `groups:` entry authored after enrich, so a later enrich pass finds those arms already labelled. It reads the grammar's supertypes, inline names, externals, extras and word the way enrich reads its base, so it works on either pipeline's `grammar()` result. The layer pass calls it when it completes a layer (`layer.ts::completeLayer`), so tree-sitter's `grammar.json` carries the labels the sittir side reads.
 
 ### `packages/codegen/src/dsl/enrich.ts::EnrichWhitespaceSidecar`
 
@@ -6446,7 +6434,7 @@ Whether a hidden rule's body is a choice of kinds: symbols, strings and named al
 
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx`
 
-The one shared context of an `enrich()` call. It carries the values every enrich pass reads or fills: the base grammar's rules (`rulesBag` — mutated in place when the clause hoist annotates an existing hidden rule it promotes), the grammar's supertypes, externals, inline names and word matcher, the authored group bodies enrich declines to mint (`authoredGroupBodies`, empty unless the call came through `sittirGrammar`), and the per-call mint registries (`kwRules`, `clauseGroupRules`, the clause and visible-group dedupe maps, `ruleOrigins`). `ruleOrigins` is stamped at each site that adds a rule, with the rule's `EnrichMintKind`, and where an upstream hidden rule is exposed through an alias (`promoted-group`); `enrich()` attaches it to its result as the one rule-origin sidecar. Helpers take the ctx instead of threading these as positional parameters; a helper that runs on a *different* rule set (the merged or enriched rules) takes that set as its own parameter, so the two are never confused.
+The one shared context of an `enrich()` call. It carries the values every enrich pass reads or fills: the base grammar's rules (`rulesBag` — mutated in place when the clause hoist annotates an existing hidden rule it promotes), the grammar's supertypes, externals, inline names and word matcher, the authored group bodies enrich declines to mint (`authoredGroupBodies`, empty unless the call came through a layer pass's intake), and the per-call mint registries (`kwRules`, `clauseGroupRules`, the clause and visible-group dedupe maps, `ruleOrigins`). `ruleOrigins` is stamped at each site that adds a rule, with the rule's `EnrichMintKind`, and where an upstream hidden rule is exposed through an alias (`promoted-group`); `enrich()` attaches it to its result as the one rule-origin sidecar. Helpers take the ctx instead of threading these as positional parameters; a helper that runs on a *different* rule set (the merged or enriched rules) takes that set as its own parameter, so the two are never confused.
 
 `sourceSymbols` is the predicted `SymbolSource` over the base rules (`enrichSymbolSource`) — the grammar-source facts separator detection reads. It is distinct from the one `enrich()` builds over the enriched rules for `unaliasOverloadedDisplays` at the end (`enrichedSymbols`): the two describe the grammar at different points and are never merged.
 
@@ -7244,7 +7232,7 @@ Hands the runtime the records an inheriting layer rewrote: they replace the pend
 
 ### `packages/codegen/src/dsl/layer.ts::BaseEditsCheck`
 
-`EditsCheck` against the enriched base when the base type is a grammar, and `unknown` otherwise.
+`EditsCheck` against the enriched base when the base type carries concrete rule shapes (`wire/wire.ts::IsShaped`), and `unknown` otherwise. The shape test runs on the base before it is enriched: enriching the loose `GrammarJson` instantiates enrich's rule types over the open rule union, which is excessively deep (TS2589). A layer above the first takes a `grammar()` result as its base, whose type names no kind, so its paths are checked when the layer evaluates, not by the type: a key that names no rule is `edit-site-missing`, and the path walk throws on a member the rule lacks.
 
 ### `packages/codegen/src/dsl/layer.ts::BaseOptionsCheck`
 
@@ -7274,7 +7262,7 @@ Fills the options from a pass's output: `name` when the config gives none, a ret
 
 ### `packages/codegen/src/dsl/layer.ts::enrichFixpoint`
 
-Runs enrich once over a completed result with the given sidecars, and names every rule enrich would add, remove or change, sorted. The checked result is returned for the layer above to build on. `sittirGrammar`'s bindings gate makes the same check (`sittir-grammar.ts::assertEnrichFixpoint`).
+Runs enrich once over a completed result with the given sidecars, and names every rule enrich would add, remove or change, sorted. The checked result is returned for the layer above to build on.
 
 ### `packages/codegen/src/dsl/layer.ts::IntakeCtx`
 
@@ -7290,7 +7278,7 @@ Wire's config for the layer: the layer's config under its resolved name. Over an
 
 ### `packages/codegen/src/dsl/layer.ts::runLayerPass`
 
-The layer pass, run from the layer's entry. Intake completes the base and the pending base takes the result. Wire's own entry then evaluates the config's rule callbacks and lists once, against the completed base; its refusals join the pass's diagnostics and its `narrow` and lead entries the pass's queues (`wire/wire.ts::WireLayer`). Each body is normalized as tree-sitter normalizes it and laid over the base's rules. The pass evaluates the lists (`evaluatedLists`), builds its context (`LayerCtx`) over the layer's grammar view (`layerView`), with a `$` that knows the rules and the externals and the layer's effects resolved per owner, runs the queued entries as the whole-grammar phase, the `narrow` entries (`verbs/narrow.ts::applyNarrows`) and then the leads (`verbs/lead.ts::applyLeads`), and completes the layer (`completeLayer`). The pending base then takes the records the layer rewrote (`completePendingRecords`), for the runtime to inherit.
+The layer pass, run from the layer's entry. Intake completes the base and the pending base takes the result. Wire's own entry then evaluates the config's rule callbacks and lists once, against the completed base; its refusals join the pass's diagnostics and its `narrow` and lead entries the pass's queues, and its alias edits are checked at the layer's depth (`wire/wire.ts::WireLayer`). Each body is normalized as tree-sitter normalizes it and laid over the base's rules. The pass evaluates the lists (`evaluatedLists`), builds its context (`LayerCtx`) over the layer's grammar view (`layerView`), with a `$` that knows the rules and the externals and the layer's effects resolved per owner, runs the queued entries as the whole-grammar phase, the `narrow` entries (`verbs/narrow.ts::applyNarrows`) and then the leads (`verbs/lead.ts::applyLeads`), and completes the layer (`completeLayer`). The pending base then takes the records the layer rewrote (`completePendingRecords`), for the runtime to inherit.
 
 ### `packages/codegen/src/dsl/layer.ts::layerView`
 
@@ -7340,7 +7328,7 @@ The hash of a resolution set no clean `generate` has confirmed: the seed, and ev
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::ConflictResolutionsInput`
 
-The resolutions a grammar passes to `sittirGrammar`, the base list and the `bound` section's list: `ConflictResolutionRecord`s, so the JSON a grammar imports satisfies it as TypeScript infers it (string literals widen, so the file does not type as `ConflictResolutionsFile`).
+The resolutions a grammar's layer 1 passes to `wire`, the base list and the `bound` section's list: `ConflictResolutionRecord`s, so the JSON a grammar imports satisfies it as TypeScript infers it (string literals widen, so the file does not type as `ConflictResolutionsFile`).
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::CONFLICT_RESOLUTIONS_FILE`
 
@@ -7352,7 +7340,7 @@ The resolutions of a grammar nothing has been derived for, both sections empty a
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::applyConflictResolutions`
 
-Sets the grammar's `conflicts` to the base resolution sets, replacing whatever `grammar()` produced. Upstream's declared conflicts and anything an author wrote never reach the final list; every conflict the grammar keeps was derived. It runs in `sittirGrammar` before `bindGrammar`, so the sets are in base names and the renames carry them; both runtimes see the same list.
+Sets the grammar's `conflicts` to the base resolution sets, replacing whatever `grammar()` produced. Upstream's declared conflicts and anything an author wrote never reach the final list; every conflict the grammar keeps was derived.
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::applyBoundConflictResolutions`
 
@@ -7523,7 +7511,7 @@ The grammar bindings of a grammar, the argument of `bindings()`. `patches` holds
 
 ### `packages/codegen/src/dsl/bind.ts::bindings`
 
-Declares grammar bindings and returns them unchanged; the call exists to type them. A `grammar.bindings.ts` default-exports one and `grammar.sittir.ts` passes it to `sittirGrammar` as `bindings` while the grammar bindings are on.
+Declares grammar bindings and returns them unchanged; the call exists to type them.
 
 ### `packages/codegen/src/dsl/bind.ts::rename`
 
@@ -7532,14 +7520,6 @@ The `Rename` primitive: `rename('function_item', 'function_declaration')`.
 ### `packages/codegen/src/dsl/bind.ts::split`
 
 The `Split` primitive: `split(kind, as, { within, containers })` mints `as` from `kind` where it sits under the placement `within` (innermost first, the placement's owner last), with a container rule per intermediate ancestor named and fielded as `containers` gives.
-
-### `packages/codegen/src/dsl/bind.ts::aliasTargetIssue`
-
-Why an alias from `from` to `to` cannot stand, or `undefined`: an alias never flips hiddenness, and its target may not name a rule of the grammar. Tree-sitter folds an alias whose value names a rule into that rule's kind, so such a target would change the parse; a group that has to share a name with a rule is a merge.
-
-### `packages/codegen/src/dsl/bind.ts::checkBindingPatches`
-
-Refuses every named alias of a symbol in grammar bindings' patches that `aliasTargetIssue` rejects against the enriched grammar, before wire applies any of them.
 
 ### `packages/codegen/src/dsl/bind.ts::rewriteBindingOptions`
 
@@ -7657,10 +7637,6 @@ A rule with every reference to `symbol` that is not already in a field wrapped i
 
 The grammar with each placement split applied. The split kind is minted under its new name from the base kind's body. Each intermediate kind of `within`, and each hidden rule on the way that reaches the target, is cloned per outer kind with the reference replaced: a hidden rule as `<base>_<outer>`, a visible container under the name its `containers` entry gives. The outer kind then references the clones. A clone of a supertype or an inline rule is listed beside its base (`mintLists`), and a visible container is fielded where its placements reference it. `splitFrom` records each minted name's base. A split that flips hiddenness, names no placement, or mints a name the grammar already has is an error.
 
-### `packages/codegen/src/dsl/bind.ts::patchAliases`
-
-Every named alias of a symbol in a patch set, as `{ from, to }`, for `checkBindingPatches`.
-
 ### `packages/codegen/src/dsl/bind.ts::baseNamesOf`
 
 The base name each bound name stands for, from the bound grammar's `renamedFrom` and `splitFrom` stamps: a clone resolves to its origin, then a renamed origin to its base name. Only names whose base name differs are kept, so a clone that reuses the very name a rename freed maps to nothing. The conflict derivation chains a bound name's sources through it (`transpile/derive-conflicts.ts::sourceChainOf`).
@@ -7668,14 +7644,6 @@ The base name each bound name stands for, from the bound grammar's `renamedFrom`
 ### `packages/codegen/src/dsl/bind.ts::boundNameOf`
 
 The bound name of a base name, from the grammar's `renamedFrom` record: the phases that meet base names (`link`, rule-cause and grammar diagnostics) map them through it to the names the bound grammar uses.
-
-### `packages/codegen/src/dsl/sittir-grammar.ts::UNBOUND_ENV`
-
-The environment variable that asks for a grammar's base: while it is `1`, `sittirGrammar` skips the grammar bindings. `evaluate`'s unbound import sets it around its import, and conflict derivation sets it on the `tree-sitter generate` runs that derive resolutions, so both see the base without building the bound grammar first, and broken grammar bindings cannot stop the base from evaluating.
-
-### `packages/codegen/src/dsl/sittir-grammar.ts::unboundRequested`
-
-Whether `UNBOUND_ENV` is `1`.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::onlyAliasedSymbols`
 
@@ -7700,14 +7668,6 @@ The three sidecars an enrich result holds, as a plain record that a layer record
 ### `packages/codegen/src/dsl/enrich.ts::withEnrichSidecarsOf`
 
 A shallow copy of a grammar carrying the three sidecars an enrich result holds (whitespace, rule origins, automatic variants), read from `enriched`. `grammar()` does not carry them, so a later enrich over a wired grammar needs them to recognise its own earlier work: without them it re-mints the layout supertype over the body wire decorated and re-aliases visible groups.
-
-### `packages/codegen/src/dsl/sittir-grammar.ts::assertEnrichFixpoint`
-
-The configured bindings layer's gate: enrich the completed authored grammar exactly once with its enrich sidecars (`layer.ts::enrichFixpoint`), compare all rule names and trees, and return that enriched result for the binding wire pass. Every added, removed or changed rule fails with its name; configured empty bindings are checked too. Absent bindings and unbound evaluation skip the second layer.
-
-### `packages/codegen/src/dsl/sittir-grammar.ts::completeLayer`
-
-Evaluates one wire layer, carries non-enumerable grammar facts from the prior layer, and applies its binding edits when present. Shared completion then stamps the final rules, unions dead-mint facts and attaches live text tokens. Evaluation-specific metadata inheritance is handled by the canonical evaluator.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireBindings`
 

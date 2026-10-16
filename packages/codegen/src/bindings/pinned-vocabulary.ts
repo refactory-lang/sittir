@@ -6,45 +6,13 @@ import type {
 	ExportStatementDefaultFrom,
 	ExtendsTypeClause,
 	InterfaceDeclaration,
-	Program,
-	PropertySignature,
-	TypescriptAPI
+	PropertySignature
 } from '@sittir/typescript';
-import type { Engine } from '@sittir/types';
-import { loadPinnedBuild, type PinnedBuild } from '../bootstrap/pinned.ts';
+import { isNode, parsedTypescript, type Kinds, type Span, type Statement, type TypescriptSource } from './pinned-typescript.ts';
 import { type Declared, type FeatureIndex, FLAG, type Member, REFINED_BY } from './vocabulary.ts';
 
-type Kinds = Awaited<ReturnType<PinnedBuild['typescript']['default']['load']>>['kinds'];
-
-interface Reader {
-	readonly K: Kinds;
-	readonly engine: Engine<TypescriptAPI>;
-	readonly pinned: PinnedBuild;
-}
-
-let reader: Promise<Reader> | undefined;
-
-function typescriptReader(): Promise<Reader> {
-	reader ??= (async () => {
-		const pinned = await loadPinnedBuild();
-		return { K: (await pinned.typescript.default.load()).kinds, engine: await pinned.common.createEngine(pinned.typescript.default), pinned };
-	})();
-	reader.catch(() => {
-		reader = undefined;
-	});
-	return reader;
-}
-
-interface Span {
-	readonly start: number;
-	readonly end: number;
-}
-
-interface Source {
-	readonly K: Kinds;
-	readonly engine: Engine<TypescriptAPI>;
+interface Source extends Omit<TypescriptSource, 'spelled'> {
 	readonly text: (item: object | number) => string;
-	readonly span: (item: object) => Span | undefined;
 }
 
 function identifier(name: { readonly $type: number } | number, kinds: readonly number[], source: Source): string {
@@ -54,16 +22,13 @@ function identifier(name: { readonly $type: number } | number, kinds: readonly n
 }
 
 async function parsed(code: string): Promise<{ readonly statements: readonly Statement[]; readonly source: Source }> {
-	const { K, engine, pinned } = await typescriptReader();
-	const slice = pinned.common.spanSlicer(code);
+	const { statements, source } = await parsedTypescript(code);
 	const text = (item: object | number): string => {
-		if (typeof item === 'number') return String(engine.render(item));
-		const span = pinned.utils.spanOf(item);
-		const spelled = span === undefined ? '' : slice(span);
-		if (spelled.includes('\\')) throw new Error(`vocabulary: ${spelled} spells a name with an escape; spell it plainly, as the reader compares names as written`);
+		const spelled = source.spelled(item);
+		if (typeof item !== 'number' && spelled.includes('\\')) throw new Error(`vocabulary: ${spelled} spells a name with an escape; spell it plainly, as the reader compares names as written`);
 		return spelled;
 	};
-	return { statements: engine.parse(code, { depth: Infinity, errors: 'throw' }).statements(), source: { K, engine, text, span: pinned.utils.spanOf } };
+	return { statements, source: { K: source.K, engine: source.engine, span: source.span, text } };
 }
 
 export async function vocabularyDeclaredInProcess(code: string): Promise<Declared[]> {
@@ -91,10 +56,6 @@ export async function vocabularyFeatureIndexInProcess(code: string): Promise<Fea
 	}
 	return { marker, exports };
 }
-
-type Statement = ReturnType<Program.Parsed['statements']>[number];
-
-const isNode = <T>(value: T): value is Exclude<T, number | undefined> => typeof value === 'object' && value !== null;
 
 type Wrapped =
 	| Statement

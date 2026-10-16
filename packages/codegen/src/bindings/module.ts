@@ -1,22 +1,17 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { pathToFileURL } from 'node:url';
-import { withDslGlobals } from '../compiler/evaluate.ts';
-import type { Bindings } from '../dsl/bind.ts';
-import type { LeadMatch } from '../dsl/verbs/effects.ts';
-import { grammarPackageDir, type GrammarName } from '../grammars.ts';
+import type { Lead, LeadMatch } from '../dsl/verbs/effects.ts';
+import { BINDINGS_MODULE, GRAMMAR_ENTRY, grammarPackageDir, type GrammarName } from '../grammars.ts';
 import { REGENERATE_BINDINGS_COMMAND } from './hash.ts';
 import type { GrammarBindings, GrammarBindingsEdit, GrammarBindingsPatch } from './grammar-bindings.ts';
-
-export const BINDINGS_MODULE = 'grammar.bindings.ts';
+import { runPinned } from './read.ts';
 
 export const bindingsModulePath = (grammar: GrammarName): string => join(grammarPackageDir(grammar), BINDINGS_MODULE);
 
-export async function loadBindingsModule(dir: string): Promise<Bindings | undefined> {
+export async function loadBindingsHash(dir: string): Promise<string | undefined> {
 	const path = join(dir, BINDINGS_MODULE);
 	if (!existsSync(path)) return undefined;
-	const module = (await withDslGlobals(() => import(pathToFileURL(path).href))) as { readonly default?: Bindings };
-	return module.default;
+	return (await runPinned('exportedStrings', readFileSync(path, 'utf8'))).hash;
 }
 
 const q = (v: string): string => JSON.stringify(v);
@@ -32,38 +27,45 @@ function matchCall(m: LeadMatch): string {
 	return `match(${[q(m.kind), ...within, ...as].join(', ')})`;
 }
 
-function list(lines: readonly string[]): string {
-	return lines.length === 0 ? '[]' : `[\n${lines.join(',\n')}\n\t]`;
+const leadSet = (l: Lead): string => `{ ".": lead(${[q(l.item), q(l.field), ...l.admits.map(matchCall)].join(', ')}) }`;
+
+function editEntries(bindings: GrammarBindings): string {
+	const sets = new Map([...bindings.patches].map(([kind, patches]) => [kind, patches.map(patchSet)]));
+	for (const l of bindings.leads) sets.set(l.list, [...(sets.get(l.list) ?? []), leadSet(l)]);
+	if (sets.size === 0) return '{}';
+	const lines = [...sets].map(([kind, entries]) => `\t\t\t${kind}: ${entries.length === 1 ? entries[0]! : `[${entries.join(', ')}]`}`);
+	return `{\n${lines.join(',\n')}\n\t\t}`;
+}
+
+function renamesData(renames: Readonly<Record<string, string>>): string {
+	const lines = Object.entries(renames).map(([from, to]) => `\t${from}: ${q(to)}`);
+	return lines.length === 0 ? '{}' : `{\n${lines.join(',\n')}\n}`;
 }
 
 export function printBindingsModule(bindings: GrammarBindings, hash: string): string {
-	const patchLines = [...bindings.patches].map(([kind, sets]) => `\t\t${kind}: ${sets.length === 1 ? patchSet(sets[0]!) : `[${sets.map(patchSet).join(', ')}]`}`);
-	const renameLines = Object.entries(bindings.renames).map(([from, to]) => `\t\trename(${q(from)}, ${q(to)})`);
-	const leadLines = bindings.leads.map((l) => `\t\tlead(${[q(l.list), q(l.item), q(l.field), ...l.admits.map(matchCall)].join(', ')})`);
-	const splitLines = bindings.splits.map(
-		(s) => `\t\tsplit(${q(s.kind)}, ${q(s.as)}, { within: [${s.within.map(q).join(', ')}], containers: [${s.containers.map((c) => `{ name: ${q(c.name)}, field: ${q(c.field)} }`).join(', ')}] })`
-	);
 	const edits = [...bindings.patches.values()].flat(2).map((p) => p.edit);
 	const helpers = [
 		...(edits.some((e) => 'alias' in e) ? ['alias'] : []),
-		'bindings',
+		'enrich',
 		...(edits.some((e) => 'field' in e) ? ['field'] : []),
-		...(leadLines.length > 0 ? ['lead', 'match'] : []),
-		...(renameLines.length > 0 ? ['rename'] : []),
-		...(splitLines.length > 0 ? ['split'] : [])
+		...(bindings.leads.length > 0 ? ['lead'] : []),
+		...(bindings.leads.some((l) => l.admits.length > 0) ? ['match'] : []),
+		'wire'
 	];
 	return `// Generated from bindings.scm and the vocabulary by \`${REGENERATE_BINDINGS_COMMAND}\`. Do not edit.
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
+import sittir from './${GRAMMAR_ENTRY}';
 import { ${helpers.join(', ')} } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export default bindings({
-	hash: ${q(hash)},
-	patches: {
-${patchLines.join(',\n')}
-	},
-	renames: ${list(renameLines)},
-	leads: ${list(leadLines)},
-	splits: ${list(splitLines)}
-});
+export const hash = ${q(hash)};
+
+export const renames = ${renamesData(bindings.renames)};
+
+export default grammar(
+	enrich(sittir),
+	wire({
+		edits: ${editEntries(bindings)}
+	})
+);
 `;
 }

@@ -369,7 +369,7 @@ describe('wire()', () => {
 		expect([...ctx.deposits.keys()].sort()).toEqual(['assignment_eq', 'assignment_type']);
 	});
 
-	it('hands grammar() no conflicts, even when the config authors some: sittirGrammar sets the final list', () => {
+	it('hands grammar() no conflicts, even when the config authors some: the layer pass sets the final list from the resolutions', () => {
 		const wired = wire<GrammarJson>(
 			{
 				name: 'test',

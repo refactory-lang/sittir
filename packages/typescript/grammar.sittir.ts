@@ -9,7 +9,6 @@
 
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
-import grammarBindings from './grammar.bindings.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import {
 	field,
@@ -23,13 +22,13 @@ import {
 	token,
 	reauthored,
 	vocabulary,
-	sittirGrammar
+	enrich,
+	wire
 } from '../codegen/src/dsl/dsl-authoring.ts';
 
 
-export default sittirGrammar(base, {
+export default grammar(enrich(base), wire({
 	resolutions,
-	bindings: grammarBindings,
 	name: 'typescript',
 	groups: {
 		jsx_opening_element_content: ($) =>
@@ -764,4 +763,4 @@ export default sittirGrammar(base, {
 			lhs_expression: '($r = null);'
 		}
 	},
-});
+}));

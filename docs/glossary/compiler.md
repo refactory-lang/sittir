@@ -1628,10 +1628,10 @@ and gates it through `diagnoseGrammar`, throwing `GrammarDiagnosticError` with t
 records and every record the gate saw when it does not pass. The config names the package, not the grammar, so the
 caller resolves it once. Hydrate then runs on the collected grammar with
 `droppedKinds` as the names whose absence is already reported, and the `ir` surface is stamped on the hydrated node map (`stampIrSurface`).
-After the gate it refuses stale grammar bindings (`bindings/hash.ts::assertBindingsFresh`
-over the package's committed `grammar.bindings.ts` and its `bindings.scm`), so
-codegen never runs with grammar bindings derived from other sources than the ones on disk.
-With `unbound` it evaluates the package without its grammar bindings and skips that check: the
+Before it evaluates anything it refuses a stale generated layer (`bindings/hash.ts::assertBindingsFresh`
+over the hash the package's `grammar.bindings.ts` exports, which `bindings/module.ts::loadBindingsHash` reads, and its `bindings.scm`), so
+codegen never runs with grammar bindings derived from other sources than the ones on disk, and never evaluates a layer it refuses.
+With `unbound` it compiles layer 1 (`grammars.ts::layerPath`) and skips that check: the
 base grammar's compilation, whose model the grammar bindings are derived against.
 
 ### `packages/codegen/src/compiler/compile.ts::diagnoseGrammar`
@@ -2207,12 +2207,12 @@ canonicalizes it with the grammar that carries it, and a `RawGrammar` after.
 
 ### `packages/codegen/src/compiler/types.ts::derivationRecords`
 
-The conflict-derivation records `sittirGrammar` attached
+The conflict-derivation records the layer pass recorded
 (`dsl/wire/derivation-records.ts::DerivationRecords`), carried from evaluation
 to the diagnostics: the conflict loop's fresh-process evaluate reads the
 upstream context from them, and `diagnoseGrammar` reports the resolutions,
 the upstream sets no resolution needs, and authored conflicts. Absent for a
-grammar not built by `sittirGrammar`.
+grammar no layer pass built.
 
 ### `packages/codegen/src/compiler/types.ts::EvaluatedGrammar`
 
@@ -2795,13 +2795,9 @@ source (`dsl-shape-fidelity.test.ts` holds each grammar to its shipped
 `grammar.json` under `rulesEqual`). `evaluate` is this plus the compile
 boundary; a caller that wants the DSL's own shape calls it directly.
 
-### `packages/codegen/src/compiler/evaluate.ts::evaluateUnboundDsl`
-
-`evaluateDsl` for the entry without its grammar bindings: the same extraction under the DSL globals, with the module imported through `importUnbound`. `evaluate` calls it when `EvaluateOptions.unbound` is set; the conflict-derivation child calls it directly.
-
 ### `packages/codegen/src/compiler/evaluate.ts::importAndExtractGrammar`
 
-Runs `load` (the grammar module's import: `evaluateDsl` passes a plain import, `evaluateUnboundDsl` passes `importUnbound`) and extracts the grammar from the module's default or named export, as its top-level `grammar()` call produced it.
+Imports a grammar layer's file and extracts the grammar from the module's default or named export, as its top-level `grammar()` call produced it. A layer's file evaluates to the same grammar wherever it is imported from, so which file is imported is the whole choice of layer (`grammars.ts::layerPath`).
 
 The dead enrich mints, the conflict-derivation records and the text-token names arrive on the top layer's record (`dsl/layer-record.ts::layerRecordOf`), with the diagnostics the layer passes recorded, which become `layerDiagnostics`. A grammar no layer pass completed carries the first three as non-enumerable sidecars on the grammar instead (`getDeadEnrichMints`, `getDerivationRecords`, `dsl/enrich.ts::getTextTokens`). The dead mints become `orphanedSyntheticGroups`, the records `derivationRecords` and the names `textTokens`, here, after the module's `grammar()` call has returned, since they are computed from that call's result. The returned grammar is a spread copy, so a non-enumerable sidecar is read here or not at all. An inheriting layer's projections (`splitFrom`, `leadFrom`, `renamedFrom` and `bindingEffects`, the record's `projections`) are spread onto the grammar here too, since the runtime's result holds only the keys it builds.
 
@@ -4598,25 +4594,21 @@ The file types a grammar declares: the `file-types` of its upstream package's `t
 
 The absolute path of a grammar package's upstream `grammar.js`, resolving the upstream package (`upstreamPackage`) from the grammar package's own directory (`packageRequire`) — the grammar package is the one place its upstream dependency is declared.
 
-### `packages/codegen/src/compiler/resolve-grammar.ts::packageEntryPath`
-
-A grammar package's `grammar.sittir.ts` entry: `GRAMMAR_ENTRY` inside the package directory.
-
 ### `packages/codegen/src/compiler/resolve-grammar.ts::packageSourceEntry`
 
-The file a grammar package evaluates: its `grammar.sittir.ts` when it exists, else the upstream `grammar.js`; `base` selects the upstream `grammar.js` outright, which is how a tool shows what the upstream grammar says before overrides. Every package evaluation resolves its entry here, so the compile and the analysis tools cannot disagree about which file a package means.
+The file a grammar package evaluates: its top layer (`grammars.ts::topLayerPath`), or layer 1 with `unbound`, when that file exists, else the upstream `grammar.js`; `base` selects the upstream `grammar.js` outright, which is how a tool shows what the upstream grammar says before overrides. Every package evaluation resolves its entry here, so the compile and the analysis tools cannot disagree about which file a package means.
+
+### `packages/codegen/src/compiler/resolve-grammar.ts::PackageSourceOptions`
+
+`base`: evaluate the upstream `grammar.js`. `unbound`: evaluate layer 1, `grammar.sittir.ts`, rather than the top layer.
 
 ### `packages/codegen/src/compiler/evaluate-package.ts::evaluatePackage`
 
-The single way to evaluate a real grammar package: `evaluate` of `packageSourceEntry` with the package's `upstreamFileTypes` stamped. The compile, every probe and diagnostic tool, and every test that evaluates a package go through it, so a model built for analysis carries the same file types the generator's model does. `evaluate` itself takes the file types as an argument and is called directly only for a grammar that is not a package (a synthetic grammar, which passes `NO_FILE_TYPES`).
+The single way to evaluate a real grammar package: `evaluate` of `packageSourceEntry` (the top layer, layer 1 with `unbound`, or the upstream grammar with `base`) with the package's `upstreamFileTypes` stamped. The compile, every probe and diagnostic tool, and every test that evaluates a package go through it, so a model built for analysis carries the same file types the generator's model does. `evaluate` itself takes the file types as an argument and is called directly only for a grammar that is not a package (a synthetic grammar, which passes `NO_FILE_TYPES`).
 
 ### `packages/codegen/src/compiler/resolve-grammar.ts::resolveGrammarJsPath`
 
 `packageGrammarJsPath` for the grammar's own package.
-
-### `packages/codegen/src/compiler/resolve-grammar.ts::resolveOverridesPath`
-
-`packageEntryPath` for the grammar's own package.
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::classifyByType`
 
@@ -9411,7 +9403,7 @@ The grammar's `reserved` field as tree-sitter has it: each wordset name mapped t
 
 ### `packages/codegen/src/compiler/resolve-grammar.ts::module`
 
-Maps a grammar name to its authored entry (`grammar.sittir.ts`) and to its upstream `grammar.js`. Grammar names and package locations come from the registry in `grammars.ts`.
+Maps a grammar package to the file it evaluates, one of its layers (`grammars.ts::layerPath`) or its upstream `grammar.js`. Grammar names and package locations come from the registry in `grammars.ts`.
 
 ### `packages/codegen/src/compiler/assemble.ts::module`
 
@@ -10154,17 +10146,9 @@ A literal that is itself the slot (a STRING stamped `nonterminal: true` with `al
 
 The raw symbols a parser folds onto another public symbol: the entries of `ts_symbol_map` whose two sides differ. A token the grammar writes twice gets a second raw symbol that the parser reports under the first one's id. The fold census test pins each grammar's count.
 
-### `packages/codegen/src/compiler/evaluate.ts::EvaluateOptions`
-
-`unbound`: evaluate the entry without its grammar bindings (`evaluateUnboundDsl`).
-
-### `packages/codegen/src/compiler/evaluate.ts::importUnbound`
-
-Imports a grammar entry with `sittir-grammar.ts::UNBOUND_ENV` set (the prior value restored after), so `sittirGrammar` skips the grammar bindings. The entry is imported under its own `?unbound` URL, which keeps the unbound module apart from a bound import of the same file in the module cache.
-
 ### `packages/codegen/src/compiler/evaluate.ts::withDslGlobals`
 
-Runs a callback with the tree-sitter DSL globals (`grammar`, `seq`, `sym`, …) installed and the prior values restored after, under the evaluation mutex, so two imports never see each other's globals. `evaluateDsl` imports a grammar entry inside it; `bindings/module.ts::loadBindingsModule` imports a `grammar.bindings.ts`, whose authoring helpers call the globals.
+Runs a callback with the tree-sitter DSL globals (`grammar`, `seq`, `sym`, …) installed and the prior values restored after, under the evaluation mutex, so two imports never see each other's globals. `evaluateDsl` imports a grammar layer inside it.
 
 ### `packages/codegen/src/compiler/evaluate.ts::LayerCtx`
 

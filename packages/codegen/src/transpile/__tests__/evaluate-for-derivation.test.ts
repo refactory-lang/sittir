@@ -85,6 +85,16 @@ describe('evaluateForDerivation', () => {
 		]);
 	});
 
+	it("evaluates rust's layer 1 and top layer to the hashes its resolutions file keeps for them", () => {
+		const resolutions = JSON.parse(readFileSync(join(grammarPackage('rust').dir, '.sittir', 'resolutions.json'), 'utf8')) as {
+			readonly grammarHash: string;
+			readonly bound: { readonly grammarHash: string };
+		};
+		const rust = evaluateForDerivation(grammarPackage('rust'));
+		expect(rust.base.grammarHash).toBe(resolutions.grammarHash);
+		expect(rust.bound.grammarHash).toBe(resolutions.bound.grammarHash);
+	}, 120_000);
+
 	it('never gives an upstream rule or external an edge', () => {
 		const upstream = upstreamGrammarJson('python', 'tree-sitter-python/src/grammar.json');
 		const upstreamSymbols = new Set([...Object.keys(upstream.rules), ...(upstream.externals ?? []).flatMap((e) => (e.name ? [e.name] : []))]);

@@ -20,14 +20,20 @@ wasm. Pointing it at `tsx/grammar.js` is harmless for a non-JSX corpus but a
 latent mismatch: anything JSX-shaped would reparse-fail. One grammar,
 end-to-end.
 
-### `sittirGrammar(base, …)` (`packages/typescript/grammar.sittir.ts:25`)
+### `grammar(enrich(base), wire({…}))` (`packages/typescript/grammar.sittir.ts:30`)
 
-`export default sittirGrammar(base, {…})` composes the grammar in one call:
-enrich runs over the upstream base with the config's authored `groups:`
-patterns visible, so it declines any group a pattern covers; wire runs over
-that enriched base; `grammar()` receives both. There is no separate enriched
-binding to hand to two places, so the base wire sees and the base tree-sitter
-compiles cannot drift apart.
+`export default grammar(enrich(base), wire({…}))` is typescript's layer 1, the
+authored layer. `enrich(base)` is the layer's base half: the upstream grammar,
+pending until the layer pass completes it. `wire({…})` is its options half:
+tree-sitter's `grammar()`, or sittir's own when sittir evaluates the file,
+calls the options' `externals` entry first, and there the layer pass enriches
+the base with the config's authored `groups:` patterns visible, so enrich
+declines any group a pattern covers, and wires the config over that enriched
+base. The base wire sees and the base tree-sitter compiles are the one
+completed object, so they cannot drift apart.
+
+The generated layer above this one, `grammar.bindings.ts`, imports this file;
+nothing here imports it, so layer 1 evaluates without the grammar bindings.
 
 ### `inline` (`packages/typescript/grammar.sittir.ts:232`)
 
@@ -76,7 +82,7 @@ polymorph helpers need to appear explicitly.
 				// once a NESTED cascade level's config replaces that raw mint's
 				// alias content with the properly-split polymorph body (transform.ts's
 				// ALIAS-rename deposit + repoint), the ORIGINAL raw mint becomes a
-				// provably-unreachable orphan. `sittirGrammar`'s dead-mint pass
+				// provably-unreachable orphan. the layer pass's dead-mint pass
 				// (`blankDeadEnrichMints`) blanks every enrich mint the final
 				// grammar does not reach, so the orphan is pruned before codegen.
 				// Folding the ENTIRE `_export_statement_default`

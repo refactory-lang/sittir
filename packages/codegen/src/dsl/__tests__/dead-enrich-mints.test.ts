@@ -8,8 +8,7 @@ import type { EnrichRuleOrigin } from '../enrich-ctx.ts';
 import { blankDeadEnrichMints, DEAD_ENRICH_MINTS_KEY, getDeadEnrichMints } from '../wire/dead-mints.ts';
 import { isBlank } from '../rule-patterns.ts';
 import type { WiredOpts } from '../wire/wire.ts';
-import { grammarPackage } from '../../grammars.ts';
-import { packageEntryPath } from '../../compiler/resolve-grammar.ts';
+import { grammarPackage, topLayerPath } from '../../grammars.ts';
 import { evaluateDsl } from '../../compiler/evaluate.ts';
 import { evaluatePackage } from '../../compiler/evaluate-package.ts';
 
@@ -89,7 +88,7 @@ describe('dead enrich mints in the in-repo grammars', () => {
 	for (const name of ['python', 'rust', 'typescript', 'scm', 'regex']) {
 		it(`${name}: every dead mint is blank and named by no list; grammar.json carries no dead-set key`, async () => {
 			const pkg = grammarPackage(name);
-			const evaluated = await evaluateDsl(packageEntryPath(pkg));
+			const evaluated = await evaluateDsl(topLayerPath(pkg));
 			for (const dead of evaluated.orphanedSyntheticGroups ?? []) {
 				expect(isBlank(evaluated.rules[dead]), dead).toBe(true);
 				expect(evaluated.inline).not.toContain(dead);

@@ -30,7 +30,7 @@ import {
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { assertNoRenamedExternal, liftRenames, resolveLiftNames, type LiftName } from './lift-names.ts';
-import { aliasOf, isComplexBody, onlyAliasedSymbols, rulesEqual, type SymbolSource } from '../rule-patterns.ts';
+import { aliasOf, isComplexBody, isParserHiddenName, onlyAliasedSymbols, rulesEqual, type SymbolSource } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
 import { getEnrichElementSupertypes, getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichMints, getEnrichTextTokens, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, nativeRuleFn, type AuthoredFieldSite, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
@@ -113,6 +113,7 @@ export interface WireContext {
 
 export interface WireLayer {
 	readonly name: string;
+	readonly depth: number;
 	readonly diagnostics: GrammarDiagnostic[];
 	readonly narrows: NarrowEntry[];
 	readonly leads: Lead[];
@@ -430,7 +431,7 @@ type PatchEntryCheck<Rule, E> = E extends readonly unknown[]
 		: CheckMaps<Rule, E, never>
 	: PatchKeyCheck<Rule, E, never>;
 
-type IsShaped<B> = 0 extends 1 & B ? false : [GrammarRule] extends [RulesOf<B>[keyof RulesOf<B>]] ? false : true;
+export type IsShaped<B> = 0 extends 1 & B ? false : [GrammarRule] extends [RulesOf<B>[keyof RulesOf<B>]] ? false : true;
 
 export type EditsCheck<B, P> = IsShaped<B> extends false
 	? unknown
@@ -769,6 +770,14 @@ function recordRefusal(context: WireContext | null, grammar: string, { code, own
 
 export function wireRefuse(refusal: WireRefusal): void {
 	recordRefusal(currentContext, currentContext?.layer?.name ?? '', refusal);
+}
+
+export function wireAliasTargetIssue(from: string, to: string): string | undefined {
+	const context = currentContext;
+	if (context?.layer === undefined || context.layer.depth === 1) return undefined;
+	if (isParserHiddenName(from) !== isParserHiddenName(to)) return 'flips hiddenness';
+	if (Object.hasOwn(context.baseRuleBodies, to)) return 'the grammar already names the target';
+	return undefined;
 }
 
 export function wireQueueLead(entry: LeadPlaceholder): void {

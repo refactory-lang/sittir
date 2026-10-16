@@ -19,4 +19,9 @@ describe('wire() checks its edits against the base enrich() gives it', () => {
 		// @ts-expect-error — program has no member 5
 		grammar(enrich(base), wire({ edits: { program: { 5: field('item') } } }));
 	});
+
+	it('checks no path against a base that is a layer, whose type names no kind', () => {
+		const below = grammar(enrich(base), wire({}));
+		grammar(enrich(below), wire({ edits: { program: { 5: field('item') } } }));
+	});
 });

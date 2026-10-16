@@ -41,16 +41,7 @@ from the same grammar, so its conflicts must be derived again.
 
 ### `packages/codegen/src/transpile/tree-sitter-cli.ts::runTreeSitterCli`
 
-```text
-Runs the tree-sitter CLI with `args` in `cwd` under the current Node binary,
-with the given stdio. It and `runTreeSitterCliCapturing` are the only ways to
-run the CLI, and both resolve it through `treeSitterCliPath` and run it in the
-environment `treeSitterCliEnv` builds.
-```
-
-### `packages/codegen/src/transpile/tree-sitter-cli.ts::treeSitterCliEnv`
-
-The environment a CLI run gets: the parent's, without `UNBOUND_ENV`, plus the variables the caller asks for. `importUnbound` sets `UNBOUND_ENV` on the parent process while an unbound evaluation is in flight, so an inherited toggle would make `tree-sitter generate` build the parser without the bindings overlay; a run gets it only when its caller passes it.
+Runs the tree-sitter CLI with `args` in `cwd` under the current Node binary, with the given stdio, in the parent's environment. It and `runTreeSitterCliCapturing` are the only ways to run the CLI; both resolve it through `treeSitterCliPath`. Which layer a run builds is the `grammar.js` in `cwd` (`scratch-entry.ts::withScratchEntry` makes one for layer 1), never a variable of the environment.
 
 ### `packages/codegen/src/transpile/compile-parser.ts::syncExternalScanner`
 
@@ -68,7 +59,7 @@ The environment a CLI run gets: the parent's, without `UNBOUND_ENV`, plus the va
 
 Writes a grammar package's `.sittir/` scaffolding for the tree-sitter CLI and returns the path of its `grammar.js`. Throws when the package has no `grammar.sittir.ts`.
 
-- `grammar.js` is the one-line re-export of the entry, `export { default } from '../grammar.sittir.ts';`. The specifier is `posix.join('..', GRAMMAR_ENTRY)`: `.sittir/` always sits beside the entry, and an ES module specifier uses `/` on every platform. tree-sitter's loader reads `default?.grammar ?? grammar` from the module it imports and accepts only a `.js` or `.json` path, which is why the re-export exists. Because of it, tree-sitter's loader imports `grammar.sittir.ts` itself and Node strips its types. The file never holds a copy of the grammar, so it cannot go stale; nothing needs to run between an edit to the entry and `tree-sitter generate`.
+- `grammar.js` is the one-line re-export of the package's top layer (`grammars.ts::topLayerPath`): `export { default } from '../grammar.bindings.ts';` where the package commits a generated layer, and `'../grammar.sittir.ts'` otherwise. The specifier is `posix.join('..', basename(topLayerPath))`: `.sittir/` always sits beside the layers, and an ES module specifier uses `/` on every platform. tree-sitter's loader reads `default?.grammar ?? grammar` from the module it imports and accepts only a `.js` or `.json` path, which is why the re-export exists. Because of it, tree-sitter's loader imports the top layer itself, which imports the layer below it, and Node strips their types. The file never holds a copy of the grammar, so it cannot go stale; nothing needs to run between an edit to a layer and `tree-sitter generate`.
 - `package.json` sets `"type": "module"`, so Node loads the re-export as an ES module, and carries the `name` tree-sitter reads to identify the grammar.
 - `tree-sitter.json` is required for ABI 15; without it `generate` falls back to ABI 14.
 - The external scanner sources are copied in (`copyExternalScannerSources`), and an empty `resolutions.json` is written when the package has none (`ensureConflictResolutions`), since the entry imports it.
@@ -146,7 +137,7 @@ Called after every `tree-sitter generate` (`run-codegen.ts::runTreeSitterGenerat
 
 ### `packages/codegen/src/transpile/transpile-overrides.ts::module`
 
-Scaffolding that lets the tree-sitter CLI run a package's `grammar.sittir.ts`. The CLI loads `.sittir/grammar.js` with its own `grammar()`/`seq()`/`choice()` globals; that file re-exports the entry, and the `node` on `PATH` strips its types. The entry imports the DSL and the upstream base grammar by relative path, so no stripped file lives under `node_modules`, where Node refuses to strip types. Every file the entry reaches must use erasable syntax only; each grammar's `tsconfig.grammar-sittir.json` enforces that.
+Scaffolding that lets the tree-sitter CLI run a package's grammar layers. The CLI loads `.sittir/grammar.js` with its own `grammar()`/`seq()`/`choice()` globals; that file re-exports the top layer, and the `node` on `PATH` strips its types. The layers import the DSL and the upstream base grammar by relative path, so no stripped file lives under `node_modules`, where Node refuses to strip types. Every file a layer reaches must use erasable syntax only; each grammar's `tsconfig.grammar-sittir.json` enforces that.
 
 ### `packages/codegen/src/transpile/transpile-overrides.ts::writeFileIfChanged`
 
@@ -394,16 +385,9 @@ derived from: the grammar and the CLI that builds its tables.
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::derivationInputsOf`
 
-```text
-The derivation inputs of an evaluated grammar. A grammar without derivation
-records was not built by `sittirGrammar`, which the loop cannot derive for.
-```
+The derivation inputs of an evaluated grammar. A grammar without derivation records was built by no layer pass, which the loop cannot derive for.
 
-The edges are the records' `sourceEdges`, the same for both grammars, since
-bindings run after the records are taken. `baseNames` comes from the bound
-grammar's own `renamedFrom` and `splitFrom` stamps (`dsl/bind.ts::baseNamesOf`),
-so a bound name chains through its base name to the upstream rule. The base
-grammar has neither stamp, so its `baseNames` is empty.
+The edges are the records' `sourceEdges`, which each layer's pass computes over its own rules from the one upstream grammar. `baseNames` comes from the grammar's own `renamedFrom` and `splitFrom` stamps (`dsl/bind.ts::baseNamesOf`), so a renamed or split name chains through its base name to the upstream rule. A grammar with neither stamp has an empty `baseNames`.
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::requireFromHere`
 
@@ -414,26 +398,11 @@ same loader whatever the caller's working directory.
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::evaluateForDerivation`
 
-```text
-Evaluates a grammar package's `grammar.sittir.ts` in a fresh Node process
-(tsx loader, `evaluate-for-derivation.child.ts`), once without its bindings
-and once with them, and returns the derivation inputs of both. A fresh process because Node caches an ES module, and the JSON it
-imports, for the life of the process: evaluating the grammar in the regen
-process would pin the `resolutions.json` it imported, and the compile that
-follows the loop would read those stale resolutions.
-```
+Evaluates a grammar package's two layers in a fresh Node process (tsx loader, `evaluate-for-derivation.child.ts`): layer 1 for the base section and the top layer for the bound one (`grammars.ts::layerPath`), and returns the derivation inputs of both. A fresh process because Node caches an ES module, and the JSON it imports, for the life of the process: evaluating the grammar in the regen process would pin the `resolutions.json` it imported, and the compile that follows the loop would read those stale resolutions.
 
 ### `packages/codegen/src/transpile/evaluate-for-derivation.child.ts::module`
 
-```text
-The child entry of `evaluateForDerivation`: evaluates the entry path given as
-its argument and writes the marker and the derivation inputs as JSON to
-stdout.
-```
-
-It evaluates the entry unbound, so the grammar hash, the upstream conflicts and
-the derived resolutions are those of the base grammar, in base names; a
-its grammar bindings rename them with the grammar after `grammar()`.
+The child entry of `evaluateForDerivation`: evaluates the two layer files given as its arguments, layer 1 and then the top layer, and writes the marker and both derivation inputs as JSON to stdout. Layer 1's grammar hash, upstream conflicts and resolutions are the base grammar's, in base names. The top layer imports layer 1, so its evaluation reuses the module the first one loaded; a layer pass does not write the grammar it is given, so each layer evaluates as it would alone.
 
 ### `packages/codegen/src/transpile/conflict-resolutions-file.ts::conflictResolutionsPath`
 
@@ -518,36 +487,15 @@ never derived after a base section fails.
 
 ### `packages/codegen/src/transpile/conflict-driver.ts::GeneratedGrammar`
 
-Which grammar a `tree-sitter generate` run builds: `base` (with
-`UNBOUND_ENV` set, the grammar bindings skipped) or `bound`.
+Which grammar a `tree-sitter generate` run builds: `base`, layer 1, in a scratch entry (`scratch-entry.ts::withScratchEntry`), or `bound`, the top layer, in the package's `.sittir/`.
 
 ### `packages/codegen/src/transpile/conflict-driver.ts::generateWithDerivedConflicts`
 
-```text
-The conflict loop for one grammar package: read the saved resolutions
-(seeding them if missing), evaluate the grammar once in a fresh process for
-each section's hash, rule count and upstream context, then settle the resolutions
-(`settleConflictResolutions`). Each probe writes its candidate set and
-runs `tree-sitter generate --json-summary`; the last, clean
-run leaves the generate outputs in place. Saved resolutions that turn
-out stale, or a derivation that cannot converge, become the blocking
-`conflict-resolutions-stale` or `conflict-unresolvable` record
-(`compiler/diagnostics/conflicts.ts`): the driver writes it as the package's
-`grammar-diagnostics.json` and throws `GrammarDiagnosticError`, which stops
-the regen. A settled run logs both sections' counts.
-```
+The conflict loop for one grammar package: read the saved resolutions (seeding them if missing), evaluate both layers once in a fresh process for each section's hash, rule count and upstream context (`evaluate-for-derivation.ts::evaluateForDerivation`), then settle the resolutions (`settleConflictResolutions`). Each probe writes its candidate set and runs `tree-sitter generate --json-summary`, a base probe in a scratch entry and a bound one in the package's `.sittir/`; the last, clean bound run leaves the generate outputs in place. Saved resolutions that turn out stale, or a derivation that cannot converge, become the blocking `conflict-resolutions-stale` or `conflict-unresolvable` record (`compiler/diagnostics/conflicts.ts`): the driver writes it as the package's `grammar-diagnostics.json` and throws `GrammarDiagnosticError`, which stops the regen. A settled run logs both sections' counts.
 
 ### `packages/codegen/src/transpile/tree-sitter-cli.ts::runTreeSitterCliCapturing`
 
-```text
-Runs the tree-sitter CLI like `runTreeSitterCli`, with stdout passed through
-and stderr captured, and returns the exit status with stderr: the
-`--json-summary` report is written to stderr.
-```
-
-`env` is the variables the caller asks for (conflict derivation passes
-`UNBOUND_ENV` for a base generate); `treeSitterCliEnv` builds the run's
-environment from them.
+Runs the tree-sitter CLI like `runTreeSitterCli`, with stdout passed through and stderr captured, and returns the exit status with stderr: the `--json-summary` report is written to stderr.
 
 ### `packages/codegen/src/transpile/compile-parser.ts::buildParserWasm`
 
@@ -634,19 +582,6 @@ It is part of the grammar hash: a different CLI can build different tables
 from the same grammar, so its conflicts must be derived again.
 ```
 
-### `packages/codegen/src/transpile/tree-sitter-cli.ts::runTreeSitterCli`
-
-```text
-Runs the tree-sitter CLI with `args` in `cwd` under the current Node binary,
-with the given stdio. It and `runTreeSitterCliCapturing` are the only ways to
-run the CLI, and both resolve it through `treeSitterCliPath` and run it in the
-environment `treeSitterCliEnv` builds.
-```
-
-### `packages/codegen/src/transpile/tree-sitter-cli.ts::treeSitterCliEnv`
-
-The environment a CLI run gets: the parent's, without `UNBOUND_ENV`, plus the variables the caller asks for. `importUnbound` sets `UNBOUND_ENV` on the parent process while an unbound evaluation is in flight, so an inherited toggle would make `tree-sitter generate` build the parser without the bindings overlay; a run gets it only when its caller passes it.
-
 ### `packages/codegen/src/transpile/compile-parser.ts::syncExternalScanner`
 
 ```text
@@ -658,17 +593,6 @@ The environment a CLI run gets: the parent's, without `UNBOUND_ENV`, plus the va
  * No-op when no scanner.c exists in the base grammar (most grammars).
  */
 ```
-
-### `packages/codegen/src/transpile/transpile-overrides.ts::transpileOverrides`
-
-Writes a grammar package's `.sittir/` scaffolding for the tree-sitter CLI and returns the path of its `grammar.js`. Throws when the package has no `grammar.sittir.ts`.
-
-- `grammar.js` is the one-line re-export of the entry, `export { default } from '../grammar.sittir.ts';`. The specifier is `posix.join('..', GRAMMAR_ENTRY)`: `.sittir/` always sits beside the entry, and an ES module specifier uses `/` on every platform. tree-sitter's loader reads `default?.grammar ?? grammar` from the module it imports and accepts only a `.js` or `.json` path, which is why the re-export exists. Because of it, tree-sitter's loader imports `grammar.sittir.ts` itself and Node strips its types. The file never holds a copy of the grammar, so it cannot go stale; nothing needs to run between an edit to the entry and `tree-sitter generate`.
-- `package.json` sets `"type": "module"`, so Node loads the re-export as an ES module, and carries the `name` tree-sitter reads to identify the grammar.
-- `tree-sitter.json` is required for ABI 15; without it `generate` falls back to ABI 14.
-- The external scanner sources are copied in (`copyExternalScannerSources`), and an empty `resolutions.json` is written when the package has none (`ensureConflictResolutions`), since the entry imports it.
-
-The generated `tree-sitter.json` and `package.json` list the grammar's file types, from `upstreamFileTypes`, instead of an empty list.
 
 ### `packages/codegen/src/transpile/transpile-overrides.ts::copyExternalScannerSources`
 
@@ -683,12 +607,6 @@ When the upstream has no scanner at all, a stub (`stubScannerSource`) is written
 ```text
 // Narrow to MODULE_NOT_FOUND — the upstream package being absent is
 // expected; permission errors or a malformed package.json surface.
-```
-
-### `packages/codegen/src/transpile/transpile-overrides.ts::outputPath`
-
-```text
-/** Absolute path to the generated `.sittir/grammar.js`. */
 ```
 
 ### `packages/codegen/src/transpile/compile-parser.ts::syncExternalScanner`
@@ -738,10 +656,6 @@ Called after every `tree-sitter generate` (`run-codegen.ts::runTreeSitterGenerat
 // through its own bookkeeping entries — those entries are dead alongside
 // the rule and are filtered below instead.
 ```
-
-### `packages/codegen/src/transpile/transpile-overrides.ts::module`
-
-Scaffolding that lets the tree-sitter CLI run a package's `grammar.sittir.ts`. The CLI loads `.sittir/grammar.js` with its own `grammar()`/`seq()`/`choice()` globals; that file re-exports the entry, and the `node` on `PATH` strips its types. The entry imports the DSL and the upstream base grammar by relative path, so no stripped file lives under `node_modules`, where Node refuses to strip types. Every file the entry reaches must use erasable syntax only; each grammar's `tsconfig.grammar-sittir.json` enforces that.
 
 ### `packages/codegen/src/transpile/transpile-overrides.ts::writeFileIfChanged`
 
@@ -973,48 +887,12 @@ resolutions change, so the hash identifies everything the resolutions were
 derived from: the grammar and the CLI that builds its tables.
 ```
 
-### `packages/codegen/src/transpile/evaluate-for-derivation.ts::derivationInputsOf`
-
-```text
-The derivation inputs of an evaluated grammar. A grammar without derivation
-records was not built by `sittirGrammar`, which the loop cannot derive for.
-```
-
-The edges are the records' `sourceEdges`, the same for both grammars, since
-bindings run after the records are taken. `baseNames` comes from the bound
-grammar's own `renamedFrom` and `splitFrom` stamps (`dsl/bind.ts::baseNamesOf`),
-so a bound name chains through its base name to the upstream rule. The base
-grammar has neither stamp, so its `baseNames` is empty.
-
 ### `packages/codegen/src/transpile/evaluate-for-derivation.ts::requireFromHere`
 
 ```text
 Resolves tsx from codegen's own dependencies, so the child process uses the
 same loader whatever the caller's working directory.
 ```
-
-### `packages/codegen/src/transpile/evaluate-for-derivation.ts::evaluateForDerivation`
-
-```text
-Evaluates a grammar package's `grammar.sittir.ts` in a fresh Node process
-(tsx loader, `evaluate-for-derivation.child.ts`), once without its bindings
-and once with them, and returns the derivation inputs of both. A fresh process because Node caches an ES module, and the JSON it
-imports, for the life of the process: evaluating the grammar in the regen
-process would pin the `resolutions.json` it imported, and the compile that
-follows the loop would read those stale resolutions.
-```
-
-### `packages/codegen/src/transpile/evaluate-for-derivation.child.ts::module`
-
-```text
-The child entry of `evaluateForDerivation`: evaluates the entry path given as
-its argument and writes the marker and the derivation inputs as JSON to
-stdout.
-```
-
-It evaluates the entry unbound, so the grammar hash, the upstream conflicts and
-the derived resolutions are those of the base grammar, in base names; a
-its grammar bindings rename them with the grammar after `grammar()`.
 
 ### `packages/codegen/src/transpile/conflict-resolutions-file.ts::conflictResolutionsPath`
 
@@ -1097,39 +975,6 @@ result (`reused` or `converged`), or `failed`, with the grammar whose section
 did not settle and its `stale` or `unresolvable` result. A bound section is
 never derived after a base section fails.
 
-### `packages/codegen/src/transpile/conflict-driver.ts::GeneratedGrammar`
-
-Which grammar a `tree-sitter generate` run builds: `base` (with
-`UNBOUND_ENV` set, the grammar bindings skipped) or `bound`.
-
-### `packages/codegen/src/transpile/conflict-driver.ts::generateWithDerivedConflicts`
-
-```text
-The conflict loop for one grammar package: read the saved resolutions
-(seeding them if missing), evaluate the grammar once in a fresh process for
-each section's hash, rule count and upstream context, then settle the resolutions
-(`settleConflictResolutions`). Each probe writes its candidate set and
-runs `tree-sitter generate --json-summary`; the last, clean
-run leaves the generate outputs in place. Saved resolutions that turn
-out stale, or a derivation that cannot converge, become the blocking
-`conflict-resolutions-stale` or `conflict-unresolvable` record
-(`compiler/diagnostics/conflicts.ts`): the driver writes it as the package's
-`grammar-diagnostics.json` and throws `GrammarDiagnosticError`, which stops
-the regen. A settled run logs both sections' counts.
-```
-
-### `packages/codegen/src/transpile/tree-sitter-cli.ts::runTreeSitterCliCapturing`
-
-```text
-Runs the tree-sitter CLI like `runTreeSitterCli`, with stdout passed through
-and stderr captured, and returns the exit status with stderr: the
-`--json-summary` report is written to stderr.
-```
-
-`env` is the variables the caller asks for (conflict derivation passes
-`UNBOUND_ENV` for a base generate); `treeSitterCliEnv` builds the run's
-environment from them.
-
 ### `packages/codegen/src/transpile/compile-parser.ts::buildParserWasm`
 
 Builds `.sittir/parser.wasm` from the sources the last `tree-sitter generate` left in `.sittir/src/`, after putting the external scanner in place (`syncExternalScanner`). It never runs `generate` itself: a regen calls it right after its own generate, so every regen rebuilds the wasm.
@@ -1176,8 +1021,9 @@ Throws `nodeFloorViolation`'s message for the `node` on `PATH`, which is what tr
 
 ### `packages/codegen/src/transpile/source-parser.ts::buildSourceParser`
 
-Builds the completed authored grammar layer for source-query validation. A temporary
-parser directory imports the grammar's canonical entry with `UNBOUND_ENV` selected
-only for generation, reusing its settled base conflicts and existing scanner/includes.
-The canonical WASM compiler builds that parser; its bytes are returned and temporary
-files are removed on success or failure. Bound parser artifacts are never rewritten.
+Builds the parser of the completed authored layer, layer 1, for source-query validation. It generates in a scratch entry (`scratch-entry.ts::withScratchEntry`) whose `grammar.js` re-exports layer 1, reusing the package's settled base conflicts and its existing scanner and includes. The canonical WASM compiler builds that parser; its bytes are returned, and the scratch directory is removed on success or failure. The package's own `.sittir/` parser artifacts are never rewritten.
+
+### `packages/codegen/src/transpile/scratch-entry.ts::withScratchEntry`
+
+Runs `run` in a scratch parser directory, `<tmp>/<grammar>/.sittir/`, whose `grammar.js` re-exports one of the package's layers by absolute file URL, beside a copy of the package's `tree-sitter.json`; the directory is removed after, whether `run` returns or throws. A `tree-sitter generate` there builds the chosen layer without touching the package's `.sittir/`, which holds the top layer's outputs. The layer's own relative imports, `resolutions.json` among them, resolve from the layer's file, so they are the package's.
+

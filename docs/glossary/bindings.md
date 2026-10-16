@@ -358,15 +358,35 @@ A feature `index.ts`'s marker and the files its star exports name (`vocabulary.t
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::parsed`
 
-A file's statements and the reading helpers over them. A file that does not parse cleanly is refused, never read from what the parser recovered: a recovered tree can turn a member into a different one (the TypeScript grammar does not parse an optional property named `abstract` without `readonly`). Every name is compared as written, so one spelled with an escape (`Flag` for `Flag`) is refused rather than read as a different name.
+A file's statements (`pinned-typescript.ts::parsedTypescript`) with the vocabulary's reading helpers over them. A file that does not parse cleanly is refused, never read from what the parser recovered: a recovered tree can turn a member into a different one (the TypeScript grammar does not parse an optional property named `abstract` without `readonly`). Every name is compared as written, so one spelled with an escape (`\u0046lag` for `Flag`) is refused rather than read as a different name.
+
+### `packages/codegen/src/bindings/pinned-typescript.ts::module`
+
+Codegen's reader of TypeScript sources, run in the pinned build's process: one parse of a file with the pinned TypeScript package, shared by every reader of a `.ts` input (the vocabulary's, `pinned-vocabulary.ts`, and the generated layer's exported strings).
+
+### `packages/codegen/src/bindings/pinned-typescript.ts::typescriptReader`
+
+The pinned TypeScript package's kinds and engine, with the pinned build they come from, loaded once per child and shared by every read; a failed load is forgotten so the next read tries again.
+
+### `packages/codegen/src/bindings/pinned-typescript.ts::TypescriptSource`
+
+The reading helpers over one parsed file: the kinds, the engine, a node's text as written (`spelled`: its source span, or an anonymous token's rendered text) and a node's span.
+
+### `packages/codegen/src/bindings/pinned-typescript.ts::parsedTypescript`
+
+A file's statements and the reading helpers over them. A file that does not parse cleanly is refused, never read from what the parser recovered.
+
+### `packages/codegen/src/bindings/pinned-typescript.ts::isNode`
+
+Whether a child is a node rather than an absent child or the kind id that stands for an anonymous token.
+
+### `packages/codegen/src/bindings/pinned-typescript.ts::exportedStringsInProcess`
+
+The string constants a module exports, by name: each `export const <name> = "<text>"`, its value read as the JSON string the generated layer prints. Other exports, and declarations whose value is not a double-quoted string, are not read.
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::identifier`
 
 A member's or namespace's name as written, refused unless it is a plain identifier (a keyword such as `static` included): a quoted or computed name would otherwise be read with its quotes or brackets as a different name.
-
-### `packages/codegen/src/bindings/pinned-vocabulary.ts::typescriptReader`
-
-The pinned TypeScript package's kinds and engine, with the pinned build they come from, loaded once per child and shared by every read; a failed load is forgotten so the next read tries again.
 
 ### `packages/codegen/src/bindings/pinned-vocabulary.ts::collect`
 
@@ -408,10 +428,6 @@ The names an interface's `extends` clause gives, each without its type arguments
 
 The file a star export (`export * from './x.ts'`) names, without its quotes.
 
-### `packages/codegen/src/bindings/pinned-vocabulary.ts::isNode`
-
-Whether a child is a node rather than an absent child or the kind id that stands for an anonymous token.
-
 ### `packages/codegen/src/bindings/hash.ts::bindingsSourceHash`
 
 The SHA-256 of a `bindings.scm` and every vocabulary source the reader reads (`vocabulary.ts::vocabularySources`), each keyed by its path relative to the vocabulary directory in posix form, in path order, over their bytes. An edit to, a move of or a deletion of any of them marks the grammar bindings stale; the generated `augment.ts` and `features/index.ts` are not read, so not hashed. Nothing is parsed, so the hash is checked without the scm parser.
@@ -430,7 +446,7 @@ Generation refused over a grammar's committed grammar bindings: missing, or deri
 
 ### `packages/codegen/src/bindings/hash.ts::assertBindingsFresh`
 
-Codegen's check of a grammar's committed `grammar.bindings.ts`: a grammar with a `bindings.scm` must commit the module, and the hash the module's `bindings({ hash, … })` carries must equal the hash of `bindings.scm` and the vocabulary now. Otherwise it throws `StaleBindingsError` naming `REGENERATE_BINDINGS_COMMAND`. A grammar with no `bindings.scm` passes. It runs whether the grammar bindings are on or off, since the facts codegen reads come from `bindings.scm` itself and the grammar bindings must agree with them. `compileGrammar` runs it after its diagnostic gate; the base grammar's own staleness is the generated-output freshness check's.
+Codegen's check of a grammar's generated layer: a grammar with a `bindings.scm` must commit `grammar.bindings.ts`, and the hash the layer exports must equal the hash of `bindings.scm` and the vocabulary now. Otherwise it throws `StaleBindingsError` naming `REGENERATE_BINDINGS_COMMAND`; a layer that exports no hash is reported as missing its bindings. A grammar with no `bindings.scm` passes. `compileGrammar` runs it before it evaluates either layer, with the hash `module.ts::loadBindingsHash` reads, so a stale layer is reported as stale and never evaluated. Compiling layer 1 alone skips it, since that is the compile the inventory regenerates the layer from. The base grammar's own staleness is the generated-output freshness check's.
 
 ### `packages/codegen/src/bindings/grammar-bindings.ts::GrammarBindingsEdit`
 
@@ -564,15 +580,15 @@ mode.
 
 ### `packages/codegen/src/bindings/module.ts::bindingsModulePath`
 
-A grammar's `grammar.bindings.ts`, beside its `grammar.sittir.ts`.
+Where `bindings-inventory --write` writes a grammar's generated layer: `grammars.ts::BINDINGS_MODULE` in the grammar's package, beside its `grammar.sittir.ts`.
 
 ### `packages/codegen/src/bindings/module.ts::printBindingsModule`
 
-The generated `grammar.bindings.ts`: its default export is the grammar bindings with the hash of the sources it was derived from (`bindings({ hash, patches, renames, leads, splits })`, the leads sorted by list and each written as `lead(…)` over its `match(…)` tree, `matchCall`), and nothing else; codegen reads the facts from `bindings.scm` through the pinned reader, never from the module. It imports only the authoring helpers it calls, and is erasable syntax only, since tree-sitter's run of the grammar evaluates it too. `grammar.sittir.ts` passes them as `bindings` only while the grammar bindings are on.
+The generated `grammar.bindings.ts`, the layer above `grammar.sittir.ts`. It exports the hash of the sources it was derived from (`hash`, which `loadBindingsHash` reads) and the kind renames as data (`renames`, each kind to its vocabulary name, which no layer applies), and its default export is `grammar(enrich(sittir), wire({ edits }))` over the layer it imports (`editEntries`). The splits are computed and reported by the inventory but not printed. It imports only the authoring helpers it calls, and is erasable syntax only, since tree-sitter's run of the grammar evaluates it too. Codegen reads the binding facts from `bindings.scm` through the pinned reader, never from this module.
 
-### `packages/codegen/src/bindings/module.ts::loadBindingsModule`
+### `packages/codegen/src/bindings/module.ts::loadBindingsHash`
 
-A package's committed `grammar.bindings.ts`, imported outside the grammar's evaluation (with the DSL globals its authoring helpers call installed, `withDslGlobals`), or `undefined` when the package commits none. `compileGrammar` reads its hash for `assertBindingsFresh`.
+The hash a package's generated layer exports, read through the pinned TypeScript reader (the `exportedStrings` mode, `pinned-typescript.ts::exportedStringsInProcess`) without evaluating the layer; `undefined` when the package commits no layer or the layer exports no hash. Reading the file rather than importing it keeps `compileGrammar` from evaluating a stale layer before `hash.ts::assertBindingsFresh` reports it.
 
 ### `packages/codegen/src/bindings/module.ts::editCall`
 
@@ -582,17 +598,21 @@ An `GrammarBindingsEdit` as the authoring call that makes it.
 
 One rule's patch set as an object of patch paths to authoring calls.
 
-### `packages/codegen/src/bindings/module.ts::list`
+### `packages/codegen/src/bindings/module.ts::leadSet`
 
-Printed entries as an array, `[]` when there are none.
+A lead as its edits entry, `{ ".": lead(item, field, …admits) }`: the set that applies at the list kind itself. Its names are the base's; the layer pass reads them through the layer's own field edits (`dsl/verbs/lead.ts::applyLeads`).
 
-### `packages/codegen/src/bindings/module.ts::BINDINGS_MODULE`
+### `packages/codegen/src/bindings/module.ts::editEntries`
 
-The file name of a grammar's committed grammar bindings, beside its `grammar.sittir.ts`.
+The generated layer's `edits` object: each kind's patch sets (`patchSet`) and then one set per lead on it (`leadSet`), a single set bare and several as an array. Kinds follow the derived patches' order, and a kind with only leads follows them; `{}` when there is nothing to edit.
+
+### `packages/codegen/src/bindings/module.ts::renamesData`
+
+The kind renames as an object literal, each kind to its vocabulary name; `{}` when there are none.
 
 ### `packages/codegen/src/bindings/module.ts::q`
 
-A string as a quoted TypeScript literal, for the emitted grammar-bindings module.
+A string as a quoted TypeScript literal, for the generated layer.
 
 ### `packages/codegen/src/bindings/flags.ts::FLAGS_PATH`
 

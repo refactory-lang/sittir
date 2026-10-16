@@ -781,6 +781,30 @@ package's `dir`, so a package outside the repo (a bootstrap in a temp directory)
 A grammar package's `.sittir/` directory: the transpiled grammar, tree-sitter's output and the persisted
 diagnostics.
 
+### `packages/codegen/src/grammars.ts::GRAMMAR_ENTRY`
+
+The file name of a package's authored layer, layer 1, and the marker that makes a directory under `packages/` a grammar package (`grammarPackages`).
+
+### `packages/codegen/src/grammars.ts::BINDINGS_MODULE`
+
+The file name of a package's generated layer, beside its `grammar.sittir.ts`. `bindings-inventory --write` writes it from `bindings.scm` and the vocabulary (`bindings/module.ts::printBindingsModule`); where it exists it is the package's top layer.
+
+### `packages/codegen/src/grammars.ts::GRAMMAR_LAYERS`
+
+The layers a package's grammar is evaluated at: `sittir`, the authored layer 1, and `top`, the layer tree-sitter and codegen build from. Each names one file (`layerPath`), so choosing a layer is choosing the file to import; nothing in the environment changes what a file evaluates to.
+
+### `packages/codegen/src/grammars.ts::GrammarLayer`
+
+One of `GRAMMAR_LAYERS`.
+
+### `packages/codegen/src/grammars.ts::topLayerPath`
+
+A package's top layer: its generated `grammar.bindings.ts` where it commits one, and its `grammar.sittir.ts` otherwise. `.sittir/grammar.js` re-exports it (`transpile/transpile-overrides.ts::transpileOverrides`), and codegen evaluates it unless the caller asks for layer 1.
+
+### `packages/codegen/src/grammars.ts::layerPath`
+
+The file of one of a package's layers: `grammar.sittir.ts` for `sittir`, `topLayerPath` for `top`. Layer 1 imports nothing above it, so evaluating it never loads the generated layer: a stale or broken generated layer cannot stop the inventory that regenerates it from layer 1.
+
 ### `packages/codegen/src/grammars.ts::nativeBindingDir`
 
 Where a grammar's native binding is built and loaded from: `packages/<name>/native`, inside the grammar package, because that package is what ships the binaries. It holds the napi loader (`NATIVE_LOADER`), its typings (`NATIVE_TYPINGS`) and one `<nativeBinaryName>.<platform suffix>.node` per built target. The crate (`nativeCrateDir`) holds only Rust sources and the private manifest napi reads its settings from. `nativeBindingRelDir` is the same path relative to the repo root, for messages and manifests. Every reader of the binding — the build script, the emitted `backend.ts`, the generated-file manifest, the freshness and staleness checks, the pack check — takes the location from here.

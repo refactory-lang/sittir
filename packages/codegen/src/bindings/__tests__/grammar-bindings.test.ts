@@ -2,11 +2,25 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
+import { evaluateSittirGrammar, writeSittirGrammarPackage } from '../../compiler/__tests__/_sittir-grammar.ts';
+import { evaluate } from '../../compiler/evaluate.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
-import { lead } from '../../dsl/bind.ts';
+import { NO_FILE_TYPES } from '../../compiler/upstream-file-types.ts';
+import { lead, split } from '../../dsl/bind.ts';
 import { match } from '../../dsl/primitives/narrow.ts';
-import { type BindingFacts, type ClaimFact, type MemberRoute, type ModelNode, type SlotModel, deriveGrammarBindings, loadBindingsModule, printBindingsModule } from '../index.ts';
+import { BINDINGS_MODULE, layerPath } from '../../grammars.ts';
+import {
+	type BindingFacts,
+	type ClaimFact,
+	type GrammarBindings,
+	type MemberRoute,
+	type ModelNode,
+	type SlotModel,
+	deriveGrammarBindings,
+	loadBindingsHash,
+	printBindingsModule,
+	REGENERATE_BINDINGS_COMMAND
+} from '../index.ts';
 
 const claim = (vocab: string, kind: string, extra: Partial<ClaimFact> = {}): ClaimFact => ({
 	vocab,
@@ -52,11 +66,12 @@ const VOCABULARY = new Map([
 ]);
 
 let dir: string;
+let baseModule: string;
 let base: RawGrammar;
 
 beforeAll(async () => {
 	dir = mkdtempSync(join(tmpdir(), 'bindings-derive-'));
-	const baseModule = join(dir, 'base.mjs');
+	baseModule = join(dir, 'base.mjs');
 	writeFileSync(
 		baseModule,
 		`export default grammar({
@@ -289,8 +304,39 @@ describe('deriveGrammarBindings', () => {
 	});
 });
 
+const EDITS: GrammarBindings['patches'] = new Map([
+	['let_item', [[{ path: '1', edit: { field: 'name' } }]]],
+	['call', [[{ path: '0/0', edit: { alias: { from: 'identifier', to: 'callee' } } }]]]
+]);
+
 describe('printBindingsModule', () => {
-	it('prints the grammar bindings with the hash of the sources it was derived from, and nothing else', () => {
+	it('prints a layer over grammar.sittir.ts: the hash and the renames as data, then each edit and lead as an entry', () => {
+		const text = printBindingsModule({ patches: EDITS, renames: { let_item: 'variable_declaration' }, leads: LEADS, splits: [] }, 'h');
+		expect(text).toBe(`// Generated from bindings.scm and the vocabulary by \`${REGENERATE_BINDINGS_COMMAND}\`. Do not edit.
+/// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
+import sittir from './grammar.sittir.ts';
+import { alias, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
+
+export const hash = "h";
+
+export const renames = {
+	let_item: "variable_declaration"
+};
+
+export default grammar(
+	enrich(sittir),
+	wire({
+		edits: {
+			let_item: { "1": field("name") },
+			call: { "0/0": alias(sym("identifier"), sym("callee")) },
+			parameters_elements: { ".": lead("item", "receiver", match("required_parameter", { "pattern": [match("this")] }, "this_parameter"), match("attributed_parameter", [match("self_parameter")])) }
+		}
+	})
+);
+`);
+	});
+
+	it('prints the derived bindings with the hash of the sources they came from, and nothing else', () => {
 		const { bindings } = deriveGrammarBindings({
 			file: FILE,
 			facts: FACTS,
@@ -300,51 +346,55 @@ describe('printBindingsModule', () => {
 			model: NO_MODEL
 		});
 		const text = printBindingsModule(bindings, 'h');
-		expect(text).toContain('export default bindings({\n\thash: "h",');
-		expect(text).toContain('rename("let_item", "variable_declaration")');
-		expect(text).toContain('let_item: { "1": field("name") }');
+		expect(text).toContain('export const hash = "h";');
+		expect(text).toContain('\tlet_item: "variable_declaration"');
+		expect(text).toContain('\t\t\tlet_item: { "1": field("name") }');
 		expect(text).not.toContain('facts');
 	});
 
-	it('prints no leads, and imports neither builder, where none are derived', () => {
-		const { bindings } = deriveGrammarBindings({
-			file: FILE,
-			facts: FACTS,
-			base,
-			vocabMembers: VOCABULARY,
-			routes: ROUTES,
-			model: NO_MODEL
-		});
-		const text = printBindingsModule(bindings, 'h');
-		expect(text).toContain('\tleads: [],\n\tsplits: ');
-		expect(text).not.toMatch(/\b(lead|match)\b,/);
+	it('computes splits but prints none, and imports lead and match only beside a lead', () => {
+		const text = printBindingsModule(
+			{ patches: new Map([['let_item', [[{ path: '1', edit: { field: 'name' } }]]]]), renames: {}, leads: [], splits: [split('let_item', 'let_statement', { within: ['source_file'], containers: [] })] },
+			'h'
+		);
+		expect(text).toContain("import { enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';");
+		expect(text).toContain('export const renames = {};');
+		expect(text).not.toMatch(/split|let_statement/);
 	});
 
-	it('prints each lead with its match tree, beside the renames and splits', () => {
-		const text = printBindingsModule({ patches: new Map(), renames: {}, leads: LEADS, splits: [] }, 'h');
-		expect(text).toContain(
-			'\tleads: [\n\t\tlead("parameters_elements", "item", "receiver", match("required_parameter", { "pattern": [match("this")] }, "this_parameter"), match("attributed_parameter", [match("self_parameter")]))\n\t],'
-		);
-		expect(text).toMatch(/import \{ bindings, lead, match \}/);
+	it('gives a kind its patch sets first, then one set per lead on it', () => {
+		const text = printBindingsModule({ patches: new Map([['parameters_elements', [[{ path: '0', edit: { field: 'item' } }]]]]), renames: {}, leads: LEADS, splits: [] }, 'h');
+		expect(text).toContain('\t\t\tparameters_elements: [{ "0": field("item") }, { ".": lead("item", "receiver", ');
 	});
 });
 
-describe('loadBindingsModule', () => {
-	it("reads committed grammar bindings, alias patches included, outside the grammar's evaluation", async () => {
+describe('loadBindingsHash', () => {
+	it('reads the hash a printed layer exports, without evaluating the layer', async () => {
 		const pkg = mkdtempSync(join(dir, 'pkg-'));
-		const bindings = { patches: new Map([['call', [[{ path: '0/0', edit: { alias: { from: 'identifier', to: 'callee' } } }]]]]), renames: {}, leads: [], splits: [] };
-		writeFileSync(join(pkg, 'grammar.bindings.ts'), printBindingsModule(bindings, 'h').replace("'../codegen/src/dsl/dsl-authoring.ts'", JSON.stringify(join(__dirname, '../../dsl/dsl-authoring.ts'))).replace(/^\/\/\/ <reference.*\n/m, ''));
-		expect((await loadBindingsModule(pkg))?.hash).toBe('h');
+		writeFileSync(join(pkg, BINDINGS_MODULE), printBindingsModule({ patches: EDITS, renames: {}, leads: LEADS, splits: [] }, 'h'));
+		expect(await loadBindingsHash(pkg)).toBe('h');
 	});
 
-	it('reads the printed leads back through the builders', async () => {
+	it('finds no hash in a layer that exports none, nor where no layer is committed', async () => {
 		const pkg = mkdtempSync(join(dir, 'pkg-'));
-		const text = printBindingsModule({ patches: new Map(), renames: {}, leads: LEADS, splits: [] }, 'h');
-		writeFileSync(join(pkg, 'grammar.bindings.ts'), text.replace("'../codegen/src/dsl/dsl-authoring.ts'", JSON.stringify(join(__dirname, '../../dsl/dsl-authoring.ts'))).replace(/^\/\/\/ <reference.*\n/m, ''));
-		expect((await loadBindingsModule(pkg))?.leads).toEqual(LEADS);
+		writeFileSync(join(pkg, BINDINGS_MODULE), 'export const renames = {};\n');
+		expect(await loadBindingsHash(pkg)).toBeUndefined();
+		expect(await loadBindingsHash(mkdtempSync(join(dir, 'empty-')))).toBeUndefined();
 	});
+});
 
-	it('finds no grammar bindings where none are committed', async () => {
-		expect(await loadBindingsModule(mkdtempSync(join(dir, 'empty-')))).toBeUndefined();
-	});
+describe('the printed layer', () => {
+	it('evaluates over the layer beside it, with its field and alias edits applied', async () => {
+		const pkg = mkdtempSync(join(dir, 'pkg-'));
+		writeSittirGrammarPackage(pkg, baseModule, 'bindtest');
+		const printed = printBindingsModule({ patches: EDITS, renames: {}, leads: [], splits: [] }, 'h');
+		writeFileSync(
+			join(pkg, BINDINGS_MODULE),
+			printed.replace("'../codegen/src/dsl/dsl-authoring.ts'", JSON.stringify(join(__dirname, '../../dsl/dsl-authoring.ts'))).replace(/^\/\/\/ <reference.*\n/m, '')
+		);
+		const raw = await evaluate(layerPath({ dir: pkg }, 'top'), NO_FILE_TYPES);
+		expect(JSON.stringify(raw.rules.let_item)).toContain('"name":"name"');
+		expect(JSON.stringify(raw.rules.let_item)).not.toContain('"name":"left"');
+		expect(JSON.stringify(raw.rules.call)).toContain('"value":"callee"');
+	}, 60_000);
 });

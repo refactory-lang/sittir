@@ -1,24 +1,16 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
+import { evaluateSittirGrammar, writeSittirGrammarPackage } from '../../compiler/__tests__/_sittir-grammar.ts';
 import { evaluateForDerivation } from '../../transpile/evaluate-for-derivation.ts';
-import { EMPTY_CONFLICT_RESOLUTIONS } from '../conflict-resolutions.ts';
 import { baseNamesOf, bindGrammar, boundNameOf, lead } from '../bind.ts';
 import { match } from '../primitives/narrow.ts';
 import { boundFieldNameOf } from '../verbs/effects.ts';
 
-const DSL = JSON.stringify(join(__dirname, '../index.ts'));
-
-function grammarPackageWith(config: string): { dir: string } {
+function grammarPackageWith(bindings?: string): { dir: string } {
 	const pkg = mkdtempSync(join(dir, 'pkg-'));
-	mkdirSync(join(pkg, '.sittir'));
-	writeFileSync(join(pkg, '.sittir', 'resolutions.json'), JSON.stringify(EMPTY_CONFLICT_RESOLUTIONS));
-	writeFileSync(
-		join(pkg, 'grammar.sittir.ts'),
-		`import base from ${JSON.stringify(baseModule)};\nimport resolutions from './.sittir/resolutions.json' with { type: 'json' };\nimport { sittirGrammar, bindings, rename, field, alias } from ${DSL};\nexport default sittirGrammar(base, { resolutions, name: 'bindtest', ${config} });\n`
-	);
+	writeSittirGrammarPackage(pkg, baseModule, 'bindtest', '', undefined, bindings === undefined ? {} : { bindings });
 	return { dir: pkg };
 }
 
@@ -47,13 +39,11 @@ beforeAll(() => {
 
 afterAll(() => rmSync(dir, { recursive: true, force: true }));
 
-const BINDINGS = `bindings: bindings({
-	patches: {
-		let_item: { 1: field('name'), '2/0/1': field('annotation') },
-		call: { '0/0': alias(sym('identifier'), sym('callee')) }
-	},
-	renames: [rename('let_item', 'binding')]
-})`;
+const BINDINGS = `edits: {
+	let_item: { 1: field('name'), '2/0/1': field('annotation') },
+	call: { '0/0': alias(sym('identifier'), sym('callee')) }
+}`;
+const BOUND = { bindings: BINDINGS, renames: { let_item: 'binding' } };
 
 describe('lead and match', () => {
 	it('build a lead entry: the list, its item field, the lead field and what the lead admits', () => {
@@ -147,9 +137,9 @@ describe('baseNamesOf', () => {
 	});
 });
 
-describe('grammar bindings on sittirGrammar', () => {
-	it('applies binding patches while preserving upstream parser kind names', async () => {
-		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', BINDINGS);
+describe('grammar bindings as the layer above grammar.sittir.ts', () => {
+	it('applies its edits and keeps the upstream kind names, its renames being data', async () => {
+		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', '', undefined, BOUND);
 		expect(Object.keys(raw.rules)).toContain('let_item');
 		expect(Object.keys(raw.rules)).not.toContain('binding');
 		const text = JSON.stringify(raw.rules.let_item);
@@ -164,7 +154,7 @@ describe('grammar bindings on sittirGrammar', () => {
 
 	it('preserves parser names in each reparse host, priority entry and gated host', async () => {
 		const hosts = `reparseHosts: { hosts: { let_item: '$r', call: '$r' }, priority: ['_item', 'let_item'], gated: ['let_item'] }`;
-		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', `${hosts}, ${BINDINGS}`);
+		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', hosts, undefined, BOUND);
 		expect(raw.reparseHosts).toEqual({
 			hosts: { let_item: '$r', call: '$r' },
 			priority: ['_item', 'let_item'],
@@ -172,29 +162,39 @@ describe('grammar bindings on sittirGrammar', () => {
 		});
 	}, 120_000);
 
-	it('evaluates unbound to the grammar without its grammar bindings', async () => {
-		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', BINDINGS, undefined, { unbound: true });
+	it('leaves layer 1, evaluated alone, without the edits of the layer above it', async () => {
+		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', '', undefined, { ...BOUND, layer: 'sittir' });
 		expect(Object.keys(raw.rules)).toContain('let_item');
 		expect(Object.keys(raw.rules)).not.toContain('binding');
 		expect(JSON.stringify(raw.rules.let_item)).toContain('"name":"left"');
 		expect(JSON.stringify(raw.rules.call)).not.toContain('callee');
 	}, 120_000);
 
-	it('refuses a patch alias whose target names a rule of the grammar', async () => {
-		await expect(
-			evaluateSittirGrammar(baseModule, 'bindtest', `bindings: bindings({ patches: { call: { '0/0': alias(sym('identifier'), sym('type')) } } })`)
-		).rejects.toThrow(/alias 'identifier' → 'type'.*already names/);
+	it('refuses an alias whose target its base already names, as a blocking diagnostic of the layer', async () => {
+		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', '', undefined, { bindings: "edits: { call: { '0/0': alias(sym('identifier'), sym('type')) } }" });
+		expect(raw.layerDiagnostics).toContainEqual(
+			expect.objectContaining({ code: 'alias-target-invalid', canProceed: false, ownerKind: 'call', message: expect.stringMatching(/alias 'identifier' → 'type'.*already names/) })
+		);
+	}, 120_000);
+
+	it('refuses an alias that flips hiddenness in a layer above the first, and allows both in layer 1', async () => {
+		const flip = "edits: { call: { '0/0': alias(sym('identifier'), sym('_callee')) } }";
+		const above = await evaluateSittirGrammar(baseModule, 'bindtest', '', undefined, { bindings: flip });
+		expect(above.layerDiagnostics).toContainEqual(expect.objectContaining({ code: 'alias-target-invalid', message: expect.stringMatching(/flips hiddenness/) }));
+		const first = await evaluateSittirGrammar(baseModule, 'bindtest', flip);
+		expect(first.layerDiagnostics ?? []).not.toContainEqual(expect.objectContaining({ code: 'alias-target-invalid' }));
+		expect(JSON.stringify(first.rules.call)).toContain('"value":"_callee"');
 	}, 120_000);
 
 	it('derives the base conflicts from the grammar without its grammar bindings', () => {
 		const bound = evaluateForDerivation(grammarPackageWith(BINDINGS));
-		const unbound = evaluateForDerivation(grammarPackageWith(''));
+		const unbound = evaluateForDerivation(grammarPackageWith());
 		expect(bound.base.grammarHash).toBe(unbound.base.grammarHash);
 	}, 120_000);
 
 	it('derives the bound conflicts from the bound grammar, keyed by its own hash and chained to its unbound names', () => {
 		const bound = evaluateForDerivation(grammarPackageWith(BINDINGS));
-		const unbound = evaluateForDerivation(grammarPackageWith(''));
+		const unbound = evaluateForDerivation(grammarPackageWith());
 		expect(unbound.bound.grammarHash).toBe(unbound.base.grammarHash);
 		expect(bound.bound.grammarHash).not.toBe(unbound.bound.grammarHash);
 		expect(bound.bound.baseNames).toEqual({});
@@ -202,7 +202,7 @@ describe('grammar bindings on sittirGrammar', () => {
 		expect(bound.base.baseNames).toEqual({});
 	}, 120_000);
 
-	it('applies bound conflicts after bindings while preserving upstream base names', async () => {
+	it('applies the bound conflicts after the layer-1 conflicts, keeping the upstream names', async () => {
 		const set = (symbols: string[]) => ({
 			resolution: { kind: 'AddConflict' as const, symbols },
 			step: 'default' as const,
@@ -214,7 +214,7 @@ describe('grammar bindings on sittirGrammar', () => {
 			resolutions: [set(['let_item', 'call'])],
 			bound: { grammarHash: '', resolutions: [set(['let_item', 'identifier'])] }
 		};
-		const bound = await evaluateSittirGrammar(baseModule, 'bindtest', BINDINGS, resolutions);
+		const bound = await evaluateSittirGrammar(baseModule, 'bindtest', '', resolutions, BOUND);
 		expect(bound.conflicts).toEqual([
 			['let_item', 'call'],
 			['let_item', 'identifier']
@@ -222,7 +222,7 @@ describe('grammar bindings on sittirGrammar', () => {
 		expect(bound.derivationRecords?.boundResolutions.map((entry) => entry.resolution.symbols)).toEqual([
 			['let_item', 'identifier']
 		]);
-		const unbound = await evaluateSittirGrammar(baseModule, 'bindtest', BINDINGS, resolutions, { unbound: true });
+		const unbound = await evaluateSittirGrammar(baseModule, 'bindtest', '', resolutions, { ...BOUND, layer: 'sittir' });
 		expect(unbound.conflicts).toEqual([['let_item', 'call']]);
 		expect(unbound.derivationRecords?.boundResolutions).toEqual([]);
 	}, 120_000);
@@ -232,11 +232,8 @@ describe('grammar bindings on sittirGrammar', () => {
 		let_item: { 'left:/before': preference('tight'), '";"/before': preference('tight') },
 		_labels: { 'identifier/x:/separator': 'gap/separator' }
 	}`;
-		const bindingsOption = `bindings: bindings({
-		patches: { let_item: { 1: field('name'), 3: field('terminator') }, call: { '0/0': alias(sym('identifier'), sym('callee')) } },
-		renames: [rename('let_item', 'binding')]
-	})`;
-		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', `${options}, ${bindingsOption}`);
+		const bindings = `edits: { let_item: { 1: field('name'), 3: field('terminator') }, call: { '0/0': alias(sym('identifier'), sym('callee')) } }`;
+		const raw = await evaluateSittirGrammar(baseModule, 'bindtest', options, undefined, { bindings, renames: { let_item: 'binding' } });
 		const block = raw.options as Record<string, Record<string, unknown>>;
 		expect(Object.keys(block.let_item ?? {}).sort()).toEqual(['name:/before', 'terminator:/before']);
 		expect(Object.keys(block._labels ?? {})).toEqual(['callee/x:/separator']);

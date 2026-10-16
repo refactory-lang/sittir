@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { bindingsModulePath } from '@sittir/codegen/bindings';
-import { REPO_ROOT, allGrammars, grammarPackage, type GrammarName } from '@sittir/codegen/grammars';
+import { GRAMMAR_LAYERS, REPO_ROOT, allGrammars, grammarPackage, layerPath, type GrammarLayer, type GrammarName } from '@sittir/codegen/grammars';
 import { invoke } from '../codegen-surface.ts';
 
 export interface GateManifest {
@@ -15,10 +15,6 @@ export interface GateException {
 }
 
 export type GateRevision = string | 'worktree';
-
-export type GateLayer = 'sittir' | 'top';
-
-export const GATE_LAYERS: readonly GateLayer[] = ['sittir', 'top'];
 
 export interface GateDifference {
 	readonly path: string;
@@ -130,26 +126,25 @@ export function parseGateException(spec: string): GateException {
 	return { path: spec.slice(0, colon), dropJsonKeys: spec.slice(colon + 1).split(',').filter((key) => key !== '') };
 }
 
-export async function evaluatedGrammarOf(grammar: GrammarName, layer: GateLayer): Promise<unknown> {
-	const entry = await invoke('resolveGrammar', 'packageEntryPath', grammarPackage(grammar));
-	return layer === 'sittir' ? invoke('evaluate', 'evaluateUnboundDsl', entry) : invoke('evaluate', 'evaluateDsl', entry);
+export async function evaluatedGrammarOf(grammar: GrammarName, layer: GrammarLayer): Promise<unknown> {
+	return invoke('evaluate', 'evaluateDsl', layerPath(grammarPackage(grammar), layer));
 }
 
 export async function snapshotOf(evaluated: unknown): Promise<string> {
 	return JSON.stringify(await invoke('evaluateForDerivation', 'canonical', evaluated), null, 2) + '\n';
 }
 
-export async function evaluatedSnapshot(grammar: GrammarName, layer: GateLayer): Promise<string> {
+export async function evaluatedSnapshot(grammar: GrammarName, layer: GrammarLayer): Promise<string> {
 	return snapshotOf(await evaluatedGrammarOf(grammar, layer));
 }
 
-const snapshotFile = (dir: string, grammar: GrammarName, layer: GateLayer): string => join(dir, `${grammar}.${layer}.json`);
+const snapshotFile = (dir: string, grammar: GrammarName, layer: GrammarLayer): string => join(dir, `${grammar}.${layer}.json`);
 
 export async function writeSnapshots(dir: string): Promise<readonly string[]> {
 	mkdirSync(dir, { recursive: true });
 	const written: string[] = [];
 	for (const grammar of allGrammars()) {
-		for (const layer of GATE_LAYERS) {
+		for (const layer of GRAMMAR_LAYERS) {
 			const file = snapshotFile(dir, grammar, layer);
 			writeFileSync(file, await evaluatedSnapshot(grammar, layer));
 			written.push(file);
@@ -161,7 +156,7 @@ export async function writeSnapshots(dir: string): Promise<readonly string[]> {
 export async function checkSnapshots(dir: string): Promise<readonly string[]> {
 	const differing: string[] = [];
 	for (const grammar of allGrammars()) {
-		for (const layer of GATE_LAYERS) {
+		for (const layer of GRAMMAR_LAYERS) {
 			const file = snapshotFile(dir, grammar, layer);
 			if (!existsSync(file) || readFileSync(file, 'utf8') !== (await evaluatedSnapshot(grammar, layer))) differing.push(file);
 		}

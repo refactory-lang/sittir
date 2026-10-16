@@ -16,6 +16,7 @@ export interface PinnedReaderModes {
 	readonly flagsModule: { readonly input: readonly FlagMember[]; readonly output: string };
 	readonly vocabularyDeclared: { readonly input: string; readonly output: Declared[] };
 	readonly vocabularyFeatureIndex: { readonly input: string; readonly output: FeatureIndex };
+	readonly exportedStrings: { readonly input: string; readonly output: Readonly<Record<string, string>> };
 }
 
 export type PinnedReaderMode = keyof PinnedReaderModes;

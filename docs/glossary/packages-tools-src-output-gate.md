@@ -16,14 +16,6 @@ A generated file that a gate allows to differ. With no keys, the file may change
 
 The tree a gate reads: a git revision, or `'worktree'` for the checkout's files as they are on disk, tracked or not.
 
-### `packages/tools/src/output-gate/index.ts::GateLayer`
-
-The layer a snapshot evaluates: `sittir` is the authored layer alone, and `top` is the grammar that `.sittir/grammar.js` exports. For a grammar with no generated bindings layer the two are the same grammar.
-
-### `packages/tools/src/output-gate/index.ts::GATE_LAYERS`
-
-Both layers, in the order snapshots are written.
-
 ### `packages/tools/src/output-gate/index.ts::GateDifference`
 
 One file that breaks a gate: `changed` when its blob differs, `missing` when the manifest lists it and the tree lacks it, `added` when the tree has a generated file the manifest does not list.
@@ -68,7 +60,7 @@ Reads a command-line exception: `path` for a whole file, or `path:key,key` for t
 
 ### `packages/tools/src/output-gate/index.ts::evaluatedGrammarOf`
 
-A grammar's evaluated grammar at one layer, as sittir's `evaluate()` returns it.
+A grammar's evaluated grammar at one layer, as sittir's `evaluateDsl` returns it for the layer's file (`@sittir/codegen/grammars`' `layerPath`). For a grammar with no generated layer, both layers are its `grammar.sittir.ts`.
 
 ### `packages/tools/src/output-gate/index.ts::snapshotOf`
 
@@ -80,7 +72,7 @@ The snapshot of one grammar at one layer.
 
 ### `packages/tools/src/output-gate/index.ts::writeSnapshots`
 
-Writes `<grammar>.<layer>.json` for every grammar and both layers into a directory.
+Writes `<grammar>.<layer>.json` for every grammar and both layers (`GRAMMAR_LAYERS`) into a directory.
 
 ### `packages/tools/src/output-gate/index.ts::checkSnapshots`
 

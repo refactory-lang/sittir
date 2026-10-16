@@ -778,7 +778,7 @@ Why a conflict derivation stopped without converging, as `transpile/derive-confl
 
 ### `packages/codegen/src/compiler/diagnostics/conflicts.ts::conflictRecords`
 
-The evaluate-time conflict records of a grammar built by `sittirGrammar`, from its derivation records:
+The evaluate-time conflict records of a grammar a layer pass built, from its derivation records:
 
 - one informational `conflict-resolution` per resolution the grammar imported, base then bound, with the resolution, the policy step, the source chains and the conflict it settled, so every conflict a grammar declares has a reviewable reason;
 - one informational `conflict-unnecessary-upstream` per conflict set upstream declared that no resolution's upstream sources (`dsl/conflict-resolutions.ts::upstreamSourcesOf`) equal, base or bound: the reshaped grammar never reports it;

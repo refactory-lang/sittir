@@ -15,6 +15,9 @@ export interface GrammarPackage {
 export const REPO_ROOT = fileURLToPath(new URL('../../..', import.meta.url)).replace(/\/$/, '');
 export const PACKAGES_DIR = join(REPO_ROOT, 'packages');
 export const GRAMMAR_ENTRY = 'grammar.sittir.ts';
+export const BINDINGS_MODULE = 'grammar.bindings.ts';
+export const GRAMMAR_LAYERS = ['sittir', 'top'] as const;
+export type GrammarLayer = (typeof GRAMMAR_LAYERS)[number];
 export const GRAMMAR_TSCONFIG = 'tsconfig.grammar-sittir.json';
 export const GRAMMAR_TYPECHECK_SCRIPT = 'type-check:grammar';
 export const GRAMMAR_TYPECHECK_CEILING = 'grammar-typecheck-ceiling.json';
@@ -68,6 +71,15 @@ export function grammarPackage(name: GrammarName, dir: string = grammarPackageDi
 
 export function sittirDirOf(pkg: Pick<GrammarPackage, 'dir'>): string {
 	return join(pkg.dir, '.sittir');
+}
+
+export function topLayerPath(pkg: Pick<GrammarPackage, 'dir'>): string {
+	const generated = join(pkg.dir, BINDINGS_MODULE);
+	return existsSync(generated) ? generated : join(pkg.dir, GRAMMAR_ENTRY);
+}
+
+export function layerPath(pkg: Pick<GrammarPackage, 'dir'>, layer: GrammarLayer): string {
+	return layer === 'top' ? topLayerPath(pkg) : join(pkg.dir, GRAMMAR_ENTRY);
 }
 
 export function grammarDisplayName(name: GrammarName): string {

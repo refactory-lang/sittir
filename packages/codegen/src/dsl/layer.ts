@@ -35,6 +35,7 @@ import {
 	symbolNamesOf,
 	wireImpl,
 	type EditsCheck,
+	type IsShaped,
 	type OptionsCheck,
 	type WireConfig,
 	type WireContext,
@@ -166,7 +167,7 @@ function completePendingBase(pending: PendingBase, completed: GrammarResult): vo
 	copyProperties(pending, completed, new Set(['grammar']));
 }
 
-type BaseEditsCheck<B, P> = B extends GrammarJson ? EditsCheck<EnrichedGrammar<B>, P> : unknown;
+type BaseEditsCheck<B, P> = IsShaped<B> extends true ? EditsCheck<EnrichedGrammar<B>, P> : unknown;
 
 type BaseOptionsCheck<B, O> = B extends GrammarJson ? OptionsCheck<EnrichedGrammar<B>, O> : unknown;
 
@@ -288,7 +289,8 @@ export function runLayerPass(base: PendingBase<unknown>, config: LayerConfig): L
 	const diagnostics = [...(inherited?.diagnostics ?? [])];
 	const completed = intake(source, { config, name, inherited, diagnostics });
 	completePendingBase(base, completed);
-	const layer: WireLayer = { name, diagnostics, narrows: [], leads: [] };
+	const depth = (inherited?.depth ?? 0) + 1;
+	const layer: WireLayer = { name, depth, diagnostics, narrows: [], leads: [] };
 	const wired = wireImpl(wireConfigOf(config, { name, inherited }), completed, source, layer);
 	const wire = wired.__wireContext__!;
 	const anyName = layerSymbols();
@@ -304,7 +306,7 @@ export function runLayerPass(base: PendingBase<unknown>, config: LayerConfig): L
 		...verbCtxOf(view, { effects: [...resolvedEffects(view, wire)], diagnostics }, rules),
 		rules,
 		created: [...bodies.keys()].filter((ruleName) => !(ruleName in baseRules)),
-		depth: (inherited?.depth ?? 0) + 1,
+		depth,
 		inherited,
 		upstream: inherited?.upstream ?? (source.grammar as unknown as GrammarJson),
 		base: completed,

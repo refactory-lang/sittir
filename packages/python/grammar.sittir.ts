@@ -9,7 +9,6 @@
 
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
-import grammarBindings from './grammar.bindings.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import type { AuthoringRule } from '../codegen/src/grammar-shapes/grammar-json.ts';
 import { transform } from '../codegen/src/dsl/transform/transform.ts';
@@ -24,7 +23,8 @@ import {
 	token,
 	reauthored,
 	vocabulary,
-	sittirGrammar
+	enrich,
+	wire
 } from '../codegen/src/dsl/dsl-authoring.ts';
 
 const comprehensionClauses = rule('comprehension_clauses', ($) =>
@@ -35,9 +35,8 @@ function tupleElements(element: AuthoringRule) {
 	return seq(seq(element, ','), repeat(seq(element, ',')), optional(element));
 }
 
-export default sittirGrammar(base, {
+export default grammar(enrich(base), wire({
 	resolutions,
-	bindings: grammarBindings,
 	name: 'python',
 	supertypes: ($, previous) => [...(previous ?? []), $._statement!],
 	externals: ($, prev) => {
@@ -475,4 +474,4 @@ export default sittirGrammar(base, {
 
 		_wildcard_pattern: vocabulary(($) => '_')
 	}
-});
+}));
