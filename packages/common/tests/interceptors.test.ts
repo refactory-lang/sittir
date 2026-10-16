@@ -194,6 +194,8 @@ describe('engine middleware', () => {
 		const language: Language<AliasedAPI> = {
 			name: 'rust',
 			fileTypes: rust.fileTypes,
+			is: rust.is,
+			kinds: rust.kinds,
 			createEngine: (options) => createEngine(language, options),
 			load: async () => ({ ...hooks, build: { ...hooks.build, alias: hooks.build.identifier } })
 		};

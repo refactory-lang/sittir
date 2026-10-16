@@ -40,7 +40,7 @@ import {
 	WILDCARD
 } from './facts.ts';
 
-type Kinds = Awaited<ReturnType<PinnedBuild['scm']['default']['load']>>['kinds'];
+type Kinds = LanguageEngine<ScmAPI>['kinds'];
 type Engine = LanguageEngine<ScmAPI>;
 
 let K: Kinds;
@@ -52,8 +52,8 @@ let loaded: Promise<void> | undefined;
 function ready(): Promise<void> {
 	loaded ??= (async () => {
 		const pinned = await loadPinnedBuild();
-		K = (await pinned.scm.default.load()).kinds;
 		engine = await pinned.common.createEngine(pinned.scm.default);
+		K = engine.kinds;
 		({ sourceSpans } = pinned.common);
 		({ spanOf } = pinned.utils);
 	})();

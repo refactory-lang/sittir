@@ -3,16 +3,10 @@ import type { IndentOption, KindTypes, LanguageAPI, LanguageHooks } from '@sitti
 import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
-import { is, isMember, membersOf } from './is.js';
+import { isMember, membersOf, type is } from './is.js';
 import { portable, queryFlags, querySlotFlags } from './portable.js';
-import {
-	TSKindId,
-	type FixedTextKindId,
-	type TypeKeyOf,
-	type NamespaceMap,
-	type TypescriptNode,
-	type TypescriptTypeMap
-} from './types.js';
+import type { TSKindId } from './kinds.js';
+import type { FixedTextKindId, TypeKeyOf, NamespaceMap, TypescriptNode, TypescriptTypeMap } from './types.js';
 import type { IndentChar, Options } from './options.js';
 import { querySlots, structure, triviaFacts } from './utils.js';
 import { buildCommentBlock, buildCommentLine } from './factories/raw.js';
@@ -40,8 +34,6 @@ export const hooks: LanguageHooks<TypescriptAPI> = Object.freeze<LanguageHooks<T
 	name: 'typescript',
 	renderModuleHash: RENDER_MODULE_HASH,
 	build: ir,
-	is,
-	kinds: TSKindId,
 	trivia: Object.freeze({
 		...triviaFacts,
 		comment: coerceToCommentLine,
