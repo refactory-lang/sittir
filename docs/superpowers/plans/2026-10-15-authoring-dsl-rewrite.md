@@ -506,8 +506,12 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 - Modify: `packages/codegen/src/compiler/types.ts` (`desugarDivergences` goes; the pass's pattern injection fills `bodyPatternZeroMatches`), `packages/codegen/src/compiler/link.ts`, `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts` (`fromDesugarDivergence` goes)
 - Test: `packages/codegen/src/compiler/__tests__/evaluate.test.ts` (the two `desugarDivergences` cases go), `packages/codegen/src/compiler/__tests__/grammar-diagnostics.test.ts`, `packages/codegen/src/compiler/__tests__/post-evaluate-invariant.test.ts`
 
-- [ ] **Step 1:** Port `evaluate.test.ts`'s `_orphan_group` case into a layer test. A `groups:` entry whose body matches nothing reports `bodyPatternZeroMatches`, from the one pass.
-- [ ] **Step 2:** Delete, then run the suite and the stage gate. A rule that moves means the two implementations diverged: stop and report the rule. Commit.
+- [x] **Step 1:** Port `evaluate.test.ts`'s `_orphan_group` case into a layer test. A `groups:` entry whose body matches nothing reports `bodyPatternZeroMatches`, from the one pass.
+- [x] **Step 2:** Delete, then run the suite and the stage gate. A rule that moves means the two implementations diverged: stop and report the rule. Commit.
+  - **Landed:** 67d3809ca on `feat/authoring-dsl`. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal. The stage's `desugarDivergences` exception went unused, since no grammar's evaluated grammar carried the key. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - **Also gone:** `evaluateRulesAndInjectSynthetics` itself, since `grammarFn` now only evaluates the rule callbacks, and the record the copies fed: `desugarDivergences`, `DesugarDivergenceEvent`, `link`'s rename of it, and `fromDesugarDivergence` with its descriptions.
+    - **The unmatched groups:** the pass's pattern injection did not yet find a `groups:` entry that matches nothing; only evaluate's copy did. `wire.ts`'s `unmatchedGroupPatterns` finds them over the layer's final rules. `completeLayer` leaves them on the wire context (`WireContext.bodyPatternZeroMatches`), and `grammarFn` appends them to the base's.
+    - **Not in the record's records yet:** the pending base takes the record's records (`completePendingRecords`), so the enriched stage, which evaluates the base without the layer's config, showed the layer's own finding. The stage gate caught it through typescript's grammar hash. Task 2.2, which moves every record into the layer record, has to keep a layer's own records off its pending base.
 
 ### Task 2.2: the record replaces evaluate's inheritance
 
