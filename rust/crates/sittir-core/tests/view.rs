@@ -40,8 +40,8 @@ fn rt(value: &dyn Render) -> String {
 /// a list's head and tail flanks read through the options the writer holds.
 fn rt_with_sites(value: &dyn Render) -> String {
     static SITES: &[SiteSpec] = &[
-        SiteSpec { default_arm: NEWLINE, strength: 2 },
-        SiteSpec { default_arm: NEWLINE, strength: 2 },
+        SiteSpec { default_arm: NEWLINE, strength: sittir_core::spacing::SeamStrength::Declared },
+        SiteSpec { default_arm: NEWLINE, strength: sittir_core::spacing::SeamStrength::Declared },
     ];
     let options = ResolvedOptions {
         spacing: ResolvedOptions::default_spacing(SITES),

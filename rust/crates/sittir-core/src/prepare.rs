@@ -198,7 +198,7 @@ pub fn root_flanks(
             }
             EdgeItem::Rebuilt => return None,
         };
-        crate::classify::classify_whitespace(&text, allowed, table).map(|arm| EdgeArm { arm, strength: None, dedent: None })
+        crate::classify::classify_whitespace(&text, allowed, table).map(|arm| EdgeArm { arm, strength: None })
     };
     Edges {
         before: flank(first, Side::Before, allowed_before),
@@ -283,7 +283,7 @@ pub fn fill_slot_separators<'i, T: Prepare + 'i, L, const ADJACENT: bool>(
 }
 
 fn set_gap_edge<T: Prepare, const ADJACENT: bool>(item: &mut SlotValue<T, ADJACENT>, side: Side, arm: KindId) {
-    let seam = SeamArm { arm, strength: crate::spacing::SEAM_SLOT, dedent: false };
+    let seam = SeamArm { arm, strength: crate::spacing::SEAM_SLOT };
     match item {
         SlotValue::Coord(coord) => {
             let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });

@@ -51,7 +51,7 @@ impl OptionSites for NoLayoutSites {
     const TABLES: OptionTables = OptionTables { indent_chars: "", newline_arms: &[], ..Sites::TABLES };
 }
 
-static SITES: &[SiteSpec] = &[SiteSpec { default_arm: KindId(1), strength: 0 }, SiteSpec { default_arm: KindId(1), strength: 0 }];
+static SITES: &[SiteSpec] = &[SiteSpec { default_arm: KindId(1), strength: sittir_core::spacing::SeamStrength::Fallback }, SiteSpec { default_arm: KindId(1), strength: sittir_core::spacing::SeamStrength::Fallback }];
 
 fn base() -> ResolvedOptions {
     ResolvedOptions { spacing: ResolvedOptions::default_spacing(SITES), delimiter: vec![0], sites: SITES, ..ResolvedOptions::default() }
@@ -65,15 +65,15 @@ fn resolve(json: &str) -> Result<ResolvedOptions, String> {
 #[test]
 fn a_leaf_sets_every_site_it_names() {
     let table = resolve(r#"{ "a": { "x": 7 } }"#).unwrap();
-    assert_eq!(table.spacing, vec![SeamArm { arm: KindId(7), strength: SEAM_DECLARED, dedent: false }; 2]);
+    assert_eq!(table.spacing, vec![SeamArm { arm: KindId(7), strength: SEAM_DECLARED }; 2]);
     assert_eq!(table.delimiter, vec![0]);
 }
 
 #[test]
 fn a_value_set_to_the_default_arm_still_writes_at_declared_strength() {
     let table = resolve(r#"{ "a": { "x": 1 } }"#).unwrap();
-    assert_eq!(table.spacing, vec![SeamArm { arm: KindId(1), strength: SEAM_DECLARED, dedent: false }; 2]);
-    assert_eq!(resolve("{}").unwrap().spacing, vec![SeamArm { arm: KindId(1), strength: 0, dedent: false }; 2]);
+    assert_eq!(table.spacing, vec![SeamArm { arm: KindId(1), strength: SEAM_DECLARED }; 2]);
+    assert_eq!(resolve("{}").unwrap().spacing, vec![SeamArm { arm: KindId(1), strength: sittir_core::spacing::SeamStrength::Fallback }; 2]);
 }
 
 #[test]

@@ -13712,11 +13712,11 @@ and `defaultText` (the default token's text) for the render's fallback
 arm. It has no `side` and registers no top-level label, like the
 delimiter site.
 
-`strength` (`SeamStrength`, 0–2) is the sixth column of the emitted
+`strength` (`SeamStrength`, the name of a core `spacing::SeamStrength` variant) is the sixth column of the emitted
 `SPACING_SITES` row: how firmly the site's table default holds against the
 mark meeting it at the same gap. `seamStrength` maps the site's origin —
-declared (`preference`, `literal-default`, `word-default`) is 2, `cascade` is 1, the fallback
-is 0; separator sites are declared.
+declared (`preference`, `literal-default`, `word-default`) is `Declared`, `cascade` is `Cascade`, the fallback
+is `Fallback`; separator sites are declared.
 
 `display` is the owning kind's visible name, the spelling of the emitted
 rows; `source` is the kind itself and `kindId` its stamped id. `kindEdge` and
@@ -13739,13 +13739,13 @@ token's face reaching the kind edge), which outranks the bare fallback.
 ### `packages/codegen/src/emitters/render-options-rs.ts::seamStrength`
 
 An exhaustive switch over `SeamOrigin | undefined`: `preference`,
-`literal-default` and `word-default` are declared (2), `cascade` is 1, and
-`fallback` or no origin is 0. A new origin fails to compile here until it is
+`literal-default` and `word-default` are `Declared`, `cascade` is `Cascade`, and
+`fallback` or no origin is `Fallback`. A new origin fails to compile here until it is
 given a strength.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::SEAM_DECLARED`
 
-The declared strength (2), named once on the TypeScript side so the plan's
+The declared strength, named once on the TypeScript side so the plan's
 fixed-strength rows (separators, list flanks) and `seamStrength`'s declared
 origins spell the same value core's `spacing::SEAM_DECLARED` holds.
 
