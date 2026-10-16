@@ -5,7 +5,7 @@
 //! nothing ambient carries the trees or the table.
 
 use crate::options::{EdgeArm, Edged, Edges, ResolvedOptions, Side};
-use crate::types::KindId;
+use crate::types::{KindId, SiteId};
 use crate::render::{CoordinateError, SourceTable};
 use crate::slot::{NodeCoordinate, SeamArm, SlotValue};
 
@@ -218,11 +218,11 @@ pub fn fill_edges<T: Edged + ?Sized>(t: &mut T, edges: Edges) {
 /// has a seat in `table`, or, for a wrapper that is not itself seated, the
 /// seated node it holds. Answers the base edges to fill and the site to read.
 pub trait SeatTarget {
-    fn seat_target(&mut self, table: &[u16], ctx: &RenderContext<'_>) -> Option<(&mut Edges, usize)>;
+    fn seat_target(&mut self, table: &[Option<SiteId>], ctx: &RenderContext<'_>) -> Option<(&mut Edges, SiteId)>;
 }
 
 impl<T: SeatTarget + ?Sized> SeatTarget for Box<T> {
-    fn seat_target(&mut self, table: &[u16], ctx: &RenderContext<'_>) -> Option<(&mut Edges, usize)> {
+    fn seat_target(&mut self, table: &[Option<SiteId>], ctx: &RenderContext<'_>) -> Option<(&mut Edges, SiteId)> {
         (**self).seat_target(table, ctx)
     }
 }
@@ -231,17 +231,14 @@ impl<T: SeatTarget + ?Sized> SeatTarget for Box<T> {
 /// kind's, else that of the node it holds through the wrappers it is
 /// (`SourceTable::seat_through`), as a wrapper transport seats through its
 /// content.
-pub fn coord_seat(coord: &crate::slot::NodeCoordinate, table: &[u16], ctx: &RenderContext<'_>) -> Option<usize> {
+pub fn coord_seat(coord: &crate::slot::NodeCoordinate, table: &[Option<SiteId>], ctx: &RenderContext<'_>) -> Option<SiteId> {
     let seat = |kind| seat_site(table, kind);
     coord.kind_in(ctx.sources).and_then(seat).or_else(|| ctx.sources.seat_through(coord, ctx.options.seat_wrappers, &seat))
 }
 
 /// The seated site of `kind` in a per-slot table indexed by kind id.
-pub fn seat_site(table: &[u16], kind: KindId) -> Option<usize> {
-    match table.get(kind.0 as usize) {
-        Some(&site) if site != crate::options::NO_SITE => Some(site as usize),
-        _ => None,
-    }
+pub fn seat_site(table: &[Option<SiteId>], kind: KindId) -> Option<SiteId> {
+    table.get(kind.index()).copied().flatten()
 }
 
 /// Give every gap between two present items of a list slot the classes its
@@ -314,7 +311,7 @@ fn set_gap_edge<T: Prepare, const ADJACENT: bool>(item: &mut SlotValue<T, ADJACE
 /// sibling that makes the gap before it.
 pub fn fill_seated_gaps<'i, T: SeatTarget + 'i, const ADJACENT: bool>(
     items: impl Iterator<Item = Option<&'i mut SlotValue<T, ADJACENT>>>,
-    table: &[u16],
+    table: &[Option<SiteId>],
     ctx: &RenderContext<'_>,
 ) {
     let present: Vec<&'i mut SlotValue<T, ADJACENT>> = items.flatten().collect();
@@ -323,13 +320,13 @@ pub fn fill_seated_gaps<'i, T: SeatTarget + 'i, const ADJACENT: bool>(
         match item {
             SlotValue::Transport(t) => {
                 if let Some((edges, site)) = t.seat_target(table, ctx) {
-                    edges.after.get_or_insert(EdgeArm::from(ctx.options.spacing[site]));
+                    edges.after.get_or_insert(EdgeArm::from(ctx.options.site_arm(site)));
                 }
             }
             SlotValue::Coord(coord) => {
                 if let Some(site) = coord_seat(coord, table, ctx) {
                     let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
-                    edges.after.get_or_insert(ctx.options.spacing[site]);
+                    edges.after.get_or_insert(ctx.options.site_arm(site));
                 }
             }
         }

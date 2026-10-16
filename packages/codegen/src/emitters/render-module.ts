@@ -2834,7 +2834,7 @@ function seatReachOf(plan: RenderPlan, nodeMap: NodeMap): SeatReach {
 
 function seatTargetSig(usesCtx: boolean): string {
 	const ctx = usesCtx ? 'ctx' : '_ctx';
-	return `    fn seat_target(&mut self, table: &[u16], ${ctx}: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {`;
+	return `    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ${ctx}: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {`;
 }
 
 function seatTargetMatchImpl(typeName: string, arms: readonly string[], exhaustive: boolean): string[] {
@@ -2995,7 +2995,7 @@ function optionDefaultFills(plan: RenderPlan, node: AssembledNode, choices: Choi
 				);
 			}
 			const ident = rustFieldIdent(slot.storageName);
-			const build = `${choiceNameOf(choices, node.typeName, slot.name)}::from_kind_id(ctx.options.spacing[options::${site.constName}].arm)`;
+			const build = `${choiceNameOf(choices, node.typeName, slot.name)}::from_kind_id(ctx.options.site_arm(options::${site.constName}).arm)`;
 			return `        if self.${ident}.is_none() { self.${ident} = ${build}.map(::sittir_core::SlotValue::Transport); }`;
 		});
 }
@@ -3043,12 +3043,12 @@ function prepareStructImpl(
 		for (const site of synthesizedSpacingSites(plan, node)) {
 			if (!carriesPerNodeValue(site)) continue;
 			body.push(
-				`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(ctx.options.spacing[options::${site.constName}].arm);`
+				`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(ctx.options.site_arm(options::${site.constName}).arm);`
 			);
 		}
 		body.push(...seatLoops(plan, node, nodeMap));
 		if (delim !== undefined) {
-			const fallback = `ctx.options.delimiter[options::${delim.constName}]`;
+			const fallback = `ctx.options.delimiter_at(options::${delim.constName})`;
 			const value =
 				trailing === undefined
 					? fallback
@@ -3061,7 +3061,7 @@ function prepareStructImpl(
 				`        if let Some(kind) = ::sittir_core::layout::Layout::slot(&self.layout, ${JSON.stringify(listItemWireKey(node))}).and_then(|slot| slot.separator).and_then(Self::separator_kind_of) {`,
 				'            self.separator_kind.get_or_insert(kind);',
 				'        }',
-				`        self.separator_kind.get_or_insert(ctx.options.spacing[options::${sep.constName}].arm);`,
+				`        self.separator_kind.get_or_insert(ctx.options.site_arm(options::${sep.constName}).arm);`,
 				`        ::sittir_core::prepare::fill_slot_separators(&mut self.layout, ${JSON.stringify(listItemWireKey(node))}, ${listItemsExpr(node)}, Self::separator_kind_of, ctx);`
 			);
 		}

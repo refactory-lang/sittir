@@ -714,7 +714,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
 
     /// A spacing site's arm read from the resolved options, written as a
     /// flank mark when `flank` is set.
-    fn option_site(&mut self, site: usize, flank: bool) {
+    fn option_site(&mut self, site: crate::types::SiteId, flank: bool) {
         debug_assert!(self.options.is_some(), "a render that writes option sites must attach the resolved options");
         let Some(options) = self.options else {
             return;
@@ -954,7 +954,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.site_with(kind, SEAM_DECLARED);
     }
 
-    fn site_at(&mut self, site: usize) {
+    fn site_at(&mut self, site: crate::types::SiteId) {
         self.option_site(site, false);
     }
 
@@ -987,7 +987,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.seam_arm(crate::slot::SeamArm { arm, strength, dedent: dedent == Some(true) });
     }
 
-    fn flank_at(&mut self, site: usize) {
+    fn flank_at(&mut self, site: crate::types::SiteId) {
         self.option_site(site, true);
     }
 

@@ -1689,8 +1689,8 @@ impl ::sittir_core::prepare::Prepare for AlternationTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::fill_slot_gaps(self.terms.iter_mut().map(Option::as_mut), ::sittir_core::layout::Layout::slot(&self.layout, "_terms"));
-        self.terms_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_BEFORE].arm);
-        self.terms_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_AFTER].arm);
+        self.terms_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_BEFORE).arm);
+        self.terms_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_AFTER).arm);
         self.terms.prepare(ctx)?;
         Ok(())
     }
@@ -1742,7 +1742,7 @@ impl ::sittir_core::prepare::Prepare for TermTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::fill_slot_gaps(self.term_group.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_term_group"));
-        self.term_group_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TERM_TERM_GROUP_SEPARATOR_SPACE].arm);
+        self.term_group_separator_space.get_or_insert(ctx.options.site_arm(options::SITE_TERM_TERM_GROUP_SEPARATOR_SPACE).arm);
         ::sittir_core::prepare::fill_seated_gaps(self.term_group.iter_mut().map(Some), options::SEATS_TERM_TERM_GROUP, ctx);
         self.term_group.prepare(ctx)?;
         Ok(())
@@ -4808,7 +4808,7 @@ impl ::sittir_core::render::Render for ColonTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for TermGroupTransport {
-    fn seat_target(&mut self, table: &[u16], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(77)) {
             return Some((self.layout.edges_mut(), site));
         }
@@ -4817,7 +4817,7 @@ impl ::sittir_core::prepare::SeatTarget for TermGroupTransport {
 }
 
 impl ::sittir_core::prepare::SeatTarget for AnyTransport {
-    fn seat_target(&mut self, table: &[u16], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::TermGroup(t) => t.seat_target(table, ctx),
             #[allow(unreachable_patterns)]

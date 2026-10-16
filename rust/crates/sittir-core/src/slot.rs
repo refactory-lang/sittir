@@ -334,7 +334,7 @@ pub(crate) unsafe fn coordinate_from_napi(env: ::napi::sys::napi_env, napi_val: 
         .ok_or_else(|| ::napi::Error::from_reason(format!("coordinate with $treeHandle {handle} carries no $span")))?;
     let end: u32 = unsafe { property(env, napi_val, c"$end")? }
         .ok_or_else(|| ::napi::Error::from_reason(format!("coordinate with $treeHandle {handle} carries no $end")))?;
-    let kind = unsafe { property::<u32>(env, napi_val, c"$type")? }.map(|id| crate::types::KindId(id as u16));
+    let kind: Option<crate::types::KindId> = unsafe { property(env, napi_val, c"$type")? };
     let changed = match unsafe { property::<::napi::bindgen_prelude::Object>(env, napi_val, c"$_layout")? } {
         Some(layout) => unsafe { property::<ChangedEdges>(env, ::napi::JsValue::raw(&layout), c"changed")?.unwrap_or_default() },
         None => ChangedEdges::default(),
@@ -435,7 +435,8 @@ mod tests {
 
     #[test]
     fn a_coordinate_meets_the_edge_seams_of_its_kind_like_a_rendered_node() {
-        use crate::options::{EdgeSite, ResolvedOptions, SiteSpec, NO_SITE};
+        use crate::options::{EdgeSite, ResolvedOptions, SiteSpec};
+        use crate::types::{EdgeRow, SiteId};
         use crate::prepare::{Prepare, RenderContext};
         use crate::spacing::{SEAM_CASCADE, SEAM_DECLARED, SEAM_FALLBACK};
         const TIGHT: KindId = KindId(1);
@@ -452,8 +453,8 @@ mod tests {
             indent: KindId(0),
             dedent: KindId(0), leaf_edges: &[], gaps: &[(1, KindId(1)), (2, KindId(2))]
         };
-        static EDGES: [EdgeSite; 1] = [EdgeSite { before: 0, after: NO_SITE, before_arms: &[], after_arms: &[] }];
-        static EDGE_ROWS: [u16; 10] = [NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 0];
+        static EDGES: [EdgeSite; 1] = [EdgeSite { before: Some(SiteId(0)), after: None, before_arms: &[], after_arms: &[] }];
+        static EDGE_ROWS: [Option<EdgeRow>; 10] = [None, None, None, None, None, None, None, None, None, Some(EdgeRow(0))];
         static SITES: [SiteSpec; 1] = [SiteSpec { default_arm: TIGHT, strength: SEAM_CASCADE }];
         let sources = Kinded(Sources(HashMap::from([(1, Arc::from("f()"))])));
         let render_with = |options: &ResolvedOptions, held: u8| {

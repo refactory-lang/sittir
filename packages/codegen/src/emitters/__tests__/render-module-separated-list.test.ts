@@ -219,7 +219,7 @@ describe('buildTypedTemplateBody — separatedList ListView wiring', () => {
 			options: { member_list: { 'member:/separator/kind': preference('semi') } } as never
 		}).transportRs.contents;
 
-		expect(emitted).toContain('self.separator_kind.get_or_insert(ctx.options.spacing[options::SITE_MEMBER_LIST_MEMBER_SEPARATOR].arm);');
+		expect(emitted).toContain('self.separator_kind.get_or_insert(ctx.options.site_arm(options::SITE_MEMBER_LIST_MEMBER_SEPARATOR).arm);');
 		expect(emitted).toContain('_ => ";" };');
 	});
 

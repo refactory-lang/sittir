@@ -15,6 +15,7 @@ export type NativeEngine = {
 	parse(src: string): string;
 	read(treeId: number, index: number, depth?: number): object;
 	siblings(treeId: number, index: number): string;
+	render(node: object): string;
 	dispose(): void;
 };
 

@@ -50,10 +50,16 @@ macro_rules! id_newtype {
             }
         }
 
+        /// Read as a double and checked whole and in range: napi's integer
+        /// readers wrap a negative, truncate a fraction and read `NaN` as 0.
         #[cfg(feature = "napi-bindings")]
         impl napi::bindgen_prelude::FromNapiValue for $name {
             unsafe fn from_napi_value(env: napi::sys::napi_env, val: napi::sys::napi_value) -> napi::Result<Self> {
-                unsafe { <$repr as napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, val) }.map(Self)
+                let value = unsafe { <f64 as napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, val) }?;
+                let id = crate::napi_engine::checked_index(value, stringify!($name))?;
+                <$repr>::try_from(id).map(Self).map_err(|_| {
+                    napi::Error::from_reason(format!("{} {id} does not fit a {}", stringify!($name), stringify!($repr)))
+                })
             }
         }
 
@@ -106,6 +112,23 @@ id_newtype! {
     /// A parser field id: the index of a field name in `parser.c`'s field
     /// table, the value `TreeCursor::field_id` returns for a child tagged with it.
     FieldId(u16)
+}
+
+id_newtype! {
+    /// A spacing site: the index of a gap's whitespace choice in the
+    /// generated site order, keying `ResolvedOptions::spacing` and `sites`.
+    SiteId(u16)
+}
+
+id_newtype! {
+    /// A flank site: the index of a list flank's delimiter bitflag in the
+    /// generated flank order, keying `ResolvedOptions::delimiter`.
+    FlankId(u16)
+}
+
+id_newtype! {
+    /// A row of `ResolvedOptions::edges`: the edge seams one kind owns.
+    EdgeRow(u16)
 }
 
 /// Where a node originated. `Ts` = read from a tree-sitter tree; `Sg` =

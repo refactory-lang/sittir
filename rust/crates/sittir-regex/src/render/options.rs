@@ -1,136 +1,136 @@
 // @generated — render options: site table and resolver. Do not hand-edit.
 
-use ::sittir_core::options::{ResolvedOptions, NO_SITE};
-use ::sittir_core::types::KindId;
+use ::sittir_core::options::ResolvedOptions;
+use ::sittir_core::types::{EdgeRow, FieldId, FlankId, KindId, SiteId};
 
 pub const SPACING_SITE_COUNT: usize = 125;
 pub const DELIMITER_SITE_COUNT: usize = 0;
 
-pub const SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_BEFORE: usize = 0;
-pub const SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_AFTER: usize = 1;
-pub const SITE_ANONYMOUS_CAPTURING_GROUP_LPAREN_AFTER: usize = 2;
-pub const SITE_ANONYMOUS_CAPTURING_GROUP_RPAREN_BEFORE: usize = 3;
-pub const SITE_ANONYMOUS_CAPTURING_GROUP_ANONYMOUS_CAPTURING_GROUP_BEFORE: usize = 4;
-pub const SITE_ANONYMOUS_CAPTURING_GROUP_ANONYMOUS_CAPTURING_GROUP_AFTER: usize = 5;
-pub const SITE_BACKREFERENCE_ESCAPE_LT_BEFORE: usize = 6;
-pub const SITE_BACKREFERENCE_ESCAPE_LT_AFTER: usize = 7;
-pub const SITE_BACKREFERENCE_ESCAPE_GT_BEFORE: usize = 8;
-pub const SITE_BACKREFERENCE_ESCAPE_BSLASHK_AFTER: usize = 9;
-pub const SITE_BACKREFERENCE_ESCAPE_BACKREFERENCE_ESCAPE_BEFORE: usize = 10;
-pub const SITE_BACKREFERENCE_ESCAPE_BACKREFERENCE_ESCAPE_AFTER: usize = 11;
-pub const SITE_CHARACTER_CLASS_LEADING_BEFORE: usize = 12;
-pub const SITE_CHARACTER_CLASS_LEADING_AFTER: usize = 13;
-pub const SITE_CHARACTER_CLASS_TRAILING_BEFORE: usize = 14;
-pub const SITE_CHARACTER_CLASS_TRAILING_AFTER: usize = 15;
-pub const SITE_CHARACTER_CLASS_LBRACK_AFTER: usize = 16;
-pub const SITE_CHARACTER_CLASS_RBRACK_BEFORE: usize = 17;
-pub const SITE_CHARACTER_CLASS_CARET_BEFORE: usize = 18;
-pub const SITE_CHARACTER_CLASS_CARET_AFTER: usize = 19;
-pub const SITE_CHARACTER_CLASS_CHARACTER_CLASS_BEFORE: usize = 20;
-pub const SITE_CHARACTER_CLASS_CHARACTER_CLASS_AFTER: usize = 21;
-pub const SITE_CHARACTER_CLASS_ESCAPE_ARM_LBRACE_BEFORE: usize = 22;
-pub const SITE_CHARACTER_CLASS_ESCAPE_ARM_LBRACE_AFTER: usize = 23;
-pub const SITE_CHARACTER_CLASS_ESCAPE_ARM_RBRACE_BEFORE: usize = 24;
-pub const SITE_CHARACTER_CLASS_ESCAPE_ARM_CHARACTER_CLASS_ESCAPE_ARM_BEFORE: usize = 25;
-pub const SITE_CHARACTER_CLASS_ESCAPE_ARM_CHARACTER_CLASS_ESCAPE_ARM_AFTER: usize = 26;
-pub const SITE_CLASS_RANGE_DASH_BEFORE: usize = 27;
-pub const SITE_CLASS_RANGE_DASH_AFTER: usize = 28;
-pub const SITE_CLASS_RANGE_CLASS_RANGE_BEFORE: usize = 29;
-pub const SITE_CLASS_RANGE_CLASS_RANGE_AFTER: usize = 30;
-pub const SITE_COUNT_QUANTIFIER_LBRACE_AFTER: usize = 31;
-pub const SITE_COUNT_QUANTIFIER_RBRACE_BEFORE: usize = 32;
-pub const SITE_COUNT_QUANTIFIER_RBRACE_AFTER: usize = 33;
-pub const SITE_COUNT_QUANTIFIER_COUNT_QUANTIFIER_BEFORE: usize = 34;
-pub const SITE_COUNT_QUANTIFIER_COUNT_QUANTIFIER_AFTER: usize = 35;
-pub const SITE_COUNT_QUANTIFIER_ARM_COUNT_QUANTIFIER_ARM_BEFORE: usize = 36;
-pub const SITE_COUNT_QUANTIFIER_ARM_COUNT_QUANTIFIER_ARM_AFTER: usize = 37;
-pub const SITE_COUNT_QUANTIFIER_GROUP_COMMA_AFTER: usize = 38;
-pub const SITE_COUNT_QUANTIFIER_GROUP_COUNT_QUANTIFIER_GROUP_BEFORE: usize = 39;
-pub const SITE_COUNT_QUANTIFIER_GROUP_COUNT_QUANTIFIER_GROUP_AFTER: usize = 40;
-pub const SITE_INLINE_FLAGS_GROUP_DISABLE_LPAREN_QMARK_AFTER: usize = 41;
-pub const SITE_INLINE_FLAGS_GROUP_DISABLE_RPAREN_BEFORE: usize = 42;
-pub const SITE_INLINE_FLAGS_GROUP_DISABLE_DASH_BEFORE: usize = 43;
-pub const SITE_INLINE_FLAGS_GROUP_DISABLE_DASH_AFTER: usize = 44;
-pub const SITE_INLINE_FLAGS_GROUP_DISABLE_COLON_BEFORE: usize = 45;
-pub const SITE_INLINE_FLAGS_GROUP_DISABLE_COLON_AFTER: usize = 46;
-pub const SITE_INLINE_FLAGS_GROUP_DISABLE_INLINE_FLAGS_GROUP_DISABLE_BEFORE: usize = 47;
-pub const SITE_INLINE_FLAGS_GROUP_DISABLE_INLINE_FLAGS_GROUP_DISABLE_AFTER: usize = 48;
-pub const SITE_INLINE_FLAGS_GROUP_ENABLE_LPAREN_QMARK_AFTER: usize = 49;
-pub const SITE_INLINE_FLAGS_GROUP_ENABLE_RPAREN_BEFORE: usize = 50;
-pub const SITE_INLINE_FLAGS_GROUP_ENABLE_COLON_BEFORE: usize = 51;
-pub const SITE_INLINE_FLAGS_GROUP_ENABLE_COLON_AFTER: usize = 52;
-pub const SITE_INLINE_FLAGS_GROUP_ENABLE_INLINE_FLAGS_GROUP_ENABLE_BEFORE: usize = 53;
-pub const SITE_INLINE_FLAGS_GROUP_ENABLE_INLINE_FLAGS_GROUP_ENABLE_AFTER: usize = 54;
-pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_LPAREN_QMARK_AFTER: usize = 55;
-pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_RPAREN_BEFORE: usize = 56;
-pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_DASH_BEFORE: usize = 57;
-pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_DASH_AFTER: usize = 58;
-pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_COLON_BEFORE: usize = 59;
-pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_COLON_AFTER: usize = 60;
-pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_INLINE_FLAGS_GROUP_TOGGLE_BEFORE: usize = 61;
-pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_INLINE_FLAGS_GROUP_TOGGLE_AFTER: usize = 62;
-pub const SITE_LOOKAHEAD_ASSERTION_BANG_BEFORE: usize = 63;
-pub const SITE_LOOKAHEAD_ASSERTION_BANG_AFTER: usize = 64;
-pub const SITE_LOOKAHEAD_ASSERTION_LPAREN_QMARK_AFTER: usize = 65;
-pub const SITE_LOOKAHEAD_ASSERTION_RPAREN_BEFORE: usize = 66;
-pub const SITE_LOOKAHEAD_ASSERTION_EQ_BEFORE: usize = 67;
-pub const SITE_LOOKAHEAD_ASSERTION_EQ_AFTER: usize = 68;
-pub const SITE_LOOKAHEAD_ASSERTION_LOOKAHEAD_ASSERTION_BEFORE: usize = 69;
-pub const SITE_LOOKAHEAD_ASSERTION_LOOKAHEAD_ASSERTION_AFTER: usize = 70;
-pub const SITE_LOOKBEHIND_ASSERTION_BANG_BEFORE: usize = 71;
-pub const SITE_LOOKBEHIND_ASSERTION_BANG_AFTER: usize = 72;
-pub const SITE_LOOKBEHIND_ASSERTION_LPAREN_QMARK_LT_AFTER: usize = 73;
-pub const SITE_LOOKBEHIND_ASSERTION_RPAREN_BEFORE: usize = 74;
-pub const SITE_LOOKBEHIND_ASSERTION_EQ_BEFORE: usize = 75;
-pub const SITE_LOOKBEHIND_ASSERTION_EQ_AFTER: usize = 76;
-pub const SITE_LOOKBEHIND_ASSERTION_LOOKBEHIND_ASSERTION_BEFORE: usize = 77;
-pub const SITE_LOOKBEHIND_ASSERTION_LOOKBEHIND_ASSERTION_AFTER: usize = 78;
-pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_BEFORE: usize = 79;
-pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_AFTER: usize = 80;
-pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_BEFORE: usize = 81;
-pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_AFTER: usize = 82;
-pub const SITE_NAMED_CAPTURING_GROUP_RPAREN_BEFORE: usize = 83;
-pub const SITE_NAMED_CAPTURING_GROUP_GT_BEFORE: usize = 84;
-pub const SITE_NAMED_CAPTURING_GROUP_GT_AFTER: usize = 85;
-pub const SITE_NAMED_CAPTURING_GROUP_NAMED_CAPTURING_GROUP_BEFORE: usize = 86;
-pub const SITE_NAMED_CAPTURING_GROUP_NAMED_CAPTURING_GROUP_AFTER: usize = 87;
-pub const SITE_NAMED_GROUP_BACKREFERENCE_LPAREN_QMARK_P_EQ_AFTER: usize = 88;
-pub const SITE_NAMED_GROUP_BACKREFERENCE_RPAREN_BEFORE: usize = 89;
-pub const SITE_NAMED_GROUP_BACKREFERENCE_NAMED_GROUP_BACKREFERENCE_BEFORE: usize = 90;
-pub const SITE_NAMED_GROUP_BACKREFERENCE_NAMED_GROUP_BACKREFERENCE_AFTER: usize = 91;
-pub const SITE_NON_CAPTURING_GROUP_LPAREN_QMARK_COLON_AFTER: usize = 92;
-pub const SITE_NON_CAPTURING_GROUP_RPAREN_BEFORE: usize = 93;
-pub const SITE_NON_CAPTURING_GROUP_NON_CAPTURING_GROUP_BEFORE: usize = 94;
-pub const SITE_NON_CAPTURING_GROUP_NON_CAPTURING_GROUP_AFTER: usize = 95;
-pub const SITE_ONE_OR_MORE_PLUS_AFTER: usize = 96;
-pub const SITE_ONE_OR_MORE_ONE_OR_MORE_BEFORE: usize = 97;
-pub const SITE_ONE_OR_MORE_ONE_OR_MORE_AFTER: usize = 98;
-pub const SITE_OPTIONAL_QMARK_AFTER: usize = 99;
-pub const SITE_OPTIONAL_OPTIONAL_BEFORE: usize = 100;
-pub const SITE_OPTIONAL_OPTIONAL_AFTER: usize = 101;
-pub const SITE_PATTERN_PATTERN_BEFORE: usize = 102;
-pub const SITE_PATTERN_PATTERN_AFTER: usize = 103;
-pub const SITE_POSIX_CHARACTER_CLASS_COLON_RBRACK_BEFORE: usize = 104;
-pub const SITE_POSIX_CHARACTER_CLASS_LBRACK_COLON_AFTER: usize = 105;
-pub const SITE_POSIX_CHARACTER_CLASS_POSIX_CHARACTER_CLASS_BEFORE: usize = 106;
-pub const SITE_POSIX_CHARACTER_CLASS_POSIX_CHARACTER_CLASS_AFTER: usize = 107;
-pub const SITE_TERM_TERM_GROUP_TERM_GROUP_AFTER: usize = 108;
-pub const SITE_TERM_TERM_GROUP_SEPARATOR_SPACE: usize = 109;
-pub const SITE_TERM_GROUP_ANY_CHARACTER_AFTER: usize = 110;
-pub const SITE_TERM_GROUP_BOUNDARY_ASSERTION_AFTER: usize = 111;
-pub const SITE_TERM_GROUP_END_ASSERTION_AFTER: usize = 112;
-pub const SITE_TERM_GROUP_NON_BOUNDARY_ASSERTION_AFTER: usize = 113;
-pub const SITE_TERM_GROUP_CARET_AFTER: usize = 114;
-pub const SITE_TERM_GROUP_TERM_GROUP_BEFORE: usize = 115;
-pub const SITE_TERM_GROUP_TERM_GROUP_AFTER: usize = 116;
-pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_UNICODE_PROPERTY_VALUE_EXPRESSION_BEFORE: usize = 117;
-pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_UNICODE_PROPERTY_VALUE_EXPRESSION_AFTER: usize = 118;
-pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_EQ_BEFORE: usize = 119;
-pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_BEFORE: usize = 120;
-pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_AFTER: usize = 121;
-pub const SITE_ZERO_OR_MORE_STAR_AFTER: usize = 122;
-pub const SITE_ZERO_OR_MORE_ZERO_OR_MORE_BEFORE: usize = 123;
-pub const SITE_ZERO_OR_MORE_ZERO_OR_MORE_AFTER: usize = 124;
+pub const SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_BEFORE: SiteId = SiteId(0);
+pub const SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_AFTER: SiteId = SiteId(1);
+pub const SITE_ANONYMOUS_CAPTURING_GROUP_LPAREN_AFTER: SiteId = SiteId(2);
+pub const SITE_ANONYMOUS_CAPTURING_GROUP_RPAREN_BEFORE: SiteId = SiteId(3);
+pub const SITE_ANONYMOUS_CAPTURING_GROUP_ANONYMOUS_CAPTURING_GROUP_BEFORE: SiteId = SiteId(4);
+pub const SITE_ANONYMOUS_CAPTURING_GROUP_ANONYMOUS_CAPTURING_GROUP_AFTER: SiteId = SiteId(5);
+pub const SITE_BACKREFERENCE_ESCAPE_LT_BEFORE: SiteId = SiteId(6);
+pub const SITE_BACKREFERENCE_ESCAPE_LT_AFTER: SiteId = SiteId(7);
+pub const SITE_BACKREFERENCE_ESCAPE_GT_BEFORE: SiteId = SiteId(8);
+pub const SITE_BACKREFERENCE_ESCAPE_BSLASHK_AFTER: SiteId = SiteId(9);
+pub const SITE_BACKREFERENCE_ESCAPE_BACKREFERENCE_ESCAPE_BEFORE: SiteId = SiteId(10);
+pub const SITE_BACKREFERENCE_ESCAPE_BACKREFERENCE_ESCAPE_AFTER: SiteId = SiteId(11);
+pub const SITE_CHARACTER_CLASS_LEADING_BEFORE: SiteId = SiteId(12);
+pub const SITE_CHARACTER_CLASS_LEADING_AFTER: SiteId = SiteId(13);
+pub const SITE_CHARACTER_CLASS_TRAILING_BEFORE: SiteId = SiteId(14);
+pub const SITE_CHARACTER_CLASS_TRAILING_AFTER: SiteId = SiteId(15);
+pub const SITE_CHARACTER_CLASS_LBRACK_AFTER: SiteId = SiteId(16);
+pub const SITE_CHARACTER_CLASS_RBRACK_BEFORE: SiteId = SiteId(17);
+pub const SITE_CHARACTER_CLASS_CARET_BEFORE: SiteId = SiteId(18);
+pub const SITE_CHARACTER_CLASS_CARET_AFTER: SiteId = SiteId(19);
+pub const SITE_CHARACTER_CLASS_CHARACTER_CLASS_BEFORE: SiteId = SiteId(20);
+pub const SITE_CHARACTER_CLASS_CHARACTER_CLASS_AFTER: SiteId = SiteId(21);
+pub const SITE_CHARACTER_CLASS_ESCAPE_ARM_LBRACE_BEFORE: SiteId = SiteId(22);
+pub const SITE_CHARACTER_CLASS_ESCAPE_ARM_LBRACE_AFTER: SiteId = SiteId(23);
+pub const SITE_CHARACTER_CLASS_ESCAPE_ARM_RBRACE_BEFORE: SiteId = SiteId(24);
+pub const SITE_CHARACTER_CLASS_ESCAPE_ARM_CHARACTER_CLASS_ESCAPE_ARM_BEFORE: SiteId = SiteId(25);
+pub const SITE_CHARACTER_CLASS_ESCAPE_ARM_CHARACTER_CLASS_ESCAPE_ARM_AFTER: SiteId = SiteId(26);
+pub const SITE_CLASS_RANGE_DASH_BEFORE: SiteId = SiteId(27);
+pub const SITE_CLASS_RANGE_DASH_AFTER: SiteId = SiteId(28);
+pub const SITE_CLASS_RANGE_CLASS_RANGE_BEFORE: SiteId = SiteId(29);
+pub const SITE_CLASS_RANGE_CLASS_RANGE_AFTER: SiteId = SiteId(30);
+pub const SITE_COUNT_QUANTIFIER_LBRACE_AFTER: SiteId = SiteId(31);
+pub const SITE_COUNT_QUANTIFIER_RBRACE_BEFORE: SiteId = SiteId(32);
+pub const SITE_COUNT_QUANTIFIER_RBRACE_AFTER: SiteId = SiteId(33);
+pub const SITE_COUNT_QUANTIFIER_COUNT_QUANTIFIER_BEFORE: SiteId = SiteId(34);
+pub const SITE_COUNT_QUANTIFIER_COUNT_QUANTIFIER_AFTER: SiteId = SiteId(35);
+pub const SITE_COUNT_QUANTIFIER_ARM_COUNT_QUANTIFIER_ARM_BEFORE: SiteId = SiteId(36);
+pub const SITE_COUNT_QUANTIFIER_ARM_COUNT_QUANTIFIER_ARM_AFTER: SiteId = SiteId(37);
+pub const SITE_COUNT_QUANTIFIER_GROUP_COMMA_AFTER: SiteId = SiteId(38);
+pub const SITE_COUNT_QUANTIFIER_GROUP_COUNT_QUANTIFIER_GROUP_BEFORE: SiteId = SiteId(39);
+pub const SITE_COUNT_QUANTIFIER_GROUP_COUNT_QUANTIFIER_GROUP_AFTER: SiteId = SiteId(40);
+pub const SITE_INLINE_FLAGS_GROUP_DISABLE_LPAREN_QMARK_AFTER: SiteId = SiteId(41);
+pub const SITE_INLINE_FLAGS_GROUP_DISABLE_RPAREN_BEFORE: SiteId = SiteId(42);
+pub const SITE_INLINE_FLAGS_GROUP_DISABLE_DASH_BEFORE: SiteId = SiteId(43);
+pub const SITE_INLINE_FLAGS_GROUP_DISABLE_DASH_AFTER: SiteId = SiteId(44);
+pub const SITE_INLINE_FLAGS_GROUP_DISABLE_COLON_BEFORE: SiteId = SiteId(45);
+pub const SITE_INLINE_FLAGS_GROUP_DISABLE_COLON_AFTER: SiteId = SiteId(46);
+pub const SITE_INLINE_FLAGS_GROUP_DISABLE_INLINE_FLAGS_GROUP_DISABLE_BEFORE: SiteId = SiteId(47);
+pub const SITE_INLINE_FLAGS_GROUP_DISABLE_INLINE_FLAGS_GROUP_DISABLE_AFTER: SiteId = SiteId(48);
+pub const SITE_INLINE_FLAGS_GROUP_ENABLE_LPAREN_QMARK_AFTER: SiteId = SiteId(49);
+pub const SITE_INLINE_FLAGS_GROUP_ENABLE_RPAREN_BEFORE: SiteId = SiteId(50);
+pub const SITE_INLINE_FLAGS_GROUP_ENABLE_COLON_BEFORE: SiteId = SiteId(51);
+pub const SITE_INLINE_FLAGS_GROUP_ENABLE_COLON_AFTER: SiteId = SiteId(52);
+pub const SITE_INLINE_FLAGS_GROUP_ENABLE_INLINE_FLAGS_GROUP_ENABLE_BEFORE: SiteId = SiteId(53);
+pub const SITE_INLINE_FLAGS_GROUP_ENABLE_INLINE_FLAGS_GROUP_ENABLE_AFTER: SiteId = SiteId(54);
+pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_LPAREN_QMARK_AFTER: SiteId = SiteId(55);
+pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_RPAREN_BEFORE: SiteId = SiteId(56);
+pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_DASH_BEFORE: SiteId = SiteId(57);
+pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_DASH_AFTER: SiteId = SiteId(58);
+pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_COLON_BEFORE: SiteId = SiteId(59);
+pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_COLON_AFTER: SiteId = SiteId(60);
+pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_INLINE_FLAGS_GROUP_TOGGLE_BEFORE: SiteId = SiteId(61);
+pub const SITE_INLINE_FLAGS_GROUP_TOGGLE_INLINE_FLAGS_GROUP_TOGGLE_AFTER: SiteId = SiteId(62);
+pub const SITE_LOOKAHEAD_ASSERTION_BANG_BEFORE: SiteId = SiteId(63);
+pub const SITE_LOOKAHEAD_ASSERTION_BANG_AFTER: SiteId = SiteId(64);
+pub const SITE_LOOKAHEAD_ASSERTION_LPAREN_QMARK_AFTER: SiteId = SiteId(65);
+pub const SITE_LOOKAHEAD_ASSERTION_RPAREN_BEFORE: SiteId = SiteId(66);
+pub const SITE_LOOKAHEAD_ASSERTION_EQ_BEFORE: SiteId = SiteId(67);
+pub const SITE_LOOKAHEAD_ASSERTION_EQ_AFTER: SiteId = SiteId(68);
+pub const SITE_LOOKAHEAD_ASSERTION_LOOKAHEAD_ASSERTION_BEFORE: SiteId = SiteId(69);
+pub const SITE_LOOKAHEAD_ASSERTION_LOOKAHEAD_ASSERTION_AFTER: SiteId = SiteId(70);
+pub const SITE_LOOKBEHIND_ASSERTION_BANG_BEFORE: SiteId = SiteId(71);
+pub const SITE_LOOKBEHIND_ASSERTION_BANG_AFTER: SiteId = SiteId(72);
+pub const SITE_LOOKBEHIND_ASSERTION_LPAREN_QMARK_LT_AFTER: SiteId = SiteId(73);
+pub const SITE_LOOKBEHIND_ASSERTION_RPAREN_BEFORE: SiteId = SiteId(74);
+pub const SITE_LOOKBEHIND_ASSERTION_EQ_BEFORE: SiteId = SiteId(75);
+pub const SITE_LOOKBEHIND_ASSERTION_EQ_AFTER: SiteId = SiteId(76);
+pub const SITE_LOOKBEHIND_ASSERTION_LOOKBEHIND_ASSERTION_BEFORE: SiteId = SiteId(77);
+pub const SITE_LOOKBEHIND_ASSERTION_LOOKBEHIND_ASSERTION_AFTER: SiteId = SiteId(78);
+pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_BEFORE: SiteId = SiteId(79);
+pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_AFTER: SiteId = SiteId(80);
+pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_BEFORE: SiteId = SiteId(81);
+pub const SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_AFTER: SiteId = SiteId(82);
+pub const SITE_NAMED_CAPTURING_GROUP_RPAREN_BEFORE: SiteId = SiteId(83);
+pub const SITE_NAMED_CAPTURING_GROUP_GT_BEFORE: SiteId = SiteId(84);
+pub const SITE_NAMED_CAPTURING_GROUP_GT_AFTER: SiteId = SiteId(85);
+pub const SITE_NAMED_CAPTURING_GROUP_NAMED_CAPTURING_GROUP_BEFORE: SiteId = SiteId(86);
+pub const SITE_NAMED_CAPTURING_GROUP_NAMED_CAPTURING_GROUP_AFTER: SiteId = SiteId(87);
+pub const SITE_NAMED_GROUP_BACKREFERENCE_LPAREN_QMARK_P_EQ_AFTER: SiteId = SiteId(88);
+pub const SITE_NAMED_GROUP_BACKREFERENCE_RPAREN_BEFORE: SiteId = SiteId(89);
+pub const SITE_NAMED_GROUP_BACKREFERENCE_NAMED_GROUP_BACKREFERENCE_BEFORE: SiteId = SiteId(90);
+pub const SITE_NAMED_GROUP_BACKREFERENCE_NAMED_GROUP_BACKREFERENCE_AFTER: SiteId = SiteId(91);
+pub const SITE_NON_CAPTURING_GROUP_LPAREN_QMARK_COLON_AFTER: SiteId = SiteId(92);
+pub const SITE_NON_CAPTURING_GROUP_RPAREN_BEFORE: SiteId = SiteId(93);
+pub const SITE_NON_CAPTURING_GROUP_NON_CAPTURING_GROUP_BEFORE: SiteId = SiteId(94);
+pub const SITE_NON_CAPTURING_GROUP_NON_CAPTURING_GROUP_AFTER: SiteId = SiteId(95);
+pub const SITE_ONE_OR_MORE_PLUS_AFTER: SiteId = SiteId(96);
+pub const SITE_ONE_OR_MORE_ONE_OR_MORE_BEFORE: SiteId = SiteId(97);
+pub const SITE_ONE_OR_MORE_ONE_OR_MORE_AFTER: SiteId = SiteId(98);
+pub const SITE_OPTIONAL_QMARK_AFTER: SiteId = SiteId(99);
+pub const SITE_OPTIONAL_OPTIONAL_BEFORE: SiteId = SiteId(100);
+pub const SITE_OPTIONAL_OPTIONAL_AFTER: SiteId = SiteId(101);
+pub const SITE_PATTERN_PATTERN_BEFORE: SiteId = SiteId(102);
+pub const SITE_PATTERN_PATTERN_AFTER: SiteId = SiteId(103);
+pub const SITE_POSIX_CHARACTER_CLASS_COLON_RBRACK_BEFORE: SiteId = SiteId(104);
+pub const SITE_POSIX_CHARACTER_CLASS_LBRACK_COLON_AFTER: SiteId = SiteId(105);
+pub const SITE_POSIX_CHARACTER_CLASS_POSIX_CHARACTER_CLASS_BEFORE: SiteId = SiteId(106);
+pub const SITE_POSIX_CHARACTER_CLASS_POSIX_CHARACTER_CLASS_AFTER: SiteId = SiteId(107);
+pub const SITE_TERM_TERM_GROUP_TERM_GROUP_AFTER: SiteId = SiteId(108);
+pub const SITE_TERM_TERM_GROUP_SEPARATOR_SPACE: SiteId = SiteId(109);
+pub const SITE_TERM_GROUP_ANY_CHARACTER_AFTER: SiteId = SiteId(110);
+pub const SITE_TERM_GROUP_BOUNDARY_ASSERTION_AFTER: SiteId = SiteId(111);
+pub const SITE_TERM_GROUP_END_ASSERTION_AFTER: SiteId = SiteId(112);
+pub const SITE_TERM_GROUP_NON_BOUNDARY_ASSERTION_AFTER: SiteId = SiteId(113);
+pub const SITE_TERM_GROUP_CARET_AFTER: SiteId = SiteId(114);
+pub const SITE_TERM_GROUP_TERM_GROUP_BEFORE: SiteId = SiteId(115);
+pub const SITE_TERM_GROUP_TERM_GROUP_AFTER: SiteId = SiteId(116);
+pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_UNICODE_PROPERTY_VALUE_EXPRESSION_BEFORE: SiteId = SiteId(117);
+pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_UNICODE_PROPERTY_VALUE_EXPRESSION_AFTER: SiteId = SiteId(118);
+pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_EQ_BEFORE: SiteId = SiteId(119);
+pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_BEFORE: SiteId = SiteId(120);
+pub const SITE_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP_AFTER: SiteId = SiteId(121);
+pub const SITE_ZERO_OR_MORE_STAR_AFTER: SiteId = SiteId(122);
+pub const SITE_ZERO_OR_MORE_ZERO_OR_MORE_BEFORE: SiteId = SiteId(123);
+pub const SITE_ZERO_OR_MORE_ZERO_OR_MORE_AFTER: SiteId = SiteId(124);
 
 /// (kind, address, label, allowed kind ids), in canonical path order.
 pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[
@@ -263,40 +263,40 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[
 
 /// The before and after site of every kind that owns edge seams, in kind id order.
 pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
-    ::sittir_core::options::EdgeSite { before: 102, after: 103, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 69, after: 70, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 77, after: 78, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 20, after: 21, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 106, after: 107, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 29, after: 30, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 4, after: 5, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 86, after: 87, before_arms: &[::sittir_core::options::ArmSite { arm: KindId(11), site: 79 }, ::sittir_core::options::ArmSite { arm: KindId(22), site: 81 }], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 94, after: 95, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 123, after: 124, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 97, after: 98, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 100, after: 101, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 34, after: 35, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 10, after: 11, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 90, after: 91, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 117, after: 118, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 115, after: 116, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 39, after: 40, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 36, after: 37, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 25, after: 26, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 120, after: 121, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 53, after: 54, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 61, after: 62, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 47, after: 48, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(102)), after: Some(SiteId(103)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(69)), after: Some(SiteId(70)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(77)), after: Some(SiteId(78)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(20)), after: Some(SiteId(21)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(106)), after: Some(SiteId(107)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(29)), after: Some(SiteId(30)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(4)), after: Some(SiteId(5)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(86)), after: Some(SiteId(87)), before_arms: &[::sittir_core::options::ArmSite { arm: KindId(11), site: SiteId(79) }, ::sittir_core::options::ArmSite { arm: KindId(22), site: SiteId(81) }], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(94)), after: Some(SiteId(95)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(123)), after: Some(SiteId(124)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(97)), after: Some(SiteId(98)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(100)), after: Some(SiteId(101)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(34)), after: Some(SiteId(35)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(10)), after: Some(SiteId(11)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(90)), after: Some(SiteId(91)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(117)), after: Some(SiteId(118)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(115)), after: Some(SiteId(116)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(39)), after: Some(SiteId(40)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(36)), after: Some(SiteId(37)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(25)), after: Some(SiteId(26)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(120)), after: Some(SiteId(121)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(53)), after: Some(SiteId(54)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(61)), after: Some(SiteId(62)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(47)), after: Some(SiteId(48)), before_arms: &[], after_arms: &[] },
 ];
 
 /// Per kind id, its row in EDGE_SITES.
-pub static EDGE_ROWS: &[u16] = &[
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, 0, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1, 2, 3, 4, NO_SITE, 5, 6, 7,
-    8, NO_SITE, NO_SITE, 9, 10, 11, 12, 13, 14, NO_SITE, NO_SITE, 15, NO_SITE, 16, 17, 18,
-    19, 20, NO_SITE, 21, 22, 23,
+pub static EDGE_ROWS: &[Option<EdgeRow>] = &[
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, Some(EdgeRow(0)), None, None, None, None, Some(EdgeRow(1)), Some(EdgeRow(2)), Some(EdgeRow(3)), Some(EdgeRow(4)), None, Some(EdgeRow(5)), Some(EdgeRow(6)), Some(EdgeRow(7)),
+    Some(EdgeRow(8)), None, None, Some(EdgeRow(9)), Some(EdgeRow(10)), Some(EdgeRow(11)), Some(EdgeRow(12)), Some(EdgeRow(13)), Some(EdgeRow(14)), None, None, Some(EdgeRow(15)), None, Some(EdgeRow(16)), Some(EdgeRow(17)), Some(EdgeRow(18)),
+    Some(EdgeRow(19)), Some(EdgeRow(20)), None, Some(EdgeRow(21)), Some(EdgeRow(22)), Some(EdgeRow(23)),
 ];
 
 /// Per kind id, its flags: KIND_ANON (the parser's anonymous token), KIND_LINE_TERMINATED, KIND_LINE_BREAK_TERMINATED, KIND_ROOT.
@@ -319,7 +319,7 @@ pub const INDENT_KIND: KindId = KindId(0);
 pub const DEDENT_KIND: KindId = KindId(0);
 
 /// (kind, its indent-capable sites in rule order): an indent opened at one site is dedented at a later one of the same kind.
-pub static DEPTH_SITES: &[(&str, &[usize])] = &[
+pub static DEPTH_SITES: &[(&str, &[SiteId])] = &[
 ];
 
 /// Per kind id, the stretches of its children its template indents one level, by their anchors.
@@ -336,8 +336,8 @@ pub fn spacing_text(kind: KindId) -> &'static str {
     }
 }
 
-pub fn allowed(site: usize) -> &'static [KindId] {
-    SPACING_SITES[site].3
+pub fn allowed(site: SiteId) -> &'static [KindId] {
+    SPACING_SITES[site.index()].3
 }
 
 /// Every layout kind (each `_layout` member, the depth movers among them where the grammar has them), the domain of `spacing_text`.
@@ -478,21 +478,21 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_TERM_TERM_GROUP: &[u16] = &[
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 108,
+pub static SEATS_TERM_TERM_GROUP: &[Option<SiteId>] = &[
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, Some(SiteId(108)),
 ];
 
-/// Per kind id of a wrapper, the field its seat passes through: 0 for its unfielded content.
-pub static SEAT_WRAPPERS: &[u16] = &[
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, 0, NO_SITE, NO_SITE, NO_SITE, 0, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 0,
+/// Per kind id of a wrapper, the field its seat passes through: FieldId(0) for its unfielded content.
+pub static SEAT_WRAPPERS: &[Option<FieldId>] = &[
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, Some(FieldId(0)), None, None, None, Some(FieldId(0)), None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, Some(FieldId(0)),
 ];
 
 pub fn defaults() -> ResolvedOptions {
@@ -509,8 +509,8 @@ pub fn defaults() -> ResolvedOptions {
     }
 }
 
-pub fn delimiter_allowed(site: usize) -> u8 {
-    DELIMITER_SITES[site].2
+pub fn delimiter_allowed(site: FlankId) -> u8 {
+    DELIMITER_SITES[site.index()].2
 }
 
 pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
@@ -859,7 +859,7 @@ mod resolve_tests {
         let expected = defaults();
         let named = [SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_AFTER];
         for i in 0..table.spacing.len() {
-            assert_eq!(table.spacing[i].arm, if named.contains(&i) { KindId(48) } else { expected.spacing[i].arm });
+            assert_eq!(table.spacing[i].arm, if named.iter().any(|site| site.index() == i) { KindId(48) } else { expected.spacing[i].arm });
         }
         assert_eq!(table.delimiter, expected.delimiter);
         assert_eq!(table.indent, expected.indent);

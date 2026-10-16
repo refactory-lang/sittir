@@ -1,13 +1,14 @@
 //! Resolved render options: one whitespace kind id per spacing site, one
 //! bitflag per flank site, and the indentation unit.
 
+use crate::types::{EdgeRow, FlankId, KindId, SiteId};
 
 /// The seams a kind wraps around itself: the spacing site on each side, or
-/// `NO_SITE` when the kind owns no seam there.
+/// none when the kind owns no seam there.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct EdgeSite {
-    pub before: u16,
-    pub after: u16,
+    pub before: Option<SiteId>,
+    pub after: Option<SiteId>,
     /// Per arm token kind, the site its edge uses on the side before, when the
     /// kind's edge is a choice of tokens that resolve one by one.
     pub before_arms: &'static [ArmSite],
@@ -19,12 +20,9 @@ pub struct EdgeSite {
 /// that arm's edge uses.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ArmSite {
-    pub arm: crate::types::KindId,
-    pub site: u16,
+    pub arm: KindId,
+    pub site: SiteId,
 }
-
-/// The cell of a kind-indexed site table for a kind that owns no site there.
-pub const NO_SITE: u16 = u16::MAX;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ResolvedOptions {
@@ -38,16 +36,16 @@ pub struct ResolvedOptions {
     pub newline: String,
     /// The edge rows of the kinds that own edge seams.
     pub edges: &'static [EdgeSite],
-    /// Per kind id, the index of its row in `edges`, or `NO_SITE`.
-    pub edge_rows: &'static [u16],
+    /// Per kind id, its row in `edges`, if it owns one.
+    pub edge_rows: &'static [Option<EdgeRow>],
     /// Per spacing site, in vector order: the arm its table holds by default and the strength that default carries.
     pub sites: &'static [SiteSpec],
     /// Per kind id, the kind's flags (`KIND_ANON`, `KIND_LINE_TERMINATED`, `KIND_LINE_BREAK_TERMINATED`, `KIND_ROOT`).
     pub kind_flags: &'static [u8],
     /// Per kind id of a wrapper, the field its seat passes through to the
-    /// node it holds, 0 for its unfielded content; `NO_SITE` for any other
-    /// kind (`prepare::fill_seated_gaps`).
-    pub seat_wrappers: &'static [u16],
+    /// node it holds, `FieldId(0)` for its unfielded content; none for any
+    /// other kind (`prepare::fill_seated_gaps`).
+    pub seat_wrappers: &'static [Option<crate::types::FieldId>],
 }
 
 /// The parser's anonymous kind: a token, never an owner of trivia.
@@ -66,13 +64,13 @@ pub const KIND_ROOT: u8 = 8;
 /// One spacing site's default arm and the strength a default carries into the writer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SiteSpec {
-    pub default_arm: crate::types::KindId,
+    pub default_arm: KindId,
     pub strength: u8,
 }
 
 impl SiteSpec {
     /// `arm` at this site: the default's strength when it is the default, declared otherwise.
-    pub fn seam(&self, arm: crate::types::KindId) -> crate::slot::SeamArm {
+    pub fn seam(&self, arm: KindId) -> crate::slot::SeamArm {
         let strength = if arm == self.default_arm { self.strength } else { crate::spacing::SEAM_DECLARED };
         crate::slot::SeamArm { arm, strength, dedent: false }
     }
@@ -86,7 +84,7 @@ impl SiteSpec {
 /// is why the strength is optional.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct EdgeArm {
-    pub arm: crate::types::KindId,
+    pub arm: KindId,
     pub strength: Option<u8>,
     /// Close a depth before the arm (`SeamArm::dedent`). The wire never
     /// sends it.
@@ -114,7 +112,7 @@ impl Edges {
 
 /// A transport that carries its kind's edges in its base.
 pub trait Edged {
-    fn kind_id(&self) -> crate::types::KindId;
+    fn kind_id(&self) -> KindId;
     fn edges(&self) -> &Edges;
     fn edges_mut(&mut self) -> &mut Edges;
 
@@ -123,7 +121,7 @@ pub trait Edged {
     fn edge_arm_kinds(
         &self,
         _ctx: &crate::prepare::RenderContext<'_>,
-    ) -> (Option<crate::types::KindId>, Option<crate::types::KindId>) {
+    ) -> (Option<KindId>, Option<KindId>) {
         (None, None)
     }
 }
@@ -157,20 +155,28 @@ impl ResolvedOptions {
     }
 
     /// The edge seams the resolved options give a node of `kind`, or none when the kind owns no edge site.
-    pub fn edge_arms(&self, kind: crate::types::KindId) -> Option<crate::slot::CoordinateEdges> {
+    pub fn edge_arms(&self, kind: KindId) -> Option<crate::slot::CoordinateEdges> {
         let row = self.edge_row(kind)?;
-        Some(crate::slot::CoordinateEdges { before: self.edge_seam(row.before, None), after: self.edge_seam(row.after, None) })
+        Some(crate::slot::CoordinateEdges {
+            before: row.before.and_then(|site| self.edge_seam(site, None)),
+            after: row.after.and_then(|site| self.edge_seam(site, None)),
+        })
     }
 
-    pub fn site_arm(&self, site: usize) -> crate::slot::SeamArm {
-        self.spacing[site]
+    pub fn site_arm(&self, site: SiteId) -> crate::slot::SeamArm {
+        self.spacing[site.index()]
+    }
+
+    /// The `Delimiter` bitflag resolved for a flank site.
+    pub fn delimiter_at(&self, site: FlankId) -> u8 {
+        self.delimiter[site.index()]
     }
 
     /// Resolve `site` to an arm an options object names. A named arm writes at
     /// declared strength even when it is the site's default: the caller chose
     /// it, so it must win a seam merge the default would lose.
-    pub fn set_arm(&mut self, site: usize, arm: crate::types::KindId) {
-        self.spacing[site] = crate::slot::SeamArm { arm, strength: crate::spacing::SEAM_DECLARED, dedent: false };
+    pub fn set_arm(&mut self, site: SiteId, arm: KindId) {
+        self.spacing[site.index()] = crate::slot::SeamArm { arm, strength: crate::spacing::SEAM_DECLARED, dedent: false };
     }
 
     /// What one side of a kind's edge writes: the stamp when one is set (at its
@@ -179,23 +185,23 @@ impl ResolvedOptions {
     /// or the row has no site on that side.
     pub fn edge_arm(
         &self,
-        kind: crate::types::KindId,
+        kind: KindId,
         side: Side,
         stamped: Option<EdgeArm>,
-        arm: Option<crate::types::KindId>,
+        arm: Option<KindId>,
     ) -> Option<crate::slot::SeamArm> {
         let row = self.edge_row(kind)?;
         let (shared, arms) = match side {
             Side::Before => (row.before, row.before_arms),
             Side::After => (row.after, row.after_arms),
         };
-        let site = arm.and_then(|arm| arms.iter().find(|a| a.arm == arm)).map_or(shared, |a| a.site);
-        self.edge_seam(site, stamped)
+        let site = arm.and_then(|arm| arms.iter().find(|a| a.arm == arm)).map_or(shared, |a| Some(a.site));
+        self.edge_seam(site?, stamped)
     }
 
     /// The arms a kind's edge on `side` resolves one by one: empty when the
     /// edge has one site for every token.
-    pub fn edge_arm_sites(&self, kind: crate::types::KindId, side: Side) -> &'static [ArmSite] {
+    pub fn edge_arm_sites(&self, kind: KindId, side: Side) -> &'static [ArmSite] {
         match (self.edge_row(kind), side) {
             (Some(row), Side::Before) => row.before_arms,
             (Some(row), Side::After) => row.after_arms,
@@ -203,11 +209,8 @@ impl ResolvedOptions {
         }
     }
 
-    fn edge_seam(&self, site: u16, stamped: Option<EdgeArm>) -> Option<crate::slot::SeamArm> {
-        if site == NO_SITE {
-            return None;
-        }
-        let site = site as usize;
+    fn edge_seam(&self, site: SiteId, stamped: Option<EdgeArm>) -> Option<crate::slot::SeamArm> {
+        let site = site.index();
         Some(match stamped {
             Some(EdgeArm { arm, strength: Some(strength), dedent }) => crate::slot::SeamArm { arm, strength, dedent: dedent == Some(true) },
             Some(EdgeArm { arm, strength: None, dedent }) => crate::slot::SeamArm { dedent: dedent == Some(true), ..self.sites[site].seam(arm) },
@@ -216,29 +219,27 @@ impl ResolvedOptions {
     }
 
     /// Whether `kind` carries `flag` in the kind flag table.
-    pub fn kind_has(&self, kind: crate::types::KindId, flag: u8) -> bool {
-        self.kind_flags.get(kind.0 as usize).is_some_and(|flags| flags & flag != 0)
+    pub fn kind_has(&self, kind: KindId, flag: u8) -> bool {
+        self.kind_flags.get(kind.index()).is_some_and(|flags| flags & flag != 0)
     }
 
     /// The spacing sites of `kind`'s edge row, before and after it: `None` on a
     /// side the row has no site, or when the kind owns no edge row.
-    pub fn edge_sites(&self, kind: crate::types::KindId) -> (Option<usize>, Option<usize>) {
-        let site = |site: u16| (site != NO_SITE).then_some(site as usize);
-        self.edge_row(kind).map_or((None, None), |row| (site(row.before), site(row.after)))
+    pub fn edge_sites(&self, kind: KindId) -> (Option<SiteId>, Option<SiteId>) {
+        self.edge_row(kind).map_or((None, None), |row| (row.before, row.after))
     }
 
-    fn edge_row(&self, kind: crate::types::KindId) -> Option<&EdgeSite> {
-        match self.edge_rows.get(kind.0 as usize) {
-            Some(&row) if row != NO_SITE => Some(&self.edges[row as usize]),
-            _ => None,
-        }
+    fn edge_row(&self, kind: KindId) -> Option<&EdgeSite> {
+        let row = (*self.edge_rows.get(kind.index())?)?;
+        Some(&self.edges[row.index()])
     }
 }
 
-/// One site an address leaf sets, with the site's canonical path for errors.
+/// One site an address leaf sets, with the site's canonical path for errors:
+/// a `SiteId` under a spacing leaf, a `FlankId` under a delimiter leaf.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct SiteRef {
-    pub site: usize,
+pub struct SiteRef<I> {
+    pub site: I,
     pub path: &'static str,
 }
 
@@ -247,8 +248,8 @@ pub struct SiteRef {
 #[derive(Debug)]
 pub enum AddressNode {
     Branch { key: &'static str, path: &'static str, children: &'static [AddressNode] },
-    Spacing { key: &'static str, sites: &'static [SiteRef] },
-    Delimiter { key: &'static str, sites: &'static [SiteRef] },
+    Spacing { key: &'static str, sites: &'static [SiteRef<SiteId>] },
+    Delimiter { key: &'static str, sites: &'static [SiteRef<FlankId>] },
 }
 
 impl AddressNode {
@@ -262,11 +263,11 @@ impl AddressNode {
 /// The generated facts an options object is read and resolved against.
 pub struct OptionTables {
     pub addresses: &'static [AddressNode],
-    pub allowed: fn(usize) -> &'static [crate::types::KindId],
-    pub delimiter_allowed: fn(usize) -> u8,
-    pub depth_sites: &'static [(&'static str, &'static [usize])],
-    pub indent: crate::types::KindId,
-    pub dedent: crate::types::KindId,
+    pub allowed: fn(SiteId) -> &'static [KindId],
+    pub delimiter_allowed: fn(FlankId) -> u8,
+    pub depth_sites: &'static [(&'static str, &'static [SiteId])],
+    pub indent: KindId,
+    pub dedent: KindId,
     /// The characters an `indent` unit may be made of: the texts of the
     /// admitted `_space` and `_tab` whitespace members. Empty when the
     /// grammar admits neither, and then `indent` is not an option.
@@ -301,8 +302,8 @@ pub const LAYOUT_KEY: &str = "layout";
 pub struct Options<S> {
     pub indent: Option<String>,
     pub newline: Option<String>,
-    pub spacing: Vec<(SiteRef, u32)>,
-    pub delimiter: Vec<(SiteRef, u32)>,
+    pub spacing: Vec<(SiteRef<SiteId>, u32)>,
+    pub delimiter: Vec<(SiteRef<FlankId>, u32)>,
     sites: ::std::marker::PhantomData<S>,
 }
 
@@ -361,7 +362,7 @@ impl<S: OptionSites> Options<S> {
                     }
                 }
                 AddressNode::Spacing { sites, .. } => {
-                    let value = if obj.is_null(&key)? { Some(u32::from(crate::types::KindId::BLANK.get())) } else { obj.number(&key)? };
+                    let value = if obj.is_null(&key)? { Some(u32::from(KindId::BLANK.get())) } else { obj.number(&key)? };
                     if let Some(value) = value {
                         self.spacing.extend(sites.iter().map(|site| (*site, value)));
                     }
@@ -399,7 +400,7 @@ impl<S: OptionSites> Options<S> {
         }
         for (site, value) in &self.spacing {
             let allowed = (tables.allowed)(site.site);
-            match u16::try_from(*value).map(crate::types::KindId) {
+            match u16::try_from(*value).map(KindId) {
                 Ok(id) if allowed.contains(&id) => table.set_arm(site.site, id),
                 _ => {
                     let allowed = allowed.iter().map(ToString::to_string).collect::<Vec<_>>().join(", ");
@@ -410,17 +411,17 @@ impl<S: OptionSites> Options<S> {
         for (site, value) in &self.delimiter {
             let allowed = (tables.delimiter_allowed)(site.site);
             match u8::try_from(*value) {
-                Ok(bits) if bits & !allowed == 0 => table.delimiter[site.site] = bits,
+                Ok(bits) if bits & !allowed == 0 => table.delimiter[site.site.index()] = bits,
                 _ => return Err(format!("options: {} does not admit delimiter {value} (allowed bits: {allowed})", site.path)),
             }
         }
         for (kind, sites) in tables.depth_sites {
             let mut depth = 0usize;
             for site in sites.iter() {
-                let value = table.spacing[*site].arm;
-                if tables.indent != crate::types::KindId::BLANK && value == tables.indent {
+                let value = table.spacing[site.index()].arm;
+                if tables.indent != KindId::BLANK && value == tables.indent {
                     depth += 1;
-                } else if tables.dedent != crate::types::KindId::BLANK && value == tables.dedent {
+                } else if tables.dedent != KindId::BLANK && value == tables.dedent {
                     if depth == 0 {
                         return Err(format!("options: {kind} dedents an indent it never opened"));
                     }
@@ -560,12 +561,12 @@ pub fn indent_unit(source: &str) -> Option<String> {
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct InferredOptions {
     pub indent: Option<String>,
-    pub edges: Vec<(usize, crate::types::KindId)>,
+    pub edges: Vec<(SiteId, KindId)>,
 }
 
 impl InferredOptions {
     /// The layer `source`, whose root is of `root`, sets apart from `base`.
-    pub fn infer(source: &str, root: crate::types::KindId, base: &ResolvedOptions, tables: &OptionTables, whitespace: &crate::render::WhitespaceTable) -> Self {
+    pub fn infer(source: &str, root: KindId, base: &ResolvedOptions, tables: &OptionTables, whitespace: &crate::render::WhitespaceTable) -> Self {
         let indent = indent_unit(source).filter(|unit| *unit != base.indent);
         let (before, after) = base.edge_sites(root);
         let leading = &source[..source.len() - source.trim_start().len()];
@@ -575,7 +576,7 @@ impl InferredOptions {
             .filter_map(|(site, ws)| {
                 let site = site?;
                 let arm = crate::classify::classify_whitespace(ws, (tables.allowed)(site), whitespace)?;
-                (arm != base.spacing[site].arm).then_some((site, arm))
+                (arm != base.spacing[site.index()].arm).then_some((site, arm))
             })
             .collect();
         InferredOptions { indent, edges }
@@ -617,7 +618,7 @@ impl InferredOptions {
 }
 
 /// The keys that address `site` alone, from the root of `nodes`.
-fn address_of(nodes: &'static [AddressNode], site: usize) -> Option<Vec<&'static str>> {
+fn address_of(nodes: &'static [AddressNode], site: SiteId) -> Option<Vec<&'static str>> {
     nodes.iter().find_map(|node| match node {
         AddressNode::Spacing { key, sites: [only] } if only.site == site => Some(vec![*key]),
         AddressNode::Branch { key, children, .. } => address_of(children, site).map(|mut path| {

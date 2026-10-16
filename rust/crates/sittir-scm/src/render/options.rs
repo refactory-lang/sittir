@@ -1,163 +1,163 @@
 // @generated — render options: site table and resolver. Do not hand-edit.
 
-use ::sittir_core::options::{ResolvedOptions, NO_SITE};
-use ::sittir_core::types::KindId;
+use ::sittir_core::options::ResolvedOptions;
+use ::sittir_core::types::{EdgeRow, FieldId, FlankId, KindId, SiteId};
 
 pub const SPACING_SITE_COUNT: usize = 152;
 pub const DELIMITER_SITE_COUNT: usize = 0;
 
-pub const SITE_ANONYMOUS_NODE_ELEMENTS_CAPTURE_AFTER: usize = 0;
-pub const SITE_ANONYMOUS_NODE_ELEMENTS_END: usize = 1;
-pub const SITE_ANONYMOUS_NODE_ELEMENTS_START: usize = 2;
-pub const SITE_ANONYMOUS_NODE_ELEMENTS_SEPARATOR_SPACE: usize = 3;
-pub const SITE_ANONYMOUS_NODE_UNDERSCORE_AFTER: usize = 4;
-pub const SITE_ANONYMOUS_NODE_ANONYMOUS_NODE_BEFORE: usize = 5;
-pub const SITE_ANONYMOUS_NODE_ANONYMOUS_NODE_AFTER: usize = 6;
-pub const SITE_CAPTURE_CAPTURE_BEFORE: usize = 7;
-pub const SITE_CAPTURE_CAPTURE_AFTER: usize = 8;
-pub const SITE_FIELD_DEFINITION_COLON_BEFORE: usize = 9;
-pub const SITE_FIELD_DEFINITION_COLON_AFTER: usize = 10;
-pub const SITE_FIELD_DEFINITION_FIELD_DEFINITION_BEFORE: usize = 11;
-pub const SITE_FIELD_DEFINITION_FIELD_DEFINITION_AFTER: usize = 12;
-pub const SITE_GROUP_EXPRESSION_ARM_DOT_BEFORE: usize = 13;
-pub const SITE_GROUP_EXPRESSION_ARM_DOT_AFTER: usize = 14;
-pub const SITE_GROUP_EXPRESSION_ARM_GROUP_EXPRESSION_ARM_BEFORE: usize = 15;
-pub const SITE_GROUP_EXPRESSION_ARM_GROUP_EXPRESSION_ARM_AFTER: usize = 16;
-pub const SITE_GROUPING_ELEMENTS_CAPTURE_AFTER: usize = 17;
-pub const SITE_GROUPING_ELEMENTS_SEPARATOR_SPACE: usize = 18;
-pub const SITE_GROUPING_GROUPING_GROUP_GROUPING_GROUP_AFTER: usize = 19;
-pub const SITE_GROUPING_GROUPING_GROUP_SEPARATOR_SPACE: usize = 20;
-pub const SITE_GROUPING_LPAREN_AFTER: usize = 21;
-pub const SITE_GROUPING_RPAREN_BEFORE: usize = 22;
-pub const SITE_GROUPING_RPAREN_AFTER: usize = 23;
-pub const SITE_GROUPING_GROUPING_BEFORE: usize = 24;
-pub const SITE_GROUPING_GROUPING_AFTER: usize = 25;
-pub const SITE_GROUPING_GROUP_DOT_BEFORE: usize = 26;
-pub const SITE_GROUPING_GROUP_GROUPING_GROUP_BEFORE: usize = 27;
-pub const SITE_GROUPING_GROUP_GROUPING_GROUP_AFTER: usize = 28;
-pub const SITE_IMMEDIATE_STRING_IMMEDIATE_STRING_AFTER: usize = 29;
-pub const SITE_LIST_DEFINITIONS_ANONYMOUS_NODE_AFTER: usize = 30;
-pub const SITE_LIST_DEFINITIONS_FIELD_DEFINITION_AFTER: usize = 31;
-pub const SITE_LIST_DEFINITIONS_GROUPING_AFTER: usize = 32;
-pub const SITE_LIST_DEFINITIONS_LIST_AFTER: usize = 33;
-pub const SITE_LIST_DEFINITIONS_MISSING_NODE_AFTER: usize = 34;
-pub const SITE_LIST_DEFINITIONS_NAMED_NODE_PLAIN_AFTER: usize = 35;
-pub const SITE_LIST_DEFINITIONS_NAMED_NODE_SUPERTYPED_AFTER: usize = 36;
-pub const SITE_LIST_DEFINITIONS_PREDICATE_AFTER: usize = 37;
-pub const SITE_LIST_DEFINITIONS_SEPARATOR_SPACE: usize = 38;
-pub const SITE_LIST_ELEMENTS_CAPTURE_AFTER: usize = 39;
-pub const SITE_LIST_ELEMENTS_SEPARATOR_SPACE: usize = 40;
-pub const SITE_LIST_LBRACK_AFTER: usize = 41;
-pub const SITE_LIST_RBRACK_BEFORE: usize = 42;
-pub const SITE_LIST_RBRACK_AFTER: usize = 43;
-pub const SITE_LIST_LIST_BEFORE: usize = 44;
-pub const SITE_LIST_LIST_AFTER: usize = 45;
-pub const SITE_MISSING_NODE_ELEMENTS_CAPTURE_AFTER: usize = 46;
-pub const SITE_MISSING_NODE_ELEMENTS_END: usize = 47;
-pub const SITE_MISSING_NODE_ELEMENTS_START: usize = 48;
-pub const SITE_MISSING_NODE_ELEMENTS_SEPARATOR_SPACE: usize = 49;
-pub const SITE_MISSING_NODE_LPAREN_AFTER: usize = 50;
-pub const SITE_MISSING_NODE_RPAREN_BEFORE: usize = 51;
-pub const SITE_MISSING_NODE_RPAREN_AFTER: usize = 52;
-pub const SITE_MISSING_NODE_MISSING_KEYWORD_BEFORE: usize = 53;
-pub const SITE_MISSING_NODE_MISSING_KEYWORD_AFTER: usize = 54;
-pub const SITE_MISSING_NODE_MISSING_NODE_BEFORE: usize = 55;
-pub const SITE_MISSING_NODE_MISSING_NODE_AFTER: usize = 56;
-pub const SITE_NAMED_NODE_EXPRESSION_ARM_DOT_BEFORE: usize = 57;
-pub const SITE_NAMED_NODE_EXPRESSION_ARM_DOT_AFTER: usize = 58;
-pub const SITE_NAMED_NODE_EXPRESSION_ARM_NAMED_NODE_EXPRESSION_ARM_BEFORE: usize = 59;
-pub const SITE_NAMED_NODE_EXPRESSION_ARM_NAMED_NODE_EXPRESSION_ARM_AFTER: usize = 60;
-pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_ANONYMOUS_NODE_AFTER: usize = 61;
-pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_FIELD_DEFINITION_AFTER: usize = 62;
-pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_GROUPING_AFTER: usize = 63;
-pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_LIST_AFTER: usize = 64;
-pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_MISSING_NODE_AFTER: usize = 65;
-pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_NAMED_NODE_EXPRESSION_ARM_AFTER: usize = 66;
-pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_NAMED_NODE_PLAIN_AFTER: usize = 67;
-pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_NAMED_NODE_SUPERTYPED_AFTER: usize = 68;
-pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_NEGATED_FIELD_AFTER: usize = 69;
-pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_PREDICATE_AFTER: usize = 70;
-pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_END: usize = 71;
-pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_START: usize = 72;
-pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE: usize = 73;
-pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_DOT_BEFORE: usize = 74;
-pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_DOT_AFTER: usize = 75;
-pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_GROUP_ANCHORED_LAST_BEFORE: usize = 76;
-pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_GROUP_ANCHORED_LAST_AFTER: usize = 77;
-pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_ANONYMOUS_NODE_AFTER: usize = 78;
-pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_FIELD_DEFINITION_AFTER: usize = 79;
-pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_GROUPING_AFTER: usize = 80;
-pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_LIST_AFTER: usize = 81;
-pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_MISSING_NODE_AFTER: usize = 82;
-pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_NAMED_NODE_EXPRESSION_ARM_AFTER: usize = 83;
-pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_NAMED_NODE_PLAIN_AFTER: usize = 84;
-pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_NAMED_NODE_SUPERTYPED_AFTER: usize = 85;
-pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_NEGATED_FIELD_AFTER: usize = 86;
-pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_PREDICATE_AFTER: usize = 87;
-pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_END: usize = 88;
-pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_START: usize = 89;
-pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE: usize = 90;
-pub const SITE_NAMED_NODE_GROUP_CHILDREN_DOT_AFTER: usize = 91;
-pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_GROUP_CHILDREN_BEFORE: usize = 92;
-pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_GROUP_CHILDREN_AFTER: usize = 93;
-pub const SITE_NAMED_NODE_PLAIN_ELEMENTS_CAPTURE_AFTER: usize = 94;
-pub const SITE_NAMED_NODE_PLAIN_ELEMENTS_END: usize = 95;
-pub const SITE_NAMED_NODE_PLAIN_ELEMENTS_START: usize = 96;
-pub const SITE_NAMED_NODE_PLAIN_ELEMENTS_SEPARATOR_SPACE: usize = 97;
-pub const SITE_NAMED_NODE_PLAIN_LPAREN_AFTER: usize = 98;
-pub const SITE_NAMED_NODE_PLAIN_RPAREN_BEFORE: usize = 99;
-pub const SITE_NAMED_NODE_PLAIN_RPAREN_AFTER: usize = 100;
-pub const SITE_NAMED_NODE_PLAIN_UNDERSCORE_BEFORE: usize = 101;
-pub const SITE_NAMED_NODE_PLAIN_UNDERSCORE_AFTER: usize = 102;
-pub const SITE_NAMED_NODE_PLAIN_NAMED_NODE_PLAIN_BEFORE: usize = 103;
-pub const SITE_NAMED_NODE_PLAIN_NAMED_NODE_PLAIN_AFTER: usize = 104;
-pub const SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_CAPTURE_AFTER: usize = 105;
-pub const SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_END: usize = 106;
-pub const SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_START: usize = 107;
-pub const SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_SEPARATOR_SPACE: usize = 108;
-pub const SITE_NAMED_NODE_SUPERTYPED_LPAREN_AFTER: usize = 109;
-pub const SITE_NAMED_NODE_SUPERTYPED_RPAREN_BEFORE: usize = 110;
-pub const SITE_NAMED_NODE_SUPERTYPED_RPAREN_AFTER: usize = 111;
-pub const SITE_NAMED_NODE_SUPERTYPED_NAMED_NODE_SUPERTYPED_BEFORE: usize = 112;
-pub const SITE_NAMED_NODE_SUPERTYPED_NAMED_NODE_SUPERTYPED_AFTER: usize = 113;
-pub const SITE_NEGATED_FIELD_BANG_AFTER: usize = 114;
-pub const SITE_NEGATED_FIELD_NEGATED_FIELD_BEFORE: usize = 115;
-pub const SITE_NEGATED_FIELD_NEGATED_FIELD_AFTER: usize = 116;
-pub const SITE_PARAMETERS_ELEMENTS_CAPTURE_AFTER: usize = 117;
-pub const SITE_PARAMETERS_ELEMENTS_STRING_AFTER: usize = 118;
-pub const SITE_PARAMETERS_ELEMENTS_END: usize = 119;
-pub const SITE_PARAMETERS_ELEMENTS_START: usize = 120;
-pub const SITE_PARAMETERS_ELEMENTS_SEPARATOR_SPACE: usize = 121;
-pub const SITE_PARAMETERS_PARAMETERS_BEFORE: usize = 122;
-pub const SITE_PARAMETERS_PARAMETERS_AFTER: usize = 123;
-pub const SITE_PREDICATE_PREFIX_BEFORE: usize = 124;
-pub const SITE_PREDICATE_LPAREN_AFTER: usize = 125;
-pub const SITE_PREDICATE_RPAREN_BEFORE: usize = 126;
-pub const SITE_PREDICATE_PREDICATE_BEFORE: usize = 127;
-pub const SITE_PREDICATE_PREDICATE_AFTER: usize = 128;
-pub const SITE_PREDICATE_TYPE_BANG_AFTER: usize = 129;
-pub const SITE_PREDICATE_TYPE_QMARK_AFTER: usize = 130;
-pub const SITE_PROGRAM_DEFINITIONS_ANONYMOUS_NODE_AFTER: usize = 131;
-pub const SITE_PROGRAM_DEFINITIONS_FIELD_DEFINITION_AFTER: usize = 132;
-pub const SITE_PROGRAM_DEFINITIONS_GROUPING_AFTER: usize = 133;
-pub const SITE_PROGRAM_DEFINITIONS_LIST_AFTER: usize = 134;
-pub const SITE_PROGRAM_DEFINITIONS_MISSING_NODE_AFTER: usize = 135;
-pub const SITE_PROGRAM_DEFINITIONS_NAMED_NODE_PLAIN_AFTER: usize = 136;
-pub const SITE_PROGRAM_DEFINITIONS_NAMED_NODE_SUPERTYPED_AFTER: usize = 137;
-pub const SITE_PROGRAM_DEFINITIONS_PREDICATE_AFTER: usize = 138;
-pub const SITE_PROGRAM_DEFINITIONS_END: usize = 139;
-pub const SITE_PROGRAM_DEFINITIONS_START: usize = 140;
-pub const SITE_PROGRAM_DEFINITIONS_SEPARATOR_SPACE: usize = 141;
-pub const SITE_PROGRAM_PROGRAM_BEFORE: usize = 142;
-pub const SITE_PROGRAM_PROGRAM_AFTER: usize = 143;
-pub const SITE_QUANTIFIER_STAR_BEFORE: usize = 144;
-pub const SITE_QUANTIFIER_STAR_AFTER: usize = 145;
-pub const SITE_QUANTIFIER_PLUS_BEFORE: usize = 146;
-pub const SITE_QUANTIFIER_PLUS_AFTER: usize = 147;
-pub const SITE_QUANTIFIER_QMARK_BEFORE: usize = 148;
-pub const SITE_QUANTIFIER_QMARK_AFTER: usize = 149;
-pub const SITE_STRING_STRING_BEFORE: usize = 150;
-pub const SITE_STRING_STRING_AFTER: usize = 151;
+pub const SITE_ANONYMOUS_NODE_ELEMENTS_CAPTURE_AFTER: SiteId = SiteId(0);
+pub const SITE_ANONYMOUS_NODE_ELEMENTS_END: SiteId = SiteId(1);
+pub const SITE_ANONYMOUS_NODE_ELEMENTS_START: SiteId = SiteId(2);
+pub const SITE_ANONYMOUS_NODE_ELEMENTS_SEPARATOR_SPACE: SiteId = SiteId(3);
+pub const SITE_ANONYMOUS_NODE_UNDERSCORE_AFTER: SiteId = SiteId(4);
+pub const SITE_ANONYMOUS_NODE_ANONYMOUS_NODE_BEFORE: SiteId = SiteId(5);
+pub const SITE_ANONYMOUS_NODE_ANONYMOUS_NODE_AFTER: SiteId = SiteId(6);
+pub const SITE_CAPTURE_CAPTURE_BEFORE: SiteId = SiteId(7);
+pub const SITE_CAPTURE_CAPTURE_AFTER: SiteId = SiteId(8);
+pub const SITE_FIELD_DEFINITION_COLON_BEFORE: SiteId = SiteId(9);
+pub const SITE_FIELD_DEFINITION_COLON_AFTER: SiteId = SiteId(10);
+pub const SITE_FIELD_DEFINITION_FIELD_DEFINITION_BEFORE: SiteId = SiteId(11);
+pub const SITE_FIELD_DEFINITION_FIELD_DEFINITION_AFTER: SiteId = SiteId(12);
+pub const SITE_GROUP_EXPRESSION_ARM_DOT_BEFORE: SiteId = SiteId(13);
+pub const SITE_GROUP_EXPRESSION_ARM_DOT_AFTER: SiteId = SiteId(14);
+pub const SITE_GROUP_EXPRESSION_ARM_GROUP_EXPRESSION_ARM_BEFORE: SiteId = SiteId(15);
+pub const SITE_GROUP_EXPRESSION_ARM_GROUP_EXPRESSION_ARM_AFTER: SiteId = SiteId(16);
+pub const SITE_GROUPING_ELEMENTS_CAPTURE_AFTER: SiteId = SiteId(17);
+pub const SITE_GROUPING_ELEMENTS_SEPARATOR_SPACE: SiteId = SiteId(18);
+pub const SITE_GROUPING_GROUPING_GROUP_GROUPING_GROUP_AFTER: SiteId = SiteId(19);
+pub const SITE_GROUPING_GROUPING_GROUP_SEPARATOR_SPACE: SiteId = SiteId(20);
+pub const SITE_GROUPING_LPAREN_AFTER: SiteId = SiteId(21);
+pub const SITE_GROUPING_RPAREN_BEFORE: SiteId = SiteId(22);
+pub const SITE_GROUPING_RPAREN_AFTER: SiteId = SiteId(23);
+pub const SITE_GROUPING_GROUPING_BEFORE: SiteId = SiteId(24);
+pub const SITE_GROUPING_GROUPING_AFTER: SiteId = SiteId(25);
+pub const SITE_GROUPING_GROUP_DOT_BEFORE: SiteId = SiteId(26);
+pub const SITE_GROUPING_GROUP_GROUPING_GROUP_BEFORE: SiteId = SiteId(27);
+pub const SITE_GROUPING_GROUP_GROUPING_GROUP_AFTER: SiteId = SiteId(28);
+pub const SITE_IMMEDIATE_STRING_IMMEDIATE_STRING_AFTER: SiteId = SiteId(29);
+pub const SITE_LIST_DEFINITIONS_ANONYMOUS_NODE_AFTER: SiteId = SiteId(30);
+pub const SITE_LIST_DEFINITIONS_FIELD_DEFINITION_AFTER: SiteId = SiteId(31);
+pub const SITE_LIST_DEFINITIONS_GROUPING_AFTER: SiteId = SiteId(32);
+pub const SITE_LIST_DEFINITIONS_LIST_AFTER: SiteId = SiteId(33);
+pub const SITE_LIST_DEFINITIONS_MISSING_NODE_AFTER: SiteId = SiteId(34);
+pub const SITE_LIST_DEFINITIONS_NAMED_NODE_PLAIN_AFTER: SiteId = SiteId(35);
+pub const SITE_LIST_DEFINITIONS_NAMED_NODE_SUPERTYPED_AFTER: SiteId = SiteId(36);
+pub const SITE_LIST_DEFINITIONS_PREDICATE_AFTER: SiteId = SiteId(37);
+pub const SITE_LIST_DEFINITIONS_SEPARATOR_SPACE: SiteId = SiteId(38);
+pub const SITE_LIST_ELEMENTS_CAPTURE_AFTER: SiteId = SiteId(39);
+pub const SITE_LIST_ELEMENTS_SEPARATOR_SPACE: SiteId = SiteId(40);
+pub const SITE_LIST_LBRACK_AFTER: SiteId = SiteId(41);
+pub const SITE_LIST_RBRACK_BEFORE: SiteId = SiteId(42);
+pub const SITE_LIST_RBRACK_AFTER: SiteId = SiteId(43);
+pub const SITE_LIST_LIST_BEFORE: SiteId = SiteId(44);
+pub const SITE_LIST_LIST_AFTER: SiteId = SiteId(45);
+pub const SITE_MISSING_NODE_ELEMENTS_CAPTURE_AFTER: SiteId = SiteId(46);
+pub const SITE_MISSING_NODE_ELEMENTS_END: SiteId = SiteId(47);
+pub const SITE_MISSING_NODE_ELEMENTS_START: SiteId = SiteId(48);
+pub const SITE_MISSING_NODE_ELEMENTS_SEPARATOR_SPACE: SiteId = SiteId(49);
+pub const SITE_MISSING_NODE_LPAREN_AFTER: SiteId = SiteId(50);
+pub const SITE_MISSING_NODE_RPAREN_BEFORE: SiteId = SiteId(51);
+pub const SITE_MISSING_NODE_RPAREN_AFTER: SiteId = SiteId(52);
+pub const SITE_MISSING_NODE_MISSING_KEYWORD_BEFORE: SiteId = SiteId(53);
+pub const SITE_MISSING_NODE_MISSING_KEYWORD_AFTER: SiteId = SiteId(54);
+pub const SITE_MISSING_NODE_MISSING_NODE_BEFORE: SiteId = SiteId(55);
+pub const SITE_MISSING_NODE_MISSING_NODE_AFTER: SiteId = SiteId(56);
+pub const SITE_NAMED_NODE_EXPRESSION_ARM_DOT_BEFORE: SiteId = SiteId(57);
+pub const SITE_NAMED_NODE_EXPRESSION_ARM_DOT_AFTER: SiteId = SiteId(58);
+pub const SITE_NAMED_NODE_EXPRESSION_ARM_NAMED_NODE_EXPRESSION_ARM_BEFORE: SiteId = SiteId(59);
+pub const SITE_NAMED_NODE_EXPRESSION_ARM_NAMED_NODE_EXPRESSION_ARM_AFTER: SiteId = SiteId(60);
+pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_ANONYMOUS_NODE_AFTER: SiteId = SiteId(61);
+pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_FIELD_DEFINITION_AFTER: SiteId = SiteId(62);
+pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_GROUPING_AFTER: SiteId = SiteId(63);
+pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_LIST_AFTER: SiteId = SiteId(64);
+pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_MISSING_NODE_AFTER: SiteId = SiteId(65);
+pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_NAMED_NODE_EXPRESSION_ARM_AFTER: SiteId = SiteId(66);
+pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_NAMED_NODE_PLAIN_AFTER: SiteId = SiteId(67);
+pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_NAMED_NODE_SUPERTYPED_AFTER: SiteId = SiteId(68);
+pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_NEGATED_FIELD_AFTER: SiteId = SiteId(69);
+pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_PREDICATE_AFTER: SiteId = SiteId(70);
+pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_END: SiteId = SiteId(71);
+pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_START: SiteId = SiteId(72);
+pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE: SiteId = SiteId(73);
+pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_DOT_BEFORE: SiteId = SiteId(74);
+pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_DOT_AFTER: SiteId = SiteId(75);
+pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_GROUP_ANCHORED_LAST_BEFORE: SiteId = SiteId(76);
+pub const SITE_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_GROUP_ANCHORED_LAST_AFTER: SiteId = SiteId(77);
+pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_ANONYMOUS_NODE_AFTER: SiteId = SiteId(78);
+pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_FIELD_DEFINITION_AFTER: SiteId = SiteId(79);
+pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_GROUPING_AFTER: SiteId = SiteId(80);
+pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_LIST_AFTER: SiteId = SiteId(81);
+pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_MISSING_NODE_AFTER: SiteId = SiteId(82);
+pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_NAMED_NODE_EXPRESSION_ARM_AFTER: SiteId = SiteId(83);
+pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_NAMED_NODE_PLAIN_AFTER: SiteId = SiteId(84);
+pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_NAMED_NODE_SUPERTYPED_AFTER: SiteId = SiteId(85);
+pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_NEGATED_FIELD_AFTER: SiteId = SiteId(86);
+pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_PREDICATE_AFTER: SiteId = SiteId(87);
+pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_END: SiteId = SiteId(88);
+pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_START: SiteId = SiteId(89);
+pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS_SEPARATOR_SPACE: SiteId = SiteId(90);
+pub const SITE_NAMED_NODE_GROUP_CHILDREN_DOT_AFTER: SiteId = SiteId(91);
+pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_GROUP_CHILDREN_BEFORE: SiteId = SiteId(92);
+pub const SITE_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_GROUP_CHILDREN_AFTER: SiteId = SiteId(93);
+pub const SITE_NAMED_NODE_PLAIN_ELEMENTS_CAPTURE_AFTER: SiteId = SiteId(94);
+pub const SITE_NAMED_NODE_PLAIN_ELEMENTS_END: SiteId = SiteId(95);
+pub const SITE_NAMED_NODE_PLAIN_ELEMENTS_START: SiteId = SiteId(96);
+pub const SITE_NAMED_NODE_PLAIN_ELEMENTS_SEPARATOR_SPACE: SiteId = SiteId(97);
+pub const SITE_NAMED_NODE_PLAIN_LPAREN_AFTER: SiteId = SiteId(98);
+pub const SITE_NAMED_NODE_PLAIN_RPAREN_BEFORE: SiteId = SiteId(99);
+pub const SITE_NAMED_NODE_PLAIN_RPAREN_AFTER: SiteId = SiteId(100);
+pub const SITE_NAMED_NODE_PLAIN_UNDERSCORE_BEFORE: SiteId = SiteId(101);
+pub const SITE_NAMED_NODE_PLAIN_UNDERSCORE_AFTER: SiteId = SiteId(102);
+pub const SITE_NAMED_NODE_PLAIN_NAMED_NODE_PLAIN_BEFORE: SiteId = SiteId(103);
+pub const SITE_NAMED_NODE_PLAIN_NAMED_NODE_PLAIN_AFTER: SiteId = SiteId(104);
+pub const SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_CAPTURE_AFTER: SiteId = SiteId(105);
+pub const SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_END: SiteId = SiteId(106);
+pub const SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_START: SiteId = SiteId(107);
+pub const SITE_NAMED_NODE_SUPERTYPED_ELEMENTS_SEPARATOR_SPACE: SiteId = SiteId(108);
+pub const SITE_NAMED_NODE_SUPERTYPED_LPAREN_AFTER: SiteId = SiteId(109);
+pub const SITE_NAMED_NODE_SUPERTYPED_RPAREN_BEFORE: SiteId = SiteId(110);
+pub const SITE_NAMED_NODE_SUPERTYPED_RPAREN_AFTER: SiteId = SiteId(111);
+pub const SITE_NAMED_NODE_SUPERTYPED_NAMED_NODE_SUPERTYPED_BEFORE: SiteId = SiteId(112);
+pub const SITE_NAMED_NODE_SUPERTYPED_NAMED_NODE_SUPERTYPED_AFTER: SiteId = SiteId(113);
+pub const SITE_NEGATED_FIELD_BANG_AFTER: SiteId = SiteId(114);
+pub const SITE_NEGATED_FIELD_NEGATED_FIELD_BEFORE: SiteId = SiteId(115);
+pub const SITE_NEGATED_FIELD_NEGATED_FIELD_AFTER: SiteId = SiteId(116);
+pub const SITE_PARAMETERS_ELEMENTS_CAPTURE_AFTER: SiteId = SiteId(117);
+pub const SITE_PARAMETERS_ELEMENTS_STRING_AFTER: SiteId = SiteId(118);
+pub const SITE_PARAMETERS_ELEMENTS_END: SiteId = SiteId(119);
+pub const SITE_PARAMETERS_ELEMENTS_START: SiteId = SiteId(120);
+pub const SITE_PARAMETERS_ELEMENTS_SEPARATOR_SPACE: SiteId = SiteId(121);
+pub const SITE_PARAMETERS_PARAMETERS_BEFORE: SiteId = SiteId(122);
+pub const SITE_PARAMETERS_PARAMETERS_AFTER: SiteId = SiteId(123);
+pub const SITE_PREDICATE_PREFIX_BEFORE: SiteId = SiteId(124);
+pub const SITE_PREDICATE_LPAREN_AFTER: SiteId = SiteId(125);
+pub const SITE_PREDICATE_RPAREN_BEFORE: SiteId = SiteId(126);
+pub const SITE_PREDICATE_PREDICATE_BEFORE: SiteId = SiteId(127);
+pub const SITE_PREDICATE_PREDICATE_AFTER: SiteId = SiteId(128);
+pub const SITE_PREDICATE_TYPE_BANG_AFTER: SiteId = SiteId(129);
+pub const SITE_PREDICATE_TYPE_QMARK_AFTER: SiteId = SiteId(130);
+pub const SITE_PROGRAM_DEFINITIONS_ANONYMOUS_NODE_AFTER: SiteId = SiteId(131);
+pub const SITE_PROGRAM_DEFINITIONS_FIELD_DEFINITION_AFTER: SiteId = SiteId(132);
+pub const SITE_PROGRAM_DEFINITIONS_GROUPING_AFTER: SiteId = SiteId(133);
+pub const SITE_PROGRAM_DEFINITIONS_LIST_AFTER: SiteId = SiteId(134);
+pub const SITE_PROGRAM_DEFINITIONS_MISSING_NODE_AFTER: SiteId = SiteId(135);
+pub const SITE_PROGRAM_DEFINITIONS_NAMED_NODE_PLAIN_AFTER: SiteId = SiteId(136);
+pub const SITE_PROGRAM_DEFINITIONS_NAMED_NODE_SUPERTYPED_AFTER: SiteId = SiteId(137);
+pub const SITE_PROGRAM_DEFINITIONS_PREDICATE_AFTER: SiteId = SiteId(138);
+pub const SITE_PROGRAM_DEFINITIONS_END: SiteId = SiteId(139);
+pub const SITE_PROGRAM_DEFINITIONS_START: SiteId = SiteId(140);
+pub const SITE_PROGRAM_DEFINITIONS_SEPARATOR_SPACE: SiteId = SiteId(141);
+pub const SITE_PROGRAM_PROGRAM_BEFORE: SiteId = SiteId(142);
+pub const SITE_PROGRAM_PROGRAM_AFTER: SiteId = SiteId(143);
+pub const SITE_QUANTIFIER_STAR_BEFORE: SiteId = SiteId(144);
+pub const SITE_QUANTIFIER_STAR_AFTER: SiteId = SiteId(145);
+pub const SITE_QUANTIFIER_PLUS_BEFORE: SiteId = SiteId(146);
+pub const SITE_QUANTIFIER_PLUS_AFTER: SiteId = SiteId(147);
+pub const SITE_QUANTIFIER_QMARK_BEFORE: SiteId = SiteId(148);
+pub const SITE_QUANTIFIER_QMARK_AFTER: SiteId = SiteId(149);
+pub const SITE_STRING_STRING_BEFORE: SiteId = SiteId(150);
+pub const SITE_STRING_STRING_AFTER: SiteId = SiteId(151);
 
 /// (kind, address, label, allowed kind ids), in canonical path order.
 pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[
@@ -317,34 +317,34 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[KindId])] = &[
 
 /// The before and after site of every kind that owns edge seams, in kind id order.
 pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
-    ::sittir_core::options::EdgeSite { before: 142, after: 143, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 7, after: 8, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 150, after: 151, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: NO_SITE, after: 29, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 122, after: 123, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 44, after: 45, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 24, after: 25, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 55, after: 56, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 5, after: 6, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 11, after: 12, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 115, after: 116, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 127, after: 128, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 15, after: 16, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 59, after: 60, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 27, after: 28, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 103, after: 104, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 112, after: 113, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 92, after: 93, before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: 76, after: 77, before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(142)), after: Some(SiteId(143)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(7)), after: Some(SiteId(8)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(150)), after: Some(SiteId(151)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: None, after: Some(SiteId(29)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(122)), after: Some(SiteId(123)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(44)), after: Some(SiteId(45)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(24)), after: Some(SiteId(25)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(55)), after: Some(SiteId(56)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(5)), after: Some(SiteId(6)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(11)), after: Some(SiteId(12)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(115)), after: Some(SiteId(116)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(127)), after: Some(SiteId(128)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(15)), after: Some(SiteId(16)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(59)), after: Some(SiteId(60)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(27)), after: Some(SiteId(28)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(103)), after: Some(SiteId(104)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(112)), after: Some(SiteId(113)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(92)), after: Some(SiteId(93)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(76)), after: Some(SiteId(77)), before_arms: &[], after_arms: &[] },
 ];
 
 /// Per kind id, its row in EDGE_SITES.
-pub static EDGE_ROWS: &[u16] = &[
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, 0, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1, 2, 3, NO_SITE, 4, 5, 6, 7, 8,
-    NO_SITE, NO_SITE, 9, 10, 11, NO_SITE, NO_SITE, NO_SITE, 12, 13, 14, NO_SITE, NO_SITE, 15, 16, 17,
-    18,
+pub static EDGE_ROWS: &[Option<EdgeRow>] = &[
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, Some(EdgeRow(0)), None, None, None, None, None, Some(EdgeRow(1)), Some(EdgeRow(2)), Some(EdgeRow(3)), None, Some(EdgeRow(4)), Some(EdgeRow(5)), Some(EdgeRow(6)), Some(EdgeRow(7)), Some(EdgeRow(8)),
+    None, None, Some(EdgeRow(9)), Some(EdgeRow(10)), Some(EdgeRow(11)), None, None, None, Some(EdgeRow(12)), Some(EdgeRow(13)), Some(EdgeRow(14)), None, None, Some(EdgeRow(15)), Some(EdgeRow(16)), Some(EdgeRow(17)),
+    Some(EdgeRow(18)),
 ];
 
 /// Per kind id, its flags: KIND_ANON (the parser's anonymous token), KIND_LINE_TERMINATED, KIND_LINE_BREAK_TERMINATED, KIND_ROOT.
@@ -368,28 +368,28 @@ pub const INDENT_KIND: KindId = KindId(31);
 pub const DEDENT_KIND: KindId = KindId(32);
 
 /// (kind, its indent-capable sites in rule order): an indent opened at one site is dedented at a later one of the same kind.
-pub static DEPTH_SITES: &[(&str, &[usize])] = &[
-    ("anonymous_node", &[5, 4, 2, 1, 6, 0]),
-    ("capture", &[7, 8]),
-    ("field_definition", &[11, 9, 10, 12]),
-    ("group_expression_arm", &[15, 13, 14, 16]),
-    ("grouping", &[24, 21, 22, 23, 25, 19, 17]),
-    ("grouping_group", &[27, 26, 28]),
-    ("immediate_string", &[29]),
-    ("list", &[44, 41, 42, 43, 45, 30, 31, 32, 33, 34, 35, 36, 37, 39]),
-    ("missing_node", &[55, 50, 53, 54, 51, 52, 48, 47, 56, 46]),
-    ("named_node_expression_arm", &[59, 57, 58, 60]),
-    ("named_node_group_anchored_last", &[76, 75, 72, 71, 74, 77, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70]),
-    ("named_node_group_children", &[92, 91, 89, 88, 93, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87]),
-    ("named_node_plain", &[103, 98, 101, 102, 99, 100, 96, 95, 104, 94]),
-    ("named_node_supertyped", &[112, 109, 110, 111, 107, 106, 113, 105]),
-    ("negated_field", &[115, 114, 116]),
-    ("parameters", &[122, 120, 119, 123, 117, 118]),
-    ("predicate", &[127, 125, 124, 126, 128]),
-    ("predicate_type", &[130, 129]),
-    ("program", &[142, 140, 139, 143, 131, 132, 133, 134, 135, 136, 137, 138]),
-    ("quantifier", &[144, 145, 146, 147, 148, 149]),
-    ("string", &[150, 151]),
+pub static DEPTH_SITES: &[(&str, &[SiteId])] = &[
+    ("anonymous_node", &[SiteId(5), SiteId(4), SiteId(2), SiteId(1), SiteId(6), SiteId(0)]),
+    ("capture", &[SiteId(7), SiteId(8)]),
+    ("field_definition", &[SiteId(11), SiteId(9), SiteId(10), SiteId(12)]),
+    ("group_expression_arm", &[SiteId(15), SiteId(13), SiteId(14), SiteId(16)]),
+    ("grouping", &[SiteId(24), SiteId(21), SiteId(22), SiteId(23), SiteId(25), SiteId(19), SiteId(17)]),
+    ("grouping_group", &[SiteId(27), SiteId(26), SiteId(28)]),
+    ("immediate_string", &[SiteId(29)]),
+    ("list", &[SiteId(44), SiteId(41), SiteId(42), SiteId(43), SiteId(45), SiteId(30), SiteId(31), SiteId(32), SiteId(33), SiteId(34), SiteId(35), SiteId(36), SiteId(37), SiteId(39)]),
+    ("missing_node", &[SiteId(55), SiteId(50), SiteId(53), SiteId(54), SiteId(51), SiteId(52), SiteId(48), SiteId(47), SiteId(56), SiteId(46)]),
+    ("named_node_expression_arm", &[SiteId(59), SiteId(57), SiteId(58), SiteId(60)]),
+    ("named_node_group_anchored_last", &[SiteId(76), SiteId(75), SiteId(72), SiteId(71), SiteId(74), SiteId(77), SiteId(61), SiteId(62), SiteId(63), SiteId(64), SiteId(65), SiteId(66), SiteId(67), SiteId(68), SiteId(69), SiteId(70)]),
+    ("named_node_group_children", &[SiteId(92), SiteId(91), SiteId(89), SiteId(88), SiteId(93), SiteId(78), SiteId(79), SiteId(80), SiteId(81), SiteId(82), SiteId(83), SiteId(84), SiteId(85), SiteId(86), SiteId(87)]),
+    ("named_node_plain", &[SiteId(103), SiteId(98), SiteId(101), SiteId(102), SiteId(99), SiteId(100), SiteId(96), SiteId(95), SiteId(104), SiteId(94)]),
+    ("named_node_supertyped", &[SiteId(112), SiteId(109), SiteId(110), SiteId(111), SiteId(107), SiteId(106), SiteId(113), SiteId(105)]),
+    ("negated_field", &[SiteId(115), SiteId(114), SiteId(116)]),
+    ("parameters", &[SiteId(122), SiteId(120), SiteId(119), SiteId(123), SiteId(117), SiteId(118)]),
+    ("predicate", &[SiteId(127), SiteId(125), SiteId(124), SiteId(126), SiteId(128)]),
+    ("predicate_type", &[SiteId(130), SiteId(129)]),
+    ("program", &[SiteId(142), SiteId(140), SiteId(139), SiteId(143), SiteId(131), SiteId(132), SiteId(133), SiteId(134), SiteId(135), SiteId(136), SiteId(137), SiteId(138)]),
+    ("quantifier", &[SiteId(144), SiteId(145), SiteId(146), SiteId(147), SiteId(148), SiteId(149)]),
+    ("string", &[SiteId(150), SiteId(151)]),
 ];
 
 /// Per kind id, the stretches of its children its template indents one level, by their anchors.
@@ -410,8 +410,8 @@ pub fn spacing_text(kind: KindId) -> &'static str {
     }
 }
 
-pub fn allowed(site: usize) -> &'static [KindId] {
-    SPACING_SITES[site].3
+pub fn allowed(site: SiteId) -> &'static [KindId] {
+    SPACING_SITES[site.index()].3
 }
 
 /// Every layout kind (each `_layout` member, the depth movers among them where the grammar has them), the domain of `spacing_text`.
@@ -579,96 +579,96 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_ANONYMOUS_NODE_ELEMENTS: &[u16] = &[
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 0,
+pub static SEATS_ANONYMOUS_NODE_ELEMENTS: &[Option<SiteId>] = &[
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, Some(SiteId(0)),
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_GROUPING_ELEMENTS: &[u16] = &[
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 17,
+pub static SEATS_GROUPING_ELEMENTS: &[Option<SiteId>] = &[
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, Some(SiteId(17)),
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_GROUPING_GROUPING_GROUP: &[u16] = &[
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 19,
+pub static SEATS_GROUPING_GROUPING_GROUP: &[Option<SiteId>] = &[
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, Some(SiteId(19)),
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_LIST_DEFINITIONS: &[u16] = &[
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 33, 32, 34, 30,
-    NO_SITE, NO_SITE, 31, NO_SITE, 37, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 35, 36,
+pub static SEATS_LIST_DEFINITIONS: &[Option<SiteId>] = &[
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, Some(SiteId(33)), Some(SiteId(32)), Some(SiteId(34)), Some(SiteId(30)),
+    None, None, Some(SiteId(31)), None, Some(SiteId(37)), None, None, None, None, None, None, None, None, Some(SiteId(35)), Some(SiteId(36)),
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_LIST_ELEMENTS: &[u16] = &[
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 39,
+pub static SEATS_LIST_ELEMENTS: &[Option<SiteId>] = &[
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, Some(SiteId(39)),
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_MISSING_NODE_ELEMENTS: &[u16] = &[
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 46,
+pub static SEATS_MISSING_NODE_ELEMENTS: &[Option<SiteId>] = &[
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, Some(SiteId(46)),
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS: &[u16] = &[
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 64, 63, 65, 61,
-    NO_SITE, NO_SITE, 62, 69, 70, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 66, NO_SITE, NO_SITE, NO_SITE, 67, 68,
+pub static SEATS_NAMED_NODE_GROUP_ANCHORED_LAST_NAMED_NODE_EXPRESSIONS: &[Option<SiteId>] = &[
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, Some(SiteId(64)), Some(SiteId(63)), Some(SiteId(65)), Some(SiteId(61)),
+    None, None, Some(SiteId(62)), Some(SiteId(69)), Some(SiteId(70)), None, None, None, None, Some(SiteId(66)), None, None, None, Some(SiteId(67)), Some(SiteId(68)),
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS: &[u16] = &[
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 81, 80, 82, 78,
-    NO_SITE, NO_SITE, 79, 86, 87, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 83, NO_SITE, NO_SITE, NO_SITE, 84, 85,
+pub static SEATS_NAMED_NODE_GROUP_CHILDREN_NAMED_NODE_EXPRESSIONS: &[Option<SiteId>] = &[
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, Some(SiteId(81)), Some(SiteId(80)), Some(SiteId(82)), Some(SiteId(78)),
+    None, None, Some(SiteId(79)), Some(SiteId(86)), Some(SiteId(87)), None, None, None, None, Some(SiteId(83)), None, None, None, Some(SiteId(84)), Some(SiteId(85)),
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_NAMED_NODE_PLAIN_ELEMENTS: &[u16] = &[
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 94,
+pub static SEATS_NAMED_NODE_PLAIN_ELEMENTS: &[Option<SiteId>] = &[
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, Some(SiteId(94)),
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_NAMED_NODE_SUPERTYPED_ELEMENTS: &[u16] = &[
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 105,
+pub static SEATS_NAMED_NODE_SUPERTYPED_ELEMENTS: &[Option<SiteId>] = &[
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, Some(SiteId(105)),
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_PARAMETERS_ELEMENTS: &[u16] = &[
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 117, 118,
+pub static SEATS_PARAMETERS_ELEMENTS: &[Option<SiteId>] = &[
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, Some(SiteId(117)), Some(SiteId(118)),
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_PROGRAM_DEFINITIONS: &[u16] = &[
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 134, 133, 135, 131,
-    NO_SITE, NO_SITE, 132, NO_SITE, 138, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 136, 137,
+pub static SEATS_PROGRAM_DEFINITIONS: &[Option<SiteId>] = &[
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None, None, None, Some(SiteId(134)), Some(SiteId(133)), Some(SiteId(135)), Some(SiteId(131)),
+    None, None, Some(SiteId(132)), None, Some(SiteId(138)), None, None, None, None, None, None, None, None, Some(SiteId(136)), Some(SiteId(137)),
 ];
 
-/// Per kind id of a wrapper, the field its seat passes through: 0 for its unfielded content.
-pub static SEAT_WRAPPERS: &[u16] = &[
+/// Per kind id of a wrapper, the field its seat passes through: FieldId(0) for its unfielded content.
+pub static SEAT_WRAPPERS: &[Option<FieldId>] = &[
 ];
 
 pub fn defaults() -> ResolvedOptions {
@@ -685,8 +685,8 @@ pub fn defaults() -> ResolvedOptions {
     }
 }
 
-pub fn delimiter_allowed(site: usize) -> u8 {
-    DELIMITER_SITES[site].2
+pub fn delimiter_allowed(site: FlankId) -> u8 {
+    DELIMITER_SITES[site.index()].2
 }
 
 pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
@@ -1104,7 +1104,7 @@ mod resolve_tests {
         let expected = defaults();
         let named = [SITE_ANONYMOUS_NODE_ANONYMOUS_NODE_AFTER];
         for i in 0..table.spacing.len() {
-            assert_eq!(table.spacing[i].arm, if named.contains(&i) { KindId(25) } else { expected.spacing[i].arm });
+            assert_eq!(table.spacing[i].arm, if named.iter().any(|site| site.index() == i) { KindId(25) } else { expected.spacing[i].arm });
         }
         assert_eq!(table.delimiter, expected.delimiter);
         assert_eq!(table.indent, expected.indent);

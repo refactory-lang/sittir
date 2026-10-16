@@ -157,11 +157,11 @@ describe('renderOptionsRs', () => {
 		const src = renderOptionsRs(plan, addresses, kindEntries);
 		expect(src).toContain('pub const SPACING_SITE_COUNT: usize = 5;');
 		expect(src).toContain('pub const DELIMITER_SITE_COUNT: usize = 1;');
-		expect(src).toContain('pub const SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER: usize = 2;');
+		expect(src).toContain('pub const SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER: SiteId = SiteId(2);');
 		expect(src).toContain('("formal_parameters", "elements_separator_space_after", "comma_separator_space_after", &[KindId(167), KindId(168), KindId(169)]),');
 		expect(src).toContain('("formal_parameters", "elements_delimiter", 2, 0),');
 		expect(src).toContain('delimiter: DELIMITER_SITES.iter().map(|s| s.3).collect(),');
-		expect(src).toContain('pub static DEPTH_SITES: &[(&str, &[usize])] = &[\n];');
+		expect(src).toContain('pub static DEPTH_SITES: &[(&str, &[SiteId])] = &[\n];');
 		expect(src).toContain('KindId(167) => "",');
 		expect(src).toContain('KindId(169) => "\\n",');
 		expect(src).not.toContain('\\u{FDD2}');
@@ -206,12 +206,12 @@ describe('renderOptionsRs', () => {
 		expect(tables[0]!.name).toBe(seatTableName('arguments', 'elements'));
 		expect(tables[0]!.rows.map((r) => r.kindId)).toEqual([200, 300]);
 		const src = renderOptionsRs(plan, deriveAddressTables([...sites, seat('zeta'), seat('alpha')], entries, makeSiteKindsNodeMap([...sites, seat('zeta'), seat('alpha')]), kindIdArmType(entries as never), (() => []) as never), entries);
-		const dense = src.slice(src.indexOf(`pub static ${tables[0]!.name}: &[u16] = &[`));
+		const dense = src.slice(src.indexOf(`pub static ${tables[0]!.name}: &[Option<SiteId>] = &[`));
 		const cells = dense.slice(dense.indexOf('\n') + 1, dense.indexOf('];')).split(',').map((c) => c.trim()).filter(Boolean);
 		expect(cells).toHaveLength(301);
-		expect(cells[200]).toBe(String(tables[0]!.rows[0]!.site));
-		expect(cells[300]).toBe(String(tables[0]!.rows[1]!.site));
-		expect(cells[250]).toBe('NO_SITE');
+		expect(cells[200]).toBe(`Some(SiteId(${tables[0]!.rows[0]!.site}))`);
+		expect(cells[300]).toBe(`Some(SiteId(${tables[0]!.rows[1]!.site}))`);
+		expect(cells[250]).toBe('None');
 		const missing = planRenderOptions([...sites, seat('nokind')], entries, makeSiteKindsNodeMap([...sites, seat('nokind')]), whitespaceText, undefined, 'rust');
 		expect(() => seatTablesOf(missing)).toThrow(/nokind/);
 	});
@@ -220,7 +220,7 @@ describe('renderOptionsRs', () => {
 		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText, undefined, 'rust');
 		const addresses = deriveAddressTables(sites, kindEntries, makeSiteKindsNodeMap(sites), kindIdArmType(kindEntries as never), (() => []) as never);
 		const source = renderOptionsRs(plan, addresses, kindEntries);
-		expect(source).toContain("pub fn allowed(site: usize) -> &'static [KindId] {\n    SPACING_SITES[site].3\n}");
+		expect(source).toContain("pub fn allowed(site: SiteId) -> &'static [KindId] {\n    SPACING_SITES[site.index()].3\n}");
 	});
 
 	it("emits the grammar's declared indent unit into defaults(), and none when it declares none", () => {
@@ -250,7 +250,7 @@ describe('renderOptionsRs', () => {
 		expect(plan.spacingSites.slice(0, 3).map((s) => s.fieldIdent)).toEqual(['lparen_before', 'lparen_after', 'rparen_before']);
 		expect(plan.depthSites).toEqual([{ kind: 'call_expression', sites: [2, 1] }]);
 		const addresses = deriveAddressTables([...sites, depth('rparen', 'rparen_before'), depth('lparen', 'lparen_after')], entries, makeSiteKindsNodeMap([...sites, depth('rparen', 'rparen_before'), depth('lparen', 'lparen_after')]), kindIdArmType(entries as never), (() => []) as never);
-		expect(renderOptionsRs(plan, addresses, entries)).toContain('    ("call_expression", &[2, 1]),');
+		expect(renderOptionsRs(plan, addresses, entries)).toContain('    ("call_expression", &[SiteId(2), SiteId(1)]),');
 	});
 });
 
@@ -305,7 +305,7 @@ describe('a kind edge over a choice of tokens', () => {
 
 	it('prints the arm tables in the edge row', () => {
 		const text = renderOptionsRs(plan, deriveAddressTables(armSites, entries, makeSiteKindsNodeMap(armSites, entries), kindIdArmType(entries as never), (() => []) as never), entries);
-		expect(text).toMatch(/before_arms: &\[::sittir_core::options::ArmSite \{ arm: KindId\(21\), site: \d+ \}, ::sittir_core::options::ArmSite \{ arm: KindId\(20\), site: \d+ \}\], after_arms: &\[\]/);
+		expect(text).toMatch(/before_arms: &\[::sittir_core::options::ArmSite \{ arm: KindId\(21\), site: SiteId\(\d+\) \}, ::sittir_core::options::ArmSite \{ arm: KindId\(20\), site: SiteId\(\d+\) \}\], after_arms: &\[\]/);
 	});
 
 	it('refuses an arm token with no kind id', () => {

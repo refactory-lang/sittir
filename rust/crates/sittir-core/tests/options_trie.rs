@@ -1,4 +1,5 @@
 use sittir_core::KindId;
+use sittir_core::types::{FlankId, SiteId};
 use sittir_core::options::{AddressNode, OptionSites, OptionTables, Options, ResolvedOptions, SiteRef, SiteSpec};
 use sittir_core::slot::SeamArm;
 use sittir_core::spacing::SEAM_DECLARED;
@@ -7,16 +8,16 @@ static ADDRESSES: &[AddressNode] = &[AddressNode::Branch {
     key: "a",
     path: "(a)",
     children: &[
-        AddressNode::Spacing { key: "x", sites: &[SiteRef { site: 0, path: "(a)/x" }, SiteRef { site: 1, path: "(a)/y:/x" }] },
-        AddressNode::Delimiter { key: "d", sites: &[SiteRef { site: 0, path: "(a)/d" }] },
+        AddressNode::Spacing { key: "x", sites: &[SiteRef { site: SiteId(0), path: "(a)/x" }, SiteRef { site: SiteId(1), path: "(a)/y:/x" }] },
+        AddressNode::Delimiter { key: "d", sites: &[SiteRef { site: FlankId(0), path: "(a)/d" }] },
     ],
 }];
 
-fn allowed(site: usize) -> &'static [KindId] {
-    if site == 0 { &[KindId(1), KindId(7), KindId(9), KindId(20), KindId(21)] } else { &[KindId(1), KindId(7), KindId(20), KindId(21)] }
+fn allowed(site: SiteId) -> &'static [KindId] {
+    if site == SiteId(0) { &[KindId(1), KindId(7), KindId(9), KindId(20), KindId(21)] } else { &[KindId(1), KindId(7), KindId(20), KindId(21)] }
 }
 
-fn delimiter_allowed(_site: usize) -> u8 {
+fn delimiter_allowed(_site: FlankId) -> u8 {
     2
 }
 
@@ -28,7 +29,7 @@ impl OptionSites for Sites {
         addresses: ADDRESSES,
         allowed,
         delimiter_allowed,
-        depth_sites: &[("a", &[0, 1])],
+        depth_sites: &[("a", &[SiteId(0), SiteId(1)])],
         indent: KindId(20),
         dedent: KindId(21),
         indent_chars: " \t",

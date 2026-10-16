@@ -1302,7 +1302,7 @@ impl<G: EngineGrammar> SourceTable for WithoutLayout<'_, G> {
         self.0.framed_span(coord)
     }
 
-    fn seat_through(&self, coord: &NodeCoordinate, wrappers: &[u16], seat: &dyn Fn(KindId) -> Option<usize>) -> Option<usize> {
+    fn seat_through(&self, coord: &NodeCoordinate, wrappers: &[Option<crate::types::FieldId>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
         self.0.seat_through(coord, wrappers, seat)
     }
 
@@ -1548,16 +1548,16 @@ impl<G: EngineGrammar> SourceTable for ParsedTree<G> {
         self.own(coord.tree).is_some_and(|tree| tree.edited_within(coord.index, false))
     }
 
-    fn seat_through(&self, coord: &NodeCoordinate, wrappers: &[u16], seat: &dyn Fn(KindId) -> Option<usize>) -> Option<usize> {
+    fn seat_through(&self, coord: &NodeCoordinate, wrappers: &[Option<crate::types::FieldId>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
         let mut node = node_at_index(&self.own(coord.tree)?.tree, coord.index)?;
         loop {
-            let field = *wrappers.get(crate::read::grammar_id(&node).index()).filter(|&&field| field != crate::options::NO_SITE)?;
-            node = if field == 0 {
+            let field = (*wrappers.get(crate::read::grammar_id(&node).index())?)?;
+            node = if field == crate::types::FieldId(0) {
                 let mut cursor = node.walk();
                 let held = node.named_children(&mut cursor).find(|child| !child.is_extra());
                 held?
             } else {
-                node.child_by_field_id(field)?
+                node.child_by_field_id(field.get())?
             };
             if let Some(site) = seat(crate::read::grammar_id(&node)) {
                 return Some(site);
@@ -1638,7 +1638,7 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
         self.get(&coord.tree).is_some_and(|tree| SourceTable::edited_within(tree, coord))
     }
 
-    fn seat_through(&self, coord: &NodeCoordinate, wrappers: &[u16], seat: &dyn Fn(KindId) -> Option<usize>) -> Option<usize> {
+    fn seat_through(&self, coord: &NodeCoordinate, wrappers: &[Option<crate::types::FieldId>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
         self.get(&coord.tree)?.seat_through(coord, wrappers, seat)
     }
 

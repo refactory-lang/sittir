@@ -283,9 +283,9 @@ pub struct ListView<'a, E: Slot> {
     pub leading: bool,
     pub trailing: bool,
     /// Spacing site read from the resolved options inside the template, before the first item.
-    pub head: Option<usize>,
+    pub head: Option<crate::types::SiteId>,
     /// Spacing site read from the resolved options inside the template, after the last item.
-    pub tail: Option<usize>,
+    pub tail: Option<crate::types::SiteId>,
     /// The list's slot (its wire key) and the layout holding its unit
     /// items' sides, each item framed by them (`UnitFrames`).
     pub units: Option<(&'a str, &'a dyn UnitFrames)>,

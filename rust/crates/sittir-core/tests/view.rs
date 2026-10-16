@@ -225,8 +225,8 @@ fn an_empty_list_writes_nothing_even_with_flanks_head_tail_and_template() {
         after: SPACE,
         leading: true,
         trailing: true,
-        head: Some(0),
-        tail: Some(1),
+        head: Some(sittir_core::types::SiteId(0)),
+        tail: Some(sittir_core::types::SiteId(1)),
         units: None,
     };
     assert_eq!(rt_with_sites(&view), "");
@@ -258,8 +258,8 @@ fn template_is_outside_head_and_tail() {
         after: TIGHT,
         leading: false,
         trailing: false,
-        head: Some(0),
-        tail: Some(1),
+        head: Some(sittir_core::types::SiteId(0)),
+        tail: Some(sittir_core::types::SiteId(1)),
         units: None,
     };
     assert_eq!(rt_with_sites(&view), "{\na,b\n}");

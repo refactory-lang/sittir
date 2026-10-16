@@ -332,13 +332,13 @@ describe('render options on transports', () => {
 		);
 		const listFill = listImpl.slice(0, listImpl.indexOf('\n}\n'));
 		expect(listFill).toContain(
-			'self.item_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE].arm);'
+			'self.item_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);'
 		);
 		expect(listFill).toContain(
-			'self.item_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER].arm);'
+			'self.item_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);'
 		);
 		expect(listFill).toMatch(
-			/self\.delimiter\.get_or_insert\(::sittir_core::prepare::source_trailing_delimiter\(self\.layout\.as_deref\(\), ::sittir_core::types::KindId\(\d+\), &\[::sittir_core::types::KindId\(\d+\)\], ctx\.options\.delimiter\[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM\], ctx\)\);/
+			/self\.delimiter\.get_or_insert\(::sittir_core::prepare::source_trailing_delimiter\(self\.layout\.as_deref\(\), ::sittir_core::types::KindId\(\d+\), &\[::sittir_core::types::KindId\(\d+\)\], ctx\.options\.delimiter_at\(options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM\), ctx\)\);/
 		);
 		const ownerImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for FormalParametersTransport {'));
 		const ownerFill = ownerImpl.slice(0, ownerImpl.indexOf('\n}\n'));
@@ -444,7 +444,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 			'::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));'
 		);
 		// The stored layout is set first: the list site and the seats fill only the gaps it left unset.
-		expect(body.indexOf('fill_slot_gaps')).toBeLessThan(body.indexOf('.get_or_insert(ctx.options.spacing['));
+		expect(body.indexOf('fill_slot_gaps')).toBeLessThan(body.indexOf('.get_or_insert(ctx.options.site_arm('));
 		expect(body.indexOf('fill_slot_gaps')).toBeLessThan(body.indexOf('fill_seated_gaps'));
 		expect(transportRs).not.toContain('fill_list_gaps');
 		expect(transportRs).not.toContain('fn source_gap(');
@@ -508,7 +508,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(transportRs).toContain(
 			"fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {"
 		);
-		expect(transportRs).toContain('.get_or_insert(ctx.options.spacing[options::');
+		expect(transportRs).toContain('.get_or_insert(ctx.options.site_arm(options::');
 		expect(transportRs).toContain(
 			"pub fn render_transport_dispatch(transport: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
 		);
@@ -530,14 +530,14 @@ describe('the typed sink replaces the mark-based Display path', () => {
 	it('fills seated sibling gaps through one dense per-slot kind table and a core call; no per-list match block', async () => {
 		const transportRs = await getRustTemplatesRs();
 		const optionsRs = await getRustOptionsRs();
-		const table = optionsRs.slice(optionsRs.indexOf('pub static SEATS_SOURCE_FILE_STATEMENTS: &[u16] = &['));
+		const table = optionsRs.slice(optionsRs.indexOf('pub static SEATS_SOURCE_FILE_STATEMENTS: &[Option<SiteId>] = &['));
 		const cells = table
 			.slice(table.indexOf('\n') + 1, table.indexOf('];'))
 			.split(',')
 			.map((c) => c.trim())
 			.filter(Boolean);
-		expect(cells.filter((c) => c !== 'NO_SITE').length).toBeGreaterThan(0);
-		expect(cells.every((c) => c === 'NO_SITE' || /^\d+$/.test(c))).toBe(true);
+		expect(cells.filter((c) => c !== 'None').length).toBeGreaterThan(0);
+		expect(cells.every((c) => c === 'None' || /^Some\(SiteId\(\d+\)\)$/.test(c))).toBe(true);
 		expect(transportRs).toContain(
 			'::sittir_core::prepare::fill_seated_gaps(self.statements.iter_mut().map(Some), options::SEATS_SOURCE_FILE_STATEMENTS, ctx);'
 		);

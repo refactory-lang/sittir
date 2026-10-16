@@ -159,7 +159,7 @@ pub trait SourceTable {
     /// (`ResolvedOptions::seat_wrappers`): for each node held by the one
     /// before it, from the coordinate's own, the first that `seat` gives a
     /// site. A table of bare sources knows no nodes and answers none.
-    fn seat_through(&self, coord: &crate::slot::NodeCoordinate, wrappers: &[u16], seat: &dyn Fn(KindId) -> Option<usize>) -> Option<usize> {
+    fn seat_through(&self, coord: &crate::slot::NodeCoordinate, wrappers: &[Option<crate::types::FieldId>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
         let _ = (coord, wrappers, seat);
         None
     }
@@ -261,11 +261,11 @@ pub trait RenderSink {
     /// A spacing site's arm read from the resolved options this sink holds,
     /// with the site's default strength when the arm is its default. Unlike
     /// `site`, which writes a given arm, this names a site and looks it up.
-    fn site_at(&mut self, site: usize);
+    fn site_at(&mut self, site: crate::types::SiteId);
     /// A list's start or end flank site, looked up as `site_at` does. At one
     /// gap, a flank mark beats any other mark of equal strength; a sink that
     /// knows no strengths writes it as a plain site.
-    fn flank_at(&mut self, site: usize) {
+    fn flank_at(&mut self, site: crate::types::SiteId) {
         self.site_at(site);
     }
     /// One side of a kind's edge: the node's stamp when it carries one, else
