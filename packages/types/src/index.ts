@@ -10,6 +10,8 @@ export type {
 	KindMembership,
 	PresenceRef,
 	QueryFacet,
+	QueryFlags,
+	FlagOf,
 	QueryPlan,
 	QuerySlotEntry,
 	QuerySlots,
@@ -18,7 +20,8 @@ export type {
 	SelfText,
 	SlotNameOf,
 	SlotRef,
-	SlotRoutes,
+	SlotSubject,
+	StepAnchor,
 	View
 } from './query.ts';
 export type {

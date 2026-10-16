@@ -248,19 +248,47 @@ Keeps the entries of a batch whose slots satisfy a `where` condition: entries ar
 
 ### `packages/common/src/query.ts::compileFor`
 
-The plan a `where` callback records for elements of one kind, cached per immutable `querySlots` table, callback and kind. The callback runs against that kind's recorder, so each slot it reads compiles to that kind's parser routes for the slot; a kind lacking a slot the callback reads is refused there. Contexts sharing a table share plans, while equal numeric kind ids in different grammars never reuse each other's routes or validation.
+The plan a `where` callback records for elements of one kind, cached per immutable `querySlots` table, callback and kind. The callback runs against that kind's recorder, so each slot it reads compiles to that kind's number for the slot, keyed by the kind; a kind lacking a slot the callback reads is refused there. Contexts sharing a table share plans, while equal numeric kind ids in different grammars never reuse each other's numbers or validation.
+
+### `packages/common/src/query.ts::sharedPlan`
+
+The one plan a `where` pushes down with a walk over several kinds: each kind's plan (`compileFor`) merged (`mergedAt`), or `undefined` when the kinds' plans differ in more than their slot numbers, and each batch then runs per kind.
+
+### `packages/common/src/query.ts::mergedAt`
+
+Plans merged position by position: equal values stay, arrays of one length and objects of one key set merge item by item, and the `slots` maps union, each kind keeping its own number; any other difference is a `CONFLICT`. The kinds' plans name disjoint kinds, so the union never overwrites a number.
+
+### `packages/common/src/query.ts::CONFLICT`
+
+What `mergedAt` answers for plans that differ in more than their slot numbers.
 
 ### `packages/common/src/query.ts::recorder`
 
-What a `where` callback receives: a Proxy whose members are the accessors of a kind, each recording the slot's parser routes (fields, and kinds under no field) from the kind's `querySlots` row: a slot whose row names a keyword gets a presence member (`presenceRef`), any other slot a text member with `eq` and `match`. Each member of a known kind is named `<kind>.<slot>`, so a slot compared in the wrong form (a text on a boolean slot, a boolean on a text slot) is refused naming both, whether at the `where` call or when a view whose kinds were not known runs. Any other key, an assignment and a call are refused. A view whose element kinds are not yet known checks the callback at the `where` call against every accessor of the grammar (`everyAccessor`, each a `shapeRef`), recording no routes, so its shape is refused early and each kind's slots, and whether each takes a text or a boolean, when it runs. A pattern crosses as its source; a flag has no native equivalent and is refused rather than dropped.
+What a `where` callback receives: a Proxy whose members are the accessors of a kind, each recording the slot's number in the kind's `querySlots` row, keyed by the kind (`SlotSubject`): a slot whose row names a keyword gets a presence member (`presenceRef`), any other slot a text member with `eq` and `match`. Each member of a known kind is named `<kind>.<slot>`, so a slot compared in the wrong form (a text on a boolean slot, a boolean on a text slot) is refused naming both, whether at the `where` call or when a view whose kinds were not known runs. The key `is` is the flag test (`flagRef`). Any other key, an assignment and a call are refused. A view whose element kinds are not yet known checks the callback at the `where` call against every accessor of the grammar (`everyAccessor`, each a `shapeRef`), recording no slot (`NO_SLOT`), so its shape is refused early and each kind's slots, and whether each takes a text or a boolean, when it runs. A pattern crosses as its source; a flag has no native equivalent and is refused rather than dropped.
 
 ### `packages/common/src/query.ts::slotsOf`
 
-A kind's query slots by accessor, each its routes and the keyword its row names (`undefined` for a text slot), read once per table and kind.
+A kind's query slots by accessor, each its subject (its number keyed by the kind) and the keyword its row names (`undefined` for a text slot), read once per table and kind.
 
 ### `packages/common/src/query.ts::everyAccessor`
 
 Every accessor of the grammar, for the check a `where` runs before its view's kinds are known.
+
+### `packages/common/src/query.ts::flagRef`
+
+A recorder's `is`: for a known kind, the plan its row of `queryFlags` gives the flag; a flag the kind does not declare is refused naming the kind, and a flag whose row is `null`, one that depends on the node's context, is refused naming both. Before the view's kinds are known it checks only that some kind of the grammar declares the flag (`everyFlag`), recording no plan (`ALWAYS`), and each kind's compilation decides when the view runs, as the slot members' shape check does.
+
+### `packages/common/src/query.ts::everyFlag`
+
+Every flag some kind of the grammar declares, for the check a `where` runs before its view's kinds are known.
+
+### `packages/common/src/query.ts::ALWAYS`
+
+The plan that always holds (`and` over no plans), which the shape check records for a flag.
+
+### `packages/common/src/query.ts::NO_SLOT`
+
+The subject of a slot recorded before its view's kinds are known: it numbers no kind. Only the shape check records it, and its plan is never run.
 
 ### `packages/common/src/query.ts::shapeRef`
 
@@ -268,15 +296,27 @@ An accessor's member in the check a `where` runs before its view's kinds are kno
 
 ### `packages/common/src/query.ts::presenceRef`
 
-The member of a slot that holds a keyword's presence. `eq(true)` records a presence leaf over the slot's routes, and `eq(false)` its negation, so the leaf carries no boolean. A text, and `match`, are refused with a message naming `eq(true)` and `eq(false)`, never compiled to a text leaf that would match the keyword's spelling.
+The member of a slot that holds a keyword's presence. `eq(true)` records a presence leaf over the slot, and `eq(false)` its negation, so the leaf carries no boolean. A text, and `match`, are refused with a message naming `eq(true)` and `eq(false)`, never compiled to a text leaf that would match the keyword's spelling.
 
 ### `packages/common/src/query.ts::holds`
 
-The JavaScript evaluation of a plan over the texts, and for an `is` plan the node types, its subjects read. A presence leaf (`present`) holds when its subject reads any text: a child sits in the slot. It is the oracle the native evaluator is tested against, and the only evaluator of a portable read test's plans, whose subject may be the node itself and which may test node types.
+The JavaScript evaluation of a plan over what its `PlanSubjects` read: the texts, the node types for an `is` leaf, and the child subjects for a `child` step. A presence leaf (`present`) holds when its subject reads any text: a child sits in the slot. A `child` step keeps the nodes its slot holds, narrows them by its anchor (`anchored`), and holds when its condition holds on one of them, evaluated with that child as the node. It is the oracle the native evaluator is tested against, and the only evaluator of a portable read test's plans, whose subject may be the node itself.
+
+### `packages/common/src/query.ts::PlanSubjects`
+
+What a caller of `holds` reads for a node: the texts a subject holds, the node types (`$type`) it holds, and the subjects of the nodes a slot holds. A caller that reads no types or no children leaves them out, and an `is` leaf or a `child` step is refused there (`NO_TYPES`, `NO_CHILDREN`).
 
 ### `packages/common/src/query.ts::NO_TYPES`
 
 The node-type reader of a caller that reads none: an `is` plan is refused there rather than read as holding nowhere.
+
+### `packages/common/src/query.ts::NO_CHILDREN`
+
+The child reader of a caller that reads none: a `child` step is refused there rather than read as holding nowhere.
+
+### `packages/common/src/query.ts::anchored`
+
+A slot's nodes as an anchored step reads them: the first, the last, the one node when it holds exactly one (none otherwise), or all of them. The portable read tests' `via` steps and `holds`'s `child` step both narrow by it, as the native child step does.
 
 ### `packages/common/src/engine-scope.ts::inTreeEngine`
 
@@ -702,11 +742,7 @@ Whether a read path names every fact in a guard path: the top-level namespace ma
 
 ### `packages/common/src/portable.ts::portableSurface`
 
-A bound grammar's portable `kinds` and `is`, built once from its generated `PortableTable` and slot table. Each path gets a frozen `kinds` node holding its `$ids` and a guard, and every path is linked under its parent as an own, non-writable property, so a segment named like a function property (`call`, `name`) shadows it. A path is reached only through its full path. A guard takes a node or a kind-id leaf, which the typed reader stores as a bare number and which is a node of that kind, and first requires its kind among the path's ids. On an exact path (`PortablePath.exact`) that decides it. Otherwise the node's path decides: its `$subType` where it carries one (stamped by the read dispatch and the portable build, which choose a vocabulary kind), or else, for a node no vocabulary kind was chosen for (one a low-level builder made), the first of its kind's read entries, in order, whose placement the context matches (`placed`) and whose every condition holds; the guard holds when `portablePathHasFacts` finds every fact of its path in that reading, within the same namespace and in order. A condition runs `holds`, the one evaluator of a `QueryPlan`, once over every node its `via` steps reach from the holder (the node, or the context node `up` places out), an anchored step reading only the first, the last or the only node of its slot (`anchored`); a negated plan therefore holds only when no reached node matches. A value's type is its `$type`, or a kind-id leaf's own number. Texts come from a slot's items through `query.ts::slotItems`, the slot found by its parser routes in the slot table. A slot the table stamps with a keyword holds a boolean: `true` reads as that keyword, the text the parser holds there, and `false` reads as no item, so a presence leaf holds exactly when the keyword is there. A value's text is a kind-id leaf's `fixedText` entry, a leaf's `$text`, and otherwise, for a parsed structured node, the slice of its tree's source its span covers (`span.ts::spanSlicer`, one slicer per tree); a built structured node has none.
-
-### `packages/common/src/portable.ts::anchored`
-
-A slot's nodes as an anchored step reads them: the first, the last, the one node when it holds exactly one (none otherwise), or all of them.
+A bound grammar's portable `kinds` and `is`, built once from its generated `PortableTable` and slot table. Each path gets a frozen `kinds` node holding its `$ids` and a guard, and every path is linked under its parent as an own, non-writable property, so a segment named like a function property (`call`, `name`) shadows it. A path is reached only through its full path. A guard takes a node or a kind-id leaf, which the typed reader stores as a bare number and which is a node of that kind, and first requires its kind among the path's ids. On an exact path (`PortablePath.exact`) that decides it. Otherwise the node's path decides: its `$subType` where it carries one (stamped by the read dispatch and the portable build, which choose a vocabulary kind), or else, for a node no vocabulary kind was chosen for (one a low-level builder made), the first of its kind's read entries, in order, whose placement the context matches (`placed`) and whose every condition holds; the guard holds when `portablePathHasFacts` finds every fact of its path in that reading, within the same namespace and in order. A condition runs `holds`, the one evaluator of a `QueryPlan`, once over every node its `via` steps reach from the holder (the node, or the context node `up` places out), an anchored step reading only the first, the last or the only node of its slot (`anchored`); a negated plan therefore holds only when no reached node matches. A value's type is its `$type`, or a kind-id leaf's own number. Texts come from a slot's items through `query.ts::slotItems`, the slot found by the number its subject gives the node's kind in the slot table; a kind the subject does not number holds no item. A slot the table stamps with a keyword holds a boolean: `true` reads as that keyword, the text the parser holds there, and `false` reads as no item, so a presence leaf holds exactly when the keyword is there. A value's text is a kind-id leaf's `fixedText` entry, a leaf's `$text`, and otherwise, for a parsed structured node, the slice of its tree's source its span covers (`span.ts::spanSlicer`, one slicer per tree); a built structured node has none.
 
 ### `packages/common/src/portable.ts::placed`
 

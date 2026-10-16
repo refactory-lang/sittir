@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, posix, sep } from 'node:path';
-import { type BindingFacts, VOCABULARY_DIR } from './facts.ts';
+import { type BindingFacts, isNamedMember, type SlotModel, VOCABULARY_DIR } from './facts.ts';
+import { formsOf } from './routes.ts';
 import { camel } from './names.ts';
 import { runPinned } from './read.ts';
 
@@ -181,17 +182,20 @@ export function flagSegment(vocabulary: Vocabulary, path: string): { readonly pa
 	return { parent, flag };
 }
 
-export function resolveFlags(facts: BindingFacts, vocabulary: Vocabulary): BindingFacts {
+export function resolveFlags(facts: BindingFacts, vocabulary: Vocabulary, model: SlotModel): BindingFacts {
 	const claims = facts.claims.map((claim) => {
 		const segment = flagSegment(vocabulary, claim.vocab);
 		return segment === undefined ? claim : { ...claim, vocab: segment.parent, flag: segment.flag };
 	});
+	const flagsOf = (path: string): ReadonlySet<string> => new Set([...vocabulary.members(path)].flatMap(([name, member]) => (member.flag ? [name] : [])));
 	return {
 		...facts,
 		claims,
+		flagsByPath: new Map([...new Set(claims.map((claim) => claim.vocab))].map((path) => [path, flagsOf(path)])),
 		members: facts.members.map((member) => {
-			if (member.route !== 'rename') return member;
-			const paths = [...new Set(claims.filter((claim, index) => claim.kind === member.owner && (member.claims === undefined || member.claims.includes(index))).map((claim) => claim.vocab))];
+			if (!isNamedMember(member)) return member;
+			const owns = (kind: string | null): boolean => kind !== null && (kind === member.owner || formsOf(model, kind).includes(member.owner));
+			const paths = [...new Set(claims.filter((claim, index) => owns(claim.kind) && (member.claims === undefined || member.claims.includes(index))).map((claim) => claim.vocab))];
 			const declared = paths.flatMap((path) => {
 				const found = vocabulary.members(path).get(camel(member.name));
 				return found === undefined ? [] : [[path, found.flag] as const];

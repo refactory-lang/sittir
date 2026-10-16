@@ -3428,6 +3428,11 @@ interface StructSlot {
 	readonly forceOptional: boolean;
 }
 
+export function transportSlotNumbers(node: AssembledNode, nodeMap: NodeMap): ReadonlyMap<string, number> {
+	if (!isCompoundOf(node)) return new Map();
+	return new Map(structSlotsOf(node, renderSlotModelOf(node), nodeMap).map(({ slot }, index) => [slot.storageName, index]));
+}
+
 function structSlotsOf(node: AssembledNode, slotModel: RenderSlotModel, nodeMap: NodeMap): StructSlot[] {
 	const position = new Map(node.slots.map((slot, index) => [slot.storageName, index]));
 	const at = (slot: AssembledNonterminal): number => position.get(slot.storageName) ?? node.slots.length;

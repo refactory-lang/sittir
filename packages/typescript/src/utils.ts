@@ -37,1026 +37,764 @@ export const triviaFacts = Object.freeze({
 } satisfies TriviaFacts);
 
 export const querySlots: QuerySlots = Object.freeze({
-	2: [['content', { fields: ['content'], kinds: [] }]],
-	111: [['content', { fields: ['content'], kinds: [] }]],
-	118: [['content', { fields: ['content'], kinds: [] }]],
-	152: [['content', { fields: ['content'], kinds: [] }]],
-	153: [['content', { fields: ['content'], kinds: [] }]],
+	2: [['content', 0]],
+	111: [['content', 0]],
+	118: [['content', 0]],
+	152: [['content', 0]],
+	153: [['content', 0]],
 	154: [
-		['prefix', { fields: ['prefix'], kinds: [] }],
-		['content', { fields: ['content'], kinds: [] }]
+		['prefix', 0],
+		['content', 1]
 	],
 	155: [
-		['integer', { fields: ['integer'], kinds: [] }],
-		['fraction', { fields: ['fraction'], kinds: [] }],
-		['marker', { fields: ['marker'], kinds: [] }],
-		['sign', { fields: ['sign'], kinds: [] }],
-		['exponent', { fields: ['exponent'], kinds: [] }]
+		['integer', 0],
+		['fraction', 1],
+		['marker', 2],
+		['sign', 3],
+		['exponent', 4]
 	],
 	156: [
-		['fraction', { fields: ['fraction'], kinds: [] }],
-		['marker', { fields: ['marker'], kinds: [] }],
-		['sign', { fields: ['sign'], kinds: [] }],
-		['exponent', { fields: ['exponent'], kinds: [] }]
+		['fraction', 0],
+		['marker', 1],
+		['sign', 2],
+		['exponent', 3]
 	],
 	157: [
-		['integer', { fields: ['integer'], kinds: [] }],
-		['marker', { fields: ['marker'], kinds: [] }],
-		['sign', { fields: ['sign'], kinds: [] }],
-		['exponent', { fields: ['exponent'], kinds: [] }]
+		['integer', 0],
+		['marker', 1],
+		['sign', 2],
+		['exponent', 3]
 	],
 	159: [
-		['prefix', { fields: ['prefix'], kinds: [] }],
-		['content', { fields: ['content'], kinds: [] }]
+		['prefix', 0],
+		['content', 1]
 	],
 	160: [
-		['prefix', { fields: ['prefix'], kinds: [] }],
-		['content', { fields: ['content'], kinds: [] }]
+		['prefix', 0],
+		['content', 1]
 	],
-	161: [['content', { fields: ['content'], kinds: [] }]],
-	162: [['content', { fields: ['content'], kinds: [] }]],
-	163: [['content', { fields: ['content'], kinds: [] }]],
-	164: [['content', { fields: ['content'], kinds: [] }]],
+	161: [['content', 0]],
+	162: [['content', 0]],
+	163: [['content', 0]],
+	164: [['content', 0]],
 	188: [
-		['hashBangLine', { fields: ['hash_bang_line'], kinds: [] }],
-		['statements', { fields: ['statements'], kinds: [] }]
+		['hashBangLine', 0],
+		['statements', 1]
 	],
-	190: [['moduleExportName', { fields: [], kinds: ['identifier', 'string_double', 'string_single'] }]],
-	191: [['exportSpecifiers', { fields: [], kinds: ['export_specifiers'] }]],
+	190: [['moduleExportName', 0]],
+	191: [['exportSpecifiers', 0]],
 	192: [
-		['exportKind', { fields: ['export_kind'], kinds: [] }],
-		['name', { fields: ['name'], kinds: [] }],
-		['alias', { fields: ['alias'], kinds: [] }]
+		['exportKind', 0],
+		['name', 1],
+		['alias', 2]
 	],
 	196: [
-		['importClause', { fields: ['import_clause'], kinds: [] }],
-		['fromClause', { fields: ['from_clause'], kinds: [] }],
-		['importAttribute', { fields: ['import_attribute'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['importClause', 0],
+		['fromClause', 1],
+		['importAttribute', 2],
+		['terminator', 3]
 	],
-	197: [['content', { fields: [], kinds: ['namespace_import', 'named_imports', 'import_clause_default_import'] }]],
-	199: [['name', { fields: ['name'], kinds: [] }]],
-	200: [['importSpecifiers', { fields: [], kinds: ['import_specifiers'] }]],
+	197: [['content', 0]],
+	199: [['name', 0]],
+	200: [['importSpecifiers', 0]],
 	202: [
-		['attributeKind', { fields: ['attribute_kind'], kinds: [] }],
-		['object', { fields: ['object'], kinds: [] }]
+		['attributeKind', 0],
+		['object', 1]
 	],
 	204: [
-		['expression', { fields: ['expression'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['expression', 0],
+		['terminator', 1]
 	],
 	205: [
-		['declarators', { fields: ['declarators'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['declarators', 0],
+		['terminator', 1]
 	],
 	206: [
-		['kind', { fields: ['kind'], kinds: [] }],
-		['declarators', { fields: ['declarators'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['kind', 0],
+		['declarators', 1],
+		['terminator', 2]
 	],
 	208: [
-		['statements', { fields: ['statements'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['statements', 0],
+		['terminator', 1]
 	],
-	209: [['body', { fields: ['body'], kinds: [] }]],
+	209: [['body', 0]],
 	210: [
-		['condition', { fields: ['condition'], kinds: [] }],
-		['consequence', { fields: ['consequence'], kinds: [] }],
-		['alternative', { fields: ['alternative'], kinds: [] }]
+		['condition', 0],
+		['consequence', 1],
+		['alternative', 2]
 	],
 	211: [
-		['value', { fields: ['value'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['value', 0],
+		['body', 1]
 	],
 	212: [
-		['initializer', { fields: ['initializer'], kinds: [] }],
-		['condition', { fields: ['condition'], kinds: [] }],
-		['increment', { fields: ['increment'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['initializer', 0],
+		['condition', 1],
+		['increment', 2],
+		['body', 3]
 	],
 	213: [
-		['await', { fields: ['await'], kinds: [] }, 'await'],
-		['header', { fields: ['header'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['await', 0, 'await'],
+		['header', 1],
+		['body', 2]
 	],
 	215: [
-		['condition', { fields: ['condition'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['condition', 0],
+		['body', 1]
 	],
 	216: [
-		['body', { fields: ['body'], kinds: [] }],
-		['condition', { fields: ['condition'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['body', 0],
+		['condition', 1],
+		['terminator', 2]
 	],
 	217: [
-		['body', { fields: ['body'], kinds: [] }],
-		['handler', { fields: ['handler'], kinds: [] }],
-		['finalizer', { fields: ['finalizer'], kinds: [] }]
+		['body', 0],
+		['handler', 1],
+		['finalizer', 2]
 	],
 	218: [
-		['object', { fields: ['object'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['object', 0],
+		['body', 1]
 	],
 	219: [
-		['label', { fields: ['label'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['label', 0],
+		['terminator', 1]
 	],
 	220: [
-		['label', { fields: ['label'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['label', 0],
+		['terminator', 1]
 	],
-	221: [['terminator', { fields: ['terminator'], kinds: [] }]],
+	221: [['terminator', 0]],
 	222: [
-		['expression', { fields: ['expression'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['expression', 0],
+		['terminator', 1]
 	],
 	223: [
-		['expression', { fields: ['expression'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['expression', 0],
+		['terminator', 1]
 	],
 	225: [
-		['label', { fields: ['label'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['label', 0],
+		['body', 1]
 	],
-	226: [['cases', { fields: ['cases'], kinds: [] }]],
+	226: [['cases', 0]],
 	227: [
-		['value', { fields: ['value'], kinds: [] }],
-		['bodies', { fields: ['body'], kinds: [] }]
+		['value', 0],
+		['bodies', 1]
 	],
-	228: [['bodies', { fields: ['body'], kinds: [] }]],
+	228: [['bodies', 0]],
 	229: [
-		['catchClauseGroup', { fields: [], kinds: ['catch_clause_group'] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['catchClauseGroup', 0],
+		['body', 1]
 	],
-	230: [['body', { fields: ['body'], kinds: [] }]],
-	234: [['expression', { fields: ['expression'], kinds: [] }]],
-	235: [['properties', { fields: ['properties'], kinds: [] }]],
-	236: [['properties', { fields: ['properties'], kinds: [] }]],
+	230: [['body', 0]],
+	234: [['expression', 0]],
+	235: [['properties', 0]],
+	236: [['properties', 0]],
 	237: [
-		['left', { fields: ['left'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
+		['left', 0],
+		['right', 1]
 	],
 	238: [
-		['left', { fields: ['left'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
+		['left', 0],
+		['right', 1]
 	],
-	239: [['elements', { fields: ['elements'], kinds: [] }]],
-	240: [['elements', { fields: ['elements'], kinds: [] }]],
+	239: [['elements', 0]],
+	240: [['elements', 0]],
 	241: [
-		['object', { fields: ['object'], kinds: [] }],
-		['property', { fields: ['property'], kinds: [] }]
+		['object', 0],
+		['property', 1]
 	],
 	242: [
-		['decorators', { fields: ['decorator'], kinds: [] }],
-		['name', { fields: ['name'], kinds: [] }],
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['heritage', { fields: ['heritage'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['decorators', 0],
+		['name', 1],
+		['typeParameters', 2],
+		['heritage', 3],
+		['body', 4]
 	],
 	243: [
-		['decorators', { fields: ['decorator'], kinds: [] }],
-		['name', { fields: ['name'], kinds: [] }],
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['heritage', { fields: ['heritage'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['decorators', 0],
+		['name', 1],
+		['typeParameters', 2],
+		['heritage', 3],
+		['body', 4],
+		['terminator', 5]
 	],
-	244: [['content', { fields: [], kinds: ['class_heritage_extends_clause', 'implements_clause'] }]],
+	244: [['content', 0]],
 	245: [
-		['async', { fields: ['async'], kinds: [] }, 'async'],
-		['name', { fields: ['name'], kinds: [] }],
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['parameters', { fields: ['parameters'], kinds: [] }],
-		['returnType', { fields: ['return_type'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['async', 0, 'async'],
+		['name', 1],
+		['typeParameters', 2],
+		['parameters', 3],
+		['returnType', 4],
+		['body', 5]
 	],
 	246: [
-		['async', { fields: ['async'], kinds: [] }, 'async'],
-		['name', { fields: ['name'], kinds: [] }],
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['parameters', { fields: ['parameters'], kinds: [] }],
-		['returnType', { fields: ['return_type'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['async', 0, 'async'],
+		['name', 1],
+		['typeParameters', 2],
+		['parameters', 3],
+		['returnType', 4],
+		['body', 5],
+		['terminator', 6]
 	],
 	247: [
-		['async', { fields: ['async'], kinds: [] }, 'async'],
-		['name', { fields: ['name'], kinds: [] }],
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['parameters', { fields: ['parameters'], kinds: [] }],
-		['returnType', { fields: ['return_type'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['async', 0, 'async'],
+		['name', 1],
+		['typeParameters', 2],
+		['parameters', 3],
+		['returnType', 4],
+		['body', 5]
 	],
 	248: [
-		['async', { fields: ['async'], kinds: [] }, 'async'],
-		['name', { fields: ['name'], kinds: [] }],
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['parameters', { fields: ['parameters'], kinds: [] }],
-		['returnType', { fields: ['return_type'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['async', 0, 'async'],
+		['name', 1],
+		['typeParameters', 2],
+		['parameters', 3],
+		['returnType', 4],
+		['body', 5],
+		['terminator', 6]
 	],
 	249: [
-		['async', { fields: ['async'], kinds: [] }, 'async'],
-		['content', { fields: [], kinds: ['arrow_function_parameter', 'call_signature'] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['async', 0, 'async'],
+		['content', 1],
+		['body', 2]
 	],
 	254: [
-		['constructor_', { fields: ['constructor'], kinds: [] }],
-		['typeArguments', { fields: ['type_arguments'], kinds: [] }],
-		['arguments', { fields: ['arguments'], kinds: [] }]
+		['constructor_', 0],
+		['typeArguments', 1],
+		['arguments', 2]
 	],
-	255: [['expression', { fields: ['expression'], kinds: [] }]],
+	255: [['expression', 0]],
 	256: [
-		['object', { fields: ['object'], kinds: [] }],
-		['separator', { fields: ['separator'], kinds: [] }],
-		['property', { fields: ['property'], kinds: [] }]
+		['object', 0],
+		['separator', 1],
+		['property', 2]
 	],
 	257: [
-		['object', { fields: ['object'], kinds: [] }],
-		['optionalChain', { fields: ['optional_chain'], kinds: [] }, '?.'],
-		['index', { fields: ['index'], kinds: [] }]
+		['object', 0],
+		['optionalChain', 1, '?.'],
+		['index', 2]
 	],
-	258: [
-		[
-			'content',
-			{
-				fields: [],
-				kinds: [
-					'member_expression',
-					'subscript_expression',
-					'undefined',
-					'identifier',
-					'object_pattern',
-					'array_pattern',
-					'non_null_expression'
-				]
-			}
-		]
-	],
+	258: [['content', 0]],
 	259: [
-		['using', { fields: ['using'], kinds: [] }, 'using'],
-		['left', { fields: ['left'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
+		['using', 0, 'using'],
+		['left', 1],
+		['right', 2]
 	],
 	261: [
-		['left', { fields: ['left'], kinds: [] }],
-		['operator', { fields: ['operator'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
+		['left', 0],
+		['operator', 1],
+		['right', 2]
 	],
-	264: [['expression', { fields: ['expression'], kinds: [] }]],
+	264: [['expression', 0]],
 	265: [
-		['condition', { fields: ['condition'], kinds: [] }],
-		['consequence', { fields: ['consequence'], kinds: [] }],
-		['alternative', { fields: ['alternative'], kinds: [] }]
+		['condition', 0],
+		['consequence', 1],
+		['alternative', 2]
 	],
 	266: [
-		['left', { fields: ['left'], kinds: [] }],
-		['operator', { fields: ['operator'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }],
-		['binaryExpressionIn', { fields: [], kinds: ['binary_expression_in'] }]
+		['left', 0],
+		['operator', 1],
+		['right', 2],
+		['binaryExpressionIn', 3]
 	],
 	267: [
-		['operator', { fields: ['operator'], kinds: [] }],
-		['argument', { fields: ['argument'], kinds: [] }]
+		['operator', 0],
+		['argument', 1]
 	],
-	269: [['expressions', { fields: ['expression'], kinds: [] }]],
-	271: [['elements', { fields: ['elements'], kinds: [] }]],
-	272: [['expression', { fields: ['expression'], kinds: [] }]],
+	269: [['expressions', 0]],
+	271: [['elements', 0]],
+	272: [['expression', 0]],
 	273: [
-		['pattern', { fields: ['pattern'], kinds: [] }],
-		['flags', { fields: ['flags'], kinds: [] }]
+		['pattern', 0],
+		['flags', 1]
 	],
-	276: [['elements', { fields: ['elements'], kinds: [] }]],
-	277: [['expression', { fields: ['expression'], kinds: [] }]],
+	276: [['elements', 0]],
+	277: [['expression', 0]],
 	278: [
-		['object', { fields: ['object'], kinds: [] }],
-		['property', { fields: ['property'], kinds: [] }]
+		['object', 0],
+		['property', 1]
 	],
 	279: [
-		['function', { fields: ['function'], kinds: [] }],
-		['typeArguments', { fields: ['type_arguments'], kinds: [] }],
-		['arguments', { fields: ['arguments'], kinds: [] }]
+		['function', 0],
+		['typeArguments', 1],
+		['arguments', 2]
 	],
-	280: [['members', { fields: ['members'], kinds: [] }]],
-	281: [['elements', { fields: ['elements'], kinds: [] }]],
+	280: [['members', 0]],
+	281: [['elements', 0]],
 	282: [
-		['terminator', { fields: ['terminator'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['terminator', 0],
+		['body', 1]
 	],
-	284: [
-		[
-			'lhsExpression',
-			{
-				fields: [],
-				kinds: [
-					'member_expression',
-					'subscript_expression',
-					'undefined',
-					'identifier',
-					'object_pattern',
-					'array_pattern',
-					'non_null_expression'
-				]
-			}
-		]
-	],
+	284: [['lhsExpression', 0]],
 	285: [
-		['accessibilityModifier', { fields: ['accessibility_modifier'], kinds: [] }],
-		['static', { fields: ['static'], kinds: [] }, 'static'],
-		['override', { fields: ['override'], kinds: [] }, 'override'],
-		['readonly', { fields: ['readonly'], kinds: [] }, 'readonly'],
-		['async', { fields: ['async'], kinds: [] }, 'async'],
-		['accessorKind', { fields: ['accessor_kind'], kinds: [] }],
-		['name', { fields: ['name'], kinds: [] }],
-		['optional', { fields: ['optional'], kinds: [] }, '?'],
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['parameters', { fields: ['parameters'], kinds: [] }],
-		['returnType', { fields: ['return_type'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['accessibilityModifier', 0],
+		['static', 1, 'static'],
+		['override', 2, 'override'],
+		['readonly', 3, 'readonly'],
+		['async', 4, 'async'],
+		['accessorKind', 5],
+		['name', 6],
+		['optional', 7, '?'],
+		['typeParameters', 8],
+		['parameters', 9],
+		['returnType', 10],
+		['body', 11]
 	],
 	286: [
-		['key', { fields: ['key'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }]
+		['key', 0],
+		['value', 1]
 	],
 	287: [
-		['key', { fields: ['key'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }]
+		['key', 0],
+		['value', 1]
 	],
-	289: [['expression', { fields: ['expression'], kinds: [] }]],
+	289: [['expression', 0]],
 	290: [
-		['decorators', { fields: ['decorator'], kinds: [] }],
-		['declare', { fields: ['declare'], kinds: [] }, 'declare'],
-		['accessibilityModifier', { fields: ['accessibility_modifier'], kinds: [] }],
-		['static', { fields: ['static'], kinds: [] }, 'static'],
-		['override', { fields: ['override'], kinds: [] }, 'override'],
-		['readonly', { fields: ['readonly'], kinds: [] }, 'readonly'],
-		['abstract', { fields: ['abstract'], kinds: [] }, 'abstract'],
-		['accessor', { fields: ['accessor'], kinds: [] }, 'accessor'],
-		['name', { fields: ['name'], kinds: [] }],
-		['optionality', { fields: ['optionality'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }]
+		['decorators', 0],
+		['declare', 1, 'declare'],
+		['accessibilityModifier', 2],
+		['static', 3, 'static'],
+		['override', 4, 'override'],
+		['readonly', 5, 'readonly'],
+		['abstract', 6, 'abstract'],
+		['accessor', 7, 'accessor'],
+		['name', 8],
+		['optionality', 9],
+		['type', 10],
+		['value', 11]
 	],
-	292: [['expression', { fields: ['expression'], kinds: [] }]],
+	292: [['expression', 0]],
 	293: [
-		['accessibilityModifier', { fields: ['accessibility_modifier'], kinds: [] }],
-		['static', { fields: ['static'], kinds: [] }, 'static'],
-		['override', { fields: ['override'], kinds: [] }, 'override'],
-		['readonly', { fields: ['readonly'], kinds: [] }, 'readonly'],
-		['async', { fields: ['async'], kinds: [] }, 'async'],
-		['accessorKind', { fields: ['accessor_kind'], kinds: [] }],
-		['name', { fields: ['name'], kinds: [] }],
-		['optional', { fields: ['optional'], kinds: [] }, '?'],
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['parameters', { fields: ['parameters'], kinds: [] }],
-		['returnType', { fields: ['return_type'], kinds: [] }]
+		['accessibilityModifier', 0],
+		['static', 1, 'static'],
+		['override', 2, 'override'],
+		['readonly', 3, 'readonly'],
+		['async', 4, 'async'],
+		['accessorKind', 5],
+		['name', 6],
+		['optional', 7, '?'],
+		['typeParameters', 8],
+		['parameters', 9],
+		['returnType', 10]
 	],
 	294: [
-		['accessibilityModifier', { fields: ['accessibility_modifier'], kinds: [] }],
-		['override', { fields: ['override'], kinds: [] }, 'override'],
-		['accessorKind', { fields: ['accessor_kind'], kinds: [] }],
-		['name', { fields: ['name'], kinds: [] }],
-		['optional', { fields: ['optional'], kinds: [] }, '?'],
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['parameters', { fields: ['parameters'], kinds: [] }],
-		['returnType', { fields: ['return_type'], kinds: [] }]
+		['accessibilityModifier', 0],
+		['override', 1, 'override'],
+		['accessorKind', 2],
+		['name', 3],
+		['optional', 4, '?'],
+		['typeParameters', 5],
+		['parameters', 6],
+		['returnType', 7]
 	],
 	295: [
-		['async', { fields: ['async'], kinds: [] }, 'async'],
-		['name', { fields: ['name'], kinds: [] }],
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['parameters', { fields: ['parameters'], kinds: [] }],
-		['returnType', { fields: ['return_type'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['async', 0, 'async'],
+		['name', 1],
+		['typeParameters', 2],
+		['parameters', 3],
+		['returnType', 4],
+		['terminator', 5]
 	],
-	296: [['expression', { fields: ['expression'], kinds: [] }]],
+	296: [['expression', 0]],
 	297: [
-		['typeArguments', { fields: ['type_arguments'], kinds: [] }],
-		['expression', { fields: ['expression'], kinds: [] }]
+		['typeArguments', 0],
+		['expression', 1]
 	],
 	298: [
-		['expression', { fields: ['expression'], kinds: [] }],
-		['typeAnnotation', { fields: ['type_annotation'], kinds: [] }]
+		['expression', 0],
+		['typeAnnotation', 1]
 	],
 	299: [
-		['expression', { fields: ['expression'], kinds: [] }],
-		['typeAnnotation', { fields: ['type_annotation'], kinds: [] }]
+		['expression', 0],
+		['typeAnnotation', 1]
 	],
 	300: [
-		['expression', { fields: ['expression'], kinds: [] }],
-		['typeArguments', { fields: ['type_arguments'], kinds: [] }]
+		['expression', 0],
+		['typeArguments', 1]
 	],
 	301: [
-		['name', { fields: ['name'], kinds: [] }],
-		['source', { fields: ['source'], kinds: [] }]
+		['name', 0],
+		['source', 1]
 	],
-	302: [['types', { fields: ['types'], kinds: [] }]],
+	302: [['types', 0]],
 	303: [
-		['value', { fields: ['value'], kinds: [] }],
-		['typeArguments', { fields: ['type_arguments'], kinds: [] }]
+		['value', 0],
+		['typeArguments', 1]
 	],
-	304: [['types', { fields: ['type'], kinds: [] }]],
-	305: [
-		[
-			'content',
-			{
-				fields: [],
-				kinds: [
-					'function_declaration',
-					'generator_function_declaration',
-					'class_declaration',
-					'lexical_declaration',
-					'variable_declaration',
-					'function_signature',
-					'abstract_class_declaration',
-					'module',
-					'internal_module',
-					'type_alias_declaration',
-					'enum_declaration',
-					'interface_declaration',
-					'import_alias',
-					'ambient_declaration',
-					'ambient_declaration_global',
-					'ambient_declaration_module'
-				]
-			}
-		]
-	],
+	304: [['types', 0]],
+	305: [['content', 0]],
 	306: [
-		['decorators', { fields: ['decorator'], kinds: [] }],
-		['name', { fields: ['name'], kinds: [] }],
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['heritage', { fields: ['heritage'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['decorators', 0],
+		['name', 1],
+		['typeParameters', 2],
+		['heritage', 3],
+		['body', 4]
 	],
 	307: [
-		['name', { fields: ['name'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['name', 0],
+		['body', 1]
 	],
 	308: [
-		['name', { fields: ['name'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['name', 0],
+		['body', 1]
 	],
 	310: [
-		['name', { fields: ['name'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['name', 0],
+		['value', 1],
+		['terminator', 2]
 	],
 	311: [
-		['module', { fields: ['module'], kinds: [] }],
-		['name', { fields: ['name'], kinds: [] }]
+		['module', 0],
+		['name', 1]
 	],
 	312: [
-		['name', { fields: ['name'], kinds: [] }],
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['extendsTypeClause', { fields: ['extends_type_clause'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['name', 0],
+		['typeParameters', 1],
+		['extendsTypeClause', 2],
+		['body', 3]
 	],
-	313: [['types', { fields: ['type'], kinds: [] }]],
+	313: [['types', 0]],
 	314: [
-		['const', { fields: ['const'], kinds: [] }, 'const'],
-		['name', { fields: ['name'], kinds: [] }],
-		['body', { fields: ['body'], kinds: [] }]
+		['const', 0, 'const'],
+		['name', 1],
+		['body', 2]
 	],
-	315: [['elements', { fields: ['elements'], kinds: [] }]],
+	315: [['elements', 0]],
 	316: [
-		['name', { fields: ['name'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }]
+		['name', 0],
+		['value', 1]
 	],
 	317: [
-		['name', { fields: ['name'], kinds: [] }],
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['name', 0],
+		['typeParameters', 1],
+		['value', 2],
+		['terminator', 3]
 	],
 	320: [
-		['decorators', { fields: ['decorator'], kinds: [] }],
-		['accessibilityModifier', { fields: [], kinds: ['accessibility_modifier'] }],
-		['override', { fields: ['override'], kinds: [] }, 'override'],
-		['readonly', { fields: ['readonly'], kinds: [] }, 'readonly'],
-		['pattern', { fields: ['pattern'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }]
+		['decorators', 0],
+		['accessibilityModifier', 1],
+		['override', 2, 'override'],
+		['readonly', 3, 'readonly'],
+		['pattern', 4],
+		['type', 5],
+		['value', 6]
 	],
 	321: [
-		['decorators', { fields: ['decorator'], kinds: [] }],
-		['accessibilityModifier', { fields: [], kinds: ['accessibility_modifier'] }],
-		['override', { fields: ['override'], kinds: [] }, 'override'],
-		['readonly', { fields: ['readonly'], kinds: [] }, 'readonly'],
-		['pattern', { fields: ['pattern'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }]
+		['decorators', 0],
+		['accessibilityModifier', 1],
+		['override', 2, 'override'],
+		['readonly', 3, 'readonly'],
+		['pattern', 4],
+		['type', 5],
+		['value', 6]
 	],
-	323: [['type', { fields: ['type'], kinds: [] }]],
-	324: [['type', { fields: ['type'], kinds: [] }]],
-	325: [['type', { fields: ['type'], kinds: [] }]],
-	326: [['type', { fields: ['type'], kinds: [] }]],
+	323: [['type', 0]],
+	324: [['type', 0]],
+	325: [['type', 0]],
+	326: [['type', 0]],
 	327: [
-		['object', { fields: ['object'], kinds: [] }],
-		['property', { fields: ['property'], kinds: [] }]
+		['object', 0],
+		['property', 1]
 	],
 	328: [
-		['function', { fields: ['function'], kinds: [] }],
-		['arguments', { fields: ['arguments'], kinds: [] }]
+		['function', 0],
+		['arguments', 1]
 	],
-	329: [['value', { fields: ['value'], kinds: [] }]],
-	330: [['asserts', { fields: [], kinds: ['asserts'] }]],
+	329: [['value', 0]],
+	330: [['asserts', 0]],
 	332: [
-		['name', { fields: ['name'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }]
+		['name', 0],
+		['type', 1]
 	],
 	333: [
-		['name', { fields: ['name'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }]
+		['name', 0],
+		['type', 1]
 	],
-	334: [['type', { fields: ['type'], kinds: [] }]],
-	335: [['type', { fields: ['type'], kinds: [] }]],
+	334: [['type', 0]],
+	335: [['type', 0]],
 	337: [
-		['abstract', { fields: ['abstract'], kinds: [] }, 'abstract'],
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['parameters', { fields: ['parameters'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }]
+		['abstract', 0, 'abstract'],
+		['typeParameters', 1],
+		['parameters', 2],
+		['type', 3]
 	],
-	339: [['type', { fields: ['type'], kinds: [] }]],
-	340: [['elements', { fields: ['elements'], kinds: [] }]],
+	339: [['type', 0]],
+	340: [['elements', 0]],
 	341: [
-		['name', { fields: ['name'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }]
+		['name', 0],
+		['type', 1]
 	],
 	342: [
-		['left', { fields: ['left'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }],
-		['consequence', { fields: ['consequence'], kinds: [] }],
-		['alternative', { fields: ['alternative'], kinds: [] }]
+		['left', 0],
+		['right', 1],
+		['consequence', 2],
+		['alternative', 3]
 	],
 	343: [
-		['name', { fields: ['name'], kinds: [] }],
-		['typeArguments', { fields: ['type_arguments'], kinds: [] }]
+		['name', 0],
+		['typeArguments', 1]
 	],
 	344: [
-		['name', { fields: ['name'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }]
+		['name', 0],
+		['type', 1]
 	],
-	345: [['typePredicate', { fields: [], kinds: ['type_predicate'] }]],
+	345: [['typePredicate', 0]],
 	346: [
-		['object', { fields: ['object'], kinds: [] }],
-		['content', { fields: [], kinds: ['dot', 'qmark_dot'] }],
-		['property', { fields: ['property'], kinds: [] }]
+		['object', 0],
+		['content', 1],
+		['property', 2]
 	],
 	347: [
-		['object', { fields: ['object'], kinds: [] }],
-		['optionalChain', { fields: ['optional_chain'], kinds: [] }, '?.'],
-		['index', { fields: ['index'], kinds: [] }]
+		['object', 0],
+		['optionalChain', 1, '?.'],
+		['index', 2]
 	],
 	348: [
-		['function', { fields: ['function'], kinds: [] }],
-		['arguments', { fields: ['arguments'], kinds: [] }]
+		['function', 0],
+		['arguments', 1]
 	],
 	349: [
-		['function', { fields: ['function'], kinds: [] }],
-		['typeArguments', { fields: ['type_arguments'], kinds: [] }]
+		['function', 0],
+		['typeArguments', 1]
 	],
-	350: [['expression', { fields: ['expression'], kinds: [] }]],
-	351: [['type', { fields: ['type'], kinds: [] }]],
+	350: [['expression', 0]],
+	351: [['type', 0]],
 	352: [
-		['type', { fields: ['type'], kinds: [] }],
-		['indexType', { fields: ['index_type'], kinds: [] }]
+		['type', 0],
+		['indexType', 1]
 	],
 	353: [
-		['name', { fields: ['name'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }],
-		['alias', { fields: ['alias'], kinds: [] }]
+		['name', 0],
+		['type', 1],
+		['alias', 2]
 	],
-	354: [
-		[
-			'content',
-			{
-				fields: [],
-				kinds: [
-					'literal_type_negative_number',
-					'number_hex',
-					'number_float_point',
-					'number_float_leading_point',
-					'number_float_scientific',
-					'number_decimal',
-					'number_binary',
-					'number_octal',
-					'number_bigint_hex',
-					'number_bigint_binary',
-					'number_bigint_octal',
-					'number_bigint_decimal',
-					'string_double',
-					'string_single',
-					'true',
-					'false',
-					'null',
-					'undefined'
-				]
-			}
-		]
-	],
-	357: [['type', { fields: ['type'], kinds: [] }]],
-	358: [['type', { fields: ['type'], kinds: [] }]],
-	360: [['types', { fields: [], kinds: ['types'] }]],
+	354: [['content', 0]],
+	357: [['type', 0]],
+	358: [['type', 0]],
+	360: [['types', 0]],
 	361: [
-		['opening', { fields: ['opening'], kinds: [] }],
-		['members', { fields: ['members'], kinds: [] }],
-		['closing', { fields: ['closing'], kinds: [] }]
+		['opening', 0],
+		['members', 1],
+		['closing', 2]
 	],
 	362: [
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['parameters', { fields: ['parameters'], kinds: [] }],
-		['returnType', { fields: ['return_type'], kinds: [] }]
+		['typeParameters', 0],
+		['parameters', 1],
+		['returnType', 2]
 	],
 	363: [
-		['accessibilityModifier', { fields: ['accessibility_modifier'], kinds: [] }],
-		['static', { fields: ['static'], kinds: [] }, 'static'],
-		['override', { fields: ['override'], kinds: [] }, 'override'],
-		['readonly', { fields: ['readonly'], kinds: [] }, 'readonly'],
-		['name', { fields: ['name'], kinds: [] }],
-		['optional', { fields: ['optional'], kinds: [] }, '?'],
-		['type', { fields: ['type'], kinds: [] }]
+		['accessibilityModifier', 0],
+		['static', 1, 'static'],
+		['override', 2, 'override'],
+		['readonly', 3, 'readonly'],
+		['name', 4],
+		['optional', 5, '?'],
+		['type', 6]
 	],
-	364: [['elements', { fields: ['elements'], kinds: [] }]],
+	364: [['elements', 0]],
 	365: [
-		['const', { fields: ['const'], kinds: [] }, 'const'],
-		['name', { fields: ['name'], kinds: [] }],
-		['constraint', { fields: ['constraint'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }]
+		['const', 0, 'const'],
+		['name', 1],
+		['constraint', 2],
+		['value', 3]
 	],
-	366: [['type', { fields: ['type'], kinds: [] }]],
+	366: [['type', 0]],
 	367: [
-		['content', { fields: [], kinds: ['extends_keyword', 'colon'] }],
-		['type', { fields: ['type'], kinds: [] }]
+		['content', 0],
+		['type', 1]
 	],
 	368: [
-		['abstract', { fields: ['abstract'], kinds: [] }, 'abstract'],
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['parameters', { fields: ['parameters'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }]
+		['abstract', 0, 'abstract'],
+		['typeParameters', 1],
+		['parameters', 2],
+		['type', 3]
 	],
-	370: [['type', { fields: ['type'], kinds: [] }]],
-	371: [['tupleTypeMembers', { fields: [], kinds: ['tuple_type_members'] }]],
-	372: [['type', { fields: ['type'], kinds: [] }]],
+	370: [['type', 0]],
+	371: [['tupleTypeMembers', 0]],
+	372: [['type', 0]],
 	373: [
-		['left', { fields: ['left'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
+		['left', 0],
+		['right', 1]
 	],
 	374: [
-		['left', { fields: ['left'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
+		['left', 0],
+		['right', 1]
 	],
 	375: [
-		['typeParameters', { fields: ['type_parameters'], kinds: [] }],
-		['parameters', { fields: ['parameters'], kinds: [] }],
-		['returnType', { fields: ['return_type'], kinds: [] }]
+		['typeParameters', 0],
+		['parameters', 1],
+		['returnType', 2]
 	],
-	376: [['items', { fields: ['item'], kinds: [] }]],
-	377: [['items', { fields: ['item'], kinds: [] }]],
-	379: [['items', { fields: ['item'], kinds: [] }]],
-	380: [['name', { fields: ['name'], kinds: [] }]],
-	382: [['items', { fields: ['item'], kinds: [] }]],
-	383: [['items', { fields: ['item'], kinds: [] }]],
-	384: [['items', { fields: ['item'], kinds: [] }]],
-	385: [['items', { fields: ['item'], kinds: [] }]],
-	386: [['content', { fields: [], kinds: ['namespace_import', 'named_imports'] }]],
+	376: [['items', 0]],
+	377: [['items', 0]],
+	379: [['items', 0]],
+	380: [['name', 0]],
+	382: [['items', 0]],
+	383: [['items', 0]],
+	384: [['items', 0]],
+	385: [['items', 0]],
+	386: [['content', 0]],
 	387: [
-		['parameter', { fields: ['parameter'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }]
+		['parameter', 0],
+		['type', 1]
 	],
-	388: [['body', { fields: ['body'], kinds: [] }]],
+	388: [['body', 0]],
 	389: [
-		['name', { fields: ['name'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['name', 0],
+		['type', 1],
+		['terminator', 2]
 	],
-	390: [['items', { fields: ['item'], kinds: [] }]],
+	390: [['items', 0]],
 	392: [
-		['name', { fields: ['name'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['name', 0],
+		['terminator', 1]
 	],
 	393: [
-		['expression', { fields: ['expression'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['expression', 0],
+		['terminator', 1]
 	],
-	394: [['argument', { fields: ['argument'], kinds: [] }]],
+	394: [['argument', 0]],
 	396: [
-		['left', { fields: ['left'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
+		['left', 0],
+		['right', 1]
 	],
 	398: [
-		['decorators', { fields: ['decorator'], kinds: [] }],
-		['methodDefinition', { fields: [], kinds: ['method_definition'] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['decorators', 0],
+		['methodDefinition', 1],
+		['terminator', 2]
 	],
 	399: [
-		['methodSignature', { fields: [], kinds: ['method_signature'] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['methodSignature', 0],
+		['terminator', 1]
 	],
 	400: [
-		['member', { fields: ['member'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['member', 0],
+		['terminator', 1]
 	],
 	401: [
-		['sign', { fields: ['sign'], kinds: [] }],
-		['readonly', { fields: ['readonly'], kinds: [] }, 'readonly'],
-		['name', { fields: ['name'], kinds: [] }],
-		['indexType', { fields: ['index_type'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }]
+		['sign', 0],
+		['readonly', 1, 'readonly'],
+		['name', 2],
+		['indexType', 3],
+		['type', 4]
 	],
 	402: [
-		['sign', { fields: ['sign'], kinds: [] }],
-		['readonly', { fields: ['readonly'], kinds: [] }, 'readonly'],
-		['mappedTypeClause', { fields: [], kinds: ['mapped_type_clause'] }],
-		['type', { fields: ['type'], kinds: [] }]
+		['sign', 0],
+		['readonly', 1, 'readonly'],
+		['mappedTypeClause', 2],
+		['type', 3]
 	],
 	403: [
-		['importClause', { fields: [], kinds: ['import_clause'] }],
-		['source', { fields: ['source'], kinds: [] }]
+		['importClause', 0],
+		['source', 1]
 	],
-	404: [
-		[
-			'expression',
-			{
-				fields: [],
-				kinds: [
-					'as_expression',
-					'satisfies_expression',
-					'instantiation_expression',
-					'internal_module',
-					'type_assertion',
-					'subscript_expression',
-					'member_expression',
-					'parenthesized_expression_typed',
-					'parenthesized_expression_sequence',
-					'undefined',
-					'identifier',
-					'this',
-					'super',
-					'number_hex',
-					'number_float_point',
-					'number_float_leading_point',
-					'number_float_scientific',
-					'number_decimal',
-					'number_binary',
-					'number_octal',
-					'number_bigint_hex',
-					'number_bigint_binary',
-					'number_bigint_octal',
-					'number_bigint_decimal',
-					'string_double',
-					'string_single',
-					'template_string',
-					'regex',
-					'true',
-					'false',
-					'null',
-					'object',
-					'array',
-					'function_expression',
-					'arrow_function',
-					'generator_function',
-					'class',
-					'meta_property_new_target',
-					'meta_property_import_meta',
-					'call_expression_call',
-					'call_expression_template_call',
-					'call_expression_member',
-					'non_null_expression',
-					'assignment_expression',
-					'augmented_assignment_expression',
-					'await_expression',
-					'unary_expression',
-					'binary_expression',
-					'ternary_expression',
-					'update_expression_postfix',
-					'update_expression_prefix',
-					'new_expression',
-					'yield_expression'
-				]
-			}
-		]
-	],
+	404: [['expression', 0]],
 	406: [
-		['importKind', { fields: ['import_kind'], kinds: [] }],
-		['name', { fields: ['name'], kinds: [] }]
+		['importKind', 0],
+		['name', 1]
 	],
 	407: [
-		['importKind', { fields: ['import_kind'], kinds: [] }],
-		['name', { fields: ['name'], kinds: [] }],
-		['alias', { fields: ['alias'], kinds: [] }]
+		['importKind', 0],
+		['name', 1],
+		['alias', 2]
 	],
 	408: [
-		[
-			'expression',
-			{
-				fields: [],
-				kinds: [
-					'as_expression',
-					'satisfies_expression',
-					'instantiation_expression',
-					'internal_module',
-					'type_assertion',
-					'subscript_expression',
-					'member_expression',
-					'parenthesized_expression_typed',
-					'parenthesized_expression_sequence',
-					'undefined',
-					'identifier',
-					'this',
-					'super',
-					'number_hex',
-					'number_float_point',
-					'number_float_leading_point',
-					'number_float_scientific',
-					'number_decimal',
-					'number_binary',
-					'number_octal',
-					'number_bigint_hex',
-					'number_bigint_binary',
-					'number_bigint_octal',
-					'number_bigint_decimal',
-					'string_double',
-					'string_single',
-					'template_string',
-					'regex',
-					'true',
-					'false',
-					'null',
-					'object',
-					'array',
-					'function_expression',
-					'arrow_function',
-					'generator_function',
-					'class',
-					'meta_property_new_target',
-					'meta_property_import_meta',
-					'call_expression_call',
-					'call_expression_template_call',
-					'call_expression_member',
-					'non_null_expression',
-					'assignment_expression',
-					'augmented_assignment_expression',
-					'await_expression',
-					'unary_expression',
-					'binary_expression',
-					'ternary_expression',
-					'update_expression_postfix',
-					'update_expression_prefix',
-					'new_expression',
-					'yield_expression'
-				]
-			}
-		],
-		['type', { fields: ['type'], kinds: [] }]
+		['expression', 0],
+		['type', 1]
 	],
-	409: [['sequenceExpression', { fields: [], kinds: ['sequence_expression'] }]],
+	409: [['sequenceExpression', 0]],
 	410: [
-		['function', { fields: ['function'], kinds: [] }],
-		['typeArguments', { fields: ['type_arguments'], kinds: [] }],
-		['arguments', { fields: ['arguments'], kinds: [] }]
+		['function', 0],
+		['typeArguments', 1],
+		['arguments', 2]
 	],
 	411: [
-		['function', { fields: ['function'], kinds: [] }],
-		['arguments', { fields: ['arguments'], kinds: [] }]
+		['function', 0],
+		['arguments', 1]
 	],
 	412: [
-		['function', { fields: ['function'], kinds: [] }],
-		['typeArguments', { fields: ['type_arguments'], kinds: [] }],
-		['arguments', { fields: ['arguments'], kinds: [] }]
+		['function', 0],
+		['typeArguments', 1],
+		['arguments', 2]
 	],
-	413: [['elements', { fields: ['elements'], kinds: [] }]],
-	414: [['elements', { fields: ['elements'], kinds: [] }]],
+	413: [['elements', 0]],
+	414: [['elements', 0]],
 	415: [
-		['argument', { fields: ['argument'], kinds: [] }],
-		['operator', { fields: ['operator'], kinds: [] }]
+		['argument', 0],
+		['operator', 1]
 	],
 	416: [
-		['operator', { fields: ['operator'], kinds: [] }],
-		['argument', { fields: ['argument'], kinds: [] }]
+		['operator', 0],
+		['argument', 1]
 	],
-	417: [['parameter', { fields: ['parameter'], kinds: [] }]],
+	417: [['parameter', 0]],
 	418: [
-		['extendsClause', { fields: ['extends_clause'], kinds: [] }],
-		['implementsClause', { fields: [], kinds: ['implements_clause'] }]
+		['extendsClause', 0],
+		['implementsClause', 1]
 	],
 	419: [
-		['identifier', { fields: [], kinds: ['identifier'] }],
-		['importClauseGroup', { fields: [], kinds: ['import_clause_group'] }]
+		['identifier', 0],
+		['importClauseGroup', 1]
 	],
 	420: [
-		['type', { fields: ['type'], kinds: [] }, 'type'],
-		[
-			'content',
-			{
-				fields: [],
-				kinds: [
-					'export_statement_default_from_star_from',
-					'export_statement_default_from_ns_from',
-					'export_statement_default_from_clause_from'
-				]
-			}
-		],
-		['terminator', { fields: ['terminator'], kinds: [] }]
+		['type', 0, 'type'],
+		['content', 1],
+		['terminator', 2]
 	],
 	421: [
-		['decorators', { fields: ['decorator'], kinds: [] }],
-		[
-			'content',
-			{
-				fields: [],
-				kinds: [
-					'function_declaration',
-					'generator_function_declaration',
-					'class_declaration',
-					'lexical_declaration',
-					'variable_declaration',
-					'function_signature',
-					'abstract_class_declaration',
-					'module',
-					'internal_module',
-					'type_alias_declaration',
-					'enum_declaration',
-					'interface_declaration',
-					'import_alias',
-					'ambient_declaration',
-					'export_statement_default_declaration_default_kw'
-				]
-			}
-		]
+		['decorators', 0],
+		['content', 1]
 	],
-	422: [['source', { fields: ['source'], kinds: [] }]],
+	422: [['source', 0]],
 	423: [
-		['namespaceExport', { fields: [], kinds: ['namespace_export'] }],
-		['source', { fields: ['source'], kinds: [] }]
+		['namespaceExport', 0],
+		['source', 1]
 	],
 	424: [
-		['exportClause', { fields: [], kinds: ['export_clause'] }],
-		['source', { fields: ['source'], kinds: [] }]
+		['exportClause', 0],
+		['source', 1]
 	],
-	425: [
-		[
-			'content',
-			{
-				fields: [],
-				kinds: [
-					'function_declaration',
-					'generator_function_declaration',
-					'class_declaration',
-					'lexical_declaration',
-					'variable_declaration',
-					'function_signature',
-					'abstract_class_declaration',
-					'module',
-					'internal_module',
-					'type_alias_declaration',
-					'enum_declaration',
-					'interface_declaration',
-					'import_alias',
-					'ambient_declaration',
-					'export_statement_default_declaration_default_kw_value'
-				]
-			}
-		]
-	],
+	425: [['content', 0]],
 	426: [
-		['value', { fields: ['value'], kinds: [] }],
-		['automaticSemicolon', { fields: [], kinds: ['automatic_semicolon', 'semi'] }]
+		['value', 0],
+		['automaticSemicolon', 1]
 	],
 	427: [
-		['name', { fields: ['name'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }]
+		['name', 0],
+		['type', 1],
+		['value', 2]
 	],
 	428: [
-		['name', { fields: ['name'], kinds: [] }],
-		['type', { fields: ['type'], kinds: [] }]
+		['name', 0],
+		['type', 1]
 	],
 	431: [
-		['left', { fields: ['left'], kinds: [] }],
-		['operator', { fields: ['operator'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
+		['left', 0],
+		['operator', 1],
+		['right', 2]
 	],
 	432: [
-		['left', { fields: ['left'], kinds: [] }],
-		['value', { fields: ['value'], kinds: [] }],
-		['operator', { fields: ['operator'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
+		['left', 0],
+		['value', 1],
+		['operator', 2],
+		['right', 3]
 	],
 	433: [
-		['kind', { fields: ['kind'], kinds: [] }],
-		['left', { fields: ['left'], kinds: [] }],
-		['terminator', { fields: ['terminator'], kinds: [] }],
-		['operator', { fields: ['operator'], kinds: [] }],
-		['right', { fields: ['right'], kinds: [] }]
+		['kind', 0],
+		['left', 1],
+		['terminator', 2],
+		['operator', 3],
+		['right', 4]
 	],
-	459: [['content', { fields: ['content'], kinds: [] }]],
-	461: [['content', { fields: ['content'], kinds: [] }]],
-	462: [['content', { fields: ['content'], kinds: [] }]],
-	463: [['content', { fields: ['content'], kinds: [] }]],
-	464: [['content', { fields: ['content'], kinds: [] }]],
-	466: [['content', { fields: ['content'], kinds: [] }]]
+	459: [['content', 0]],
+	461: [['content', 0]],
+	462: [['content', 0]],
+	463: [['content', 0]],
+	464: [['content', 0]],
+	466: [['content', 0]]
 });
 
 export const structure: StructureTable = Object.freeze({

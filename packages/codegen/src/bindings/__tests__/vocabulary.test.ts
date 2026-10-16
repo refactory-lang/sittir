@@ -189,7 +189,7 @@ describe('flagSegment', () => {
 describe('resolveFlags', () => {
 	it('claims a flag segment\'s parent path with the flag, and leaves every other claim as it is', async () => {
 		const facts: BindingFacts = { claims: [claim('declaration.method.static'), claim('declaration.method')], members: [], containers: [], templates: [], unclaimed: [] };
-		const resolved = resolveFlags(facts, await vocabularyOf());
+		const resolved = resolveFlags(facts, await vocabularyOf(), new Map());
 		expect(resolved.claims.map((c) => [c.vocab, c.flag])).toEqual([
 			['declaration.method', 'static'],
 			['declaration.method', undefined]

@@ -231,6 +231,7 @@ function assembleEngine<API extends LanguageAPI>(
 	const inLanguage = inLanguageOf(identity);
 	const queryHooks: QueryHooks = {
 		querySlots: hooks.querySlots,
+		queryFlags: hooks.queryFlags ?? {},
 		membership: hooks.membership,
 		kindName: (kind) => hooks.trivia.kindName(kind),
 		wrap: hooks.wrap
