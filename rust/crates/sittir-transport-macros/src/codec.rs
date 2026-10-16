@@ -332,10 +332,9 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
 }
 
 /// An enum kind: a member decodes from an id it claims and writes its first.
-pub fn members(ident: &Ident, firsts: &[(&Ident, Path)]) -> TokenStream {
+pub fn members(ident: &Ident) -> TokenStream {
     let napi = napi();
     let owner = ident.to_string();
-    let encodes = firsts.iter().map(|(name, first)| quote!(Self::#name => #first,));
     let boxed = boxed(ident);
     gated(quote! {
         impl #napi::bindgen_prelude::FromNapiValue for #ident {
@@ -346,10 +345,7 @@ pub fn members(ident: &Ident, firsts: &[(&Ident, Path)]) -> TokenStream {
         }
         impl #napi::bindgen_prelude::ToNapiValue for #ident {
             unsafe fn to_napi_value(env: #napi::sys::napi_env, val: Self) -> #napi::Result<#napi::sys::napi_value> {
-                let id: __Kind = match val {
-                    #(#encodes)*
-                };
-                unsafe { <__Kind as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, id) }
+                unsafe { <__Kind as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, __id(&val)) }
             }
         }
         #boxed
@@ -528,7 +524,8 @@ mod tests {
             }
         });
         assert!(has(&out, r#"__member(id, id).ok_or_else(|| ::sittir_core::__napi::Error::from_reason(::std::format!("kind id {id} is not a kind {} takes", "PrimitiveTypeEnum")))"#));
-        assert!(has(&out, "Self::U8 => kind::U8_KEYWORD,"));
+        assert!(has(&out, "PrimitiveTypeEnum::U8 => kind::U8_KEYWORD,"));
+        assert!(has(&out, "to_napi_value(env, __id(&val))"));
     }
 
     #[test]

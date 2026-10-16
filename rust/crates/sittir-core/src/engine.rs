@@ -1748,8 +1748,8 @@ mod tests {
         fn router(self, grammar: KindId, _display: KindId) -> Option<crate::read::Router> {
             let language: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
             match crate::read::kind_name(&language, grammar)? {
-                "function_item" => Some(crate::read::Router::Children(function_item_route)),
-                "declaration_list" | "block" => Some(crate::read::Router::Children(item_route)),
+                "function_item" => Some(crate::read::Router::Children(function_item_route, |_, _| None)),
+                "declaration_list" | "block" => Some(crate::read::Router::Children(item_route, |_, _| None)),
                 _ => None,
             }
         }

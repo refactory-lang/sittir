@@ -30,6 +30,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
     let mut boxed_table: Vec<TokenStream> = vec![quote!(__unadmitted); data.variants.len()];
     let mut routes_table: Vec<TokenStream> = vec![quote!(__no_routes); data.variants.len()];
     let mut routers_table: Vec<TokenStream> = vec![quote!(__no_router); data.variants.len()];
+    let mut units_table: Vec<TokenStream> = vec![quote!(__no_unit); data.variants.len()];
     let mut variant_fns = Vec::new();
     let mut blank = None;
     let mut payloads: Vec<(&Ident, &Type)> = Vec::new();
@@ -92,9 +93,10 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             builds.push(quote!(if [#(#claims),*].contains(&id) { return ::core::option::Option::Some(#built); }));
         }
         let i = at as u16;
+        let first = kinds.kinds.first().or(kinds.shown.first()).or(kinds.folded.first()).cloned();
         wire.push(codec::WireVariant {
             index: Some(i),
-            first: kinds.kinds.first().or(kinds.shown.first()).or(kinds.folded.first()).cloned(),
+            first: first.clone(),
             decodes: kinds.decodes.clone(),
             ..unread(payload)
         });
@@ -141,6 +143,15 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 });
                 read_table[at] = quote!(#read_fn);
                 boxed_table[at] = quote!(#boxed_fn);
+                if let Some(first) = &first {
+                    let unit_fn = format_ident!("__unit_{}", i);
+                    variant_fns.push(quote! {
+                        fn #unit_fn(_cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
+                            ::core::option::Option::Some(#first)
+                        }
+                    });
+                    units_table[at] = quote!(#unit_fn);
+                }
             }
             Fields::Unnamed(payload) if payload.unnamed.len() == 1 => {
                 let ty = &payload.unnamed[0].ty;
@@ -174,6 +185,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 boxed_table[at] = quote!(#boxed_fn);
                 routes_table[at] = quote!(<#ty as __rt::ReadTransport>::routes);
                 routers_table[at] = quote!(<#ty as __rt::ReadTransport>::router);
+                units_table[at] = quote!(<#ty as __rt::ReadTransport>::unit_id);
             }
             _ => return Err(syn::Error::new_spanned(variant, "a choice's variant is a unit or holds one transport")),
         }
@@ -249,10 +261,14 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             fn __no_router(_grammar: __Kind, _display: __Kind) -> ::core::option::Option<__rt::Router> {
                 ::core::option::Option::None
             }
+            fn __no_unit(_cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
+                ::core::option::Option::None
+            }
             #(#variant_fns)*
             const __READS: &[__Read<#ident>] = &[#(#read_table),*];
             const __ROUTES: &[fn(&mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed>] = &[#(#routes_table),*];
             const __ROUTERS: &[fn(__Kind, __Kind) -> ::core::option::Option<__rt::Router>] = &[#(#routers_table),*];
+            const __UNITS: &[__rt::UnitId] = &[#(#units_table),*];
             const __READS_BOXED: &[__Read<::std::boxed::Box<#ident>>] = &[#(#boxed_table),*];
             fn __variant(grammar: __Kind, display: __Kind) -> ::core::option::Option<u16> {
                 #(#by_display)*
@@ -310,6 +326,10 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
                     __variant(grammar, display).and_then(|i| __ROUTERS[i as usize](grammar, display))
                 }
+                fn unit_id(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
+                    let node = cursor.node();
+                    __variant(::sittir_core::read::grammar_id(&node), __rt::display_id(&node)).and_then(|i| __UNITS[i as usize](cursor))
+                }
             }
             #has_layout
             #codec
@@ -336,14 +356,9 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
         firsts.push((name, first));
         by_kind.push(quote!(if [#(#ids),*].contains(&grammar) || [#(#folded),*].contains(&grammar) || [#(#shown),*].contains(&display) { return ::core::option::Option::Some(#ident::#name); }));
     }
-    let spelled = attrs.spelled.then(|| {
-        quote! {
-            if let ::core::option::Option::Some(member) = __rt::spelled_id(&__rt::survey(cursor)).and_then(|id| __member(id, id)) {
-                return ::core::result::Result::Ok(member);
-            }
-        }
-    });
-    let codec = codec::members(ident, &firsts);
+    let spelled = attrs.spelled.then(|| quote!(.or_else(|| __rt::spelled_id(&__rt::survey(cursor)).and_then(|id| __member(id, id)))));
+    let ids = firsts.iter().map(|(name, first)| quote!(#ident::#name => #first,));
+    let codec = codec::members(ident);
     Ok(quote! {
         const _: () = {
             use ::sittir_core::read as __rt;
@@ -351,6 +366,15 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
             fn __member(grammar: __Kind, display: __Kind) -> ::core::option::Option<#ident> {
                 #(#by_kind)*
                 ::core::option::Option::None
+            }
+            fn __resolve(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<#ident> {
+                let node = cursor.node();
+                __member(::sittir_core::read::grammar_id(&node), __rt::display_id(&node))#spelled
+            }
+            fn __id(member: &#ident) -> __Kind {
+                match member {
+                    #(#ids)*
+                }
             }
             impl __rt::ReadTransport for #ident {
                 fn admits(grammar: __Kind, display: __Kind) -> bool {
@@ -367,12 +391,10 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
                     _ctx: &__rt::ReadCtx<'_>,
                     _depth: __rt::Depth,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
-                    let node = cursor.node();
-                    if let ::core::option::Option::Some(member) = __member(::sittir_core::read::grammar_id(&node), __rt::display_id(&node)) {
-                        return ::core::result::Result::Ok(member);
-                    }
-                    #spelled
-                    ::core::result::Result::Err(__rt::ReadError::Unspelled { kind: ::sittir_core::read::grammar_id(&node), index: __rt::index_of(cursor) })
+                    __resolve(cursor).ok_or_else(|| __rt::ReadError::Unspelled { kind: ::sittir_core::read::grammar_id(&cursor.node()), index: __rt::index_of(cursor) })
+                }
+                fn unit_id(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
+                    __resolve(cursor).map(|member| __id(&member))
                 }
             }
             impl<__L: ::core::default::Default> __rt::HasLayout<__L> for #ident {
@@ -713,7 +735,7 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
     Ok(Body {
         routes: quote! {
             fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
-                <Self as __rt::ReadTransport>::admits(grammar, display).then_some(__rt::Router::Envelope { wraps_hidden: #wraps_hidden })
+                <Self as __rt::ReadTransport>::admits(grammar, display).then_some(__rt::Router::Envelope { wraps_hidden: #wraps_hidden, unit: <#inner as __rt::ReadTransport>::unit_id })
             }
         },
         items: quote!(),
@@ -859,10 +881,17 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                 ::core::option::Option::Some(__rt::Routed { children, routes, keys: &[#(#keys),*] })
             }
             fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
-                <Self as __rt::ReadTransport>::admits(grammar, display).then_some(__rt::Router::Children(__route))
+                <Self as __rt::ReadTransport>::admits(grammar, display).then_some(__rt::Router::Children(__route, __unit))
             }
         },
         items: quote! {
+            #[allow(unused_variables)]
+            fn __unit(slot: ::sittir_core::types::SlotId, cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__Kind> {
+                match slot {
+                    #(#idxs => <#tys as __rt::ReadSlot>::unit_id(cursor),)*
+                    _ => ::core::option::Option::None,
+                }
+            }
             fn __route(child: &__rt::Child) -> ::core::result::Result<__rt::Route, __rt::ReadError> {
                 if child.trivia {
                     return ::core::result::Result::Ok(__rt::Route::Trivia);
