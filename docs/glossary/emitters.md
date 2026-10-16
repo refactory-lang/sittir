@@ -13734,20 +13734,22 @@ native options table's allowed and default ids, and the factory map's
 How firmly a site's table default holds against the mark meeting it at the
 same gap: a declared value (a preference or literal-default row, a keyword's
 word-default, or a value set on the node) outranks a cascaded one (the edge
-token's face reaching the kind edge), which outranks the bare fallback.
+token's face reaching the kind edge), which outranks the bare fallback. Its
+members are the names of core's `spacing::SeamStrength` variants the emitter
+writes them as.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::seamStrength`
 
 An exhaustive switch over `SeamOrigin | undefined`: `preference`,
-`literal-default` and `word-default` are declared (2), `cascade` is 1, and
-`fallback` or no origin is 0. A new origin fails to compile here until it is
+`literal-default` and `word-default` are `Declared`, `cascade` is `Cascade`,
+and `fallback` or no origin is `Fallback`. A new origin fails to compile here until it is
 given a strength.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::SEAM_DECLARED`
 
-The declared strength (2), named once on the TypeScript side so the plan's
+The declared strength, named once on the TypeScript side so the plan's
 fixed-strength rows (separators, list flanks) and `seamStrength`'s declared
-origins spell the same value core's `spacing::SEAM_DECLARED` holds.
+origins spell the same `spacing::SeamStrength::Declared` variant.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::edgeSitesOf`
 
@@ -14059,7 +14061,7 @@ line. `SEAT_WRAPPERS` writes its `SeatPath` cells through it directly.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::denseFlags`
 
-`pub static NAME: &[u8]`, a table indexed by kind id up to the highest flagged id, `0` in every gap, thirty-two cells to a line. `KIND_FLAGS` is written through it. It is separate from `denseTable` because a flag cell's empty value is `0`, not `None`.
+`pub static NAME: &[cell]`, a table indexed by kind id up to the highest flagged id, the empty set in every gap, thirty-two cells to a line. `KIND_FLAGS` is written through it as `KindFlags(bits)` cells, and `LEAF_EDGES` as packed `u16`s. It is separate from `denseTable` because a flag cell's empty value is the empty set, not `None`.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::leafEdgesTable`
 

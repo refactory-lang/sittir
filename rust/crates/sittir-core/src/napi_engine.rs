@@ -112,6 +112,10 @@ macro_rules! napi_engine {
         #[::napi_derive::napi]
         pub type NodeIndex = u32;
 
+        /// A child's position under its parent as JavaScript holds it: a whole number.
+        #[::napi_derive::napi]
+        pub type ChildPosition = u32;
+
         /// Number of trees still held on this thread. Diagnostics only — the
         /// boundary's disposal is driven by GC, so this is the way a test can
         /// observe that trees are actually being released.
@@ -383,12 +387,11 @@ macro_rules! napi_engine {
                 &mut self,
                 from: String,
                 #[napi(ts_arg_type = "Array<import('../src/types.ts').TSKindId> | undefined | null")] kinds: Option<Vec<$crate::types::KindId>>,
-                resume: Option<Vec<f64>>,
+                resume: Option<Vec<$crate::types::ChildPosition>>,
                 limit: f64,
                 plan: Option<String>,
                 depth: Option<f64>,
             ) -> ::napi::Result<String> {
-                let resume = resume.map(|path| path.into_iter().map(|child| $crate::napi_engine::checked_whole::<u32>(child, "resume")).collect::<::napi::Result<Vec<_>>>()).transpose()?;
                 let limit: u32 = $crate::napi_engine::checked_whole(limit, "limit")?;
                 let depth = depth.map(|levels| $crate::napi_engine::checked_whole::<u32>(levels, "depth")).transpose()?;
                 let plan = plan.map(|json| $crate::napi_engine::compile_plan(&json)).transpose()?;

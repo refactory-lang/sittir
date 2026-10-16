@@ -298,6 +298,21 @@ impl<T: Render + TriviaSeam + crate::prepare::Prepare + Clone + PartialEq + std:
 {
 }
 
+/// A test's trivia type, which never crosses the boundary: decoding one from
+/// JavaScript refuses.
+#[cfg(all(test, feature = "napi-bindings"))]
+macro_rules! refuse_napi_decode {
+    ($trivia:ty) => {
+        impl ::napi::bindgen_prelude::FromNapiValue for $trivia {
+            unsafe fn from_napi_value(_: ::napi::sys::napi_env, _: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+                Err(::napi::Error::from_reason(concat!(stringify!($trivia), " does not cross the boundary")))
+            }
+        }
+    };
+}
+#[cfg(all(test, feature = "napi-bindings"))]
+pub(crate) use refuse_napi_decode;
+
 /// Trivia that frames what a node renders: its leading entries before, its
 /// trailing entries after.
 pub trait Framing {

@@ -68,7 +68,7 @@ impl ChangedEdges {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SeamArm {
     pub arm: crate::types::KindId,
-    pub strength: u8,
+    pub strength: crate::spacing::SeamStrength,
     /// Close a depth before writing the arm. No fill sets it; it stays for
     /// the niche it gives `Option<SeamArm>`, which keeps a coordinate's edges,
     /// and so the transports that hold coordinates, within their payload
@@ -102,7 +102,7 @@ impl NodeCoordinate {
     }
 
     /// The tree and the index packed as one handle: the wire's `$treeHandle`.
-    pub fn handle(&self) -> u64 {
+    pub fn handle(&self) -> crate::types::TreeHandle {
         encode_handle(self.tree, self.index)
     }
 
@@ -369,7 +369,7 @@ pub(crate) unsafe fn coordinate_from_napi(env: ::napi::sys::napi_env, napi_val: 
         Some(layout) => unsafe { property::<ChangedEdges>(env, ::napi::JsValue::raw(&layout), c"changed")?.unwrap_or_default() },
         None => ChangedEdges::default(),
     };
-    let (tree, index) = crate::engine::decode_handle(handle);
+    let (tree, index) = crate::engine::decode_handle(crate::types::TreeHandle(handle));
     let writes = (changed != ChangedEdges::default()).then(|| Box::new(CoordinateWrites { changed }));
     Ok(Some(NodeCoordinate { kind, writes, ..NodeCoordinate::new(tree, index, end, span) }))
 }
@@ -382,7 +382,7 @@ pub(crate) unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: NodeC
     use crate::boundary::{object_with_present, present};
     unsafe {
         object_with_present(env, &[
-            present(env, c"$treeHandle", Some(coord.handle() as f64))?,
+            present(env, c"$treeHandle", Some(coord.handle()))?,
             present(env, c"$end", Some(coord.end))?,
             present(env, c"$span", Some(coord.span))?,
             present(env, c"$type", coord.kind.map(|kind| u32::from(kind.0)))?,
@@ -392,6 +392,7 @@ pub(crate) unsafe fn coordinate_to_napi(env: ::napi::sys::napi_env, coord: NodeC
 
 #[cfg(test)]
 mod tests {
+    use crate::spacing::SeamStrength;
     use crate::types::KindId;
     use super::SlotValue;
     use crate::engine::encode_handle;
@@ -468,7 +469,6 @@ mod tests {
         use crate::options::{EdgeSite, ResolvedOptions, SiteSpec};
         use crate::types::{EdgeRow, SiteId};
         use crate::prepare::{Prepare, RenderContext};
-        use crate::spacing::{SEAM_CASCADE, SEAM_DECLARED, SEAM_FALLBACK};
         const TIGHT: KindId = KindId(1);
         const SPACE: KindId = KindId(2);
         fn text_of(kind: KindId) -> &'static str {
@@ -485,9 +485,9 @@ mod tests {
         };
         static EDGES: [EdgeSite; 1] = [EdgeSite { before: Some(SiteId(0)), after: None, before_arms: &[], after_arms: &[] }];
         static EDGE_ROWS: [Option<EdgeRow>; 10] = [None, None, None, None, None, None, None, None, None, Some(EdgeRow(0))];
-        static SITES: [SiteSpec; 1] = [SiteSpec { default_arm: TIGHT, strength: SEAM_CASCADE }];
+        static SITES: [SiteSpec; 1] = [SiteSpec { default_arm: TIGHT, strength: SeamStrength::Cascade }];
         let sources = Kinded(Sources(HashMap::from([(crate::types::TreeId(1), Arc::from("f()"))])));
-        let render_with = |options: &ResolvedOptions, held: u8| {
+        let render_with = |options: &ResolvedOptions, held: SeamStrength| {
             let mut slot: SlotValue<Word> = SlotValue::Coord(NodeCoordinate::new(
                 crate::types::TreeId(1),
                 crate::types::NodeIndex(0), crate::types::NodeIndex(1),
@@ -518,10 +518,10 @@ mod tests {
         };
         // A cascade-tight edge beats the fallback space held before it, and a
         // declared space still beats the cascade.
-        assert_eq!(render_with(&with_edges, SEAM_FALLBACK), "f()");
-        assert_eq!(render_with(&with_edges, SEAM_DECLARED), "f ()");
+        assert_eq!(render_with(&with_edges, SeamStrength::Fallback), "f()");
+        assert_eq!(render_with(&with_edges, SeamStrength::Declared), "f ()");
         // A kind that owns no edge site leaves the held space alone.
-        assert_eq!(render_with(&ResolvedOptions::default(), SEAM_FALLBACK), "f ()");
+        assert_eq!(render_with(&ResolvedOptions::default(), SeamStrength::Fallback), "f ()");
     }
 
     #[test]
@@ -570,7 +570,7 @@ mod tests {
     #[test]
     fn the_unknown_tree_message_names_the_tree() {
         let err = CoordinateError::UnknownTree {
-            handle: 12_884_901_888,
+            handle: crate::types::TreeHandle(12_884_901_888),
             tree_id: crate::types::TreeId(3),
         };
         assert!(err.to_string().contains("names tree 3"), "{err}");

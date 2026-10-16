@@ -10,9 +10,30 @@ use serde::{Deserialize, Serialize};
 /// Declares a numeric id of one domain: a transparent newtype over its
 /// width, so ids of two domains never pass for each other. It crosses serde
 /// and the napi boundary as a plain number, and `index` is the one widening
-/// to `usize` for a table the id keys.
+/// to `usize` for a table the id keys. `as $wire` writes it to JavaScript as
+/// that type instead of its width, for an id napi has no writer for.
 macro_rules! id_newtype {
     ($(#[$meta:meta])* $name:ident($repr:ty)) => {
+        id_newtype!(@common $(#[$meta])* $name($repr));
+
+        #[cfg(feature = "napi-bindings")]
+        impl napi::bindgen_prelude::ToNapiValue for $name {
+            unsafe fn to_napi_value(env: napi::sys::napi_env, val: Self) -> napi::Result<napi::sys::napi_value> {
+                unsafe { <$repr as napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, val.0) }
+            }
+        }
+    };
+    ($(#[$meta:meta])* $name:ident($repr:ty) as $wire:ty) => {
+        id_newtype!(@common $(#[$meta])* $name($repr));
+
+        #[cfg(feature = "napi-bindings")]
+        impl napi::bindgen_prelude::ToNapiValue for $name {
+            unsafe fn to_napi_value(env: napi::sys::napi_env, val: Self) -> napi::Result<napi::sys::napi_value> {
+                unsafe { <$wire as napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, val.0 as $wire) }
+            }
+        }
+    };
+    (@common $(#[$meta:meta])* $name:ident($repr:ty)) => {
         $(#[$meta])*
         #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, ::serde::Serialize, ::serde::Deserialize)]
         #[serde(transparent)]
@@ -57,13 +78,6 @@ macro_rules! id_newtype {
             unsafe fn from_napi_value(env: napi::sys::napi_env, val: napi::sys::napi_value) -> napi::Result<Self> {
                 let value = unsafe { <f64 as napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, val) }?;
                 crate::napi_engine::checked_whole::<$repr>(value, stringify!($name)).map(Self)
-            }
-        }
-
-        #[cfg(feature = "napi-bindings")]
-        impl napi::bindgen_prelude::ToNapiValue for $name {
-            unsafe fn to_napi_value(env: napi::sys::napi_env, val: Self) -> napi::Result<napi::sys::napi_value> {
-                unsafe { <$repr as napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, val.0) }
             }
         }
 
@@ -162,6 +176,57 @@ impl ::std::ops::Add<u32> for NodeIndex {
     fn add(self, count: u32) -> NodeIndex {
         NodeIndex(self.0 + count)
     }
+}
+
+id_newtype! {
+    /// A list flank's delimiters, as a set: whether the list writes its
+    /// separator before its first item (`LEADING`) and after its last
+    /// (`TRAILING`). The empty set leaves the option unset.
+    Delimiter(u8)
+}
+
+impl Delimiter {
+    pub const NONE: Self = Self(0);
+    pub const LEADING: Self = Self(1);
+    pub const TRAILING: Self = Self(1 << 1);
+
+    /// Whether the set holds any delimiter of `other`.
+    pub const fn has(self, other: Self) -> bool {
+        self.0 & other.0 != 0
+    }
+
+    /// The set with `other`'s delimiters added.
+    pub const fn with(self, other: Self) -> Self {
+        Self(self.0 | other.0)
+    }
+
+    /// The set with `other`'s delimiters removed.
+    pub const fn without(self, other: Self) -> Self {
+        Self(self.0 & !other.0)
+    }
+
+    /// Whether every delimiter of the set is one `allowed` holds.
+    pub const fn within(self, allowed: Self) -> bool {
+        self.0 & !allowed.0 == 0
+    }
+}
+
+id_newtype! {
+    /// A node of a live tree as JavaScript holds it: its tree and its node
+    /// index in one number (`engine::encode_handle`), below 2^53 so a double
+    /// carries it exactly.
+    TreeHandle(u64) as f64
+}
+
+id_newtype! {
+    /// A child's position among its parent's children, every child counted:
+    /// what `Node::child` takes.
+    ChildPosition(u32)
+}
+
+id_newtype! {
+    /// An item's position among a slot's items.
+    ItemIndex(u32)
 }
 
 id_newtype! {

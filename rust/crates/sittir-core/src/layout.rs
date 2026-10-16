@@ -173,12 +173,12 @@ pub fn source_separator<T>(layout: Option<&TransportLayout<T>>, ctx: &RenderCont
 #[derive(Debug, Clone, PartialEq)]
 pub struct UnitSides<T> {
     pub slot: String,
-    pub item: u32,
+    pub item: crate::types::ItemIndex,
     pub trivia: TransportTrivia<T>,
 }
 
 /// The sides `layout` holds for the unit at item `item` of the slot `slot`.
-pub fn unit_sides<'a, T>(layout: Option<&'a TransportLayout<T>>, slot: &str, item: u32) -> Option<&'a TransportTrivia<T>> {
+pub fn unit_sides<'a, T>(layout: Option<&'a TransportLayout<T>>, slot: &str, item: crate::types::ItemIndex) -> Option<&'a TransportTrivia<T>> {
     layout?.units.iter().find(|unit| unit.slot == slot && unit.item == item).map(|unit| &unit.trivia)
 }
 
@@ -188,7 +188,7 @@ pub fn unit_sides<'a, T>(layout: Option<&'a TransportLayout<T>>, slot: &str, ite
 pub fn render_unit<T: Render + TriviaSeam>(
     layout: Option<&TransportLayout<T>>,
     slot: &str,
-    item: u32,
+    item: crate::types::ItemIndex,
     w: &mut dyn RenderSink,
     body: impl FnOnce(&mut dyn RenderSink) -> RenderResult,
 ) -> RenderResult {
@@ -199,7 +199,7 @@ pub fn render_unit<T: Render + TriviaSeam>(
 }
 
 impl<T: Render + TriviaSeam + std::fmt::Debug> crate::view::UnitFrames for TransportLayout<T> {
-    fn frame_unit(&self, slot: &str, item: u32, w: &mut dyn RenderSink, body: &mut dyn FnMut(&mut dyn RenderSink) -> RenderResult) -> RenderResult {
+    fn frame_unit(&self, slot: &str, item: crate::types::ItemIndex, w: &mut dyn RenderSink, body: &mut dyn FnMut(&mut dyn RenderSink) -> RenderResult) -> RenderResult {
         render_unit(Some(self), slot, item, w, body)
     }
 }
@@ -365,7 +365,7 @@ pub fn render_framed<F: Framing + ?Sized>(
         trivia.frame_leading(w)?;
     }
     w.open_frame(origin);
-    let line_terminated = kind.is_some_and(|kind| w.kind_has(kind, crate::options::KIND_LINE_TERMINATED));
+    let line_terminated = kind.is_some_and(|kind| w.kind_has(kind, crate::options::KindFlags::LINE_TERMINATED));
     let outer = line_terminated.then(|| w.swallow_cr(true));
     body(w)?;
     if let Some(outer) = outer {
@@ -477,11 +477,11 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
 impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue for UnitSides<T> {
     /// `{ slot, item, leading?, trailing?, inner? }`.
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
-        use crate::boundary::{property, property_whole};
+        use crate::boundary::property;
         unsafe {
             Ok(Self {
                 slot: property(env, napi_val, c"slot")?.ok_or_else(|| ::napi::Error::from_reason("a unit's sides name its slot"))?,
-                item: property_whole(env, napi_val, c"item", "a unit's sides")?.unwrap_or(0),
+                item: property(env, napi_val, c"item")?.unwrap_or(crate::types::ItemIndex(0)),
                 trivia: TransportTrivia::from_napi_value(env, napi_val)?,
             })
         }
@@ -588,6 +588,7 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
 
 #[cfg(test)]
 mod tests {
+    use crate::spacing::SeamStrength;
     use crate::types::KindId;
     use super::{TransportLayout, TriviaRole};
     use crate::render::{Render, RenderResult, RenderSink};
@@ -601,6 +602,9 @@ mod tests {
     /// grammar's comment template.
     #[derive(Debug, Clone, PartialEq)]
     struct MockTrivia(String);
+
+    #[cfg(feature = "napi-bindings")]
+    crate::trivia::refuse_napi_decode!(MockTrivia);
 
     impl crate::trivia::TriviaSeam for MockTrivia {
         fn seam_gap(&self) -> Option<(crate::layout_kinds::LayoutKinds, Option<&str>)> {
@@ -728,7 +732,6 @@ mod tests {
     #[test]
     fn a_stamped_edge_of_a_kind_with_no_edge_site_is_written_around_the_node() {
         use crate::options::{EdgeArm, Edges};
-        use crate::spacing::{SEAM_DECLARED, SEAM_TRIVIA};
         const TIGHT: KindId = KindId(1);
         const SPACE: KindId = KindId(2);
         fn text_of(kind: KindId) -> &'static str {
@@ -739,7 +742,7 @@ mod tests {
             }
         }
         const TABLE: crate::render::WhitespaceTable = crate::render::WhitespaceTable { text_of, indent: KindId(0), dedent: KindId(0) , leaf_edges: &[], gaps: &[(1, KindId(1)), (2, KindId(2))]};
-        let tight = Some(EdgeArm { arm: TIGHT, strength: Some(SEAM_TRIVIA), dedent: None });
+        let tight = Some(EdgeArm { arm: TIGHT, strength: Some(SeamStrength::Trivia), dedent: None });
         let edged = |text, edges| MockTransport {
             text,
             layout: Some(Box::new(TransportLayout { edges: Some(edges), ..Default::default() })),
@@ -749,9 +752,9 @@ mod tests {
         let mut out = String::new();
         let mut w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident()).with_table(&TABLE);
         first.render(&mut w).unwrap();
-        w.site_with(SPACE, SEAM_DECLARED);
+        w.site_with(SPACE, SeamStrength::Declared);
         w.text(",").unwrap();
-        w.site_with(SPACE, SEAM_DECLARED);
+        w.site_with(SPACE, SeamStrength::Declared);
         second.render(&mut w).unwrap();
         w.finish().unwrap();
         assert_eq!(out, "a,b");

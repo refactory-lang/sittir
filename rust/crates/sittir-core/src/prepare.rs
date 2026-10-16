@@ -60,10 +60,11 @@ impl<X: ArmOf> ArmOf for Option<X> {
 /// the list's own kind being `kind`). A list rebuilt from none, or a table
 /// that cannot answer, takes `default`, the options table's. The leading
 /// flag is always `default`'s.
-pub fn source_trailing_delimiter<T>(layout: Option<&crate::layout::TransportLayout<T>>, kind: KindId, separators: &[KindId], default: u8, ctx: &RenderContext<'_>) -> u8 {
+pub fn source_trailing_delimiter<T>(layout: Option<&crate::layout::TransportLayout<T>>, kind: KindId, separators: &[KindId], default: crate::types::Delimiter, ctx: &RenderContext<'_>) -> crate::types::Delimiter {
     let Some(source) = layout.and_then(|layout| layout.sides.as_ref()) else { return default };
     let Some(last) = ctx.sources.last_list_child_kind(source.tree, source.span, kind) else { return default };
-    (default & !2) | if separators.contains(&last) { 2 } else { 0 }
+    let trailing = crate::types::Delimiter::TRAILING;
+    if separators.contains(&last) { default.with(trailing) } else { default.without(trailing) }
 }
 
 /// The item at one end of a root's render, as the root's edge reads it: a
@@ -244,7 +245,7 @@ pub fn seat_site(table: &[Option<SiteId>], kind: KindId) -> Option<SiteId> {
 /// Give every gap between two present items of a list slot the classes its
 /// stored layout holds (`layout::SlotLayout`): the side before the
 /// separator onto the earlier item's `after` edge, the side after it onto
-/// the later item's `before` edge, at slot strength (`SEAM_SLOT`), so no
+/// the later item's `before` edge, at slot strength (`SeamStrength::Slot`), so no
 /// option replaces them and a gap's own layout entry does. An edge already
 /// set keeps its arm. An absent item renders nothing, so it neither takes a
 /// gap nor parts two.
@@ -283,7 +284,7 @@ pub fn fill_slot_separators<'i, T: Prepare + 'i, L, const ADJACENT: bool>(
 }
 
 fn set_gap_edge<T: Prepare, const ADJACENT: bool>(item: &mut SlotValue<T, ADJACENT>, side: Side, arm: KindId) {
-    let seam = SeamArm { arm, strength: crate::spacing::SEAM_SLOT, dedent: false };
+    let seam = SeamArm { arm, strength: crate::spacing::SeamStrength::Slot, dedent: false };
     match item {
         SlotValue::Coord(coord) => {
             let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
@@ -625,7 +626,7 @@ mod tests {
         let options = ResolvedOptions::default();
         let ctx = RenderContext { options: &options, sources: &sources, recording: None };
         let layout = crate::layout::TransportLayout::<String> { sides: rebuilt.then(|| coordinate(2, 7)), ..Default::default() };
-        super::source_trailing_delimiter(Some(&layout), crate::types::KindId(1), &[COMMA], default, &ctx)
+        super::source_trailing_delimiter(Some(&layout), crate::types::KindId(1), &[COMMA], crate::types::Delimiter(default), &ctx).get()
     }
 
     #[test]

@@ -690,7 +690,7 @@ function printStatements(
 				lines.push(
 					unit === undefined
 						? `${pad}${printer.field(node.name)}.render(w)?;`
-						: `${pad}::sittir_core::layout::render_unit(node.layout.as_deref(), ${JSON.stringify(unit)}, 0, w, |w| ${printer.field(node.name)}.render(w))?;`
+						: `${pad}::sittir_core::layout::render_unit(node.layout.as_deref(), ${JSON.stringify(unit)}, ::sittir_core::types::ItemIndex(0), w, |w| ${printer.field(node.name)}.render(w))?;`
 				);
 				break;
 			}
