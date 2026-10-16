@@ -41,7 +41,7 @@ Maintainer, 2026-10-15:
   - `refine(forms)` as an entry;
   - `export const hash`;
   - `injects:` and the record form of `groups:` go.
-- **Order of work.** The first stage is gated byte-identical against the 2b head, 946114382. 2b waits for the rewrite.
+- **Order of work.** The first stage is gated byte-identical against the 2b head, 946114382, once wire's visible-externals rewrite is idempotent (§10). 2b waits for the rewrite.
 
 Carried forward unchanged:
 - One copy primitive serves splits, contextual aliases, literal splits and the receiver lead.
@@ -390,7 +390,9 @@ The "parser" column says whether tree-sitter sees the edit, or only the model do
 
   **The alias check.** In a layer above the first, `alias` refuses a target the base already has, and an alias that flips hiddenness (`alias-target-invalid`).
   - The check reads the member's displayed name, so naming a copy of a visible kind with another visible name flips nothing.
-  - Over a completed grammar, such an alias is a merge or a hiddenness change, which the stage-2 merge rules handle.
+  - Over a completed grammar, such an alias is a merge or a hiddenness change.
+  - A merge the layer declares is a display family, not an overload. Enrich splits a display that a grammar overloads by accident; its detector (`unaliasOverloadedDisplays`) never matches a display family a layer declared. This narrows what the detector matches; it is not a skip set or a decline.
+  - The declared families, read from the layer's alias effects, are an input to enrich and to the completion check (§1.3), so a declared merge passes the fixpoint check.
   - Layer 1 is exempt, because it writes tree-sitter's own aliases.
   - Today this is `checkBindingPatches`, run on the bindings layer only.
 - **`variant`.**
@@ -417,7 +419,7 @@ It is refused with `rename-invalid` when:
 - the source is not a rule or an external;
 - the source is the start rule, which must stay first;
 - the rename flips hiddenness;
-- the grammar already has the target name. That makes it a merge, which the stage-2 merge rules handle.
+- the grammar already has the target name. That makes it a merge, which an `alias` to the existing display declares (§3.2).
 
 No layer uses it yet. The derived kind renames stay data (§2.4), and the generator never writes a `rename` entry. Where `rename` is unused, which today is everywhere, it adds no rule, and `parser.c`'s symbol table is unchanged.
 
@@ -642,13 +644,14 @@ The `leadFrom` and `bindingEffects` projections read the same effects (§1.7). `
 - **The baseline.**
   - The rewrite branches from master, with the 2b head merged in.
   - Master has since changed 22 generated files, all downstream of the grammar: the packages' `api.ts`, `portable.ts`, `types.ts`, `utils.ts` and `node-model-portable.json5`, and the crates' `lib.rs`.
-  - So the baseline is recorded at that merge. Before it is recorded, the merge's grammar-level outputs are checked against 946114382's blobs: `grammar.json`, `parser.c`, `node-types.json`, `parser.wasm`, `resolutions.json` and the generated layers.
+  - So the baseline is recorded after that merge. Before it is recorded, the merge's grammar-level outputs are checked against 946114382's blobs: `grammar.json`, `parser.c`, `node-types.json`, `parser.wasm`, `resolutions.json` and the generated layers.
+  - It is recorded once wire's visible-externals rewrite is idempotent. At 946114382 the bindings layer wraps layer 1's aliases a second time, `alias(alias($._newline, newline), newline)`, which enrich cannot run over again. The idempotent rewrite collapses those aliases in `grammar.json` (python 10, rust 8, typescript 8), restores the whitespace factory entries the nesting had dropped, and moves only the grammar hashes in `resolutions.json`. `parser.c`, `node-types.json` and `parser.wasm` do not move.
 - **Generated files.** Every file in the baseline manifest matches its blob, except:
   - grammar.bindings.ts, which is rewritten as a layer;
   - `.sittir/grammar.js` for rust, typescript and python, which re-exports the top layer;
   - `grammar.json` for rust, typescript and python, which drops `splitFrom`, `leadFrom` and `bindingEffects`. The rest of `grammar.json`, and `parser.c`, `node-types.json` and `parser.wasm`, stay byte-identical.
 - **Validation rows.** `validate:native` rows equal the baseline's rows. Those are `reshape-gate-rows-946114382.txt`, unless the merge moved a row, and any moved row is reported before the baseline is accepted.
-- **Evaluated grammars.** Each layer's evaluated grammar, including the record's projections, deep-equals the baseline's. A snapshot is taken at the merge. Equality keeps both conflict sections reused.
+- **Evaluated grammars.** Each layer's evaluated grammar, including the record's projections, deep-equals the baseline's. A snapshot is taken at the baseline. Equality keeps both conflict sections reused.
 - **The standing gates:**
   - the full unit suite;
   - workspace type-check and lint;
