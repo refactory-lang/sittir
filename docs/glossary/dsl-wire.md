@@ -2007,7 +2007,7 @@ The grammar's `reparseHosts` block: a template per supertype or kind whose `$r` 
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.bindingEffects`
 
-The effects the binding patch sets had, in the order they applied (`bind.ts::BindingEffect`). `sittirGrammar` reads them through `wireBindingEffects` to rewrite the authored options.
+The effects the binding patch sets had, in the order they applied (`verbs/effects.ts::BindingEffect`). `sittirGrammar` reads them through `wireBindingEffects` to rewrite the authored options.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.recordingBindingEffects`
 

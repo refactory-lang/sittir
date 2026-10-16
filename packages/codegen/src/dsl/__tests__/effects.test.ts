@@ -1,9 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import type { LeadMatch } from '../bind.ts';
+import type { LayerRecords } from '../layer-record.ts';
 import { preference } from '../primitives/preference.ts';
-import { effectsForOwners, provenanceOf, rewriteInherited, type CopyOrigin, type Effect } from '../verbs/effects.ts';
+import { effectsForOwners, provenanceOf, rewriteInherited, type CopyOrigin, type Effect, type LeadMatch } from '../verbs/effects.ts';
 import { LABELS_KEY } from '../wire/options-block.ts';
 
 interface FixtureCopy {
@@ -15,15 +15,34 @@ interface FixtureCopy {
 	readonly admitted?: string;
 }
 
-interface LeadFixture {
+interface LayerFixture {
 	readonly effects: readonly Effect[];
 	readonly lead: { readonly list: string; readonly item: string; readonly field: string; readonly admits: readonly LeadMatch[] } | null;
 	readonly copies: readonly FixtureCopy[];
 	readonly rules: Readonly<Record<string, unknown>>;
 	readonly provenance: unknown;
+	readonly inherited: LayerRecords & { readonly options: Readonly<Record<string, unknown>> };
+	readonly rewrittenOptions: Readonly<Record<string, unknown>>;
 }
 
-const leadFixtures = JSON.parse(readFileSync(join(__dirname, 'fixtures/lead-provenance.json'), 'utf8')) as Readonly<Record<string, LeadFixture>>;
+const layerFixtures = JSON.parse(readFileSync(join(__dirname, 'fixtures/bindings-layer-effects.json'), 'utf8')) as Readonly<Record<string, LayerFixture>>;
+
+const layerEffects = (fixture: LayerFixture): Effect[] => {
+	const origin: CopyOrigin | undefined = fixture.lead === null ? undefined : { kind: 'lead', ...fixture.lead };
+	return [
+		...fixture.effects,
+		...fixture.copies.map((copy): Effect => ({
+			kind: 'copy',
+			copy: copy.copy,
+			source: copy.source,
+			part: copy.part,
+			context: copy.context,
+			display: copy.display,
+			admitted: copy.admitted,
+			origin: origin!
+		}))
+	];
+};
 
 const before = preference('space');
 const after = preference('newline');
@@ -129,6 +148,47 @@ describe('rewriteInherited', () => {
 		});
 	});
 
+	it.each<[string, LayerRecords, LayerRecords]>([
+		['the keys of rule causes', { ruleCauses: { a: { kind: 'vocabulary' } } }, { ruleCauses: { b: { kind: 'vocabulary' } } }],
+		['the keys of test-failure expectations, not their reasons', { expectTestFailures: { a: 'a' } }, { expectTestFailures: { b: 'a' } }],
+		[
+			'the keys of refine forms, not the forms',
+			{ refineForms: new Map([['a', [{ name: 'a', selections: { 0: 'a' } }]]]) },
+			{ refineForms: new Map([['b', [{ name: 'a', selections: { 0: 'a' } }]]]) }
+		],
+		[
+			'the keys of external roles',
+			{ externalRoles: new Map([['a', { role: 'indent' as const }]]) },
+			{ externalRoles: new Map([['b', { role: 'indent' as const }]]) }
+		],
+		[
+			'the kinds a diagnostic expectation lists, not its code',
+			{ expectDiagnostics: { 'unclassifiable-shape': ['a', 'c'] } },
+			{ expectDiagnostics: { 'unclassifiable-shape': ['b', 'c'] } }
+		],
+		[
+			"each patch site's owner kind, not its path or name",
+			{ patchSites: [{ ownerKind: 'a', path: 'a:', form: 'field', name: 'a' }] },
+			{ patchSites: [{ ownerKind: 'b', path: 'a:', form: 'field', name: 'a' }] }
+		],
+		["each whitespace collision's name", { whitespaceCollisions: [{ name: 'a', site: 'upstream' }] }, { whitespaceCollisions: [{ name: 'b', site: 'upstream' }] }],
+		['the groups whose body pattern matched nothing', { bodyPatternZeroMatches: ['a', 'c'] }, { bodyPatternZeroMatches: ['b', 'c'] }]
+	])('renames %s under a kind rename', (_record, records, expected) => {
+		expect(rewriteInherited(records, { effects: [{ kind: 'rename', from: 'a', to: 'b' }], rules: {} })).toEqual(expected);
+	});
+
+	it('keeps the stages as they were recorded under a kind rename', () => {
+		const stages = { raw: { grammar: { name: 'a' } }, enriched: { grammar: { name: 'a' } } } as unknown as LayerRecords['stages'];
+		expect(rewriteInherited({ stages }, { effects: [{ kind: 'rename', from: 'a', to: 'b' }], rules: {} }).stages).toBe(stages);
+	});
+
+	it.each(Object.keys(layerFixtures))("rewrites %s's inherited records as its bindings layer does, key order included", (grammar) => {
+		const fixture = layerFixtures[grammar]!;
+		const expected = { ...fixture.inherited, options: { ...fixture.inherited.options, ...fixture.rewrittenOptions } };
+		const rewritten = rewriteInherited(fixture.inherited, { effects: layerEffects(fixture), rules: fixture.rules });
+		expect(JSON.stringify(rewritten)).toBe(JSON.stringify(expected));
+	});
+
 	it('returns records untouched when the layer records no effect', () => {
 		const records = { options: { o: { 'item:/after': after } } };
 		expect(rewriteInherited(records, { effects: [], rules: {} })).toEqual(records);
@@ -164,20 +224,9 @@ describe('effectsForOwners', () => {
 });
 
 describe('provenanceOf', () => {
-	it.each(Object.keys(leadFixtures))("reproduces %s's provenance, key order included, from its recorded effects", (grammar) => {
-		const fixture = leadFixtures[grammar]!;
-		const origin: CopyOrigin | undefined = fixture.lead === null ? undefined : { kind: 'lead', ...fixture.lead };
-		const copies = fixture.copies.map((copy): Effect => ({
-			kind: 'copy',
-			copy: copy.copy,
-			source: copy.source,
-			part: copy.part,
-			context: copy.context,
-			display: copy.display,
-			admitted: copy.admitted,
-			origin: origin!
-		}));
-		expect(JSON.stringify(provenanceOf([...fixture.effects, ...copies], fixture.rules))).toBe(JSON.stringify(fixture.provenance));
+	it.each(Object.keys(layerFixtures))("reproduces %s's provenance, key order included, from its recorded effects", (grammar) => {
+		const fixture = layerFixtures[grammar]!;
+		expect(JSON.stringify(provenanceOf(layerEffects(fixture), fixture.rules))).toBe(JSON.stringify(fixture.provenance));
 	});
 
 	it('maps the copies a path or copy() made into splitFrom, and each rename target to its source', () => {

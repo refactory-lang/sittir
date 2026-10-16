@@ -7231,11 +7231,11 @@ One entry of `resolutions.json` as the derivation writes it: the AddConflict set
 
 ### `packages/codegen/src/dsl/layer-record.ts::LayerRecords`
 
-The records that cross layers beside the rules, under the names the evaluated grammar gives them: options and labels, groups, render-as, visible externals, reparse hosts, refine forms, rule causes and undeclared rules, patch sites, external roles, the expectations, stages, protected rule names, whitespace collisions and body-pattern zero matches. A layer's inherited records pass through `rewriteInherited`; its own entries win over them.
+The records that cross layers beside the rules, under the names the evaluated grammar gives them: options and labels, groups, render-as, visible externals, reparse hosts, refine forms, rule causes and undeclared rules, patch sites, external roles, the expectations, stages, protected rule names, whitespace collisions and body-pattern zero matches. A layer's inherited records pass through `rewriteInherited`; its own entries win over them. `RECORD_RENAMES` gives every key its treatment under a kind rename.
 
 ### `packages/codegen/src/dsl/layer-record.ts::LayerRecord`
 
-The one record a completed layer hands the layer above, on its result's start rule: its `depth` (1 for `grammar.sittir.ts`, one more per layer above), the `upstream` grammar its derivation records stay keyed to, the enrich `sidecars` the next layer re-attaches when it checks its base, the conflict `resolutions`, the dead enrich mints, the text tokens, the lift names, the effect log and the records. JSON never carries it.
+The one record a completed layer hands the layer above, on its result's start rule: its `depth` (1 for `grammar.sittir.ts`, one more per layer above), the `upstream` grammar (`GrammarJson`) its derivation records stay keyed to, the enrich `sidecars` the next layer re-attaches when it checks its base, the conflict `resolutions`, the dead enrich mints, the text tokens, the lift names, the effect log and the records. JSON never carries it.
 
 ### `packages/codegen/src/dsl/layer-record.ts::LAYER_RECORD_KEY`
 
@@ -7456,15 +7456,6 @@ The `Rename` primitive: `rename('function_item', 'function_declaration')`.
 
 The `Split` primitive: `split(kind, as, { within, containers })` mints `as` from `kind` where it sits under the placement `within` (innermost first, the placement's owner last), with a container rule per intermediate ancestor named and fielded as `containers` gives.
 
-### `packages/codegen/src/dsl/bind.ts::BindingEffect`
-
-What one binding patch did, as wire records it while the patch applies: a `segment` effect (`SegmentEffect`) is an option-path segment of the patched kind that the patch renamed (a field `from:` to `to:`, or a wrapped child or token to the new field), and an `alias` effect (`AliasEffect`) is a kind the patch aliased to a new name.
-
-A `lead` effect records the actual receiver alias, rest group reference, rest
-field and visible variants created by `leadGrammar`. Group names are read after
-the canonical singleton-ordinal collapse. Portable binding facts consume this
-realization; they do not derive the minted names independently.
-
 ### `packages/codegen/src/dsl/bind.ts::BINDING_SET`
 
 The non-enumerable mark on a patch set that came from grammar bindings. `transform` applies a marked set inside `wireWithBindingEffects`, so only binding patches record effects.
@@ -7511,15 +7502,11 @@ A field the grammar bindings add for a member whose child arrives under no field
 
 ### `packages/codegen/src/dsl/bind.ts::LIST_FIELDS`
 
-The grammar's top-level fields that are plain lists of kind names (`supertypes`, `inline`, …); a rename maps each entry.
+The grammar's top-level fields that are plain lists of kind names (`supertypes`, `inline`, `factoryInline`, `textTokens`); a rename maps each entry. The layer records that list kind names rename through the effect table (`renameRecords`).
 
 ### `packages/codegen/src/dsl/bind.ts::RULE_FIELDS`
 
 The grammar's top-level fields whose entries are rules or lists of rules and names (`extras`, `externals`, `precedences`, `reserved`, `conflicts`); a rename walks them like a rule body.
-
-### `packages/codegen/src/dsl/bind.ts::KEYED_FIELDS`
-
-The grammar's top-level records keyed by kind name (`rules`, `renderAs`, `visibleExternals`, `groups`); a rename maps each key and walks each value.
 
 ### `packages/codegen/src/dsl/bind.ts::mappedName`
 
@@ -7535,7 +7522,7 @@ Copies the non-enumerable facts a grammar carries (the facts wire and enrich sta
 
 ### `packages/codegen/src/dsl/bind.ts::renameGrammar`
 
-The grammar with each rename's base rule or external taking its new name everywhere a kind is named: keyed fields, list and rule fields, the options block, the reparse hosts, `word`, every set of names, and the hidden facts. `renamedFrom` records each new name's base name for the phases that read base names. A rename of a name the grammar lacks, one that flips hiddenness, or one onto a name the grammar already has is an error.
+The grammar with each rename's base rule or external taking its new name everywhere a kind is named: the rules' keys and bodies, list and rule fields, the records the effect table names (`renameRecords`), `word`, every set of names, and the hidden facts. `renamedFrom` records each new name's base name for the phases that read base names. A rename of a name the grammar lacks, one that flips hiddenness, or one onto a name the grammar already has is an error.
 
 ### `packages/codegen/src/dsl/bind.ts::replaceSymbols`
 
@@ -7648,18 +7635,6 @@ Marks each binding patch set for canonical effect recording. Authored patch sets
 ### `packages/codegen/src/dsl/rule-patterns.ts::onlyAliasedSymbols`
 
 The symbols a set of rule bodies references under a named alias and never by name. An authored hidden rule in that set is not a pattern candidate: its owner gave it a visible name at every reference, and the parser makes that alias the rule's own name only while every reference carries it. Folding an unrelated inline body of the same shape into a plain reference would add an unaliased reference, and the kind would stop being the aliased one. Evaluate's `applyPatternReplacement` and wire's `applyWirePatternReplacement` both ask it; a candidate that folds into an alias site (a declared group) is not subject to it.
-
-### `packages/codegen/src/dsl/bind.ts::LeadWithin`
-
-A lead match's restriction: the field it restricts (`null` for an unfielded child) and the matches it admits there.
-
-### `packages/codegen/src/dsl/bind.ts::LeadMatch`
-
-One kind a lead admits: the kind, its restriction (`within`), when it narrows the kind, and the name of the variant the narrowing mints (`as`), when a claim names it.
-
-### `packages/codegen/src/dsl/bind.ts::Lead`
-
-A leading-element split of a separated list: the list rule, its item field, the field the leading element takes, and the matches the leading element admits.
 
 ### `packages/codegen/src/dsl/bind.ts::lead`
 

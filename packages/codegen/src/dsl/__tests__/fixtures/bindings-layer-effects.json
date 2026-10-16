@@ -1,0 +1,3024 @@
+{
+	"rust": {
+		"effects": [
+			{
+				"kind": "segment",
+				"owner": "attribute_item",
+				"from": "attribute:",
+				"to": "content:"
+			},
+			{
+				"kind": "segment",
+				"owner": "inner_attribute_item",
+				"from": "attribute:",
+				"to": "content:"
+			},
+			{
+				"kind": "segment",
+				"owner": "static_item",
+				"from": "ref:",
+				"to": "by_reference:"
+			},
+			{
+				"kind": "segment",
+				"owner": "type_item",
+				"from": "type:",
+				"to": "value:"
+			},
+			{
+				"kind": "segment",
+				"owner": "const_parameter",
+				"from": "value:",
+				"to": "default:"
+			},
+			{
+				"kind": "segment",
+				"owner": "type_parameter",
+				"from": "default_type:",
+				"to": "default:"
+			},
+			{
+				"kind": "segment",
+				"owner": "let_declaration",
+				"from": "pattern:",
+				"to": "name:"
+			},
+			{
+				"kind": "segment",
+				"owner": "use_as_clause",
+				"from": "path:",
+				"to": "name:"
+			},
+			{
+				"kind": "segment",
+				"owner": "reference_type",
+				"from": "mutable:",
+				"to": "exclusive:"
+			},
+			{
+				"kind": "segment",
+				"owner": "macro_invocation",
+				"from": "macro:",
+				"to": "function:"
+			},
+			{
+				"kind": "segment",
+				"owner": "unary_expression",
+				"from": "operand:",
+				"to": "argument:"
+			},
+			{
+				"kind": "segment",
+				"owner": "try_expression",
+				"from": "value:",
+				"to": "argument:"
+			},
+			{
+				"kind": "segment",
+				"owner": "type_cast_expression",
+				"from": "value:",
+				"to": "expression:"
+			},
+			{
+				"kind": "segment",
+				"owner": "tuple_expression",
+				"from": "expressions:",
+				"to": "elements:"
+			},
+			{
+				"kind": "segment",
+				"owner": "shorthand_field_initializer",
+				"from": "name:",
+				"to": "field:"
+			},
+			{
+				"kind": "segment",
+				"owner": "field_initializer",
+				"from": "attribute_item:",
+				"to": "attributes:"
+			},
+			{
+				"kind": "segment",
+				"owner": "match_expression",
+				"from": "value:",
+				"to": "subject:"
+			},
+			{
+				"kind": "segment",
+				"owner": "for_expression",
+				"from": "value:",
+				"to": "right:"
+			},
+			{
+				"kind": "segment",
+				"owner": "for_expression",
+				"from": "pattern:",
+				"to": "left:"
+			},
+			{
+				"kind": "segment",
+				"owner": "field_expression",
+				"from": "value:",
+				"to": "object:"
+			},
+			{
+				"kind": "segment",
+				"owner": "field_expression",
+				"from": "field:",
+				"to": "property:"
+			},
+			{
+				"kind": "segment",
+				"owner": "slice_pattern",
+				"from": "patterns:",
+				"to": "elements:"
+			},
+			{
+				"kind": "segment",
+				"owner": "reference_pattern",
+				"from": "mutable:",
+				"to": "exclusive:"
+			},
+			{
+				"kind": "segment",
+				"owner": "reference_expression_raw_const",
+				"from": "\"raw\"",
+				"to": "raw:"
+			},
+			{
+				"kind": "segment",
+				"owner": "reference_expression_raw_mut",
+				"from": "mutable_specifier:",
+				"to": "writable:"
+			},
+			{
+				"kind": "segment",
+				"owner": "reference_expression_raw_mut",
+				"from": "\"raw\"",
+				"to": "raw:"
+			},
+			{
+				"kind": "segment",
+				"owner": "reference_expression_mut",
+				"from": "mutable_specifier:",
+				"to": "exclusive:"
+			},
+			{
+				"kind": "segment",
+				"owner": "pointer_type_mut",
+				"from": "mutable_specifier:",
+				"to": "writable:"
+			}
+		],
+		"lead": {
+			"list": "parameters_elements",
+			"item": "attributed_parameter",
+			"field": "receiver",
+			"admits": [
+				{
+					"kind": "attributed_parameter",
+					"within": {
+						"field": null,
+						"admits": [
+							{
+								"kind": "self_parameter"
+							},
+							{
+								"kind": "parameter",
+								"within": {
+									"field": "name",
+									"admits": [
+										{
+											"kind": "self"
+										}
+									]
+								},
+								"as": "receiver_parameter_declaration"
+							}
+						]
+					}
+				}
+			]
+		},
+		"copies": [
+			{
+				"copy": "_parameter_receiver",
+				"source": "parameter",
+				"part": ".",
+				"context": "receiver",
+				"display": "receiver_parameter_declaration",
+				"admitted": "parameter"
+			},
+			{
+				"copy": "_attributed_parameter_receiver",
+				"source": "_attributed_parameter",
+				"part": ".",
+				"context": "receiver",
+				"display": "attributed_parameter_receiver",
+				"admitted": "attributed_parameter"
+			},
+			{
+				"copy": "_parameters_elements_receiver",
+				"source": "parameters_elements",
+				"part": ".",
+				"context": "receiver",
+				"display": "parameters_elements_receiver"
+			}
+		],
+		"rules": {
+			"_parameters_elements_receiver": {
+				"members": [
+					{
+						"content": {
+							"content": {
+								"name": "_attributed_parameter_receiver",
+								"type": "SYMBOL"
+							},
+							"named": true,
+							"type": "ALIAS",
+							"value": "attributed_parameter_receiver"
+						},
+						"metadata": {
+							"fieldSource": "enriched"
+						},
+						"name": "receiver",
+						"type": "FIELD"
+					},
+					{
+						"content": {
+							"metadata": {
+								"symbolSource": "group-lift"
+							},
+							"name": "parameters_elements_receiver_group",
+							"type": "SYMBOL"
+						},
+						"type": "OPTIONAL"
+					}
+				],
+				"type": "SEQ"
+			},
+			"parameters_elements_receiver_group": {
+				"annotations": {
+					"hoisted": true
+				},
+				"members": [
+					{
+						"type": "STRING",
+						"value": ","
+					},
+					{
+						"content": {
+							"content": {
+								"inline": false,
+								"metadata": {
+									"symbolSource": "group-lift"
+								},
+								"name": "parameters_elements",
+								"type": "SYMBOL"
+							},
+							"metadata": {
+								"fieldSource": "enriched"
+							},
+							"name": "elements",
+							"type": "FIELD"
+						},
+						"type": "OPTIONAL"
+					}
+				],
+				"type": "SEQ"
+			}
+		},
+		"provenance": {
+			"splitFrom": {},
+			"leadFrom": {
+				"_parameter_receiver": "parameter",
+				"_attributed_parameter_receiver": "_attributed_parameter",
+				"_parameters_elements_receiver": "parameters_elements"
+			},
+			"bindingEffects": [
+				{
+					"kind": "segment",
+					"owner": "attribute_item",
+					"from": "attribute:",
+					"to": "content:"
+				},
+				{
+					"kind": "segment",
+					"owner": "inner_attribute_item",
+					"from": "attribute:",
+					"to": "content:"
+				},
+				{
+					"kind": "segment",
+					"owner": "static_item",
+					"from": "ref:",
+					"to": "by_reference:"
+				},
+				{
+					"kind": "segment",
+					"owner": "type_item",
+					"from": "type:",
+					"to": "value:"
+				},
+				{
+					"kind": "segment",
+					"owner": "const_parameter",
+					"from": "value:",
+					"to": "default:"
+				},
+				{
+					"kind": "segment",
+					"owner": "type_parameter",
+					"from": "default_type:",
+					"to": "default:"
+				},
+				{
+					"kind": "segment",
+					"owner": "let_declaration",
+					"from": "pattern:",
+					"to": "name:"
+				},
+				{
+					"kind": "segment",
+					"owner": "use_as_clause",
+					"from": "path:",
+					"to": "name:"
+				},
+				{
+					"kind": "segment",
+					"owner": "reference_type",
+					"from": "mutable:",
+					"to": "exclusive:"
+				},
+				{
+					"kind": "segment",
+					"owner": "macro_invocation",
+					"from": "macro:",
+					"to": "function:"
+				},
+				{
+					"kind": "segment",
+					"owner": "unary_expression",
+					"from": "operand:",
+					"to": "argument:"
+				},
+				{
+					"kind": "segment",
+					"owner": "try_expression",
+					"from": "value:",
+					"to": "argument:"
+				},
+				{
+					"kind": "segment",
+					"owner": "type_cast_expression",
+					"from": "value:",
+					"to": "expression:"
+				},
+				{
+					"kind": "segment",
+					"owner": "tuple_expression",
+					"from": "expressions:",
+					"to": "elements:"
+				},
+				{
+					"kind": "segment",
+					"owner": "shorthand_field_initializer",
+					"from": "name:",
+					"to": "field:"
+				},
+				{
+					"kind": "segment",
+					"owner": "field_initializer",
+					"from": "attribute_item:",
+					"to": "attributes:"
+				},
+				{
+					"kind": "segment",
+					"owner": "match_expression",
+					"from": "value:",
+					"to": "subject:"
+				},
+				{
+					"kind": "segment",
+					"owner": "for_expression",
+					"from": "value:",
+					"to": "right:"
+				},
+				{
+					"kind": "segment",
+					"owner": "for_expression",
+					"from": "pattern:",
+					"to": "left:"
+				},
+				{
+					"kind": "segment",
+					"owner": "field_expression",
+					"from": "value:",
+					"to": "object:"
+				},
+				{
+					"kind": "segment",
+					"owner": "field_expression",
+					"from": "field:",
+					"to": "property:"
+				},
+				{
+					"kind": "segment",
+					"owner": "slice_pattern",
+					"from": "patterns:",
+					"to": "elements:"
+				},
+				{
+					"kind": "segment",
+					"owner": "reference_pattern",
+					"from": "mutable:",
+					"to": "exclusive:"
+				},
+				{
+					"kind": "segment",
+					"owner": "reference_expression_raw_const",
+					"from": "\"raw\"",
+					"to": "raw:"
+				},
+				{
+					"kind": "segment",
+					"owner": "reference_expression_raw_mut",
+					"from": "mutable_specifier:",
+					"to": "writable:"
+				},
+				{
+					"kind": "segment",
+					"owner": "reference_expression_raw_mut",
+					"from": "\"raw\"",
+					"to": "raw:"
+				},
+				{
+					"kind": "segment",
+					"owner": "reference_expression_mut",
+					"from": "mutable_specifier:",
+					"to": "exclusive:"
+				},
+				{
+					"kind": "segment",
+					"owner": "pointer_type_mut",
+					"from": "mutable_specifier:",
+					"to": "writable:"
+				},
+				{
+					"kind": "lead",
+					"list": "parameters_elements",
+					"item": "attributed_parameter",
+					"field": "receiver",
+					"admits": [
+						{
+							"kind": "attributed_parameter",
+							"within": {
+								"field": null,
+								"admits": [
+									{
+										"kind": "self_parameter"
+									},
+									{
+										"kind": "parameter",
+										"within": {
+											"field": "name",
+											"admits": [
+												{
+													"kind": "self"
+												}
+											]
+										},
+										"as": "receiver_parameter_declaration"
+									}
+								]
+							}
+						}
+					],
+					"receiver": "parameters_elements_receiver",
+					"group": "parameters_elements_receiver_group",
+					"restField": "elements",
+					"variants": {
+						"parameter": "receiver_parameter_declaration",
+						"attributed_parameter": "attributed_parameter_receiver"
+					}
+				}
+			]
+		},
+		"inherited": {
+			"options": {
+				"indent": {
+					"__sittirPlaceholder": "preference",
+					"default": "    "
+				},
+				"body": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "indent"
+					},
+					"after": {
+						"__sittirPlaceholder": "preference",
+						"default": "dedent"
+					}
+				},
+				"gap": {
+					"separator": {
+						"__sittirPlaceholder": "preference",
+						"default": "newline"
+					}
+				},
+				"field_declaration_list_elements": {
+					"item:/separator/\",\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "newline"
+					},
+					"item:/delimiter": {
+						"__sittirPlaceholder": "preference",
+						"default": "Delimiter.Trailing"
+					}
+				},
+				"enum_variant_list_elements": {
+					"item:/separator/\",\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "newline"
+					},
+					"item:/delimiter": {
+						"__sittirPlaceholder": "preference",
+						"default": "Delimiter.Trailing"
+					}
+				},
+				"_": {
+					"_/separator/\"+\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"_/separator/\"+\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"(\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"(\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\")\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"[\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"[\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"]\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"{\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"}\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\".\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\".\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"..\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"..\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"..=\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"..=\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"...\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"...\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\",\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"_/separator/\",\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"_/separator/\";\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\";\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\":\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\":\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"::\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"::\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"<\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"<\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\">\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"!\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"&\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"#\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"$\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"'\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"'\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"->\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"->\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"=\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"=\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"=>\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"=>\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"operator:/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"operator:/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"struct_pattern": {
+					"\"{\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"struct_pattern_elements": {
+					"item:/start": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"item:/end": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"macro_invocation": {
+					"\"!\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"!\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"inner_attribute_item": {
+					"\"!\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"visibility_modifier_pub_scope": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"self_parameter": {
+					"reference:/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"variadic_parameter": {
+					"\"...\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"function_modifiers": {
+					"modifier:/separator": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"closure_parameters": {
+					"\"|\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"|\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"source_file": {
+					"statements:/separator": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"statements:/(_)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "newline"
+					},
+					"statements:/(function_item)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "blankline"
+					},
+					"statements:/(struct_item_brace)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "blankline"
+					},
+					"statements:/(enum_item)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "blankline"
+					},
+					"statements:/(impl_item_body)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "blankline"
+					},
+					"statements:/(trait_item)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "blankline"
+					},
+					"statements:/(mod_item_inline)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "blankline"
+					},
+					"statements:/(attribute_item)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "newline"
+					}
+				},
+				"declaration_list": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"declarations:/end": {
+						"__sittirPlaceholder": "preference",
+						"default": "newline"
+					}
+				},
+				"try_expression": {
+					"\"?\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"removed_trait_bound": {
+					"\"?\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"type_parameters": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"lifetime": {
+					"after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"bounded_type": {
+					"\"+\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"trait_bounds": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"pointer_type_const": {
+					"\"*\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"pointer_type_mut": {
+					"\"*\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"delim_token_tree_paren": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"token_tree_paren": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"token_binding_pattern": {
+					"\":\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"type:/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"block": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"statements:/end": {
+						"__sittirPlaceholder": "preference",
+						"default": "newline"
+					}
+				},
+				"match_block": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"field_declaration_list": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"enum_variant_list": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"field_initializer_list": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"{\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"}\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"last_match_arm": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "newline"
+					}
+				},
+				"range_expression_binary": {
+					"operator:/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"operator:/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"range_expression_prefix": {
+					"operator:/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"range_expression_postfix": {
+					"operator:/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"unary_expression": {
+					"operator:/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"token_tree_punctuation": {
+					"\"!\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"?\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\",\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"...\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"...\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"_labels": {
+					"block/\"{\"/after": "body/before",
+					"block/\"}\"/before": "body/after",
+					"match_block/\"{\"/after": "body/before",
+					"match_block/\"}\"/before": "body/after",
+					"declaration_list/\"{\"/after": "body/before",
+					"declaration_list/\"}\"/before": "body/after",
+					"field_declaration_list/\"{\"/after": "body/before",
+					"field_declaration_list/\"}\"/before": "body/after",
+					"enum_variant_list/\"{\"/after": "body/before",
+					"enum_variant_list/\"}\"/before": "body/after",
+					"array_expression_list/attributes:/separator": "gap/separator",
+					"array_expression_semi/attributes:/separator": "gap/separator",
+					"attributed_argument/attribute_item:/separator": "gap/separator",
+					"attributed_enum_variant/attribute_item:/separator": "gap/separator",
+					"attributed_field_declaration/attribute_item:/separator": "gap/separator",
+					"attributed_ordered_field/attribute_item:/separator": "gap/separator",
+					"attributed_type_parameter/attribute_item:/separator": "gap/separator",
+					"block/statements:/separator": "gap/separator",
+					"declaration_list/declarations:/separator": "gap/separator",
+					"field_initializer/attribute_item:/separator": "gap/separator",
+					"last_match_arm/attributes:/separator": "gap/separator",
+					"match_arm/attributes:/separator": "gap/separator",
+					"match_block_arms/arms:/separator": "gap/separator",
+					"shorthand_field_initializer/attributes:/separator": "gap/separator",
+					"token_repetition/tokens:/separator": "gap/separator",
+					"token_repetition_pattern/token_patterns:/separator": "gap/separator",
+					"tuple_expression/attributes:/separator": "gap/separator"
+				}
+			},
+			"reparseHosts": {
+				"hosts": {
+					"_expression": "fn _f() { let _ = $r; }",
+					"_type": "type _X = $r;",
+					"_pattern": "fn _f() { let $r = (); }",
+					"_declaration_statement": "$r",
+					"_literal": "fn _f() { let _ = $r; }",
+					"_literal_pattern": "fn _f() { let $r = (); }",
+					"parameters": "fn _f$r {}",
+					"parameter": "fn _f($r) {}",
+					"arguments": "f$r;",
+					"type_parameters": "fn _f$r() {}",
+					"type_parameter": "fn _f<$r>() {}",
+					"mut_pattern": "fn _f(x: i32) { match x { $r => () } }",
+					"generic_type_with_turbofish": "type _X = $r::Item;",
+					"scoped_type_identifier_in_expression_position": "fn _f() { let _ = $r { val: 1 }; }",
+					"delim_token_tree": "fn _f() { mac! $r }",
+					"token_tree": "macro_rules! _m { () => $r }",
+					"visibility_modifier": "$r fn _f() {}"
+				},
+				"gated": [
+					"visibility_modifier"
+				]
+			},
+			"renderAs": {
+				"float_literal": {
+					"type": "PATTERN",
+					"value": "[0-9][0-9_]*(?:\\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?"
+				},
+				"string_content": {
+					"type": "IMMEDIATE_TOKEN",
+					"content": {
+						"type": "PATTERN",
+						"value": "[^\"\\\\]+"
+					}
+				},
+				"raw_string_literal_content": {
+					"type": "IMMEDIATE_TOKEN",
+					"content": {
+						"type": "PATTERN",
+						"value": "[\\s\\S]*"
+					}
+				},
+				"_outer_block_doc_comment_marker": {
+					"type": "IMMEDIATE_TOKEN",
+					"content": {
+						"type": "STRING",
+						"value": "*"
+					}
+				},
+				"_inner_block_doc_comment_marker": {
+					"type": "IMMEDIATE_TOKEN",
+					"content": {
+						"type": "STRING",
+						"value": "!"
+					}
+				},
+				"_raw_string_literal_start": {
+					"type": "PATTERN",
+					"value": "[bc]?r#*\""
+				},
+				"_raw_string_literal_end": {
+					"type": "IMMEDIATE_TOKEN",
+					"content": {
+						"type": "PATTERN",
+						"value": "\"#*"
+					}
+				},
+				"_line_doc_content": {
+					"type": "IMMEDIATE_TOKEN",
+					"content": {
+						"type": "PATTERN",
+						"value": ".*\\n?"
+					}
+				},
+				"_block_comment_content": {
+					"type": "IMMEDIATE_TOKEN",
+					"content": {
+						"type": "PATTERN",
+						"value": "[^]*"
+					}
+				}
+			},
+			"visibleExternals": {
+				"_tight": {
+					"type": "STRING",
+					"value": ""
+				},
+				"_space": {
+					"type": "STRING",
+					"value": " "
+				},
+				"_tab": {
+					"type": "STRING",
+					"value": "\t"
+				},
+				"_newline": {
+					"type": "STRING",
+					"value": "\n"
+				},
+				"_blankline": {
+					"type": "STRING",
+					"value": "\n\n"
+				},
+				"_double_blankline": {
+					"type": "STRING",
+					"value": "\n\n\n"
+				},
+				"_indent": {
+					"type": "STRING",
+					"value": "﷐\n"
+				},
+				"_dedent": {
+					"type": "STRING",
+					"value": "﷑\n"
+				}
+			}
+		},
+		"rewrittenOptions": {
+			"_labels": {
+				"block/\"{\"/after": "body/before",
+				"block/\"}\"/before": "body/after",
+				"match_block/\"{\"/after": "body/before",
+				"match_block/\"}\"/before": "body/after",
+				"declaration_list/\"{\"/after": "body/before",
+				"declaration_list/\"}\"/before": "body/after",
+				"field_declaration_list/\"{\"/after": "body/before",
+				"field_declaration_list/\"}\"/before": "body/after",
+				"enum_variant_list/\"{\"/after": "body/before",
+				"enum_variant_list/\"}\"/before": "body/after",
+				"array_expression_list/attributes:/separator": "gap/separator",
+				"array_expression_semi/attributes:/separator": "gap/separator",
+				"attributed_argument/attribute_item:/separator": "gap/separator",
+				"attributed_enum_variant/attribute_item:/separator": "gap/separator",
+				"attributed_field_declaration/attribute_item:/separator": "gap/separator",
+				"attributed_ordered_field/attribute_item:/separator": "gap/separator",
+				"attributed_type_parameter/attribute_item:/separator": "gap/separator",
+				"block/statements:/separator": "gap/separator",
+				"declaration_list/declarations:/separator": "gap/separator",
+				"field_initializer/attributes:/separator": "gap/separator",
+				"last_match_arm/attributes:/separator": "gap/separator",
+				"match_arm/attributes:/separator": "gap/separator",
+				"match_block_arms/arms:/separator": "gap/separator",
+				"shorthand_field_initializer/attributes:/separator": "gap/separator",
+				"token_repetition/tokens:/separator": "gap/separator",
+				"token_repetition_pattern/token_patterns:/separator": "gap/separator",
+				"tuple_expression/attributes:/separator": "gap/separator"
+			}
+		}
+	},
+	"typescript": {
+		"effects": [
+			{
+				"kind": "segment",
+				"owner": "export_specifier",
+				"from": "export_kind:",
+				"to": "type_only:"
+			},
+			{
+				"kind": "segment",
+				"owner": "import_statement",
+				"from": "import_clause:",
+				"to": "type_only:"
+			},
+			{
+				"kind": "segment",
+				"owner": "for_in_statement",
+				"from": "await:",
+				"to": "async:"
+			},
+			{
+				"kind": "segment",
+				"owner": "try_statement",
+				"from": "handler:",
+				"to": "handlers:"
+			},
+			{
+				"kind": "segment",
+				"owner": "generator_function",
+				"from": "\"*\"",
+				"to": "generator:"
+			},
+			{
+				"kind": "segment",
+				"owner": "generator_function_declaration",
+				"from": "\"*\"",
+				"to": "generator:"
+			},
+			{
+				"kind": "segment",
+				"owner": "new_expression",
+				"from": "constructor:",
+				"to": "function:"
+			},
+			{
+				"kind": "segment",
+				"owner": "member_expression",
+				"from": "separator:",
+				"to": "optional_chain:"
+			},
+			{
+				"kind": "segment",
+				"owner": "assignment_expression",
+				"from": "using:",
+				"to": "disposable:"
+			},
+			{
+				"kind": "segment",
+				"owner": "decorator",
+				"from": "expression:",
+				"to": "content:"
+			},
+			{
+				"kind": "segment",
+				"owner": "method_definition",
+				"from": "accessor_kind:",
+				"to": "generator:"
+			},
+			{
+				"kind": "segment",
+				"owner": "method_signature",
+				"from": "accessor_kind:",
+				"to": "generator:"
+			},
+			{
+				"kind": "segment",
+				"owner": "abstract_method_signature",
+				"from": "accessor_kind:",
+				"to": "generator:"
+			},
+			{
+				"kind": "segment",
+				"owner": "as_expression",
+				"from": "type_annotation:",
+				"to": "type:"
+			},
+			{
+				"kind": "segment",
+				"owner": "satisfies_expression",
+				"from": "type_annotation:",
+				"to": "type:"
+			},
+			{
+				"kind": "segment",
+				"owner": "abstract_class_declaration",
+				"from": "\"abstract\"",
+				"to": "abstract:"
+			},
+			{
+				"kind": "segment",
+				"owner": "required_parameter",
+				"from": "pattern:",
+				"to": "name:"
+			},
+			{
+				"kind": "segment",
+				"owner": "optional_parameter",
+				"from": "pattern:",
+				"to": "name:"
+			},
+			{
+				"kind": "segment",
+				"owner": "optional_parameter",
+				"from": "\"?\"",
+				"to": "optional:"
+			},
+			{
+				"kind": "segment",
+				"owner": "_parameter_name",
+				"from": "pattern:",
+				"to": "name:"
+			},
+			{
+				"kind": "segment",
+				"owner": "_number",
+				"from": "argument:",
+				"to": "value:"
+			},
+			{
+				"kind": "segment",
+				"owner": "type_parameter",
+				"from": "value:",
+				"to": "default:"
+			},
+			{
+				"kind": "segment",
+				"owner": "constraint",
+				"from": "type:",
+				"to": "bounds:"
+			},
+			{
+				"kind": "segment",
+				"owner": "export_statement_equals_export",
+				"from": "expression:",
+				"to": "value:"
+			},
+			{
+				"kind": "segment",
+				"owner": "literal_type_negative_number",
+				"from": "argument:",
+				"to": "value:"
+			},
+			{
+				"kind": "segment",
+				"owner": "import_specifier_name",
+				"from": "import_kind:",
+				"to": "type_only:"
+			},
+			{
+				"kind": "segment",
+				"owner": "import_specifier_as",
+				"from": "import_kind:",
+				"to": "type_only:"
+			},
+			{
+				"kind": "segment",
+				"owner": "call_expression_member",
+				"from": "\"?.\"",
+				"to": "optional_chain:"
+			},
+			{
+				"kind": "segment",
+				"owner": "export_statement_default_from",
+				"from": "type:",
+				"to": "type_only:"
+			},
+			{
+				"kind": "segment",
+				"owner": "variable_declarator_definite",
+				"from": "\"!\"",
+				"to": "definite:"
+			}
+		],
+		"lead": {
+			"list": "formal_parameters_elements",
+			"item": "formal_parameter",
+			"field": "receiver",
+			"admits": [
+				{
+					"kind": "required_parameter",
+					"within": {
+						"field": "name",
+						"admits": [
+							{
+								"kind": "this"
+							}
+						]
+					},
+					"as": "receiver_parameter_declaration"
+				}
+			]
+		},
+		"copies": [
+			{
+				"copy": "_parameter_name_receiver",
+				"source": "_parameter_name",
+				"part": ".",
+				"context": "receiver"
+			},
+			{
+				"copy": "_required_parameter_receiver",
+				"source": "required_parameter",
+				"part": ".",
+				"context": "receiver",
+				"display": "receiver_parameter_declaration",
+				"admitted": "required_parameter"
+			},
+			{
+				"copy": "_parameter_name_formal_parameter",
+				"source": "_parameter_name",
+				"part": ".",
+				"context": "formal_parameter"
+			},
+			{
+				"copy": "_formal_parameters_elements_receiver",
+				"source": "formal_parameters_elements",
+				"part": ".",
+				"context": "receiver",
+				"display": "formal_parameters_elements_receiver"
+			}
+		],
+		"rules": {
+			"_formal_parameters_elements_receiver": {
+				"members": [
+					{
+						"content": {
+							"content": {
+								"name": "_required_parameter_receiver",
+								"type": "SYMBOL"
+							},
+							"named": true,
+							"type": "ALIAS",
+							"value": "receiver_parameter_declaration"
+						},
+						"metadata": {
+							"fieldSource": "enriched"
+						},
+						"name": "receiver",
+						"type": "FIELD"
+					},
+					{
+						"content": {
+							"metadata": {
+								"symbolSource": "group-lift"
+							},
+							"name": "formal_parameters_elements_receiver_group",
+							"type": "SYMBOL"
+						},
+						"type": "OPTIONAL"
+					}
+				],
+				"type": "SEQ"
+			},
+			"formal_parameters_elements_receiver_group": {
+				"annotations": {
+					"hoisted": true
+				},
+				"members": [
+					{
+						"type": "STRING",
+						"value": ","
+					},
+					{
+						"content": {
+							"content": {
+								"inline": false,
+								"metadata": {
+									"symbolSource": "group-lift"
+								},
+								"name": "formal_parameters_elements",
+								"type": "SYMBOL"
+							},
+							"metadata": {
+								"fieldSource": "enriched"
+							},
+							"name": "elements",
+							"type": "FIELD"
+						},
+						"type": "OPTIONAL"
+					}
+				],
+				"type": "SEQ"
+			}
+		},
+		"provenance": {
+			"splitFrom": {},
+			"leadFrom": {
+				"_parameter_name_receiver": "_parameter_name",
+				"_required_parameter_receiver": "required_parameter",
+				"_parameter_name_formal_parameter": "_parameter_name",
+				"_formal_parameters_elements_receiver": "formal_parameters_elements"
+			},
+			"bindingEffects": [
+				{
+					"kind": "segment",
+					"owner": "export_specifier",
+					"from": "export_kind:",
+					"to": "type_only:"
+				},
+				{
+					"kind": "segment",
+					"owner": "import_statement",
+					"from": "import_clause:",
+					"to": "type_only:"
+				},
+				{
+					"kind": "segment",
+					"owner": "for_in_statement",
+					"from": "await:",
+					"to": "async:"
+				},
+				{
+					"kind": "segment",
+					"owner": "try_statement",
+					"from": "handler:",
+					"to": "handlers:"
+				},
+				{
+					"kind": "segment",
+					"owner": "generator_function",
+					"from": "\"*\"",
+					"to": "generator:"
+				},
+				{
+					"kind": "segment",
+					"owner": "generator_function_declaration",
+					"from": "\"*\"",
+					"to": "generator:"
+				},
+				{
+					"kind": "segment",
+					"owner": "new_expression",
+					"from": "constructor:",
+					"to": "function:"
+				},
+				{
+					"kind": "segment",
+					"owner": "member_expression",
+					"from": "separator:",
+					"to": "optional_chain:"
+				},
+				{
+					"kind": "segment",
+					"owner": "assignment_expression",
+					"from": "using:",
+					"to": "disposable:"
+				},
+				{
+					"kind": "segment",
+					"owner": "decorator",
+					"from": "expression:",
+					"to": "content:"
+				},
+				{
+					"kind": "segment",
+					"owner": "method_definition",
+					"from": "accessor_kind:",
+					"to": "generator:"
+				},
+				{
+					"kind": "segment",
+					"owner": "method_signature",
+					"from": "accessor_kind:",
+					"to": "generator:"
+				},
+				{
+					"kind": "segment",
+					"owner": "abstract_method_signature",
+					"from": "accessor_kind:",
+					"to": "generator:"
+				},
+				{
+					"kind": "segment",
+					"owner": "as_expression",
+					"from": "type_annotation:",
+					"to": "type:"
+				},
+				{
+					"kind": "segment",
+					"owner": "satisfies_expression",
+					"from": "type_annotation:",
+					"to": "type:"
+				},
+				{
+					"kind": "segment",
+					"owner": "abstract_class_declaration",
+					"from": "\"abstract\"",
+					"to": "abstract:"
+				},
+				{
+					"kind": "segment",
+					"owner": "required_parameter",
+					"from": "pattern:",
+					"to": "name:"
+				},
+				{
+					"kind": "segment",
+					"owner": "optional_parameter",
+					"from": "pattern:",
+					"to": "name:"
+				},
+				{
+					"kind": "segment",
+					"owner": "optional_parameter",
+					"from": "\"?\"",
+					"to": "optional:"
+				},
+				{
+					"kind": "segment",
+					"owner": "_parameter_name",
+					"from": "pattern:",
+					"to": "name:"
+				},
+				{
+					"kind": "segment",
+					"owner": "_number",
+					"from": "argument:",
+					"to": "value:"
+				},
+				{
+					"kind": "segment",
+					"owner": "type_parameter",
+					"from": "value:",
+					"to": "default:"
+				},
+				{
+					"kind": "segment",
+					"owner": "constraint",
+					"from": "type:",
+					"to": "bounds:"
+				},
+				{
+					"kind": "segment",
+					"owner": "export_statement_equals_export",
+					"from": "expression:",
+					"to": "value:"
+				},
+				{
+					"kind": "segment",
+					"owner": "literal_type_negative_number",
+					"from": "argument:",
+					"to": "value:"
+				},
+				{
+					"kind": "segment",
+					"owner": "import_specifier_name",
+					"from": "import_kind:",
+					"to": "type_only:"
+				},
+				{
+					"kind": "segment",
+					"owner": "import_specifier_as",
+					"from": "import_kind:",
+					"to": "type_only:"
+				},
+				{
+					"kind": "segment",
+					"owner": "call_expression_member",
+					"from": "\"?.\"",
+					"to": "optional_chain:"
+				},
+				{
+					"kind": "segment",
+					"owner": "export_statement_default_from",
+					"from": "type:",
+					"to": "type_only:"
+				},
+				{
+					"kind": "segment",
+					"owner": "variable_declarator_definite",
+					"from": "\"!\"",
+					"to": "definite:"
+				},
+				{
+					"kind": "lead",
+					"list": "formal_parameters_elements",
+					"item": "formal_parameter",
+					"field": "receiver",
+					"admits": [
+						{
+							"kind": "required_parameter",
+							"within": {
+								"field": "name",
+								"admits": [
+									{
+										"kind": "this"
+									}
+								]
+							},
+							"as": "receiver_parameter_declaration"
+						}
+					],
+					"receiver": "formal_parameters_elements_receiver",
+					"group": "formal_parameters_elements_receiver_group",
+					"restField": "elements",
+					"variants": {
+						"required_parameter": "receiver_parameter_declaration"
+					}
+				}
+			]
+		},
+		"inherited": {
+			"options": {
+				"indent": {
+					"__sittirPlaceholder": "preference",
+					"default": "  "
+				},
+				"body": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "indent"
+					},
+					"after": {
+						"__sittirPlaceholder": "preference",
+						"default": "dedent"
+					}
+				},
+				"case_body": {
+					"start": {
+						"__sittirPlaceholder": "preference",
+						"default": "indent"
+					},
+					"end": {
+						"__sittirPlaceholder": "preference",
+						"default": "dedent"
+					}
+				},
+				"gap": {
+					"separator": {
+						"__sittirPlaceholder": "preference",
+						"default": "newline"
+					}
+				},
+				"number_hex": {
+					"prefix:": {
+						"__sittirPlaceholder": "preference",
+						"default": "0x"
+					}
+				},
+				"number_octal": {
+					"prefix:": {
+						"__sittirPlaceholder": "preference",
+						"default": "0o"
+					}
+				},
+				"number_binary": {
+					"prefix:": {
+						"__sittirPlaceholder": "preference",
+						"default": "0b"
+					}
+				},
+				"number_float_point": {
+					"marker:": {
+						"__sittirPlaceholder": "preference",
+						"default": "e"
+					}
+				},
+				"number_float_leading_point": {
+					"marker:": {
+						"__sittirPlaceholder": "preference",
+						"default": "e"
+					}
+				},
+				"number_float_scientific": {
+					"marker:": {
+						"__sittirPlaceholder": "preference",
+						"default": "e"
+					}
+				},
+				"statements": {
+					"terminator": {
+						"__sittirPlaceholder": "preference",
+						"default": ";"
+					}
+				},
+				"quotes": {
+					"style": {
+						"__sittirPlaceholder": "preference",
+						"default": "double"
+					}
+				},
+				"enum_body_elements": {
+					"item:/separator/\",\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "newline"
+					},
+					"item:/delimiter": {
+						"__sittirPlaceholder": "preference",
+						"default": "Delimiter.Trailing"
+					}
+				},
+				"program": {
+					"statements:/separator": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"statements:/(_)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "newline"
+					},
+					"statements:/(function_declaration)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "blankline"
+					},
+					"statements:/(class_declaration)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "blankline"
+					},
+					"statements:/(abstract_class_declaration)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "blankline"
+					},
+					"statements:/(interface_declaration)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "blankline"
+					},
+					"statements:/(enum_declaration)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "blankline"
+					},
+					"statements:/(export_statement_default_declaration)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "blankline"
+					}
+				},
+				"property_signature": {
+					"optional:/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"_": {
+					"decorator:/separator": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"decorator:/(_)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "newline"
+					},
+					"decorator:/end": {
+						"__sittirPlaceholder": "preference",
+						"default": "newline"
+					},
+					"\"(\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"(\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\")\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"[\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"[\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"]\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"{\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"}\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"${\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"<\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"<\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\">\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\".\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\".\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\",\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\";\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"++\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"++\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"--\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"--\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"?.\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"?.\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"...\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\":\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\":\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"=\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"=\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"=>\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"=>\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"|\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"|\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"&\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"&\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"operator:/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"operator:/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"_/separator/\",\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"template_substitution": {
+					"after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"template_type": {
+					"after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"literal_type_negative_number": {
+					"operator:/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"unary_expression": {
+					"operator:/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"update_expression_postfix": {
+					"operator:/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"update_expression_prefix": {
+					"operator:/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"object_type_content": {
+					"item:/separator/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"item:/separator/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "newline"
+					},
+					"item:/separator/kind": {
+						"__sittirPlaceholder": "preference",
+						"default": "semi"
+					},
+					"item:/delimiter": {
+						"__sittirPlaceholder": "preference",
+						"default": "Delimiter.Trailing"
+					}
+				},
+				"statement_block": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"terminator:": {
+						"__sittirPlaceholder": "preference",
+						"default": "blank"
+					}
+				},
+				"class_static_block": {
+					"terminator:": {
+						"__sittirPlaceholder": "preference",
+						"default": "blank"
+					}
+				},
+				"class_declaration": {
+					"terminator:": {
+						"__sittirPlaceholder": "preference",
+						"default": "blank"
+					}
+				},
+				"function_declaration": {
+					"terminator:": {
+						"__sittirPlaceholder": "preference",
+						"default": "blank"
+					}
+				},
+				"generator_function_declaration": {
+					"terminator:": {
+						"__sittirPlaceholder": "preference",
+						"default": "blank"
+					},
+					"\"*\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"for_header_let_const_kind": {
+					"terminator:": {
+						"__sittirPlaceholder": "preference",
+						"default": "blank"
+					}
+				},
+				"class_body_member_method": {
+					"terminator:": {
+						"__sittirPlaceholder": "preference",
+						"default": "blank"
+					}
+				},
+				"class_body": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"switch_body": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"named_imports": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"import_specifiers": {
+					"item:/start": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"item:/end": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"export_clause": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"export_specifiers": {
+					"item:/start": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"item:/end": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"object": {
+					"properties:/start": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"properties:/end": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"object_pattern": {
+					"properties:/start": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"properties:/end": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"ternary_expression": {
+					"\":\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"conditional_type": {
+					"\":\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"index_signature_colon": {
+					"\"[\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"index_signature_mapped_type_clause": {
+					"\"[\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"sign:/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"for_statement": {
+					"\"(\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\";\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"decorator": {
+					"\"@\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"generator_function": {
+					"\"*\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"lexical_declaration": {
+					"after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"variable_declaration": {
+					"after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"required_parameter": {
+					"decorator:/(_)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"decorator:/end": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"optional_parameter": {
+					"decorator:/(_)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"decorator:/end": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"?\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"_labels": {
+					"_/terminator:": "statements/terminator",
+					"_/automatic_semicolon:": "statements/terminator",
+					"string/variant": "quotes/style",
+					"class_body/\"{\"/after": "body/before",
+					"class_body/\"}\"/before": "body/after",
+					"statement_block/\"{\"/after": "body/before",
+					"statement_block/\"}\"/before": "body/after",
+					"switch_body/\"{\"/after": "body/before",
+					"switch_body/\"}\"/before": "body/after",
+					"enum_body/\"{\"/after": "body/before",
+					"enum_body/\"}\"/before": "body/after",
+					"object_type/opening:/after": "body/before",
+					"object_type/closing:/before": "body/after",
+					"switch_case/body:/start": "case_body/start",
+					"switch_case/body:/end": "case_body/end",
+					"switch_default/body:/start": "case_body/start",
+					"switch_default/body:/end": "case_body/end",
+					"class_body/members:/separator": "gap/separator",
+					"statement_block/statements:/separator": "gap/separator",
+					"switch_body/cases:/separator": "gap/separator",
+					"switch_case/body:/separator": "gap/separator",
+					"switch_default/body:/separator": "gap/separator"
+				}
+			},
+			"reparseHosts": {
+				"hosts": {
+					"expression": "let _ = $r;",
+					"type": "type _X = $r;",
+					"pattern": "let $r = null;",
+					"declaration": "$r",
+					"statement": "$r",
+					"formal_parameters": "function _f$r {}",
+					"required_parameter": "function _f($r) {}",
+					"arguments": "_f$r;",
+					"type_parameters": "function _f$r() {}",
+					"variable_declarator": "let $r;",
+					"type_annotation": "let _$r;",
+					"class_body": "class _C $r",
+					"property_signature": "interface _I { $r }",
+					"index_signature": "type _T = { $r }",
+					"interface_body": "interface _I $r",
+					"decorator_member_expression": "@$r\nclass _W {}",
+					"decorator_call_expression": "@$r\nclass _W {}",
+					"decorator_parenthesized_expression": "@$r\nclass _W {}",
+					"rest_pattern": "const [$r] = [];",
+					"lhs_expression": "($r = null);"
+				}
+			},
+			"renderAs": {
+				"html_comment": {
+					"type": "PATTERN",
+					"value": "<!--[\\s\\S]*?-->"
+				},
+				"jsx_text": {
+					"type": "PATTERN",
+					"value": "[^{}<>]+"
+				},
+				"_template_chars": {
+					"type": "IMMEDIATE_TOKEN",
+					"content": {
+						"type": "PATTERN",
+						"value": "[^`\\\\$]+"
+					}
+				}
+			},
+			"visibleExternals": {
+				"_automatic_semicolon": {
+					"type": "STRING",
+					"value": "\n"
+				},
+				"_function_signature_automatic_semicolon": {
+					"type": "STRING",
+					"value": "\n"
+				},
+				"_tight": {
+					"type": "STRING",
+					"value": ""
+				},
+				"_space": {
+					"type": "STRING",
+					"value": " "
+				},
+				"_tab": {
+					"type": "STRING",
+					"value": "\t"
+				},
+				"_newline": {
+					"type": "STRING",
+					"value": "\n"
+				},
+				"_blankline": {
+					"type": "STRING",
+					"value": "\n\n"
+				},
+				"_double_blankline": {
+					"type": "STRING",
+					"value": "\n\n\n"
+				},
+				"_indent": {
+					"type": "STRING",
+					"value": "﷐\n"
+				},
+				"_dedent": {
+					"type": "STRING",
+					"value": "﷑\n"
+				}
+			}
+		},
+		"rewrittenOptions": {
+			"generator_function_declaration": {
+				"terminator:": {
+					"__sittirPlaceholder": "preference",
+					"default": "blank"
+				},
+				"generator:/before": {
+					"__sittirPlaceholder": "preference",
+					"default": "tight"
+				}
+			},
+			"generator_function": {
+				"generator:/before": {
+					"__sittirPlaceholder": "preference",
+					"default": "tight"
+				}
+			},
+			"optional_parameter": {
+				"decorator:/(_)/after": {
+					"__sittirPlaceholder": "preference",
+					"default": "space"
+				},
+				"decorator:/end": {
+					"__sittirPlaceholder": "preference",
+					"default": "space"
+				},
+				"optional:/before": {
+					"__sittirPlaceholder": "preference",
+					"default": "tight"
+				}
+			}
+		}
+	},
+	"python": {
+		"effects": [
+			{
+				"kind": "alias",
+				"from": "lambda_within_for_in_clause",
+				"to": "lambda_expression"
+			},
+			{
+				"kind": "alias",
+				"from": "lambda",
+				"to": "lambda_expression"
+			},
+			{
+				"kind": "segment",
+				"owner": "named_expression",
+				"from": "value:",
+				"to": "right:"
+			},
+			{
+				"kind": "segment",
+				"owner": "named_expression",
+				"from": "name:",
+				"to": "left:"
+			},
+			{
+				"kind": "segment",
+				"owner": "try_statement",
+				"from": "except_clauses:",
+				"to": "handlers:"
+			},
+			{
+				"kind": "segment",
+				"owner": "try_statement",
+				"from": "else_clause:",
+				"to": "alternative:"
+			},
+			{
+				"kind": "segment",
+				"owner": "try_statement",
+				"from": "finally_clause:",
+				"to": "finalizer:"
+			},
+			{
+				"kind": "segment",
+				"owner": "finally_clause",
+				"from": "block:",
+				"to": "body:"
+			},
+			{
+				"kind": "segment",
+				"owner": "class_definition",
+				"from": "superclasses:",
+				"to": "bases:"
+			},
+			{
+				"kind": "segment",
+				"owner": "default_parameter",
+				"from": "value:",
+				"to": "default:"
+			},
+			{
+				"kind": "segment",
+				"owner": "typed_default_parameter",
+				"from": "value:",
+				"to": "default:"
+			},
+			{
+				"kind": "segment",
+				"owner": "list_splat_pattern",
+				"from": "target:",
+				"to": "pattern:"
+			},
+			{
+				"kind": "segment",
+				"owner": "dictionary_splat_pattern",
+				"from": "target:",
+				"to": "pattern:"
+			},
+			{
+				"kind": "segment",
+				"owner": "attribute",
+				"from": "attribute:",
+				"to": "property:"
+			},
+			{
+				"kind": "segment",
+				"owner": "subscript",
+				"from": "value:",
+				"to": "object:"
+			},
+			{
+				"kind": "segment",
+				"owner": "splat_type",
+				"from": "name:",
+				"to": "type:"
+			},
+			{
+				"kind": "segment",
+				"owner": "conditional_expression",
+				"from": "body:",
+				"to": "consequence:"
+			},
+			{
+				"kind": "segment",
+				"owner": "assignment_eq",
+				"from": "left:",
+				"to": "name:"
+			},
+			{
+				"kind": "segment",
+				"owner": "assignment_eq",
+				"from": "right:",
+				"to": "value:"
+			},
+			{
+				"kind": "segment",
+				"owner": "assignment_type",
+				"from": "left:",
+				"to": "name:"
+			},
+			{
+				"kind": "segment",
+				"owner": "assignment_typed",
+				"from": "left:",
+				"to": "name:"
+			},
+			{
+				"kind": "segment",
+				"owner": "assignment_typed",
+				"from": "right:",
+				"to": "value:"
+			}
+		],
+		"lead": null,
+		"copies": [],
+		"rules": {},
+		"provenance": {
+			"splitFrom": {},
+			"bindingEffects": [
+				{
+					"kind": "alias",
+					"from": "lambda_within_for_in_clause",
+					"to": "lambda_expression"
+				},
+				{
+					"kind": "alias",
+					"from": "lambda",
+					"to": "lambda_expression"
+				},
+				{
+					"kind": "segment",
+					"owner": "named_expression",
+					"from": "value:",
+					"to": "right:"
+				},
+				{
+					"kind": "segment",
+					"owner": "named_expression",
+					"from": "name:",
+					"to": "left:"
+				},
+				{
+					"kind": "segment",
+					"owner": "try_statement",
+					"from": "except_clauses:",
+					"to": "handlers:"
+				},
+				{
+					"kind": "segment",
+					"owner": "try_statement",
+					"from": "else_clause:",
+					"to": "alternative:"
+				},
+				{
+					"kind": "segment",
+					"owner": "try_statement",
+					"from": "finally_clause:",
+					"to": "finalizer:"
+				},
+				{
+					"kind": "segment",
+					"owner": "finally_clause",
+					"from": "block:",
+					"to": "body:"
+				},
+				{
+					"kind": "segment",
+					"owner": "class_definition",
+					"from": "superclasses:",
+					"to": "bases:"
+				},
+				{
+					"kind": "segment",
+					"owner": "default_parameter",
+					"from": "value:",
+					"to": "default:"
+				},
+				{
+					"kind": "segment",
+					"owner": "typed_default_parameter",
+					"from": "value:",
+					"to": "default:"
+				},
+				{
+					"kind": "segment",
+					"owner": "list_splat_pattern",
+					"from": "target:",
+					"to": "pattern:"
+				},
+				{
+					"kind": "segment",
+					"owner": "dictionary_splat_pattern",
+					"from": "target:",
+					"to": "pattern:"
+				},
+				{
+					"kind": "segment",
+					"owner": "attribute",
+					"from": "attribute:",
+					"to": "property:"
+				},
+				{
+					"kind": "segment",
+					"owner": "subscript",
+					"from": "value:",
+					"to": "object:"
+				},
+				{
+					"kind": "segment",
+					"owner": "splat_type",
+					"from": "name:",
+					"to": "type:"
+				},
+				{
+					"kind": "segment",
+					"owner": "conditional_expression",
+					"from": "body:",
+					"to": "consequence:"
+				},
+				{
+					"kind": "segment",
+					"owner": "assignment_eq",
+					"from": "left:",
+					"to": "name:"
+				},
+				{
+					"kind": "segment",
+					"owner": "assignment_eq",
+					"from": "right:",
+					"to": "value:"
+				},
+				{
+					"kind": "segment",
+					"owner": "assignment_type",
+					"from": "left:",
+					"to": "name:"
+				},
+				{
+					"kind": "segment",
+					"owner": "assignment_typed",
+					"from": "left:",
+					"to": "name:"
+				},
+				{
+					"kind": "segment",
+					"owner": "assignment_typed",
+					"from": "right:",
+					"to": "value:"
+				}
+			]
+		},
+		"inherited": {
+			"options": {
+				"decorator": {
+					"\"@\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"indent": {
+					"__sittirPlaceholder": "preference",
+					"default": "    "
+				},
+				"gap": {
+					"separator": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"integer_hex": {
+					"prefix:": {
+						"__sittirPlaceholder": "preference",
+						"default": "0x"
+					}
+				},
+				"integer_octal": {
+					"prefix:": {
+						"__sittirPlaceholder": "preference",
+						"default": "0o"
+					}
+				},
+				"integer_binary": {
+					"prefix:": {
+						"__sittirPlaceholder": "preference",
+						"default": "0b"
+					}
+				},
+				"module": {
+					"statements:/separator": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"statements:/(function_definition)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "double_blankline"
+					},
+					"statements:/(class_definition)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "double_blankline"
+					},
+					"statements:/(decorated_definition)/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "double_blankline"
+					}
+				},
+				"_": {
+					"\"(\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"(\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\")\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"[\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"[\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"]\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"{\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"}\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\".\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\".\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\",\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"_/separator/\",\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"_/separator/\";\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"_/separator/\".\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"_/separator/\".\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\":\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\":\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"->\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"->\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"=\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\"=\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\":=\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"\":=\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"operator:/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"operator:/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					},
+					"operators:/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"keyword_argument": {
+					"\"=\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"=\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"default_parameter": {
+					"\"=\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\"=\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"slice": {
+					"\":\"/before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"\":\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"splat_pattern": {
+					"operator:/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"list_splat": {
+					"\"*\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"list_splat_pattern": {
+					"\"*\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"dictionary_splat": {
+					"\"**\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"dictionary_splat_pattern": {
+					"\"**\"/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"splat_type": {
+					"operator:/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"unary_operator": {
+					"operator:/after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"interpolation": {
+					"before": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					},
+					"after": {
+						"__sittirPlaceholder": "preference",
+						"default": "tight"
+					}
+				},
+				"comprehension_clauses": {
+					"content:/separator": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"comparison_operator": {
+					"comparators:/separator": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"concatenated_string": {
+					"string:/separator": {
+						"__sittirPlaceholder": "preference",
+						"default": "space"
+					}
+				},
+				"_labels": {
+					"block/statements:/separator": "gap/separator",
+					"decorated_definition/decorator:/separator": "gap/separator",
+					"if_statement/alternative:/separator": "gap/separator",
+					"match_block_block/alternative:/separator": "gap/separator",
+					"try_statement/except_clauses:/separator": "gap/separator"
+				}
+			},
+			"reparseHosts": {
+				"hosts": {
+					"expression": "_ = ($r)",
+					"type": "_: $r = None",
+					"pattern": "for $r in _: pass",
+					"_simple_statement": "$r",
+					"_compound_statement": "$r",
+					"expression_statement": "$r",
+					"assignment": "$r",
+					"function_definition": "$r",
+					"parameters": "def _f$r:\n    pass",
+					"parameters_elements": "def _f($r):\n    pass",
+					"argument_list": "_f$r",
+					"dotted_name": "import $r",
+					"list_splat": "_f($r)",
+					"list_splat_pattern": "$r = (1,)",
+					"attribute": "[$r]",
+					"subscript": "[$r]",
+					"parenthesized_expression": "f($r)"
+				}
+			},
+			"renderAs": {
+				"string_start": {
+					"type": "PATTERN",
+					"value": "[a-zA-Z]*[\"'`]+"
+				},
+				"_string_content": {
+					"type": "IMMEDIATE_TOKEN",
+					"content": {
+						"type": "PATTERN",
+						"value": "[\\s\\S]+"
+					}
+				},
+				"escape_interpolation": {
+					"type": "IMMEDIATE_TOKEN",
+					"content": {
+						"type": "PATTERN",
+						"value": "\\{\\{|\\}\\}"
+					}
+				},
+				"string_end": {
+					"type": "IMMEDIATE_TOKEN",
+					"content": {
+						"type": "PATTERN",
+						"value": "\\\\*[\"'`]+"
+					}
+				}
+			},
+			"visibleExternals": {
+				"_indent": {
+					"type": "STRING",
+					"value": "﷐\n"
+				},
+				"_dedent": {
+					"type": "STRING",
+					"value": "﷑\n"
+				},
+				"_tight": {
+					"type": "STRING",
+					"value": ""
+				},
+				"_space": {
+					"type": "STRING",
+					"value": " "
+				},
+				"_tab": {
+					"type": "STRING",
+					"value": "\t"
+				},
+				"_newline": {
+					"type": "STRING",
+					"value": "\n"
+				},
+				"_blankline": {
+					"type": "STRING",
+					"value": "\n\n"
+				},
+				"_double_blankline": {
+					"type": "STRING",
+					"value": "\n\n\n"
+				}
+			}
+		},
+		"rewrittenOptions": {
+			"_labels": {
+				"block/statements:/separator": "gap/separator",
+				"decorated_definition/decorator:/separator": "gap/separator",
+				"if_statement/alternative:/separator": "gap/separator",
+				"match_block_block/alternative:/separator": "gap/separator",
+				"try_statement/handlers:/separator": "gap/separator"
+			}
+		}
+	}
+}

@@ -7,7 +7,7 @@ const SENTINEL = 'layer-record-sentinel';
 
 const record = (depth: number): LayerRecord => ({
 	depth,
-	upstream: { grammar: { name: SENTINEL } },
+	upstream: { name: SENTINEL, rules: {} },
 	sidecars: enrichSidecarsOf({}),
 	resolutions: EMPTY_CONFLICT_RESOLUTIONS,
 	deadMints: new Set([SENTINEL]),

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { lead, leadGrammar, leadIssue, LeadRefusal, match, type Lead } from '../bind.ts';
+import { lead, leadGrammar, leadIssue, LeadRefusal, match } from '../bind.ts';
+import type { Lead } from '../verbs/effects.ts';
 import type { GrammarRecord } from '../rule-patterns.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
 

@@ -1,4 +1,4 @@
-import type { LeadEffect, LeadMatch } from '../dsl/bind.ts';
+import type { LeadEffect, LeadMatch } from '../dsl/verbs/effects.ts';
 import { bindFacts, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type MemberFact, type SlotSelector } from './facts.ts';
 
 const selector = (kind: string, field: string | null = null): SlotSelector => ({

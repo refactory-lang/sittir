@@ -1,7 +1,8 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import type { ErrorRegion, StepAnchor } from '@sittir/types';
-import { bindMatch, type LeadMatch } from '../dsl/bind.ts';
+import { bindMatch } from '../dsl/bind.ts';
+import type { LeadMatch } from '../dsl/verbs/effects.ts';
 import { allGrammars, grammarPackageDir, PACKAGES_DIR, type GrammarName } from '../grammars.ts';
 
 export const WILDCARD = '_';

@@ -1,4 +1,5 @@
-import { childFields, fieldRenameGrammar, fieldRenameIssue, fieldWrapGrammar, fieldWrapIssue, type FieldRename, type FieldWrap, type Lead, type Split } from '../dsl/bind.ts';
+import { childFields, fieldRenameGrammar, fieldRenameIssue, fieldWrapGrammar, fieldWrapIssue, type FieldRename, type FieldWrap, type Split } from '../dsl/bind.ts';
+import type { Lead } from '../dsl/verbs/effects.ts';
 import { isRecord, symbolNames, type GrammarRecord } from '../dsl/rule-patterns.ts';
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';

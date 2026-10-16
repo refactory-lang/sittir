@@ -1,4 +1,3 @@
-import type { BindingEffect, LeadEffect, LeadMatch } from '../bind.ts';
 import type { LayerRecords } from '../layer-record.ts';
 import { isPreference } from '../primitives/preference.ts';
 import { formatPreferencePath, parsePreferencePath } from '../primitives/preference-path.ts';
@@ -6,11 +5,29 @@ import { fieldNames, isRecord, supertypesOf, transparentReach, type GrammarRecor
 import { LABELS_KEY } from '../wire/options-block.ts';
 import { REPARSE_HOST_PRIORITY } from '../wire/reparse-hosts.ts';
 
+export interface LeadWithin {
+	readonly field: string | null;
+	readonly admits: readonly LeadMatch[];
+}
+
+export interface LeadMatch {
+	readonly kind: string;
+	readonly within?: LeadWithin;
+	readonly as?: string;
+}
+
+export interface Lead {
+	readonly list: string;
+	readonly item: string;
+	readonly field: string;
+	readonly admits: readonly LeadMatch[];
+}
+
 export type CopyOrigin =
 	| { readonly kind: 'path'; readonly owner: string; readonly path: string }
 	| { readonly kind: 'copy'; readonly owner: string }
 	| { readonly kind: 'narrow'; readonly owner: string; readonly path: string }
-	| { readonly kind: 'lead'; readonly list: string; readonly item: string; readonly field: string; readonly admits: readonly LeadMatch[] };
+	| (Lead & { readonly kind: 'lead' });
 
 export interface SegmentEffect {
 	readonly kind: 'segment';
@@ -43,6 +60,16 @@ export interface CopyEffect {
 }
 
 export type Effect = SegmentEffect | AliasEffect | RenameEffect | CopyEffect;
+
+export interface LeadEffect extends Lead {
+	readonly kind: 'lead';
+	readonly receiver: string;
+	readonly group: string;
+	readonly restField: string;
+	readonly variants: Readonly<Record<string, string>>;
+}
+
+export type BindingEffect = SegmentEffect | AliasEffect | LeadEffect;
 
 export interface EffectCtx {
 	readonly effects: readonly Effect[];
@@ -78,13 +105,13 @@ export function renameValue(value: unknown, rename: (name: string) => string): u
 
 export function renameKeys(record: unknown, rename: (name: string) => string, renameValues = true): unknown {
 	if (!isRecord(record)) return record;
-	const out: GrammarRecord = {};
-	for (const [key, v] of Object.entries(record)) {
-		const to = rename(key);
-		if (to in out) throw new Error(`bind: '${key}' renames to '${to}', which the grammar already names`);
-		out[to] = renameValues ? renameValue(v, rename) : v;
+	const out = new Map<string, unknown>();
+	for (const [key, v] of record instanceof Map ? record : Object.entries(record)) {
+		const to = typeof key === 'string' ? rename(key) : key;
+		if (out.has(to)) throw new Error(`bind: '${key}' renames to '${to}', which the grammar already names`);
+		out.set(to, renameValues ? renameValue(v, rename) : v);
 	}
-	return out;
+	return record instanceof Map ? out : Object.fromEntries(out);
 }
 
 export function renameReparseHosts(config: GrammarRecord, rename: (name: string) => string): GrammarRecord {
@@ -226,36 +253,82 @@ export function effectsForOwners<E extends { readonly kind: string }>(grammar: G
 
 const inheritsOptions = (origin: CopyOrigin): boolean => origin.kind === 'path' || origin.kind === 'copy';
 
-const RENAMED_KEYED_RECORDS = ['renderAs', 'visibleExternals', 'groups'] as const;
-const RENAMED_NAME_LISTS = ['protectedRuleNames', 'undeclaredRules'] as const;
+function splitFromOf(effects: readonly Effect[]): Record<string, string> {
+	const splitFrom: Record<string, string> = {};
+	for (const effect of effects) if (effect.kind === 'copy' && inheritsOptions(effect.origin)) splitFrom[effect.copy] = effect.source;
+	return splitFrom;
+}
+
+type RecordRename = 'optionPaths' | 'keysAndBodies' | 'keys' | 'names' | 'reparseHosts' | 'invariant' | { readonly entry: string };
+
+const RECORD_RENAMES = {
+	options: 'optionPaths',
+	groups: 'keysAndBodies',
+	renderAs: 'keysAndBodies',
+	visibleExternals: 'keysAndBodies',
+	reparseHosts: 'reparseHosts',
+	refineForms: 'keys',
+	ruleCauses: 'keys',
+	undeclaredRules: 'names',
+	patchSites: { entry: 'ownerKind' },
+	externalRoles: 'keys',
+	expectDiagnostics: 'names',
+	expectTestFailures: 'keys',
+	stages: 'invariant',
+	protectedRuleNames: 'names',
+	whitespaceCollisions: { entry: 'name' },
+	bodyPatternZeroMatches: 'names'
+} as const satisfies { readonly [K in keyof LayerRecords]-?: RecordRename };
+
+function renamedRecord(value: unknown, as: RecordRename, rename: (name: string) => string, fields: ReadonlySet<string>): unknown {
+	if (typeof as === 'object')
+		return Array.isArray(value)
+			? value.map((entry: unknown) => {
+					if (!isRecord(entry)) return entry;
+					const name = entry[as.entry];
+					return typeof name === 'string' ? { ...entry, [as.entry]: rename(name) } : entry;
+				})
+			: value;
+	switch (as) {
+		case 'optionPaths':
+			return renameOptionPaths(value, rename, true, fields);
+		case 'keysAndBodies':
+			return renameKeys(value, rename);
+		case 'keys':
+			return renameKeys(value, rename, false);
+		case 'names':
+			return renameValue(value, rename);
+		case 'reparseHosts':
+			return isRecord(value) ? renameReparseHosts(value, rename) : value;
+		case 'invariant':
+			return value;
+	}
+}
+
+export function renameRecords(records: GrammarRecord, rename: (name: string) => string, fields: ReadonlySet<string>): GrammarRecord {
+	const out: GrammarRecord = { ...records };
+	for (const [key, as] of Object.entries(RECORD_RENAMES)) if (key in records) out[key] = renamedRecord(records[key], as, rename, fields);
+	return out;
+}
 
 export function rewriteInherited(records: LayerRecords, ctx: EffectCtx): LayerRecords {
 	const segments: SegmentEffect[] = [];
 	const aliases = new Map<string, string>();
 	const renames = new Map<string, string>();
-	const splitFrom: Record<string, string> = {};
 	for (const effect of ctx.effects) {
 		if (effect.kind === 'segment') segments.push(effect);
 		else if (effect.kind === 'alias') aliases.set(effect.from, effect.to);
 		else if (effect.kind === 'rename') renames.set(effect.from, effect.to);
-		else if (inheritsOptions(effect.origin)) splitFrom[effect.copy] = effect.source;
 	}
+	const splitFrom = splitFromOf(ctx.effects);
 	const fields = fieldNames(ctx.rules);
-	const renamed = (name: string): string => renames.get(name) ?? name;
-	const out: GrammarRecord = { ...records };
-	if (records.options !== undefined) {
-		let options: unknown = records.options;
-		if (segments.length > 0) options = rewriteOwnedSegments(options, segments);
-		if (aliases.size > 0) options = renameOptionPaths(options, (name) => aliases.get(name) ?? name, false, fields);
-		if (renames.size > 0) options = renameOptionPaths(options, renamed, true, fields);
-		if (Object.keys(splitFrom).length > 0) options = inheritSplitOptions({ options, rules: ctx.rules }, splitFrom);
-		out.options = options;
+	let out: GrammarRecord = { ...records };
+	if (out.options !== undefined) {
+		if (segments.length > 0) out.options = rewriteOwnedSegments(out.options, segments);
+		if (aliases.size > 0) out.options = renameOptionPaths(out.options, (name) => aliases.get(name) ?? name, false, fields);
 	}
-	if (renames.size > 0) {
-		if (isRecord(records.reparseHosts)) out.reparseHosts = renameReparseHosts(records.reparseHosts, renamed);
-		for (const key of RENAMED_KEYED_RECORDS) if (records[key] !== undefined) out[key] = renameKeys(records[key], renamed);
-		for (const key of RENAMED_NAME_LISTS) if (records[key] !== undefined) out[key] = renameValue(records[key], renamed);
-	}
+	if (renames.size > 0) out = renameRecords(out, (name) => renames.get(name) ?? name, fields);
+	if (out.options !== undefined && Object.keys(splitFrom).length > 0) out.options = inheritSplitOptions({ options: out.options, rules: ctx.rules }, splitFrom);
 	return out as LayerRecords;
 }
 
@@ -310,7 +383,7 @@ function leadEffectOf({ origin, copies }: LeadCopies, rules: Readonly<Record<str
 }
 
 export function provenanceOf(effects: readonly Effect[], rules: Readonly<Record<string, unknown>>): Provenance {
-	const splitFrom: Record<string, string> = {};
+	const splitFrom = splitFromOf(effects);
 	const leadFrom: Record<string, string> = {};
 	const renamedFrom: Record<string, string> = {};
 	const leads = new Map<string, LeadCopies>();
@@ -318,7 +391,6 @@ export function provenanceOf(effects: readonly Effect[], rules: Readonly<Record<
 		if (effect.kind === 'rename') renamedFrom[effect.to] = effect.from;
 		if (effect.kind !== 'copy') continue;
 		const { origin } = effect;
-		if (inheritsOptions(origin)) splitFrom[effect.copy] = effect.source;
 		if (origin.kind !== 'lead') continue;
 		leadFrom[effect.copy] = effect.source;
 		const key = JSON.stringify([origin.list, origin.field]);

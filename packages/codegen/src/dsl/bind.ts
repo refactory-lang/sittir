@@ -23,11 +23,14 @@ import {
 	inheritSplitOptions,
 	renameKeys,
 	renameOptionPaths,
-	renameReparseHosts,
+	renameRecords,
 	renameValue,
 	rewriteOwnedSegments,
-	type AliasEffect,
-	type SegmentEffect
+	type BindingEffect,
+	type Lead,
+	type LeadEffect,
+	type LeadMatch,
+	type LeadWithin
 } from './verbs/effects.ts';
 import type { PatchesConfig } from './wire/wire.ts';
 import { collapseSingletonMintOrdinals, visibleGroupSynthName } from './automatic-groups.ts';
@@ -60,24 +63,6 @@ export interface FieldWrap {
 	readonly target: FieldWrapTarget;
 }
 
-export interface LeadWithin {
-	readonly field: string | null;
-	readonly admits: readonly LeadMatch[];
-}
-
-export interface LeadMatch {
-	readonly kind: string;
-	readonly within?: LeadWithin;
-	readonly as?: string;
-}
-
-export interface Lead {
-	readonly list: string;
-	readonly item: string;
-	readonly field: string;
-	readonly admits: readonly LeadMatch[];
-}
-
 export function bindMatch(
 	match: LeadMatch,
 	rename: (kind: string) => string,
@@ -103,16 +88,6 @@ export interface Bindings {
 	readonly renames?: readonly Rename[];
 	readonly leads?: readonly Lead[];
 	readonly splits?: readonly Split[];
-}
-
-export type BindingEffect = SegmentEffect | AliasEffect | LeadEffect;
-
-export interface LeadEffect extends Lead {
-	readonly kind: 'lead';
-	readonly receiver: string;
-	readonly group: string;
-	readonly restField: string;
-	readonly variants: Readonly<Record<string, string>>;
 }
 
 export const BINDING_SET: unique symbol = Symbol.for('sittir.bindingSet');
@@ -153,9 +128,8 @@ export function split(kind: string, as: string, placement: Pick<Split, 'within' 
 	return { kind, as, within: placement.within, containers: placement.containers };
 }
 
-const LIST_FIELDS = ['supertypes', 'inline', 'factoryInline', 'textTokens', 'protectedRuleNames', 'undeclaredRules'];
+const LIST_FIELDS = ['supertypes', 'inline', 'factoryInline', 'textTokens'];
 const RULE_FIELDS = ['extras', 'externals', 'precedences', 'reserved', 'conflicts'];
-const KEYED_FIELDS = ['rules', 'renderAs', 'visibleExternals', 'groups'];
 
 export function mappedName(record: Readonly<Record<string, string>> | undefined, name: string): string {
 	return record !== undefined && Object.hasOwn(record, name) ? record[name]! : name;
@@ -193,10 +167,8 @@ export function renameGrammar(grammar: GrammarRecord, renames: Readonly<Record<s
 		if (isParserHiddenName(from) !== isParserHiddenName(to)) throw new Error(`bind: '${from}' → '${to}' flips hiddenness`);
 		if (to in rules && !(to in renames)) throw new Error(`bind: '${from}' → '${to}', which the grammar already names`);
 	}
-	const out: GrammarRecord = { ...grammar };
-	for (const field of KEYED_FIELDS) if (field in grammar) out[field] = renameKeys(grammar[field], rename);
-	if ('options' in grammar) out.options = renameOptions(grammar, rename, true);
-	if (isRecord(grammar.reparseHosts)) out.reparseHosts = renameReparseHosts(grammar.reparseHosts, rename);
+	const out = renameRecords(grammar, rename, fieldNames(grammar.rules));
+	if ('rules' in grammar) out.rules = renameKeys(grammar.rules, rename);
 	for (const field of [...LIST_FIELDS, ...RULE_FIELDS]) if (field in grammar) out[field] = renameValue(grammar[field], rename);
 	if (typeof grammar.word === 'string') out.word = rename(grammar.word);
 	for (const [field, value] of Object.entries(grammar))

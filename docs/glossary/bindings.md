@@ -1467,7 +1467,7 @@ Every required member of a path that a kind reached by a wildcard claim of that 
 
 ### `packages/codegen/src/bindings/facts.ts::MatchRead`
 
-What reading a pattern as a `match` tree gives: the tree (`dsl/bind.ts::LeadMatch`, with no `as`, which only the derivation adds), or the reason the pattern says something `match` cannot.
+What reading a pattern as a `match` tree gives: the tree (`dsl/verbs/effects.ts::LeadMatch`, with no `as`, which only the derivation adds), or the reason the pattern says something `match` cannot.
 
 ### `packages/codegen/src/bindings/facts.ts::LeadLeadMatch`
 

@@ -4,9 +4,21 @@ Per-declaration reference for `packages/codegen/src/dsl/verbs/`: the verbs' appl
 
 ---
 
+### `packages/codegen/src/dsl/verbs/effects.ts::LeadWithin`
+
+A lead match's restriction: the field it restricts (`null` for an unfielded child) and the matches it admits there.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::LeadMatch`
+
+One kind a lead admits: the kind, its restriction (`within`), when it narrows the kind, and the name of the variant the narrowing mints (`as`), when a claim names it.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::Lead`
+
+A leading-element split of a separated list: the list rule, its item field, the field the leading element takes, and the matches the leading element admits.
+
 ### `packages/codegen/src/dsl/verbs/effects.ts::CopyOrigin`
 
-What made a copy, which decides what the copy inherits and which projection lists it. A `path` (an edit path that enters a rule) or a `copy` (`copy()` itself) makes a form that keeps its source's shape, so the copy takes its source's options and labels. A `narrow` or a `lead` makes a form with a new shape, which inherits nothing. A `lead` origin carries the entry as the layer resolved it, in this layer's field names: its list, item, field and admits, which the lead's `bindingEffects` entry repeats.
+What made a copy, which decides what the copy inherits and which projection lists it. A `path` (an edit path that enters a rule) or a `copy` (`copy()` itself) makes a form that keeps its source's shape, so the copy takes its source's options and labels. A `narrow` or a `lead` makes a form with a new shape, which inherits nothing. A `lead` origin is the `Lead` entry as the layer resolved it, in this layer's field names, which the lead's `bindingEffects` entry repeats.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::SegmentEffect`
 
@@ -18,7 +30,7 @@ An alias edit's effect: the member displayed as `from` now shows as `to`. On inh
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::RenameEffect`
 
-A kind rename's effect: the kind `from` is now `to` wherever a kind is named. On inherited records it renames option heads and `(kind)` segments, label heads, the reparse hosts, the keys of render-as, visible externals and groups, and the protected and undeclared rule names.
+A kind rename's effect: the kind `from` is now `to` wherever a kind is named. On inherited records it rewrites what `RECORD_RENAMES` names.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::CopyEffect`
 
@@ -27,6 +39,14 @@ A copy a verb made: the rule `copy`, made from `source` (`part` is `.` for the w
 ### `packages/codegen/src/dsl/verbs/effects.ts::Effect`
 
 One entry of a layer's effect log, in the order the layer recorded it.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::LeadEffect`
+
+A lead's `bindingEffects` entry: the `Lead` entry, the displayed name of the receiver form (`receiver`), the group the receiver form references beside the receiver field (`group`), the group's field that holds the list (`restField`), and each admitted kind's variant (`variants`). Portable binding facts read these names rather than derive them.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::BindingEffect`
+
+One entry of the `bindingEffects` projection: a segment effect, an alias effect, or a lead's entry.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::EffectCtx`
 
@@ -50,7 +70,7 @@ A grammar value with every kind name in it renamed: a bare string or a list of t
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::renameKeys`
 
-A keyed record with its keys renamed, and its values too unless `renameValues` is false (a reparse host's template is source text). Two keys renaming to one name is an error.
+A keyed record, a plain object or a `Map`, with its keys renamed, and its values too unless `renameValues` is false (a reparse host's template is source text, a test failure's reason is prose). The result has the input's form. Two keys renaming to one name is an error; the keys are gathered in a `Map`, so a kind named like an object property (`constructor`) is no collision.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::renameReparseHosts`
 
@@ -104,17 +124,29 @@ The recorded effects, with each field (`segment`) effect given to every rule who
 
 Whether a copy takes its source's options and labels: true for a copy a path or `copy()` made, false for one a narrowing or a lead made, whose shape is new.
 
-### `packages/codegen/src/dsl/verbs/effects.ts::RENAMED_KEYED_RECORDS`
+### `packages/codegen/src/dsl/verbs/effects.ts::splitFromOf`
 
-The inherited records keyed by kind name, which a kind rename re-keys and walks.
+Each copy whose origin `inheritsOptions`, mapped to its source, in log order. It is both the `splitFrom` projection and the copies `rewriteInherited` gives their source's options.
 
-### `packages/codegen/src/dsl/verbs/effects.ts::RENAMED_NAME_LISTS`
+### `packages/codegen/src/dsl/verbs/effects.ts::RecordRename`
 
-The inherited records that are lists of kind names, which a kind rename maps entry by entry.
+What a kind rename does to one record: `optionPaths` renames option heads, `(kind)` segments and label heads; `keysAndBodies` re-keys the record and renames the kinds its values reference as rule bodies do; `keys` re-keys it and leaves its values; `names` renames the names a list holds, or the lists a record holds; `{ entry }` renames, in each entry of a list, the name under that key; `reparseHosts` renames the hosts' keys, the priority and the gated names; `invariant` leaves the record as it is.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::RECORD_RENAMES`
+
+The one table of which records a kind rename rewrites, and how. It is typed over every `LayerRecords` key, so a new record fails the type-check until it is given an entry. A rename leaves the old name only as an unreachable blank rule, so every record that holds a kind name follows it, as a key or as a name. The one exception is `stages`, the layer's evaluation snapshots, which stay as they were recorded.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::renamedRecord`
+
+One record under a kind rename, as its `RecordRename` says.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::renameRecords`
+
+Every record `RECORD_RENAMES` names, under a kind rename, with the field names that tell a field segment from a slot segment named after a kind. A key the input lacks stays absent, and the input is never changed. `rewriteInherited` applies it to a layer's inherited records, and `renameGrammar` to a whole grammar beside its own rule and list fields.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::rewriteInherited`
 
-The records a layer inherits, rewritten through the layer's effects so that they name what the layer's result has. The options block takes, in this order: the segment effects under their owners (`rewriteOwnedSegments` with no grammar, since the log names every owner), the alias effects (`renameOptionPaths` without kind heads), the renames (with kind heads), and the copies a path or `copy()` made (`inheritSplitOptions`). A rename also rewrites the reparse hosts, the keyed records and the name lists. A record no effect names is returned as given, and the input is never changed. A layer's own records are written against its own result, so they never pass through here.
+The records a layer inherits, rewritten through the layer's effects so that they name what the layer's result has. The options block takes, in this order: the segment effects under their owners (`rewriteOwnedSegments` with no grammar, since the log names every owner), the alias effects (`renameOptionPaths` without kind heads), the renames (`renameRecords`, which also rewrites every other record the table names), and the copies a path or `copy()` made (`inheritSplitOptions`). Segment, alias and copy effects touch only the options block. A record no effect names is returned as given, and the input is never changed. A layer's own records are written against its own result, so they never pass through here.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::LeadCopies`
 

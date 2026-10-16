@@ -1,4 +1,4 @@
-import type { BindingEffect } from '../dsl/bind.ts';
+import type { BindingEffect } from '../dsl/verbs/effects.ts';
 import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
 import type { IrSurface } from './model/ir-surface.ts';
 import type { WhitespaceCollision } from '../dsl/whitespace.ts';

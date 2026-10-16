@@ -1,4 +1,5 @@
 import type { EvaluatedGrammar } from '../compiler/types.ts';
+import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
 import type { ConflictResolutionsFile } from './conflict-resolutions.ts';
 import type { EnrichSidecars } from './enrich.ts';
 import { isRecord } from './rule-patterns.ts';
@@ -27,7 +28,7 @@ export type LayerRecords = Pick<
 
 export interface LayerRecord {
 	readonly depth: number;
-	readonly upstream: unknown;
+	readonly upstream: GrammarJson;
 	readonly sidecars: EnrichSidecars;
 	readonly resolutions: ConflictResolutionsFile;
 	readonly deadMints: ReadonlySet<string>;

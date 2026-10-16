@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { boundNameOf, type BindingEffect } from '../dsl/bind.ts';
-import { boundFieldNameOf } from '../dsl/verbs/effects.ts';
+import { boundNameOf } from '../dsl/bind.ts';
+import { boundFieldNameOf, type BindingEffect } from '../dsl/verbs/effects.ts';
 import { parsePreferencePath } from '../dsl/primitives/preference-path.ts';
 import { type OptionsConfig, readOptionsBlock } from '../dsl/wire/options-block.ts';
 import { bindFacts, bindingsPath, type EnumMember, type ModelNode, type SlotModel, VOCABULARY_DIR } from './facts.ts';

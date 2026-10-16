@@ -1,4 +1,4 @@
-import type { BindingEffect } from '../bind.ts';
+import type { BindingEffect } from '../verbs/effects.ts';
 import { withHoistedAnnotation } from '../annotations.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import type { AnyRule } from '../../types/rule.ts';

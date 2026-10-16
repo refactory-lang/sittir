@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { projectLeadFacts } from '../lead-facts.ts';
 import { readBindings } from '../read.ts';
-import type { LeadEffect } from '../../dsl/bind.ts';
+import type { LeadEffect } from '../../dsl/verbs/effects.ts';
 
 const effect: LeadEffect = {
 	kind: 'lead',
