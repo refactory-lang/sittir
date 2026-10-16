@@ -698,7 +698,7 @@ mod tests {
             }
         }
         let sources = Sources(std::sync::Arc::from("CONTENT"));
-        let framed: SlotValue<MockTrivia> = SlotValue::Coord(crate::slot::NodeCoordinate::new(crate::types::TreeId(1), 0, 1, crate::types::Span { start: 0, end: 7 }));
+        let framed: SlotValue<MockTrivia> = SlotValue::Coord(crate::slot::NodeCoordinate::new(crate::types::TreeId(1), crate::types::NodeIndex(0), crate::types::NodeIndex(1), crate::types::Span { start: 0, end: 7 }));
         let mut out = String::new();
         let mut w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident()).with_sources(&sources);
         framed.render(&mut w).unwrap();

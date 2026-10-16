@@ -702,9 +702,9 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                 let wrapped = __rt::survey(cursor).into_iter().find(|child| !child.trivia).ok_or(
                     __rt::ReadError::Unadmitted { kind: ::sittir_core::read::grammar_id(&cursor.node()), index: own },
                 )?;
-                cursor.goto_descendant(wrapped.index as usize);
+                __rt::goto(cursor, wrapped.index);
             },
-            quote!(cursor.goto_descendant(own as usize);),
+            quote!(__rt::goto(cursor, own);),
         )
     } else {
         (quote!(), quote!())

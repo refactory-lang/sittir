@@ -27,7 +27,7 @@ pub struct QueryCoordinate {
     #[serde(rename = "$treeHandle")]
     pub handle: u64,
     #[serde(rename = "$end")]
-    pub end: u32,
+    pub end: crate::types::NodeIndex,
     #[serde(rename = "$span")]
     pub span: Span,
     #[serde(rename = "$type")]
@@ -147,7 +147,7 @@ pub struct QueryCtx<'a> {
 /// One value a slot holds: its text, and the node that spells it, by its
 /// descendant index and kind, unless it is a group of a token's text.
 struct Hit<'s> {
-    node: Option<(u32, crate::types::KindId)>,
+    node: Option<(crate::types::NodeIndex, crate::types::KindId)>,
     text: &'s str,
 }
 
@@ -196,10 +196,10 @@ impl Plan {
                 };
                 let own = index_of(cursor);
                 let found = tested.iter().any(|&index| {
-                    cursor.goto_descendant(index as usize);
+                    crate::read::goto(cursor, index);
                     of.holds(cursor, ctx)
                 });
-                cursor.goto_descendant(own as usize);
+                crate::read::goto(cursor, own);
                 found
             }
             Plan::Not(of) => !of.holds(cursor, ctx),
@@ -367,11 +367,11 @@ mod tests {
         let ctx = QueryCtx { source, stamp: &stamp, router: &router };
         let mut cursor = tree.walk();
         let mut out = Vec::new();
-        for index in 0..tree.root_node().descendant_count() {
-            cursor.goto_descendant(index);
+        for index in (0..tree.root_node().descendant_count() as u32).map(crate::types::NodeIndex::new) {
+            crate::read::goto(&mut cursor, index);
             if cursor.node().kind() == kind {
                 out.push(plan.holds(&mut cursor, &ctx));
-                assert_eq!(cursor.descendant_index(), index, "the cursor ends where it started");
+                assert_eq!(crate::read::index_of(&cursor), index, "the cursor ends where it started");
             }
         }
         out

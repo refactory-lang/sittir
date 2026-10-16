@@ -32,7 +32,7 @@ pub struct Separator {
 /// table has one there, and its separator.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SlotGap {
-    pub items: (u32, u32),
+    pub items: (crate::types::NodeIndex, crate::types::NodeIndex),
     pub before: Option<usize>,
     pub after: Option<usize>,
     pub separator: Separator,
@@ -107,7 +107,7 @@ mod tests {
     use crate::types::KindId;
 
     fn child(index: u32, start: u32, end: u32) -> Child {
-        Child { index, grammar: KindId(index as u16), display: KindId(index as u16), field: None, named: true, trivia: false, start, end, descendants: 1 }
+        Child { index: crate::types::NodeIndex(index), grammar: KindId(index as u16), display: KindId(index as u16), field: None, named: true, trivia: false, start, end, descendants: 1 }
     }
 
     #[test]

@@ -8,7 +8,7 @@
 export interface BaselineRun {
   start: number
   end: number
-  index: number
+  index: NodeIndex
   side: string
   breaks?: number
   spaces?: number

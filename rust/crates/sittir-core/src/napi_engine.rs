@@ -92,9 +92,8 @@ macro_rules! napi_engine {
         fn with_live_node<R>(
             tree_id: $crate::types::TreeId,
             index: $crate::types::NodeIndex,
-            f: impl FnOnce(&mut $crate::ParsedTree<$grammar>, u32) -> ::napi::Result<R>,
+            f: impl FnOnce(&mut $crate::ParsedTree<$grammar>, $crate::types::NodeIndex) -> ::napi::Result<R>,
         ) -> ::napi::Result<R> {
-            let index = index.get();
             LIVE_TREES.with(|trees| {
                 let mut trees = trees.borrow_mut();
                 let parsed = trees.get_mut(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
@@ -205,7 +204,6 @@ macro_rules! napi_engine {
             /// child and the index.
             #[::napi_derive::napi(ts_return_type = "object")]
             pub fn read(&self, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, depth: Option<f64>) -> ::napi::Result<::napi::Either<$any, $crate::ErrorRead>> {
-                let index = index.get();
                 let depth = $crate::napi_engine::depth_from_wire(depth)?;
                 LIVE_TREES.with(|trees| {
                     let trees = trees.borrow();
@@ -259,7 +257,6 @@ macro_rules! napi_engine {
             /// absent. Refuses as `read` does.
             #[::napi_derive::napi(ts_return_type = "object")]
             pub fn snapshot(&self, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, holder_byte: Option<u32>) -> ::napi::Result<::napi::Either<$any, $crate::ErrorRead>> {
-                let index = index.get();
                 LIVE_TREES.with(|trees| {
                     let trees = trees.borrow();
                     let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
@@ -349,7 +346,7 @@ macro_rules! napi_engine {
             /// render refused.
             #[::napi_derive::napi]
             pub fn layout_baseline(&self, tree_id: $crate::types::TreeId, whole: Option<bool>) -> ::napi::Result<Vec<$crate::napi_engine::BaselineRun>> {
-                with_live_node(tree_id, $crate::types::NodeIndex(0), |parsed, _| {
+                with_live_node(tree_id, $crate::types::NodeIndex::ROOT, |parsed, _| {
                     let runs = parsed.baseline_runs(whole.unwrap_or(false)).map_err(::napi::Error::from_reason)?;
                     Ok(runs.into_iter().map(|(run, written)| $crate::napi_engine::BaselineRun::new(run, written)).collect())
                 })
@@ -361,7 +358,7 @@ macro_rules! napi_engine {
             /// that is not live.
             #[::napi_derive::napi(ts_return_type = "{ deviations: number; slots: number; separators: number }")]
             pub fn stored_layout(&self, tree_id: $crate::types::TreeId) -> ::napi::Result<$crate::layout::StoredLayout> {
-                with_live_node(tree_id, $crate::types::NodeIndex(0), |parsed, _| Ok(parsed.stored_layout()))
+                with_live_node(tree_id, $crate::types::NodeIndex::ROOT, |parsed, _| Ok(parsed.stored_layout()))
             }
 
             /// The work the live tree `treeId`'s layout reads have done so far
@@ -369,7 +366,7 @@ macro_rules! napi_engine {
             /// diagnostic. Refuses a tree that is not live.
             #[::napi_derive::napi(ts_return_type = "{ regionNodes: number; siblingItems: number }")]
             pub fn layout_work(&self, tree_id: $crate::types::TreeId) -> ::napi::Result<$crate::layout::LayoutWork> {
-                with_live_node(tree_id, $crate::types::NodeIndex(0), |parsed, _| Ok(parsed.layout_work()))
+                with_live_node(tree_id, $crate::types::NodeIndex::ROOT, |parsed, _| Ok(parsed.layout_work()))
             }
 
             /// One batch of a pre-order walk of the named descendants under
@@ -411,7 +408,7 @@ macro_rules! napi_engine {
             /// that is not live and an index naming no node of it.
             #[::napi_derive::napi]
             pub fn line_starts_inside_tokens(&self, tree_id: $crate::types::TreeId, index: Option<$crate::types::NodeIndex>) -> ::napi::Result<Vec<u32>> {
-                let index = index.map_or(0, $crate::types::NodeIndex::get);
+                let index = index.unwrap_or($crate::types::NodeIndex::ROOT);
                 LIVE_TREES.with(|trees| {
                     let trees = trees.borrow();
                     let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
@@ -602,7 +599,7 @@ pub fn depth_from_wire(depth: Option<f64>) -> napi::Result<crate::read::Depth> {
 pub struct BaselineRun {
     pub start: u32,
     pub end: u32,
-    pub index: u32,
+    pub index: crate::types::NodeIndex,
     pub side: String,
     pub breaks: Option<u32>,
     pub spaces: Option<u32>,

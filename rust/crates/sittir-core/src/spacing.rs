@@ -144,7 +144,7 @@ pub fn seam_rank(text: &str) -> SeamRank {
 /// indentation it began with, which it restores when it closes.
 #[derive(Debug)]
 struct Frame {
-    origin: Option<(crate::types::TreeId, u32)>,
+    origin: Option<(crate::types::TreeId, crate::types::NodeIndex)>,
     excess: i32,
 }
 

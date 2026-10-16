@@ -1,6 +1,8 @@
 //! A cursor numbers from the node it starts on. The native query walks from
 //! its start node and adds that node's index; these tests hold that rule to
-//! tree-sitter over whole sources.
+//! tree-sitter over whole sources, so it calls the cursor's numbering
+//! directly rather than through `sittir_core::read`.
+#![allow(clippy::disallowed_methods)]
 
 use tree_sitter::{Language, Node, Parser, Tree};
 

@@ -149,6 +149,24 @@ id_newtype! {
     NodeIndex(u32)
 }
 
+impl NodeIndex {
+    /// The tree's root.
+    pub const ROOT: NodeIndex = NodeIndex(0);
+
+    /// How many preorder positions `self` lies past `base`.
+    pub const fn offset_from(self, base: NodeIndex) -> u32 {
+        self.0 - base.0
+    }
+}
+
+/// The node `count` preorder positions past this one.
+impl ::std::ops::Add<u32> for NodeIndex {
+    type Output = NodeIndex;
+    fn add(self, count: u32) -> NodeIndex {
+        NodeIndex(self.0 + count)
+    }
+}
+
 /// Where a node originated. `Ts` = read from a tree-sitter tree; `Sg` =
 /// ast-grep path; `Factory` = constructed on the TS side.
 ///

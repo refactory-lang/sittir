@@ -13,7 +13,7 @@ use crate::layout::TransportLayout;
 use crate::slot::{ChangedEdges, NodeCoordinate, SlotValue};
 use crate::trivia::{TransportTrivia, TriviaEntry};
 use crate::trivia_table::TriviaSide;
-use crate::types::{FieldId, KindId, Span};
+use crate::types::{FieldId, KindId, NodeIndex, Span};
 use std::num::NonZeroU32;
 use std::sync::OnceLock;
 use tree_sitter::{Language, Node, TreeCursor};
@@ -122,7 +122,7 @@ pub struct ReadCtx<'s> {
     pub sides: Option<&'s dyn SideLookup>,
     /// The node, by index, whose neighbours changed on the edges given, so
     /// its sides there drop their layout runs (`trivia::without_edge_runs`).
-    pub changed: Option<(u32, ChangedEdges)>,
+    pub changed: Option<(NodeIndex, ChangedEdges)>,
     /// Set on a read whose client stores a unit variant as its bare kind
     /// (`ReadCtx::inline_units`): past the depth, a child with no named
     /// child is read inline although the read seats sides.
@@ -167,16 +167,16 @@ pub trait SideLookup {
     /// The entries of `side` of the node at `index` as a
     /// `Vec<SideEntry<T>>` of the grammar's trivia type, without the layout
     /// runs at that edge when `edge_changed`.
-    fn side(&self, index: u32, side: TriviaSide, edge_changed: bool) -> Box<dyn std::any::Any>;
+    fn side(&self, index: NodeIndex, side: TriviaSide, edge_changed: bool) -> Box<dyn std::any::Any>;
     /// The stored layout of each list slot of the node at `index`
     /// (`layout::SlotLayout`); none where the lookup measures none.
-    fn slots(&self, index: u32) -> Vec<crate::layout::SlotLayout> {
+    fn slots(&self, index: NodeIndex) -> Vec<crate::layout::SlotLayout> {
         let _ = index;
         Vec::new()
     }
     /// The separator before the node at `index` as an item of its parent's
     /// list slot, where it is not the one the slot renders.
-    fn separator(&self, index: u32) -> Option<KindId> {
+    fn separator(&self, index: NodeIndex) -> Option<KindId> {
         let _ = index;
         None
     }
@@ -190,7 +190,7 @@ pub trait SideLookup {
 #[derive(Debug)]
 pub struct SnapshotCtx<'s> {
     pub lines: &'s crate::points::LineTable,
-    root: u32,
+    root: NodeIndex,
     holder: std::cell::Cell<crate::points::Point>,
     replaced: std::cell::RefCell<Vec<crate::points::Point>>,
 }
@@ -198,7 +198,7 @@ pub struct SnapshotCtx<'s> {
 impl<'s> SnapshotCtx<'s> {
     /// A snapshot of the node at `root`, measuring from the byte `holder`,
     /// or from the source's start when absent.
-    pub fn new(lines: &'s crate::points::LineTable, holder: Option<u32>, root: u32) -> Self {
+    pub fn new(lines: &'s crate::points::LineTable, holder: Option<u32>, root: NodeIndex) -> Self {
         let holder = holder.and_then(|byte| lines.point(byte as usize)).unwrap_or(crate::points::Point::ZERO);
         Self { lines, root, holder: std::cell::Cell::new(holder), replaced: std::cell::RefCell::default() }
     }
@@ -256,7 +256,7 @@ impl<'s> ReadCtx<'s> {
 
     /// This context, with the neighbours of the node at `index` changed on
     /// the edges `changed` gives.
-    pub fn with_changed(self, index: u32, changed: ChangedEdges) -> Self {
+    pub fn with_changed(self, index: NodeIndex, changed: ChangedEdges) -> Self {
         Self { changed: Some((index, changed)), ..self }
     }
 
@@ -266,7 +266,7 @@ impl<'s> ReadCtx<'s> {
     /// are, but on the snapshot's own node, whose outer edges face
     /// neighbours outside it, without the runs at those edges. `None` when
     /// the context looks up no sides or the side is empty.
-    fn side<T: crate::trivia::FromTriviaText + 'static>(&self, index: u32, side: TriviaSide) -> Option<Vec<TriviaEntry<T>>> {
+    fn side<T: crate::trivia::FromTriviaText + 'static>(&self, index: NodeIndex, side: TriviaSide) -> Option<Vec<TriviaEntry<T>>> {
         let lookup = self.sides?;
         let edge_changed = self.changed.is_some_and(|(at, changed)| at == index && changed.on(side));
         let entries = *lookup.side(index, side, edge_changed).downcast::<Vec<SideEntry<T>>>().ok()?;
@@ -301,7 +301,7 @@ impl<'s> ReadCtx<'s> {
     /// the context (`ReadCtx::hold`) measures its inner side from its own
     /// start and its leading and trailing sides from the holder its hold
     /// replaced, which it restores.
-    pub fn layout<T: crate::trivia::FromTriviaText + 'static>(&self, index: u32, at: Origin, held: bool) -> Box<TransportLayout<T>> {
+    pub fn layout<T: crate::trivia::FromTriviaText + 'static>(&self, index: NodeIndex, at: Origin, held: bool) -> Box<TransportLayout<T>> {
         let inner = self.side(index, TriviaSide::Inner);
         if held {
             self.release();
@@ -320,7 +320,7 @@ impl<'s> ReadCtx<'s> {
     /// `layout`, holding the sides of the node's unit children (`units`).
     pub fn layout_with_units<T: crate::trivia::FromTriviaText + 'static>(
         &self,
-        index: u32,
+        index: NodeIndex,
         at: Origin,
         held: bool,
         units: Vec<crate::layout::UnitSides<T>>,
@@ -334,7 +334,7 @@ impl<'s> ReadCtx<'s> {
     /// holder, which its slot stores as a bare kind, as this context seats
     /// them: `None` when the context seats none, when the read keeps the unit
     /// a coordinate (`reads_leaf_inline`), or when the unit has none.
-    pub fn unit_sides<T: crate::trivia::FromTriviaText + 'static>(&self, index: u32, depth: Depth) -> Option<TransportTrivia<T>> {
+    pub fn unit_sides<T: crate::trivia::FromTriviaText + 'static>(&self, index: NodeIndex, depth: Depth) -> Option<TransportTrivia<T>> {
         if !self.reads_leaf_inline(depth) {
             return None;
         }
@@ -393,7 +393,7 @@ impl<'s> ReadCtx<'s> {
 
     /// Where the node at `index` came from: its coordinate, or in a snapshot
     /// its span from this context's holder.
-    pub fn origin(&self, node: &Node<'_>, index: u32) -> Origin {
+    pub fn origin(&self, node: &Node<'_>, index: NodeIndex) -> Origin {
         let at = self.coordinate(node, index);
         match self.snapshot {
             None => Origin::Tree(at),
@@ -414,9 +414,9 @@ impl<'s> ReadCtx<'s> {
     /// whole source: tree-sitter's root starts at the first token, and the
     /// root stands for the file, whose leading and trailing bytes its
     /// coordinate render must keep.
-    pub fn coordinate(&self, node: &Node<'_>, index: u32) -> NodeCoordinate {
+    pub fn coordinate(&self, node: &Node<'_>, index: NodeIndex) -> NodeCoordinate {
         let range = node.byte_range();
-        let span = if index == 0 {
+        let span = if index == NodeIndex::ROOT {
             Span { start: 0, end: self.source.len() as u32 }
         } else {
             Span { start: range.start as u32, end: range.end as u32 }
@@ -435,14 +435,30 @@ impl<'s> ReadCtx<'s> {
 
 /// The index of the node the cursor is on: its descendant index from the
 /// tree's root, which `TreeCursor::goto_descendant` reaches again.
-pub fn index_of(cursor: &TreeCursor<'_>) -> u32 {
+#[allow(clippy::disallowed_methods)]
+pub fn index_of(cursor: &TreeCursor<'_>) -> NodeIndex {
+    NodeIndex(cursor.descendant_index() as u32)
+}
+
+/// How many preorder positions the cursor's node lies past the node the
+/// cursor was created at: a node's index is its subtree root's index plus
+/// this. The one other call of `TreeCursor::descendant_index`.
+#[allow(clippy::disallowed_methods)]
+pub fn offset_of(cursor: &TreeCursor<'_>) -> u32 {
     cursor.descendant_index() as u32
+}
+
+/// Moves a cursor created at the tree's root to the node at `index`. The one
+/// call of `TreeCursor::goto_descendant`.
+#[allow(clippy::disallowed_methods)]
+pub fn goto(cursor: &mut TreeCursor<'_>, index: NodeIndex) {
+    cursor.goto_descendant(index.index());
 }
 
 /// What the first pass learns about one child.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Child {
-    pub index: u32,
+    pub index: NodeIndex,
     pub grammar: KindId,
     pub display: KindId,
     pub field: Option<FieldId>,
@@ -543,17 +559,17 @@ pub enum Route {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ReadError {
     /// A child the kind's model has no route for: a model gap, not data.
-    Unrouted { kind: KindId, child: KindId, index: u32 },
+    Unrouted { kind: KindId, child: KindId, index: NodeIndex },
     /// A required slot no child filled.
-    Missing { kind: KindId, slot: &'static str, index: u32 },
+    Missing { kind: KindId, slot: &'static str, index: NodeIndex },
     /// A second child for a slot that holds one.
-    Overfull { kind: KindId, slot: &'static str, index: u32 },
+    Overfull { kind: KindId, slot: &'static str, index: NodeIndex },
     /// A node whose kind no member of the type it was read into takes.
-    Unadmitted { kind: KindId, index: u32 },
+    Unadmitted { kind: KindId, index: NodeIndex },
     /// A token whose text does not match its kind's interior.
-    Interior { kind: KindId, index: u32 },
+    Interior { kind: KindId, index: NodeIndex },
     /// An enum kind whose spelling tokens display none of its members' ids.
-    Unspelled { kind: KindId, index: u32 },
+    Unspelled { kind: KindId, index: NodeIndex },
 }
 
 impl ReadError {
@@ -591,14 +607,14 @@ impl ReadError {
 pub struct SlotSite {
     pub kind: KindId,
     pub slot: &'static str,
-    pub index: u32,
+    pub index: NodeIndex,
 }
 
 /// The node at descendant `index` of `tree` read one level into `T`: its own
 /// slots, each child past them a coordinate.
-pub fn read_coordinate<T: ReadTransport>(tree: &tree_sitter::Tree, ctx: &ReadCtx<'_>, index: u32) -> Result<T, ReadError> {
+pub fn read_coordinate<T: ReadTransport>(tree: &tree_sitter::Tree, ctx: &ReadCtx<'_>, index: NodeIndex) -> Result<T, ReadError> {
     let mut cursor = tree.walk();
-    cursor.goto_descendant(index as usize);
+    goto(&mut cursor, index);
     T::read(&mut cursor, ctx, Depth::ONE)
 }
 
@@ -681,8 +697,8 @@ pub struct Routed {
 
 /// The routes of the node at `index` read as `T` (`ReadTransport::routes`).
 /// The cursor was created at the tree's root.
-pub fn routes_at<T: ReadTransport>(cursor: &mut TreeCursor<'_>, index: u32) -> Option<Routed> {
-    cursor.goto_descendant(index as usize);
+pub fn routes_at<T: ReadTransport>(cursor: &mut TreeCursor<'_>, index: NodeIndex) -> Option<Routed> {
+    goto(cursor, index);
     T::routes(cursor)
 }
 
@@ -758,7 +774,7 @@ impl<L, T: HasLayout<L>> HasLayout<L> for Box<T> {
 /// is measured from the envelope's holder.
 pub fn envelope_layout<T: crate::trivia::FromTriviaText + 'static>(
     taken: Option<Box<TransportLayout<T>>>,
-    index: u32,
+    index: NodeIndex,
     at: Origin,
     ctx: &ReadCtx<'_>,
 ) -> Box<TransportLayout<T>> {
@@ -1182,8 +1198,8 @@ pub fn delimiter(list: &Node<'_>, children: &[Child], routes: &[Route], items: c
 
 /// Read the node at `index` into `T`. The cursor was created at the tree's
 /// root.
-pub fn read_at<T: ReadTransport>(cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, index: u32, depth: Depth) -> Result<T, ReadError> {
-    cursor.goto_descendant(index as usize);
+pub fn read_at<T: ReadTransport>(cursor: &mut TreeCursor<'_>, ctx: &ReadCtx<'_>, index: NodeIndex, depth: Depth) -> Result<T, ReadError> {
+    goto(cursor, index);
     T::read(cursor, ctx, depth)
 }
 
@@ -1209,7 +1225,7 @@ mod tests {
         parser.set_language(&tree_sitter_rust::LANGUAGE.into()).unwrap();
         let tree = parser.parse(source, None).unwrap();
         let lines = LineTable::new(source);
-        let measure = SnapshotCtx::new(&lines, None, 0);
+        let measure = SnapshotCtx::new(&lines, None, NodeIndex::ROOT);
         let ctx = ReadCtx::new(source, crate::types::TreeId(1), |_| false).snapshot(&measure);
         let root = tree.walk();
         let item_span = Origin::Snapshot(PointSpan { start: Point { row: 2, column: 0 }, end: Point { row: 4, column: 1 } });
@@ -1235,11 +1251,11 @@ mod tests {
     struct OneOfEach;
 
     impl SideLookup for OneOfEach {
-        fn side(&self, _: u32, side: TriviaSide, edge_changed: bool) -> Box<dyn std::any::Any> {
+        fn side(&self, _: NodeIndex, side: TriviaSide, edge_changed: bool) -> Box<dyn std::any::Any> {
             let text = |text: &str| TriviaEntry::new(SlotValue::Transport(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None }));
             let entries: Vec<SideEntry<crate::trivia::TriviaText>> = match side {
                 TriviaSide::Leading if !edge_changed => vec![
-                    SideEntry::Source { entry: TriviaEntry::new(SlotValue::Coord(NodeCoordinate::new(crate::types::TreeId(1), 3, 4, Span { start: 4, end: 8 }))), kind: KindId(7), span: Span { start: 4, end: 8 }, adjacent: None },
+                    SideEntry::Source { entry: TriviaEntry::new(SlotValue::Coord(NodeCoordinate::new(crate::types::TreeId(1), crate::types::NodeIndex(3), crate::types::NodeIndex(4), Span { start: 4, end: 8 }))), kind: KindId(7), span: Span { start: 4, end: 8 }, adjacent: None },
                     SideEntry::Layout(text("\n")),
                     SideEntry::Written(text("// w")),
                 ],
@@ -1254,7 +1270,7 @@ mod tests {
     struct EdgeRun;
 
     impl SideLookup for EdgeRun {
-        fn side(&self, _: u32, side: TriviaSide, _: bool) -> Box<dyn std::any::Any> {
+        fn side(&self, _: NodeIndex, side: TriviaSide, _: bool) -> Box<dyn std::any::Any> {
             let text = |text: &str| TriviaEntry::new(SlotValue::Transport(crate::trivia::TriviaText { kind: KindId(7), text: text.into(), span: None, before: None, after: None }));
             let entries: Vec<SideEntry<crate::trivia::TriviaText>> = match side {
                 TriviaSide::Leading => vec![SideEntry::Layout(text(" ")), SideEntry::Written(text("// w"))],
@@ -1270,14 +1286,14 @@ mod tests {
         let source = "a b";
         let lines = LineTable::new(source);
         let at = Origin::Snapshot(PointSpan { start: Point::ZERO, end: Point::ZERO });
-        let leading = |root: u32| {
+        let leading = |root: NodeIndex| {
             let measure = SnapshotCtx::new(&lines, None, root);
             let ctx = ReadCtx::new(source, crate::types::TreeId(1), |_| false).snapshot(&measure).with_sides(&EdgeRun);
-            let side = ctx.layout::<crate::trivia::TriviaText>(3, at.clone(), false).trivia.and_then(|trivia| trivia.leading).expect("a seated leading side");
+            let side = ctx.layout::<crate::trivia::TriviaText>(NodeIndex(3), at.clone(), false).trivia.and_then(|trivia| trivia.leading).expect("a seated leading side");
             side.into_iter().map(|entry| entry.value.transport().map(|text| text.text.to_string()).expect("a snapshot entry is text")).collect::<Vec<_>>()
         };
-        assert_eq!(leading(0), [" ", "// w"], "a node inside the snapshot keeps the run its neighbour faces");
-        assert_eq!(leading(3), ["// w"], "the snapshot's own node drops the run toward a neighbour outside it");
+        assert_eq!(leading(NodeIndex::ROOT), [" ", "// w"], "a node inside the snapshot keeps the run its neighbour faces");
+        assert_eq!(leading(NodeIndex(3)), ["// w"], "the snapshot's own node drops the run toward a neighbour outside it");
     }
 
     #[test]
@@ -1285,10 +1301,10 @@ mod tests {
         use crate::points::{LineTable, Point, PointSpan};
         let source = "a\n  // x\nb";
         let lines = LineTable::new(source);
-        let measure = SnapshotCtx::new(&lines, Some(2), 0);
+        let measure = SnapshotCtx::new(&lines, Some(2), NodeIndex::ROOT);
         let ctx = ReadCtx::new(source, crate::types::TreeId(1), |_| false).snapshot(&measure).with_sides(&OneOfEach);
         let at = Origin::Snapshot(PointSpan { start: Point::ZERO, end: Point::ZERO });
-        let leading = ctx.layout::<crate::trivia::TriviaText>(3, at, false).trivia.and_then(|trivia| trivia.leading).expect("a seated leading side");
+        let leading = ctx.layout::<crate::trivia::TriviaText>(NodeIndex(3), at, false).trivia.and_then(|trivia| trivia.leading).expect("a seated leading side");
         let texts: Vec<_> = leading.into_iter().map(|entry| entry.value.transport().cloned().expect("a snapshot entry is text")).collect();
         assert_eq!(texts, [
             crate::trivia::TriviaText { kind: KindId(7), text: "// x".into(), span: Some(PointSpan { start: Point { row: 0, column: 2 }, end: Point { row: 0, column: 6 } }), before: None, after: None },
@@ -1300,12 +1316,12 @@ mod tests {
     #[test]
     fn a_live_read_seats_a_side_as_the_lookup_gives_it_and_drops_a_changed_edges_runs_through_it() {
         let ctx = ReadCtx::new("", crate::types::TreeId(1), |_| false).with_sides(&OneOfEach);
-        let at = || Origin::Tree(NodeCoordinate::new(crate::types::TreeId(1), 3, 4, Span { start: 0, end: 0 }));
-        let leading = ctx.layout::<crate::trivia::TriviaText>(3, at(), false).trivia.and_then(|trivia| trivia.leading);
+        let at = || Origin::Tree(NodeCoordinate::new(crate::types::TreeId(1), crate::types::NodeIndex(3), crate::types::NodeIndex(4), Span { start: 0, end: 0 }));
+        let leading = ctx.layout::<crate::trivia::TriviaText>(NodeIndex(3), at(), false).trivia.and_then(|trivia| trivia.leading);
         assert_eq!(leading.map(|entries| entries.len()), Some(3));
-        let changed = ctx.with_changed(3, ChangedEdges { leading: true, trailing: false });
-        assert!(changed.layout::<crate::trivia::TriviaText>(3, at(), false).trivia.is_none(), "the lookup is asked for the changed edge");
-        assert!(ReadCtx::new("", crate::types::TreeId(1), |_| false).layout::<crate::trivia::TriviaText>(3, at(), false).trivia.is_none(), "a read with no lookup seats nothing");
+        let changed = ctx.with_changed(NodeIndex(3), ChangedEdges { leading: true, trailing: false });
+        assert!(changed.layout::<crate::trivia::TriviaText>(NodeIndex(3), at(), false).trivia.is_none(), "the lookup is asked for the changed edge");
+        assert!(ReadCtx::new("", crate::types::TreeId(1), |_| false).layout::<crate::trivia::TriviaText>(NodeIndex(3), at(), false).trivia.is_none(), "a read with no lookup seats nothing");
     }
 
     #[test]
@@ -1316,11 +1332,11 @@ mod tests {
         let tree = parser.parse(source, None).unwrap();
         let ctx = ReadCtx::new(source, crate::types::TreeId(1), |_| false);
         let mut cursor = tree.walk();
-        for index in 0..tree.root_node().descendant_count() {
-            cursor.goto_descendant(index);
+        for index in (0..tree.root_node().descendant_count() as u32).map(NodeIndex::new) {
+            goto(&mut cursor, index);
             let Origin::Tree(coordinate) = ctx.at_of(&cursor) else { panic!("a live read names a coordinate") };
-            assert_eq!(coordinate.index as usize, index);
-            assert_eq!(coordinate.end as usize, index + cursor.node().descendant_count());
+            assert_eq!(coordinate.index, index);
+            assert_eq!(coordinate.end, index + cursor.node().descendant_count() as u32);
         }
     }
 
@@ -1342,7 +1358,7 @@ mod tests {
     #[test]
     fn a_refusal_names_the_kind_the_child_and_its_index() {
         let name = |k: KindId| if k.0 == 208 { "function_item" } else { "block" };
-        let refusal = ReadError::Unrouted { kind: KindId(208), child: KindId(313), index: 451 };
+        let refusal = ReadError::Unrouted { kind: KindId(208), child: KindId(313), index: crate::types::NodeIndex(451) };
         assert_eq!(
             refusal.describe(&name),
             "function_item (kind 208) has no route for its child block (kind 313) at index 451"
@@ -1350,7 +1366,7 @@ mod tests {
     }
 
     fn site() -> SlotSite {
-        SlotSite { kind: KindId(1), slot: "items", index: 0 }
+        SlotSite { kind: KindId(1), slot: "items", index: crate::types::NodeIndex(0) }
     }
 
     /// A transport for the slot tests: kind 5, with a blank arm when `BLANK`.
@@ -1375,7 +1391,7 @@ mod tests {
     type Plain = Probe<false>;
 
     fn token(start: u32, end: u32, trivia: bool) -> Child {
-        Child { index: 0, grammar: KindId(9), display: KindId(9), field: None, named: false, trivia, start, end, descendants: 1 }
+        Child { index: NodeIndex::ROOT, grammar: KindId(9), display: KindId(9), field: None, named: false, trivia, start, end, descendants: 1 }
     }
 
     #[test]
@@ -1433,7 +1449,7 @@ mod tests {
     fn a_required_slot_with_no_child_is_missing() {
         assert_eq!(
             <SlotValue<Plain> as ReadSlot>::finish(None, site()),
-            Err(ReadError::Missing { kind: KindId(1), slot: "items", index: 0 })
+            Err(ReadError::Missing { kind: KindId(1), slot: "items", index: crate::types::NodeIndex(0) })
         );
     }
 
@@ -1445,7 +1461,7 @@ mod tests {
 
     #[test]
     fn an_empty_repeat1_list_is_missing() {
-        let missing = ReadError::Missing { kind: KindId(1), slot: "items", index: 0 };
+        let missing = ReadError::Missing { kind: KindId(1), slot: "items", index: crate::types::NodeIndex(0) };
         assert_eq!(<crate::NonEmptyVec<SlotValue<Plain>> as ReadSlot>::finish(Vec::new(), site()).err(), Some(missing.clone()));
         assert_eq!(<crate::NonEmptyVec<Option<SlotValue<Plain>>> as ReadSlot>::finish(Elided::default(), site()).err(), Some(missing));
     }

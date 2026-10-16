@@ -18,10 +18,10 @@ use crate::types::Span;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct NodeCoordinate {
     pub tree: crate::types::TreeId,
-    pub index: u32,
+    pub index: crate::types::NodeIndex,
     /// `index + descendant_count()`: the node's subtree is the indexes
     /// `[index, end)`.
-    pub end: u32,
+    pub end: crate::types::NodeIndex,
     pub span: Span,
     /// The kind the reader stamped on the node, when the wire carries it. A
     /// handle names a tree position, which for trivia is its owner's, so the
@@ -84,7 +84,7 @@ pub struct CoordinateEdges {
 }
 
 impl NodeCoordinate {
-    pub fn new(tree: crate::types::TreeId, index: u32, end: u32, span: Span) -> Self {
+    pub fn new(tree: crate::types::TreeId, index: crate::types::NodeIndex, end: crate::types::NodeIndex, span: Span) -> Self {
         Self {
             tree,
             index,
@@ -362,7 +362,7 @@ pub(crate) unsafe fn coordinate_from_napi(env: ::napi::sys::napi_env, napi_val: 
     let handle = crate::napi_engine::checked_index(handle, "$treeHandle")?;
     let span: Span = unsafe { property(env, napi_val, c"$span")? }
         .ok_or_else(|| ::napi::Error::from_reason(format!("coordinate with $treeHandle {handle} carries no $span")))?;
-    let end: u32 = unsafe { property(env, napi_val, c"$end")? }
+    let end: crate::types::NodeIndex = unsafe { property(env, napi_val, c"$end")? }
         .ok_or_else(|| ::napi::Error::from_reason(format!("coordinate with $treeHandle {handle} carries no $end")))?;
     let kind: Option<crate::types::KindId> = unsafe { property(env, napi_val, c"$type")? };
     let changed = match unsafe { property::<::napi::bindgen_prelude::Object>(env, napi_val, c"$_layout")? } {
@@ -427,8 +427,8 @@ mod tests {
     #[test]
     fn a_coordinate_renders_its_slice_of_its_own_tree() {
         let sources = Sources(HashMap::from([(crate::types::TreeId(3), Arc::from("let main() {}"))]));
-        let coord = NodeCoordinate::new(crate::types::TreeId(3), 0, 1, Span { start: 4, end: 8 });
-        assert_eq!(coord.handle(), encode_handle(crate::types::TreeId(3), 0));
+        let coord = NodeCoordinate::new(crate::types::TreeId(3), crate::types::NodeIndex(0), crate::types::NodeIndex(1), Span { start: 4, end: 8 });
+        assert_eq!(coord.handle(), encode_handle(crate::types::TreeId(3), crate::types::NodeIndex(0)));
         assert_eq!(coord.resolve(&sources), Ok("main"));
         let slot: SlotValue<Word> = SlotValue::Coord(coord);
         assert_eq!(rendered_with(&slot, &sources).unwrap(), "main");
@@ -443,7 +443,7 @@ mod tests {
                 w.text("let")?;
                 let slot: SlotValue<Word, true> = SlotValue::Coord(NodeCoordinate::new(
                     crate::types::TreeId(1),
-                    0, 1,
+                    crate::types::NodeIndex(0), crate::types::NodeIndex(1),
                     Span { start: 0, end: 1 },
                 ));
                 slot.render(w)
@@ -490,7 +490,7 @@ mod tests {
         let render_with = |options: &ResolvedOptions, held: u8| {
             let mut slot: SlotValue<Word> = SlotValue::Coord(NodeCoordinate::new(
                 crate::types::TreeId(1),
-                0, 1,
+                crate::types::NodeIndex(0), crate::types::NodeIndex(1),
                 Span { start: 1, end: 3 },
             ));
             slot.prepare(&RenderContext {
@@ -527,8 +527,8 @@ mod tests {
     #[test]
     fn a_coordinate_into_an_unknown_tree_is_refused_with_its_handle() {
         let sources = Sources(HashMap::new());
-        let handle = encode_handle(crate::types::TreeId(9), 2);
-        let coord = NodeCoordinate::new(crate::types::TreeId(9), 2, 3, Span { start: 0, end: 1 });
+        let handle = encode_handle(crate::types::TreeId(9), crate::types::NodeIndex(2));
+        let coord = NodeCoordinate::new(crate::types::TreeId(9), crate::types::NodeIndex(2), crate::types::NodeIndex(3), Span { start: 0, end: 1 });
         assert_eq!(
             coord.resolve(&sources),
             Err(CoordinateError::UnknownTree { handle, tree_id: crate::types::TreeId(9) })
@@ -543,12 +543,12 @@ mod tests {
             (crate::types::TreeId(1), Arc::from("é")),
             (crate::types::TreeId(2), Arc::from("short")),
         ]));
-        let off = NodeCoordinate::new(crate::types::TreeId(1), 0, 1, Span { start: 1, end: 2 });
+        let off = NodeCoordinate::new(crate::types::TreeId(1), crate::types::NodeIndex(0), crate::types::NodeIndex(1), Span { start: 1, end: 2 });
         assert!(matches!(
             off.resolve(&sources),
             Err(CoordinateError::BadSpan { .. })
         ));
-        let out = NodeCoordinate::new(crate::types::TreeId(2), 0, 1, Span { start: 2, end: 40 });
+        let out = NodeCoordinate::new(crate::types::TreeId(2), crate::types::NodeIndex(0), crate::types::NodeIndex(1), Span { start: 2, end: 40 });
         let Err(CoordinateError::BadSpan { detail, .. }) = out.resolve(&sources) else {
             panic!("expected BadSpan")
         };
@@ -559,7 +559,7 @@ mod tests {
     fn a_writer_without_sources_refuses_every_coordinate() {
         let slot: SlotValue<Word> = SlotValue::Coord(NodeCoordinate::new(
             crate::types::TreeId(1),
-            0, 1,
+            crate::types::NodeIndex(0), crate::types::NodeIndex(1),
             Span { start: 0, end: 1 },
         ));
         let mut out = String::new();
@@ -617,7 +617,7 @@ mod tests {
         assert!(!absent.kind_in(&w, &[WORD_KIND]));
         // A table of bare sources holds no tree to ask, so a coordinate is no kind.
         let coord: SlotValue<Word> =
-            SlotValue::Coord(NodeCoordinate::new(crate::types::TreeId(3), 0, 1, Span { start: 4, end: 8 }));
+            SlotValue::Coord(NodeCoordinate::new(crate::types::TreeId(3), crate::types::NodeIndex(0), crate::types::NodeIndex(1), Span { start: 4, end: 8 }));
         assert!(!coord.kind_in(&w, &[WORD_KIND]));
     }
 
@@ -659,7 +659,7 @@ mod tests {
             .with_sources(&sources);
         let coord: SlotValue<Word> = SlotValue::Coord(NodeCoordinate::new(
             crate::types::TreeId(1),
-            0, 1,
+            crate::types::NodeIndex(0), crate::types::NodeIndex(1),
             Span { start: 0, end: 3 },
         ));
         assert!(coord.transport_or_write(&mut w2).unwrap().is_none());

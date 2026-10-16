@@ -391,7 +391,7 @@ pub trait Prepare {
     /// The node at descendant `index` of `tree` read one level into this
     /// type (`read::read_coordinate`), when the type reads; `None` for a
     /// value no read produces.
-    fn read_coordinate(tree: &tree_sitter::Tree, ctx: &crate::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, crate::read::ReadError>>
+    fn read_coordinate(tree: &tree_sitter::Tree, ctx: &crate::read::ReadCtx<'_>, index: crate::types::NodeIndex) -> Option<Result<Self, crate::read::ReadError>>
     where
         Self: Sized,
     {
@@ -521,7 +521,7 @@ impl<T: Prepare> Prepare for Box<T> {
         (**self).prepare(ctx)
     }
 
-    fn read_coordinate(tree: &tree_sitter::Tree, ctx: &crate::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, crate::read::ReadError>> {
+    fn read_coordinate(tree: &tree_sitter::Tree, ctx: &crate::read::ReadCtx<'_>, index: crate::types::NodeIndex) -> Option<Result<Self, crate::read::ReadError>> {
         T::read_coordinate(tree, ctx, index).map(|read| read.map(Box::new))
     }
 
@@ -584,7 +584,7 @@ mod tests {
     };
 
     fn coordinate(start: u32, end: u32) -> NodeCoordinate {
-        NodeCoordinate::new(crate::types::TreeId(3), 0, 1, Span { start, end })
+        NodeCoordinate::new(crate::types::TreeId(3), crate::types::NodeIndex(0), crate::types::NodeIndex(1), Span { start, end })
     }
 
     fn before_flank(first: &NodeCoordinate, source: &str) -> Option<KindId> {

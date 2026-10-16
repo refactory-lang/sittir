@@ -30,7 +30,7 @@
 //! in a gap of a list slot, from the class the slot stores
 //! (`ParsedTree::deviation`, `list_slots`).
 
-use crate::types::KindId;
+use crate::types::{KindId, NodeIndex};
 use std::collections::BTreeMap;
 
 /// A side of a node that holds trivia: before its first token, after its
@@ -48,7 +48,7 @@ pub enum TriviaSide {
 pub struct Token {
     pub start: u32,
     pub end: u32,
-    pub node: u32,
+    pub node: NodeIndex,
     pub own: bool,
 }
 
@@ -75,10 +75,10 @@ pub struct Token {
 /// its last child that holds trivia, or its `inner` side when no child does.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Assigned {
-    Extra(u32),
-    Error(u32),
-    Layout { run: u32, start: u32, end: u32, owner: u32, depth: i32 },
-    Member(u32),
+    Extra(NodeIndex),
+    Error(NodeIndex),
+    Layout { run: u32, start: u32, end: u32, owner: NodeIndex, depth: i32 },
+    Member(NodeIndex),
     Depth(i32),
 }
 
@@ -138,15 +138,15 @@ const NONE: u32 = u32::MAX;
 /// nodes, each kept by its index less the walk's start.
 pub struct Walk {
     pub tokens: Vec<Token>,
-    pub entries: Vec<u32>,
+    pub entries: Vec<NodeIndex>,
     nodes: Nodes,
-    base: u32,
+    base: NodeIndex,
 }
 
 impl Walk {
     /// The bytes of the node at descendant `index`, which lies under the walk's start.
-    pub fn span(&self, index: u32) -> (u32, u32) {
-        let at = (index - self.base) as usize;
+    pub fn span(&self, index: NodeIndex) -> (u32, u32) {
+        let at = index.offset_from(self.base) as usize;
         (self.nodes.start[at], self.nodes.end[at])
     }
 }
@@ -173,7 +173,7 @@ pub fn is_empty(node: &tree_sitter::Node<'_>) -> bool {
 
 /// The walk under `node`, the node at descendant `index` of its tree. The
 /// walk's start has no edge tokens of its own: they would lie at its bounds.
-pub fn walk(node: tree_sitter::Node<'_>, index: u32, source: &str) -> Walk {
+pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk {
     let count = node.descendant_count();
     let mut nodes = Nodes {
         kind: vec![KindId::BLANK; count],
@@ -186,7 +186,7 @@ pub fn walk(node: tree_sitter::Node<'_>, index: u32, source: &str) -> Walk {
         count: vec![0; count],
     };
     let mut tokens: Vec<Token> = Vec::new();
-    let mut entries: Vec<u32> = Vec::new();
+    let mut entries: Vec<NodeIndex> = Vec::new();
     struct Frame {
         at_index: u32,
         before: usize,
@@ -200,12 +200,12 @@ pub fn walk(node: tree_sitter::Node<'_>, index: u32, source: &str) -> Walk {
             return;
         }
         let start = from + (text.len() - text.trim_start().len()) as u32;
-        tokens.push(Token { start, end: start + trimmed.len() as u32, node: owner + index, own: true });
+        tokens.push(Token { start, end: start + trimmed.len() as u32, node: index + owner, own: true });
     };
     let mut cursor = node.walk();
     loop {
         let node = cursor.node();
-        let local = cursor.descendant_index() as u32;
+        let local = crate::read::offset_of(&cursor);
         let (start, end) = (node.start_byte() as u32, node.end_byte() as u32);
         let i = local as usize;
         nodes.kind[i] = crate::read::grammar_id(&node);
@@ -224,9 +224,9 @@ pub fn walk(node: tree_sitter::Node<'_>, index: u32, source: &str) -> Walk {
             nodes.holds[nodes.parent[i] as usize] = true;
         }
         if entry {
-            entries.push(local + index);
+            entries.push(index + local);
         } else if node.child_count() == 0 {
-            tokens.push(Token { start, end, node: local + index, own: false });
+            tokens.push(Token { start, end, node: index + local, own: false });
         } else {
             frames.push(Frame { at_index: local, before: tokens.len(), at: start });
             cursor.goto_first_child();
@@ -251,10 +251,10 @@ pub fn walk(node: tree_sitter::Node<'_>, index: u32, source: &str) -> Walk {
                 let first = own.iter().map(|token| token.start).min();
                 let last = own.iter().map(|token| token.end).max();
                 if first.is_some_and(|first| start < first) {
-                    tokens.push(Token { start, end: start, node: frame.at_index + index, own: true });
+                    tokens.push(Token { start, end: start, node: index + frame.at_index, own: true });
                 }
                 if last.is_some_and(|last| end > last) {
-                    tokens.push(Token { start: end, end, node: frame.at_index + index, own: true });
+                    tokens.push(Token { start: end, end, node: index + frame.at_index, own: true });
                 }
             }
             if let Some(parent) = frames.last_mut() {
@@ -266,9 +266,9 @@ pub fn walk(node: tree_sitter::Node<'_>, index: u32, source: &str) -> Walk {
 
 /// The tokens under the node at `index` of `tree`, in source order
 /// (`TriviaTable`'s walk, from that node).
-pub fn tokens(tree: &tree_sitter::Tree, source: &str, index: u32) -> Vec<Token> {
+pub fn tokens(tree: &tree_sitter::Tree, source: &str, index: NodeIndex) -> Vec<Token> {
     let mut cursor = tree.walk();
-    cursor.goto_descendant(index as usize);
+    crate::read::goto(&mut cursor, index);
     walk(cursor.node(), index, source).tokens
 }
 
@@ -363,7 +363,7 @@ impl Nodes {
 /// Where the assignment puts an entry of a gap.
 #[derive(Clone, Copy)]
 enum Place {
-    Side(u32, TriviaSide),
+    Side(NodeIndex, TriviaSide),
     Unowned,
 }
 
@@ -380,17 +380,17 @@ enum Place {
 pub struct LayoutRun {
     pub start: u32,
     pub end: u32,
-    pub node: u32,
+    pub node: NodeIndex,
     pub side: TriviaSide,
-    pub owner: u32,
+    pub owner: NodeIndex,
     pub carries: bool,
 }
 
 /// The trivia of a parsed tree, assigned once to its nodes' sides.
 #[derive(Debug, Default)]
 pub struct TriviaTable {
-    sides: BTreeMap<(u32, TriviaSide), Vec<Assigned>>,
-    unowned: Vec<u32>,
+    sides: BTreeMap<(NodeIndex, TriviaSide), Vec<Assigned>>,
+    unowned: Vec<NodeIndex>,
     runs: Vec<LayoutRun>,
 }
 
@@ -398,38 +398,40 @@ impl TriviaTable {
     /// The table of `tree`, parsed from `source`, whose grammar's surface
     /// kinds are `kinds` and whose indentation level is `unit` spaces wide.
     pub fn assign(tree: &tree_sitter::Tree, source: &str, kinds: SurfaceKinds, unit: u32) -> Self {
-        let Walk { tokens, entries, nodes, .. } = walk(tree.root_node(), 0, source);
+        let Walk { tokens, entries, nodes, base } = walk(tree.root_node(), NodeIndex::ROOT, source);
+        let local = |index: NodeIndex| index.offset_from(base);
+        let global = |at: u32| base + at;
         let lines = crate::points::LineTable::new(source);
         let row = |byte: u32| lines.point(byte as usize).map_or(0, |point| point.row);
         let mut table = TriviaTable::default();
-        let mut structure = Structure::new(tree, source, kinds.depth, &tokens, unit);
+        let mut structure = Structure::new(tree, source, base, kinds.depth, &tokens, unit);
         let mut excess = Excess::default();
         let owner_of = |left: Option<&Token>, right: Option<&Token>| match (left, right) {
-            (Some(left), Some(right)) => nodes.common(left.node, right.node),
+            (Some(left), Some(right)) => nodes.common(local(left.node), local(right.node)),
             _ => 0,
         };
         let place = |left: Option<&Token>, right: Option<&Token>, starts_on_left_row: bool, through: Option<SurfaceKinds>| -> Place {
             let owner = owner_of(left, right);
             if !nodes.holds[owner as usize] {
-                return Place::Side(owner, TriviaSide::Inner);
+                return Place::Side(global(owner), TriviaSide::Inner);
             }
-            let before = left.and_then(|left| nodes.side_holder(owner, left.node, through, |child| nodes.end[child as usize] == left.end));
-            let after = right.and_then(|right| nodes.side_holder(owner, right.node, through, |child| nodes.start[child as usize] == right.start));
+            let before = left.and_then(|left| nodes.side_holder(owner, local(left.node), through, |child| nodes.end[child as usize] == left.end));
+            let after = right.and_then(|right| nodes.side_holder(owner, local(right.node), through, |child| nodes.start[child as usize] == right.start));
             match (before, after) {
                 (None, None) => match through {
                     Some(kinds) => {
                         let (node, side) = nodes.nearest_side(owner, left.map_or(0, |left| left.end), right.map_or(u32::MAX, |right| right.start), kinds);
-                        Place::Side(node, side)
+                        Place::Side(global(node), side)
                     }
                     None => Place::Unowned,
                 },
-                (Some(before), None) => Place::Side(before, TriviaSide::Trailing),
-                (None, Some(after)) => Place::Side(after, TriviaSide::Leading),
+                (Some(before), None) => Place::Side(global(before), TriviaSide::Trailing),
+                (None, Some(after)) => Place::Side(global(after), TriviaSide::Leading),
                 (Some(before), Some(after)) => {
                     if starts_on_left_row {
-                        Place::Side(before, TriviaSide::Trailing)
+                        Place::Side(global(before), TriviaSide::Trailing)
                     } else {
-                        Place::Side(after, TriviaSide::Leading)
+                        Place::Side(global(after), TriviaSide::Leading)
                     }
                 }
             }
@@ -445,17 +447,20 @@ impl TriviaTable {
             excess.close_until(from, &mut table);
             let mut at = from;
             let mut led = None;
-            let mut run = |at: u32, until: u32, led: Option<u32>, table: &mut TriviaTable, excess: &mut Excess| {
+            let mut run = |at: u32, until: u32, led: Option<NodeIndex>, table: &mut TriviaTable, excess: &mut Excess| {
                 let Some(text) = source.get(at as usize..until as usize) else { return };
                 let place = led.map_or_else(|| place(left, right, false, None), |node| Place::Side(node, TriviaSide::Leading));
                 let owner = match place {
-                    Place::Side(node, TriviaSide::Inner) => node,
+                    Place::Side(node, TriviaSide::Inner) => local(node),
                     Place::Side(_, _) | Place::Unowned => owner_of(left, right),
                 };
                 let edge = at == 0 || until as usize == source.len();
                 let depth = if text.contains('\n') {
-                    let reach = structure.excess(&nodes, right.map_or(0, |right| right.node), until, text.rsplit('\n').next().unwrap_or_default());
-                    excess.change(owner, nodes.end[owner as usize], reach, || nodes.restore_side(owner, kinds))
+                    let reach = structure.excess(&nodes, right.map_or(0, |right| local(right.node)), until, text.rsplit('\n').next().unwrap_or_default());
+                    excess.change(owner, nodes.end[owner as usize], reach, || {
+                        let (node, side) = nodes.restore_side(owner, kinds);
+                        (global(node), side)
+                    })
                 } else {
                     0
                 };
@@ -463,22 +468,22 @@ impl TriviaTable {
                     Place::Side(node, side) if !edge => {
                         let joined = at == from && left.is_some_and(|left| left.start == left.end) && table.runs.last().is_some_and(|run| run.end == at);
                         let run = table.runs.len() as u32;
-                        table.runs.push(LayoutRun { start: at, end: until, node, side, owner, carries: true });
+                        table.runs.push(LayoutRun { start: at, end: until, node, side, owner: global(owner), carries: true });
                         parted.placed(&mut table.runs, joined);
-                        table.push(place, Assigned::Layout { run, start: at, end: until, owner, depth });
+                        table.push(place, Assigned::Layout { run, start: at, end: until, owner: global(owner), depth });
                     }
                     _ if depth != 0 => table.push(place, Assigned::Depth(depth)),
                     _ => {}
                 }
             };
             while let Some(&&index) = next.peek() {
-                let (start, end) = (nodes.start[index as usize], nodes.end[index as usize]);
+                let (start, end) = (nodes.start[local(index) as usize], nodes.end[local(index) as usize]);
                 if start >= to && !(start == to && right.is_some_and(|right| right.start == right.end && right.start == start && start < end)) {
                     break;
                 }
                 next.next();
                 run(at, start, led, &mut table, &mut excess);
-                if kinds.layout.contains(&nodes.kind[index as usize]) {
+                if kinds.layout.contains(&nodes.kind[local(index) as usize]) {
                     table.push(place(left, right, false, None), Assigned::Member(index));
                 } else {
                     let entry = if is_error_index(tree, index) { Assigned::Error(index) } else { Assigned::Extra(index) };
@@ -510,13 +515,13 @@ impl TriviaTable {
     }
 
     /// The entries the assignment gives `side` of the node at `index`, in source order.
-    pub fn side(&self, index: u32, side: TriviaSide) -> &[Assigned] {
+    pub fn side(&self, index: NodeIndex, side: TriviaSide) -> &[Assigned] {
         self.sides.get(&(index, side)).map_or(&[], Vec::as_slice)
     }
 
     /// The layout members no side takes: between two of their owner's own
     /// tokens, with no named child beside them.
-    pub fn unowned(&self) -> &[u32] {
+    pub fn unowned(&self) -> &[NodeIndex] {
         &self.unowned
     }
 
@@ -570,6 +575,7 @@ impl Parted {
 struct Structure<'t> {
     tree: &'t tree_sitter::Tree,
     source: &'t str,
+    base: NodeIndex,
     regions: &'static [DepthRegion],
     tokens: &'t [Token],
     unit: u32,
@@ -577,8 +583,8 @@ struct Structure<'t> {
 }
 
 impl<'t> Structure<'t> {
-    fn new(tree: &'t tree_sitter::Tree, source: &'t str, regions: &'static [DepthRegion], tokens: &'t [Token], unit: u32) -> Self {
-        Self { tree, source, regions, tokens, unit: unit.max(1), spans: std::collections::HashMap::new() }
+    fn new(tree: &'t tree_sitter::Tree, source: &'t str, base: NodeIndex, regions: &'static [DepthRegion], tokens: &'t [Token], unit: u32) -> Self {
+        Self { tree, source, base, regions, tokens, unit: unit.max(1), spans: std::collections::HashMap::new() }
     }
 
     /// The width of `indentation`: its spaces, and `unit` per tab.
@@ -629,10 +635,10 @@ impl<'t> Structure<'t> {
     /// the start of the literal child). A region whose literal the node
     /// lacks indents nothing.
     fn spans_of(&mut self, index: u32) -> &[(u32, u32)] {
-        let (tree, source, regions) = (self.tree, self.source, self.regions);
+        let (tree, source, base, regions) = (self.tree, self.source, self.base, self.regions);
         self.spans.entry(index).or_insert_with(|| {
             let mut cursor = tree.walk();
-            cursor.goto_descendant(index as usize);
+            crate::read::goto(&mut cursor, base + index);
             let node = cursor.node();
             let literals: Vec<(u32, u32, &str)> = {
                 let mut children = node.walk();
@@ -676,13 +682,13 @@ struct OpenOwner {
     owner: u32,
     end: u32,
     restore: i32,
-    side: (u32, TriviaSide),
+    side: (NodeIndex, TriviaSide),
 }
 
 impl Excess {
     /// A run of `owner` (ending at `end`) at `excess`: the change from the
     /// running excess, which the owner restores at its end.
-    fn change(&mut self, owner: u32, end: u32, excess: i32, side: impl FnOnce() -> (u32, TriviaSide)) -> i32 {
+    fn change(&mut self, owner: u32, end: u32, excess: i32, side: impl FnOnce() -> (NodeIndex, TriviaSide)) -> i32 {
         let depth = excess - self.current;
         if depth != 0 && self.open.last().is_none_or(|open| open.owner != owner) {
             self.open.push(OpenOwner { owner, end, restore: self.current, side: side() });
@@ -703,8 +709,8 @@ impl Excess {
     }
 }
 
-fn is_error_index(tree: &tree_sitter::Tree, index: u32) -> bool {
+fn is_error_index(tree: &tree_sitter::Tree, index: NodeIndex) -> bool {
     let mut cursor = tree.walk();
-    cursor.goto_descendant(index as usize);
+    crate::read::goto(&mut cursor, index);
     cursor.node().is_error()
 }

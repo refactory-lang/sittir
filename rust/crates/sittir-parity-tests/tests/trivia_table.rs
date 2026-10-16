@@ -2,6 +2,8 @@
 //! owner's child beside the gap, held to tree-sitter's trees in three grammars.
 
 use sittir_core::trivia_table::{is_empty, Assigned, SurfaceKinds, TriviaSide, TriviaTable};
+use sittir_core::read::goto;
+use sittir_core::types::NodeIndex;
 use tree_sitter::{Language, Node, Parser, Tree};
 
 fn parse(language: &Language, source: &str) -> Tree {
@@ -11,12 +13,12 @@ fn parse(language: &Language, source: &str) -> Tree {
 }
 
 /// The descendant index of the first node, in pre-order, of `kind` whose text is `text`.
-fn index_of(tree: &Tree, source: &str, kind: &str, text: &str) -> u32 {
+fn index_of(tree: &Tree, source: &str, kind: &str, text: &str) -> NodeIndex {
     let mut cursor = tree.walk();
     loop {
         let node: Node<'_> = cursor.node();
         if node.kind() == kind && &source[node.byte_range()] == text {
-            return cursor.descendant_index() as u32;
+            return sittir_core::read::index_of(&cursor);
         }
         if cursor.goto_first_child() {
             continue;
@@ -43,12 +45,12 @@ impl Case {
         Case { tree, source, table }
     }
 
-    fn at(&self, kind: &str, text: &str) -> u32 {
+    fn at(&self, kind: &str, text: &str) -> NodeIndex {
         index_of(&self.tree, self.source, kind, text)
     }
 
     /// The extras and `ERROR`s of `side` of the node at `index`, without its layout runs.
-    fn entries(&self, index: u32, side: TriviaSide) -> Vec<Assigned> {
+    fn entries(&self, index: NodeIndex, side: TriviaSide) -> Vec<Assigned> {
         self.table.side(index, side).iter().copied().filter(|entry| !matches!(entry, Assigned::Layout { .. } | Assigned::Depth(_))).collect()
     }
 
@@ -59,9 +61,9 @@ impl Case {
     }
 
     /// The layout runs holding a line break of every side, as source text.
-    fn layout(&self) -> Vec<(u32, TriviaSide, &str)> {
+    fn layout(&self) -> Vec<(NodeIndex, TriviaSide, &str)> {
         let mut runs = Vec::new();
-        for index in 0..self.tree.root_node().descendant_count() as u32 {
+        for index in (0..self.tree.root_node().descendant_count() as u32).map(NodeIndex::new) {
             for side in [Leading, Trailing, Inner] {
                 for entry in self.table.side(index, side) {
                     if let Assigned::Layout { start, end, .. } = *entry {
@@ -102,9 +104,9 @@ fn a_comment_before_the_first_item_leads_it_and_one_after_the_last_trails_it() {
 #[test]
 fn a_source_of_comments_only_is_the_roots_inner() {
     let case = Case::new(rust(), "\n\n// only\n\n");
-    assert_eq!(case.entries(0, Inner), [Assigned::Extra(case.at("line_comment", "// only"))]);
+    assert_eq!(case.entries(NodeIndex::ROOT, Inner), [Assigned::Extra(case.at("line_comment", "// only"))]);
     let case = Case::new(python(), "\n# only\n");
-    assert_eq!(case.entries(0, Inner), [Assigned::Extra(case.at("comment", "# only"))]);
+    assert_eq!(case.entries(NodeIndex::ROOT, Inner), [Assigned::Extra(case.at("comment", "# only"))]);
 }
 
 #[test]
@@ -147,7 +149,7 @@ fn a_comment_on_a_statements_line_trails_the_statement_not_the_call() {
 fn python_newline_text_is_layout_and_never_an_entry() {
     let case = Case::new(python(), "x = 1  # c\ny = 2\n");
     case.holds("expression_statement", "x = 1", Trailing, "comment", "# c");
-    assert!(matches!(case.table.side(case.at("simple_statements", "y = 2"), Leading), [Assigned::Layout { start: 10, end: 11, owner: 0, depth: 0, .. }]));
+    assert!(matches!(case.table.side(case.at("simple_statements", "y = 2"), Leading), [Assigned::Layout { start: 10, end: 11, owner: NodeIndex::ROOT, depth: 0, .. }]));
 }
 
 #[test]
@@ -207,7 +209,7 @@ fn the_outer_node_takes_the_side() {
 fn a_line_break_run_is_layout_on_the_side_its_gap_goes_to() {
     let case = Case::new(rust(), "fn f() {}\n\nfn g() {}\n");
     let g = case.at("function_item", "fn g() {}");
-    assert!(matches!(case.table.side(g, Leading), [Assigned::Layout { start: 9, end: 11, owner: 0, depth: 0, .. }]));
+    assert!(matches!(case.table.side(g, Leading), [Assigned::Layout { start: 9, end: 11, owner: NodeIndex::ROOT, depth: 0, .. }]));
 }
 
 #[test]
@@ -222,8 +224,8 @@ fn every_extra_of_the_probe_inputs_lands_in_one_side() {
         let path = format!("{}/../../../docs/superpowers/probes/2026-10-01-shared-arena/transport/inputs/{name}", env!("CARGO_MANIFEST_DIR"));
         let source: &'static str = Box::leak(std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("{path}: {e}")).into_boxed_str());
         let case = Case::new(rust(), source);
-        let mut placed: Vec<u32> = case.table.unowned().to_vec();
-        for index in 0..case.tree.root_node().descendant_count() as u32 {
+        let mut placed: Vec<NodeIndex> = case.table.unowned().to_vec();
+        for index in (0..case.tree.root_node().descendant_count() as u32).map(NodeIndex::new) {
             for side in [Leading, Trailing, Inner] {
                 placed.extend(case.entries(index, side).into_iter().map(|entry| match entry {
                     Assigned::Extra(at) | Assigned::Error(at) | Assigned::Member(at) => at,
@@ -234,10 +236,10 @@ fn every_extra_of_the_probe_inputs_lands_in_one_side() {
         placed.sort_unstable();
         let mut extras = Vec::new();
         let mut cursor = case.tree.walk();
-        for index in 0..case.tree.root_node().descendant_count() {
-            cursor.goto_descendant(index);
+        for index in (0..case.tree.root_node().descendant_count() as u32).map(NodeIndex::new) {
+            goto(&mut cursor, index);
             if cursor.node().is_extra() || cursor.node().is_error() {
-                extras.push(index as u32);
+                extras.push(index);
             }
         }
         assert!(!extras.is_empty(), "{name} has comments");
@@ -257,7 +259,7 @@ fn a_node_is_empty_when_no_child_has_width() {
     for (source, block, empty) in [("function f() {\n}\n", "{\n}", true), ("function f() {\n  ;\n}\n", "{\n  ;\n}", false)] {
         let case = Case::new(typescript(), source);
         let mut cursor = case.tree.walk();
-        cursor.goto_descendant(case.at("statement_block", block) as usize);
+        goto(&mut cursor, case.at("statement_block", block));
         assert_eq!(is_empty(&cursor.node()), empty, "{source:?}");
     }
 }
@@ -275,7 +277,7 @@ fn the_run_between_a_leading_entry_and_its_owner_is_on_the_entrys_side() {
 
 impl Case {
     /// The depth members of `side` of the node at `index`: each line break run's, then each restore's, in order.
-    fn depths(&self, index: u32, side: TriviaSide) -> Vec<i32> {
+    fn depths(&self, index: NodeIndex, side: TriviaSide) -> Vec<i32> {
         self.table
             .side(index, side)
             .iter()
@@ -306,10 +308,11 @@ fn a_python_continuation_one_level_in_carries_one_indent() {
 #[test]
 fn a_paren_aligned_continuation_normalizes_to_whole_levels() {
     let case = Case::new(python(), "x = foo(1,\n        2)\nyy = foo(1,\n          2)\n");
-    let twos: Vec<u32> = (0..case.tree.root_node().descendant_count() as u32)
+    let twos: Vec<NodeIndex> = (0..case.tree.root_node().descendant_count() as u32)
+        .map(NodeIndex::new)
         .filter(|&at| {
             let mut cursor = case.tree.walk();
-            cursor.goto_descendant(at as usize);
+            goto(&mut cursor, at);
             cursor.node().kind() == "integer_decimal_plain" && cursor.node().utf8_text(case.source.as_bytes()).ok() == Some("2")
         })
         .collect();
@@ -351,6 +354,7 @@ fn a_block_body_is_structural_and_carries_no_depth_members() {
 fn a_body_indented_by_any_width_is_structural() {
     let case = Case::new(python(), "if a:\n  if b:\n     c\n");
     let runs: Vec<i32> = (0..case.tree.root_node().descendant_count() as u32)
+        .map(NodeIndex::new)
         .flat_map(|at| [Leading, Trailing, Inner].map(|side| case.depths(at, side)))
         .flatten()
         .collect();

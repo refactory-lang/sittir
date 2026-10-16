@@ -54,7 +54,7 @@ fn a_coordinate_is_checked_against_its_tree_and_an_unset_site_takes_the_table() 
         items: vec![
             SlotValue::Coord(NodeCoordinate::new(
                 sittir_core::types::TreeId(7),
-                0, 1,
+                sittir_core::types::NodeIndex(0), sittir_core::types::NodeIndex(1),
                 Span { start: 3, end: 4 },
             )),
             SlotValue::Transport(Leaf),
@@ -83,9 +83,9 @@ fn a_set_site_keeps_its_wire_value() {
 fn a_coordinate_into_an_unknown_tree_fails_the_walk_with_its_handle() {
     let options = ResolvedOptions::default();
     let sources = Sources(HashMap::new());
-    let handle = encode_handle(sittir_core::types::TreeId(9), 2);
+    let handle = encode_handle(sittir_core::types::TreeId(9), sittir_core::types::NodeIndex(2));
     let mut slot: SlotValue<Leaf> =
-        SlotValue::Coord(NodeCoordinate::new(sittir_core::types::TreeId(9), 2, 3, Span { start: 0, end: 1 }));
+        SlotValue::Coord(NodeCoordinate::new(sittir_core::types::TreeId(9), sittir_core::types::NodeIndex(2), sittir_core::types::NodeIndex(3), Span { start: 0, end: 1 }));
     assert_eq!(
         slot.prepare(&ctx(&options, &sources)),
         Err(CoordinateError::UnknownTree { handle, tree_id: sittir_core::types::TreeId(9) })
@@ -96,9 +96,9 @@ fn a_coordinate_into_an_unknown_tree_fails_the_walk_with_its_handle() {
 fn a_span_outside_its_tree_fails_the_walk() {
     let options = ResolvedOptions::default();
     let sources = Sources(HashMap::from([(sittir_core::types::TreeId(1), Arc::from("ab"))]));
-    let handle = encode_handle(sittir_core::types::TreeId(1), 0);
+    let handle = encode_handle(sittir_core::types::TreeId(1), sittir_core::types::NodeIndex(0));
     let mut slot: SlotValue<Leaf> =
-        SlotValue::Coord(NodeCoordinate::new(sittir_core::types::TreeId(1), 0, 1, Span { start: 0, end: 5 }));
+        SlotValue::Coord(NodeCoordinate::new(sittir_core::types::TreeId(1), sittir_core::types::NodeIndex(0), sittir_core::types::NodeIndex(1), Span { start: 0, end: 5 }));
     assert!(matches!(
         slot.prepare(&ctx(&options, &sources)),
         Err(CoordinateError::BadSpan { handle: h, .. }) if h == handle
@@ -112,8 +112,8 @@ fn a_nested_container_is_walked_to_the_bottom() {
         ..ResolvedOptions::default()
     };
     let sources = Sources(HashMap::new());
-    let handle = encode_handle(sittir_core::types::TreeId(4), 1);
-    let mut nested: Option<Box<Vec<SlotValue<Leaf>>>> = Some(Box::new(vec![SlotValue::Coord(NodeCoordinate::new(sittir_core::types::TreeId(4), 1, 2, Span { start: 0, end: 1 }))]));
+    let handle = encode_handle(sittir_core::types::TreeId(4), sittir_core::types::NodeIndex(1));
+    let mut nested: Option<Box<Vec<SlotValue<Leaf>>>> = Some(Box::new(vec![SlotValue::Coord(NodeCoordinate::new(sittir_core::types::TreeId(4), sittir_core::types::NodeIndex(1), sittir_core::types::NodeIndex(2), Span { start: 0, end: 1 }))]));
     assert_eq!(
         nested.prepare(&ctx(&options, &sources)),
         Err(CoordinateError::UnknownTree { handle, tree_id: sittir_core::types::TreeId(4) })
@@ -402,7 +402,7 @@ impl Prepare for Seatable {
 }
 
 fn parsed(kind: u16, start: u32, end: u32) -> Option<SlotValue<Seatable>> {
-    let mut coord = NodeCoordinate::new(sittir_core::types::TreeId(7), 0, 1, Span { start, end });
+    let mut coord = NodeCoordinate::new(sittir_core::types::TreeId(7), sittir_core::types::NodeIndex(0), sittir_core::types::NodeIndex(1), Span { start, end });
     coord.kind = Some(KindId(kind));
     Some(SlotValue::Coord(coord))
 }
@@ -444,7 +444,7 @@ fn a_coordinate_whose_gap_its_slot_already_filled_keeps_it() {
     let table: &[Option<SiteId>] = &[None, None, None, Some(SiteId(0))];
     let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
     let sources = source_tree();
-    let mut first = NodeCoordinate::new(sittir_core::types::TreeId(7), 0, 1, Span { start: 0, end: 6 });
+    let mut first = NodeCoordinate::new(sittir_core::types::TreeId(7), sittir_core::types::NodeIndex(0), sittir_core::types::NodeIndex(1), Span { start: 0, end: 6 });
     first.kind = Some(KindId(3));
     first.edges = Some(sittir_core::slot::CoordinateEdges { before: None, after: Some(SeamArm { arm: KindId(9), strength: sittir_core::spacing::SEAM_SLOT, dedent: false }) });
     let mut items = [Some(SlotValue::Coord(first)), parsed(3, 8, 17)];
