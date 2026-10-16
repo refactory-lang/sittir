@@ -11016,9 +11016,13 @@ Prints one `SlotSetter` as its `$with` type member: a rest signature when the se
 
 What one slot's `$with` setter takes, as parts. Every multi-valued slot takes rest arguments (`restSetterType`); any other slot takes one value, typed through `setterElemType`. The factory `$with`, the form `$with` and the wrap `$with` all ask this one derivation whether a setter is rest, so a list setter has the same call shape in every grammar and on parsed and built nodes alike.
 
+### `packages/codegen/src/emitters/factories.ts::withHoles`
+
+A list slot's setter element type, widened with `undefined` when the slot's positions may be individually blank (array elision, `[a, , b]`). The reader returns a hole as `undefined`, so a setter that takes the read items back must admit it; a slot that cannot be blank keeps its element type. Both setter derivations of a multi-valued slot (the config-typed rest setter and the spread-list setter) go through it, so the two spell a hole alike.
+
 ### `packages/codegen/src/emitters/factories.ts::restSetterType`
 
-The rest-parameter type of a multi-valued slot's setter, or nothing for a slot that holds one value. The element is the slot's construction element type when its storage is verbatim, and the element of the config field's array otherwise (a list that mixes nodes with terminal tokens, such as statements with `;`, stores a projected form, so its element type is read off the config). A non-empty slot takes `NonEmptyArray`. The emitted setter passes its arguments through `restItems`, which refuses one array given in place of the items: without that, a rest setter called with an array would store a nested array and fail later, in the native transport, with a message that names no slot.
+The rest-parameter type of a multi-valued slot's setter, or nothing for a slot that holds one value. The element is the slot's construction element type when its storage is verbatim, and the element of the config field's array otherwise (a list that mixes nodes with terminal tokens, such as statements with `;`, stores a projected form, so its element type is read off the config). A slot whose positions may be blank (array elision) widens the element through `withHoles`. A non-empty slot takes `NonEmptyArray`. The emitted setter passes its arguments through `restItems`, which refuses one array given in place of the items: without that, a rest setter called with an array would store a nested array and fail later, in the native transport, with a message that names no slot.
 
 ### `packages/codegen/src/emitters/factories.ts::SlotSetter`
 

@@ -626,7 +626,7 @@ export interface Alternation {
 	readonly $type: TSKindId.Alternation;
 	readonly _terms: NonEmptyArray<Term | undefined>;
 	readonly __slotHints__?: {
-		readonly terms: SlotHint<NonEmptyArray<T.Term>, false, true>;
+		readonly terms: SlotHint<NonEmptyArray<T.Term | undefined>, false, true>;
 	};
 	readonly terms: () => NonEmptyArray<Term | undefined>;
 }
