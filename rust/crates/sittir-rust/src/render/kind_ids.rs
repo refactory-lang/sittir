@@ -60,70 +60,70 @@ pub const DOT_DOT_DOT: KindId = KindId(49);
 pub const SQUOTE: KindId = KindId(50);
 pub const DEFAULT_KEYWORD: KindId = KindId(51);
 pub const GEN_KEYWORD: KindId = KindId(52);
-pub const LT2: KindId = KindId(53);
-pub const AMP: KindId = KindId(54);
-pub const IMPL_KEYWORD: KindId = KindId(55);
-pub const DYN_KEYWORD: KindId = KindId(56);
-pub const MUTABLE_SPECIFIER: KindId = KindId(57);
-pub const U8_KEYWORD: KindId = KindId(58);
-pub const I8_KEYWORD: KindId = KindId(59);
-pub const U16_KEYWORD: KindId = KindId(60);
-pub const I16_KEYWORD: KindId = KindId(61);
-pub const U32_KEYWORD: KindId = KindId(62);
-pub const I32_KEYWORD: KindId = KindId(63);
-pub const U64_KEYWORD: KindId = KindId(64);
-pub const I64_KEYWORD: KindId = KindId(65);
-pub const U128_KEYWORD: KindId = KindId(66);
-pub const I128_KEYWORD: KindId = KindId(67);
-pub const ISIZE_KEYWORD: KindId = KindId(68);
-pub const USIZE_KEYWORD: KindId = KindId(69);
-pub const F32_KEYWORD: KindId = KindId(70);
-pub const F64_KEYWORD: KindId = KindId(71);
-pub const BOOL_KEYWORD: KindId = KindId(72);
-pub const STR_KEYWORD: KindId = KindId(73);
-pub const CHAR_KEYWORD: KindId = KindId(74);
-pub const DASH: KindId = KindId(75);
-pub const AMP_AMP: KindId = KindId(76);
-pub const PIPE_PIPE: KindId = KindId(77);
-pub const PIPE: KindId = KindId(78);
-pub const CARET: KindId = KindId(79);
-pub const EQ_EQ: KindId = KindId(80);
-pub const BANG_EQ: KindId = KindId(81);
-pub const LT_EQ: KindId = KindId(82);
-pub const GT_EQ: KindId = KindId(83);
-pub const LT_LT: KindId = KindId(84);
-pub const GT_GT: KindId = KindId(85);
-pub const SLASH: KindId = KindId(86);
-pub const PERCENT: KindId = KindId(87);
-pub const PLUS_EQ: KindId = KindId(88);
-pub const DASH_EQ: KindId = KindId(89);
-pub const STAR_EQ: KindId = KindId(90);
-pub const SLASH_EQ: KindId = KindId(91);
-pub const PERCENT_EQ: KindId = KindId(92);
-pub const AMP_EQ: KindId = KindId(93);
-pub const PIPE_EQ: KindId = KindId(94);
-pub const CARET_EQ: KindId = KindId(95);
-pub const LT_LT_EQ: KindId = KindId(96);
-pub const GT_GT_EQ: KindId = KindId(97);
-pub const RETURN_KEYWORD: KindId = KindId(98);
-pub const YIELD_KEYWORD: KindId = KindId(99);
-pub const DOT_DOT: KindId = KindId(100);
-pub const IF_KEYWORD: KindId = KindId(101);
-pub const ELSE_KEYWORD: KindId = KindId(102);
-pub const MATCH_KEYWORD: KindId = KindId(103);
-pub const WHILE_KEYWORD: KindId = KindId(104);
-pub const LOOP_KEYWORD: KindId = KindId(105);
-pub const IN_KEYWORD: KindId = KindId(106);
-pub const BREAK_KEYWORD: KindId = KindId(107);
-pub const CONTINUE_KEYWORD: KindId = KindId(108);
-pub const DOT: KindId = KindId(109);
-pub const AWAIT_KEYWORD: KindId = KindId(110);
-pub const UNSAFE_KEYWORD: KindId = KindId(111);
-pub const ASYNC_KEYWORD: KindId = KindId(112);
-pub const TRY_KEYWORD: KindId = KindId(113);
-pub const REF_KEYWORD: KindId = KindId(114);
-pub const AT: KindId = KindId(115);
-pub const DQUOTE: KindId = KindId(116);
+pub const RAW_KEYWORD: KindId = KindId(53);
+pub const LT2: KindId = KindId(54);
+pub const AMP: KindId = KindId(55);
+pub const IMPL_KEYWORD: KindId = KindId(56);
+pub const DYN_KEYWORD: KindId = KindId(57);
+pub const MUTABLE_SPECIFIER: KindId = KindId(58);
+pub const U8_KEYWORD: KindId = KindId(59);
+pub const I8_KEYWORD: KindId = KindId(60);
+pub const U16_KEYWORD: KindId = KindId(61);
+pub const I16_KEYWORD: KindId = KindId(62);
+pub const U32_KEYWORD: KindId = KindId(63);
+pub const I32_KEYWORD: KindId = KindId(64);
+pub const U64_KEYWORD: KindId = KindId(65);
+pub const I64_KEYWORD: KindId = KindId(66);
+pub const U128_KEYWORD: KindId = KindId(67);
+pub const I128_KEYWORD: KindId = KindId(68);
+pub const ISIZE_KEYWORD: KindId = KindId(69);
+pub const USIZE_KEYWORD: KindId = KindId(70);
+pub const F32_KEYWORD: KindId = KindId(71);
+pub const F64_KEYWORD: KindId = KindId(72);
+pub const BOOL_KEYWORD: KindId = KindId(73);
+pub const STR_KEYWORD: KindId = KindId(74);
+pub const CHAR_KEYWORD: KindId = KindId(75);
+pub const DASH: KindId = KindId(76);
+pub const AMP_AMP: KindId = KindId(77);
+pub const PIPE_PIPE: KindId = KindId(78);
+pub const PIPE: KindId = KindId(79);
+pub const CARET: KindId = KindId(80);
+pub const EQ_EQ: KindId = KindId(81);
+pub const BANG_EQ: KindId = KindId(82);
+pub const LT_EQ: KindId = KindId(83);
+pub const GT_EQ: KindId = KindId(84);
+pub const LT_LT: KindId = KindId(85);
+pub const GT_GT: KindId = KindId(86);
+pub const SLASH: KindId = KindId(87);
+pub const PERCENT: KindId = KindId(88);
+pub const PLUS_EQ: KindId = KindId(89);
+pub const DASH_EQ: KindId = KindId(90);
+pub const STAR_EQ: KindId = KindId(91);
+pub const SLASH_EQ: KindId = KindId(92);
+pub const PERCENT_EQ: KindId = KindId(93);
+pub const AMP_EQ: KindId = KindId(94);
+pub const PIPE_EQ: KindId = KindId(95);
+pub const CARET_EQ: KindId = KindId(96);
+pub const LT_LT_EQ: KindId = KindId(97);
+pub const GT_GT_EQ: KindId = KindId(98);
+pub const RETURN_KEYWORD: KindId = KindId(99);
+pub const YIELD_KEYWORD: KindId = KindId(100);
+pub const DOT_DOT: KindId = KindId(101);
+pub const IF_KEYWORD: KindId = KindId(102);
+pub const ELSE_KEYWORD: KindId = KindId(103);
+pub const MATCH_KEYWORD: KindId = KindId(104);
+pub const WHILE_KEYWORD: KindId = KindId(105);
+pub const LOOP_KEYWORD: KindId = KindId(106);
+pub const IN_KEYWORD: KindId = KindId(107);
+pub const BREAK_KEYWORD: KindId = KindId(108);
+pub const CONTINUE_KEYWORD: KindId = KindId(109);
+pub const DOT: KindId = KindId(110);
+pub const AWAIT_KEYWORD: KindId = KindId(111);
+pub const UNSAFE_KEYWORD: KindId = KindId(112);
+pub const ASYNC_KEYWORD: KindId = KindId(113);
+pub const TRY_KEYWORD: KindId = KindId(114);
+pub const REF_KEYWORD: KindId = KindId(115);
+pub const AT: KindId = KindId(116);
 pub const TRUE_KEYWORD: KindId = KindId(117);
 pub const FALSE_KEYWORD: KindId = KindId(118);
 pub const SLASH_SLASH: KindId = KindId(119);
@@ -162,10 +162,10 @@ pub const ESCAPE_SEQUENCE_SIMPLE: KindId = KindId(151);
 pub const ESCAPE_SEQUENCE_UNICODE_FIXED: KindId = KindId(152);
 pub const ESCAPE_SEQUENCE_UNICODE_BRACED: KindId = KindId(153);
 pub const ESCAPE_SEQUENCE_HEX: KindId = KindId(154);
-pub const RAW_KEYWORD: KindId = KindId(155);
-pub const LINE_COMMENT_REGULAR: KindId = KindId(156);
-pub const MACRO_RULES_BANG: KindId = KindId(157);
-pub const STRING_CONTENT: KindId = KindId(158);
+pub const LINE_COMMENT_REGULAR: KindId = KindId(155);
+pub const MACRO_RULES_BANG: KindId = KindId(156);
+pub const STRING_CONTENT: KindId = KindId(157);
+pub const STRING_CLOSE: KindId = KindId(158);
 pub const _RAW_STRING_LITERAL_START: KindId = KindId(159);
 pub const RAW_STRING_LITERAL_CONTENT: KindId = KindId(160);
 pub const _RAW_STRING_LITERAL_END: KindId = KindId(161);
@@ -482,7 +482,7 @@ const _: () = assert!(ERROR.0 == KindId::ERROR.0);
 /// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, and the depth members a layout run's excess indentation reads as.
 pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_core::trivia_table::SurfaceKinds {
     lists: &[342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359],
-    units: &[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 122, 123, 125, 126, 127, 129, 130, 131, 136, 137, 138, 139, 140, 155, 157, 163, 164, 168, 169, 170, 171, 172, 173, 174, 175, 178, 244, 254, 281, 321, 338, 339, 363, 364, 421, 426],
+    units: &[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 122, 123, 125, 126, 127, 129, 130, 131, 136, 137, 138, 139, 140, 156, 163, 164, 168, 169, 170, 171, 172, 173, 174, 175, 178, 244, 254, 281, 321, 338, 339, 363, 364, 421, 426],
     layout: &[],
     indent: 174,
     dedent: 175,
@@ -493,7 +493,7 @@ pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_co
 pub const ROOT_KINDS: &[KindId] = &[KindId(176)];
 
 /// The keyword tokens the grammar aliases to its word rule: a node of one of them, displayed as the word rule, reads as the word rule.
-pub const RELAXED_KEYWORDS: &[KindId] = &[KindId(51), KindId(32), KindId(52), KindId(58), KindId(59), KindId(60), KindId(61), KindId(62), KindId(63), KindId(64), KindId(65), KindId(66), KindId(67), KindId(68), KindId(69), KindId(70), KindId(71), KindId(72), KindId(73), KindId(74)];
+pub const RELAXED_KEYWORDS: &[KindId] = &[KindId(51), KindId(32), KindId(52), KindId(53), KindId(59), KindId(60), KindId(61), KindId(62), KindId(63), KindId(64), KindId(65), KindId(66), KindId(67), KindId(68), KindId(69), KindId(70), KindId(71), KindId(72), KindId(73), KindId(74), KindId(75)];
 
 /// The display ids that stand for the word rule (an alias of it) and the keyword tokens aliased to each.
 pub const RELAXED_DISPLAYS: &[(KindId, &[KindId])] = &[];
@@ -559,70 +559,70 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         50 => "'", // "squote"
         51 => "default", // "default_keyword"
         52 => "gen", // "gen_keyword"
-        53 => "<", // "lt2"
-        54 => "&", // "amp"
-        55 => "impl", // "impl_keyword"
-        56 => "dyn", // "dyn_keyword"
-        57 => "mutable_specifier", // "mutable_specifier"
-        58 => "u8", // "u8_keyword"
-        59 => "i8", // "i8_keyword"
-        60 => "u16", // "u16_keyword"
-        61 => "i16", // "i16_keyword"
-        62 => "u32", // "u32_keyword"
-        63 => "i32", // "i32_keyword"
-        64 => "u64", // "u64_keyword"
-        65 => "i64", // "i64_keyword"
-        66 => "u128", // "u128_keyword"
-        67 => "i128", // "i128_keyword"
-        68 => "isize", // "isize_keyword"
-        69 => "usize", // "usize_keyword"
-        70 => "f32", // "f32_keyword"
-        71 => "f64", // "f64_keyword"
-        72 => "bool", // "bool_keyword"
-        73 => "str", // "str_keyword"
-        74 => "char", // "char_keyword"
-        75 => "-", // "dash"
-        76 => "&&", // "amp_amp"
-        77 => "||", // "pipe_pipe"
-        78 => "|", // "pipe"
-        79 => "^", // "caret"
-        80 => "==", // "eq_eq"
-        81 => "!=", // "bang_eq"
-        82 => "<=", // "lt_eq"
-        83 => ">=", // "gt_eq"
-        84 => "<<", // "lt_lt"
-        85 => ">>", // "gt_gt"
-        86 => "/", // "slash"
-        87 => "%", // "percent"
-        88 => "+=", // "plus_eq"
-        89 => "-=", // "dash_eq"
-        90 => "*=", // "star_eq"
-        91 => "/=", // "slash_eq"
-        92 => "%=", // "percent_eq"
-        93 => "&=", // "amp_eq"
-        94 => "|=", // "pipe_eq"
-        95 => "^=", // "caret_eq"
-        96 => "<<=", // "lt_lt_eq"
-        97 => ">>=", // "gt_gt_eq"
-        98 => "return", // "return_keyword"
-        99 => "yield", // "yield_keyword"
-        100 => "..", // "dot_dot"
-        101 => "if", // "if_keyword"
-        102 => "else", // "else_keyword"
-        103 => "match", // "match_keyword"
-        104 => "while", // "while_keyword"
-        105 => "loop", // "loop_keyword"
-        106 => "in", // "in_keyword"
-        107 => "break", // "break_keyword"
-        108 => "continue", // "continue_keyword"
-        109 => ".", // "dot"
-        110 => "await", // "await_keyword"
-        111 => "unsafe", // "unsafe_keyword"
-        112 => "async", // "async_keyword"
-        113 => "try", // "try_keyword"
-        114 => "ref", // "ref_keyword"
-        115 => "@", // "at"
-        116 => "\"", // "dquote"
+        53 => "raw", // "raw_keyword"
+        54 => "<", // "lt2"
+        55 => "&", // "amp"
+        56 => "impl", // "impl_keyword"
+        57 => "dyn", // "dyn_keyword"
+        58 => "mutable_specifier", // "mutable_specifier"
+        59 => "u8", // "u8_keyword"
+        60 => "i8", // "i8_keyword"
+        61 => "u16", // "u16_keyword"
+        62 => "i16", // "i16_keyword"
+        63 => "u32", // "u32_keyword"
+        64 => "i32", // "i32_keyword"
+        65 => "u64", // "u64_keyword"
+        66 => "i64", // "i64_keyword"
+        67 => "u128", // "u128_keyword"
+        68 => "i128", // "i128_keyword"
+        69 => "isize", // "isize_keyword"
+        70 => "usize", // "usize_keyword"
+        71 => "f32", // "f32_keyword"
+        72 => "f64", // "f64_keyword"
+        73 => "bool", // "bool_keyword"
+        74 => "str", // "str_keyword"
+        75 => "char", // "char_keyword"
+        76 => "-", // "dash"
+        77 => "&&", // "amp_amp"
+        78 => "||", // "pipe_pipe"
+        79 => "|", // "pipe"
+        80 => "^", // "caret"
+        81 => "==", // "eq_eq"
+        82 => "!=", // "bang_eq"
+        83 => "<=", // "lt_eq"
+        84 => ">=", // "gt_eq"
+        85 => "<<", // "lt_lt"
+        86 => ">>", // "gt_gt"
+        87 => "/", // "slash"
+        88 => "%", // "percent"
+        89 => "+=", // "plus_eq"
+        90 => "-=", // "dash_eq"
+        91 => "*=", // "star_eq"
+        92 => "/=", // "slash_eq"
+        93 => "%=", // "percent_eq"
+        94 => "&=", // "amp_eq"
+        95 => "|=", // "pipe_eq"
+        96 => "^=", // "caret_eq"
+        97 => "<<=", // "lt_lt_eq"
+        98 => ">>=", // "gt_gt_eq"
+        99 => "return", // "return_keyword"
+        100 => "yield", // "yield_keyword"
+        101 => "..", // "dot_dot"
+        102 => "if", // "if_keyword"
+        103 => "else", // "else_keyword"
+        104 => "match", // "match_keyword"
+        105 => "while", // "while_keyword"
+        106 => "loop", // "loop_keyword"
+        107 => "in", // "in_keyword"
+        108 => "break", // "break_keyword"
+        109 => "continue", // "continue_keyword"
+        110 => ".", // "dot"
+        111 => "await", // "await_keyword"
+        112 => "unsafe", // "unsafe_keyword"
+        113 => "async", // "async_keyword"
+        114 => "try", // "try_keyword"
+        115 => "ref", // "ref_keyword"
+        116 => "@", // "at"
         117 => "true", // "true_keyword"
         118 => "false", // "false_keyword"
         119 => "//", // "slash_slash"
@@ -661,10 +661,10 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         152 => "escape_sequence_unicode_fixed", // "escape_sequence_unicode_fixed"
         153 => "escape_sequence_unicode_braced", // "escape_sequence_unicode_braced"
         154 => "escape_sequence_hex", // "escape_sequence_hex"
-        155 => "raw", // "raw_keyword"
-        156 => "line_comment_regular", // "line_comment_regular"
-        157 => "macro_rules!", // "macro_rules_bang"
-        158 => "string_content", // "string_content"
+        155 => "line_comment_regular", // "line_comment_regular"
+        156 => "macro_rules!", // "macro_rules_bang"
+        157 => "string_content", // "string_content"
+        158 => "\"", // "string_close"
         159 => "raw_string_literal_start", // "_raw_string_literal_start"
         160 => "string_content", // "raw_string_literal_content"
         161 => "raw_string_literal_end", // "_raw_string_literal_end"

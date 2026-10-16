@@ -3,6 +3,7 @@ import { createEngine } from '@sittir/common';
 import typescript from '../src/index.ts';
 
 const ts = await createEngine(typescript);
+const verifying = await createEngine(typescript, { verifyStructure: 'runtime' });
 
 describe('a strict builder with render options given its target\'s argument', () => {
 	it('builds a relaxed name from its text, not from a keyword kind', () => {
@@ -15,7 +16,7 @@ describe('a strict builder with render options given its target\'s argument', ()
 
 	it('refuses a lone string, which the loose entry takes', () => {
 		// @ts-expect-error text to a leaf is coercion: the loose entry takes it
-		expect(() => ts.build.exportStatement.namespaceExport.strict('ns')).toThrow(/a strict factory takes a built node, not a string/);
+		expect(() => verifying.build.exportStatement.namespaceExport.strict('ns')).toThrow(/a strict factory takes a built node, not a string/);
 		expect(ts.build.exportStatement.namespaceExport.strict(ts.build.identifier('ns')).$render()).toBe('export as namespace ns;');
 		expect(ts.build.exportStatement.namespaceExport.coerce('ns').$render()).toBe('export as namespace ns;');
 	});

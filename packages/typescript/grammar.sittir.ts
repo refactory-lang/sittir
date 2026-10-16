@@ -613,11 +613,13 @@ export default sittirGrammar(base, {
 
 		member_expression: reauthored(
 			'rejects-valid-syntax',
-			{
-				text: 'a?.for;',
-				form: [{ symbol: 'expression' }, { symbol: 'optional_chain' }, 'for'],
-				kind: 'member_expression'
-			},
+			[
+				{
+					text: 'a?.for;',
+					form: [{ symbol: 'expression' }, { symbol: 'optional_chain' }, 'for'],
+					kind: 'member_expression'
+				}
+			],
 			($, original) => {
 				const keywordProperties = ['break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'export', 'extends', 'false', 'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof', 'new', 'null', 'return', 'super', 'switch', 'this', 'throw', 'true', 'try', 'typeof', 'var', 'void', 'while', 'with', 'get', 'set', 'async', 'await', 'static', 'let'];
 				const widen = (rule: any): any => {
@@ -634,11 +636,13 @@ export default sittirGrammar(base, {
 
 		decorator_member_expression: reauthored(
 			'rejects-valid-syntax',
-			{
-				text: '@(super.decorate) method() {}',
-				form: ['super', '.', { symbol: 'identifier' }],
-				kind: 'decorator_member_expression'
-			},
+			[
+				{
+					text: '@(super.decorate) method() {}',
+					form: ['super', '.', { symbol: 'identifier' }],
+					kind: 'decorator_member_expression'
+				}
+			],
 			($) =>
 				prec(
 					'member',
@@ -652,11 +656,13 @@ export default sittirGrammar(base, {
 
 		export_statement: reauthored(
 			'rejects-valid-syntax',
-			{
-				text: "export type * from './x.ts';",
-				form: ['export', 'type', '*', 'from', { symbol: 'string' }, ';'],
-				kind: 'export_statement'
-			},
+			[
+				{
+					text: "export type * from './x.ts';",
+					form: ['export', 'type', '*', 'from', { symbol: 'string' }, ';'],
+					kind: 'export_statement'
+				}
+			],
 			($) =>
 				choice(
 					choice(

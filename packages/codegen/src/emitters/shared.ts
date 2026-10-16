@@ -877,10 +877,6 @@ export function testConstructsWithChildren(node: AssembledNode, nodeMap: NodeMap
 	return classifyChildFactorySurface(node, nodeMap) !== null;
 }
 
-export function irNamespacesChildFactory(node: AssembledNode, nodeMap: NodeMap): boolean {
-	return classifyChildFactorySurface(node, nodeMap) !== null;
-}
-
 export interface SoleSlotFacts {
 	readonly slot: AssembledNonterminal;
 	readonly multiple: boolean;
@@ -982,6 +978,18 @@ export function emptyDefaultOf(
 	if (!isNodeRef(sole) || sole.storageKindId === undefined) return null;
 	const target = nodeMap.nodeByKindId.get(sole.storageKindId);
 	return target?.rawFactoryName === undefined || isFixedTextLeaf(target) ? null : `${factoryNs}${target.rawFactoryName}()`;
+}
+
+export function assertOmittedSlotsFilled(
+	node: { readonly kind: string; readonly configSlots: readonly AssembledNonterminal[] },
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): void {
+	for (const slot of node.configSlots) {
+		if (isRequired(slot) && slotFilledWhenOmitted(slot, nodeMap) && emptyDefaultOf(slot, nodeMap, kindEntries) === null) {
+			throw new Error(`${node.kind}: its builder may omit the required slot ${slot.name}, which has no empty default`);
+		}
+	}
 }
 
 export function registeredSlots(node: {

@@ -14,17 +14,11 @@ import {
 	triviaInner,
 	describeValue,
 	restItems,
-	coerceBooleanKeywordStorage,
 	kindIdStorage,
-	rejectBareText,
+	listStorage,
+	strictBooleanStorage,
 	unaffixed
 } from '@sittir/common/utils';
-
-function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
-	if (arr.length === 0) {
-		throw new Error(`${label}: requires at least one element`);
-	}
-}
 
 export const _leafRe_buildIdentifier = /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u;
 export const _leafRe_buildImmediateIdentifier = _leafRe_buildIdentifier;
@@ -35,7 +29,7 @@ export const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
 export function buildProgram(): T.EmptyProgram;
 export function buildProgram(...children: Admit<T.Definition[]>): T.Program.Bound;
 export function buildProgram(...children: Admit<T.Definition[]>): T.Program.Bound {
-	const _definitions = rejectBareText(children, 'Program.definitions', 'a built Definition');
+	const _definitions = children;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Program as const,
@@ -126,7 +120,7 @@ export function buildImmediateIdentifier(text: string): T.ImmediateIdentifier.Bo
 }
 
 export function buildCapture(value: Admit<T.ImmediateIdentifier>): T.Capture.Bound {
-	const _name = rejectBareText(value, 'Capture.name', 'buildImmediateIdentifier(…)');
+	const _name = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Capture as const,
@@ -165,7 +159,7 @@ export function buildString(...args: unknown[]) {
 		: _buildString((buildStringContent as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildString>[0]);
 }
 function _buildString(value?: Admit<T.StringContent>): T.String.Bound {
-	const _string_content = rejectBareText(value, 'String.stringContent', 'a built StringContent');
+	const _string_content = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.String as const,
@@ -206,7 +200,7 @@ export function buildImmediateString(...args: unknown[]) {
 			);
 }
 function _buildImmediateString(value?: Admit<T.StringContent>): T.ImmediateString.Bound {
-	const _string_content = rejectBareText(value, 'ImmediateString.stringContent', 'a built StringContent');
+	const _string_content = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ImmediateString as const,
@@ -230,8 +224,7 @@ function _buildImmediateString(value?: Admit<T.StringContent>): T.ImmediateStrin
 export function buildStringContent(
 	...children: NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>
 ): T.StringContent.Bound {
-	_assertNonEmpty(children, 'string_content.children');
-	const _content = rejectBareText(children, 'StringContent.content', 'buildStringContentText(…)');
+	const _content = children;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.StringContent as const,
@@ -256,8 +249,7 @@ export function buildStringContent(
 export function buildParameters(
 	...children: NonEmptyArray<Admit<T.Capture | T.String | T.Identifier>>
 ): T.Parameters.Bound {
-	_assertNonEmpty(children, 'parameters.children');
-	const _elements = rejectBareText(children, 'Parameters.elements', 'buildIdentifier(…)');
+	const _elements = children;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Parameters as const,
@@ -307,8 +299,8 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 }
 
 export function buildList(config: T.List.Config): T.List.Bound {
-	const _definitions = rejectBareText(config.definitions, 'List.definitions', 'a built Definition');
-	const _elements = rejectBareText(config.elements ?? [], 'List.elements', 'a built ListElement');
+	const _definitions = listStorage<NonNullable<T.List['_definitions']>>(config.definitions);
+	const _elements = listStorage<NonNullable<T.List['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.List as const,
@@ -335,8 +327,8 @@ export function buildList(config: T.List.Config): T.List.Bound {
 }
 
 export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
-	const _grouping_group = rejectBareText(config.groupingGroup, 'Grouping.groupingGroup', 'a built GroupingGroup');
-	const _elements = rejectBareText(config.elements ?? [], 'Grouping.elements', 'a built ListElement');
+	const _grouping_group = listStorage<NonNullable<T.Grouping['_grouping_group']>>(config.groupingGroup);
+	const _elements = listStorage<NonNullable<T.Grouping['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Grouping as const,
@@ -372,8 +364,8 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
 export function buildMissingNode(): T.EmptyMissingNode;
 export function buildMissingNode(config?: Partial<T.MissingNode.Config>): T.MissingNode.Bound;
 export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.MissingNode.Bound {
-	const _name = rejectBareText(config.name, 'MissingNode.name', 'buildIdentifier(…)');
-	const _elements = rejectBareText(config.elements ?? [], 'MissingNode.elements', 'a built ListElement');
+	const _name = config.name;
+	const _elements = listStorage<NonNullable<T.MissingNode['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MissingNode as const,
@@ -401,12 +393,8 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 }
 
 export function buildAnonymousNode(config: T.AnonymousNode.Config): T.AnonymousNode.Bound {
-	const _name = rejectBareText(
-		kindIdStorage<NonNullable<T.AnonymousNode['_name']>>(config.name),
-		'AnonymousNode.name',
-		'a built String'
-	);
-	const _elements = rejectBareText(config.elements ?? [], 'AnonymousNode.elements', 'a built ListElement');
+	const _name = kindIdStorage<NonNullable<T.AnonymousNode['_name']>>(config.name);
+	const _elements = listStorage<NonNullable<T.AnonymousNode['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.AnonymousNode as const,
@@ -433,8 +421,8 @@ export function buildAnonymousNode(config: T.AnonymousNode.Config): T.AnonymousN
 }
 
 export function buildFieldDefinition(config: T.FieldDefinition.Config): T.FieldDefinition.Bound {
-	const _name = rejectBareText(config.name, 'FieldDefinition.name', 'buildIdentifier(…)');
-	const _definition = rejectBareText(config.definition, 'FieldDefinition.definition', 'a built Definition');
+	const _name = config.name;
+	const _definition = config.definition;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.FieldDefinition as const,
@@ -461,7 +449,7 @@ export function buildFieldDefinition(config: T.FieldDefinition.Config): T.FieldD
 }
 
 export function buildNegatedField(value: Admit<T.Identifier>): T.NegatedField.Bound {
-	const _identifier = rejectBareText(value, 'NegatedField.identifier', 'buildIdentifier(…)');
+	const _identifier = value;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NegatedField as const,
@@ -483,18 +471,10 @@ export function buildNegatedField(value: Admit<T.Identifier>): T.NegatedField.Bo
 }
 
 export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
-	const _prefix = rejectBareText(
-		kindIdStorage<NonNullable<T.Predicate['_prefix']>>(config.prefix),
-		'Predicate.prefix',
-		'a kind id'
-	);
-	const _name = rejectBareText(config.name, 'Predicate.name', 'buildImmediateIdentifier(…)');
-	const _type = rejectBareText(
-		kindIdStorage<NonNullable<T.Predicate['_type']>>(config.type),
-		'Predicate.type',
-		'a kind id'
-	);
-	const _parameters = rejectBareText(config.parameters, 'Predicate.parameters', 'a built Parameters');
+	const _prefix = kindIdStorage<NonNullable<T.Predicate['_prefix']>>(config.prefix);
+	const _name = config.name;
+	const _type = kindIdStorage<NonNullable<T.Predicate['_type']>>(config.type);
+	const _parameters = config.parameters;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.Predicate as const,
@@ -531,11 +511,7 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 export function buildListElementQuantifier(
 	value: Admit<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>
 ): T.ListElementQuantifier.Bound {
-	const _quantifier = rejectBareText(
-		kindIdStorage<NonNullable<T.ListElementQuantifier['_quantifier']>>(value),
-		'ListElementQuantifier.quantifier',
-		'a kind id'
-	);
+	const _quantifier = kindIdStorage<NonNullable<T.ListElementQuantifier['_quantifier']>>(value);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ListElementQuantifier as const,
@@ -558,8 +534,8 @@ export function buildListElementQuantifier(
 }
 
 export function buildGroupExpressionArm(config: T.GroupExpressionArm.Config): T.GroupExpressionArm.Bound {
-	const _left = rejectBareText(config.left, 'GroupExpressionArm.left', 'a built Definition / GroupExpressionArm');
-	const _right = rejectBareText(config.right, 'GroupExpressionArm.right', 'a built Definition / GroupExpressionArm');
+	const _left = config.left;
+	const _right = config.right;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.GroupExpressionArm as const,
@@ -586,16 +562,8 @@ export function buildGroupExpressionArm(config: T.GroupExpressionArm.Config): T.
 }
 
 export function buildNamedNodeExpressionArm(config: T.NamedNodeExpressionArm.Config): T.NamedNodeExpressionArm.Bound {
-	const _left = rejectBareText(
-		config.left,
-		'NamedNodeExpressionArm.left',
-		'a built Definition / NegatedField / NamedNodeExpressionArm'
-	);
-	const _right = rejectBareText(
-		config.right,
-		'NamedNodeExpressionArm.right',
-		'a built Definition / NegatedField / NamedNodeExpressionArm'
-	);
+	const _left = config.left;
+	const _right = config.right;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NamedNodeExpressionArm as const,
@@ -622,12 +590,8 @@ export function buildNamedNodeExpressionArm(config: T.NamedNodeExpressionArm.Con
 }
 
 export function buildGroupingGroup(config: T.GroupingGroup.Config): T.GroupingGroup.Bound {
-	const _group_expression = rejectBareText(
-		config.groupExpression,
-		'GroupingGroup.groupExpression',
-		'a built Definition / GroupExpressionArm'
-	);
-	const _anchor = coerceBooleanKeywordStorage(rejectBareText(config.anchor, 'GroupingGroup.anchor', 'a boolean'));
+	const _group_expression = config.groupExpression;
+	const _anchor = strictBooleanStorage(config.anchor);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.GroupingGroup as const,
@@ -676,17 +640,9 @@ export function buildStringContentText(text: string): T.StringContentText.Bound 
 export const buildAnchor: TSKindId.Anchor = TSKindId.Anchor;
 
 export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNodePlain.Bound {
-	const _name = rejectBareText(
-		kindIdStorage<NonNullable<T.NamedNodePlain['_name']>>(config.name),
-		'NamedNodePlain.name',
-		'buildIdentifier(…)'
-	);
-	const _named_node_group = rejectBareText(
-		config.namedNodeGroup,
-		'NamedNodePlain.namedNodeGroup',
-		'a built NamedNodeGroup'
-	);
-	const _elements = rejectBareText(config.elements ?? [], 'NamedNodePlain.elements', 'a built ListElement');
+	const _name = kindIdStorage<NonNullable<T.NamedNodePlain['_name']>>(config.name);
+	const _named_node_group = config.namedNodeGroup;
+	const _elements = listStorage<NonNullable<T.NamedNodePlain['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NamedNodePlain as const,
@@ -717,14 +673,10 @@ export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNod
 }
 
 export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): T.NamedNodeSupertyped.Bound {
-	const _supertype = rejectBareText(config.supertype, 'NamedNodeSupertyped.supertype', 'buildIdentifier(…)');
-	const _name = rejectBareText(config.name, 'NamedNodeSupertyped.name', 'buildImmediateIdentifier(…)');
-	const _named_node_group = rejectBareText(
-		config.namedNodeGroup,
-		'NamedNodeSupertyped.namedNodeGroup',
-		'a built NamedNodeGroup'
-	);
-	const _elements = rejectBareText(config.elements ?? [], 'NamedNodeSupertyped.elements', 'a built ListElement');
+	const _supertype = config.supertype;
+	const _name = config.name;
+	const _named_node_group = config.namedNodeGroup;
+	const _elements = listStorage<NonNullable<T.NamedNodeSupertyped['_elements']>>(config.elements ?? []);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NamedNodeSupertyped as const,
@@ -759,13 +711,9 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 }
 
 export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Config): T.NamedNodeGroupChildren.Bound {
-	const _anchor = coerceBooleanKeywordStorage(
-		rejectBareText(config.anchor, 'NamedNodeGroupChildren.anchor', 'a boolean')
-	);
-	const _named_node_expressions = rejectBareText(
-		config.namedNodeExpressions,
-		'NamedNodeGroupChildren.namedNodeExpressions',
-		'a built Definition / NegatedField / NamedNodeExpressionArm'
+	const _anchor = strictBooleanStorage(config.anchor);
+	const _named_node_expressions = listStorage<NonNullable<T.NamedNodeGroupChildren['_named_node_expressions']>>(
+		config.namedNodeExpressions
 	);
 	const handle = currentHandle();
 	const node = {
@@ -799,19 +747,11 @@ export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Con
 export function buildNamedNodeGroupAnchoredLast(
 	config: T.NamedNodeGroupAnchoredLast.Config
 ): T.NamedNodeGroupAnchoredLast.Bound {
-	const _anchor = coerceBooleanKeywordStorage(
-		rejectBareText(config.anchor, 'NamedNodeGroupAnchoredLast.anchor', 'a boolean')
+	const _anchor = strictBooleanStorage(config.anchor);
+	const _named_node_expressions = listStorage<NonNullable<T.NamedNodeGroupAnchoredLast['_named_node_expressions']>>(
+		config.namedNodeExpressions ?? []
 	);
-	const _named_node_expressions = rejectBareText(
-		config.namedNodeExpressions ?? [],
-		'NamedNodeGroupAnchoredLast.namedNodeExpressions',
-		'a built Definition / NegatedField / NamedNodeExpressionArm'
-	);
-	const _last = rejectBareText(
-		config.last,
-		'NamedNodeGroupAnchoredLast.last',
-		'a built Definition / NegatedField / NamedNodeExpressionArm'
-	);
+	const _last = config.last;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NamedNodeGroupAnchoredLast as const,

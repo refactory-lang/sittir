@@ -553,15 +553,24 @@ detector lands. `kindid-unstamped-anon-literal` is deliberately absent: the
 enriched stage has no generated parser, so it fires on every anonymous literal.
 `content-collision` and `storagename-collision` are absent too: a `field()`
 patch resolves them, so they are patch-site provocations, not rule causes.
-`'accepts-other-kind'` has none either, for a different reason: no diagnostic
-provokes it, its witness is its justification (`judgeOtherKindWitness`).
+The witnessed causes (`WITNESSED_CAUSES`) have none either, for a different
+reason: no diagnostic provokes them, their witnesses are their justification
+(`judgeWitnesses`).
 
-### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeOtherKindWitness`
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeWitnesses`
 
-Judges a rule declared `reauthored('accepts-other-kind', witness, body)`. The
+The loop every witnessed cause shares. A declaration without witnesses, or with
+an empty array, is a `rule-cause-mismatch`: grammar files are not type-checked,
+so the non-empty tuple type alone does not hold it; otherwise each witness is judged in order, and the first
+that fails is the `rule-cause-mismatch`, naming its index and text. The
+mismatch message ends with the cause's own requirement, which the caller states.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeOtherKindWitnesses`
+
+Judges a rule declared `reauthored('accepts-other-kind', witnesses, body)`. The
 claim is that the upstream rule accepts a form that is always another kind. It
 holds, as far as rules alone can show, when the upstream rule of this name and
-the upstream rule of the witness's kind both derive the witness form
+the upstream rule of each witness's kind both derive that witness's form
 (`derivesForm`): the two rules overlap on it. Anything less is
 `rule-cause-mismatch`, naming which rule fails to derive it. Which of the two
 the parser picks is not checked here: upstream's parser is the ground truth for
@@ -570,31 +579,58 @@ which rule wins, and a test parses every declared witness text with it. The same
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::derivesForm`
 
 Whether a rule can produce a sequence of literal tokens and symbols. A string
-matches its literal; a symbol matches an item naming it, and a hidden symbol
-(leading underscore) is also expanded into its own body, since it leaves no
-node of its own. Sequences, choices, optionals and repeats are followed; fields,
-aliases and tokens are transparent. A hidden rule re-entered at the same
-position derives nothing new and is cut, so left recursion terminates.
+matches its literal; a symbol matches an item naming it, and a symbol the caller
+expands is also followed into its own body. By default only hidden symbols
+(leading underscore) expand, since they leave no node of its own. Sequences, choices, optionals and repeats are followed; fields,
+aliases and tokens are transparent. Recursion is solved as a least fixed
+point. A rule re-entered at the same position yields what it has reached so
+far, and passes repeat until no rule reaches a new end. So a left-recursive rule
+is recognised in full, and the answer is exact in both directions. That matters
+for the checks that need a form not to be derived. Each rule-and-position entry
+only grows, up to the form's length, so the passes terminate.
 
-### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::UpstreamRules`
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::GrammarRules`
 
-The upstream grammar's rules as evaluated before any sittir change: the raw
-stage. The witness of an `'accepts-other-kind'` rewrite is judged against these,
-never against the rewritten rules.
+A grammar's rules by name. The gate reads two such records. The upstream rules,
+as evaluated before any sittir change, are the raw stage. The authored rules are
+the evaluated grammar's own, with `rules:` applied. Witnesses that claim what
+upstream derives are judged against the upstream rules. Only
+`'accepts-invalid-syntax'` also reads the authored rules, to show the authored
+body no longer derives the excluded form.
 
-### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeRejectedWitness`
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeRejectedWitnesses`
 
-Judges a rule declared `reauthored('rejects-valid-syntax', witness, body)`. The
-claim is that the upstream rule named by the witness's `kind` does not derive the
-witness `form`, the form of a source text upstream's parser rejects. A missing
-witness, a `kind` upstream does not declare, or an upstream rule that already
-derives the form is a `rule-cause-mismatch`. The rule being reauthored must still
+Judges a rule declared `reauthored('rejects-valid-syntax', witnesses, body)`. The
+claim is that the upstream rule named by each witness's `kind` does not derive
+that witness's `form`, the form of a source text upstream's parser rejects. A
+missing witness, a `kind` upstream does not declare, or an upstream rule that
+already derives the form is a `rule-cause-mismatch`. The rule being reauthored must still
 be an upstream rule, which `judgeReauthored` checks first.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::judgeInvalidWitnesses`
+
+Judges a rule declared `reauthored('accepts-invalid-syntax', witnesses, body)`.
+The claim is that upstream accepts a form the language's productions exclude,
+and the authored rule does not. For each witness:
+- it must cite the excluding `production`;
+- the upstream rule named by its `kind` must derive its `form`;
+- the grammar must author a rule of that name, and that rule must not derive
+  the `form`.
+The authored check also follows every rule sittir added, hidden or not (any rule
+upstream does not declare). An authored body that moves the excluded form into
+a minted variant still accepts it, so it counts as deriving it. Upstream's own
+symbols stay items, as in the upstream check. A failure on any of these is a
+`rule-cause-mismatch`. Rules alone cannot show
+what the built parser does, so the reauthor-witness test parses every witness
+text with both parsers. Upstream's must accept it. Sittir's parses the text
+between two valid statements of the grammar and must report an error. Every
+error must lie within the witness's text, and both surrounding statements must
+parse clean, so a recovery that swallows a neighbour fails.
 
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::isWitnessVerified`
 
 Whether a rule's declaration is one the gate verifies by witness: today,
-`reauthored('accepts-other-kind', …)`, `reauthored('semantic-gap', …)` and `reauthored('rejects-valid-syntax', …)`. The second additionally requires the witness kind to equal the unchanged upstream parser kind and a nonempty language meaning; semantic construction regressions provide evidence beyond the grammar-form check. The hand-written rule ratchet
+every cause in `WITNESSED_CAUSES`: `'accepts-other-kind'`, `'semantic-gap'`, `'rejects-valid-syntax'` and `'accepts-invalid-syntax'`. The second additionally requires the witness kind to equal the unchanged upstream parser kind and a nonempty language meaning; semantic construction regressions provide evidence beyond the grammar-form check. The hand-written rule ratchet
 reads it to tell a verified correction from debt.
 
 ### `packages/codegen/src/__tests__/hand-rule-ratchet.test.ts::CEILINGS`
@@ -676,7 +712,9 @@ The `whitespace-mint-collision` message for each collision site: a `visibleExter
 
 The `reauthored` judgement: the declared cause must be a `PROVOKING_CODES` key (grammar files are unchecked, so an unknown cause reaches here and is `rule-cause-mismatch` naming the valid causes), the name must be an upstream rule, some
 `PROVOKING_CODES` code must fire on it upstream, and one of those codes must
-belong to the declared cause.
+belong to the declared cause. A witnessed cause is judged by its witnesses
+instead: `judgeOtherKindWitnesses`, `judgeRejectedWitnesses` or
+`judgeInvalidWitnesses`.
 
 ### `packages/codegen/src/compiler/diagnostics/patch-sites.ts::labelPatchSites`
 

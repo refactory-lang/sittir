@@ -1299,8 +1299,8 @@ export const rustGrammarShape = {
 					type: 'CHOICE',
 					members: [
 						{
-							type: 'SYMBOL',
-							name: 'visibility_modifier'
+							type: 'STRING',
+							value: 'unsafe'
 						},
 						{
 							type: 'BLANK'
@@ -9077,11 +9077,13 @@ export const rustGrammarShape = {
 					}
 				},
 				{
-					type: 'IMMEDIATE_TOKEN',
+					type: 'ALIAS',
 					content: {
-						type: 'STRING',
-						value: '"'
-					}
+						type: 'SYMBOL',
+						name: 'string_close'
+					},
+					named: false,
+					value: '"'
 				}
 			]
 		},
@@ -9587,6 +9589,10 @@ export const rustGrammarShape = {
 					{
 						type: 'STRING',
 						value: 'gen'
+					},
+					{
+						type: 'STRING',
+						value: 'raw'
 					}
 				]
 			},

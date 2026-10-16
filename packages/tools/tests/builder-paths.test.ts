@@ -4,7 +4,7 @@ import { loadNodeModel } from '../src/validate/common.ts';
 
 const GRAMMARS = ['rust', 'typescript', 'python', 'scm', 'regex'] as const;
 
-const NOT_ROUTES = new Set(['strict', 'coerce', 'synonym']);
+const NOT_ROUTES = new Set(['strict', 'coerce']);
 
 function at(root: unknown, path: readonly string[]): unknown {
 	return path.reduce<unknown>((value, key) => (value == null ? undefined : (value as Record<string, unknown>)[key]), root);

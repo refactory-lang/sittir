@@ -85,7 +85,8 @@ import {
 	enumMemberDiscriminant,
 	pruneUnusedImports,
 	importLocalName,
-	isDeclaredSupertype
+	isDeclaredSupertype,
+	needsNonEmptyHoist
 } from './shared.ts';
 import {
 	constructorTargetKind,
@@ -490,7 +491,10 @@ const VOCABULARY_IMPORTS = [
 	'WithNode',
 	'BoundWithNode',
 	'QueryFacet',
-	'Snapshot'
+	'Snapshot',
+	'Proven',
+	'KeyRefusesEmpty',
+	'SetterRefusesEmpty'
 ];
 
 function emitGrammarTypeMap(grammar: string, nodeMap: NodeMap, triviaKinds: readonly string[]): string[] {
@@ -996,9 +1000,9 @@ function emitInterface(
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				const elemType = hasOptionalElements(f) ? `${storageType} | undefined` : storageType;
 				const arrType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `readonly (${elemType})[]`;
-				lines.push(`  ${propName}(): ${arrType};`);
+				lines.push(`  readonly ${propName}: () => ${arrType};`);
 			} else {
-				lines.push(`  ${propName}(): ${storageType}${opt ? ' | undefined' : ''};`);
+				lines.push(`  readonly ${propName}: () => ${storageType}${opt ? ' | undefined' : ''};`);
 			}
 		}
 	}
@@ -1347,7 +1351,18 @@ function emitNamespaceSugarBlock(
 		lines.push(`  export type LooseArgs = LooseArgsFor<${nsKey}>;`);
 	}
 	lines.push(`  export type Kind = ${kindIdOrNever(kind, nodeMap, kindEntries)};`);
+	lines.push(...nonEmptyProofLines(node, nodeMap));
 	lines.push('}');
+}
+
+function nonEmptyProofLines(node: AssembledNode, nodeMap: NodeMap): string[] {
+	const checks = node.slots
+		.filter((slot) => slot.registeredOption === undefined && needsNonEmptyHoist(slot, nodeMap))
+		.flatMap((slot) => {
+			const key = JSON.stringify(slot.configKey);
+			return [`KeyRefusesEmpty<Config, ${key}>`, `KeyRefusesEmpty<LooseConfig, ${key}>`, `SetterRefusesEmpty<Bound, ${JSON.stringify(slot.propertyName)}>`];
+		});
+	return checks.length === 0 ? [] : [`  type NonEmptySlots = Proven<[${checks.join(', ')}]>;`];
 }
 
 function emitRefineFormSubNamespaces(

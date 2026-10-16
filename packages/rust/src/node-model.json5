@@ -51,6 +51,10 @@
     },
     {
       "type": "SYMBOL",
+      "name": "string_close"
+    },
+    {
+      "type": "SYMBOL",
       "name": "raw_string_literal_start"
     },
     {
@@ -3267,7 +3271,7 @@
       }
     },
     "foreign_mod_item_semi": {
-      "visibility_modifier": {
+      "unsafe": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3283,7 +3287,7 @@
       }
     },
     "foreign_mod_item_body": {
-      "visibility_modifier": {
+      "unsafe": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3906,7 +3910,7 @@
         51,
         32,
         52,
-        58,
+        53,
         59,
         60,
         61,
@@ -3922,7 +3926,8 @@
         71,
         72,
         73,
-        74
+        74,
+        75
       ]
     },
     "displays": []
@@ -9592,15 +9597,6 @@
       "text": "..="
     },
     {
-      "kind": "dquote",
-      "modelType": "punctuation",
-      "typeName": "Dquote",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"\\\"\" as const",
-      "text": "\""
-    },
-    {
       "kind": "dyn_keyword",
       "modelType": "keyword",
       "typeName": "DynKeyword",
@@ -12231,22 +12227,20 @@
       "variantOf": "foreign_mod_item",
       "slots": [
         {
-          "name": "visibility_modifier",
-          "propertyName": "visibilityModifier",
-          "paramName": "visibilityModifier",
+          "name": "unsafe",
+          "propertyName": "unsafe",
+          "paramName": "unsafe",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "visibility_modifier"
-          ],
+          "storage": "boolean",
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "visibility_modifier",
-              "parseKind": "visibility_modifier"
+              "value": "unsafe",
+              "parseKind": "unsafe_keyword"
             }
           ]
         },
@@ -12294,7 +12288,7 @@
       "name": "foreign_mod_item_body",
       "factoryShape": "config",
       "factoryFields": [
-        "visibility_modifier",
+        "unsafe",
         "extern_modifier",
         "body"
       ]
@@ -12332,22 +12326,20 @@
       "variantOf": "foreign_mod_item",
       "slots": [
         {
-          "name": "visibility_modifier",
-          "propertyName": "visibilityModifier",
-          "paramName": "visibilityModifier",
+          "name": "unsafe",
+          "propertyName": "unsafe",
+          "paramName": "unsafe",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "visibility_modifier"
-          ],
+          "storage": "boolean",
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "visibility_modifier",
-              "parseKind": "visibility_modifier"
+              "value": "unsafe",
+              "parseKind": "unsafe_keyword"
             }
           ]
         },
@@ -12375,7 +12367,7 @@
       "name": "foreign_mod_item_semi",
       "factoryShape": "config",
       "factoryFields": [
-        "visibility_modifier",
+        "unsafe",
         "extern_modifier"
       ]
     },
@@ -22360,6 +22352,14 @@
       "stampExpression": "\"str\" as const",
       "text": "str",
       "factoryShape": "text"
+    },
+    {
+      "kind": "string_close",
+      "modelType": "pattern",
+      "typeName": "StringClose",
+      "factoryName": "stringClose",
+      "hidden": false,
+      "oneSurface": true
     },
     {
       "kind": "string_content",

@@ -10,7 +10,8 @@ import {
 	coerceMixedEnumStorage,
 	configFieldOr,
 	isNodeOfKind,
-	isNodeValue
+	isNodeValue,
+	listStorage
 } from '@sittir/common/utils';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
@@ -580,23 +581,11 @@ function _resolveBitflag<T>(v: _LooseFieldInput): T {
 	return v as T;
 }
 
-function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
-	if (arr.length === 0) {
-		throw new Error(`${label}: requires at least one element`);
-	}
-}
-
 /** Narrows a coercer input to its config arm. A bare `isNodeValue` check
  *  cannot: the UntypedNode arm is not a strict subtype of the config arm, so
  *  negative narrowing leaves it in place. */
 function _isLooseConfig<C>(v: C | AnyUntypedNode): v is C {
 	return !isNodeValue(v);
-}
-function _requireField<T>(kind: string, slot: string, v: T | undefined | null): T {
-	if (v === undefined || v === null) {
-		throw new Error(`Missing required slot '${slot}' on ${kind}.from()`);
-	}
-	return v;
 }
 
 // Interned resolver kind lists (dedup)
@@ -646,14 +635,10 @@ export function resolvePattern_content(value: T.Pattern.LooseConfig['content']):
 export function coerceToPattern(input: T.Pattern.Loose): ReturnType<typeof F.buildPattern> {
 	if (isNodeOfKind(input, TSKindId.Pattern)) return input as unknown as ReturnType<typeof F.buildPattern>;
 	return F.buildPattern(
-		_requireField(
-			'pattern',
-			'content',
-			_resolveOne<T.Alternation | T.Term>(
-				configFieldOr(input, 'content', () => input),
-				_K0,
-				_K1
-			)
+		_resolveOne<T.Alternation | T.Term>(
+			configFieldOr(input, 'content', () => input),
+			_K0,
+			_K1
 		)
 	);
 }
@@ -736,14 +721,10 @@ export function coerceToLookaroundAssertion(
 	if (isNodeOfKind(input, TSKindId.LookaroundAssertion))
 		return input as unknown as ReturnType<typeof F.buildLookaroundAssertion>;
 	return F.buildLookaroundAssertion(
-		_requireField(
-			'lookaround_assertion',
-			'content',
-			_resolveOne<T.LookaheadAssertion | T.LookbehindAssertion>(
-				configFieldOr(input, 'content', () => input),
-				_K0,
-				_K2
-			)
+		_resolveOne<T.LookaheadAssertion | T.LookbehindAssertion>(
+			configFieldOr(input, 'content', () => input),
+			_K0,
+			_K2
 		)
 	);
 }
@@ -769,8 +750,8 @@ export function coerceToLookaheadAssertion(
 	if (!_isLooseConfig<T.LookaheadAssertion.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildLookaheadAssertion>;
 	return F.buildLookaheadAssertion({
-		content: _requireField('lookahead_assertion', 'content', resolveLookaheadAssertion_content(input.content)),
-		pattern: _requireField('lookahead_assertion', 'pattern', resolveLookaheadAssertion_pattern(input.pattern))
+		content: resolveLookaheadAssertion_content(input.content),
+		pattern: resolveLookaheadAssertion_pattern(input.pattern)
 	});
 }
 
@@ -795,8 +776,8 @@ export function coerceToLookbehindAssertion(
 	if (!_isLooseConfig<T.LookbehindAssertion.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildLookbehindAssertion>;
 	return F.buildLookbehindAssertion({
-		content: _requireField('lookbehind_assertion', 'content', resolveLookbehindAssertion_content(input.content)),
-		pattern: _requireField('lookbehind_assertion', 'pattern', resolveLookbehindAssertion_pattern(input.pattern))
+		content: resolveLookbehindAssertion_content(input.content),
+		pattern: resolveLookbehindAssertion_pattern(input.pattern)
 	});
 }
 
@@ -820,7 +801,7 @@ export function resolveCharacterClass_leading(
 export function resolveCharacterClass_classAtoms(
 	value: T.CharacterClass.LooseConfig['classAtoms']
 ): Admit<T.CharacterClass['_class_atoms']> {
-	return coerceMixedEnumStorage(
+	return listStorage(
 		_resolveKindEnum(value, () =>
 			_resolveMany<
 				| T.ClassCharacter
@@ -833,7 +814,7 @@ export function resolveCharacterClass_classAtoms(
 				| T.ClassRange
 			>(value, _K3, _K4)
 		),
-		[['\\-', TSKindId.BslashDash] as const]
+		(item) => coerceMixedEnumStorage(item, [['\\-', TSKindId.BslashDash] as const])
 	);
 }
 
@@ -868,15 +849,11 @@ export function coerceToPosixCharacterClass(
 	if (isNodeOfKind(input, TSKindId.PosixCharacterClass))
 		return input as unknown as ReturnType<typeof F.buildPosixCharacterClass>;
 	return F.buildPosixCharacterClass(
-		_requireField(
-			'posix_character_class',
-			'posixClassName',
-			_resolveOneLeaf<T.PosixClassName>(
-				configFieldOr(input, 'posixClassName', () =>
-					typeof input === 'string' ? spelledInterior(input, '[:', ':]') : input
-				),
-				'posix_class_name'
-			)
+		_resolveOneLeaf<T.PosixClassName>(
+			configFieldOr(input, 'posixClassName', () =>
+				typeof input === 'string' ? spelledInterior(input, '[:', ':]') : input
+			),
+			'posix_class_name'
 		)
 	);
 }
@@ -907,8 +884,8 @@ export function resolveClassRange_end(value: T.ClassRange.LooseConfig['end']): A
 export function coerceToClassRange(input: T.ClassRange.Loose): ReturnType<typeof F.buildClassRange> {
 	if (!_isLooseConfig<T.ClassRange.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildClassRange>;
 	return F.buildClassRange({
-		start: _requireField('class_range', 'start', resolveClassRange_start(input.start)),
-		end: _requireField('class_range', 'end', resolveClassRange_end(input.end))
+		start: resolveClassRange_start(input.start),
+		end: resolveClassRange_end(input.end)
 	});
 }
 
@@ -929,13 +906,9 @@ export function coerceToAnonymousCapturingGroup(
 	if (isNodeOfKind(input, TSKindId.AnonymousCapturingGroup))
 		return input as unknown as ReturnType<typeof F.buildAnonymousCapturingGroup>;
 	return F.buildAnonymousCapturingGroup(
-		_requireField(
-			'anonymous_capturing_group',
-			'pattern',
-			_resolveOneBranch<T.Pattern>(
-				configFieldOr(input, 'pattern', () => input),
-				'pattern'
-			)
+		_resolveOneBranch<T.Pattern>(
+			configFieldOr(input, 'pattern', () => input),
+			'pattern'
 		)
 	);
 }
@@ -967,13 +940,9 @@ export function coerceToNamedCapturingGroup(
 	if (!_isLooseConfig<T.NamedCapturingGroup.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildNamedCapturingGroup>;
 	return F.buildNamedCapturingGroup({
-		content: _requireField('named_capturing_group', 'content', resolveNamedCapturingGroup_content(input.content)),
-		groupName: _requireField(
-			'named_capturing_group',
-			'groupName',
-			resolveNamedCapturingGroup_groupName(input.groupName)
-		),
-		pattern: _requireField('named_capturing_group', 'pattern', resolveNamedCapturingGroup_pattern(input.pattern))
+		content: resolveNamedCapturingGroup_content(input.content),
+		groupName: resolveNamedCapturingGroup_groupName(input.groupName),
+		pattern: resolveNamedCapturingGroup_pattern(input.pattern)
 	});
 }
 
@@ -989,13 +958,9 @@ export function coerceToNonCapturingGroup(
 	if (isNodeOfKind(input, TSKindId.NonCapturingGroup))
 		return input as unknown as ReturnType<typeof F.buildNonCapturingGroup>;
 	return F.buildNonCapturingGroup(
-		_requireField(
-			'non_capturing_group',
-			'pattern',
-			_resolveOneBranch<T.Pattern>(
-				configFieldOr(input, 'pattern', () => input),
-				'pattern'
-			)
+		_resolveOneBranch<T.Pattern>(
+			configFieldOr(input, 'pattern', () => input),
+			'pattern'
 		)
 	);
 }
@@ -1057,7 +1022,7 @@ export function coerceToCountQuantifier(input: T.CountQuantifier.Loose): ReturnT
 	if (!_isLooseConfig<T.CountQuantifier.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildCountQuantifier>;
 	return F.buildCountQuantifier({
-		content: _requireField('count_quantifier', 'content', resolveCountQuantifier_content(input.content)),
+		content: resolveCountQuantifier_content(input.content),
 		lazy: resolveCountQuantifier_lazy(input.lazy)
 	});
 }
@@ -1074,15 +1039,11 @@ export function coerceToBackreferenceEscape(
 	if (isNodeOfKind(input, TSKindId.BackreferenceEscape))
 		return input as unknown as ReturnType<typeof F.buildBackreferenceEscape>;
 	return F.buildBackreferenceEscape(
-		_requireField(
-			'backreference_escape',
-			'groupName',
-			_resolveOneLeaf<T.GroupName>(
-				configFieldOr(input, 'groupName', () =>
-					typeof input === 'string' ? spelledInterior(input, '\\k<', '>') : input
-				),
-				'group_name'
-			)
+		_resolveOneLeaf<T.GroupName>(
+			configFieldOr(input, 'groupName', () =>
+				typeof input === 'string' ? spelledInterior(input, '\\k<', '>') : input
+			),
+			'group_name'
 		)
 	);
 }
@@ -1099,15 +1060,11 @@ export function coerceToNamedGroupBackreference(
 	if (isNodeOfKind(input, TSKindId.NamedGroupBackreference))
 		return input as unknown as ReturnType<typeof F.buildNamedGroupBackreference>;
 	return F.buildNamedGroupBackreference(
-		_requireField(
-			'named_group_backreference',
-			'groupName',
-			_resolveOneLeaf<T.GroupName>(
-				configFieldOr(input, 'groupName', () =>
-					typeof input === 'string' ? spelledInterior(input, '(?P=', ')') : input
-				),
-				'group_name'
-			)
+		_resolveOneLeaf<T.GroupName>(
+			configFieldOr(input, 'groupName', () =>
+				typeof input === 'string' ? spelledInterior(input, '(?P=', ')') : input
+			),
+			'group_name'
 		)
 	);
 }
@@ -1133,14 +1090,10 @@ export function coerceToCharacterClassEscape(
 	if (isNodeOfKind(input, TSKindId.CharacterClassEscape))
 		return input as unknown as ReturnType<typeof F.buildCharacterClassEscape>;
 	return F.buildCharacterClassEscape(
-		_requireField(
-			'character_class_escape',
-			'content',
-			_resolveOne<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>(
-				configFieldOr(input, 'content', () => input),
-				_K9,
-				_K10
-			)
+		_resolveOne<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>(
+			configFieldOr(input, 'content', () => input),
+			_K9,
+			_K10
 		)
 	);
 }
@@ -1178,11 +1131,7 @@ export function coerceToUnicodePropertyValueExpression(
 		unicodePropertyValueExpressionGroup: resolveUnicodePropertyValueExpression_unicodePropertyValueExpressionGroup(
 			input.unicodePropertyValueExpressionGroup
 		),
-		unicodePropertyValue: _requireField(
-			'unicode_property_value_expression',
-			'unicodePropertyValue',
-			resolveUnicodePropertyValueExpression_unicodePropertyValue(input.unicodePropertyValue)
-		)
+		unicodePropertyValue: resolveUnicodePropertyValueExpression_unicodePropertyValue(input.unicodePropertyValue)
 	});
 }
 
@@ -1214,16 +1163,12 @@ export function resolveIdentityEscape_content(
 export function coerceToIdentityEscape(input: T.IdentityEscape.Loose): ReturnType<typeof F.buildIdentityEscape> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildIdentityEscape>;
 	return F.buildIdentityEscape(
-		_requireField(
-			'identity_escape',
-			'content',
-			_resolveOne<string>(
-				configFieldOr(input, 'content', () =>
-					typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildIdentityEscape_content) : input
-				),
-				_K0,
-				_K0
-			)
+		_resolveOne<string>(
+			configFieldOr(input, 'content', () =>
+				typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildIdentityEscape_content) : input
+			),
+			_K0,
+			_K0
 		)
 	);
 }
@@ -1284,7 +1229,7 @@ export function resolveTermGroup_quantifier(
 export function coerceToTermGroup(input: T.TermGroup.Loose): ReturnType<typeof F.buildTermGroup> {
 	if (!_isLooseConfig<T.TermGroup.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildTermGroup>;
 	return F.buildTermGroup({
-		content: _requireField('term_group', 'content', resolveTermGroup_content(input.content)),
+		content: resolveTermGroup_content(input.content),
 		quantifier: resolveTermGroup_quantifier(input.quantifier)
 	});
 }
@@ -1328,11 +1273,7 @@ export function coerceToCountQuantifierArm(
 	if (!_isLooseConfig<T.CountQuantifierArm.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildCountQuantifierArm>;
 	return F.buildCountQuantifierArm({
-		decimalDigits: _requireField(
-			'count_quantifier_arm',
-			'decimalDigits',
-			resolveCountQuantifierArm_decimalDigits(input.decimalDigits)
-		),
+		decimalDigits: resolveCountQuantifierArm_decimalDigits(input.decimalDigits),
 		countQuantifierGroup: resolveCountQuantifierArm_countQuantifierGroup(input.countQuantifierGroup)
 	});
 }
@@ -1355,15 +1296,11 @@ export function coerceToCharacterClassEscapeArm(
 	if (!_isLooseConfig<T.CharacterClassEscapeArm.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildCharacterClassEscapeArm>;
 	return F.buildCharacterClassEscapeArm({
-		characterClassEscapeText2: _requireField(
-			'character_class_escape_arm',
-			'characterClassEscapeText2',
-			resolveCharacterClassEscapeArm_characterClassEscapeText2(input.characterClassEscapeText2)
+		characterClassEscapeText2: resolveCharacterClassEscapeArm_characterClassEscapeText2(
+			input.characterClassEscapeText2
 		),
-		unicodePropertyValueExpression: _requireField(
-			'character_class_escape_arm',
-			'unicodePropertyValueExpression',
-			resolveCharacterClassEscapeArm_unicodePropertyValueExpression(input.unicodePropertyValueExpression)
+		unicodePropertyValueExpression: resolveCharacterClassEscapeArm_unicodePropertyValueExpression(
+			input.unicodePropertyValueExpression
 		)
 	});
 }
@@ -1380,15 +1317,11 @@ export function coerceToUnicodePropertyValueExpressionGroup(
 	if (isNodeOfKind(input, TSKindId.UnicodePropertyValueExpressionGroup))
 		return input as unknown as ReturnType<typeof F.buildUnicodePropertyValueExpressionGroup>;
 	return F.buildUnicodePropertyValueExpressionGroup(
-		_requireField(
-			'unicode_property_value_expression_group',
-			'unicodePropertyName',
-			_resolveOneBranch<T.UnicodePropertyName>(
-				configFieldOr(input, 'unicodePropertyName', () =>
-					typeof input === 'string' ? spelledInterior(input, '', '=') : input
-				),
-				'unicode_property_name'
-			)
+		_resolveOneBranch<T.UnicodePropertyName>(
+			configFieldOr(input, 'unicodePropertyName', () =>
+				typeof input === 'string' ? spelledInterior(input, '', '=') : input
+			),
+			'unicode_property_name'
 		)
 	);
 }
@@ -1429,11 +1362,7 @@ export function coerceToInlineFlagsGroupEnable(
 	if (!_isLooseConfig<T.InlineFlagsGroupEnable.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildInlineFlagsGroupEnable>;
 	return F.buildInlineFlagsGroupEnable({
-		enabled: _requireField(
-			'inline_flags_group_enable',
-			'enabled',
-			resolveInlineFlagsGroupEnable_enabled(input.enabled)
-		),
+		enabled: resolveInlineFlagsGroupEnable_enabled(input.enabled),
 		pattern: resolveInlineFlagsGroupEnable_pattern(input.pattern)
 	});
 }
@@ -1462,16 +1391,8 @@ export function coerceToInlineFlagsGroupToggle(
 	if (!_isLooseConfig<T.InlineFlagsGroupToggle.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildInlineFlagsGroupToggle>;
 	return F.buildInlineFlagsGroupToggle({
-		enabled: _requireField(
-			'inline_flags_group_toggle',
-			'enabled',
-			resolveInlineFlagsGroupToggle_enabled(input.enabled)
-		),
-		disabled: _requireField(
-			'inline_flags_group_toggle',
-			'disabled',
-			resolveInlineFlagsGroupToggle_disabled(input.disabled)
-		),
+		enabled: resolveInlineFlagsGroupToggle_enabled(input.enabled),
+		disabled: resolveInlineFlagsGroupToggle_disabled(input.disabled),
 		pattern: resolveInlineFlagsGroupToggle_pattern(input.pattern)
 	});
 }
@@ -1494,11 +1415,7 @@ export function coerceToInlineFlagsGroupDisable(
 	if (!_isLooseConfig<T.InlineFlagsGroupDisable.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildInlineFlagsGroupDisable>;
 	return F.buildInlineFlagsGroupDisable({
-		disabled: _requireField(
-			'inline_flags_group_disable',
-			'disabled',
-			resolveInlineFlagsGroupDisable_disabled(input.disabled)
-		),
+		disabled: resolveInlineFlagsGroupDisable_disabled(input.disabled),
 		pattern: resolveInlineFlagsGroupDisable_pattern(input.pattern)
 	});
 }
@@ -1557,13 +1474,9 @@ export function coerceToUnicodePropertyName(
 	if (isNodeOfKind(input, TSKindId.UnicodePropertyName))
 		return input as unknown as ReturnType<typeof F.buildUnicodePropertyName>;
 	return F.buildUnicodePropertyName(
-		_requireField(
-			'unicode_property_name',
-			'content',
-			_resolveOneLeaf<T.UnicodePropertyValue>(
-				configFieldOr(input, 'content', () => input),
-				'unicode_property_value'
-			)
+		_resolveOneLeaf<T.UnicodePropertyValue>(
+			configFieldOr(input, 'content', () => input),
+			'unicode_property_value'
 		)
 	);
 }

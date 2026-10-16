@@ -9,56 +9,6 @@
 
 import * as F from './factories/index.js';
 
-// Role synonyms — resolve a native JS value to this grammar's node for that role.
-// Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.
-export const synonym = Object.freeze({
-	boolean(value: boolean): typeof F.buildTrue | typeof F.buildFalse {
-		return value ? F.buildTrue : F.buildFalse;
-	},
-	number(value: number): ReturnType<typeof F.number> {
-		return F.number(String(value));
-	},
-	comment: Object.assign(
-		function comment(content: string): ReturnType<typeof ir.commentLine> {
-			return ir.commentLine(content);
-		},
-		{
-			line(text: string): ReturnType<typeof ir.commentLine> {
-				return ir.commentLine(text);
-			},
-			block(text: string): ReturnType<typeof ir.commentBlock> {
-				return ir.commentBlock(text);
-			}
-		}
-	),
-	type(name: string): ReturnType<typeof F.buildTypeIdentifier> {
-		return F.buildTypeIdentifier(F.buildIdentifier(name));
-	},
-	identifier(name: string): ReturnType<typeof F.buildIdentifier> {
-		return F.buildIdentifier(name);
-	},
-	// definition.function → function_signature
-	get function(): (typeof ir)['functionSignature'] {
-		return ir.functionSignature;
-	},
-	// definition.class → abstract_class_declaration
-	get class(): (typeof ir)['abstractClassDeclaration'] {
-		return ir.abstractClassDeclaration;
-	},
-	// definition.method → method_signature
-	get method(): (typeof ir)['methodSignature'] {
-		return ir.methodSignature;
-	},
-	// definition.module → module
-	get module(): (typeof ir)['module'] {
-		return ir.module;
-	},
-	// definition.interface → interface_declaration
-	get interface(): (typeof ir)['interfaceDeclaration'] {
-		return ir.interfaceDeclaration;
-	}
-} as const);
-
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
 export const expression: {
@@ -509,7 +459,6 @@ export const ir: {
 	readonly type: typeof type;
 	readonly primaryType: typeof primaryType;
 	readonly layout: typeof layout;
-	readonly synonym: typeof synonym;
 } = Object.freeze({
 	// Node factories
 	program: F.program,
@@ -772,6 +721,5 @@ export const ir: {
 	primaryExpression,
 	type,
 	primaryType,
-	layout,
-	synonym
+	layout
 });

@@ -16,7 +16,6 @@ import { emitBackend } from '../emitters/grammar-runtime.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
 import { loadPackageIdTables } from './generated-metadata.ts';
-import { extractGrammarRoles, withRootRole } from '../scm/extract-roles.ts';
 import { assertGrammarJsonInlineIntegrity } from './inline-sets.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
 import { formatCompilerDiagnostics, formatNamingEvents } from './diagnostics/grammar-diagnostics.ts';
@@ -112,7 +111,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		}
 
 		const rootKind = normalized.root!;
-		const grammarRoles = withRootRole(extractGrammarRoles(pkg), rootKind);
 		const triviaKindNames = [...triviaKinds(nodeMap)];
 
 		const evaluateSynthesizedKinds = collectEvaluateSynthesizedKinds(raw);
@@ -127,7 +125,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			synthesizedKinds: evaluateSynthesizedKinds,
 			strict: cfg.strict,
 			triviaKinds: triviaKindNames,
-			grammarRoles,
+			rootKind,
 			emitRenderModule: cfg.emitRenderModule,
 			expectTestFailures: raw.expectTestFailures,
 			reparseHosts: raw.reparseHosts,
@@ -143,16 +141,16 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		const routesInput = await grammarInput(cfg.grammar, raw, nodeModelData, bindingsPathIn(pkg.dir));
 		const portable = routesInput === undefined ? undefined : emitPortable(routesInput, nodeMap, emitted.kindEntries);
 
-		const rootTypeName = nodeMap.nodes.get(grammarRoles.get('root')[0]!)?.typeName;
+		const rootTypeName = nodeMap.nodes.get(rootKind)?.typeName;
 		if (rootTypeName === undefined) {
 			throw new Error(
-				`generate: root kind '${grammarRoles.get('root')[0]}' has no NodeMap entry — cannot type the engine root`
+				`generate: root kind '${rootKind}' has no NodeMap entry — cannot type the engine root`
 			);
 		}
 		const rootTreeTypeName = emitted.rootTreeTypeName;
 		if (rootTreeTypeName === undefined) {
 			throw new Error(
-				`generate: wrap emitter named no root surface for '${grammarRoles.get('root')[0]}' — cannot type engine.parse()`
+				`generate: wrap emitter named no root surface for '${rootKind}' — cannot type engine.parse()`
 			);
 		}
 

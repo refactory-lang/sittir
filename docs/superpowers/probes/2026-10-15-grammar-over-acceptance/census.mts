@@ -1,5 +1,6 @@
 // Each witness against three judges: sittir's parser (packages/<g>/.sittir/parser.wasm), the
-// upstream parser the grammar is built from (tree-sitter-<g>.wasm), and the language's compiler
+// upstream parser the grammar is built from (`upstreamWasmPath`: .sittir/upstream.wasm, built from
+// base.ts by the same CLI), and the language's compiler
 // (tsc, CPython's compile, rustc). Writes results/<grammar>.tsv and prints the over-accepted rows.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -36,7 +37,8 @@ async function parserFor(wasm: string) {
 	};
 }
 
-const upstream = (g: string) => createRequire(join(ROOT, `packages/${g}/package.json`)).resolve(`tree-sitter-${g}/tree-sitter-${g}.wasm`);
+const { upstreamWasmPath } = await import(join(ROOT, 'packages/tools/src/validate/common.ts'));
+const upstream = (g: string): string => upstreamWasmPath(g)!;
 
 for (const [grammar, list] of Object.entries(witnesses)) {
 	const sittir = await parserFor(join(ROOT, `packages/${grammar}/.sittir/parser.wasm`));

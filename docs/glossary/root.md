@@ -570,6 +570,10 @@ values.
 /** Output directory for test files (default: ../tests relative to outputDir). */
 ```
 
+### `packages/codegen/src/run-codegen.ts::compileParsers`
+
+The regen's wasm step: sittir's `parser.wasm` from the sources `generate` just wrote, then the upstream judge (`ensureUpstreamWasm`), which is rebuilt only when the upstream grammar changed.
+
 ### `packages/codegen/src/run-codegen.ts::compileParser`
 
 ```text
@@ -748,6 +752,14 @@ Whether a grammar package on disk is marked stable (`stableGrammars`). A name wi
 
 The dependency name a grammar package declares for its upstream tree-sitter grammar: `tree-sitter-<name>`. A grammar whose upstream publishes under another name (or not on npm) declares it under this name with an `npm:` alias or a git spec.
 
+### `packages/codegen/src/grammars.ts::UPSTREAM_WASM`
+
+The upstream judge's file name in a grammar's `.sittir` directory, shared by the regen that writes it and the validators that read it.
+
+
+### `packages/codegen/src/grammars.ts::UPSTREAM_GENERATION_CONFLICTS`
+
+The conflict pairs an upstream grammar needs declared for tree-sitter to generate it at all, by grammar name. The upstream judge's staged grammar adds them to the unmodified upstream rules; the grammar sittir builds does not declare them, because it resolves the construct differently. Typescript lists the two its `using` syntax needs under the pinned javascript.
 ### `packages/codegen/src/grammars.ts::grammarRequire`
 
 `packageRequire` for the grammar's own package directory.
