@@ -676,17 +676,20 @@ raw-string routing metadata where the type alone cannot express its parser behav
 
 **Steps.**
 1. Write `arena.rs` (Interfaces): chunks, addresses, the side record, the string table of ruling 1.2, and the tree's lazily made source buffer of ruling 1.1. A run longer than a shared chunk gets a chunk of its own, sized to fit, so it still never straddles chunks; a chunk holding one oversize run is addressed at its word 0, inside the `chunk << 20 | word` packing.
-1a. **The built nodes' native trivia table** (the maintainer, 2026-10-16: moved here from 3b-ii, so `render_record` parity holds on every fixture and nothing is written to be thrown away). One table per engine, beside its built-record arena, keyed by record address and side (leading, trailing, inner), holding each side's entries and the unit sides. It is outside the record: writing a side updates the table, never the immutable record or a record that shares it. A parsed node placed in a built holder keeps its sides in its tree's table. The record writer moves a built transport's `$_layout.trivia` and `units` into it; the record reader and `render_record` read them back from it.
-2. The derive expands, per declaration:
-   - a record writer (transport → records, children before parents);
-   - a record reader (records → transport), which bounds-checks every word it reads and refuses any malformed cell;
-   - the cell writer and reader per choice.
-3. Add the napi methods beside today's (Interfaces). `read_many` takes a `wire` argument (ruling 2).
-4. Tests:
+1a. **The built nodes' native trivia table** (the maintainer, 2026-10-16: moved here from 3b-ii, so `render_record` parity holds on every fixture and nothing is written to be thrown away). One table per engine, beside its built-record arena, keyed by record address and side (leading, trailing, inner), holding each side's entries and the unit sides. It is outside the record: writing a side updates the table, never the immutable record or a record that shares it. A parsed node placed in a built holder keeps its sides in its tree's table. The record writer moves a built transport's `$_layout.trivia` and `units` into it; the record views and `render_record` read them from it.
+
+**No record is decoded back into a transport** (the maintainer, 2026-10-16). The record codec's one direction is writing: native code writes records from tree-sitter (the read) and from builders. `render_record` reads records in place through views the derive generates over each record, the cutover's render design from the start, and JavaScript reads them in place over the external `ArrayBuffer` (Task 9), so nothing is marshaled per node at the boundary. The one decode is `$text`'s lazy UTF-8 to JavaScript string on access (ruling 1.1).
+
+2. The derive expands, per declaration, inside `records_codec!`:
+   - a **record writer** (transport → records, children before parents), and the cell writer per choice. A read writes its records through the typed reader's transports; writing records straight from the tree, with no transport between, is a Task 10 optimization row, since the slot routing must stay in the one reader;
+   - a **fields trait**: one accessor per slot and the layout facts the render reads, with generic associated types for each slot's value. The transport struct implements it over its fields, and a **record view** (`…Record<'a>`, the arena and the record's address) implements it over the record's cells, bounds-checking every word it reads and refusing any malformed cell.
+3. Codegen's render bodies (`render-module.ts`) are generic over the fields trait, so one body renders a transport and a record. Prepare over a record resolves into side arrays keyed by record address, never into the record.
+4. Add the napi methods beside today's (Interfaces). `read_many` takes a `wire` argument (ruling 2).
+5. Tests:
    - each kind's macro expansion;
-   - read parity over every corpus entry of the five grammars: `decode(read_record(i))` equals `read(i)`;
-   - the fuzzed decode (Review Focus 1);
-   - a render of `render_record` equal to `render` for every parity fixture.
+   - read parity over every corpus entry of the five grammars: `render_record(read_record(i))` equals `render(read(i))`, and every view accessor answers what the transport's field holds (kind, presence, coordinate, text span), compared through the fields trait;
+   - the fuzzed view (Review Focus 1): arbitrary words are refused or rendered, and none reads outside its chunk or aborts;
+   - a render of `render_record` equal to `render` for every parity fixture, built trivia included.
 
 ### Task 9: JavaScript over records
 
