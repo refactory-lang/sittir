@@ -83,7 +83,8 @@ that runs inside it:
 Reference: [glossary/dsl.md](glossary/dsl.md),
 [glossary/dsl-wire.md](glossary/dsl-wire.md),
 [glossary/dsl-transform.md](glossary/dsl-transform.md),
-[glossary/dsl-primitives.md](glossary/dsl-primitives.md).
+[glossary/dsl-primitives.md](glossary/dsl-primitives.md),
+[glossary/dsl-verbs.md](glossary/dsl-verbs.md).
 
 ## Function reference index
 
@@ -94,6 +95,7 @@ Reference: [glossary/dsl.md](glossary/dsl.md),
 | `compiler/diagnostics/` (grammar diagnostics, preflight) | [glossary/compiler-diagnostics.md](glossary/compiler-diagnostics.md) |
 | `dsl/` (enrich, rule-transforms, rule-attrs, walker) | [glossary/dsl.md](glossary/dsl.md) |
 | `dsl/primitives/` (seq/choice/field/alias constructors) | [glossary/dsl-primitives.md](glossary/dsl-primitives.md) |
+| `dsl/verbs/` (the verbs' application and the effect table) | [glossary/dsl-verbs.md](glossary/dsl-verbs.md) |
 | `dsl/transform/` (override `transform()` machinery) | [glossary/dsl-transform.md](glossary/dsl-transform.md) |
 | `dsl/wire/` (override folding into the options object) | [glossary/dsl-wire.md](glossary/dsl-wire.md) |
 | `emitters/` (all generated-output emitters) | [glossary/emitters.md](glossary/emitters.md) |

@@ -1,5 +1,6 @@
 import type { RawGrammar } from '../compiler/types.ts';
-import { lead, leadIssue, type GrammarRecord, type Lead, type LeadMatch } from '../dsl/bind.ts';
+import { lead, leadIssue, type Lead, type LeadMatch } from '../dsl/bind.ts';
+import type { GrammarRecord } from '../dsl/rule-patterns.ts';
 import { fieldedHeadListOf, isParserHiddenName, symbolFactsOf } from '../dsl/rule-patterns.ts';
 import { predictedEntriesOf, renameAwareSymbolSource } from '../dsl/symbol-table.ts';
 import type { Rule } from '../types/rule.ts';

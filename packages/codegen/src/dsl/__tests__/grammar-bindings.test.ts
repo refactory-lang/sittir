@@ -5,7 +5,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
 import { evaluateForDerivation } from '../../transpile/evaluate-for-derivation.ts';
 import { EMPTY_CONFLICT_RESOLUTIONS } from '../conflict-resolutions.ts';
-import { baseNamesOf, bindGrammar, boundFieldNameOf, boundNameOf, lead, match } from '../bind.ts';
+import { baseNamesOf, bindGrammar, boundNameOf, lead, match } from '../bind.ts';
+import { boundFieldNameOf } from '../verbs/effects.ts';
 
 const DSL = JSON.stringify(join(__dirname, '../index.ts'));
 

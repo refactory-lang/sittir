@@ -4114,6 +4114,30 @@ Terminal-ness is the `SymbolSource`'s `isTerminal`, a predicted kind catalog's `
  */
 ```
 
+### `packages/codegen/src/dsl/rule-patterns.ts::GrammarRecord`
+
+A grammar, a rule or any grammar sub-record as untyped JSON-like data. The bind functions and the effect table take the evaluated grammar this way, since they run on what `grammar()` returned, before sittir types any of it. The grammar bindings walk the base grammar as the same type.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::isRecord`
+
+A grammar value that is a record (a rule, or a map of rules or names), not an array or a scalar. The bind functions, the effect table and the grammar bindings walk rules with it.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::symbolNames`
+
+Every symbol name a rule references, at any depth. The grammar bindings use it to tell whether an alias's target holds the aliased kind.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::fieldNames`
+
+Every field name a rule uses, at any depth.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::supertypesOf`
+
+The grammar's supertype names, whether listed as names or as symbol rules. A supertype is where an owner's reach stops: its arms are kinds of their own.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::transparentReach`
+
+The owner and every hidden rule it reaches through hidden rules alone, stopping at supertypes: the rules whose fields and references belong to the owner.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::selfReferentialFoldOf`
 
 ```text
@@ -7205,6 +7229,26 @@ The distinct upstream sources of a resolution: the last name of each source chai
 
 One entry of `resolutions.json` as the derivation writes it: the AddConflict set, the policy step, the conflict it resolved (symbol sequence, lookahead, and the rules of each interpretation), and `sourceChains`, for each rule of the set the chain from its name to its upstream source (`dsl/conflict-resolutions.ts::sourceChain`), so a reviewer can see why a set counted as declared upstream.
 
+### `packages/codegen/src/dsl/layer-record.ts::LayerRecords`
+
+The records that cross layers beside the rules, under the names the evaluated grammar gives them: options and labels, groups, render-as, visible externals, reparse hosts, refine forms, rule causes and undeclared rules, patch sites, external roles, the expectations, stages, protected rule names, whitespace collisions and body-pattern zero matches. A layer's inherited records pass through `rewriteInherited`; its own entries win over them.
+
+### `packages/codegen/src/dsl/layer-record.ts::LayerRecord`
+
+The one record a completed layer hands the layer above, on its result's start rule: its `depth` (1 for `grammar.sittir.ts`, one more per layer above), the `upstream` grammar its derivation records stay keyed to, the enrich `sidecars` the next layer re-attaches when it checks its base, the conflict `resolutions`, the dead enrich mints, the text tokens, the lift names, the effect log and the records. JSON never carries it.
+
+### `packages/codegen/src/dsl/layer-record.ts::LAYER_RECORD_KEY`
+
+The symbol the record rides under on the start rule's body. `JSON.stringify` and `Object.keys` skip a symbol key, so `grammar.json`, canonical snapshots and rule comparisons never see the record. It is a registered symbol (`Symbol.for`), so two loaded copies of this module agree on it.
+
+### `packages/codegen/src/dsl/layer-record.ts::layerRecordOf`
+
+The record a `grammar()` result carries, read from its first rule's body: the start rule, since no layer renames it. Undefined for a grammar no layer pass completed, such as an upstream grammar.
+
+### `packages/codegen/src/dsl/layer-record.ts::withLayerRecord`
+
+A fresh copy of a start rule's body that carries the record. Both runtimes keep the body a rule callback returns by identity, so the record reaches the result. The key is not enumerable, so a spread copy of the body, which a later layer's edits make, carries no stale record.
+
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::ConflictResolutionsFile`
 
 The shape of `.sittir/resolutions.json`: two `ResolutionSection`s. The top-level one holds the base sets, derived against the grammar without its bindings and named in base names. `bound` holds the sets only the bound grammar needs, derived against the bound grammar and named in bound names. One store keeps both, so a grammar imports one file and the driver writes through one writer.
@@ -7392,14 +7436,6 @@ The precedence wrapper types, which carry no slot topology.
 
 The parser's field table as `{ name, id }` rows in id order, skipping entries without an id. It is the field-side counterpart of `collectGeneratedKindEntries` and the single source `field_ids.rs` is emitted from.
 
-### `packages/codegen/src/dsl/bind.ts::isRecord`
-
-A grammar value that is a record (a rule, or a map of rules or names), not an array or a scalar. The grammar bindings walk rules with it too.
-
-### `packages/codegen/src/dsl/bind.ts::symbolNames`
-
-Every symbol name a rule references, at any depth. The grammar bindings use it to tell whether an alias's target holds the aliased kind.
-
 ### `packages/codegen/src/dsl/bind.ts::Rename`
 
 A kind-level rename in a grammar's bindings: the base rule or external `from` takes the name `to`.
@@ -7422,7 +7458,7 @@ The `Split` primitive: `split(kind, as, { within, containers })` mints `as` from
 
 ### `packages/codegen/src/dsl/bind.ts::BindingEffect`
 
-What one binding patch did, as wire records it while the patch applies: a `segment` effect is an option-path segment of the patched kind that the patch renamed (a field `from:` to `to:`, or a wrapped child or token to the new field), and an `alias` effect is a kind the patch aliased to a new name.
+What one binding patch did, as wire records it while the patch applies: a `segment` effect (`SegmentEffect`) is an option-path segment of the patched kind that the patch renamed (a field `from:` to `to:`, or a wrapped child or token to the new field), and an `alias` effect (`AliasEffect`) is a kind the patch aliased to a new name.
 
 A `lead` effect records the actual receiver alias, rest group reference, rest
 field and visible variants created by `leadGrammar`. Group names are read after
@@ -7457,10 +7493,6 @@ Carries the authored options block through the binding patches. The block is aut
 
 Completes grammar bindings after their wire patches: authored options take the canonical patch effects, placement splits apply in upstream parser names, then leads create their receiver forms. Kind renames do not apply to the parser. The returned grammar carries the same readonly `bindingEffects` array wire recorded, for consumers that map binding field routes. Hidden facts survive each grammar rewrite.
 
-### `packages/codegen/src/dsl/bind.ts::renameReparseHosts`
-
-The authored `reparseHosts` block under a rename. It is authored in base names; a host's key and every `priority` and `gated` entry name kinds, while a host's template is source text and stays as written. A block that names no `priority` takes `REPARSE_HOST_PRIORITY`, renamed too, so the emitted table and the kinds it is consulted with share one spelling.
-
 ### `packages/codegen/src/dsl/bind.ts::Split`
 
 A placement split in grammar bindings: the base kind `kind`, wherever it is reached under the chain `within` (innermost first, the outermost kind last), becomes the new kind `as`. `containers` names, per intermediate kind of `within` that is visible, the clone that holds the split kind there and the field the outer kind reaches the clone under. `splitGrammar` applies it.
@@ -7477,10 +7509,6 @@ What a field wrap fields: an unfielded reference to a kind (`symbol`, matched by
 
 A field the grammar bindings add for a member whose child arrives under no field: every unfielded `target` the owner reaches is wrapped in `field(field, …)`.
 
-### `packages/codegen/src/dsl/bind.ts::GrammarRecord`
-
-A grammar, a rule or any grammar sub-record as untyped JSON-like data. The bind functions take the evaluated grammar this way, since they run on what `grammar()` returned, before sittir types any of it. The grammar bindings walk the base grammar as the same type.
-
 ### `packages/codegen/src/dsl/bind.ts::LIST_FIELDS`
 
 The grammar's top-level fields that are plain lists of kind names (`supertypes`, `inline`, …); a rename maps each entry.
@@ -7493,37 +7521,9 @@ The grammar's top-level fields whose entries are rules or lists of rules and nam
 
 The grammar's top-level records keyed by kind name (`rules`, `renderAs`, `visibleExternals`, `groups`); a rename maps each key and walks each value.
 
-### `packages/codegen/src/dsl/bind.ts::KIND_KEYS`
-
-The record keys outside a rule's own reference that name a kind: an arm's `variantOf`. An arm's `variant` is a label, not a kind, even when it spells one.
-
-### `packages/codegen/src/dsl/bind.ts::namesKind`
-
-Whether a record's string at a key names a kind: a `SYMBOL` or `FIELD_ALIAS` name, a named `ALIAS`'s value, or a `KIND_KEYS` key.
-
-### `packages/codegen/src/dsl/bind.ts::renameValue`
-
-A grammar value with every kind name in it renamed: a bare string or a list of them (the list fields name kinds), and, inside a record, only the strings `namesKind` picks out. A label, a metadata source or any other string that happens to spell a renamed kind is left as written.
-
 ### `packages/codegen/src/dsl/bind.ts::mappedName`
 
 A name through a rename record: the mapped name where the record has one of its own, else the name unchanged. `Object.hasOwn` keeps a kind named like an object property (`constructor`) from reading a prototype member.
-
-### `packages/codegen/src/dsl/bind.ts::renameKeys`
-
-A keyed record with its keys renamed, and its values too unless `renameValues` is false (a reparse host's template is source text). Two keys renaming to one name is an error.
-
-### `packages/codegen/src/dsl/bind.ts::renameSegment`
-
-One segment of an options path under a rename: a `(kind)` segment and a `kind:` slot segment that is no field of the grammar take the new name; a field segment and a literal are left as written.
-
-### `packages/codegen/src/dsl/bind.ts::renamePath`
-
-An options path under a rename. Its head is a kind when `kindHead` (a top-level options key); otherwise it is renamed like any other segment.
-
-### `packages/codegen/src/dsl/bind.ts::renameOptionPaths`
-
-An options record with every path key renamed, recursively, leaving preference values alone. The keys under `LABELS_KEY` are addresses whose heads are kinds. Two keys renaming to one path is an error.
 
 ### `packages/codegen/src/dsl/bind.ts::renameOptions`
 
@@ -7541,18 +7541,6 @@ The grammar with each rename's base rule or external taking its new name everywh
 
 A rule with every `SYMBOL` name passed through `replace`.
 
-### `packages/codegen/src/dsl/bind.ts::fieldNames`
-
-Every field name a rule uses, at any depth.
-
-### `packages/codegen/src/dsl/bind.ts::supertypesOf`
-
-The grammar's supertype names, whether listed as names or as symbol rules. A supertype is where an owner's reach stops: its arms are kinds of their own.
-
-### `packages/codegen/src/dsl/bind.ts::transparentReach`
-
-The owner and every hidden rule it reaches through hidden rules alone, stopping at supertypes: the rules whose fields and references belong to the owner.
-
 ### `packages/codegen/src/dsl/bind.ts::fieldHosts`
 
 The rules in the owner's transparent reach that use a field: where a rename of that field has to happen.
@@ -7564,14 +7552,6 @@ Why a field rename cannot apply, or nothing. The owner must be a rule, and the f
 ### `packages/codegen/src/dsl/bind.ts::renameFields`
 
 A rule with every `FIELD` named `from` renamed `to`.
-
-### `packages/codegen/src/dsl/bind.ts::SegmentRewrite`
-
-One slot-segment rewrite of an options path, scoped to the kind `owner`: the segment `from` becomes `to`.
-
-### `packages/codegen/src/dsl/bind.ts::rewriteOwnedSegments`
-
-The options block with segment rewrites applied under their owning kind only: within a kind's options record, and in a label address whose head is that kind. A rewrite for one kind leaves another kind's identically spelled segment alone.
 
 ### `packages/codegen/src/dsl/bind.ts::fieldRenameGrammar`
 
@@ -7693,6 +7673,18 @@ A `match` restriction from its authored form: an array is an unfielded child; a 
 
 Builds a `LeadMatch`: a kind, an optional restriction (`leadWithin`) and an optional variant name. `(required_parameter pattern: (this))` is `match('required_parameter', { pattern: [match('this')] })`.
 
+### `packages/codegen/src/dsl/enrich.ts::ENRICH_SIDECAR_KEYS`
+
+The keys of enrich's three sidecars: whitespace, rule origins and automatic variants. `withEnrichSidecarsOf` copies them onto a grammar, and `enrichSidecarsOf` reads them into a record of their own.
+
+### `packages/codegen/src/dsl/enrich.ts::EnrichSidecars`
+
+Enrich's three sidecars, held apart from the grammar they came with. Their values stay untyped here: the getters (`getEnrichWhitespace`, `getEnrichRuleOrigins`, `getEnrichAutomaticVariants`) type each one where it is read.
+
+### `packages/codegen/src/dsl/enrich.ts::enrichSidecarsOf`
+
+The three sidecars an enrich result holds, as a plain record that a layer record keeps; a key the result lacks is undefined.
+
 ### `packages/codegen/src/dsl/enrich.ts::withEnrichSidecarsOf`
 
 A shallow copy of a grammar carrying the three sidecars an enrich result holds (whitespace, rule origins, automatic variants), read from `enriched`. `grammar()` does not carry them, so a later enrich over a wired grammar needs them to recognise its own earlier work: without them it re-mints the layout supertype over the body wire decorated and re-aliases visible groups.
@@ -7709,21 +7701,9 @@ Evaluates one wire layer, carries non-enumerable grammar facts from the prior la
 
 The internal binding-layer entry to canonical wire construction. It accepts a completed grammar result and binding patch sets without imposing the public authored grammar literal shape on that runtime result. The checked enriched grammar is both the wire base and its source.
 
-### `packages/codegen/src/dsl/bind.ts::boundSegmentOf`
-
-One owner-scoped lookup of a segment rewrite, including rewrites on hidden helper rules reached by the canonical transparent-rule traversal. Conflicting reachable destinations are refused. Both options rewriting and field-name projection use this lookup.
-
-### `packages/codegen/src/dsl/bind.ts::boundFieldNameOf`
-
-Projects a field name through canonical segment effects, optionally resolving hidden helper owners through the supplied grammar: the preference-path formatter and parser preserve the segment syntax, and an effect that does not leave a field segment is refused. Field routes and options therefore read the same recorded binding edit.
-
 ### `packages/codegen/src/dsl/bind.ts::bindMatch`
 
 Maps a lead match tree through kind and owner-scoped field renames, retaining variant names. Both binding facts and the post-patch lead application use this derivation.
-
-### `packages/codegen/src/dsl/bind.ts::bindingEffectsForOwners`
-
-Projects recorded field effects onto every owning rule through the shared segment lookup before lead narrowing can replace hidden helper references. The resulting sidecar is the canonical owner-scoped record consumed by binding facts after transformation.
 
 ### `packages/codegen/src/dsl/automatic-groups.ts::AutomaticGroupContext`
 
@@ -7733,10 +7713,3 @@ The minimal existing automatic-group context: rule and group bags, canonical ded
 `boundNameOf` also consumes explicit alias effects recorded by the bindings wire. The same mapper projects authored claims and member routes to a wire-created leaf alias such as `line_comment_regular` → `text_comment`; it does not infer aliases or alter unrelated kind identities.
 
 
-### `packages/codegen/src/dsl/bind.ts::ownerOptions`
-
-Selects an authored owner's render preferences and owned label addresses as input to the existing canonical option-path renamer. Values and label targets keep their authored meaning.
-
-### `packages/codegen/src/dsl/bind.ts::inheritSplitOptions`
-
-Projects source-owner preferences and labels onto each realized parser split using the canonical split provenance and option-path mapper. The original policy remains in place; an explicitly authored target policy wins. `splitGrammar` applies this alongside its realized `splitFrom` metadata so contextual bodies retain indentation, boundary breaks and end-of-list preferences.

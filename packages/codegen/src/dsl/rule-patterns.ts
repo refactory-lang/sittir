@@ -626,6 +626,50 @@ export function isParserHiddenName(name: string): boolean {
 	return name.startsWith('_');
 }
 
+export type GrammarRecord = Record<string, unknown>;
+
+export const isRecord = (value: unknown): value is GrammarRecord => typeof value === 'object' && value !== null && !Array.isArray(value);
+
+export function symbolNames(rule: unknown, out: Set<string> = new Set()): Set<string> {
+	if (Array.isArray(rule)) for (const r of rule) symbolNames(r, out);
+	else if (isRecord(rule)) {
+		if (rule.type === 'SYMBOL' && typeof rule.name === 'string') out.add(rule.name);
+		for (const value of Object.values(rule)) symbolNames(value, out);
+	}
+	return out;
+}
+
+export function fieldNames(rule: unknown, out: Set<string> = new Set()): Set<string> {
+	if (Array.isArray(rule)) for (const r of rule) fieldNames(r, out);
+	else if (isRecord(rule)) {
+		if (rule.type === 'FIELD' && typeof rule.name === 'string') out.add(rule.name);
+		for (const value of Object.values(rule)) fieldNames(value, out);
+	}
+	return out;
+}
+
+export function supertypesOf(grammar: GrammarRecord): ReadonlySet<string> {
+	return new Set(
+		(Array.isArray(grammar.supertypes) ? grammar.supertypes : []).flatMap((s) =>
+			typeof s === 'string' ? [s] : isRecord(s) && typeof s.name === 'string' ? [s.name] : []
+		)
+	);
+}
+
+export function transparentReach(rules: GrammarRecord, from: string, stop: ReadonlySet<string>): Set<string> {
+	const out = new Set<string>([from]);
+	const queue = [from];
+	while (queue.length > 0) {
+		for (const ref of symbolNames(rules[queue.pop()!])) {
+			if (isParserHiddenName(ref) && ref in rules && !stop.has(ref) && !out.has(ref)) {
+				out.add(ref);
+				queue.push(ref);
+			}
+		}
+	}
+	return out;
+}
+
 export interface SymbolSource {
 	readonly rules: Readonly<Record<string, AnyRule>>;
 	readonly externals: ReadonlySet<string>;
