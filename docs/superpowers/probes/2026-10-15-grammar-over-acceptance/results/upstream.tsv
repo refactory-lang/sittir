@@ -25,12 +25,12 @@ typescript	misparse	javascript#259	a labelled statement	3	production	-	-	-	not w
 typescript	misparse	javascript#318	a destructuring assignment	3	production	-	-	-	not witnessed	
 typescript	misparse	javascript#354 (PR)	ASI after an arrow function followed by a parenthesized expression	2	production	-	-	-	not witnessed	
 typescript	misparse		`bigint` is not a predefined type: `let x: bigint` reads it as a type_identifier	3	production	clean	clean	accepts	parses clean	no upstream issue or PR; upstream master's predefined_type lacks bigint too
-rust	under	rust#277, rust#288 (in 0.24.1)	&raw[..] when the identifier is named raw	1	production	ERROR@2:6	ERROR@2:6	accepts	under-accepted	fixed by v0.24.1, a git tag only: npm still publishes 0.24.0 (rust#318)
+rust	under	rust#277, rust#288 (in 0.24.1)	&raw[..] when the identifier is named raw	1	production	clean	clean	accepts	parses clean	fixed by v0.24.1, a git tag only: npm still publishes 0.24.0 (rust#318)
 rust	misparse	rust#306 (in 0.24.1), rust#307 (in 0.24.2)	string literals with unexpected prefixes, and recovery after repeated string literals	1	production	-	-	-	not witnessed	git tags only (rust#318)
 rust	under	rust#315, rust#316 (PR)	a block comment with multibyte characters	2	production	ERROR@1:1	ERROR@1:1	accepts	under-accepted	
 rust	under	rust#284, rust#312 (PR)	<= after a cast	2	production	ERROR@2:31	ERROR@2:31	accepts	under-accepted	
 rust	under	rust#276	two attributes on a parameter	3	production	ERROR@1:10	ERROR@1:10	accepts	under-accepted	
-rust	under	rust#250, rust#256 (PR)	safe items in an unsafe extern block (edition 2024)	2	production	ERROR@1:1 ERROR@2:9	ERROR@1:1 ERROR@2:9	accepts	under-accepted	
+rust	under	rust#250, rust#256 (PR)	safe items in an unsafe extern block (edition 2024)	2	production	ERROR@2:9	ERROR@2:9	accepts	under-accepted	
 rust	under	rust#282 (PR)	a trailing comma in closure parameters	2	production	ERROR@2:5 ERROR@2:29	ERROR@2:5 ERROR@2:29	accepts	under-accepted	
 rust	under	rust#271 (PR)	a where clause on a unit struct	2	production	ERROR@2:1	ERROR@2:1	accepts	under-accepted	
 rust	under	rust#319 (PR), rust#301 (PR)	attributes on struct pattern fields	2	production	ERROR@3:5 ERROR@3:32	ERROR@3:5 ERROR@3:32	accepts	under-accepted	

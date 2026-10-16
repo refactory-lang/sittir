@@ -56,7 +56,7 @@ The environment a CLI run gets: the parent's, without `UNBOUND_ENV`, plus the va
 
 ```text
 /**
- * Copy the base grammar's scanner.c into .sittir/src/ when missing,
+ * Copy the base grammar's scanner.c into <target>/src/ when missing,
  * preserving any relative #include paths it uses (e.g., typescript's
  * scanner.c includes ../../common/scanner.h). Looks under the grammar
  * package's node_modules/tree-sitter-<name>/{src,<lang>/src}/scanner.c.
@@ -102,17 +102,20 @@ Some grammars — tree-sitter-typescript among them — bundle a custom external
 scanner that `tree-sitter generate` does not materialize. Without it the WASM
 build fails with "Missing symbols" for the
 `tree_sitter_<lang>_external_scanner_*` functions, so the base grammar's
-`scanner.c` (and any header it relatively-includes) is copied into
-`.sittir/src/` before building.
+`scanner.c` (and any header it relatively-includes) is copied into the
+target's `src/` before building: `.sittir/` for sittir's parser, the staging
+directory for the upstream judge. It returns the files it copied, none when
+the target already has a scanner or the upstream ships none.
 
 ### `packages/codegen/src/transpile/compile-parser.ts::copyRelativeScannerIncludes`
 
 ```text
 /**
  * Mirrors any header the scanner reaches via a relative `#include "..."`
- * alongside the copied scanner, at the same relative position from the new
- * .sittir/src/scanner.c location. Same-directory includes and tree-sitter's
- * own runtime headers are already resolvable and don't need copying.
+ * alongside the copied scanner, at the same relative position from the copied
+ * scanner, following the copied headers' own relative includes in turn.
+ * Same-directory includes and tree-sitter's own runtime headers are already
+ * resolvable and don't need copying. Returns the files it copied.
  */
 ```
 
@@ -539,6 +542,26 @@ Builds `.sittir/parser.wasm` from the sources the last `tree-sitter generate` le
 ### `packages/codegen/src/transpile/compile-parser.ts::ensureParserWasm`
 
 Builds the wasm only when `.sittir/parser.wasm` is missing, and reports whether it did. The wasm is committed and every regen rebuilds it, so this is a backstop for a missing file (the vitest global setup), not a staleness check: a present wasm is never rebuilt, and a grammar edit reaches it through a regen.
+
+### `packages/codegen/src/transpile/compile-parser.ts::UPSTREAM_KEY`
+
+`.sittir/upstream.json`, which records the key the committed `upstream.wasm` was built at.
+
+### `packages/codegen/src/transpile/compile-parser.ts::withUpstreamGrammar`
+
+Stages the unmodified upstream grammar in a fresh temporary directory: a `grammar.js` that re-exports the package's `base.ts` (the grammar sittir builds on, with whatever its dependencies resolve to, overrides included), the grammar's `.sittir` `package.json` and `tree-sitter.json`, and the upstream scanner with every file it includes. The directory sits two levels deep so a scanner's relative includes (typescript's `../../common/scanner.h`) stay inside it, and it is removed afterwards. The callback receives the staged scanner files, which are the key's scanner input.
+
+### `packages/codegen/src/transpile/compile-parser.ts::upstreamKeyOf`
+
+The staged grammar's key: the tree-sitter CLI version, the `grammar.json` that `generate --no-parser` writes, and each staged scanner file by its path in the staging directory and its contents, in sorted order. A scanner that delegates to a header (typescript's) is keyed on the header too. Equal keys mean the same parser, so the key decides whether the judge is rebuilt without generating a parser.
+
+### `packages/codegen/src/transpile/compile-parser.ts::buildUpstreamWasm`
+
+Generates and builds the staged upstream grammar to the given wasm path with the same CLI that builds sittir's own parser. For a grammar on its published version the result parses as the published wasm does; for a pinned grammar (a git tag, an overridden dependency) it is the only wasm that matches what sittir builds on.
+
+### `packages/codegen/src/transpile/compile-parser.ts::ensureUpstreamWasm`
+
+Writes `.sittir/upstream.wasm`, the upstream judge, when its key differs from the recorded one or the file is missing, and records the key. The regen runs it beside `buildParserWasm`, so the judge follows every change to the upstream grammar and costs only the key when nothing changed.
 
 ### `packages/codegen/src/transpile/tree-sitter-cli.ts::NODE_FLOOR`
 

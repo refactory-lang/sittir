@@ -102,7 +102,7 @@ describe('fetchUpstreamCorpus', () => {
 
 	it('falls through to the next ref only on a 404', async () => {
 		fetchMock.mockResolvedValueOnce(response(404)).mockResolvedValueOnce(response(200, archive({ 'a.txt': 'A' })));
-		const result = await fetchUpstreamCorpus({ grammar: 'rust' });
+		const result = await fetchUpstreamCorpus({ grammar: 'python' });
 		expect(fetchMock).toHaveBeenCalledTimes(2);
 		expect(result.ref).toBe(result.version);
 	});

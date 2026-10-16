@@ -219,30 +219,10 @@ export interface PortableIds {
 		| TSKindId.ModItemExternal
 		| TSKindId.ModItemInline;
 	'declaration.module.foreign': TSKindId.ForeignModItem | TSKindId.ForeignModItemBody | TSKindId.ForeignModItemSemi;
-	'declaration.module.foreign.private': TSKindId.ForeignModItemBody | TSKindId.ForeignModItemSemi;
-	'declaration.module.foreign.public': TSKindId.ForeignModItemBody | TSKindId.ForeignModItemSemi;
-	'declaration.module.foreign.public.internal': TSKindId.ForeignModItemBody | TSKindId.ForeignModItemSemi;
-	'declaration.module.foreign.public.restricted': TSKindId.ForeignModItemBody | TSKindId.ForeignModItemSemi;
-	'declaration.module.private':
-		| TSKindId.ForeignModItemBody
-		| TSKindId.ForeignModItemSemi
-		| TSKindId.ModItemExternal
-		| TSKindId.ModItemInline;
-	'declaration.module.public':
-		| TSKindId.ForeignModItemBody
-		| TSKindId.ForeignModItemSemi
-		| TSKindId.ModItemExternal
-		| TSKindId.ModItemInline;
-	'declaration.module.public.internal':
-		| TSKindId.ForeignModItemBody
-		| TSKindId.ForeignModItemSemi
-		| TSKindId.ModItemExternal
-		| TSKindId.ModItemInline;
-	'declaration.module.public.restricted':
-		| TSKindId.ForeignModItemBody
-		| TSKindId.ForeignModItemSemi
-		| TSKindId.ModItemExternal
-		| TSKindId.ModItemInline;
+	'declaration.module.private': TSKindId.ModItemExternal | TSKindId.ModItemInline;
+	'declaration.module.public': TSKindId.ModItemExternal | TSKindId.ModItemInline;
+	'declaration.module.public.internal': TSKindId.ModItemExternal | TSKindId.ModItemInline;
+	'declaration.module.public.restricted': TSKindId.ModItemExternal | TSKindId.ModItemInline;
 	'declaration.parameter':
 		| TSKindId.CapturedPattern
 		| TSKindId.CharLiteralEmpty
@@ -1192,23 +1172,7 @@ export interface PortableKindsAt {
 		readonly private: PortableKindsAt['declaration.module.private'];
 		readonly public: PortableKindsAt['declaration.module.public'];
 	};
-	'declaration.module.foreign': {
-		readonly $ids: readonly PortableIds['declaration.module.foreign'][];
-		readonly private: PortableKindsAt['declaration.module.foreign.private'];
-		readonly public: PortableKindsAt['declaration.module.foreign.public'];
-	};
-	'declaration.module.foreign.private': { readonly $ids: readonly PortableIds['declaration.module.foreign.private'][] };
-	'declaration.module.foreign.public': {
-		readonly $ids: readonly PortableIds['declaration.module.foreign.public'][];
-		readonly internal: PortableKindsAt['declaration.module.foreign.public.internal'];
-		readonly restricted: PortableKindsAt['declaration.module.foreign.public.restricted'];
-	};
-	'declaration.module.foreign.public.internal': {
-		readonly $ids: readonly PortableIds['declaration.module.foreign.public.internal'][];
-	};
-	'declaration.module.foreign.public.restricted': {
-		readonly $ids: readonly PortableIds['declaration.module.foreign.public.restricted'][];
-	};
+	'declaration.module.foreign': { readonly $ids: readonly PortableIds['declaration.module.foreign'][] };
 	'declaration.module.private': { readonly $ids: readonly PortableIds['declaration.module.private'][] };
 	'declaration.module.public': {
 		readonly $ids: readonly PortableIds['declaration.module.public'][];
@@ -2107,21 +2071,7 @@ export interface PortableIsAt {
 		readonly private: PortableIsAt['declaration.module.private'];
 		readonly public: PortableIsAt['declaration.module.public'];
 	};
-	'declaration.module.foreign': PortableGuard<PortableIds['declaration.module.foreign']> & {
-		readonly private: PortableIsAt['declaration.module.foreign.private'];
-		readonly public: PortableIsAt['declaration.module.foreign.public'];
-	};
-	'declaration.module.foreign.private': PortableGuard<PortableIds['declaration.module.foreign.private']> & {};
-	'declaration.module.foreign.public': PortableGuard<PortableIds['declaration.module.foreign.public']> & {
-		readonly internal: PortableIsAt['declaration.module.foreign.public.internal'];
-		readonly restricted: PortableIsAt['declaration.module.foreign.public.restricted'];
-	};
-	'declaration.module.foreign.public.internal': PortableGuard<
-		PortableIds['declaration.module.foreign.public.internal']
-	> & {};
-	'declaration.module.foreign.public.restricted': PortableGuard<
-		PortableIds['declaration.module.foreign.public.restricted']
-	> & {};
+	'declaration.module.foreign': PortableGuard<PortableIds['declaration.module.foreign']> & {};
 	'declaration.module.private': PortableGuard<PortableIds['declaration.module.private']> & {};
 	'declaration.module.public': PortableGuard<PortableIds['declaration.module.public']> & {
 		readonly internal: PortableIsAt['declaration.module.public.internal'];
@@ -2959,38 +2909,10 @@ const table: PortableTable = {
 			ids: [TSKindId.ForeignModItem, TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi],
 			exact: true
 		},
-		'declaration.module.foreign.private': {
-			ids: [TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi],
-			exact: false
-		},
-		'declaration.module.foreign.public': {
-			ids: [TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi],
-			exact: false
-		},
-		'declaration.module.foreign.public.internal': {
-			ids: [TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi],
-			exact: false
-		},
-		'declaration.module.foreign.public.restricted': {
-			ids: [TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi],
-			exact: false
-		},
-		'declaration.module.private': {
-			ids: [TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi, TSKindId.ModItemExternal, TSKindId.ModItemInline],
-			exact: false
-		},
-		'declaration.module.public': {
-			ids: [TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi, TSKindId.ModItemExternal, TSKindId.ModItemInline],
-			exact: false
-		},
-		'declaration.module.public.internal': {
-			ids: [TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi, TSKindId.ModItemExternal, TSKindId.ModItemInline],
-			exact: false
-		},
-		'declaration.module.public.restricted': {
-			ids: [TSKindId.ForeignModItemBody, TSKindId.ForeignModItemSemi, TSKindId.ModItemExternal, TSKindId.ModItemInline],
-			exact: false
-		},
+		'declaration.module.private': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
+		'declaration.module.public': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
+		'declaration.module.public.internal': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
+		'declaration.module.public.restricted': { ids: [TSKindId.ModItemExternal, TSKindId.ModItemInline], exact: false },
 		'declaration.parameter': {
 			ids: [
 				TSKindId.CapturedPattern,
@@ -4592,142 +4514,8 @@ const table: PortableTable = {
 		[TSKindId.ForExpression]: [{ path: 'statement.loop.for_each', within: [], test: [] }],
 		[TSKindId.ForLifetimes]: [{ path: 'clause.lifetimes', within: [], test: [] }],
 		[TSKindId.ForeignModItem]: [{ path: 'declaration.module.foreign', within: [], test: [] }],
-		[TSKindId.ForeignModItemBody]: [
-			{
-				path: 'declaration.module.foreign.private',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '396': 0 } } },
-					{ up: 0, via: [{ slots: { '396': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
-					{
-						up: 0,
-						via: [{ slots: { '396': 0 } }, { slots: { '235': 0 } }],
-						plan: { op: 'is', types: [380], slots: { '381': 0 } }
-					},
-					{
-						up: 0,
-						via: [{ slots: { '396': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
-					}
-				]
-			},
-			{
-				path: 'declaration.module.foreign.public.internal',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '396': 0 } } },
-					{ up: 0, via: [{ slots: { '396': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
-					{
-						up: 0,
-						via: [{ slots: { '396': 0 } }, { slots: { '235': 0 } }],
-						plan: { op: 'is', types: [380], slots: { '381': 0 } }
-					},
-					{
-						up: 0,
-						via: [{ slots: { '396': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [127], slots: { '380': 0 } }
-					}
-				]
-			},
-			{
-				path: 'declaration.module.foreign.public.restricted',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '396': 0 } } },
-					{ up: 0, via: [{ slots: { '396': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
-					{
-						up: 0,
-						via: [{ slots: { '396': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
-					}
-				]
-			},
-			{
-				path: 'declaration.module.foreign.public',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '396': 0 } } },
-					{ up: 0, via: [{ slots: { '396': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
-				]
-			},
-			{
-				path: 'declaration.module.foreign.public.internal',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '396': 0 } } },
-					{ up: 0, via: [{ slots: { '396': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
-				]
-			},
-			{ path: 'declaration.module.foreign', within: [], test: [] }
-		],
-		[TSKindId.ForeignModItemSemi]: [
-			{
-				path: 'declaration.module.foreign.private',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '395': 0 } } },
-					{ up: 0, via: [{ slots: { '395': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
-					{
-						up: 0,
-						via: [{ slots: { '395': 0 } }, { slots: { '235': 0 } }],
-						plan: { op: 'is', types: [380], slots: { '381': 0 } }
-					},
-					{
-						up: 0,
-						via: [{ slots: { '395': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
-					}
-				]
-			},
-			{
-				path: 'declaration.module.foreign.public.internal',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '395': 0 } } },
-					{ up: 0, via: [{ slots: { '395': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
-					{
-						up: 0,
-						via: [{ slots: { '395': 0 } }, { slots: { '235': 0 } }],
-						plan: { op: 'is', types: [380], slots: { '381': 0 } }
-					},
-					{
-						up: 0,
-						via: [{ slots: { '395': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [127], slots: { '380': 0 } }
-					}
-				]
-			},
-			{
-				path: 'declaration.module.foreign.public.restricted',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '395': 0 } } },
-					{ up: 0, via: [{ slots: { '395': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
-					{
-						up: 0,
-						via: [{ slots: { '395': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
-					}
-				]
-			},
-			{
-				path: 'declaration.module.foreign.public',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '395': 0 } } },
-					{ up: 0, via: [{ slots: { '395': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
-				]
-			},
-			{
-				path: 'declaration.module.foreign.public.internal',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '395': 0 } } },
-					{ up: 0, via: [{ slots: { '395': 0 } }], plan: { op: 'is', types: [127], slots: { '235': 0 } } }
-				]
-			},
-			{ path: 'declaration.module.foreign', within: [], test: [] }
-		],
+		[TSKindId.ForeignModItemBody]: [{ path: 'declaration.module.foreign', within: [], test: [] }],
+		[TSKindId.ForeignModItemSemi]: [{ path: 'declaration.module.foreign', within: [], test: [] }],
 		[TSKindId.FunctionItem]: [
 			{
 				path: 'declaration.method',
@@ -6309,7 +6097,6 @@ const table: PortableTable = {
 		[TSKindId.GenKeyword]: 'gen',
 		[TSKindId.TryKeyword]: 'try',
 		[TSKindId.At]: '@',
-		[TSKindId.Dquote]: '"',
 		[TSKindId.TrueKeyword]: 'true',
 		[TSKindId.FalseKeyword]: 'false',
 		[TSKindId.SlashSlash]: '//',
@@ -6369,6 +6156,8 @@ export const queryFlags: QueryFlags = Object.freeze({
 		mutable: { op: 'present', slots: { '414': 1 } },
 		byReference: { op: 'present', slots: { '414': 0 } }
 	},
+	[TSKindId.ForeignModItemBody]: { unsafe: { op: 'present', slots: { '396': 0 } } },
+	[TSKindId.ForeignModItemSemi]: { unsafe: { op: 'present', slots: { '395': 0 } } },
 	[TSKindId.FunctionItem]: {
 		async: { op: 'child', slots: { '208': 1 }, of: { op: 'eq', text: 'async', slots: { '210': 0 } } },
 		const: { op: 'child', slots: { '208': 1 }, of: { op: 'eq', text: 'const', slots: { '210': 0 } } },
@@ -6387,14 +6176,14 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ImplItemBody]: { unsafe: { op: 'present', slots: { '377': 0 } } },
 	[TSKindId.ImplItemSemi]: { unsafe: { op: 'present', slots: { '378': 0 } } },
 	[TSKindId.LetDeclaration]: { mutable: { op: 'present', slots: { '223': 0 } } },
-	[TSKindId.Parameter]: { mutable: { op: 'is', types: [57], slots: { '233': 0 } } },
+	[TSKindId.Parameter]: { mutable: { op: 'is', types: [58], slots: { '233': 0 } } },
 	[TSKindId.PointerTypeMut]: { writable: { op: 'and', of: [] } },
 	[TSKindId.ReferenceExpressionMut]: { exclusive: { op: 'and', of: [] } },
 	[TSKindId.ReferenceExpressionRawConst]: { raw: { op: 'and', of: [] } },
 	[TSKindId.ReferenceExpressionRawMut]: { writable: { op: 'and', of: [] }, raw: { op: 'and', of: [] } },
-	[TSKindId.ReferencePattern]: { exclusive: { op: 'is', types: [57], slots: { '326': 0 } } },
-	[TSKindId.ReferenceType]: { exclusive: { op: 'is', types: [57], slots: { '252': 1 } } },
-	[TSKindId.SelfParameter]: { mutable: { op: 'is', types: [57], slots: { '231': 2 } } },
+	[TSKindId.ReferencePattern]: { exclusive: { op: 'is', types: [58], slots: { '326': 0 } } },
+	[TSKindId.ReferenceType]: { exclusive: { op: 'is', types: [58], slots: { '252': 1 } } },
+	[TSKindId.SelfParameter]: { mutable: { op: 'is', types: [58], slots: { '231': 2 } } },
 	[TSKindId.StaticItem]: {
 		mutable: { op: 'present', slots: { '206': 2 } },
 		byReference: { op: 'present', slots: { '206': 1 } }
@@ -6439,6 +6228,12 @@ declare module './types.js' {
 	}
 	interface FieldPatternShorthand {
 		readonly __flags__?: 'mutable' | 'byReference';
+	}
+	interface ForeignModItemBody {
+		readonly __flags__?: 'unsafe';
+	}
+	interface ForeignModItemSemi {
+		readonly __flags__?: 'unsafe';
 	}
 	interface FunctionItem {
 		readonly __flags__?: 'async' | 'const' | 'unsafe' | 'default';

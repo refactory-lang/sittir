@@ -595,11 +595,11 @@ export const querySlots: QuerySlots = Object.freeze({
 	393: [['rangeExpressionBare', 0]],
 	394: [['expression', 0]],
 	395: [
-		['visibilityModifier', 0],
+		['unsafe', 0, 'unsafe'],
 		['externModifier', 1]
 	],
 	396: [
-		['visibilityModifier', 0],
+		['unsafe', 0, 'unsafe'],
 		['externModifier', 1],
 		['body', 2]
 	],
