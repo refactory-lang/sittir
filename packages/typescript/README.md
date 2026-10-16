@@ -17,18 +17,18 @@ npm install @sittir/typescript
 ```ts
 import typescript from '@sittir/typescript';
 
-using engine = await typescript.createEngine();
+using ts = await typescript.createEngine();
 
-const iface = engine.build.interfaceDeclaration({
+const iface = ts.build.interfaceDeclaration({
 	name: 'User',
-	body: engine.build.objectType.curly()
+	body: ts.build.objectType.curly()
 });
 
 iface.$render(); // "interface User {}"
-engine.render(iface).toString(); // "interface User {}"
+ts.render(iface).toString(); // "interface User {}"
 ```
 
-A node belongs to the engine that built or read it, and renders, edits and takes trivia through that engine. `engine.build` is the only way to make nodes; a node made anywhere else has no engine, and `$render()` says so.
+A node belongs to the engine that built or read it, and renders, edits and takes trivia through that engine. `ts.build` is the only way to make nodes; a node made anywhere else has no engine, and `$render()` says so.
 
 ## Reading
 
@@ -37,10 +37,10 @@ A node belongs to the engine that built or read it, and renders, edits and takes
 ```ts
 import typescript from '@sittir/typescript';
 
-using engine = await typescript.createEngine();
+using ts = await typescript.createEngine();
 const source = 'let x:   number = 1; // keep me\n';
 
-const program = engine.parse(source);
+const program = ts.parse(source);
 program.$render() === source; // true
 ```
 
@@ -51,11 +51,11 @@ program.$render() === source; // true
 ```ts
 import typescript from '@sittir/typescript';
 
-using engine = await typescript.createEngine();
+using ts = await typescript.createEngine();
 
-const iface = engine.build.interfaceDeclaration({
+const iface = ts.build.interfaceDeclaration({
 	name: 'User',
-	body: engine.build.objectType.curly()
+	body: ts.build.objectType.curly()
 });
 
 iface.$trivia.leading('// the user').$render(); // "// the user\ninterface User {}"
@@ -68,15 +68,15 @@ The guards narrow to this engine's language: a node of another engine of the lan
 ```ts
 import typescript from '@sittir/typescript';
 
-using engine = await typescript.createEngine();
-const built = engine.build.interfaceDeclaration({
+using ts = await typescript.createEngine();
+const built = ts.build.interfaceDeclaration({
 	name: 'User',
-	body: engine.build.objectType.curly()
+	body: ts.build.objectType.curly()
 });
 
-engine.isNode(built); // true
-engine.isFactoryNode(built); // true
-engine.isParsedNode(built); // false
+ts.isNode(built); // true
+ts.isFactoryNode(built); // true
+ts.isParsedNode(built); // false
 ```
 
 ## Types

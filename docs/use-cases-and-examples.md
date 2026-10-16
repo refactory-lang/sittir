@@ -11,10 +11,10 @@ At module scope, `using` disposes the engine when module evaluation finishes, so
 ```ts
 import rust from '@sittir/rust';
 
-using engine = await rust.createEngine();
-const name = engine.build.identifier('value');
+using rs = await rust.createEngine();
+const name = rs.build.identifier('value');
 name.$render(); // "value"
-engine.isFactoryNode(name); // true
+rs.isFactoryNode(name); // true
 ```
 
 ## Construction and coercion
@@ -24,11 +24,11 @@ The ordinary builder resolves ergonomic inputs according to the slot's grammar-d
 ```ts
 import rust from '@sittir/rust';
 
-using engine = await rust.createEngine();
-const fn = engine.build.statement.function.strict({
-	name: engine.build.identifier('main'),
-	parameters: engine.build.parameters.strict(),
-	body: engine.build.block.strict()
+using rs = await rust.createEngine();
+const fn = rs.build.statement.function.strict({
+	name: rs.build.identifier('main'),
+	parameters: rs.build.parameters.strict(),
+	body: rs.build.block.strict()
 });
 fn.$render(); // "fn main() {}"
 ```
@@ -42,9 +42,9 @@ Builders expose the grammar's forms, not a uniform object constructor for every 
 ```ts
 import typescript from '@sittir/typescript';
 
-using engine = await typescript.createEngine();
+using ts = await typescript.createEngine();
 const source = 'const answer: number = 42; // retained\n';
-const root = engine.parse(source, { errors: 'throw' });
+const root = ts.parse(source, { errors: 'throw' });
 root.$errors.length === 0; // true
 root.$render() === source; // true
 ```
@@ -58,11 +58,11 @@ Accessors return their declared slot values. A guard narrows a grammar kind; it 
 ```ts
 import rust from '@sittir/rust';
 
-using engine = await rust.createEngine();
-const root = engine.parse('fn old_name() {}\n');
+using rs = await rust.createEngine();
+const root = rs.parse('fn old_name() {}\n');
 const statements = root.statements().map((node) =>
-	engine.is.functionItem(node)
-		? node.$with.name(engine.build.identifier('new_name'))
+	rs.is.functionItem(node)
+		? node.$with.name(rs.build.identifier('new_name'))
 		: node
 );
 const updated = root.$with.statements(...statements);
@@ -79,10 +79,10 @@ A parsed node's `$query()` exposes typed slot views and structural walks. `ofTyp
 ```ts
 import python from '@sittir/python';
 
-using engine = await python.createEngine();
-const root = engine.parse('load(1)\nstore(2)\n');
+using py = await python.createEngine();
+const root = py.parse('load(1)\nstore(2)\n');
 const calls = Array.from(
-	root.$query().$descendants.ofType(engine.kinds.Call)
+	root.$query().$descendants.ofType(py.kinds.Call)
 		.where((call) => call.function.eq('load'))
 );
 calls.length === 1; // true
@@ -97,9 +97,9 @@ Queries require parsed structure. A newly constructed node or draft is not a par
 ```ts
 import rust from '@sittir/rust';
 
-using engine = await rust.createEngine();
-const name = engine.build.identifier('value');
-engine.render(name).toString(); // "value"
+using rs = await rust.createEngine();
+const name = rs.build.identifier('value');
+rs.render(name).toString(); // "value"
 ```
 
 Parsed nodes can reuse their source bytes. A fresh build is rendered from its structure. Neither path promises that every grammar construct is covered without exclusions; the native validation baseline records that coverage.
@@ -111,11 +111,11 @@ Use `$trivia` rather than editing raw layout storage. Leading and trailing trivi
 ```ts
 import rust from '@sittir/rust';
 
-using engine = await rust.createEngine();
-const fn = engine.build.statement.function({
+using rs = await rust.createEngine();
+const fn = rs.build.statement.function({
 	name: 'main',
-	parameters: engine.build.parameters(),
-	body: engine.build.block()
+	parameters: rs.build.parameters(),
+	body: rs.build.block()
 });
 fn.$trivia.leading('// entry point').$render(); // "// entry point\nfn main() {}"
 ```

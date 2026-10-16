@@ -1,14 +1,13 @@
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+const rs = await rust.createEngine();
 
 export function renderFunction() {
-	return engine.build.statement.function({
+	return rs.build.statement.function({
 		visibilityModifier: 'pub',
 		name: 'render_config',
-		parameters: engine.build.parameters.strict(),
+		parameters: rs.build.parameters.strict(),
 		returnType: 'String',
-		body: engine.build.block.strict(),
+		body: rs.build.block.strict(),
 	}).$render();
 }

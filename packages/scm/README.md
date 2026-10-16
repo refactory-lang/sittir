@@ -13,9 +13,9 @@ npm install @sittir/scm
 ```ts
 import scm from '@sittir/scm';
 
-using engine = await scm.createEngine();
+using q = await scm.createEngine();
 const source = '(identifier) @name';
-engine.parse(source, { errors: 'throw' }).$render() === source; // true
+q.parse(source, { errors: 'throw' }).$render() === source; // true
 ```
 
 ## Regenerating

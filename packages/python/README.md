@@ -17,20 +17,20 @@ npm install @sittir/python
 ```ts
 import python from '@sittir/python';
 
-using engine = await python.createEngine();
+using py = await python.createEngine();
 
-const fn = engine.build.functionDefinition({
+const fn = py.build.functionDefinition({
 	name: 'greet',
-	parameters: engine.build.parameters(),
-	body: engine.build.block(engine.build.passStatement)
+	parameters: py.build.parameters(),
+	body: py.build.block(py.build.passStatement)
 });
 
 fn.$render(); // "def greet():\n    pass\n"
-engine.render(fn).toString(); // "def greet():\n    pass\n"
-engine.parse(fn.$render(), { errors: 'throw' }).$errors.length === 0; // true
+py.render(fn).toString(); // "def greet():\n    pass\n"
+py.parse(fn.$render(), { errors: 'throw' }).$errors.length === 0; // true
 ```
 
-A node belongs to the engine that built or read it, and renders, edits and takes trivia through that engine. `engine.build` is the only way to make nodes; a node made anywhere else has no engine, and `$render()` says so.
+A node belongs to the engine that built or read it, and renders, edits and takes trivia through that engine. `py.build` is the only way to make nodes; a node made anywhere else has no engine, and `$render()` says so.
 
 ## Reading
 
@@ -39,10 +39,10 @@ A node belongs to the engine that built or read it, and renders, edits and takes
 ```ts
 import python from '@sittir/python';
 
-using engine = await python.createEngine();
+using py = await python.createEngine();
 const source = 'def greet(name):\n    # say hello\n    print( name )\n';
 
-const module = engine.parse(source);
+const module = py.parse(source);
 module.$render() === source; // true
 ```
 
@@ -53,12 +53,12 @@ module.$render() === source; // true
 ```ts
 import python from '@sittir/python';
 
-using engine = await python.createEngine();
+using py = await python.createEngine();
 
-const fn = engine.build.functionDefinition({
+const fn = py.build.functionDefinition({
 	name: 'greet',
-	parameters: engine.build.parameters(),
-	body: engine.build.block(engine.build.passStatement)
+	parameters: py.build.parameters(),
+	body: py.build.block(py.build.passStatement)
 });
 
 fn.$trivia.leading('# entry point').$render(); // "# entry point\ndef greet():\n    pass\n"
@@ -71,16 +71,16 @@ The guards narrow to this engine's language: a node of another engine of the lan
 ```ts
 import python from '@sittir/python';
 
-using engine = await python.createEngine();
-const built = engine.build.functionDefinition({
+using py = await python.createEngine();
+const built = py.build.functionDefinition({
 	name: 'greet',
-	parameters: engine.build.parameters(),
-	body: engine.build.block(engine.build.passStatement)
+	parameters: py.build.parameters(),
+	body: py.build.block(py.build.passStatement)
 });
 
-engine.isNode(built); // true
-engine.isFactoryNode(built); // true
-engine.isParsedNode(built); // false
+py.isNode(built); // true
+py.isFactoryNode(built); // true
+py.isParsedNode(built); // false
 ```
 
 ## Types

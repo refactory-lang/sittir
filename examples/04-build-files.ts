@@ -1,23 +1,22 @@
-import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+const rs = await rust.createEngine();
 
 export function renderPublicStruct() {
-	return engine.build.statement.struct.unit({
+	return rs.build.statement.struct.unit({
 		visibilityModifier: 'pub',
 		name: 'Config',
 	}).$render();
 }
 
 export function renderSourceFile() {
-	return engine.build.sourceFile({
+	return rs.build.sourceFile({
 		statements: [
-			engine.build.statement.function({
+			rs.build.statement.function({
 				visibilityModifier: 'pub',
 				name: 'main',
-				parameters: engine.build.parameters.strict(),
-				body: engine.build.block.strict(),
+				parameters: rs.build.parameters.strict(),
+				body: rs.build.block.strict(),
 			}),
 		],
 	}).$render();
