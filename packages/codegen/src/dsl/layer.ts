@@ -19,7 +19,7 @@ import { layerRecordOf, withLayerRecord, type LayerRecord, type LayerRecords } f
 import { isRecord, type GrammarRecord } from './rule-patterns.ts';
 import { baseRulesOf } from './shared.ts';
 import { verbCtxOf, type VerbCtx } from './verbs/copy.ts';
-import { effectsForOwners, rewriteInherited, type AliasEffect, type Effect, type SegmentEffect } from './verbs/effects.ts';
+import { appendProvenance, effectsForOwners, provenanceOf, recordsOf, rewriteInherited, type AliasEffect, type Effect, type SegmentEffect } from './verbs/effects.ts';
 import { applyLeads } from './verbs/lead.ts';
 import { applyNarrows } from './verbs/narrow.ts';
 import { deadEnrichMints, withoutDeadNames } from './wire/dead-mints.ts';
@@ -150,6 +150,10 @@ function copyProperties(target: object, source: object, skip: ReadonlySet<Proper
 		const enumerable = Object.getOwnPropertyDescriptor(source, key)!.enumerable;
 		Object.defineProperty(target, key, { value: Reflect.get(source, key), writable: true, enumerable, configurable: true });
 	}
+}
+
+function completePendingRecords(pending: PendingBase, records: LayerRecords): void {
+	copyProperties(pending.grammar, records, new Set());
 }
 
 function completePendingBase(pending: PendingBase, completed: GrammarResult): void {
@@ -295,8 +299,9 @@ export function runLayerPass(base: PendingBase<unknown>, config: LayerConfig): L
 	for (const [ruleName, body] of bodies) rules[ruleName] = normalizedBody(body, ruleName);
 	const symbols = layerSymbols(new Set([...Object.keys(rules), ...symbolNamesOf(externals)]));
 	const evaluated = evaluatedLists(wired, { base: completed, symbols, externals });
+	const view = layerView(name, rules, evaluated, completed);
 	const ctx: LayerCtx = {
-		...verbCtxOf(layerView(name, rules, evaluated, completed), { effects: [...resolvedEffects(rules, wire)], diagnostics }, rules),
+		...verbCtxOf(view, { effects: [...resolvedEffects(view, wire)], diagnostics }, rules),
 		rules,
 		created: [...bodies.keys()].filter((ruleName) => !(ruleName in baseRules)),
 		depth: (inherited?.depth ?? 0) + 1,
@@ -311,7 +316,9 @@ export function runLayerPass(base: PendingBase<unknown>, config: LayerConfig): L
 	};
 	applyNarrows(layer.narrows, ctx);
 	applyLeads(layer.leads, ctx);
-	return completeLayer(evaluated, ctx);
+	const output = completeLayer(evaluated, ctx);
+	completePendingRecords(base, output.record.records);
+	return output;
 }
 
 function layerView(name: string, rules: Record<string, Rule>, evaluated: Omit<LayerLists, 'conflicts'>, base: GrammarResult): GrammarRecord {
@@ -326,9 +333,9 @@ function layerView(name: string, rules: Record<string, Rule>, evaluated: Omit<La
 	};
 }
 
-function resolvedEffects(rules: Readonly<Record<string, Rule>>, wire: WireContext): readonly Effect[] {
+function resolvedEffects(view: GrammarRecord, wire: WireContext): readonly Effect[] {
 	const own = wire.bindingEffects.filter((effect): effect is SegmentEffect | AliasEffect => effect.kind === 'segment' || effect.kind === 'alias');
-	return effectsForOwners({ rules }, own) as readonly Effect[];
+	return effectsForOwners(view, own) as readonly Effect[];
 }
 
 function normalizedBody(body: unknown, name: string): Rule {
@@ -376,6 +383,7 @@ function layerConflicts(ctx: LayerCtx): readonly (readonly unknown[])[] {
 
 function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx): LayerOutput {
 	const { rules, wire, depth } = ctx;
+	const projections = ctx.inherited === undefined ? undefined : appendProvenance(ctx.inherited.projections, provenanceOf(ctx.effects, rules));
 	const view = { grammar: { ...ctx.grammar, rules, supertypes: ctx.lists.supertypes, inline: ctx.lists.inline } };
 	stampWiredVariants(view, ctx.base, wire.automaticVariants, new Set(wire.elementSupertypes.keys()));
 	const dead = deadEnrichMints(view.grammar, { mints: getEnrichMints(ctx.base), protectedNames: ctx.protectedNames });
@@ -393,7 +401,8 @@ function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx):
 		textTokens: [...getEnrichTextTokens(ctx.base).keys()].filter((name) => !deadMints.has(name)),
 		liftNames,
 		effects: [...(ctx.inherited?.effects ?? []), ...ctx.effects],
-		records: ctx.inherited === undefined ? {} : (rewriteInherited(ctx.inherited.records, { effects: ctx.effects, rules }) as LayerRecords),
+		records: ctx.inherited === undefined ? {} : rewriteInherited(recordsOf(ctx.base.grammar), { effects: ctx.effects, rules }),
+		projections,
 		derivationRecords: derivationRecordsOf(rules, {
 			upstream: ctx.upstream,
 			liftNames,

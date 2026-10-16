@@ -98,7 +98,11 @@ One slot-segment rewrite of an options path, scoped to the kind `owner`: the seg
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::boundSegmentOf`
 
-One owner-scoped lookup of a segment rewrite, including rewrites on hidden helper rules reached by the canonical transparent-rule traversal. Conflicting reachable destinations are refused. Both options rewriting and field-name projection use this lookup.
+One owner-scoped lookup of a segment rewrite, over the destinations `segmentDestinations` finds. A segment with two destinations under the owner is refused here, when a reader asks for it. Both options rewriting and field-name projection use this lookup.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::segmentDestinations`
+
+Every destination a segment has under an owner, counting rewrites on the hidden helper rules the owner reaches by the canonical transparent-rule traversal, which stops at a supertype. One kind can hold a field at two positions and have them renamed apart (rust's `range_expression` names its two `expression` operands `start` and `end`), so a segment can have more than one destination.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::boundFieldNameOf`
 
@@ -126,7 +130,7 @@ Whether an effect is a field `segment` effect.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::effectsForOwners`
 
-The recorded effects, with each field (`segment`) effect given to every rule whose transparent reach holds its owner: in rule order, and within a rule in the order the segments were first recorded. The other effects come first, in their own order. It runs over the rules as the layer's edits left them, before the whole-grammar phase: a lead can narrow a visible kind in place and swap a hidden rule it reaches for a copy, after which the kind no longer reaches the rule the effect names (typescript's `required_parameter`, whose `_parameter_name` the lead's rest side copies). The result names every owner, so a reader of one owner (`boundFieldNameOf` without a grammar, `rewriteInherited`) needs no reach of its own.
+The recorded effects, with each field (`segment`) effect given to every rule whose transparent reach holds its owner, once per destination (`segmentDestinations`): in rule order, and within a rule in the order the segments were first recorded. A segment renamed two ways stays two effects, and only a reader that asks for it (`boundSegmentOf`) refuses it. The other effects come first, in their own order. It runs over the rules as the layer's edits left them, before the whole-grammar phase: a lead can narrow a visible kind in place and swap a hidden rule it reaches for a copy, after which the kind no longer reaches the rule the effect names (typescript's `required_parameter`, whose `_parameter_name` the lead's rest side copies). The result names every owner, so a reader of one owner (`boundFieldNameOf` without a grammar, `rewriteInherited`) needs no reach of its own.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::inheritsOptions`
 
@@ -155,6 +159,10 @@ Every record `RECORD_RENAMES` names, under a kind rename, with the field names t
 ### `packages/codegen/src/dsl/verbs/effects.ts::rewriteInherited`
 
 The records a layer inherits, rewritten through the layer's effects so that they name what the layer's result has. The options block takes, in this order: the segment effects under their owners (`rewriteOwnedSegments` with no grammar, since the log names every owner), the alias effects (`renameOptionPaths` without kind heads), the renames (`renameRecords`, which also rewrites every other record the table names), and the copies a path or `copy()` made (`inheritSplitOptions`). Segment, alias and copy effects touch only the options block. A record no effect names is returned as given, and the input is never changed. A layer's own records are written against its own result, so they never pass through here.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::recordsOf`
+
+The records a grammar carries, picked by the effect table's keys (`RECORD_RENAMES`), leaving out each one the grammar leaves undefined. An inheriting layer reads the records it inherits from its base this way.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::LeadCopies`
 
@@ -191,6 +199,14 @@ A lead's `bindingEffects` entry, from its copies and the rules. The list, item, 
 ### `packages/codegen/src/dsl/verbs/effects.ts::provenanceOf`
 
 The `Provenance` of a layer's effects, read over the layer's final rules, where the receiver forms and groups the leads made sit. A copy whose origin is a `narrow` is in no projection. Lead entries come in the order of each lead's first copy, keyed by list and field, since a lead's receiver form `_<list>_<field>` is unique.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::appendProvenance`
+
+A layer's projections appended to the ones it inherits: each map merged with the layer's entries last, and the binding effects in order, under `provenance`'s presence rules. A layer that inherits no projections projects its own as they are.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::provenance`
+
+A `Provenance` under the presence rules: `splitFrom` and `bindingEffects` always, `leadFrom` and `renamedFrom` only when they hold an entry.
 
 ### `packages/codegen/src/dsl/verbs/copy.ts::VerbRefusalCode`
 

@@ -2092,19 +2092,11 @@ The grammar's `reparseHosts` block: a template per supertype or kind whose `$r` 
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.bindingEffects`
 
-The effects the binding patch sets had, in the order they applied (`verbs/effects.ts::BindingEffect`). `sittirGrammar` reads them through `wireBindingEffects` to rewrite the authored options.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.recordingBindingEffects`
-
-True while a binding patch set applies (`wireWithBindingEffects`); `wireRecordBindingEffect` records only then, so authored patches leave no effects.
-
-### `packages/codegen/src/dsl/wire/wire.ts::wireWithBindingEffects`
-
-Runs `fn` with `recordingBindingEffects` set, restoring the prior value after.
+The field and alias effects the layer's patch sets had, in the order they applied (`verbs/effects.ts::BindingEffect`). The layer pass resolves them per owner into its effect log (`dsl/layer.ts::resolvedEffects`), and `sittirGrammar` reads a bindings layer's through `wireBindingEffects` to rewrite the authored options.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRecordBindingEffect`
 
-Records one effect while a binding patch set applies; outside one it does nothing.
+Records one effect on the current wire context, in every layer.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireBindingEffects`
 

@@ -90,7 +90,6 @@ export interface WireContext {
 	readonly undeclaredRules: ReadonlySet<string>;
 	readonly patchSites: Map<string, PatchSite>;
 	readonly bindingEffects: BindingEffect[];
-	recordingBindingEffects: boolean;
 	extraRuleNames: ReadonlySet<string>;
 	precedenceRankedNames: ReadonlySet<string>;
 	lists?: WireLists;
@@ -227,20 +226,8 @@ export function wireRecordPatchSite(site: PatchSite): void {
 	currentContext?.patchSites.set(patchSiteKey(site), site);
 }
 
-export function wireWithBindingEffects<T>(fn: () => T): T {
-	const context = currentContext;
-	if (!context) return fn();
-	const prior = context.recordingBindingEffects;
-	context.recordingBindingEffects = true;
-	try {
-		return fn();
-	} finally {
-		context.recordingBindingEffects = prior;
-	}
-}
-
 export function wireRecordBindingEffect(effect: BindingEffect): void {
-	if (currentContext?.recordingBindingEffects === true) currentContext.bindingEffects.push(effect);
+	currentContext?.bindingEffects.push(effect);
 }
 
 export function wireBindingEffects(opts: unknown): readonly BindingEffect[] {
@@ -361,7 +348,6 @@ export function withWireContext<T>(
 		undeclaredRules: new Set(),
 		patchSites: new Map(),
 		bindingEffects: [],
-		recordingBindingEffects: false,
 		extraRuleNames: new Set(),
 		precedenceRankedNames: new Set(),
 		flattenedParents: new Set(),
@@ -586,7 +572,6 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		...declaredRuleCauses(cfg.rules ?? {}),
 		patchSites: new Map(),
 		bindingEffects: [],
-		recordingBindingEffects: false,
 		extraRuleNames: new Set(),
 		precedenceRankedNames: new Set(),
 		flattenedParents: new Set(),

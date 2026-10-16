@@ -4,7 +4,7 @@ import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { ConflictResolutionsInput } from './conflict-resolutions.ts';
 import type { EnrichSidecars } from './enrich.ts';
 import { isRecord } from './rule-patterns.ts';
-import type { Effect } from './verbs/effects.ts';
+import type { Effect, Provenance } from './verbs/effects.ts';
 import type { DerivationRecords } from './wire/derivation-records.ts';
 import type { LiftName } from './wire/lift-names.ts';
 
@@ -38,6 +38,7 @@ export interface LayerRecord {
 	readonly liftNames: ReadonlyMap<string, LiftName>;
 	readonly effects: readonly Effect[];
 	readonly records: LayerRecords;
+	readonly projections: Provenance | undefined;
 	readonly derivationRecords: DerivationRecords;
 	readonly diagnostics: readonly GrammarDiagnostic[];
 }

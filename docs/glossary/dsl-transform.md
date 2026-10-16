@@ -1838,11 +1838,11 @@ Whether a patch is an `alias()` of the same symbol the patched member is. `resol
 
 ### `packages/codegen/src/dsl/transform/transform.ts::recordFieldEffect`
 
-The option-path segment a `field()` patch renames on the patched kind: an existing field's `name:`, a wrapped symbol's `kind:`, or a wrapped token's quoted text, each becoming the new field's `name:`. Recorded only while a binding set applies.
+The option-path segment a `field()` patch renames on the patched kind: an existing field's `name:`, a wrapped symbol's `kind:`, or a wrapped token's quoted text, each becoming the new field's `name:`. Recorded in every layer.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::recordAliasEffect`
 
-A named `alias()` of a symbol renames that kind in option paths; recorded only while a binding set applies.
+A named `alias()` of a symbol renames that kind in option paths; recorded in every layer.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::reconstructPrec`
 

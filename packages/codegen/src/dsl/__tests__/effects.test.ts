@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { LayerRecords } from '../layer-record.ts';
 import { preference } from '../primitives/preference.ts';
-import { effectsForOwners, provenanceOf, rewriteInherited, type CopyOrigin, type Effect, type LeadMatch } from '../verbs/effects.ts';
+import { appendProvenance, effectsForOwners, provenanceOf, recordsOf, rewriteInherited, type CopyOrigin, type Effect, type LeadMatch, type Provenance } from '../verbs/effects.ts';
 import { LABELS_KEY } from '../wire/options-block.ts';
 
 interface FixtureCopy {
@@ -220,6 +220,39 @@ describe('effectsForOwners', () => {
 		expect(effectsForOwners(grammar, [{ kind: 'segment', owner: '_s', from: 'f:', to: 'e:' }])).toEqual([
 			{ kind: 'segment', owner: '_s', from: 'f:', to: 'e:' }
 		]);
+	});
+
+	it('keeps both renames of a segment one owner holds twice, and refuses only a record that reads that segment', () => {
+		const grammar = { rules: { range: seq(field('e', sym('x')), sym('x'), field('e', sym('x'))), x: sym('y') }, supertypes: [] };
+		const effects: Effect[] = [
+			{ kind: 'segment', owner: 'range', from: 'e:', to: 'start:' },
+			{ kind: 'segment', owner: 'range', from: 'e:', to: 'end:' }
+		];
+		expect(effectsForOwners(grammar, effects)).toEqual(effects);
+		const tight = preference('tight');
+		expect(rewriteInherited({ options: { range: { 'x:/before': tight } } }, { effects, rules: grammar.rules })).toEqual({ options: { range: { 'x:/before': tight } } });
+		expect(() => rewriteInherited({ options: { range: { 'e:/before': tight } } }, { effects, rules: grammar.rules })).toThrow(/'range\/e:' has conflicting field renames: start:, end:/);
+	});
+});
+
+describe('recordsOf', () => {
+	it('picks the records the effect table names, leaving out every other key and each record left undefined', () => {
+		const grammar = { name: 'g', rules: {}, options: { a: {} }, groups: undefined, protectedRuleNames: ['x'] };
+		expect(recordsOf(grammar)).toEqual({ options: { a: {} }, protectedRuleNames: ['x'] });
+	});
+});
+
+describe('appendProvenance', () => {
+	const inherited: Provenance = { splitFrom: { a: 'b' }, bindingEffects: [{ kind: 'alias', from: 'p', to: 'q' }] };
+
+	it("appends a layer's projections to the ones it inherits", () => {
+		const own: Provenance = { splitFrom: { c: 'd' }, leadFrom: { e: 'f' }, bindingEffects: [{ kind: 'segment', owner: 'o', from: 'x:', to: 'y:' }] };
+		expect(appendProvenance(inherited, own)).toEqual({ splitFrom: { a: 'b', c: 'd' }, leadFrom: { e: 'f' }, bindingEffects: [...inherited.bindingEffects, ...own.bindingEffects] });
+		expect(appendProvenance(undefined, own)).toBe(own);
+	});
+
+	it('leaves leadFrom and renamedFrom out while neither side has an entry', () => {
+		expect(Object.keys(appendProvenance(inherited, { splitFrom: {}, bindingEffects: [] }))).toEqual(['splitFrom', 'bindingEffects']);
 	});
 });
 

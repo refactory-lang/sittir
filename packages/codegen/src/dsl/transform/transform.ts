@@ -32,7 +32,6 @@ import type { RuleAnnotations } from '../../types/rule.ts';
 import {
 	wireRenameLift,
 	wireWithPatchSites,
-	wireWithBindingEffects,
 	wireRecordBindingEffect,
 	wireHasAuthoredRule,
 	wireIsBaseSupertype,
@@ -59,7 +58,6 @@ import {
 	makeSimpleDollarProxy,
 	type PatchSite
 } from '../wire/wire.ts';
-import { isBindingSet } from '../bind.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
 import {
 	isFieldLike,
@@ -116,10 +114,7 @@ type PatchSet = Record<number | string, PatchValue>;
 
 export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: PatchSet[]): RuntimeRule {
 	let rule = original;
-	for (const patches of patchSets) {
-		const current = rule;
-		rule = isBindingSet(patches) ? wireWithBindingEffects(() => applyPatchSet(current, patches)) : applyPatchSet(current, patches);
-	}
+	for (const patches of patchSets) rule = applyPatchSet(rule, patches);
 	return rule;
 }
 

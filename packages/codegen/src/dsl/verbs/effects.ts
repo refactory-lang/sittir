@@ -150,19 +150,27 @@ interface SegmentRewrite {
 	readonly to: string;
 }
 
-export function boundSegmentOf(
+function segmentDestinations(
 	rewrites: readonly SegmentRewrite[],
 	grammar?: GrammarRecord
-): (owner: string, segment: string) => string {
+): (owner: string, segment: string) => readonly string[] {
 	const rules = isRecord(grammar?.rules) ? grammar.rules : {};
 	const stop = grammar === undefined ? new Set<string>() : supertypesOf(grammar);
 	const reach = new Map<string, ReadonlySet<string>>();
 	return (owner, segment) => {
 		const hosts = reach.get(owner) ?? transparentReach(rules, owner, stop);
 		reach.set(owner, hosts);
-		const destinations = [
-			...new Set(rewrites.filter((r) => hosts.has(r.owner) && r.from === segment).map((r) => r.to))
-		];
+		return [...new Set(rewrites.filter((r) => hosts.has(r.owner) && r.from === segment).map((r) => r.to))];
+	};
+}
+
+export function boundSegmentOf(
+	rewrites: readonly SegmentRewrite[],
+	grammar?: GrammarRecord
+): (owner: string, segment: string) => string {
+	const destinationsOf = segmentDestinations(rewrites, grammar);
+	return (owner, segment) => {
+		const destinations = destinationsOf(owner, segment);
 		if (destinations.length > 1)
 			throw new Error(`bind: '${owner}/${segment}' has conflicting field renames: ${destinations.join(', ')}`);
 		return destinations[0] ?? segment;
@@ -258,16 +266,15 @@ const isSegment = (effect: { readonly kind: string }): effect is SegmentEffect =
 export function effectsForOwners<E extends { readonly kind: string }>(grammar: GrammarRecord, effects: readonly E[]): readonly (E | SegmentEffect)[] {
 	const segments: SegmentEffect[] = [];
 	for (const effect of effects) if (isSegment(effect)) segments.push(effect);
-	const segmentOf = boundSegmentOf(segments, grammar);
+	const destinationsOf = segmentDestinations(segments, grammar);
 	const from = [...new Set(segments.map((effect) => effect.from))];
 	const owners = isRecord(grammar.rules) ? Object.keys(grammar.rules) : [];
 	return [
 		...effects.filter((effect) => !isSegment(effect)),
 		...owners.flatMap((owner) =>
-			from.flatMap((before): SegmentEffect[] => {
-				const to = segmentOf(owner, before);
-				return to === before ? [] : [{ kind: 'segment', owner, from: before, to }];
-			})
+			from.flatMap((before) =>
+				destinationsOf(owner, before).flatMap((to): SegmentEffect[] => (to === before ? [] : [{ kind: 'segment', owner, from: before, to }]))
+			)
 		)
 	];
 }
@@ -324,6 +331,10 @@ function renamedRecord(value: unknown, as: RecordRename, rename: (name: string) 
 		case 'invariant':
 			return value;
 	}
+}
+
+export function recordsOf(grammar: GrammarRecord): LayerRecords {
+	return Object.fromEntries(Object.keys(RECORD_RENAMES).flatMap((key) => (grammar[key] === undefined ? [] : [[key, grammar[key]]]))) as LayerRecords;
 }
 
 export function renameRecords(records: GrammarRecord, rename: (name: string) => string, fields: ReadonlySet<string>): GrammarRecord {
@@ -443,13 +454,32 @@ export function provenanceOf(effects: readonly Effect[], rules: Readonly<Record<
 		leads.set(key, lead);
 		lead.copies.push(effect);
 	}
+	return provenance(splitFrom, leadFrom, renamedFrom, [
+		...effects.filter((effect): effect is SegmentEffect | AliasEffect => effect.kind === 'segment' || effect.kind === 'alias'),
+		...[...leads.values()].map((lead) => leadEffectOf(lead, rules))
+	]);
+}
+
+export function appendProvenance(inherited: Provenance | undefined, own: Provenance): Provenance {
+	if (inherited === undefined) return own;
+	return provenance(
+		{ ...inherited.splitFrom, ...own.splitFrom },
+		{ ...inherited.leadFrom, ...own.leadFrom },
+		{ ...inherited.renamedFrom, ...own.renamedFrom },
+		[...inherited.bindingEffects, ...own.bindingEffects]
+	);
+}
+
+function provenance(
+	splitFrom: Readonly<Record<string, string>>,
+	leadFrom: Readonly<Record<string, string>>,
+	renamedFrom: Readonly<Record<string, string>>,
+	bindingEffects: readonly BindingEffect[]
+): Provenance {
 	return {
 		splitFrom,
 		...(Object.keys(leadFrom).length === 0 ? {} : { leadFrom }),
 		...(Object.keys(renamedFrom).length === 0 ? {} : { renamedFrom }),
-		bindingEffects: [
-			...effects.filter((effect): effect is SegmentEffect | AliasEffect => effect.kind === 'segment' || effect.kind === 'alias'),
-			...[...leads.values()].map((lead) => leadEffectOf(lead, rules))
-		]
+		bindingEffects
 	};
 }

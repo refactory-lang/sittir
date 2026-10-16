@@ -17,23 +17,13 @@ import { attachDerivationRecords } from './wire/derivation-records.ts';
 import { applyBoundConflictResolutions, applyConflictResolutions, type ConflictResolutionsInput } from './conflict-resolutions.ts';
 import type { OptionsConfig } from './wire/options-block.ts';
 import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
-import { bindGrammar, checkBindingPatches, markBindingSet, type Bindings } from './bind.ts';
+import { bindGrammar, checkBindingPatches, type Bindings } from './bind.ts';
 
 type GrammarFn = (base: unknown, options: WiredOpts) => GrammarResult;
 
 export const UNBOUND_ENV = 'SITTIR_UNBOUND';
 
 const unboundRequested = (): boolean => process.env[UNBOUND_ENV] === '1';
-
-const patchSets = (entry: unknown): readonly unknown[] =>
-	entry === undefined ? [] : Array.isArray(entry) ? entry : [entry];
-
-function markedBindingPatches(bindingPatches: EditsConfig): EditsConfig {
-	const out: Record<string, unknown> = {};
-	for (const [kind, entry] of Object.entries(bindingPatches))
-		out[kind] = patchSets(entry).map((set) => markBindingSet(set as object));
-	return out as EditsConfig;
-}
 
 function assertEnrichFixpoint(wired: GrammarResult, enriched: unknown): GrammarResult {
 	const { checked, changed } = enrichFixpoint(wired, enrichSidecarsOf(enriched));
@@ -109,7 +99,7 @@ export function sittirGrammar<
 	if (bindings !== undefined) {
 		const bindingBase = assertEnrichFixpoint(result, enriched);
 		checkBindingPatches(bindingBase, bindings.patches);
-		const bindingOpts = wireBindings(result.grammar.name, bindingBase, markedBindingPatches(bindings.patches ?? {}));
+		const bindingOpts = wireBindings(result.grammar.name, bindingBase, bindings.patches ?? {});
 		result = completeLayer(bindingBase, bindingOpts, result, bindings);
 		if (opts.__wireContext__ !== undefined) {
 			for (const [name, entry] of bindingOpts.__wireContext__?.liftNames ?? [])

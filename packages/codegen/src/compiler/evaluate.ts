@@ -961,6 +961,7 @@ async function importAndExtractGrammar(load: () => Promise<unknown>): Promise<Ev
 	const layerDiagnostics = record?.diagnostics ?? [];
 	return {
 		...grammarObj,
+		...record?.projections,
 		...(deadMints.size === 0 ? {} : { orphanedSyntheticGroups: [...deadMints] }),
 		...(derivationRecords === undefined ? {} : { derivationRecords }),
 		...(textTokens.length === 0 ? {} : { textTokens }),

@@ -63,16 +63,6 @@ export interface Bindings {
 	readonly splits?: readonly Split[];
 }
 
-export const BINDING_SET: unique symbol = Symbol.for('sittir.bindingSet');
-
-export function markBindingSet<S extends object>(set: S): S {
-	return Object.defineProperty({ ...set }, BINDING_SET, { value: true });
-}
-
-export function isBindingSet(set: object): boolean {
-	return (set as { [BINDING_SET]?: boolean })[BINDING_SET] === true;
-}
-
 export function bindings<const B extends Bindings>(grammarBindings: B): B {
 	return grammarBindings;
 }

@@ -15,6 +15,7 @@ const record = (depth: number): LayerRecord => ({
 	liftNames: new Map(),
 	effects: [{ kind: 'alias', from: SENTINEL, to: `${SENTINEL}_to` }],
 	records: { options: { [SENTINEL]: {} } },
+	projections: { splitFrom: { [SENTINEL]: SENTINEL }, bindingEffects: [] },
 	derivationRecords: {
 		upstreamConflicts: [[SENTINEL]],
 		sourceEdges: {},

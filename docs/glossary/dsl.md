@@ -7140,7 +7140,7 @@ The records that cross layers beside the rules, under the names the evaluated gr
 
 ### `packages/codegen/src/dsl/layer-record.ts::LayerRecord`
 
-The one record a completed layer hands the layer above, on its result's start rule: its `depth` (1 for `grammar.sittir.ts`, one more per layer above), the `upstream` grammar (`GrammarJson`) its derivation records stay keyed to, the enrich `sidecars` the next layer re-attaches when it checks its base, the conflict `resolutions` (the file the first layer gave), the dead enrich mints, the text tokens, the lift names, the effect log, the records, the conflict-derivation records (`wire/derivation-records.ts::DerivationRecords`) and the diagnostics the passes recorded (`layer-not-enrich-fixpoint`, `edit-site-missing`), which `evaluate` hands the compile gate. JSON never carries it.
+The one record a completed layer hands the layer above, on its result's start rule: its `depth` (1 for `grammar.sittir.ts`, one more per layer above), the `upstream` grammar (`GrammarJson`) its derivation records stay keyed to, the enrich `sidecars` the next layer re-attaches when it checks its base, the conflict `resolutions` (the file the first layer gave), the dead enrich mints, the text tokens, the lift names, the effect log, the records, the projections (`verbs/effects.ts::Provenance`, for a layer that inherits a record), the conflict-derivation records (`wire/derivation-records.ts::DerivationRecords`) and the diagnostics the passes recorded (`layer-not-enrich-fixpoint`, `edit-site-missing`), which `evaluate` hands the compile gate. JSON never carries it.
 
 ### `packages/codegen/src/dsl/layer-record.ts::LAYER_RECORD_KEY`
 
@@ -7230,6 +7230,10 @@ Copies every own property of `source`, symbol keys included and `skip` excepted,
 
 Fills a pending base from intake's completed result. The guarded keys are cleared and every property of the completed grammar is copied over; the externals keep the consumed handle; `reserved` is a fresh copy, because tree-sitter writes a layer's reserved word sets into its base's `reserved`, which must never reach the layer below. The result's own properties beside `grammar`, enrich's sidecars among them, are copied onto the pending base too.
 
+### `packages/codegen/src/dsl/layer.ts::completePendingRecords`
+
+Hands the runtime the records an inheriting layer rewrote: they replace the pending base's own. The runtime inherits its base's records, so the layer's result carries them, with the layer's own entries merged over them. A layer that inherits no record rewrites none.
+
 ### `packages/codegen/src/dsl/layer.ts::BaseEditsCheck`
 
 `EditsCheck` against the enriched base when the base type is a grammar, and `unknown` otherwise.
@@ -7278,7 +7282,7 @@ Wire's config for the layer: the layer's config under its resolved name. Over an
 
 ### `packages/codegen/src/dsl/layer.ts::runLayerPass`
 
-The layer pass, run from the layer's entry. Intake completes the base and the pending base takes the result. Wire's own entry then evaluates the config's rule callbacks and lists once, against the completed base; its refusals join the pass's diagnostics and its `narrow` and lead entries the pass's queues (`wire/wire.ts::WireLayer`). Each body is normalized as tree-sitter normalizes it and laid over the base's rules. The pass evaluates the lists (`evaluatedLists`), builds its context (`LayerCtx`) over the layer's grammar view (`layerView`), with a `$` that knows the rules and the externals and the layer's effects resolved per owner, runs the queued entries as the whole-grammar phase, the `narrow` entries (`verbs/narrow.ts::applyNarrows`) and then the leads (`verbs/lead.ts::applyLeads`), and completes the layer (`completeLayer`).
+The layer pass, run from the layer's entry. Intake completes the base and the pending base takes the result. Wire's own entry then evaluates the config's rule callbacks and lists once, against the completed base; its refusals join the pass's diagnostics and its `narrow` and lead entries the pass's queues (`wire/wire.ts::WireLayer`). Each body is normalized as tree-sitter normalizes it and laid over the base's rules. The pass evaluates the lists (`evaluatedLists`), builds its context (`LayerCtx`) over the layer's grammar view (`layerView`), with a `$` that knows the rules and the externals and the layer's effects resolved per owner, runs the queued entries as the whole-grammar phase, the `narrow` entries (`verbs/narrow.ts::applyNarrows`) and then the leads (`verbs/lead.ts::applyLeads`), and completes the layer (`completeLayer`). The pending base then takes the records the layer rewrote (`completePendingRecords`), for the runtime to inherit.
 
 ### `packages/codegen/src/dsl/layer.ts::layerView`
 
@@ -7290,7 +7294,7 @@ What `evaluatedLists` reads: the completed base, the layer's `$` and the evaluat
 
 ### `packages/codegen/src/dsl/layer.ts::resolvedEffects`
 
-The layer's field (segment) and alias effects, resolved per owner (`verbs/effects.ts::effectsForOwners`) over the rules as its edits leave them.
+The layer's field (segment) and alias effects, resolved per owner (`verbs/effects.ts::effectsForOwners`) over the layer's grammar view: the rules as its edits leave them, with the layer's supertypes, where a field effect's reach stops.
 
 ### `packages/codegen/src/dsl/layer.ts::normalizedBody`
 
@@ -7310,7 +7314,7 @@ The conflict sets the `conflicts` callback returns. The first layer's are its se
 
 ### `packages/codegen/src/dsl/layer.ts::completeLayer`
 
-Completion, in order. Automatic variants are stamped over the layer's grammar view, with the supertype and inline lists the verbs' copies joined. Enrich mints that nothing reaches (`wire/dead-mints.ts::deadEnrichMints`) are blanked, and `inline` and `supertypes` leave them out. The record is built: depth, upstream, enrich sidecars, resolutions, dead mints, text tokens, lift names, effects, inherited records rewritten through the effects (`rewriteInherited`), derivation records and diagnostics. The record rides on the start rule's body (`withLayerRecord`), normalized for it.
+Completion, in order. Automatic variants are stamped over the layer's grammar view, with the supertype and inline lists the verbs' copies joined. Enrich mints that nothing reaches (`wire/dead-mints.ts::deadEnrichMints`) are blanked, and `inline` and `supertypes` leave them out. The record is built: depth, upstream, enrich sidecars, resolutions, dead mints, text tokens, lift names, effects, the records the layer inherits (its base's, `verbs/effects.ts::recordsOf`) rewritten through the effects (`rewriteInherited`), the projections, derivation records and diagnostics. A layer that inherits a record projects its effects (`provenanceOf`, over the rules before dead mints are blanked) after the ones it inherits (`appendProvenance`); layer 1 records its effects and projects nothing. The record rides on the start rule's body (`withLayerRecord`), normalized for it.
 
 Each other body is returned as its callback returned it unless the pass replaced it: an object body as the pass left it, a dead mint as `blank()`, and a string or RegExp as written, for the runtime to normalize, because the runtimes normalize a RegExp differently (sittir's `PATTERN` drops its flags). The rules the verbs created follow every body wire evaluated, in creation order, so the runtime appends them last.
 
@@ -7521,18 +7525,6 @@ The `Rename` primitive: `rename('function_item', 'function_declaration')`.
 
 The `Split` primitive: `split(kind, as, { within, containers })` mints `as` from `kind` where it sits under the placement `within` (innermost first, the placement's owner last), with a container rule per intermediate ancestor named and fielded as `containers` gives.
 
-### `packages/codegen/src/dsl/bind.ts::BINDING_SET`
-
-The non-enumerable mark on a patch set that came from grammar bindings. `transform` applies a marked set inside `wireWithBindingEffects`, so only binding patches record effects.
-
-### `packages/codegen/src/dsl/bind.ts::markBindingSet`
-
-A copy of a patch set carrying `BINDING_SET`; the grammar bindings' own object stays unmarked.
-
-### `packages/codegen/src/dsl/bind.ts::isBindingSet`
-
-Whether a patch set carries `BINDING_SET`.
-
 ### `packages/codegen/src/dsl/bind.ts::aliasTargetIssue`
 
 Why an alias from `from` to `to` cannot stand, or `undefined`: an alias never flips hiddenness, and its target may not name a rule of the grammar. Tree-sitter folds an alias whose value names a rule into that rule's kind, so such a target would change the parse; a group that has to share a name with a rule is a merge.
@@ -7676,14 +7668,6 @@ The environment variable that asks for a grammar's base: while it is `1`, `sitti
 ### `packages/codegen/src/dsl/sittir-grammar.ts::unboundRequested`
 
 Whether `UNBOUND_ENV` is `1`.
-
-### `packages/codegen/src/dsl/sittir-grammar.ts::patchSets`
-
-A patches entry as its list of sets: one map, an array of maps, or none.
-
-### `packages/codegen/src/dsl/sittir-grammar.ts::markedBindingPatches`
-
-Marks each binding patch set for canonical effect recording. Authored patch sets belong to the completed first layer and are never combined with these sets.
 
 ### `packages/codegen/src/dsl/rule-patterns.ts::onlyAliasedSymbols`
 

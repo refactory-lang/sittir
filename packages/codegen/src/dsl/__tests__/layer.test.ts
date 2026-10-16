@@ -9,7 +9,7 @@ import { evaluate, evaluateDsl, withDslGlobals } from '../../compiler/evaluate.t
 import type { EvaluatedGrammar } from '../../compiler/types.ts';
 import { canonical } from '../../transpile/evaluate-for-derivation.ts';
 import { runTreeSitterCliCapturing, treeSitterCliVersion } from '../../transpile/tree-sitter-cli.ts';
-import { alias, field, match, narrow } from '../dsl-authoring.ts';
+import { alias, field, match, narrow, preference } from '../dsl-authoring.ts';
 import type { GrammarResult } from '../enrich.ts';
 import type { SymbolRule } from '../../grammar-shapes/grammar-json.ts';
 import { layerOptions, pendingBase } from '../layer.ts';
@@ -242,6 +242,35 @@ describe('a lead entry in a layer', () => {
 		});
 	});
 
+	it('projects its copies as leadFrom, and itself after the field effects in bindingEffects', async () => {
+		await withDslGlobals(async () => {
+			const result = layer(layer(listed(), {}), { edits: { function_item: { '1': field('parameter_list') }, ...RECEIVER } });
+			const projections = layerRecordOf(result)?.projections;
+			expect(projections?.leadFrom).toEqual({ _params_receiver: 'params' });
+			expect(projections?.bindingEffects.map((effect) => effect.kind)).toEqual(['segment', 'lead']);
+			expect(projections?.bindingEffects.at(-1)).toMatchObject({ kind: 'lead', list: 'params', item: 'item', field: 'receiver', receiver: 'params_receiver', group: 'params_receiver_group' });
+		});
+	});
+
+	it("reads its names as the base's, through the field entries of its own layer", async () => {
+		await withDslGlobals(async () => {
+			const named = upstream({
+				program: ($: Symbols) => repeat($.function_item!),
+				function_item: ($: Symbols) => seq('fn', field('parameters', $.params!)),
+				params: ($: Symbols) => seq(field('item', $._param!), repeat(seq(',', field('item', $._param!)))),
+				_param: ($: Symbols) => choice($.param!, $.rest!),
+				param: ($: Symbols) => seq(field('pattern', choice($.self_name!, $.name!)), optional(seq(':', $.name!))),
+				rest: ($: Symbols) => seq('...', $.name!),
+				self_name: () => 'self',
+				name: () => /[a-z]+/
+			});
+			const receiver = lead('item', 'receiver', match('param', { pattern: [match('self_name')] }));
+			const result = layer(layer(named, {}), { edits: { param: { '0': field('binding') }, params: { '.': receiver } } });
+			expect(layerRecordOf(result)?.diagnostics).toEqual([]);
+			expect(layerRecordOf(result)?.projections?.leadFrom).toMatchObject({ _params_receiver: 'params' });
+		});
+	});
+
 	it('records a refused lead with its code, and drops the entry', async () => {
 		await withDslGlobals(async () => {
 			const plain = layer(layer(listed(), {}), {});
@@ -323,7 +352,64 @@ describe('a narrow entry in a layer', () => {
 	});
 });
 
+describe('an inheriting layer', () => {
+	const OPTIONS = {
+		gap: { separator: preference('newline') },
+		pair: { 'key:/after': preference('tight') },
+		_labels: { 'pair/key:/after': 'gap/separator' }
+	};
+	const paired = (): GrammarResult => upstream({ program: ($: Symbols) => repeat($.pair!), pair: ($: Symbols) => seq($.item!, '=', $.item!) });
+	const optionsOf = (result: GrammarResult): unknown => (result.grammar as { readonly options?: unknown }).options;
+
+	it('keeps the options its own layer wrote as written, and rewrites the options it inherits through its field entries', async () => {
+		await withDslGlobals(async () => {
+			const first = layer(paired(), { edits: { pair: { '0': field('key') } }, options: OPTIONS } as Config);
+			expect(optionsOf(first)).toEqual(OPTIONS);
+			const second = layer(first, { edits: { pair: { '0': field('name') } } });
+			expect(optionsOf(second)).toEqual({ gap: OPTIONS.gap, pair: { 'name:/after': OPTIONS.pair['key:/after'] }, _labels: { 'pair/name:/after': 'gap/separator' } });
+		});
+	});
+
+	it('records its field effects in every layer, and projects them only when it inherits a record', async () => {
+		await withDslGlobals(async () => {
+			const first = layer(paired(), { edits: { pair: { '0': field('key') } } });
+			const second = layer(first, { edits: { pair: { '0': field('name') } } });
+			expect(layerRecordOf(first)?.effects).toContainEqual({ kind: 'segment', owner: 'pair', from: 'item1:', to: 'key:' });
+			expect(layerRecordOf(first)?.projections).toBeUndefined();
+			expect(layerRecordOf(second)?.projections).toEqual({ splitFrom: {}, bindingEffects: [{ kind: 'segment', owner: 'pair', from: 'key:', to: 'name:' }] });
+		});
+	});
+
+	it('gives a field effect to every rule that reaches its owner, stopping at a supertype', async () => {
+		await withDslGlobals(async () => {
+			const base = upstream({
+				program: ($: Symbols) => repeat($.holder!),
+				holder: ($: Symbols) => seq('[', $._kind!, ']'),
+				_kind: ($: Symbols) => choice($._entry!, $.other!),
+				_entry: ($: Symbols) => seq($.item!, ':', $.item!),
+				other: () => 'o'
+			});
+			const first = layer(base, { supertypes: ($: Symbols) => [$._kind!] } as Config);
+			const second = layer(first, { edits: { _entry: { '0': field('key') } } });
+			expect(layerRecordOf(second)?.projections?.bindingEffects).toEqual([
+				{ kind: 'segment', owner: '_kind', from: 'item:', to: 'key:' },
+				{ kind: 'segment', owner: '_entry', from: 'item:', to: 'key:' }
+			]);
+		});
+	});
+});
+
 describe('the fixture chain', () => {
+	it("exposes layer 2's projections on its evaluated grammar, and none on layer 1's", async () => {
+		const first = await evaluateDsl(chain('layer1.ts'));
+		const second = await evaluateDsl(chain('layer2.ts'));
+		expect(first).not.toHaveProperty('splitFrom');
+		expect(first).not.toHaveProperty('bindingEffects');
+		expect(second.splitFrom).toEqual({});
+		expect(second.bindingEffects).toEqual([{ kind: 'segment', owner: 'let_statement', from: '_expression:', to: 'value:' }]);
+		expect(second).not.toHaveProperty('leadFrom');
+	});
+
 	it('gives the same rules, rule order and lists from evaluate() and from the pinned CLI', async () => {
 		const evaluated = await evaluateDsl(chain('layer2.ts'));
 		const generated = JSON.parse(cliChain().grammarJson) as Record<string, unknown>;
