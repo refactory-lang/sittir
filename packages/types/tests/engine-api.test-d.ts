@@ -57,6 +57,8 @@ export const strictTypes: Types<Engine<API, 'strict'>>['leaf'] = { $type: 1 };
 export const descriptor: Language<FakeAPI> = {
 	name: 'fake',
 	fileTypes: [],
+	is: { leaf: (n: unknown): n is FakeNode => typeof n === 'object' && n !== null && '$type' in n && n.$type === 1 },
+	kinds: { Leaf: 1 },
 	load: async (): Promise<LanguageHooks<FakeAPI>> => {
 		throw new Error('type-only');
 	},

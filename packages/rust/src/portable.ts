@@ -2,7 +2,7 @@
 
 import type { PortableGuard, PortableTable, QueryFlags, QuerySlotFlags } from '@sittir/types';
 import { portableSurface } from '@sittir/common/engine';
-import { TSKindId } from './types.js';
+import { TSKindId } from './kinds.js';
 import { querySlots } from './utils.js';
 
 export interface PortableIds {

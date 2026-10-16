@@ -22,6 +22,7 @@ import type {
 	StructureTable
 } from '@sittir/types';
 import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
+import { inLanguage as inLanguageOf, languageGuards } from './language.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
 import { verifyStructure } from './verify-structure.ts';
 import { ParseErrors } from './parse-errors.ts';
@@ -142,39 +143,6 @@ function interceptedRender<Call>(
 	};
 }
 
-function inLanguageOf(identity: EngineIdentity<LanguageAPI>): (value: unknown) => boolean {
-	return (value) => {
-		if (typeof value === 'number') return true;
-		const stamp = engineOf(value);
-		return stamp !== undefined && sameLanguage(stamp, identity);
-	};
-}
-
-type Guard = (...args: unknown[]) => boolean;
-
-function languageGuards<G extends object>(
-	guards: G,
-	inLanguage: (value: unknown) => boolean,
-	wrapped: Map<Guard, Guard> = new Map()
-): Readonly<G> {
-	const entries = Object.entries(guards).map(([name, guard]): [string, unknown] => [
-		name,
-		languageGuard(guard as Guard, inLanguage, wrapped)
-	]);
-	return Object.freeze(Object.fromEntries(entries) as G);
-}
-
-function languageGuard(guard: Guard, inLanguage: (value: unknown) => boolean, wrapped: Map<Guard, Guard>): Guard {
-	const known = wrapped.get(guard);
-	if (known !== undefined) return known;
-	const checked = (value: unknown, ...rest: unknown[]): boolean => inLanguage(value) && guard(value, ...rest);
-	wrapped.set(guard, checked);
-	if (Object.keys(guard).length === 0) return checked;
-	return Object.freeze(
-		Object.defineProperties(checked, Object.getOwnPropertyDescriptors(languageGuards(guard, inLanguage, wrapped)))
-	);
-}
-
 const builderScopes = new WeakMap<object, <T extends object>(table: T) => T>();
 
 export function scopeBuilders<T extends object>(engine: object, table: T): T {
@@ -228,7 +196,7 @@ function assembleEngine<API extends LanguageAPI>(
 		bindTree(read.tree, handle);
 		return read;
 	};
-	const inLanguage = inLanguageOf(identity);
+	const inLanguage = inLanguageOf(language);
 	const queryHooks: QueryHooks = {
 		querySlots: hooks.querySlots,
 		queryFlags: hooks.queryFlags ?? {},
@@ -240,8 +208,8 @@ function assembleEngine<API extends LanguageAPI>(
 	const engine: Engine<API> = {
 		...identity,
 		build,
-		is: languageGuards(hooks.is, inLanguage),
-		kinds: hooks.kinds,
+		is: language.is,
+		kinds: language.kinds,
 		types: undefined as unknown as API['types'],
 		diagnostics: {
 			buildProfile: native.buildProfile,
@@ -321,7 +289,7 @@ function assemblePortableEngine<API extends PortableLanguageAPI>(language: Langu
 	const portable = hooks.portable;
 	if (portable === undefined) throw new Error(`language "${language.name}" has no portable surface: its grammar has no bindings`);
 	const identity: EngineIdentity<API> = { language, renderModuleHash: hooks.renderModuleHash, options: undefined, trivia: hooks.trivia };
-	return Object.freeze({ ...identity, kinds: portable.kinds, is: languageGuards(portable.is, inLanguageOf(identity)) });
+	return Object.freeze({ ...identity, kinds: portable.kinds, is: languageGuards(portable.is, language) });
 }
 
 function mergeRenderOptions<O extends object>(engine: O | undefined, call: O | undefined): O {

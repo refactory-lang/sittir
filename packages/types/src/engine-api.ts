@@ -112,6 +112,14 @@ export type CreateEngineOptions<API extends LanguageAPI, R = API['options']> = E
 export interface Language<API extends LanguageAPI> {
 	readonly name: API['name'];
 	readonly fileTypes: readonly string[];
+	/**
+	 * The language's guards, the same object as every engine's `is`. Each narrows a node of this language by its kind, and refuses
+	 * a node of another language or a value no engine stamped. A supertype or member guard also takes a bare kind id, and passes
+	 * it when it is one of its kinds. Importing the descriptor gives them without loading the engine.
+	 */
+	readonly is: API['is'];
+	/** The language's kind ids by name, the same object as every engine's `kinds`. */
+	readonly kinds: API['kinds'];
 	load(): Promise<LanguageHooks<API>>;
 	readonly __api?: API;
 	/**
@@ -148,8 +156,6 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	readonly name: API['name'];
 	readonly renderModuleHash: string;
 	readonly build: API['build'];
-	readonly is: API['is'];
-	readonly kinds: API['kinds'];
 	readonly trivia: TriviaFacts;
 	readonly querySlots: QuerySlots;
 	readonly queryFlags?: QueryFlags;

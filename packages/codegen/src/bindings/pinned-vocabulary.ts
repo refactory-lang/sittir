@@ -14,7 +14,7 @@ import type { Engine } from '@sittir/types';
 import { loadPinnedBuild, type PinnedBuild } from '../bootstrap/pinned.ts';
 import { type Declared, type FeatureIndex, FLAG, type Member, REFINED_BY } from './vocabulary.ts';
 
-type Kinds = Awaited<ReturnType<PinnedBuild['typescript']['default']['load']>>['kinds'];
+type Kinds = Engine<TypescriptAPI>['kinds'];
 
 interface Reader {
 	readonly K: Kinds;
@@ -27,7 +27,8 @@ let reader: Promise<Reader> | undefined;
 function typescriptReader(): Promise<Reader> {
 	reader ??= (async () => {
 		const pinned = await loadPinnedBuild();
-		return { K: (await pinned.typescript.default.load()).kinds, engine: await pinned.common.createEngine(pinned.typescript.default), pinned };
+		const engine = await pinned.common.createEngine(pinned.typescript.default);
+		return { K: engine.kinds, engine, pinned };
 	})();
 	reader.catch(() => {
 		reader = undefined;
