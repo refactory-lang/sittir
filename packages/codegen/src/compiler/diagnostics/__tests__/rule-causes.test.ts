@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { blockedRecords } from '../grammar-diagnostics.ts';
-import { diagnoseRuleCauses } from '../rule-causes.ts';
+import { diagnoseRuleCauses, isWitnessVerified } from '../rule-causes.ts';
 import type { StageDiagnosis } from '../../stage.ts';
 import type { GrammarDiagnostic } from '../../../types/diagnostics.ts';
 import type { RuleCauseDeclaration } from '../../../dsl/primitives/rule-cause.ts';
@@ -25,6 +25,7 @@ function diagnose(input: {
 	renderAs?: readonly string[];
 	enriched: StageDiagnosis;
 	upstreamRules?: Record<string, unknown>;
+	authoredRules?: Record<string, unknown>;
 }): GrammarDiagnostic[] {
 	return diagnoseRuleCauses({
 		grammar: 'synth',
@@ -37,7 +38,8 @@ function diagnose(input: {
 					: Object.fromEntries(input.renderAs.map((n) => [n, { type: 'BLANK' } as never]))
 		},
 		enriched: input.enriched,
-		upstreamRules: input.upstreamRules as never
+		upstreamRules: input.upstreamRules as never,
+		authoredRules: input.authoredRules as never
 	});
 }
 const codesOf = (ds: readonly GrammarDiagnostic[]) => ds.map((d) => `${d.code}:${d.ownerKind}`).sort();
@@ -61,7 +63,9 @@ describe('semantic-gap reauthoring witnesses', () => {
 	};
 	const check = (evidence: typeof witness | undefined) =>
 		diagnose({
-			ruleCauses: { tuple: { kind: 'reauthored', cause: 'semantic-gap', witness: evidence } },
+			ruleCauses: {
+				tuple: { kind: 'reauthored', cause: 'semantic-gap', witnesses: evidence === undefined ? undefined : [evidence] }
+			},
 			enriched: enriched({ ruleNames: new Set(['tuple']) }),
 			upstreamRules
 		});
@@ -81,6 +85,23 @@ describe('semantic-gap reauthoring witnesses', () => {
 		expect(codesOf(check({ ...witness, meaning: '' }))).toEqual(['rule-cause-mismatch:tuple']);
 		expect(codesOf(check({ ...witness, kind: 'other' }))).toEqual(['rule-cause-mismatch:tuple']);
 	});
+});
+
+describe('a witnessed cause given an empty witness array', () => {
+	const upstreamRules = { tuple: { type: 'SEQ', members: [{ type: 'STRING', value: '(' }, { type: 'STRING', value: ')' }] } };
+	it.each(['accepts-other-kind', 'semantic-gap', 'rejects-valid-syntax', 'accepts-invalid-syntax'] as const)(
+		'%s is a mismatch',
+		(cause) => {
+			const ds = diagnose({
+				ruleCauses: { tuple: { kind: 'reauthored', cause, witnesses: [] as never } },
+				enriched: enriched({ ruleNames: new Set(['tuple']) }),
+				upstreamRules,
+				authoredRules: upstreamRules
+			});
+			expect(codesOf(ds)).toEqual(['rule-cause-mismatch:tuple']);
+			expect(ds[0]!.message).toContain('declares no witness');
+		}
+	);
 });
 
 describe('diagnoseRuleCauses', () => {
@@ -190,7 +211,7 @@ describe('a rule reauthored because upstream accepts a form that is always anoth
 		form: readonly (string | { symbol: string })[],
 		kind: string
 	): Record<string, RuleCauseDeclaration> => ({
-		tuple: { kind: 'reauthored', cause: 'accepts-other-kind', witness: { text: '(a)', form, kind } }
+		tuple: { kind: 'reauthored', cause: 'accepts-other-kind', witnesses: [{ text: '(a)', form, kind }] }
 	});
 	const parenthesizedForm = ['(', { symbol: 'expression' }, ')'];
 
@@ -255,5 +276,102 @@ describe('a rule reauthored because upstream accepts a form that is always anoth
 			upstreamRules
 		});
 		expect(codesOf(doubled)).toEqual(['rule-cause-mismatch:tuple']);
+	});
+});
+
+describe('a rule reauthored because upstream accepts a form the language excludes', () => {
+	const str = (value: string) => ({ type: 'STRING', value });
+	const sym = (name: string) => ({ type: 'SYMBOL', name });
+	const seq = (...members: unknown[]) => ({ type: 'SEQ', members });
+	const upstreamRules = {
+		getter: seq(str('get'), sym('name'), str('('), { type: 'OPTIONAL', content: sym('parameter') }, str(')'))
+	};
+	const authoredRules = { getter: seq(str('get'), sym('name'), str('('), str(')')) };
+	const ruleNames = new Set(Object.keys(upstreamRules));
+	const witness = {
+		text: 'get x(a)',
+		form: ['get', { symbol: 'name' }, '(', { symbol: 'parameter' }, ')'],
+		kind: 'getter',
+		production: 'ECMAScript MethodDefinition: get ClassElementName ( )'
+	};
+	const check = (witnesses: readonly (typeof witness)[] | undefined, authored: Record<string, unknown> = authoredRules) =>
+		diagnose({
+			ruleCauses: {
+				getter: { kind: 'reauthored', cause: 'accepts-invalid-syntax', witnesses: witnesses as never }
+			},
+			enriched: enriched({ ruleNames }),
+			upstreamRules,
+			authoredRules: authored
+		});
+
+	it('is silent when upstream derives the witness form and the authored rule does not', () => {
+		expect(check([witness])).toEqual([]);
+	});
+
+	it('is a mismatch when upstream does not derive the witness form', () => {
+		const ds = check([{ ...witness, form: ['get', { symbol: 'name' }, '(', ',', ')'] }]);
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
+		expect(ds[0]!.message).toContain("upstream 'getter' does not derive the witness form");
+	});
+
+	it('is a mismatch when the authored rule still derives the witness form', () => {
+		const ds = check([witness], upstreamRules);
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
+		expect(ds[0]!.message).toContain('the authored rule still derives');
+	});
+
+	it('is a mismatch when the authored grammar has no rule of the witness kind', () => {
+		const ds = check([witness], {});
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
+		expect(ds[0]!.message).toContain("no authored rule 'getter'");
+	});
+
+	it('is a mismatch when the authored rule still derives the form through a rule sittir minted', () => {
+		const ds = check([witness], { getter: sym('getter_accessor'), getter_accessor: upstreamRules.getter });
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
+		expect(ds[0]!.message).toContain('the authored rule still derives');
+	});
+
+	it('is a mismatch when the authored rule still derives the form through a left-recursive rule sittir minted', () => {
+		const upstream = { getter: seq(str('x'), str('x')) };
+		const choice = (...members: unknown[]) => ({ type: 'CHOICE', members });
+		const doubled = { text: 'x x', form: ['x', 'x'], kind: 'getter', production: 'p' };
+		const ds = diagnose({
+			ruleCauses: { getter: { kind: 'reauthored', cause: 'accepts-invalid-syntax', witnesses: [doubled] } },
+			enriched: enriched({ ruleNames: new Set(['getter']) }),
+			upstreamRules: upstream,
+			authoredRules: { getter: sym('variant'), variant: choice(seq(sym('variant'), str('x')), str('x')) }
+		});
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
+		expect(ds[0]!.message).toContain('the authored rule still derives');
+	});
+
+	it('reads a symbol upstream also declares as a witness item, not as its body', () => {
+		const withName = { ...upstreamRules, name: str('x') };
+		const ds = diagnose({
+			ruleCauses: { getter: { kind: 'reauthored', cause: 'accepts-invalid-syntax', witnesses: [witness] } },
+			enriched: enriched({ ruleNames: new Set(Object.keys(withName)) }),
+			upstreamRules: withName,
+			authoredRules: { ...authoredRules, name: str('x') }
+		});
+		expect(ds).toEqual([]);
+	});
+
+	it('is a mismatch when the witness cites no production', () => {
+		expect(codesOf(check([{ ...witness, production: ' ' }]))).toEqual(['rule-cause-mismatch:getter']);
+	});
+
+	it('is a mismatch when no witness is declared', () => {
+		expect(codesOf(check(undefined))).toEqual(['rule-cause-mismatch:getter']);
+	});
+
+	it('judges every witness and names the index of the one that fails', () => {
+		const ds = check([witness, { ...witness, form: ['set', { symbol: 'name' }, '(', ')'] }]);
+		expect(codesOf(ds)).toEqual(['rule-cause-mismatch:getter']);
+		expect(ds[0]!.message).toContain('witness 1');
+	});
+
+	it('is a witness-verified cause', () => {
+		expect(isWitnessVerified({ kind: 'reauthored', cause: 'accepts-invalid-syntax' })).toBe(true);
 	});
 });
