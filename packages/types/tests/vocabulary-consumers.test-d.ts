@@ -20,6 +20,7 @@ import type {
 	File,
 	GrammarContext,
 	Identifier,
+	OptionalMembers,
 	ScopedVisibility,
 	Statement,
 	Type
@@ -58,6 +59,25 @@ export function getterWithAccessor(name: Declaration.Property.Getter<Composed>['
 		...getter(name),
 		// @ts-expect-error no member holds the accessor kind
 		accessor: 'get'
+	};
+}
+
+// An auto-accessor holds a field's optionality marker (`accessor x!: T`), under the feature that owns it on a field.
+export function accessorOptionality<G extends GrammarContext<G>>(
+	p: Declaration.Property<G>
+): Declaration.Field<G>['optionality'] | undefined {
+	return p.optionality;
+}
+interface Optional extends GrammarContext<Optional>, Accessors, OptionalMembers {}
+export function markedAccessor(name: Declaration.Property<Optional>['name']): Declaration.Property<Optional> {
+	return { $kind: 'declaration.property', name, optionality: '!' };
+}
+export function bareMarked(name: Declaration.Property<Bare>['name']): Declaration.Property<Bare> {
+	return {
+		$kind: 'declaration.property',
+		name,
+		// @ts-expect-error a context without optional members has no optionality
+		optionality: '!'
 	};
 }
 
