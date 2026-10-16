@@ -379,8 +379,7 @@ type BaseKind<Base extends GrammarJson = GrammarJson> = Base extends {
 	? keyof R & string
 	: keyof Base & string;
 
-export type GroupsConfigValue = Record<string, string> | RuleFn;
-export type GroupsConfig = Partial<Record<string, GroupsConfigValue>>;
+export type GroupsConfig = Partial<Record<string, RuleFn>>;
 
 export type EditsConfig<Base extends GrammarJson = GrammarJson> = [GrammarRule] extends [
 	Base['rules'][keyof Base['rules']]
@@ -494,10 +493,7 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 		readonly [name: string]: ($: ShapedSymbols<B>, previous?: any) => unknown;
 	};
 	readonly factoryInline?: ($: ShapedSymbols<B>) => unknown[];
-	readonly groups?: Partial<
-		Record<string, Record<string, string> | (($: ShapedSymbols<B>, previous?: GrammarRule) => unknown)>
-	>;
-	readonly injects?: Partial<Record<string, ($: ShapedSymbols<B>, previous?: GrammarRule) => unknown>>;
+	readonly groups?: Partial<Record<string, ($: ShapedSymbols<B>, previous?: GrammarRule) => unknown>>;
 	readonly edits?: EditsConfig<B>;
 	readonly options?: OptionsConfig;
 	readonly renderAs?: RenderAsConfig;
@@ -544,7 +540,7 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 	const baseArg = base as BaseArg | undefined;
 	const { visibleExternals, whitespaceCollisions } = withEnrichedWhitespace(declared.visibleExternals, base);
 	assertNoSpacingAddressPatches(cfg.edits ?? {}, knownRuleNames(cfg, baseArg));
-	assertNoDeclaredGroupPatches(cfg.edits ?? {}, cfg.groups, cfg.injects);
+	assertNoDeclaredGroupPatches(cfg.edits ?? {}, cfg.groups);
 	const context: WireContext = {
 		deposits: new Map(),
 		ruleBodies: new Map(),
@@ -863,18 +859,16 @@ function assertNoSpacingAddressPatches(edits: EditsConfig, rules: ReadonlySet<st
 }
 
 function declaredGroupMintName(key: string): string {
-	return key.startsWith('_') ? key : `_${key}`;
+	return `_${key}`;
 }
 
-function assertNoDeclaredGroupPatches(edits: EditsConfig, groups: GroupsConfig | undefined, injects: GroupsConfig | undefined): void {
-	for (const [section, declared] of [['groups', groups], ['injects', injects]] as const) {
-		for (const key of Object.keys(declared ?? {})) {
-			for (const patchKey of new Set([key, declaredGroupMintName(key)])) {
-				if (!(edits as Record<string, unknown>)[patchKey]) continue;
-				throw new Error(
-					`edits: '${patchKey}' names the ${section}: declaration '${key}' — its body is declared under ${section}:; write the field()/variant() in that body`
-				);
-			}
+function assertNoDeclaredGroupPatches(edits: EditsConfig, groups: GroupsConfig | undefined): void {
+	for (const key of Object.keys(groups ?? {})) {
+		for (const patchKey of [key, declaredGroupMintName(key)]) {
+			if (!(edits as Record<string, unknown>)[patchKey]) continue;
+			throw new Error(
+				`edits: '${patchKey}' names the groups: declaration '${key}' — its body is declared under groups:; write the field()/variant() in that body`
+			);
 		}
 	}
 }
@@ -1240,7 +1234,6 @@ interface WirePatternCandidate {
 }
 
 export interface DeclaredPattern {
-	readonly section: 'groups' | 'injects';
 	readonly key: string;
 	readonly body: RuntimeRule;
 }
@@ -1251,44 +1244,41 @@ export interface EvaluatedConfig {
 	readonly visibleExternals: Readonly<Record<string, unknown>> | undefined;
 }
 
-export function evaluatedConfig(cfg: Pick<WireConfig<any>, 'groups' | 'injects' | 'renderAs' | 'visibleExternals'>): EvaluatedConfig {
+export function evaluatedConfig(cfg: Pick<WireConfig<any>, 'groups' | 'renderAs' | 'visibleExternals'>): EvaluatedConfig {
 	const bodies = (config: RenderAsConfig | VisibleExternalsConfig | undefined): Readonly<Record<string, unknown>> | undefined =>
 		config === undefined ? undefined : (withStringGlobalShim(() => config(layerSymbols())) ?? undefined);
-	return { patterns: declaredPatterns(cfg.groups, cfg.injects), renderAs: bodies(cfg.renderAs), visibleExternals: bodies(cfg.visibleExternals) };
+	return { patterns: declaredPatterns(cfg.groups), renderAs: bodies(cfg.renderAs), visibleExternals: bodies(cfg.visibleExternals) };
 }
 
-function declaredPatterns(groups: GroupsConfig | undefined, injects: GroupsConfig | undefined): DeclaredPattern[] {
-	const declared: [section: 'groups' | 'injects', key: string, value: RuleFn][] = [];
+function declaredPatterns(groups: GroupsConfig | undefined): DeclaredPattern[] {
+	const declared: [key: string, value: RuleFn][] = [];
 	for (const [key, value] of Object.entries(groups ?? {})) {
-		if (typeof value !== 'function') continue;
+		if (value === undefined) continue;
 		if (key.startsWith('_')) {
 			throw new Error(
-				`groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); declare a hidden pattern under injects: instead`
+				`groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); write a hidden pattern as a rule under rules: instead`
 			);
 		}
-		declared.push(['groups', key, value as RuleFn]);
-	}
-	for (const [key, value] of Object.entries(injects ?? {})) {
-		if (typeof value === 'function') declared.push(['injects', key, value as RuleFn]);
+		declared.push([key, value]);
 	}
 	const $ = declared.length === 0 ? undefined : layerSymbols();
-	return declared.map(([section, key, value]) => {
+	return declared.map(([key, value]) => {
 		let body: RuntimeRule;
 		try {
 			const result = value.call(undefined, $, undefined);
 			if (!result || typeof result !== 'object' || typeof (result as { type?: unknown }).type !== 'string') {
-				throw new Error(`${section}['${key}']: body fn did not return a rule object`);
+				throw new Error(`groups['${key}']: body fn did not return a rule object`);
 			}
 			body = result as RuntimeRule;
 		} catch (e) {
-			throw new Error(`${section}['${key}']: failed to evaluate body fn: ${(e as Error).message}`);
+			throw new Error(`groups['${key}']: failed to evaluate body fn: ${(e as Error).message}`);
 		}
 		if (!isComplexBody(body)) {
 			throw new Error(
-				`${section}['${key}']: body is not a complex structural pattern (need SEQ ≥2, CHOICE ≥2, or REPEAT with non-trivial content)`
+				`groups['${key}']: body is not a complex structural pattern (need SEQ ≥2, CHOICE ≥2, or REPEAT with non-trivial content)`
 			);
 		}
-		return { section, key, body };
+		return { key, body };
 	});
 }
 
@@ -1451,9 +1441,7 @@ export function unmatchedGroupPatterns(
 	context: Pick<WireContext, 'authoredRuleNames' | 'groups'>
 ): string[] {
 	const complex = (name: string): boolean => Object.hasOwn(rules, name) && isComplexBody(rules[name]!);
-	const groups = Object.entries(context.groups ?? {}).flatMap(([key, value]) =>
-		typeof value === 'function' && complex(declaredGroupMintName(key)) ? [declaredGroupMintName(key)] : []
-	);
+	const groups = Object.keys(context.groups ?? {}).map(declaredGroupMintName).filter(complex);
 	if (groups.length === 0) return [];
 	const patterns = new Set([...[...context.authoredRuleNames].filter((name) => name.startsWith('_') && !Object.hasOwn(baseRules, name) && complex(name)), ...groups]);
 	const held = new Set<string>();
@@ -1478,12 +1466,10 @@ export function applyWirePatternReplacement(
 	context: WireContext
 ): void {
 	const declared: WirePatternCandidate[] = [];
-	for (const { section, key, body } of patterns) {
+	for (const { key, body } of patterns) {
 		const hiddenName = declaredGroupMintName(key);
-		const hidden = hiddenName === key;
-		declared.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
-		const registered = wrapOneRuleFn(hiddenName, declaredBody(body), context);
-		rules[hiddenName] = section === 'groups' ? stampHoistedFn(registered) : registered;
+		declared.push({ name: hiddenName, body, aliasAs: key });
+		rules[hiddenName] = stampHoistedFn(wrapOneRuleFn(hiddenName, declaredBody(body), context));
 	}
 
 	const originals = new Map(Object.entries(rules));

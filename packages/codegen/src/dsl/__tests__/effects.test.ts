@@ -134,7 +134,6 @@ describe('rewriteInherited', () => {
 		const records = {
 			options: { a: { '(a)/after': after }, o: { 'a:/before': before }, [LABELS_KEY]: { 'a/x:': 'a/before' } },
 			renderAs: { a: sym('a') },
-			groups: { a: { x: 'a' } },
 			reparseHosts: { hosts: { a: 'a $' }, priority: ['a', 'o'] },
 			undeclaredRules: ['a', 'o']
 		};
@@ -142,7 +141,6 @@ describe('rewriteInherited', () => {
 		expect(rewritten).toEqual({
 			options: { b: { '(b)/after': after }, o: { 'b:/before': before }, [LABELS_KEY]: { 'b/x:': 'a/before' } },
 			renderAs: { b: sym('b') },
-			groups: { b: { x: 'a' } },
 			reparseHosts: { hosts: { b: 'a $' }, priority: ['b', 'o'] },
 			undeclaredRules: ['b', 'o']
 		});

@@ -256,7 +256,7 @@ function intake(source: GrammarResult, ctx: IntakeCtx): GrammarResult {
 	const { config, inherited } = ctx;
 	if (inherited === undefined)
 		return enrich(source, {
-			groupBodies: ctx.declared.patterns.filter((pattern) => pattern.section === 'groups').map((pattern) => pattern.body),
+			groupBodies: ctx.declared.patterns.map((pattern) => pattern.body),
 			extras: config.extras,
 			fieldSites: authoredFieldSites(config.edits)
 		}) as unknown as GrammarResult;
@@ -461,10 +461,8 @@ export function ownRecordsOf(wire: WireContext, facts: OwnRecordFacts): LayerRec
 			const lifts = wire.liftClaims.get(key);
 			return lifts === undefined ? site : { ...site, lifts: [...lifts].sort() };
 		});
-	const groups = Object.entries(wire.groups ?? {}).filter((entry): entry is [string, Record<string, string>] => entry[1] !== undefined && typeof entry[1] !== 'function');
 	return {
 		options: nonEmpty(wire.options),
-		groups: nonEmpty(Object.fromEntries(groups)),
 		renderAs: normalizedBodies(wire.renderAs),
 		visibleExternals: normalizedBodies(wire.visibleExternals),
 		reparseHosts: wire.reparseHosts,

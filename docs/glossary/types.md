@@ -82,31 +82,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/types/rule.ts::replaceAtPath`
-
-```text
-/**
- * Return a new rule tree with the sub-rule at `path` replaced by
- * `replacement`. Pure — no mutation of input. Path segments index into:
- *   - seq.members[i] / choice.members[i]
- *   - wrapper.content (path '0' for optional/repeat/repeat1/field/
- *     token/alias/variant/clause/group)
- *
- * Throws if any segment fails to address.
- */
-```
-
-```text
-// ---------------------------------------------------------------
-// Path-addressed rule rewriting
-//
-// Slash-separated positional paths (e.g. '1/1/0/1/3') used by
-// `edits:` / `groups:` in grammar.sittir.ts. See
-// docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
-// for the path semantics.
-// ---------------------------------------------------------------
-```
-
 ### `packages/codegen/src/types/rule.ts::sym`
 
 ```text

@@ -7385,7 +7385,7 @@ Each other body is returned as its callback returned it unless the pass replaced
 ### `packages/codegen/src/dsl/layer.ts::ownRecordsOf`
 
 The records one wire run makes on its own (`layer-record.ts::LayerRecords`), from its context and the facts its
-caller holds (`OwnRecordFacts`): the options, the record-valued `groups:` entries, the render bodies its config
+caller holds (`OwnRecordFacts`): the options, the render bodies its config
 evaluated to (`renderAs`, and `visibleExternals` with enrich's whitespace bodies, each normalized by `normalizedBody`),
 the reparse hosts, refine forms, rule causes, the undeclared rules (sorted), the patch sites (sorted by key, each with
 the lifts it claimed as `lifts`), the external roles, the expectations, the names wire protects

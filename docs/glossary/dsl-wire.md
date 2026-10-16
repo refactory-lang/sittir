@@ -683,8 +683,8 @@ The `groups:` entries whose hidden rule (`_<key>`) no rule of a layer's final ru
 Wrap a `groups:` rule fn so its body carries `annotations.hoisted`. A
 `groups:` entry is a declaration that the minted rule is a form of its parent;
 the stamp is made where the body is produced so it reaches both executions of
-the grammar (tree-sitter's CLI and sittir's `evaluate()`). Only the `groups`
-section stamps — an `injects:` or authored hidden rule is an ordinary rule.
+the grammar (tree-sitter's CLI and sittir's `evaluate()`). An authored hidden
+rule that serves as a pattern is an ordinary rule, and is not stamped.
 
 
 ### `packages/codegen/src/dsl/wire/wire.ts::applyWireVisibleExternalsRewrite`
@@ -726,10 +726,9 @@ With no minted bodies the grammar's own bodies are unchanged.
 #### body
 
 ```text
-// Legacy auto-detection: any `_`-prefixed rule the author declared in
-// `rules:` is a structural pattern candidate. Maintained for the
-// TypeScript `_ambient_declaration_*` entries that still rely on this
-// path; new patterns should go in `groups:` with a body fn.
+// Detection: any `_`-prefixed rule the author declares in `rules:` with
+// a complex body is a structural pattern candidate, the hidden
+// counterpart of a `groups:` entry.
 ```
 
 #### body
@@ -743,11 +742,11 @@ With no minted bodies the grammar's own bodies are unchanged.
 #### body
 
 ```text
-// New body-pattern groups path: each `groups:` entry whose value is a
-// function is a body-pattern candidate. The KEY is the visible kind
-// name; internally we synthesize a hidden `_<key>` rule with the body,
-// and emit `alias($._<key>, $.<key>)` at every match site so tree-
-// sitter exposes the visible kind as a CST node.
+// Body-pattern groups path: each `groups:` entry is a body-pattern
+// candidate. The KEY is the visible kind name; internally we synthesize
+// a hidden `_<key>` rule with the body, and emit `alias($._<key>, $.<key>)`
+// at every match site so tree-sitter exposes the visible kind as a CST
+// node.
 ```
 
 #### body
@@ -759,8 +758,8 @@ With no minted bodies the grammar's own bodies are unchanged.
 // the declared body is returned inside a proper wire context.
 ```
 
-The wire context is required: each injected or grouped rule fn is wrapped in
-it, and the pattern-replacing wrappers read its automatic-variant record.
+The wire context is required: each `groups:` mint is wrapped in it, and the
+pattern-replacing wrappers read its automatic-variant record.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::RenderAsConfig`
 
@@ -1064,12 +1063,8 @@ The lift name → final name view of `liftNames`, in the shape `renameRule` and 
 
 ### `packages/codegen/src/dsl/wire/wire.ts::groups`
 
-```text
-/** Per-kind group-lift map from config. Link reads this to synthesize
-	 *  nested sub-rules into hidden, hoisted compound kinds
-	 *  (`AbstractAssembledCompound` with `enrichment.hoisted` set). See:
-	 *  docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md */
-```
+The config's `groups:` entries (`GroupsConfig`), keyed by the visible kind each mints. `unmatchedGroupPatterns` reads
+their mint names (`declaredGroupMintName`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::renderAs`
 
@@ -1168,32 +1163,13 @@ The lift name → final name view of `liftNames`, in the shape `renameRule` and 
  */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::GroupsConfigValue`
+### `packages/codegen/src/dsl/wire/wire.ts::GroupsConfig`
 
-```text
-/**
- * Per-kind group-lift map. Each entry's key is either:
- *   1. A parent kind whose rule body contains a sub-rule to lift —
- *      the value is `path → discriminator`, same slash-separated path
- *      semantics as `edits:`; the synthesized hidden kind is
- *      `_<parent>_<discriminator>`. (Path-mode — existing behavior.)
- *   2. A visible kind name (NO leading underscore) whose value is a
- *      RuleFn (body-pattern function). Codegen synthesizes the hidden
- *      `_<key>` rule from the function body and rewrites every
- *      structurally-matching sub-tree in the grammar as
- *      `alias($._<key>, $.<key>)` so tree-sitter emits the visible kind
- *      as a CST node. (Body-pattern mode — for tree-sitter inlining
- *      workarounds where a hidden helper would otherwise vanish from
- *      the parse tree.)
- *
- * Keys are plain `string` rather than `BaseKind<Base>` because the
- * post-variant-aliased rule map contains synthesized variant kinds
- * (e.g. `_visibility_modifier_pub`) that aren't exported in the base
- * grammar's kind set. `BaseKind<Base>` was too narrow — it caused a
- * type error on those keys that was masked by `--noCheck` but would
- * fail when the build check is re-enabled.
- */
-```
+Per-kind body patterns. Each key is a visible kind name (no leading underscore) and its value is a rule fn, the
+body pattern. Codegen mints the hidden `_<key>` rule from the body and rewrites every structurally matching sub-tree in
+the grammar as `alias($._<key>, $.<key>)`, so tree-sitter emits the visible kind as a CST node where a hidden helper
+would otherwise vanish from the parse tree. A hidden pattern is an authored hidden rule under `rules:`
+(`applyWirePatternReplacement`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::EditsConfig`
 
@@ -1345,13 +1321,8 @@ Wire never applies authored conflict sets: it hands `grammar()` no `conflicts`, 
 
 ### `packages/codegen/src/dsl/wire/wire.ts::groups`
 
-```text
-/**
-	 * Group-lift map — same `$` typing as `rules`. Path-mode entries are
-	 * `path → discriminator` records; body-pattern-mode entries are clean-`$`
-	 * builders (`($: ShapedSymbols<B>) => unknown`), not the untyped `RuleFn`.
-	 */
-```
+The body patterns (`GroupsConfig`), with the same `$` typing as `rules`: each entry is a clean-`$` builder
+(`($: ShapedSymbols<B>, previous?) => unknown`), not the untyped `RuleFn`.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::renderAs`
 
@@ -1710,7 +1681,7 @@ The base grammar's `word`, when it declares one.
 
 The body of `wire` over the runtime base (`unknown`, read as `BaseArg`). `wire` is its typed facade, whose
 generic base type only checks the authored config's keys; `wireWithoutConfig` and the layer pass
-(`layer.ts::runLayerPass`) call it directly. The config's `groups:`, `injects:`, `renderAs:` and `visibleExternals:` callbacks are evaluated once
+(`layer.ts::runLayerPass`) call it directly. The config's `groups:`, `renderAs:` and `visibleExternals:` callbacks are evaluated once
 (`evaluatedConfig`): the layer pass evaluates them before intake and passes what it evaluated (`declared`), and the
 other callers let wire evaluate them. The runtime's call to its `externals` callback is where wire evaluates
 the rest of the config (`evaluatingExternals`); the rule callbacks and the `extras`, `supertypes` and `precedences` callbacks
@@ -1941,7 +1912,7 @@ built it, the same object the upstream diagnostic stage reads.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::DeclaredPattern`
 
-One evaluated `groups:` or `injects:` body-pattern entry: its section, its key and its body.
+One evaluated `groups:` body-pattern entry: its key and its body.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::EvaluatedConfig`
 
@@ -1950,7 +1921,7 @@ The config callbacks wire reads beside the rules, each evaluated once: the body 
 
 ### `packages/codegen/src/dsl/wire/wire.ts::evaluatedConfig`
 
-Evaluates a config's `groups:`, `injects:`, `renderAs:` and `visibleExternals:` callbacks once, with the runtime's
+Evaluates a config's `groups:`, `renderAs:` and `visibleExternals:` callbacks once, with the runtime's
 symbols (`layerSymbols`), the render bodies under `withStringGlobalShim`. A `$` is built only for a config that has
 such a callback, so a wire without them needs no runtime. The layer pass calls it before intake, which hands enrich
 the `groups:` bodies, and gives the result to wire (`wireImpl`). Every reader takes these values: the pattern
@@ -1963,11 +1934,11 @@ name the entry's `$` does not know with the undefined-symbol `ReferenceError` a 
 
 ### `packages/codegen/src/dsl/wire/wire.ts::declaredPatterns`
 
-Evaluates the body-pattern entries of `groups:` and `injects:`, with the validation both consumers share: a
-`groups:` key must be visible, the body fn must return a rule, and the body must be a complex structural pattern
-(`rule-patterns.ts::isComplexBody`). Each is evaluated once, with the runtime's symbols (`layerSymbols`), so a body is
-the rule the runtime builds; a name the grammar lacks is refused when the body joins the rules (`declaredBody`).
-`evaluatedConfig` calls it.
+Evaluates the body-pattern entries of `groups:`, with the validation its consumers rely on: a key must be visible
+(a hidden pattern is an authored hidden rule under `rules:`), the body fn must return a rule, and the body must be a
+complex structural pattern (`rule-patterns.ts::isComplexBody`). Each is evaluated once, with the runtime's symbols
+(`layerSymbols`), so a body is the rule the runtime builds; a name the grammar lacks is refused when the body joins the
+rules (`declaredBody`). `evaluatedConfig` calls it.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::PatchEntry`
 
@@ -1983,16 +1954,13 @@ the rule the runtime builds; a name the grammar lacks is refused when the body j
 
 ```text
 /**
- * Structural injection. Each authored hidden rule, each `groups:` entry and
- * each `injects:` entry, as the config evaluated them (`DeclaredPattern`),
- * is a candidate body; every rule body that contains
- * a structurally equal shape has it replaced by a reference to the
- * candidate. Visibility follows the name: a `_`-prefixed candidate is a
- * hidden rule and the reference is a plain symbol; an unprefixed one is a
- * visible kind and the reference is `alias($._name, $.name)`. `groups:`
- * accepts only visible names and is the older spelling of the visible
- * case; `injects:` accepts both, which is how a choice is wrapped into a
- * hidden kind so one preference can be declared on it.
+ * Structural injection. Each authored hidden rule and each `groups:` entry,
+ * as the config evaluated it (`DeclaredPattern`), is a candidate body; every
+ * rule body that contains a structurally equal shape has it replaced by a
+ * reference to the candidate. An authored hidden rule is referenced by a
+ * plain symbol, which is how a choice is wrapped into a hidden kind so one
+ * preference can be declared on it. A `groups:` entry names a visible kind:
+ * its body is minted as `_<key>` and referenced as `alias($._key, $.key)`.
  */
 ```
 
@@ -2044,15 +2012,13 @@ The options key under which addresses are labelled. Its keys are addresses whose
 
 ### `packages/codegen/src/dsl/wire/wire.ts::declaredGroupMintName`
 
-The rule name a `groups:` or `injects:` declaration is registered under: the
-key itself when it already starts with `_`, otherwise `_<key>` (the visible key
-becomes the alias display over that hidden rule). `applyWirePatternReplacement`
-registers the body under this name and `assertNoDeclaredGroupPatches` checks
-patch keys against it, so both read the one naming rule.
+The rule name a `groups:` declaration is registered under: `_<key>`. The key is a visible kind name
+(`declaredPatterns` refuses a hidden one) and becomes the alias display over that hidden rule.
+`applyWirePatternReplacement`, `assertNoDeclaredGroupPatches` and `unmatchedGroupPatterns` read this one naming rule.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::assertNoDeclaredGroupPatches`
 
-Refuses a `edits:` key that names a `groups:` or `injects:` declaration,
+Refuses an `edits:` key that names a `groups:` declaration,
 either by its key or by its registered name (`declaredGroupMintName`). Such a
 body is registered after the patch wrappers are composed, and the registration
 replaces the wrapper under that name, so the patch would be dropped without a

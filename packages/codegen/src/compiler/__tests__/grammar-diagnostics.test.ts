@@ -84,30 +84,23 @@ describe('grammar diagnostics preflight', () => {
 		);
 	});
 
-	it('records groups-config-invalid for a lift that does not resolve and applies the others', () => {
+	it('records refine-config-invalid for a refine form whose path does not resolve', () => {
 		const rawGrammar = withPredictedKinds({
 			...buildRawGrammar({
-				program: {
-					type: 'SEQ',
-					members: [
-						{ type: 'SYMBOL', name: 'a' },
-						{ type: 'SEQ', members: [{ type: 'STRING', value: '(' }, { type: 'SYMBOL', name: 'b' }] }
-					]
-				},
+				program: { type: 'SEQ', members: [{ type: 'SYMBOL', name: 'a' }, { type: 'SYMBOL', name: 'b' }] },
 				a: { type: 'PATTERN', value: 'a' },
 				b: { type: 'PATTERN', value: 'b' }
 			}),
-			groups: { program: { '1': 'inner', '7': 'missing' } }
+			refineForms: new Map([['program', [{ name: 'curly', selections: { 'missing:': '{' } }]]])
 		});
 		const result = collectGrammarDiagnosticsForGrammar({ rawGrammar });
 		expect(result.diagnostics).toContainEqual(
 			expect.objectContaining({
-				code: 'groups-config-invalid',
+				code: 'refine-config-invalid',
 				canProceed: false,
-				message: expect.stringMatching(/groups\['program'\]\['7'\]/)
+				message: expect.stringMatching(/refine\(program\) form 'curly'/)
 			})
 		);
-		expect(result.linked.rules._program_inner).toBeDefined();
 	});
 
 	it('rejects an expectDiagnostics entry that names a code no entry can expect', () => {

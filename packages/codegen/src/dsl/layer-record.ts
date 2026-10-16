@@ -13,7 +13,6 @@ import type { PatchSite } from './wire/wire.ts';
 export type LayerRecords = Pick<
 	EvaluatedGrammar,
 	| 'options'
-	| 'groups'
 	| 'renderAs'
 	| 'visibleExternals'
 	| 'reparseHosts'
@@ -93,7 +92,6 @@ function mergedPatchSites(inherited: readonly PatchSite[] | undefined, own: read
 
 const RECORD_MERGES: { readonly [K in keyof LayerRecords]-?: RecordMerge<K> } = {
 	options: mergedEntries,
-	groups: mergedEntries,
 	renderAs: mergedEntries,
 	visibleExternals: mergedEntries,
 	reparseHosts: (inherited, own) => own ?? inherited,

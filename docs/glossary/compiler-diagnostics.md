@@ -443,14 +443,14 @@ diagnostics. The caller guarantees the prediction built (the gate, or `diagnoseS
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::SURFACED_COMPILER_CODES`
 
-The compiler-diagnostic codes the grammar diagnostics report as their own: the invalid config records
-(`groups-config-invalid`, `refine-config-invalid`) and the token-interior pass's `token-interior-unstructurable`
+The compiler-diagnostic codes the grammar diagnostics report as their own: the invalid refine config record
+(`refine-config-invalid`) and the token-interior pass's `token-interior-unstructurable`
 (a token whose interior the grammar addresses but the pass cannot structure), so they reach the generation gate. The kind-id stamp reports (`kindid-*`) stay compiler warnings
 and feed the phantom-kind ratchet; they are not grammar diagnostics.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::UNEXPECTABLE_CODES`
 
-The codes no `expectDiagnostics` entry may name: a grammar tree-sitter rejects (`dangling-internal-ref`, `unpredictable-symbol-table`) a config declaration that does not fit the grammar (`groups-config-invalid`, `refine-config-invalid`), a `rules:` or `renderAs:` declaration that contradicts the grammar (`rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`), a definition of a name enrich mints for the whitespace vocabulary (`whitespace-mint-collision`), and a conflict the grammar authors or the derivation cannot settle (`conflict-authored`, `conflict-unresolvable`, `conflict-resolutions-stale`), dynamic precedence reshaping lost (`conflict-dynamic-precedence-lost`), and a receiver claim the lead derivation refuses (`lead-refused`). Each is fixed at its cause, never accepted. The debt codes `rule-reauthored-without-cause` and `patch-without-cause` stay floorable.
+The codes no `expectDiagnostics` entry may name: a grammar tree-sitter rejects (`dangling-internal-ref`, `unpredictable-symbol-table`) a `refine()` declaration that does not fit the grammar (`refine-config-invalid`), a `rules:` or `renderAs:` declaration that contradicts the grammar (`rule-cause-missing`, `rule-cause-mismatch`, `render-only-not-external`, `vocabulary-replaces-upstream`), a definition of a name enrich mints for the whitespace vocabulary (`whitespace-mint-collision`), and a conflict the grammar authors or the derivation cannot settle (`conflict-authored`, `conflict-unresolvable`, `conflict-resolutions-stale`), dynamic precedence reshaping lost (`conflict-dynamic-precedence-lost`), and a receiver claim the lead derivation refuses (`lead-refused`). Each is fixed at its cause, never accepted. The debt codes `rule-reauthored-without-cause` and `patch-without-cause` stay floorable.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::unexpectableExpectEntries`
 

@@ -291,7 +291,6 @@ type RecordRename = 'optionPaths' | 'keysAndBodies' | 'keys' | 'names' | 'repars
 
 const RECORD_RENAMES = {
 	options: 'optionPaths',
-	groups: 'keysAndBodies',
 	renderAs: 'keysAndBodies',
 	visibleExternals: 'keysAndBodies',
 	reparseHosts: 'reparseHosts',

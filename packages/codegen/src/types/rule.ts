@@ -392,36 +392,6 @@ export interface SymbolRef {
 	position?: number;
 }
 
-export function replaceAtPath<R extends AnyRule>(rule: R, path: string, replacement: R): R {
-	const segments = path.split('/').filter((s) => s.length > 0);
-	return replaceAtPathRec(rule, segments, 0, replacement) as R;
-}
-
-function replaceAtPathRec(rule: AnyRule, segments: readonly string[], depth: number, replacement: AnyRule): AnyRule {
-	if (depth === segments.length) return replacement;
-	const idx = parseInt(segments[depth]!, 10);
-	switch (rule.type) {
-		case SEQ:
-		case CHOICE: {
-			const members = rule.members.slice();
-			members[idx] = replaceAtPathRec(members[idx]!, segments, depth + 1, replacement);
-			return { ...rule, members };
-		}
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case FIELD:
-		case TOKEN:
-		case ALIAS:
-			return {
-				...rule,
-				content: replaceAtPathRec((rule as { content: AnyRule }).content, segments, depth + 1, replacement)
-			} as AnyRule;
-		default:
-			throw new Error(`replaceAtPath: cannot descend into '${rule.type}' at segment ${depth}`);
-	}
-}
-
 export function sym(name: string): SymbolRule<'evaluate'> {
 	return { type: SYMBOL, name, inline: name.startsWith('_') };
 }

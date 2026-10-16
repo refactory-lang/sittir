@@ -327,13 +327,12 @@ export function collectGrammarDiagnostics(input: {
 	return { diagnostics: [...parseKindMapped, ...assembleWarningMapped, ...slotGroupingMapped] };
 }
 
-const SURFACED_COMPILER_CODES: ReadonlySet<string> = new Set(['groups-config-invalid', 'refine-config-invalid', 'token-interior-unstructurable']);
+const SURFACED_COMPILER_CODES: ReadonlySet<string> = new Set(['refine-config-invalid', 'token-interior-unstructurable']);
 
 const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'dangling-internal-ref',
 	'unpredictable-symbol-table',
 	'kind-key-collision',
-	'groups-config-invalid',
 	'refine-config-invalid',
 	'rule-cause-missing',
 	'rule-cause-mismatch',

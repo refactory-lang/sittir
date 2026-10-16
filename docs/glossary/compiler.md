@@ -2886,10 +2886,6 @@ The whole-text regex of every linked rule that composes to one (`composeTokenTex
  *  or one that already carries a `hidden` stamp, is left alone. */
 ```
 
-### `packages/codegen/src/compiler/link.ts::namedAliasFaceOf`
-
-The parser-visible face of a group-lift target: unwraps OPTIONAL/REPEAT wrappers and single-non-blank choices down to a named ALIAS and returns its value. When a lift target has such a face, `applyGroupOverrides` mints nothing — group overrides run only on the sittir side of the dual execution, so a hidden mint there is a phantom kind by construction, and it would bury an arm that already owns a parser-issued identity one level deeper. The variant discriminator then rides the existing alias.
-
 ### `packages/codegen/src/compiler/link.ts::pruneInlinedAliasBodies`
 
 Deletes hidden rules that nothing references after inlining, except alias bodies and dispatch unions: a rule already promoted to SUPERTYPE, or still shaped as a choice of kinds (`isKindChoice`), survives unreferenced — hidden dispatch unions like a grammar's `_statement` are namespaces the factory surface groups by, and inlining a union's references does not retire the union itself.
@@ -3420,22 +3416,6 @@ The `terminated` form is not read here; it is lifted for a whole seq only, by
 /** Pick the position-carried modifier attrs a seq passes to a repeat that
  *  replaces it (id/fieldName/multiplicity/nonterminal/metadata) — NOT `members`. */
 ```
-
-### `packages/codegen/src/compiler/link.ts::validateGroupsConfig`
-
-Splits a `groups:` block into the lifts that can be applied and the issues that rule the others out: a kind missing from the rule map, or per lift a path that does not resolve, a discriminator that is empty or not an identifier, a lift nested in another, or a synthesized name already taken (`groupLiftIssue`). A lifted body with no structural member still applies and only warns. Nothing throws, so one bad entry never stops the rest.
-
-### `packages/codegen/src/compiler/link.ts::ValidGroupsConfig`
-
-The lifts of a `groups:` block that apply, keyed by kind then path, and the issues of the ones that do not.
-
-### `packages/codegen/src/compiler/link.ts::GroupLiftCtx`
-
-What `groupLiftIssue` reads for one kind's lifts: the lifts and their paths, the kind's rule, the rule map and the warning sink.
-
-### `packages/codegen/src/compiler/link.ts::groupLiftIssue`
-
-Why one group lift cannot apply, or `undefined` when it can. A path the resolver rejects (`ConfigError`) becomes the issue's message; any other error is not a config fault and propagates.
 
 ### `packages/codegen/src/compiler/link.ts::unwrapAliasForCheck`
 
@@ -7623,8 +7603,8 @@ adds.
 // post-enrich-injection) makes it the single source and lets it reach the
 // enrich-injected group rules the constructors miss. Idempotent over
 // already-lifted shapes (see lift-separators.ts), so it is a no-op while
-// the constructors still lift. Runs before group-lift / classification,
-// which expect the canonical separator shape.
+// the constructors still lift. Runs before classification, which expects
+// the canonical separator shape.
 ```
 
 #### body
@@ -7664,8 +7644,7 @@ adds.
 // After this, downstream phases see bare string literals at those
 // positions and treat them as inline mandatory literals in seq
 // context — same as how `seq('mod', $.name)` renders `mod {{ name }}`
-// with `mod` stamped inline. Runs BEFORE applyGroupOverrides so any
-// group lifts operate on already-stamped rule bodies.
+// with `mod` stamped inline.
 // raw.renderAs is Rule<'evaluate'> (pre-link, override-authored literal
 // bodies); stampStaticRenderAs only reads STRING-shaped bodies, so the
 // phase view is a widen-only cast (RepeatRule's per-phase shapes genuinely
@@ -8095,7 +8074,7 @@ not a parser supertype) is a hoisted form of the kind that references it; the
 rule is left as it is. A hoisted rule the parser declares a supertype has no
 node to seat, so it is classified like any other hidden choice. The stamp is declared by the route that minted
 the rule — the variant lift, a `groups:` entry, enrich's clause-hoist and
-promoted-arm mints, a `group()` patch, the group lift here — never inferred
+promoted-arm mints, a `group()` patch — never inferred
 from the body's shape: a hidden sequence with a `field()` that no route
 stamped (an upstream rule, or an authored rule a parent merely aliases) is an
 ordinary hidden rule. The annotation is the one source of the hoisted fact: nothing collects it
@@ -8226,106 +8205,6 @@ lifted afterwards.
 // construction site, so skipping it here is correct, not lossy.
 // (The pre-link DSL-shaped uppercase 'GROUP'/'VARIANT' are a separate
 // dsl/ vocabulary that never reaches this compiler-Rule<'link'> walker.)
-```
-
-### `packages/codegen/src/compiler/link.ts::resolveGroupPath`
-
-```text
-// ---------------------------------------------------------------------------
-// Group-lift synthesis (moved from group-synthesis.ts in that change
-// de-scatter). Implements the `groups:` override block per
-// docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md.
-// Pure — no I/O, no side effects on inputs.
-// ---------------------------------------------------------------------------
-```
-
-```text
-/**
- * Walk a path string ('1/1/0/1/3') into a rule tree, returning the
- * sub-rule at that path. Path segments index into:
- *   - seq.members[i]
- *   - choice.members[i]
- *   - wrapper.content (path '0' for optional/repeat/repeat1/field/token/
- *     alias/variant/clause/group)
- *
- * Throws if any segment fails to address. Mirrors path semantics used
- * by `edits:` in `grammar.sittir.ts`.
- */
-```
-
-A path that does not resolve throws `ConfigError`, which only the validators catch (`groupLiftIssue`): by the time `applyGroupOverrides` walks a path, validation has already kept only the ones that resolve.
-
-### `packages/codegen/src/compiler/link.ts::deriveSynthesizedName`
-
-```text
-/**
- * Compute the synthesized hidden kind name for a group lift:
- * `_<parent>_<discriminator>` (a parent that is already hidden keeps its
- * leading underscore).
- */
-```
-
-#### body
-
-```text
-// When parentKind already starts with '_' (hidden rule), use it as-is
-// as the base; otherwise prepend '_' to canonicalize.
-```
-
-### `packages/codegen/src/compiler/link.ts::applyGroupOverrides`
-
-```text
-/**
- * Apply all `groups:` lifts. Pure transform — input rules are not
- * mutated; a new rules map is returned with lifted bodies registered
- * under their synthesized kind names and parent bodies rewritten to
- * reference them.
- *
- * Wrapper handling: when the lift target is wrapped (`optional` /
- * `repeat` / `repeat1`), only the wrapper's content is moved into the
- * synthesized kind. The wrapper stays at the parent's lift position
- * with the synthesized symbol ref inside. This preserves cardinality
- * semantics at the parent.
- */
-```
-
-#### body
-
-```text
-// deep first
-```
-
-Each lifted body is registered with `annotations.hoisted` stamped, the same
-declaration every other minting route makes; `classifyHiddenRule` collects
-the set from that annotation alone.
-
-It applies only the lifts `validateGroupsConfig` keeps and returns the issues of the rest; link records each as `groups-config-invalid` (`recordConfigIssue`).
-
-### `packages/codegen/src/compiler/link.ts::liftRule`
-
-#### body
-
-```text
-// Mint the helper ref through evaluate's `symbol()` so it gets the SAME
-// construction-time stamps (`hidden`, `inline = name.startsWith('_')`) as any
-// other ref — group-lift helpers are `_`-prefixed → inline=true. Stamping at
-// the one constructor (then revised at wrapper push-down / link supertype pass)
-// keeps `inline` authoritative on the normalizedRules path, so normalize's fold
-// can read it instead of re-deriving hiddenness structurally.
-```
-
-#### body
-
-```text
-// (_discriminator kept for future use; the current implementation does not use it.
-// The discriminator participates only in the synthesized kind name component.)
-```
-
-#### body
-
-```text
-// target.separator already carries trailing/leading nested — rides
-// along for free (same pattern as flatten.ts's REPEAT case).
 ```
 
 ### `packages/codegen/src/compiler/link.ts::stampStaticRenderAs`
@@ -8548,7 +8427,7 @@ A path that does not resolve throws `ConfigError`; link validates every form fir
 
 ### `packages/codegen/src/compiler/link.ts::ConfigError`
 
-A `groups:` or `refine()` declaration that does not fit the grammar. The path resolvers throw it and only the validators catch it, so the message is written once where the fault is found and the fault still becomes a record rather than a throw out of link.
+A `refine()` declaration that does not fit the grammar. The path resolvers throw it and only the validator catches it (`refineFormIssue`), so the message is written once where the fault is found and the fault still becomes a record rather than a throw out of link.
 
 ### `packages/codegen/src/compiler/link.ts::ConfigIssue`
 
@@ -8556,7 +8435,7 @@ One invalid config entry: the kind it is declared on and the message naming the 
 
 ### `packages/codegen/src/compiler/link.ts::recordConfigIssue`
 
-Records a `ConfigIssue` in link's sink as `groups-config-invalid` or `refine-config-invalid`, fail severity. The grammar diagnostics surface both, and neither can be expected (`diagnostics/grammar-diagnostics.ts::UNEXPECTABLE_CODES`): the fix is the declaration.
+Records a `ConfigIssue` in link's sink as `refine-config-invalid`, fail severity. The grammar diagnostics surface it, and it cannot be expected (`diagnostics/grammar-diagnostics.ts::UNEXPECTABLE_CODES`): the fix is the declaration.
 
 ### `packages/codegen/src/compiler/link.ts::narrowedFieldLiteralsForForm`
 

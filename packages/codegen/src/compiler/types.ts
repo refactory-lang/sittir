@@ -128,7 +128,6 @@ export interface RawGrammar {
 	readonly references: SymbolRef[];
 	readonly externalRoles?: Map<string, ExternalRole>;
 	readonly refineForms?: Map<string, RefineForm[]>;
-	readonly groups?: Record<string, Record<string, string> | undefined>;
 	readonly renderAs?: Record<string, Rule<'evaluate'>>;
 	readonly visibleExternals?: Record<string, Rule<'evaluate'>>;
 	readonly whitespaceCollisions?: readonly WhitespaceCollision[];

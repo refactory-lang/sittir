@@ -647,7 +647,7 @@ describe('wire()', () => {
 	});
 });
 
-describe('a patch keyed by a groups: or injects: declaration', () => {
+describe('a patch keyed by a groups: declaration', () => {
 	beforeAll(() => {
 		installFakeDsl();
 	});
@@ -665,8 +665,8 @@ describe('a patch keyed by a groups: or injects: declaration', () => {
 
 	it('throws when the patch names the groups: key', () => {
 		expect(() =>
-			wire<GrammarJson>({ name: 'test', rules: {}, injects: { paren_x: pair as never }, edits: { paren_x: { 1: field('inner') } } }, emptyBase)
-		).toThrow(/edits: 'paren_x' names the injects: declaration 'paren_x'/);
+			wire<GrammarJson>({ name: 'test', rules: {}, groups: { paren_x: pair as never }, edits: { paren_x: { 1: field('inner') } } }, emptyBase)
+		).toThrow(/edits: 'paren_x' names the groups: declaration 'paren_x'/);
 	});
 
 	it('still applies a patch on an ordinary rule beside a groups: declaration', () => {
