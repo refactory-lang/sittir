@@ -1,23 +1,13 @@
 import type { NodeMap } from '../compiler/types.ts';
-import { isBuilderTextLeaf } from '../compiler/model/node-map.ts';
-import type { AssembledNode } from '../compiler/model/node-map.ts';
-import {
-	AssembledSupertype,
-	AssembledPattern
-} from '../compiler/model/node-map.ts';
-import { irNamespacesChildFactory, lexedContentSlot } from './shared.ts';
-import { hasOneSurface, irPlanOf, memberKeyFor, type IrMember } from '../compiler/model/ir-surface.ts';
-import { lineTerminatedKinds } from '../compiler/model/trivia.ts';
-import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
+import { irPlanOf, type IrMember } from '../compiler/model/ir-surface.ts';
 
 export interface EmitIrConfig {
 	grammar: string;
 	nodeMap: NodeMap;
-	grammarRoles?: GrammarRoles;
 }
 
 export function emitIr(config: EmitIrConfig): string {
-	const { nodeMap, grammarRoles } = config;
+	const { nodeMap } = config;
 	const plan = irPlanOf(nodeMap);
 
 	const lines: string[] = [
@@ -37,16 +27,6 @@ export function emitIr(config: EmitIrConfig): string {
 	const body: string[] = [];
 	const groupBlocks: string[] = [];
 	const groupNames: string[] = [];
-
-	let hasSynonyms = false;
-	if (grammarRoles) {
-		const synonymLines = emitSynonymNamespace(grammarRoles, nodeMap);
-		if (synonymLines.length > 0) {
-			hasSynonyms = true;
-			body.push(...synonymLines);
-			body.push('');
-		}
-	}
 
 	for (const group of plan.groups) {
 		groupNames.push(group.key);
@@ -87,16 +67,12 @@ export function emitIr(config: EmitIrConfig): string {
 
 	irValueLines.push('  // Leaf node factories');
 	flat(plan.patterns);
-	if (groupNames.length > 0 || hasSynonyms) {
+	if (groupNames.length > 0) {
 		irValueLines.push('');
 		irValueLines.push('  // Supertype-grouped sub-namespaces (also exported standalone above)');
 		for (const g of groupNames) {
 			irValueLines.push(`  ${g},`);
 			irTypeMembers.push(`  readonly ${g}: typeof ${g};`);
-		}
-		if (hasSynonyms) {
-			irValueLines.push('  synonym,');
-			irTypeMembers.push('  readonly synonym: typeof synonym;');
 		}
 	}
 	body.push('export const ir: {');
@@ -106,296 +82,4 @@ export function emitIr(config: EmitIrConfig): string {
 	body.push('});');
 
 	return [...lines, ...body].join('\n');
-}
-
-
-
-
-function isPolymorphTextParent(node: AssembledNode): boolean {
-	return node instanceof AssembledSupertype && node.irKey !== undefined && !node.seated;
-}
-
-function isTextRoleTarget(node: AssembledNode): boolean {
-	return isLeafFactory(node) || isPolymorphTextParent(node);
-}
-
-function roleFactoryRef(node: AssembledNode): string {
-	return isPolymorphTextParent(node) ? `F.${node.irKey}` : factoryRef(node);
-}
-
-function roleReturnType(node: AssembledNode): string {
-	return `ReturnType<typeof ${roleFactoryRef(node)}>`;
-}
-
-function resolveRoleNodes(
-	role: Role,
-	grammarRoles: GrammarRoles,
-	nodeMap: NodeMap,
-	includePolymorphParents = false
-): AssembledNode[] {
-	const kindNames = grammarRoles.get(role);
-	const nodes: AssembledNode[] = [];
-	const seen = new Set<string>();
-	for (const kind of kindNames) {
-		const node = nodeMap.nodes.get(kind) ?? nodeMap.nodes.get(`_${kind}`);
-		if (
-			node &&
-			(node.rawFactoryName || (includePolymorphParents && isPolymorphTextParent(node))) &&
-			!seen.has(node.kind)
-		) {
-			seen.add(node.kind);
-			nodes.push(node);
-		}
-	}
-	return nodes;
-}
-
-function isLeafFactory(node: AssembledNode): boolean {
-	return (
-		(node instanceof AssembledPattern || isBuilderTextLeaf(node) || lexedContentSlot(node) !== undefined) &&
-		node.rawFactoryName !== undefined
-	);
-}
-
-function factoryRef(node: AssembledNode): string {
-	return lexedContentSlot(node) === undefined || hasOneSurface(node) ? `F.${node.rawFactoryName}` : `F.${node.factoryName}`;
-}
-
-function returnTypeExpr(node: AssembledNode): string {
-	return isBuilderTextLeaf(node) ? `typeof ${factoryRef(node)}` : `ReturnType<typeof ${factoryRef(node)}>`;
-}
-
-function emitSynonymNamespace(grammarRoles: GrammarRoles, nodeMap: NodeMap): string[] {
-	const fns: string[] = [];
-
-	emitSynonymBoolean(grammarRoles, nodeMap, fns);
-	emitSynonymNumber(grammarRoles, nodeMap, fns);
-	emitSynonymString(grammarRoles, nodeMap, fns);
-	emitSynonymComment(grammarRoles, nodeMap, fns);
-	emitSynonymType(grammarRoles, nodeMap, fns);
-	emitSynonymIdentifier(grammarRoles, nodeMap, fns);
-	emitSynonymAliases(grammarRoles, nodeMap, fns);
-
-	if (fns.length === 0) return [];
-
-	const lines: string[] = [];
-	lines.push("// Role synonyms — resolve a native JS value to this grammar's node for that role.");
-	lines.push('// Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.');
-	lines.push('export const synonym = Object.freeze({');
-	lines.push(...fns);
-	lines.push('} as const);');
-	return lines;
-}
-
-function emitSynonymBoolean(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
-	const nodes = resolveRoleNodes('boolean', grammarRoles, nodeMap);
-	if (nodes.length === 0) return;
-
-	const leafNode = nodes.find((n) => isLeafFactory(n) && !isBuilderTextLeaf(n));
-	if (leafNode) {
-		fns.push(`  boolean(value: boolean): ${returnTypeExpr(leafNode)} {`);
-		fns.push(`    return ${factoryRef(leafNode)}(value ? 'true' : 'false');`);
-		fns.push('  },');
-		return;
-	}
-
-	const trueNode = nodes.find((n) => n.kind === 'true');
-	const falseNode = nodes.find((n) => n.kind === 'false');
-	if (trueNode && falseNode) {
-		const retType = `${returnTypeExpr(trueNode)} | ${returnTypeExpr(falseNode)}`;
-		fns.push(`  boolean(value: boolean): ${retType} {`);
-		fns.push(`    return value ? ${factoryRef(trueNode)} : ${factoryRef(falseNode)};`);
-		fns.push('  },');
-		return;
-	}
-
-	const first = nodes[0];
-	if (first && isLeafFactory(first)) {
-		fns.push(`  boolean(value: boolean): ${returnTypeExpr(first)} {`);
-		fns.push(`    return ${factoryRef(first)}(value ? 'true' : 'false');`);
-		fns.push('  },');
-	}
-}
-
-function emitSynonymNumber(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
-	const nodes = resolveRoleNodes('number', grammarRoles, nodeMap, true);
-	const leafNodes = nodes.filter(isTextRoleTarget);
-	if (leafNodes.length === 0) return;
-
-	const floatNodes = resolveRoleNodes('number.float', grammarRoles, nodeMap, true).filter(isTextRoleTarget);
-	const floatSet = new Set(floatNodes.map((n) => n.kind));
-	const intNodes = leafNodes.filter((n) => !floatSet.has(n.kind));
-
-	const intNode = intNodes[0];
-	const floatNode = floatNodes[0];
-
-	if (intNode && floatNode) {
-		const retType = `${roleReturnType(intNode)} | ${roleReturnType(floatNode)}`;
-		fns.push(`  number: Object.assign(`);
-		fns.push(`    function number(value: number): ${retType} {`);
-		fns.push(`      return Number.isInteger(value)`);
-		fns.push(`        ? ${roleFactoryRef(intNode)}(String(value))`);
-		fns.push(`        : ${roleFactoryRef(floatNode)}(String(value));`);
-		fns.push(`    },`);
-		fns.push(`    {`);
-		fns.push(
-			`      integer(value: number): ${roleReturnType(intNode)} { return ${roleFactoryRef(intNode)}(String(value)); },`
-		);
-		fns.push(
-			`      float(value: number): ${roleReturnType(floatNode)} { return ${roleFactoryRef(floatNode)}(String(value)); },`
-		);
-		fns.push(`    }`);
-		fns.push(`  ),`);
-	} else {
-		const node = intNode ?? floatNode ?? leafNodes[0];
-		if (!node) return;
-		fns.push(`  number(value: number): ${roleReturnType(node)} {`);
-		fns.push(`    return ${roleFactoryRef(node)}(String(value));`);
-		fns.push('  },');
-	}
-}
-
-function emitSynonymString(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
-	const nodes = resolveRoleNodes('string', grammarRoles, nodeMap);
-	if (nodes.length === 0) return;
-
-	const primaryNode = nodes.find((n) => /string/.test(n.kind) && !/char|raw|template|regex/.test(n.kind));
-	if (!primaryNode) return;
-
-	if (isLeafFactory(primaryNode)) {
-		fns.push(`  string(value: string): ${returnTypeExpr(primaryNode)} {`);
-		fns.push(`    return ${factoryRef(primaryNode)}(value);`);
-		fns.push('  },');
-		return;
-	}
-
-	const contentNode = nodeMap.nodes.get('string_content');
-	if (contentNode && isLeafFactory(contentNode) && irNamespacesChildFactory(primaryNode, nodeMap)) {
-		fns.push(`  string(value: string): ${returnTypeExpr(primaryNode)} {`);
-		fns.push(`    return ${factoryRef(primaryNode)}(${factoryRef(contentNode)}(value));`);
-		fns.push('  },');
-	}
-}
-
-function emitSynonymComment(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
-	const ref = (node: AssembledNode): string => {
-		if (node.builderPath === undefined) throw new Error(`ir: the trivia kind '${node.kind}' has no builder path`);
-		return `ir.${node.builderPath.join('.')}`;
-	};
-	const returnType = (node: AssembledNode): string => `ReturnType<typeof ${ref(node)}>`;
-	const nodes = grammarRoles
-		.get('trivia')
-		.flatMap((kind) => {
-			const node = nodeMap.nodes.get(kind) ?? nodeMap.nodes.get(`_${kind}`);
-			if (node instanceof AssembledSupertype) return [...node.subtypeNames].flatMap((name) => nodeMap.nodes.get(name) ?? []);
-			return node === undefined ? [] : [node];
-		})
-		.filter(
-			(node, i, all) => node.rawFactoryName !== undefined && all.findIndex((other) => other.kind === node.kind) === i
-		);
-	if (nodes.length === 0) return;
-
-	const leafNodes = nodes.filter(isLeafFactory);
-
-	if (leafNodes.length === 1) {
-		const node = leafNodes[0]!;
-		fns.push(`  comment(text: string): ${returnType(node)} {`);
-		fns.push(`    return ${ref(node)}(text);`);
-		fns.push('  },');
-		return;
-	}
-
-	if (leafNodes.length > 1) {
-		const lineTerminated = lineTerminatedKinds(nodeMap);
-		const lineNode = leafNodes.find((n) => lineTerminated.has(n.kind));
-		const blockNode = leafNodes.find((n) => !lineTerminated.has(n.kind));
-		if (lineNode && blockNode) {
-			fns.push(`  comment: Object.assign(`);
-			fns.push(`    function comment(content: string): ${returnType(lineNode)} {`);
-			fns.push(`      return ${ref(lineNode)}(content);`);
-			fns.push(`    },`);
-			fns.push(`    {`);
-			fns.push(`      line(text: string): ${returnType(lineNode)} { return ${ref(lineNode)}(text); },`);
-			fns.push(`      block(text: string): ${returnType(blockNode)} { return ${ref(blockNode)}(text); },`);
-			fns.push(`    }`);
-			fns.push(`  ),`);
-			return;
-		}
-		const first = leafNodes[0]!;
-		fns.push(`  comment(text: string): ${returnType(first)} {`);
-		fns.push(`    return ${ref(first)}(text);`);
-		fns.push('  },');
-		return;
-	}
-}
-
-function emitSynonymType(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
-	const typeKinds = grammarRoles.get('type');
-	const builtinKinds = new Set(grammarRoles.get('type.builtin'));
-	const filteredKinds = typeKinds.filter((k) => !builtinKinds.has(k));
-
-	const resolveNode = (k: string) => nodeMap.nodes.get(k) ?? nodeMap.nodes.get(`_${k}`);
-	const typeIdKind = filteredKinds.find((k) => k !== 'identifier' && resolveNode(k) !== undefined);
-	if (!typeIdKind) {
-		const identKind = filteredKinds.find((k) => k === 'identifier' && resolveNode(k) !== undefined);
-		if (identKind) {
-			const node = resolveNode(identKind)!;
-			if (isLeafFactory(node)) {
-				fns.push(`  type(name: string): ${returnTypeExpr(node)} {`);
-				fns.push(`    return F.${node.rawFactoryName}(name);`);
-				fns.push('  },');
-			}
-		}
-		return;
-	}
-
-	const typeNode = resolveNode(typeIdKind)!;
-
-	if (isLeafFactory(typeNode)) {
-		fns.push(`  type(name: string): ${returnTypeExpr(typeNode)} {`);
-		fns.push(`    return F.${typeNode.rawFactoryName}(name);`);
-		fns.push('  },');
-	} else {
-		const identNode = nodeMap.nodes.get('identifier');
-		if (identNode && isLeafFactory(identNode)) {
-			fns.push(`  type(name: string): ${returnTypeExpr(typeNode)} {`);
-			fns.push(`    return F.${typeNode.rawFactoryName}(F.${identNode.rawFactoryName}(name));`);
-			fns.push('  },');
-		}
-	}
-}
-
-function emitSynonymIdentifier(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
-	const varKinds = grammarRoles.get('variable');
-
-	const identKind = varKinds.find((k) => k === 'identifier');
-	if (!identKind) return;
-
-	const node = nodeMap.nodes.get(identKind);
-	if (!node || !isLeafFactory(node)) return;
-
-	fns.push(`  identifier(name: string): ${returnTypeExpr(node)} {`);
-	fns.push(`    return F.${node.rawFactoryName}(name);`);
-	fns.push('  },');
-}
-
-function emitSynonymAliases(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
-	const ALIAS_ROLES: readonly { role: Role; canonicalName: string }[] = [
-		{ role: 'definition.function', canonicalName: 'function' },
-		{ role: 'definition.class', canonicalName: 'class' },
-		{ role: 'definition.method', canonicalName: 'method' },
-		{ role: 'definition.module', canonicalName: 'module' },
-		{ role: 'definition.interface', canonicalName: 'interface' }
-	];
-
-	for (const { role, canonicalName } of ALIAS_ROLES) {
-		const kinds = grammarRoles.get(role);
-		if (kinds.length === 0) continue;
-		const primaryKind = kinds[0]!;
-		const node = nodeMap.nodes.get(primaryKind);
-		if (!node?.rawFactoryName) continue;
-		const irKey = node.irKey ?? memberKeyFor(primaryKind, '');
-		fns.push(`  // ${role} → ${primaryKind}`);
-		fns.push(`  get ${canonicalName}(): (typeof ir)['${irKey}'] { return ir.${irKey}; },`);
-	}
 }

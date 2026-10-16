@@ -824,10 +824,6 @@ export function testConstructsWithChildren(node: AssembledNode, nodeMap: NodeMap
 	return classifyChildFactorySurface(node, nodeMap) !== null;
 }
 
-export function irNamespacesChildFactory(node: AssembledNode, nodeMap: NodeMap): boolean {
-	return classifyChildFactorySurface(node, nodeMap) !== null;
-}
-
 export interface SoleSlotFacts {
 	readonly slot: AssembledNonterminal;
 	readonly multiple: boolean;

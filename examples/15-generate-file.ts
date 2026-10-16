@@ -9,7 +9,7 @@ export function generateCacheModule() {
 		statements: [
 			engine.build.statement.struct.unit({
 				visibilityModifier: 'pub',
-				name: engine.build.synonym.type('Cache'),
+				name: 'Cache',
 			}),
 			engine.build.statement.function({
 				visibilityModifier: 'pub',

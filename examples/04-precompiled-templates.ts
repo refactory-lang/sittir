@@ -6,7 +6,7 @@ const engine = await createEngine(rust);
 export function renderPublicStruct() {
 	return engine.build.statement.struct.unit({
 		visibilityModifier: 'pub',
-		name: engine.build.synonym.type('Config'),
+		name: 'Config',
 	}).$render();
 }
 

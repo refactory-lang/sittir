@@ -9,44 +9,6 @@
 
 import * as F from './factories/index.js';
 
-// Role synonyms — resolve a native JS value to this grammar's node for that role.
-// Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.
-export const synonym = Object.freeze({
-	boolean(value: boolean): typeof F.buildTrue | typeof F.buildFalse {
-		return value ? F.buildTrue : F.buildFalse;
-	},
-	number: Object.assign(
-		function number(value: number): ReturnType<typeof F.integer> | ReturnType<typeof F.float> {
-			return Number.isInteger(value) ? F.integer(String(value)) : F.float(String(value));
-		},
-		{
-			integer(value: number): ReturnType<typeof F.integer> {
-				return F.integer(String(value));
-			},
-			float(value: number): ReturnType<typeof F.float> {
-				return F.float(String(value));
-			}
-		}
-	),
-	comment(text: string): ReturnType<typeof ir.comment> {
-		return ir.comment(text);
-	},
-	type(name: string): ReturnType<typeof F.buildIdentifier> {
-		return F.buildIdentifier(name);
-	},
-	identifier(name: string): ReturnType<typeof F.buildIdentifier> {
-		return F.buildIdentifier(name);
-	},
-	// definition.function → function_definition
-	get function(): (typeof ir)['functionDefinition'] {
-		return ir.functionDefinition;
-	},
-	// definition.class → class_definition
-	get class(): (typeof ir)['classDefinition'] {
-		return ir.classDefinition;
-	}
-} as const);
-
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
 export const statement: {
@@ -306,7 +268,6 @@ export const ir: {
 	readonly stringEnd: typeof F.buildStringEnd;
 	readonly statement: typeof statement;
 	readonly layout: typeof layout;
-	readonly synonym: typeof synonym;
 } = Object.freeze({
 	// Node factories
 	module: F.module,
@@ -506,6 +467,5 @@ export const ir: {
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	statement,
-	layout,
-	synonym
+	layout
 });
