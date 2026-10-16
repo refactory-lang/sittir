@@ -28,7 +28,7 @@
 - **Execution.** The design session executes this plan inline, with superpowers:executing-plans. It uses no subagents.
 - **Byte-identical gates.** Every stage leaves generated output byte-identical to the previous stage's commit, except the exceptions the stage names.
   - Stage 1's reference was recorded at Task 0.4 (2867fa8ed, spec §10). Its grammar-level outputs equal 946114382's with each nested alias collapsed, and its rows equal the merge's.
-  - A master merge re-records the reference at the merge, and every file the merge moves must be explained by the merged commits. The current reference is 2adb24cf3's: the master merge's (777411578, below Task 1.1), with Task 1.2 Step 1's accepted consequence.
+  - A master merge re-records the reference at the merge, and every file the merge moves must be explained by the merged commits. The current reference is b56cee690's: the second master merge's (below Task 1.4). The first, 777411578, is below Task 1.1, and Task 1.2 Step 1's accepted consequence was re-recorded at 2adb24cf3.
   - A failed gate stops the stage for review. Nothing is reverted to make a gate pass.
 - **Erasable syntax only** in `grammar.sittir.ts`, `grammar.bindings.ts` and every module they import: no enums, no namespaces with values, no parameter properties.
 - **Generated outputs are never hand-edited;** regenerate them. The generated layer is written only by `bindings-inventory --write`.
@@ -446,6 +446,16 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 - [ ] **Step 3: Implement and regenerate.** A name search for `SITTIR_UNBOUND`, `UNBOUND_ENV` and `sittirGrammar` (Infigraph `search` with `regex=true`) returns no hits outside the glossary's history-free text.
 - [ ] **Step 4: Run the tests, `bindings-inventory --check`, and the stage gate's `output-gate` and snapshot checks.** A difference outside the named exceptions stops the task. Report the paths, and the first differing rule or key, to brainstorm.
 - [ ] **Step 5: Glossary entries.** Commit the code, the tests and the three regenerated layers together.
+
+### The master merge during Task 1.4
+
+**Landed** on `feat/authoring-dsl`: b56cee690 merges master at 6bf9fcc6b, between Task 1.4's layer-two commit (5c20d509e) and the switch, so that the switch's gates run against current master. It brings the accepts-invalid-syntax rule cause with witness arrays, `c.<slot>.is(flag)`, a newtype for every core id domain, and tree-sitter-javascript pinned to 0.25.0 with rule-level `reserved()`.
+- The reference is re-recorded at b56cee690: `scratchpad/handoffs/reshape-gate-manifest-b56cee690.txt` (255 files), `reshape-snapshots-b56cee690/` and `reshape-gate-rows-b56cee690.txt`. Against 2adb24cf3:
+  - every grammar's crate and native typings move, from the id newtypes. Every grammar's emitted package moves where master's emitters meet this branch's model: typed ids and slot flags for the receiver kinds and under the bound slot names.
+  - typescript's grammar-level outputs and evaluated grammar move, from the JavaScript pin and its grammar edits. python's evaluated grammar moves only by `witness` → `witnesses`. rust's, regex's and scm's are unchanged.
+  - the three bindings layers are unchanged.
+  - the rows equal 2adb24cf3's, except typescript cov 204 → 206: master's own delta, 201 → 203 from the base.
+- Three counts and one test compose both sides. The typescript list-setter census is 31, and the typescript ir entry ceiling is 217 (213 at the base, plus two builders from each side). master's reserved-properties test names the bound slot `optionalChain`.
 
 ### Task 1.5: removals, and the stage gate
 
