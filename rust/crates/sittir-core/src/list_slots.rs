@@ -33,8 +33,8 @@ pub struct Separator {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SlotGap {
     pub items: (crate::types::NodeIndex, crate::types::NodeIndex),
-    pub before: Option<usize>,
-    pub after: Option<usize>,
+    pub before: Option<crate::types::RunId>,
+    pub after: Option<crate::types::RunId>,
     pub separator: Separator,
 }
 
@@ -47,7 +47,7 @@ pub struct SlotGaps {
 
 /// The list slots of a routed node, each with the separator gaps it spells;
 /// `run_at` finds the run from one byte to another.
-pub fn slot_gaps(routed: &Routed, run_at: impl Fn(u32, u32) -> Option<usize>) -> Vec<SlotGaps> {
+pub fn slot_gaps(routed: &Routed, run_at: impl Fn(u32, u32) -> Option<crate::types::RunId>) -> Vec<SlotGaps> {
     let mut items: BTreeMap<crate::types::SlotId, Vec<usize>> = BTreeMap::new();
     for (at, route) in routed.routes.iter().enumerate() {
         if let Route::Slot { slot, .. } = *route {
@@ -104,7 +104,7 @@ pub fn majority<T: Copy + PartialEq>(values: &[T], preferred: Option<T>) -> Opti
 mod tests {
     use super::*;
     use crate::read::Child;
-    use crate::types::KindId;
+    use crate::types::{KindId, RunId};
 
     fn child(index: u32, start: u32, end: u32) -> Child {
         Child { index: crate::types::NodeIndex(index), grammar: KindId(index as u16), display: KindId(index as u16), field: None, named: true, trivia: false, start, end, descendants: 1 }
@@ -124,10 +124,10 @@ mod tests {
             keys: &["_item"],
         };
         let runs = [(1, 2), (3, 4), (5, 5), (6, 6)];
-        let run_at = |start, end| runs.iter().position(|&run| run == (start, end));
+        let run_at = |start, end| runs.iter().position(|&run| run == (start, end)).map(|at| RunId(at as u32));
         let [slot] = slot_gaps(&routed, run_at).try_into().unwrap();
         assert_eq!(slot.key, "_item");
-        assert_eq!(slot.gaps.iter().map(|gap| (gap.before, gap.after)).collect::<Vec<_>>(), vec![(Some(0), Some(1)), (Some(2), Some(3))]);
+        assert_eq!(slot.gaps.iter().map(|gap| (gap.before, gap.after)).collect::<Vec<_>>(), vec![(Some(RunId(0)), Some(RunId(1))), (Some(RunId(2)), Some(RunId(3)))]);
         assert_eq!(slot.gaps[0].separator, Separator { kind: KindId(2), start: 2, end: 3 });
     }
 
@@ -138,7 +138,7 @@ mod tests {
             routes: vec![Route::Slot { slot: crate::types::SlotId(0), scalar: false }, Route::Slot { slot: crate::types::SlotId(0), scalar: false }],
             keys: &["_statements"],
         };
-        let [slot] = slot_gaps(&routed, |_, _| Some(0)).try_into().unwrap();
+        let [slot] = slot_gaps(&routed, |_, _| Some(RunId(0))).try_into().unwrap();
         assert!(slot.gaps.is_empty());
     }
 
@@ -155,7 +155,7 @@ mod tests {
             ],
             keys: &["_item", "_other"],
         };
-        let [slot] = slot_gaps(&routed, |_, _| Some(0)).try_into().unwrap();
+        let [slot] = slot_gaps(&routed, |_, _| Some(RunId(0))).try_into().unwrap();
         assert!(slot.gaps.is_empty());
     }
 

@@ -20,7 +20,7 @@ use crate::render::SourceTable;
 use crate::slot::{NodeCoordinate, SlotValue};
 use crate::trivia::{FromTriviaText, TriviaEntry, TriviaText};
 use crate::trivia_table::{Assigned, TriviaSide, TriviaTable};
-use crate::types::{KindId, NodeIndex, TreeId};
+use crate::types::{KindId, NodeIndex, RunId, TreeId};
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -416,7 +416,7 @@ type Record = Arc<Result<crate::baseline::Baseline, String>>;
 #[derive(Debug, Default)]
 struct NodeSlots {
     layouts: Vec<crate::layout::SlotLayout>,
-    runs: HashMap<usize, (usize, crate::list_slots::SlotSide)>,
+    runs: HashMap<RunId, (usize, crate::list_slots::SlotSide)>,
     /// The separator before each item whose gap holds another than its
     /// slot's, by the item's index.
     separators: HashMap<NodeIndex, KindId>,
@@ -832,7 +832,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     ///
     /// A run in a gap of a list slot (`node_slots`) measures against the
     /// class the slot stores on its side instead, where it stores one.
-    fn deviation(&self, at: usize) -> Option<G::Trivia> {
+    fn deviation(&self, at: RunId) -> Option<G::Trivia> {
         let text = self.run_text(at);
         let kind = self.layout_kind(text)?;
         let class = self.slot_class(at).unwrap_or_else(|| self.baseline_class(at));
@@ -842,18 +842,18 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// The source of the run at `at` among the table's runs, measured as
     /// its baseline is: from the last text before it that is not whitespace,
     /// back to the run before it at most.
-    fn run_text(&self, at: usize) -> &str {
-        let runs = self.trivia_table().runs();
-        let run = runs[at];
-        let floor = at.checked_sub(1).map_or(0, |before| runs[before].end.min(run.start)) as usize;
+    fn run_text(&self, at: RunId) -> &str {
+        let table = self.trivia_table();
+        let run = table.run(at);
+        let floor = at.get().checked_sub(1).map_or(0, |before| table.run(RunId(before)).end.min(run.start)) as usize;
         let from = self.source[..run.start as usize].trim_end().len().max(floor);
         &self.source[from..run.end as usize]
     }
 
     /// The class the read-time options write at the run at `at`: its
     /// baseline's whitespace as a layout class reads it (`Tally::spelling`).
-    fn baseline_class(&self, at: usize) -> Option<KindId> {
-        let gap = self.baseline_gap(self.trivia_table().runs()[at], false).ok().flatten()?;
+    fn baseline_class(&self, at: RunId) -> Option<KindId> {
+        let gap = self.baseline_gap(self.trivia_table().run(at), false).ok().flatten()?;
         self.layout_kind(&gap.spelling())
     }
 
@@ -861,9 +861,9 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// slot's stored class on that side, else the run's baseline class
     /// (`None` where no baseline reaches it). `None` outside a slot's gaps,
     /// and for a run that does not carry the layout around it.
-    fn slot_class(&self, at: usize) -> Option<Option<KindId>> {
+    fn slot_class(&self, at: RunId) -> Option<Option<KindId>> {
         use crate::list_slots::SlotSide;
-        let run = self.trivia_table().runs()[at];
+        let run = self.trivia_table().run(at);
         if !run.carries {
             return None;
         }
@@ -890,16 +890,17 @@ impl<G: EngineGrammar> ParsedTree<G> {
         if let Some(slots) = self.slots.lock().unwrap_or_else(std::sync::PoisonError::into_inner).get(&index) {
             return Arc::clone(slots);
         }
-        let runs = self.trivia_table().runs();
+        let table = self.trivia_table();
+        let runs = table.runs();
         let run_at = |start: u32, end: u32| {
             let from = runs.partition_point(|run| run.start < start);
-            runs[from..].iter().take_while(|run| run.start == start).position(|run| run.end == end).map(|at| from + at)
+            runs[from..].iter().take_while(|run| run.start == start).position(|run| run.end == end).map(|at| RunId((from + at) as u32))
         };
         let slots = self.grammar.slot_routes(&self.tree, index).map_or_else(Vec::new, |routed| crate::list_slots::slot_gaps(&routed, run_at));
         let mut measured = NodeSlots::default();
         for (slot, SlotGaps { key, gaps }) in slots.iter().enumerate() {
-            let mut side = |side: SlotSide, of: fn(&SlotGap) -> Option<usize>| {
-                let carried: Vec<usize> = gaps.iter().filter_map(of).filter(|&at| runs[at].carries).collect();
+            let mut side = |side: SlotSide, of: fn(&SlotGap) -> Option<RunId>| {
+                let carried: Vec<RunId> = gaps.iter().filter_map(of).filter(|&at| table.run(at).carries).collect();
                 measured.runs.extend(carried.iter().map(|&at| (at, (slot, side))));
                 let classes: Vec<(KindId, KindId)> = carried.iter().filter_map(|&at| Some((self.layout_kind(self.run_text(at))?, self.baseline_class(at)?))).collect();
                 let baseline = classes.first()?.1;
@@ -1109,7 +1110,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             (layouts + slots.layouts.iter().filter(|layout| !layout.is_empty()).count(), separators + slots.separators.len())
         });
         crate::layout::StoredLayout {
-            deviations: count((0..self.trivia_table().runs().len()).filter(|&at| self.deviation(at).is_some()).count()),
+            deviations: count(self.trivia_table().run_ids().filter(|&at| self.deviation(at).is_some()).count()),
             slots: count(slots.0),
             separators: count(slots.1),
         }
@@ -1196,7 +1197,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
                         .into_iter()
                         .collect(),
                     Assigned::Layout { run, depth: count, .. } => {
-                        let deviation = self.deviation(run as usize);
+                        let deviation = self.deviation(run);
                         deviation.map(|member| SideEntry::Layout(entry(SlotValue::Transport(member)))).into_iter().chain(depth(count)).collect()
                     }
                     Assigned::Member(at) => node_at_index(&self.tree, at)

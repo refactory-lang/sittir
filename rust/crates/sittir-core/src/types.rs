@@ -164,6 +164,12 @@ impl ::std::ops::Add<u32> for NodeIndex {
     }
 }
 
+id_newtype! {
+    /// A run of whitespace a side takes: its place among a trivia table's
+    /// runs, in source order (`TriviaTable::runs`).
+    RunId(u32)
+}
+
 /// Where a node originated. `Ts` = read from a tree-sitter tree; `Sg` =
 /// ast-grep path; `Factory` = constructed on the TS side.
 ///

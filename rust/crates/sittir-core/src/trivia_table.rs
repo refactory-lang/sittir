@@ -30,7 +30,7 @@
 //! in a gap of a list slot, from the class the slot stores
 //! (`ParsedTree::deviation`, `list_slots`).
 
-use crate::types::{KindId, NodeIndex, Span};
+use crate::types::{KindId, NodeIndex, RunId, Span};
 use std::collections::BTreeMap;
 
 /// A side of a node that holds trivia: before its first token, after its
@@ -77,7 +77,7 @@ pub struct Token {
 pub enum Assigned {
     Extra(NodeIndex),
     Error(NodeIndex),
-    Layout { run: u32, start: u32, end: u32, owner: NodeIndex, depth: i32 },
+    Layout { run: RunId, start: u32, end: u32, owner: NodeIndex, depth: i32 },
     Member(NodeIndex),
     Depth(i32),
 }
@@ -468,7 +468,7 @@ impl TriviaTable {
                 match place {
                     Place::Side(node, side) if !edge => {
                         let joined = at == from && left.is_some_and(|left| left.start == left.end) && table.runs.last().is_some_and(|run| run.end == at);
-                        let run = table.runs.len() as u32;
+                        let run = RunId(table.runs.len() as u32);
                         table.runs.push(LayoutRun { start: at, end: until, node, side, owner: global(owner), carries: true });
                         parted.placed(&mut table.runs, joined);
                         table.push(place, Assigned::Layout { run, start: at, end: until, owner: global(owner), depth });
@@ -529,6 +529,16 @@ impl TriviaTable {
     /// Every run of whitespace a side takes, in source order (`LayoutRun`).
     pub fn runs(&self) -> &[LayoutRun] {
         &self.runs
+    }
+
+    /// The run `id` names.
+    pub fn run(&self, id: RunId) -> LayoutRun {
+        self.runs[id.index()]
+    }
+
+    /// Every run's id, in source order.
+    pub fn run_ids(&self) -> impl Iterator<Item = RunId> {
+        (0..self.runs.len() as u32).map(RunId)
     }
 }
 
