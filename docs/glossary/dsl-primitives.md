@@ -140,7 +140,8 @@ rewritten content is rebuilt in the representation it had
  * accumulated bindings AND `fn`'s result. Save/restore guarantees
  * nested `grammar(...)` calls stay isolated even on exception paths.
  *
- * Called by `grammarFn` in evaluate.ts — not by override authors.
+ * Called by the layer pass (`dsl/layer.ts::runLayerPass`) — not by
+ * override authors.
  */
 ```
 
@@ -165,13 +166,12 @@ rewritten content is rebuilt in the representation it had
  * member of the externals array.
  *
  * **Tree-sitter compatibility**: when `role()` is called outside any
- * sittir-managed scope (e.g. when tree-sitter's CLI loads the
- * transpiled `.sittir/grammar.js` and runs `grammar()` natively),
- * the binding is silently dropped and only the symbol passthrough
- * runs. Tree-sitter doesn't read role bindings — they only matter
- * to sittir's Link phase, which always evaluates the override file
- * inside a `withRoleScope` block. This keeps the same call site valid
- * for both consumers without runtime feature detection.
+ * scope, the binding is dropped and only the symbol passthrough runs.
+ * The layer pass opens a scope in either runtime
+ * (`dsl/layer.ts::runLayerPass`), so the bindings reach its record;
+ * tree-sitter never reads them, and link reads them from the evaluated
+ * grammar's `externalRoles`. This keeps the same call site valid for
+ * both consumers without runtime feature detection.
  */
 ```
 
@@ -179,9 +179,8 @@ rewritten content is rebuilt in the representation it had
 
 ```text
 /**
- * Module-local accumulator. Null when no `grammar(...)` call is on
- * the stack — calling `role()` in that state is an error because we
- * have no scope to attach the binding to.
+ * Module-local accumulator. Null when no scope is open; `role()` then
+ * records nothing.
  */
 ```
 
@@ -411,15 +410,14 @@ tree-sitter's CLI.
  *
  * `role()` returns the symbol reference UNCHANGED so the externals
  * array still receives a valid token reference. As a side effect it
- * pushes the binding onto a per-grammar accumulator that
- * `evaluate.ts`'s `grammarFn` consumes and attaches to the resulting
- * grammar as `externalRoles`. Link reads it from `raw.externalRoles`
- * to drive its symbol-resolution behavior.
+ * pushes the binding onto the accumulator of the layer pass that
+ * evaluates the callback, which records the bindings as its record's
+ * `externalRoles`. Link reads them from `raw.externalRoles` to drive
+ * its symbol-resolution behavior.
  *
- * The accumulator is scoped to the enclosing `grammar(...)` call via
- * a save/restore pattern (see `withRoleScope`), so nested
- * `grammar(enrich(base), {...})` evaluations don't leak roles between
- * scopes.
+ * The accumulator is scoped to one layer pass via a save/restore
+ * pattern (see `withRoleScope`), so nested layer passes don't leak
+ * roles between layers.
  *
  * Import explicitly:
  *

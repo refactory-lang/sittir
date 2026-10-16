@@ -8,7 +8,7 @@ import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.
 import { evaluateTempGrammar } from '../../compiler/__tests__/_temp-grammar.ts';
 import { parserRulesOf } from '../../compiler/canonical-rules.ts';
 import { diagnoseGrammar } from '../../compiler/compile.ts';
-import { evaluate, evaluateDsl, withDslGlobals } from '../../compiler/evaluate.ts';
+import { evaluate, evaluateDsl, evaluatedGrammarOf, withDslGlobals } from '../../compiler/evaluate.ts';
 import { evaluatePackage } from '../../compiler/evaluate-package.ts';
 import type { EvaluatedGrammar } from '../../compiler/types.ts';
 import { grammarPackage } from '../../grammars.ts';
@@ -215,10 +215,9 @@ describe('a groups: entry in a layer', () => {
 				groups: { held_group: ($: Symbols) => seq('(', $.item!, ')'), orphan_group: () => seq('a', 'b') }
 			});
 			const second = layer(first, {});
-			const evaluated = (result: GrammarResult): EvaluatedGrammar => result.grammar as unknown as EvaluatedGrammar;
-			expect(evaluated(first).bodyPatternZeroMatches).toEqual(['_orphan_group']);
-			expect(evaluated(second).bodyPatternZeroMatches).toEqual(['_orphan_group']);
-			expect(evaluated(first).stages?.enriched.grammar.bodyPatternZeroMatches).toBeUndefined();
+			expect(evaluatedGrammarOf(first).bodyPatternZeroMatches).toEqual(['_orphan_group']);
+			expect(evaluatedGrammarOf(second).bodyPatternZeroMatches).toEqual(['_orphan_group']);
+			expect(evaluatedGrammarOf(first).stages?.enriched.grammar.bodyPatternZeroMatches).toBeUndefined();
 		});
 	});
 });
@@ -405,14 +404,35 @@ describe('an inheriting layer', () => {
 		_labels: { 'pair/key:/after': 'gap/separator' }
 	};
 	const paired = (): GrammarResult => upstream({ program: ($: Symbols) => repeat($.pair!), pair: ($: Symbols) => seq($.item!, '=', $.item!) });
-	const optionsOf = (result: GrammarResult): unknown => (result.grammar as { readonly options?: unknown }).options;
-
 	it('keeps the options its own layer wrote as written, and rewrites the options it inherits through its field entries', async () => {
 		await withDslGlobals(async () => {
 			const first = layer(paired(), { edits: { pair: { '0': field('key') } }, options: OPTIONS } as Config);
-			expect(optionsOf(first)).toEqual(OPTIONS);
 			const second = layer(first, { edits: { pair: { '0': field('name') } } });
-			expect(optionsOf(second)).toEqual({ gap: OPTIONS.gap, pair: { 'name:/after': OPTIONS.pair['key:/after'] }, _labels: { 'pair/name:/after': 'gap/separator' } });
+			const rewritten = { gap: OPTIONS.gap, pair: { 'name:/after': OPTIONS.pair['key:/after'] }, _labels: { 'pair/name:/after': 'gap/separator' } };
+			expect(layerRecordOf(first)?.records.options).toEqual(OPTIONS);
+			expect(evaluatedGrammarOf(first).options).toEqual(OPTIONS);
+			expect(layerRecordOf(second)?.records.options).toEqual(rewritten);
+			expect(evaluatedGrammarOf(second).options).toEqual(rewritten);
+		});
+	});
+
+	it('keeps the stage bases its base recorded, so the stages are those of the first layer that departs', async () => {
+		await withDslGlobals(async () => {
+			const first = layer(paired(), { edits: { pair: { '0': field('key') } } });
+			const second = layer(first, { edits: { pair: { '0': field('name') } } });
+			expect(layerRecordOf(first)?.stageBases).toBeDefined();
+			expect(layerRecordOf(second)?.stageBases).toBe(layerRecordOf(first)?.stageBases);
+		});
+	});
+
+	it("places a layer's render bodies after its own rules, ahead of the rules a layer above adds", async () => {
+		await withDslGlobals(async () => {
+			const first = layer(upstream(), { renderAs: () => ({ marker: 'm' }) } as Config);
+			const second = layer(first, { rules: { extra: () => 'x' } });
+			const evaluated = evaluatedGrammarOf(second);
+			const synthesized = [...evaluated.evaluateSynthesized];
+			expect(synthesized).toContain('marker');
+			expect(Object.keys(evaluated.rules).slice(-1 - synthesized.length)).toEqual([...synthesized, 'extra']);
 		});
 	});
 
@@ -520,7 +540,10 @@ describe('the fixture chain', () => {
 				supertypes: vi.fn((_$: unknown, previous: unknown) => previous),
 				precedences: vi.fn((_$: unknown, previous: unknown) => previous),
 				word: vi.fn(($: Record<string, unknown>) => $.item),
-				reserved: vi.fn(() => ['let'])
+				reserved: vi.fn(() => ['let']),
+				group: vi.fn(($: Symbols) => seq('(', $.item!, ')')),
+				visibleExternals: vi.fn(() => ({ _hidden: 'h' })),
+				renderAs: vi.fn(() => ({ marker: 'm' }))
 			};
 			layer(upstream(), {
 				rules: { item: spies.rule },
@@ -530,7 +553,10 @@ describe('the fixture chain', () => {
 				supertypes: spies.supertypes,
 				precedences: spies.precedences,
 				word: spies.word,
-				reserved: { global: spies.reserved }
+				reserved: { global: spies.reserved },
+				groups: { item_group: spies.group },
+				visibleExternals: spies.visibleExternals,
+				renderAs: spies.renderAs
 			} as Config);
 			for (const [name, spy] of Object.entries(spies)) expect(spy, name).toHaveBeenCalledTimes(1);
 		});

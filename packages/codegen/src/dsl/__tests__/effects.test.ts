@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { LayerRecords } from '../layer-record.ts';
 import { preference } from '../primitives/preference.ts';
-import { appendProvenance, effectsForOwners, provenanceOf, recordsOf, rewriteInherited, type CopyOrigin, type Effect, type LeadMatch, type Provenance } from '../verbs/effects.ts';
+import { appendProvenance, effectsForOwners, provenanceOf, rewriteInherited, type CopyOrigin, type Effect, type LeadMatch, type Provenance } from '../verbs/effects.ts';
 import { LABELS_KEY } from '../wire/options-block.ts';
 
 interface FixtureCopy {
@@ -177,11 +177,6 @@ describe('rewriteInherited', () => {
 		expect(rewriteInherited(records, { effects: [{ kind: 'rename', from: 'a', to: 'b' }], rules: {} })).toEqual(expected);
 	});
 
-	it('keeps the stages as they were recorded under a kind rename', () => {
-		const stages = { raw: { grammar: { name: 'a' } }, enriched: { grammar: { name: 'a' } } } as unknown as LayerRecords['stages'];
-		expect(rewriteInherited({ stages }, { effects: [{ kind: 'rename', from: 'a', to: 'b' }], rules: {} }).stages).toBe(stages);
-	});
-
 	it.each(Object.keys(layerFixtures))("rewrites %s's inherited records as its bindings layer does, key order included", (grammar) => {
 		const fixture = layerFixtures[grammar]!;
 		const expected = { ...fixture.inherited, options: { ...fixture.inherited.options, ...fixture.rewrittenOptions } };
@@ -232,13 +227,6 @@ describe('effectsForOwners', () => {
 		const tight = preference('tight');
 		expect(rewriteInherited({ options: { range: { 'x:/before': tight } } }, { effects, rules: grammar.rules })).toEqual({ options: { range: { 'x:/before': tight } } });
 		expect(() => rewriteInherited({ options: { range: { 'e:/before': tight } } }, { effects, rules: grammar.rules })).toThrow(/'range\/e:' has conflicting field renames: start:, end:/);
-	});
-});
-
-describe('recordsOf', () => {
-	it('picks the records the effect table names, leaving out every other key and each record left undefined', () => {
-		const grammar = { name: 'g', rules: {}, options: { a: {} }, groups: undefined, protectedRuleNames: ['x'] };
-		expect(recordsOf(grammar)).toEqual({ options: { a: {} }, protectedRuleNames: ['x'] });
 	});
 });
 

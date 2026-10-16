@@ -672,7 +672,10 @@ describe('a patch keyed by a groups: or injects: declaration', () => {
 	it('still applies a patch on an ordinary rule beside a groups: declaration', () => {
 		const wired = wire<GrammarJson>({
 			name: 'test',
-			rules: { call: () => ({ type: 'SEQ', members: [{ type: 'SYMBOL', name: 'callee' }, { type: 'SYMBOL', name: 'args' }] }) },
+			rules: {
+				call: () => ({ type: 'SEQ', members: [{ type: 'SYMBOL', name: 'callee' }, { type: 'SYMBOL', name: 'args' }] }),
+				x: () => ({ type: 'STRING', value: 'x' })
+			},
 			groups: { paren_x: pair as never },
 			edits: { call: { 0: field('function') } }
 		}, emptyBase);

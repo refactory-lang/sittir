@@ -263,7 +263,10 @@ The names of the grammar's extra rules: the names in the evaluated `extras` list
 
 ### `packages/codegen/src/dsl/wire/wire.ts::protectedWireRuleNames`
 
-The rule names wire keeps alive whether or not the grammar references them: the deposit names, and the `renderAs` and `visibleExternals` names, read off each callback's keys with a symbol proxy. `evaluate` joins them with the supertypes as `protectedRuleNames`, and `reachableRuleNames` counts them as roots, so the canonical prune and the dead-mint pass keep the same rules.
+The rule names wire keeps alive whether or not the grammar references them: the deposit names, and the `renderAs`
+and `visibleExternals` names its config evaluated to. A layer's records join them with the supertypes as
+`protectedRuleNames` (`layer.ts::ownRecordsOf`), and `reachableRuleNames` counts them as roots, so the canonical prune
+and the dead-mint pass keep the same rules.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::upstreamSymbolNames`
 
@@ -625,7 +628,7 @@ only when a replacement happens.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::unmatchedGroupPatterns`
 
-The `groups:` entries whose hidden rule (`_<key>`) no rule of a layer's final rules references, in declaration order: elevations that never fired. An entry counts only when its rule has a complex body (`rule-patterns.ts::isComplexBody`). A reference from inside a pattern rule does not count: a declared group, or an authored hidden rule with a complex body that the base lacks. The layer pass asks it over its final rules, after the dead mints are blanked (`layer.ts::completeLayer`).
+The `groups:` entries whose hidden rule (`_<key>`) no rule of a layer's final rules references, in declaration order: elevations that never fired. An entry counts only when its rule has a complex body (`rule-patterns.ts::isComplexBody`). A reference from inside a pattern rule does not count: a declared group, or an authored hidden rule with a complex body that the base lacks. The layer pass asks it over its final rules, after the dead mints are blanked, and keeps the result as its own `bodyPatternZeroMatches` (`layer.ts::completeLayer`).
 
 ### `packages/codegen/src/dsl/wire/wire.ts::withStringGlobalShim`
 
@@ -686,19 +689,20 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::applyWireVisibleExternalsRewrite`
 
-```text
-/**
- * Evaluate `visibleExternals:` (if configured) to learn its hidden-name
- * keys, then wrap EVERY rule fn (authored + injected passthroughs) so
- * their returned bodies have matching SYMBOL refs rewritten into named
- * visible aliases. Every layer's wire applies it, over its base's rules
- * too, so it must be idempotent.
- */
-```
+Wraps every rule fn (authored and injected passthroughs) so the SYMBOL references its body makes to a
+`visibleExternals:` name are rewritten into named visible aliases. The names are the keys of the bodies the config
+evaluated to, with enrich's whitespace bodies (`withEnrichedWhitespace`). Every layer's wire applies it, over its
+base's rules too, so it must be idempotent.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::withEnrichedWhitespace`
 
-The `visibleExternals:` config `wire()` runs with, and the whitespace collisions it stamps on the wire context. The whitespace-member bodies enrich minted (`getEnrichWhitespace`) merge over the grammar's own entries, so every consumer (the wire context sittir's `evaluate()` drains, the base-rule passthrough, the visible-name rewrite) sees one record. Enrich owns the whitespace vocabulary and a grammar's `visibleExternals:` holds only its own scanned externals (typescript's automatic semicolons), so a key that redeclares a minted member is a `visibleExternals` collision: the minted body wins and the collision, with enrich's upstream ones, reaches the gate as `whitespace-mint-collision`. With no minted bodies the config is unchanged.
+The `visibleExternals:` bodies wire runs with, and the whitespace collisions it stamps on the wire context. The
+whitespace-member bodies enrich minted (`getEnrichWhitespace`) merge over the bodies the grammar's own entries
+evaluated to, so every consumer (the layer's records, the base-rule passthrough, the visible-name rewrite) sees one
+record. Enrich owns the whitespace vocabulary and a grammar's `visibleExternals:` holds only its own scanned externals
+(typescript's automatic semicolons), so a key that redeclares a minted member is a `visibleExternals` collision: the
+minted body wins and the collision, with enrich's upstream ones, reaches the gate as `whitespace-mint-collision`.
+With no minted bodies the grammar's own bodies are unchanged.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::applyWirePatternReplacement`
 
@@ -752,7 +756,7 @@ The `visibleExternals:` config `wire()` runs with, and the whitespace collisions
 // Register the hidden rule body so tree-sitter has a definition
 // for the symbol the alias() wrappers will reference. Wrap via
 // wrapOneRuleFn directly (this fn runs after wrapAllRuleFns) so
-// the body fn evaluates inside a proper wire context.
+// the declared body is returned inside a proper wire context.
 ```
 
 The wire context is required: each injected or grouped rule fn is wrapped in
@@ -793,9 +797,9 @@ it, and the pattern-replacing wrappers read its automatic-variant record.
  * grammar declares it. Bodies are nominal shapes — read-produced leaves render
  * verbatim from wire text; the body's job is to give factory-built nodes a
  * render rule and to carry declared token facts. `token.immediate(...)` is the
- * one wrapper a body may use (the drain folds it into the rule's
- * `immediate`/`tokenized` attrs); `prec()` and other wrappers leak past the
- * drain folds and must not appear.
+ * one wrapper a body may use (the compile boundary folds it into the rule's
+ * `immediate`/`tokenized` attrs); `prec()` and other wrappers leak past those
+ * folds and must not appear.
  *
  * Deliberately separate from {@link VisibleExternalsConfig}: a render body and
  * CST visibility are independent facts. A hidden external may carry a
@@ -856,12 +860,12 @@ it, and the pattern-replacing wrappers read its automatic-variant record.
 
 `ruleBodies` holds, per `rule()` name, the canonical text of its declared
 body and the first site that declared it (`wireDeclareRuleBody`).
-`whitespaceCollisions` holds the whitespace names the grammar also defines (`withEnrichedWhitespace`), which evaluate carries to the gate. `automaticVariants` is the context's one automatic-variant record, made when
+`renderAs` and `visibleExternals` hold the bodies the config's callbacks evaluated to (`evaluatedConfig`), the latter with enrich's whitespace bodies. `whitespaceCollisions` holds the whitespace names the grammar also defines (`withEnrichedWhitespace`), which the layer's records carry to the gate. `automaticVariants` is the context's one automatic-variant record, made when
 the context is built and never at a read site (`seedAutomaticVariants`): a
 copy of the base's record when the base went through `enrich`, otherwise an
 empty record, because without an enrich pass no label is automatic. A
 malformed record on the base is an error. Wire edits the copy (restamps add
-keys, authored label writers remove them) and evaluate carries it to link.
+keys, authored label writers remove them) and the layer record carries it to link.
 Every reader gets it through the context:
 `resolveFieldPlaceholder` reads it (via `wireAutomaticVariants`) to strip a
 label from content a patch pulls under a `field()`; `resolveAliasPlaceholder`
@@ -1070,18 +1074,19 @@ The lift name → final name view of `liftNames`, in the shape `renameRule` and 
 ### `packages/codegen/src/dsl/wire/wire.ts::renderAs`
 
 ```text
-/** Sittir-side rule bodies for external scanner symbols. Each entry
-	 *  gives sittir's slot/render/factory pipeline a structural body for
-	 *  a symbol produced by the C external scanner. The body is used
-	 *  sittir-side only; when the grammar reaches tree-sitter the entry
-	 *  is stripped (the external scanner still produces the symbol).
-	 *  See: renderAs mechanism. */
+/** Sittir-side rule bodies for external scanner symbols, as the
+	 *  config's `renderAs:` callback evaluated to them (`evaluatedConfig`).
+	 *  Each gives sittir's slot/render/factory pipeline a structural body
+	 *  for a symbol produced by the C external scanner. The body is used
+	 *  sittir-side only; tree-sitter's grammar never holds it (the
+	 *  external scanner still produces the symbol). */
 ```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::visibleExternals`
 
 ```text
-/** Hidden-external → sittir-side render body map from `visibleExternals:`.
+/** Hidden-external → sittir-side render body map, as `visibleExternals:`
+	 *  evaluated to it with enrich's whitespace bodies (`withEnrichedWhitespace`).
 	 *  See {@link VisibleExternalsConfig} for the full mechanism. */
 ```
 
@@ -1593,7 +1598,8 @@ Whether the base grammar (the enriched base, with or without its `grammar` wrapp
 ### `packages/codegen/src/dsl/wire/wire.ts::wireWithoutConfig`
 
 `wire` with no config but the grammar's name, over a runtime `grammar()` result: how an evaluation stage is
-evaluated (`evaluateStage`), so the stage sees exactly what enrich hands wire, such as the minted whitespace bodies.
+evaluated (`compiler/evaluate.ts::evaluatedStage`), so the stage sees exactly what enrich hands wire, such as the
+minted whitespace bodies.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::evaluatingExternals`
 
@@ -1681,10 +1687,6 @@ The lists the entry evaluated (`evaluateWireLists`); absent until the runtime ca
 
 The body of every rule callback as the entry evaluated it, in key order; absent until the runtime calls the entry.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.bodyPatternZeroMatches`
-
-The layer's own `groups:` entries that its final rules nowhere reference, set by the layer pass at completion (`layer.ts::completeLayer`, `unmatchedGroupPatterns`). The runtime's `grammar()` call reads it after the pass; a context no layer pass ran over leaves it unset.
-
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.evaluatedExternals`
 
 The names the grammar's `externals` callback returned, set when the runtime calls wire's entry. Lift-name resolution, which the entry runs after the rule callbacks, refuses a renamed lift among them.
@@ -1708,8 +1710,10 @@ The base grammar's `word`, when it declares one.
 
 The body of `wire` over the runtime base (`unknown`, read as `BaseArg`). `wire` is its typed facade, whose
 generic base type only checks the authored config's keys; `wireWithoutConfig` and the layer pass
-(`layer.ts::runLayerPass`) call it directly. The runtime's call to its `externals` callback is where wire evaluates
-the config (`evaluatingExternals`); the rule callbacks and the `extras`, `supertypes` and `precedences` callbacks
+(`layer.ts::runLayerPass`) call it directly. The config's `groups:`, `injects:`, `renderAs:` and `visibleExternals:` callbacks are evaluated once
+(`evaluatedConfig`): the layer pass evaluates them before intake and passes what it evaluated (`declared`), and the
+other callers let wire evaluate them. The runtime's call to its `externals` callback is where wire evaluates
+the rest of the config (`evaluatingExternals`); the rule callbacks and the `extras`, `supertypes` and `precedences` callbacks
 return what that call computed. The layer pass also passes its handle (`WireLayer`), which wire's refusals and the lead entries it queues join
 (`WireContext.layer`); the other callers pass none.
 
@@ -1827,8 +1831,7 @@ built it, the same object the upstream diagnostic stage reads.
 ```text
 // Wire-phase pattern find-and-replace: runs after wrapAllRuleFns so
 // each candidate fn executes inside a proper wire context when eagerly
-// evaluated. This is the tree-sitter-runtime path; evaluate.ts has its
-// own post-evaluation pass for the sittir-pipeline path.
+// evaluated. It is the one pattern injection, for both runtimes.
 ```
 
 #### body
@@ -1936,26 +1939,35 @@ built it, the same object the upstream diagnostic stage reads.
 // `cfg = config as unknown as WireConfig<any>` above).
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::authoredGroupBodies`
-
-The evaluated bodies of a config's `groups:` body-pattern entries, through
-`declaredPatterns`. The layer pass hands them to `enrich` (`dsl/layer.ts::intake`) so enrich declines
-any visible group whose whole body an authored pattern covers; wire then
-replaces the pattern where it stands in the enriched rule, and never has a
-minted group to take over.
-
 ### `packages/codegen/src/dsl/wire/wire.ts::DeclaredPattern`
 
-One evaluated `groups:` or `injects:` body-pattern entry: its section, key,
-body function and the evaluated body.
+One evaluated `groups:` or `injects:` body-pattern entry: its section, its key and its body.
+
+### `packages/codegen/src/dsl/wire/wire.ts::EvaluatedConfig`
+
+The config callbacks wire reads beside the rules, each evaluated once: the body patterns (`declaredPatterns`) and the
+`renderAs:` and `visibleExternals:` bodies.
+
+### `packages/codegen/src/dsl/wire/wire.ts::evaluatedConfig`
+
+Evaluates a config's `groups:`, `injects:`, `renderAs:` and `visibleExternals:` callbacks once, with the runtime's
+symbols (`layerSymbols`), the render bodies under `withStringGlobalShim`. A `$` is built only for a config that has
+such a callback, so a wire without them needs no runtime. The layer pass calls it before intake, which hands enrich
+the `groups:` bodies, and gives the result to wire (`wireImpl`). Every reader takes these values: the pattern
+injection (`applyWirePatternReplacement`), the visible-name rewrite, the protected names and the layer's records.
+
+### `packages/codegen/src/dsl/wire/wire.ts::declaredBody`
+
+The rule callback of a declared pattern's hidden rule: it returns the body the pattern evaluated to, after refusing a
+name the entry's `$` does not know with the undefined-symbol `ReferenceError` a body that names it would have thrown.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::declaredPatterns`
 
-Evaluates the body-pattern entries of `groups:` and `injects:` once, with the
-validation both consumers share: a `groups:` key must be visible, the body fn
-must return a rule, and the body must be a complex structural pattern
-(`isComplexBodyRt`). Used by `applyWirePatternReplacement` and
-`authoredGroupBodies`.
+Evaluates the body-pattern entries of `groups:` and `injects:`, with the validation both consumers share: a
+`groups:` key must be visible, the body fn must return a rule, and the body must be a complex structural pattern
+(`rule-patterns.ts::isComplexBody`). Each is evaluated once, with the runtime's symbols (`layerSymbols`), so a body is
+the rule the runtime builds; a name the grammar lacks is refused when the body joins the rules (`declaredBody`).
+`evaluatedConfig` calls it.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::PatchEntry`
 
@@ -1972,7 +1984,8 @@ must return a rule, and the body must be a complex structural pattern
 ```text
 /**
  * Structural injection. Each authored hidden rule, each `groups:` entry and
- * each `injects:` entry is a candidate body; every rule body that contains
+ * each `injects:` entry, as the config evaluated them (`DeclaredPattern`),
+ * is a candidate body; every rule body that contains
  * a structurally equal shape has it replaced by a reference to the
  * candidate. Visibility follows the name: a `_`-prefixed candidate is a
  * hidden rule and the reference is a plain symbol; an unprefixed one is a

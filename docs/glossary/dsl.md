@@ -4878,7 +4878,7 @@ A predicate over rule names: whether the name is a text token an earlier enrich 
 ### `packages/codegen/src/dsl/enrich.ts::EnrichAuthoredConfig`
 
 The part of a grammar's authored config enrich reads: `groupBodies`, the
-evaluated `groups:` body patterns (`authoredGroupBodies`), and `extras`, the
+evaluated `groups:` body patterns (`wire/wire.ts::evaluatedConfig`), and `extras`, the
 config's `extras:` callback, which decides the extras the final grammar
 lexes (`authoredExtrasOf`). Enrich evaluates it once, and its result carries the list.
 
@@ -7125,11 +7125,28 @@ One entry of `resolutions.json` as the derivation writes it: the AddConflict set
 
 ### `packages/codegen/src/dsl/layer-record.ts::LayerRecords`
 
-The records that cross layers beside the rules, under the names the evaluated grammar gives them: options and labels, groups, render-as, visible externals, reparse hosts, refine forms, rule causes and undeclared rules, patch sites, external roles, the expectations, stages, protected rule names, whitespace collisions and body-pattern zero matches. A layer's inherited records pass through `rewriteInherited`; its own entries win over them. `RECORD_RENAMES` gives every key its treatment under a kind rename.
+The records that cross layers beside the rules, under the names the evaluated grammar gives them: options and labels,
+groups, render-as, visible externals, reparse hosts, refine forms, rule causes and undeclared rules, patch sites,
+external roles, the expectations, protected rule names, whitespace collisions and body-pattern zero matches. A
+layer's inherited records pass through `rewriteInherited`, and its own merge over them (`mergedRecords`).
+`RECORD_RENAMES` gives every key its treatment under a kind rename.
 
 ### `packages/codegen/src/dsl/layer-record.ts::LayerRecord`
 
-The one record a completed layer hands the layer above, on its result's start rule: its `depth` (1 for `grammar.sittir.ts`, one more per layer above), the `upstream` grammar (`GrammarJson`) its derivation records stay keyed to, the enrich `sidecars` the next layer re-attaches when it checks its base, the conflict `resolutions` (the file the first layer gave), the dead enrich mints, the text tokens, the lift names, the effect log, the records, the projections (`verbs/effects.ts::Provenance`, for a layer that inherits a record), the conflict-derivation records (`wire/derivation-records.ts::DerivationRecords`) and the diagnostics the passes recorded (`layer-not-enrich-fixpoint`, `edit-site-missing`), which `evaluate` hands the compile gate. JSON never carries it.
+The one record a completed layer hands the layer above, on its result's start rule: its `depth` (1 for `grammar.sittir.ts`, one more per layer above), the `upstream` grammar (`GrammarJson`) its derivation records stay keyed to, the enrich `sidecars` the next layer re-attaches when it checks its base, the conflict `resolutions` (the file the first layer gave), the dead enrich mints, the text tokens, the lift names, the effect log, the records (`mergedRecords`), where each layer's render bodies go among the rules (`SynthesizedRules`), the top layer's automatic-variant record (`automatic-variants.ts::AutomaticVariants`), the stage bases (`StageBases`), the projections (`verbs/effects.ts::Provenance`, for a layer that inherits a record), the conflict-derivation records (`wire/derivation-records.ts::DerivationRecords`) and the diagnostics the passes recorded (`layer-not-enrich-fixpoint`, `edit-site-missing`), which `evaluate` hands the compile gate. JSON never carries it.
+
+### `packages/codegen/src/dsl/layer-record.ts::SynthesizedRules`
+
+Where one layer's render bodies go among the rules: `after` is the number of rules the runtime held when the layer
+completed, and `names` the layer's own `renderAs` and `visibleExternals` names. A record keeps every layer's, its
+base's first, for `compiler/evaluate.ts::withSynthesizedRules`.
+
+### `packages/codegen/src/dsl/layer-record.ts::StageBases`
+
+What the stages are evaluated from: the departing layer's name, its `raw` source before enrich, the `enriched` base
+it completed, and the record its base carried, whose records and render bodies the stages take. The first layer that
+departs from its base records them, the layers above inherit them unchanged, and evaluate evaluates them
+(`compiler/evaluate.ts::evaluatedStages`), so no rename rewrites a stage and the tree-sitter run never evaluates one.
 
 ### `packages/codegen/src/dsl/layer-record.ts::LAYER_RECORD_KEY`
 
@@ -7142,6 +7159,45 @@ The record a `grammar()` result carries, read from its first rule's body: the st
 ### `packages/codegen/src/dsl/layer-record.ts::withLayerRecord`
 
 A fresh copy of a start rule's body that carries the record. Both runtimes keep the body a rule callback returns by identity, so the record reaches the result. The key is not enumerable, so a spread copy of the body, which a later layer's edits make, carries no stale record.
+
+### `packages/codegen/src/dsl/layer-record.ts::RecordMerge`
+
+How one record merges a layer's own entry over the one it inherits.
+
+### `packages/codegen/src/dsl/layer-record.ts::mergedEntries`
+
+A keyed record with the own entries over the inherited ones; undefined when neither layer has one.
+
+### `packages/codegen/src/dsl/layer-record.ts::mergedMap`
+
+A map with the own entries over the inherited ones, inherited keys first; undefined when neither layer has one.
+
+### `packages/codegen/src/dsl/layer-record.ts::namesOf`
+
+The inherited names, then the own ones not already among them.
+
+### `packages/codegen/src/dsl/layer-record.ts::mergedPatchSites`
+
+The inherited patch sites, then the own; a site at the same owner and path replaces the inherited one in its place.
+Undefined when neither layer has one.
+
+### `packages/codegen/src/dsl/layer-record.ts::RECORD_MERGES`
+
+The one table of how each record merges, typed over every `LayerRecords` key, so a new record fails the type-check
+until it is given an entry. Keyed records and maps take the own entries over the inherited ones. The reparse hosts
+and the whitespace collisions are the layer's own when it has any. The undeclared and protected names are the union,
+and the protected names are a list even when empty, since every layer's wire computes them. The patch sites merge by
+owner and path, and the unmatched `groups:` entries are the inherited, then the own.
+
+### `packages/codegen/src/dsl/layer-record.ts::mergedRecords`
+
+A layer's records: each `RECORD_MERGES` entry over the inherited records and the own, leaving out a record neither
+has.
+
+### `packages/codegen/src/dsl/layer-record.ts::synthesizedOf`
+
+The `SynthesizedRules` entry for a layer's own render bodies, after the given number of rules; none when the layer
+declares none.
 
 ### `packages/codegen/src/dsl/layer.ts::LAYER_BASE`
 
@@ -7177,7 +7233,7 @@ One pass's result: the layer's name, the body each rule callback returns, keyed 
 
 ### `packages/codegen/src/dsl/layer.ts::LayerCtx`
 
-The one phase context of the pass, a verb context (`verbs/copy.ts::VerbCtx`) over the layer's grammar view (`layerView`), whose rules are the layer's own: the layer's name and depth, the record it inherits, the upstream grammar and the completed base, the conflict resolutions and whether the config authors conflicts, wire's context and the rule names it protects, the rules as the layer leaves them, the rules it creates in creation order (wire's, then the verbs' copies and groups), the layer's `$`, the effects (the layer's own, resolved per owner, then the copies the verbs record) and the diagnostics the pass records.
+The one phase context of the pass, a verb context (`verbs/copy.ts::VerbCtx`) over the layer's grammar view (`layerView`), whose rules are the layer's own: the layer's name and depth, the record it inherits, the upstream grammar and the completed base, the conflict resolutions and whether the config authors conflicts, wire's context and the rule names it protects, the rules as the layer leaves them, the rules it creates in creation order (wire's, then the verbs' copies and groups), the layer's `$`, the stage bases, the effects (the layer's own, resolved per owner, then the copies the verbs record) and the diagnostics the pass records.
 
 ### `packages/codegen/src/dsl/layer.ts::LayerHandle`
 
@@ -7219,10 +7275,6 @@ Copies every own property of `source`, symbol keys included and `skip` excepted,
 
 Fills a pending base from intake's completed result. The guarded keys are cleared and every property of the completed grammar is copied over; the externals keep the consumed handle; `reserved` is a fresh copy, because tree-sitter writes a layer's reserved word sets into its base's `reserved`, which must never reach the layer below. The result's own properties beside `grammar`, enrich's sidecars among them, are copied onto the pending base too.
 
-### `packages/codegen/src/dsl/layer.ts::completePendingRecords`
-
-Hands the runtime the records an inheriting layer rewrote: they replace the pending base's own. The runtime inherits its base's records, so the layer's result carries them, with the layer's own entries merged over them. A layer that inherits no record rewrites none.
-
 ### `packages/codegen/src/dsl/layer.ts::BaseEditsCheck`
 
 `EditsCheck` against the enriched base when the base type carries concrete rule shapes (`wire/wire.ts::IsShaped`), and `unknown` otherwise. The shape test runs on the base before it is enriched: enriching the loose `GrammarJson` instantiates enrich's rule types over the open rule union, which is excessively deep (TS2589). A layer above the first takes a `grammar()` result as its base, whose type names no kind, so its paths are checked when the layer evaluates, not by the type: a key that names no rule is `edit-site-missing`, and the path walk throws on a member the rule lacks.
@@ -7259,11 +7311,12 @@ Runs enrich once over a completed result with the given sidecars, and names ever
 
 ### `packages/codegen/src/dsl/layer.ts::IntakeCtx`
 
-What intake reads beside the source grammar: the config, the layer's name, the inherited record and the diagnostics it appends to.
+What intake reads beside the source grammar: the config, the layer's name, the inherited record, the diagnostics it
+appends to and the config's evaluated callbacks (`declared`), whose `groups:` bodies enrich reads.
 
 ### `packages/codegen/src/dsl/layer.ts::intake`
 
-Completes a layer's base. Over an upstream base, which carries no record, enrich runs with the config's enrich inputs: the `groups:` bodies, the `extras:` callback, which enrich evaluates once against the base's list (`enrich.ts::authoredExtrasOf`), and the field sites `edits` names. Over a completed layer the config's enrich inputs reach no enrich: `resolutions` is refused, since it belongs to the first layer, and enrich runs once over the base with the record's sidecars (`enrichFixpoint`), recording `layer-not-enrich-fixpoint` with the rules it would change.
+Completes a layer's base. Over an upstream base, which carries no record, enrich runs with the config's enrich inputs: the `groups:` bodies the layer evaluated, the `extras:` callback, which enrich evaluates once against the base's list (`enrich.ts::authoredExtrasOf`), and the field sites `edits` names. Over a completed layer the config's enrich inputs reach no enrich: `resolutions` is refused, since it belongs to the first layer, and enrich runs once over the base with the record's sidecars (`enrichFixpoint`), recording `layer-not-enrich-fixpoint` with the rules it would change.
 
 ### `packages/codegen/src/dsl/layer.ts::wireConfigOf`
 
@@ -7271,7 +7324,29 @@ Wire's config for the layer: the layer's config under its resolved name. Over an
 
 ### `packages/codegen/src/dsl/layer.ts::runLayerPass`
 
-The layer pass, run from the layer's entry. Intake completes the base and the pending base takes the result. Wire's own entry then evaluates the config's rule callbacks and lists once, against the completed base; its refusals join the pass's diagnostics and its `narrow` and lead entries the pass's queues, and its alias edits are checked at the layer's depth (`wire/wire.ts::WireLayer`). Each body is normalized as tree-sitter normalizes it and laid over the base's rules. The pass evaluates the lists (`evaluatedLists`), builds its context (`LayerCtx`) over the layer's grammar view (`layerView`), with a `$` that knows the rules and the externals and the layer's effects resolved per owner, runs the queued entries as the whole-grammar phase, the `narrow` entries (`verbs/narrow.ts::applyNarrows`) and then the leads (`verbs/lead.ts::applyLeads`), and completes the layer (`completeLayer`). The pending base then takes the records the layer rewrote (`completePendingRecords`), for the runtime to inherit.
+The layer pass, run from the layer's entry: it evaluates the layer (`evaluatedLayer`) and completes it
+(`completeLayer`), inside a role scope of its own (`primitives/role.ts::withRoleScope`), so the `role()` calls the
+layer's callbacks make become its record's `externalRoles` in either runtime.
+
+### `packages/codegen/src/dsl/layer.ts::evaluatedLayer`
+
+The layer up to completion. The config's `groups:`, `renderAs:` and `visibleExternals:` callbacks are evaluated
+once (`wire/wire.ts::evaluatedConfig`), for intake and wire to read. Intake completes the base and the pending base
+takes the result. Wire's own entry then evaluates the config's rule callbacks and lists once, against the completed
+base; its refusals join the pass's diagnostics and its `narrow` and lead entries the pass's queues, and its alias
+edits are checked at the layer's depth (`wire/wire.ts::WireLayer`). Each body is normalized as tree-sitter
+normalizes it and laid over the base's rules. The pass evaluates the lists (`evaluatedLists`), builds its context
+(`LayerCtx`) over the layer's grammar view (`layerView`), with a `$` that knows the rules and the externals and the
+layer's effects resolved per owner, and runs the queued entries as the whole-grammar phase: the `narrow` entries
+(`verbs/narrow.ts::applyNarrows`) and then the leads (`verbs/lead.ts::applyLeads`). The stage bases are the ones its
+base's record carries, or, for the first layer that departs from its base (`departsFromBase`), its source and the
+base it completed.
+
+### `packages/codegen/src/dsl/layer.ts::departsFromBase`
+
+Whether a layer departs from its base: its config declares a `rules:` entry or an `edits:` entry. Only a departing
+layer has hand-authored departures to judge, so only the first one records the stage bases
+(`layer-record.ts::StageBases`) evaluate judges them against.
 
 ### `packages/codegen/src/dsl/layer.ts::layerView`
 
@@ -7303,9 +7378,37 @@ The conflict sets the `conflicts` callback returns. The first layer's are its se
 
 ### `packages/codegen/src/dsl/layer.ts::completeLayer`
 
-Completion, in order. Automatic variants are stamped over the layer's grammar view, with the supertype and inline lists the verbs' copies joined. Enrich mints that nothing reaches (`wire/dead-mints.ts::deadEnrichMints`) are blanked, and `inline` and `supertypes` leave them out. The dead set covers every way a mint dies without tracking any one of them: a lift renamed onto an authored variant, a lift whose owner the grammar re-authors, a lift left behind by a body rewrite. Each dead rule's entry is reassigned to the runtime's own `blank()` and no rule object is changed, so a body another rule shares is untouched, and reassigning an existing key keeps the key order, which fixes parser symbol ids. tree-sitter's generate drops the unreachable blank rule, `transpile/prune-grammar-json.ts::pruneOrphanedPlaceholderRules` removes it from grammar.json, and the canonical prune removes it from sittir's grammar. The record's dead mints, the inherited ones and the layer's own, become `orphanedSyntheticGroups`. The `groups:` entries that nothing in the final rules references (`wire/wire.ts::unmatchedGroupPatterns`) go on the wire context (`WireContext.bodyPatternZeroMatches`), not into the records: the pending base takes the records, and the base evaluated without the layer's config (`stages`) must not show what the layer found. The record is built: depth, upstream, enrich sidecars, resolutions, dead mints, text tokens, lift names, effects, the records the layer inherits (its base's, `verbs/effects.ts::recordsOf`) rewritten through the effects (`rewriteInherited`), the projections, derivation records and diagnostics. A layer that inherits a record projects its effects (`provenanceOf`, over the rules before dead mints are blanked) after the ones it inherits (`appendProvenance`); layer 1 records its effects and projects nothing. The record rides on the start rule's body (`withLayerRecord`), normalized for it.
+Completion, in order. Automatic variants are stamped over the layer's grammar view, with the supertype and inline lists the verbs' copies joined. Enrich mints that nothing reaches (`wire/dead-mints.ts::deadEnrichMints`) are blanked, and `inline` and `supertypes` leave them out. The dead set covers every way a mint dies without tracking any one of them: a lift renamed onto an authored variant, a lift whose owner the grammar re-authors, a lift left behind by a body rewrite. Each dead rule's entry is reassigned to the runtime's own `blank()` and no rule object is changed, so a body another rule shares is untouched, and reassigning an existing key keeps the key order, which fixes parser symbol ids. tree-sitter's generate drops the unreachable blank rule, `transpile/prune-grammar-json.ts::pruneOrphanedPlaceholderRules` removes it from grammar.json, and the canonical prune removes it from sittir's grammar. The record's dead mints, the inherited ones and the layer's own, become `orphanedSyntheticGroups`. The record is built: depth, upstream, enrich sidecars, resolutions, dead mints, text tokens, lift names, effects, the records (`layer-record.ts::mergedRecords`: the ones its base's record carries, rewritten through the effects (`rewriteInherited`), under the layer's own (`ownRecordsOf`), which take the `groups:` entries that nothing in the final rules references (`wire/wire.ts::unmatchedGroupPatterns`)), where the layer's render bodies go (`layer-record.ts::synthesizedOf`, after the rules the runtime holds once the layer's bodies join its base's), wire's automatic-variant record, the stage bases, the projections, derivation records and diagnostics. A layer that inherits a record projects its effects (`provenanceOf`, over the rules before dead mints are blanked) after the ones it inherits (`appendProvenance`); layer 1 records its effects and projects nothing. The record rides on the start rule's body (`withLayerRecord`), normalized for it.
 
 Each other body is returned as its callback returned it unless the pass replaced it: an object body as the pass left it, a dead mint as `blank()`, and a string or RegExp as written, for the runtime to normalize, because the runtimes normalize a RegExp differently (sittir's `PATTERN` drops its flags). The rules the verbs created follow every body wire evaluated, in creation order, so the runtime appends them last.
+
+### `packages/codegen/src/dsl/layer.ts::ownRecordsOf`
+
+The records one wire run makes on its own (`layer-record.ts::LayerRecords`), from its context and the facts its
+caller holds (`OwnRecordFacts`): the options, the record-valued `groups:` entries, the render bodies its config
+evaluated to (`renderAs`, and `visibleExternals` with enrich's whitespace bodies, each normalized by `normalizedBody`),
+the reparse hosts, refine forms, rule causes, the undeclared rules (sorted), the patch sites (sorted by key, each with
+the lifts it claimed as `lifts`), the external roles, the expectations, the names wire protects
+(`wire/wire.ts::protectedWireRuleNames`) with the supertypes, the whitespace collisions and the unmatched `groups:`
+entries. A record with nothing in it is left out, except the protected names. The layer pass makes its own records
+with it (`completeLayer`), and evaluate a stage's (`compiler/evaluate.ts::evaluatedStage`).
+
+### `packages/codegen/src/dsl/layer.ts::OwnRecordFacts`
+
+What a wire run's records need beside its context: the supertypes the grammar ends with, the roles its `role()`
+calls declared and the `groups:` entries nothing references.
+
+### `packages/codegen/src/dsl/layer.ts::nonEmpty`
+
+A record, or undefined when it holds no entry.
+
+### `packages/codegen/src/dsl/layer.ts::definedEntries`
+
+A record's entries that hold a value, or undefined when none does.
+
+### `packages/codegen/src/dsl/layer.ts::normalizedBodies`
+
+Each render body normalized as a rule callback's value is (`normalizedBody`), or undefined when there is none.
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::ConflictResolutionsFile`
 

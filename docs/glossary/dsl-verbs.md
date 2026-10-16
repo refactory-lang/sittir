@@ -142,11 +142,11 @@ Each copy whose origin `inheritsOptions`, mapped to its source, in log order. It
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::RecordRename`
 
-What a kind rename does to one record: `optionPaths` renames option heads, `(kind)` segments and label heads; `keysAndBodies` re-keys the record and renames the kinds its values reference as rule bodies do; `keys` re-keys it and leaves its values; `names` renames the names a list holds, or the lists a record holds; `{ entry }` renames, in each entry of a list, the name under that key; `reparseHosts` renames the hosts' keys, the priority and the gated names; `invariant` leaves the record as it is.
+What a kind rename does to one record: `optionPaths` renames option heads, `(kind)` segments and label heads; `keysAndBodies` re-keys the record and renames the kinds its values reference as rule bodies do; `keys` re-keys it and leaves its values; `names` renames the names a list holds, or the lists a record holds; `{ entry }` renames, in each entry of a list, the name under that key; `reparseHosts` renames the hosts' keys, the priority and the gated names.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::RECORD_RENAMES`
 
-The one table of which records a kind rename rewrites, and how. It is typed over every `LayerRecords` key, so a new record fails the type-check until it is given an entry. A rename leaves the old name only as an unreachable blank rule, so every record that holds a kind name follows it, as a key or as a name. The one exception is `stages`, the layer's evaluation snapshots, which stay as they were recorded.
+The one table of which records a kind rename rewrites, and how. It is typed over every `LayerRecords` key, so a new record fails the type-check until it is given an entry. A rename leaves the old name only as an unreachable blank rule, so every record that holds a kind name follows it, as a key or as a name. The stages are not a record: evaluate evaluates them from the stage bases the layer record carries, which no rename rewrites (`layer-record.ts::StageBases`).
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::renamedRecord`
 
@@ -159,10 +159,6 @@ Every record `RECORD_RENAMES` names, under a kind rename, with the field names t
 ### `packages/codegen/src/dsl/verbs/effects.ts::rewriteInherited`
 
 The records a layer inherits, rewritten through the layer's effects so that they name what the layer's result has. The options block takes, in this order: the segment effects under their owners (`rewriteOwnedSegments` with no grammar, since the log names every owner), the alias effects (`renameOptionPaths` without kind heads), the renames (`renameRecords`, which also rewrites every other record the table names), and the copies a path or `copy()` made (`inheritSplitOptions`). Segment, alias and copy effects touch only the options block. A record no effect names is returned as given, and the input is never changed. A layer's own records are written against its own result, so they never pass through here.
-
-### `packages/codegen/src/dsl/verbs/effects.ts::recordsOf`
-
-The records a grammar carries, picked by the effect table's keys (`RECORD_RENAMES`), leaving out each one the grammar leaves undefined. An inheriting layer reads the records it inherits from its base this way.
 
 ### `packages/codegen/src/dsl/verbs/effects.ts::LeadCopies`
 

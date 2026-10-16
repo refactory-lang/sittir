@@ -77,8 +77,8 @@ export interface WireContext {
 	readonly liftNames: Map<string, LiftName>;
 	readonly refineForms: Map<string, RefineForm[]>;
 	readonly groups?: GroupsConfig;
-	readonly renderAs?: RenderAsConfig;
-	readonly visibleExternals?: VisibleExternalsConfig;
+	readonly renderAs?: Readonly<Record<string, unknown>>;
+	readonly visibleExternals?: Readonly<Record<string, unknown>>;
 	readonly whitespaceCollisions?: readonly WhitespaceCollision[];
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
 	readonly expectTestFailures?: Partial<Record<string, string>>;
@@ -108,7 +108,6 @@ export interface WireContext {
 	readonly source: unknown;
 	evaluatedExternals: ReadonlySet<string>;
 	evaluatedBodies?: ReadonlyMap<string, unknown>;
-	bodyPatternZeroMatches?: readonly string[];
 	readonly layer: WireLayer | undefined;
 }
 
@@ -541,9 +540,9 @@ export function wireWithoutConfig(name: string, base: GrammarResult): WiredOpts 
 	return wireImpl({ name }, base, base);
 }
 
-export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, layer?: WireLayer): WiredOpts {
+export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, layer?: WireLayer, declared: EvaluatedConfig = evaluatedConfig(cfg)): WiredOpts {
 	const baseArg = base as BaseArg | undefined;
-	const { visibleExternals, whitespaceCollisions } = withEnrichedWhitespace(cfg.visibleExternals, base);
+	const { visibleExternals, whitespaceCollisions } = withEnrichedWhitespace(declared.visibleExternals, base);
 	assertNoSpacingAddressPatches(cfg.edits ?? {}, knownRuleNames(cfg, baseArg));
 	assertNoDeclaredGroupPatches(cfg.edits ?? {}, cfg.groups, cfg.injects);
 	const context: WireContext = {
@@ -554,7 +553,7 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		liftNames: new Map(),
 		refineForms: new Map(),
 		groups: cfg.groups,
-		renderAs: cfg.renderAs,
+		renderAs: declared.renderAs,
 		visibleExternals,
 		whitespaceCollisions,
 		expectDiagnostics: cfg.expectDiagnostics,
@@ -595,7 +594,7 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		if (!(baseName in outRules)) outRules[baseName] = passthroughBaseRuleFn;
 	}
 	wrapAllRuleFns(outRules, context);
-	applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
+	applyWirePatternReplacement(outRules, context.authoredRuleNames, declared.patterns, context);
 	applyWireVisibleExternalsRewrite(outRules, visibleExternals);
 
 	if (baseArg) {
@@ -608,7 +607,7 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 		for (const name of getEnrichVisibleSubsequenceSources(base)) {
 			context.inlineRemovals.add(name);
 		}
-		applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
+		applyWirePatternReplacement(outRules, context.authoredRuleNames, declared.patterns, context);
 	}
 	recordAliasTargets(outRules, context);
 	const externals = evaluatingExternals(cfg, outRules, { base: baseArg, context }, [
@@ -643,13 +642,8 @@ export function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, l
 	return wired;
 }
 
-export function protectedWireRuleNames(opts: WiredOpts): string[] {
-	const context = opts.__wireContext__;
-	if (context === undefined) return [];
-	const $ = makeSimpleDollarProxy();
-	const keysOf = (config: RenderAsConfig | VisibleExternalsConfig | undefined): string[] =>
-		config === undefined ? [] : Object.keys(withStringGlobalShim(() => config($)) ?? {});
-	return [...context.deposits.keys(), ...keysOf(context.renderAs), ...keysOf(context.visibleExternals)];
+export function protectedWireRuleNames(context: WireContext): string[] {
+	return [...context.deposits.keys(), ...Object.keys(context.renderAs ?? {}), ...Object.keys(context.visibleExternals ?? {})];
 }
 
 function declaredRuleCauses(rules: Record<string, RuleFn>): Pick<WireContext, 'ruleCauses' | 'undeclaredRules'> {
@@ -1245,15 +1239,25 @@ interface WirePatternCandidate {
 	readonly aliasAs?: string;
 }
 
-interface DeclaredPattern {
+export interface DeclaredPattern {
 	readonly section: 'groups' | 'injects';
 	readonly key: string;
-	readonly value: RuleFn;
 	readonly body: RuntimeRule;
 }
 
+export interface EvaluatedConfig {
+	readonly patterns: readonly DeclaredPattern[];
+	readonly renderAs: Readonly<Record<string, unknown>> | undefined;
+	readonly visibleExternals: Readonly<Record<string, unknown>> | undefined;
+}
+
+export function evaluatedConfig(cfg: Pick<WireConfig<any>, 'groups' | 'injects' | 'renderAs' | 'visibleExternals'>): EvaluatedConfig {
+	const bodies = (config: RenderAsConfig | VisibleExternalsConfig | undefined): Readonly<Record<string, unknown>> | undefined =>
+		config === undefined ? undefined : (withStringGlobalShim(() => config(layerSymbols())) ?? undefined);
+	return { patterns: declaredPatterns(cfg.groups, cfg.injects), renderAs: bodies(cfg.renderAs), visibleExternals: bodies(cfg.visibleExternals) };
+}
+
 function declaredPatterns(groups: GroupsConfig | undefined, injects: GroupsConfig | undefined): DeclaredPattern[] {
-	const $ = makeSimpleDollarProxy();
 	const declared: [section: 'groups' | 'injects', key: string, value: RuleFn][] = [];
 	for (const [key, value] of Object.entries(groups ?? {})) {
 		if (typeof value !== 'function') continue;
@@ -1267,6 +1271,7 @@ function declaredPatterns(groups: GroupsConfig | undefined, injects: GroupsConfi
 	for (const [key, value] of Object.entries(injects ?? {})) {
 		if (typeof value === 'function') declared.push(['injects', key, value as RuleFn]);
 	}
+	const $ = declared.length === 0 ? undefined : layerSymbols();
 	return declared.map(([section, key, value]) => {
 		let body: RuntimeRule;
 		try {
@@ -1283,12 +1288,8 @@ function declaredPatterns(groups: GroupsConfig | undefined, injects: GroupsConfi
 				`${section}['${key}']: body is not a complex structural pattern (need SEQ ≥2, CHOICE ≥2, or REPEAT with non-trivial content)`
 			);
 		}
-		return { section, key, value, body };
+		return { section, key, body };
 	});
-}
-
-export function authoredGroupBodies(groups: GroupsConfig | undefined): RuntimeRule[] {
-	return declaredPatterns(groups, undefined).map((pattern) => pattern.body);
 }
 
 export function makeSimpleDollarProxy(): Record<string, RuntimeRule> {
@@ -1416,34 +1417,28 @@ function buildVisibleExternalsRewritingFn(fn: RuleFn, hiddenToVisible: ReadonlyM
 }
 
 function withEnrichedWhitespace(
-	config: VisibleExternalsConfig | undefined,
+	declared: Readonly<Record<string, unknown>> | undefined,
 	base: unknown
 ): {
-	readonly visibleExternals: VisibleExternalsConfig | undefined;
+	readonly visibleExternals: Readonly<Record<string, unknown>> | undefined;
 	readonly whitespaceCollisions: readonly WhitespaceCollision[];
 } {
 	const { bodies, collisions } = getEnrichWhitespace(base);
-	const declared = config === undefined ? [] : Object.keys(withStringGlobalShim(() => config(makeSimpleDollarProxy())) ?? {});
 	const whitespaceCollisions = [
 		...collisions,
-		...declared.filter((name) => Object.hasOwn(bodies, name)).map((name) => ({ name, site: 'visibleExternals' as const }))
+		...Object.keys(declared ?? {})
+			.filter((name) => Object.hasOwn(bodies, name))
+			.map((name) => ({ name, site: 'visibleExternals' as const }))
 	];
-	if (Object.keys(bodies).length === 0) return { visibleExternals: config, whitespaceCollisions };
-	return { visibleExternals: ($) => ({ ...config?.($), ...bodies }), whitespaceCollisions };
+	if (Object.keys(bodies).length === 0) return { visibleExternals: declared, whitespaceCollisions };
+	return { visibleExternals: { ...declared, ...bodies }, whitespaceCollisions };
 }
 
 function applyWireVisibleExternalsRewrite(
 	rules: Record<string, RuleFn>,
-	config: VisibleExternalsConfig | undefined
+	visibleExternals: Readonly<Record<string, unknown>> | undefined
 ): void {
-	if (!config) return;
-	const $ = makeSimpleDollarProxy();
-	const entries = withStringGlobalShim(() => config($));
-	if (!entries) return;
-	const hiddenToVisible = new Map<string, string>();
-	for (const hiddenName of Object.keys(entries)) {
-		hiddenToVisible.set(hiddenName, hiddenName.replace(/^_+/, ''));
-	}
+	const hiddenToVisible = new Map(Object.keys(visibleExternals ?? {}).map((hiddenName) => [hiddenName, hiddenName.replace(/^_+/, '')]));
 	if (hiddenToVisible.size === 0) return;
 	for (const [name, fn] of Object.entries(rules)) {
 		rules[name] = buildVisibleExternalsRewritingFn(fn, hiddenToVisible);
@@ -1466,19 +1461,28 @@ export function unmatchedGroupPatterns(
 	return groups.filter((name) => !held.has(name));
 }
 
+function declaredBody(body: RuntimeRule): RuleFn {
+	return function declaredBodyFn($) {
+		for (const name of symbolNames(body)) {
+			const symbol: unknown = ($ as Readonly<Record<string, unknown>>)[name];
+			if (symbol instanceof ReferenceError) throw symbol;
+		}
+		return body;
+	};
+}
+
 export function applyWirePatternReplacement(
 	rules: Record<string, RuleFn>,
 	authoredRuleNames: ReadonlySet<string>,
-	groups: GroupsConfig | undefined,
-	context: WireContext,
-	injects?: GroupsConfig
+	patterns: readonly DeclaredPattern[],
+	context: WireContext
 ): void {
 	const declared: WirePatternCandidate[] = [];
-	for (const { section, key, value, body } of declaredPatterns(groups, injects)) {
+	for (const { section, key, body } of patterns) {
 		const hiddenName = declaredGroupMintName(key);
 		const hidden = hiddenName === key;
 		declared.push(hidden ? { name: hiddenName, body } : { name: hiddenName, body, aliasAs: key });
-		const registered = wrapOneRuleFn(hiddenName, value, context);
+		const registered = wrapOneRuleFn(hiddenName, declaredBody(body), context);
 		rules[hiddenName] = section === 'groups' ? stampHoistedFn(registered) : registered;
 	}
 

@@ -2077,120 +2077,16 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  */
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::getWireContext`
-
-```text
-/**
- * Read the wire context `wire()` stashes on `opts.__wireContext__` — a
- * runtime-only channel not part of the public `GrammarOptions` shape.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::drainRefineMetadata`
-
-```text
-/**
- * Read the refine() form metadata produced by the DSL during rule
- * evaluation. Returns `undefined` when no refine() calls fired (keeps
- * the `RawGrammar.refineForms` field absent rather than an empty map
- * for downstream consumers that check presence).
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::drainGroupsMetadata`
-
-```text
-/**
- * Read the groups config from the wire context. Returns `undefined` when
- * no `groups:` block was supplied (keeps `RawGrammar.groups` absent for
- * downstream consumers that check presence).
- */
-```
-
-#### body
-
-```text
-// Filter out body-pattern entries (function values) — those are
-// consumed by wire's pattern injection, which makes alias() rewrites,
-// not lift-based synthesis. Only path-map entries reach link's
-// applyGroupOverrides.
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::drainExpectDiagnosticsMetadata`
-
-```text
-/**
- * Read the `expectDiagnostics:` config from the wire context — the grammar
- * author's own declaration of accepted, non-blocking diagnostic exceptions
- * per kind. Returns `undefined` when no `expectDiagnostics:` block was
- * supplied (keeps `RawGrammar.expectDiagnostics` absent for downstream
- * consumers that check presence).
- */
-```
-
-#### body
-
-```text
-// WireConfig's Partial<Record<...>> admits undefined values; drop them so
-// RawGrammar.expectDiagnostics carries only defined kind lists.
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::drainExpectTestFailuresMetadata`
-
-```text
-/**
- * Read the `expectTestFailures:` config from the wire context — the grammar
- * author's declaration of kinds whose generated `nodes.test.ts` tests are
- * known-failing (tracked defects); `emitters/test.ts` emits those as
- * `describe.skip` with the declared reason. Returns `undefined` when no
- * block was supplied, mirroring {@link drainExpectDiagnosticsMetadata}.
- */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::drainRuleCausesMetadata`
-
-Copies `WireContext.ruleCauses` and `WireContext.undeclaredRules` onto
-`RawGrammar.ruleCauses` / `RawGrammar.undeclaredRules` (the latter sorted);
-each is omitted when empty, and both when the grammar was not wired.
-
-### `packages/codegen/src/compiler/evaluate.ts::drainPatchSitesMetadata`
-
-Copies `WireContext.patchSites` onto `RawGrammar.patchSites`, sorted by
-owner, path and form, each with the lifts it claimed (`WireContext.liftClaims`) as `lifts`; omitted when there
-are none.
-
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.patchSites`
 
 Every `edits:` entry the grammar applied, by owner kind, path and
 placeholder form. Read by the patch-site labelling and the override census.
 
-### `packages/codegen/src/compiler/evaluate.ts::departsFromBase`
-
-Whether a wired grammar departs from its base: it extends a base and declares at least one
-`rules:` entry or `edits:` entry. A grammar with no base has nothing to depart from. Only such a grammar has hand-authored
-departures to judge, so only it pays for the stage evaluations.
-
-### `packages/codegen/src/compiler/evaluate.ts::evaluateStages`
-
-The two stages a departing grammar is judged against: `raw`, the upstream base before enrich
-(`WireContext.source`), and `enriched`, the enriched base `grammar()` received (the object `wire()` read). Both
-are evaluated with no wire config, inside the same DSL-globals scope, so the upstream is never located by package
-path.
-
-### `packages/codegen/src/compiler/evaluate.ts::evaluateStage`
-
-Evaluates one base a second time through `wire` with no config (only the grammar's name), and records every rule
-name it declares: the base's rules plus the rules `wire` hands the stage. Going through `wire`
-means the stage sees what enrich hands wire, such as the whitespace bodies it mints (`withEnrichedWhitespace`),
-so the enriched stage and the final evaluation agree that `_tight` and the other members are literal kinds rather
-than empty patterns. The evaluated rules alone are not that list, because the
-rule catalog omits hidden rules it finds unreachable (typescript's `_reserved_identifier`). A throw fails the
-evaluation: a base tree-sitter accepts always evaluates, and one it rejects is reported by its prediction records.
-
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.stages`
 
-The base evaluated with no wire config, before and after enrich (`EvaluationStages`); absent when the grammar does
-not depart from its base (`departsFromBase`).
+The base evaluated with no wire config, before and after enrich (`EvaluationStages`); absent when no layer departs
+from its base (`dsl/layer.ts::departsFromBase`). The first layer that departs records the stage bases, and evaluate
+evaluates them (`evaluate.ts::evaluatedStages`).
 
 ### `packages/codegen/src/compiler/types.ts::NodeMap.irSurface`
 
@@ -2198,7 +2094,7 @@ What the model decided about `ir` (`IrSurface`), stamped once by `stampIrSurface
 
 ### `packages/codegen/src/compiler/types.ts::EvaluationStages`
 
-`{ raw, enriched }`, each a `StageEvaluation`: the outcome of `evaluateStages`.
+`{ raw, enriched }`, each a `StageEvaluation`: the outcome of `evaluatedStages`.
 
 ### `packages/codegen/src/compiler/types.ts::StageEvaluation`
 
@@ -2216,12 +2112,13 @@ grammar no layer pass built.
 
 ### `packages/codegen/src/compiler/types.ts::EvaluatedGrammar`
 
-A grammar as sittir's `grammar()` returns it: rules exactly as the DSL built
-them, without a rule catalog or reference list. It carries what the compile
-boundary needs to finish the grammar — `evaluateSynthesized` for kind
+A grammar as sittir evaluates it: what its `grammar()` call built, with the
+top layer's records (`evaluate.ts::evaluatedGrammarOf`), rules exactly as the
+DSL built them, without a rule catalog or reference list. It carries what the
+compile boundary needs to finish the grammar — `evaluateSynthesized` for kind
 prediction and `protectedRuleNames` for the orphan pass — and nothing reads it as
-compiler input except `canonicalGrammar`. It is also what an extending grammar
-receives as its base.
+compiler input except `canonicalGrammar`. The `grammar()` result an extending
+grammar receives as its base holds its rules and lists alone.
 
 ### `packages/codegen/src/compiler/stage.ts::diagnoseEvaluationStage`
 
@@ -2261,101 +2158,6 @@ rule, which is what the hand-written rule ratchet counts.
 
 The grammar's `rules:` entries with a bare body, sorted.
 
-### `packages/codegen/src/compiler/evaluate.ts::drainRenderAsMetadata`
-
-```text
-/**
- * Evaluate the `renderAs:` fn from the wire context and inject the
- * resulting rule bodies into the rules map, recording each in `evaluateSynthesized`.
- *
- * @remarks
- * Called AFTER `evaluateRuleFunctions` so the DSL globals are
- * still injected and a real `$` proxy is available. The fn is evaluated
- * with a fresh proxy so any `$.name` refs inside the fn body resolve
- * correctly (current support: `string(...)` literals and `blank()` —
- * neither needs the proxy, but we keep the proxy for forward
- * compatibility).
- *
- * The keys returned by the fn are ALSO removed from `rules` (stripping the
- * tree-sitter-side body when the base grammar had one). This is safe: the
- * external scanner produces these symbols; the grammar rule body is
- * redundant for tree-sitter and harmful for sittir (sittir would pick up
- * the base IMMEDIATE_TOKEN body and use it instead of the sittir-side
- * render body).
- *
- * @returns A Record<string, Rule<'evaluate'>> for `RawGrammar.renderAs`, or
- * `undefined` when no `renderAs:` was declared.
- */
-```
-
-#### body
-
-```text
-// An immediate-declared external's renderAs body is the sanctioned way
-// to declare its immediacy; the compile boundary canonicalizes the
-// returned record like every rule body, so no destination sees a raw
-// IMMEDIATE_TOKEN tag.
-```
-
-#### body
-
-```text
-// Inject into the rules map as a sittir-side synthesized rule so
-// downstream pipeline phases (link, template-walker, etc.) treat
-// it like any regular rule.
-```
-
-#### body
-
-```text
-// Strip any pre-existing tree-sitter-side body for this symbol.
-// The assignment above already overwrites it; this comment documents
-// the intentional overwrite: renderAs wins over base-grammar body.
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::drainVisibleExternalsMetadata`
-
-```text
-/**
- * Evaluate the `visibleExternals:` fn from the wire context and return the
- * hidden-name → sittir-side render body map, for `RawGrammar.visibleExternals`.
- *
- * @remarks
- * Like `drainRenderAsMetadata`, this injects each body into `rules` under
- * the HIDDEN name (the storage identity), replacing the external scanner's
- * empty-pattern placeholder. The visible name is parse identity only,
- * carried by the ALIAS wrap on references — the SYMBOL→ALIAS
- * rewrite's alias target resolves to, and per `resolveRule`'s ALIAS case,
- * whether a name gets its own independent top-level IR kind is decided
- * solely by whether it's a `rules` bag key at all.
- *
- * @returns A Record<string, Rule<'evaluate'>> for `RawGrammar.visibleExternals`,
- * or `undefined` when no `visibleExternals:` was declared.
- */
-```
-
-#### body
-
-```text
-// An immediate-declared external's renderAs body is the sanctioned way
-// to declare its immediacy; the compile boundary canonicalizes the
-// returned record like every rule body, so no destination sees a raw
-// IMMEDIATE_TOKEN tag.
-```
-
-#### body
-
-```text
-// Mirror drainRenderAsMetadata: inject the body into the rules map
-// under the HIDDEN name, replacing the external's empty-pattern
-// placeholder. The hidden name is the STORAGE identity (`name` is always
-// storage; `aliasedTo` is the display name) — registering under the visible name instead creates a
-// SECOND node colliding on the same typeName, and the transport
-// struct gets emitted from the empty placeholder (no render text).
-// The visible name stays parse-identity-only, carried by the ALIAS
-// wrap on references; the whole mint modeling path handles the rest.
-```
-
 ### `packages/codegen/src/compiler/evaluate.ts::evaluate`
 
 ```text
@@ -2374,26 +2176,6 @@ The grammar's `rules:` entries with a bare body, sorted.
 ```
 
 It takes the grammar's file types and stamps them on the raw grammar it builds, and on the stages inside it; the argument is required. A grammar that is not a package (a synthetic one) passes `NO_FILE_TYPES`; a package goes through `evaluatePackage`.
-
-### `packages/codegen/src/compiler/evaluate.ts::evaluateMetadataCallbacksInScope`
-
-```text
-/**
- * Evaluate all metadata callbacks (extras, externals, supertypes, inline,
- * conflicts, word) inside the current role scope.
- *
- * @remarks
- * The metadata callbacks must run inside the same `withRoleScope` closure as
- * the rule functions so any `role()` calls they contain attach to this
- * grammar's accumulator rather than a parent or sibling scope.
- *
- * @param opts - Grammar options containing the metadata callbacks.
- * @param baseGrammar - The evaluated base grammar object, or `null`.
- * @param refs - Mutable symbol-reference accumulator.
- * @param sinks - Mutable accumulators for each metadata list.
- * @param setWord - Callback to record the `word` rule name.
- */
-```
 
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateExternalsCallback`
 
@@ -2503,8 +2285,7 @@ Each `reserved` wordset callback runs like the list callbacks, with a fresh `$` 
  * supplied accumulators. A precedences group keeps each entry's name: a
  * named precedence as its string, a rule reference as the rule's name, so
  * wire's precedence-ranked check reads the same table on this side as the
- * tree-sitter CLI hands it. Pulled out of grammarFn so the call site can wrap it
- * in `withRoleScope` cleanly.
+ * tree-sitter CLI hands it.
  *
  * tree-sitter's pattern: each callback receives `($, baseValue)`
  * where `$` is a fresh proxy and `baseValue` is the base grammar's
@@ -2570,9 +2351,58 @@ boundary; a caller that wants the DSL's own shape calls it directly.
 
 ### `packages/codegen/src/compiler/evaluate.ts::importAndExtractGrammar`
 
-Imports a grammar layer's file and extracts the grammar from the module's default or named export, as its top-level `grammar()` call produced it. A layer's file evaluates to the same grammar wherever it is imported from, so which file is imported is the whole choice of layer (`grammars.ts::layerPath`).
+Imports a grammar layer's file and hands the module's default or named export, as its top-level `grammar()` call
+produced it, to `evaluatedGrammarOf`. A layer's file evaluates to the same grammar wherever it is imported from, so
+which file is imported is the whole choice of layer (`grammars.ts::layerPath`).
 
-The dead enrich mints, the conflict-derivation records and the text-token names arrive on the top layer's record (`dsl/layer-record.ts::layerRecordOf`), with the diagnostics the layer passes recorded, which become `layerDiagnostics`. A grammar no layer pass completed (an upstream `grammar.js`) carries none of them, and comes back as a copy of what its `grammar()` call produced. The dead mints become `orphanedSyntheticGroups`, the records `derivationRecords` and the names `textTokens`, here, after the module's `grammar()` call has returned, since they are computed from that call's result. The returned grammar is a spread copy, so whatever a caller adds never reaches the imported module's grammar, which the module cache keeps. An inheriting layer's projections (`splitFrom`, `leadFrom`, `renamedFrom` and `bindingEffects`, the record's `projections`) are spread onto the grammar here too, since the runtime's result holds only the keys it builds.
+### `packages/codegen/src/compiler/evaluate.ts::evaluatedGrammarOf`
+
+The evaluated grammar of a `grammar()` result: what the runtime built, with what the top layer's record carries
+(`dsl/layer-record.ts::layerRecordOf`). The records become the grammar's keys, and the render bodies join its rules
+(`withRecords`). The record's automatic-variant record becomes the grammar's, and the stages are evaluated from its
+stage bases (`evaluatedStages`). An inheriting layer's projections (`splitFrom`, `leadFrom`, `renamedFrom` and
+`bindingEffects`) are spread onto it. The dead enrich mints become `orphanedSyntheticGroups`, the conflict-derivation
+records `derivationRecords`, the text-token names `textTokens`, and the diagnostics the layer passes recorded
+`layerDiagnostics`. A grammar no layer pass completed (an upstream `grammar.js`) carries none of them, and comes back
+as a copy of what its `grammar()` call produced. The result is a spread copy, so whatever a caller adds never reaches
+the imported module's grammar, which the module cache keeps. A test reads an in-process layer's evaluated grammar
+through it.
+
+### `packages/codegen/src/compiler/evaluate.ts::withRecords`
+
+A grammar with a layer's records: each record becomes the grammar key of the same name, and the render bodies
+(`renderAs`, then `visibleExternals`, which wins on a shared name) join the rules where the layers that declared
+them place them (`withSynthesizedRules`). A body enters under its storage name, which for a visible external is the
+hidden name: the visible name is parse identity only, carried by the alias each reference takes, and a rule under
+the visible name would be a second node on the same type name. A body replaces a rule of the same name in place.
+`evaluateSynthesized` names these rules. They are sittir's alone: the external scanner produces the symbols, so
+tree-sitter's grammar never holds them, and the runtime's `grammar()` never sees them.
+
+### `packages/codegen/src/compiler/evaluate.ts::withSynthesizedRules`
+
+The rules with each layer's render bodies inserted after the rules its runtime held (`SynthesizedRules.after`),
+counting the bodies the layers below inserted. Each layer's bodies so sit between its own rules and the rules of the
+layers above, and the emitted render module follows that order. A name already among the rules keeps its place and
+takes the body.
+
+### `packages/codegen/src/compiler/evaluate.ts::evaluatedStages`
+
+The two stages a departing layer is judged against (`dsl/layer-record.ts::StageBases`): `raw`, the layer's source
+before enrich, and `enriched`, the base the layer completed. Both are evaluated here, after the module's `grammar()`
+call and inside the same DSL-globals scope, so the upstream is never located by package path and the tree-sitter
+run never evaluates them.
+
+### `packages/codegen/src/compiler/evaluate.ts::evaluatedStage`
+
+Evaluates one base a second time through `wire` with no config but the layer's name (`wireWithoutConfig`), and
+records every rule name it declares: the base's rules plus the rules `wire` hands the stage. The stage's records are
+the ones that wire run makes (`dsl/layer.ts::ownRecordsOf`) over the ones its base's layer carried, and its render
+bodies sit where `withRecords` places them. Going through `wire` means the stage sees what enrich hands wire, such
+as the whitespace bodies it mints (`withEnrichedWhitespace`), so the enriched stage and the final evaluation agree
+that `_tight` and the other members are literal kinds rather than empty patterns. The evaluated rules alone are not
+that list, because the rule catalog omits hidden rules it finds unreachable (typescript's `_reserved_identifier`). A
+throw fails the evaluation: a base tree-sitter accepts always evaluates, and one it rejects is reported by its
+prediction records.
 
 ### `packages/codegen/src/compiler/evaluate.ts::restoreSavedGlobals`
 
@@ -5394,24 +5224,14 @@ collector parameter.
 
 ### `packages/codegen/src/compiler/evaluate.ts::EvaluateCtx`
 
-```text
-/**
- * The evaluate-phase ctx, where cross-node state lives. Constructed ONCE per
- * grammarFn invocation; every field is always available there, so all are
- * required. Pass-LOCAL derived state (externalSet, the field-enum sweep
- * maps) stays in explicit parameters.
- */
-```
+The context of one `grammarFn` call: the options, the base's rules and grammar, the list accumulators
+(`MetadataSinks`) and the setter for `word`. Every field is set when the call builds it.
 
 ### `packages/codegen/src/compiler/evaluate.ts::rules`
 
 ```text
 /** The rule record under evaluation (mutated by passes). */
 ```
-
-### `packages/codegen/src/compiler/evaluate.ts::evaluateSynthesized`
-
-The names of the rules this evaluation added itself, filled as each is injected.
 
 ### `packages/codegen/src/compiler/evaluate.ts::refs`
 
@@ -5902,7 +5722,7 @@ parser.c's `#define TOKEN_COUNT`: symbol ids below it are the parser's tokens (t
 
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.evaluateSynthesized`
 
-The names of the rules whose bodies sittir's evaluate injected itself: render-only rules (`renderAs:`), visible externals, wire deposits no rule callback declared, and the body-pattern-group fallback. It says who supplied the rule body, not whether the parser has a symbol for the kind: most of these have none, but a visible external does. `canonical-rules.ts::predictKinds` leaves them out of kind prediction. `generate.ts::collectEvaluateSynthesizedKinds` hands the ones with a catalog root to the emitters, where `emitters/shared.ts::classifyParserSymbolEmission` looks a kind up in the parser catalog first and emits it when it is there; the set only classifies a kind that is missing from the parser catalog as intentionally synthesized, so it is skipped with a warning instead of being an error. link's rename carries the set to the parser-facing names (`renameRules`).
+The names of the rules whose bodies sittir's evaluate added itself: the render-only rules (`renderAs:`) and the visible externals' bodies, which the layer record carries (`evaluate.ts::withRecords`). It says who supplied the rule body, not whether the parser has a symbol for the kind: most of these have none, but a visible external does. `canonical-rules.ts::predictKinds` leaves them out of kind prediction. `generate.ts::collectEvaluateSynthesizedKinds` hands the ones with a catalog root to the emitters, where `emitters/shared.ts::classifyParserSymbolEmission` looks a kind up in the parser catalog first and emits it when it is there; the set only classifies a kind that is missing from the parser catalog as intentionally synthesized, so it is skipped with a warning instead of being an error. link's rename carries the set to the parser-facing names (`renameRules`).
 
 It is the only authorship fact evaluate records. Who authored any other rule is answered elsewhere: `RuleProvenanceStage` (`compiler/diagnostics/diagnostic-records.ts`) says which stage first declares a rule (upstream, enrich or wire), and wire holds the authored rule names and patch sites.
 
@@ -6081,8 +5901,9 @@ The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible r
 ```text
 /**
 	 * `groups:` body-pattern entries (hidden `_<key>` names) that no final
-	 * rule of their layer references, as the layer pass finds them
-	 * (`dsl/wire/wire.ts::unmatchedGroupPatterns`) —
+	 * rule of their layer references, as each layer pass finds them
+	 * (`dsl/wire/wire.ts::unmatchedGroupPatterns`) and its record keeps
+	 * them, its base's first —
 	 * the elevation they declare silently never fired. Surfaced as the
 	 * `body-pattern-zero-match` diagnostic by
 	 * `collectGrammarDiagnosticsForGrammar`.
@@ -6291,9 +6112,9 @@ The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible r
 
 ### `packages/codegen/src/compiler/types.ts::automaticVariants`
 
-The wire context's automatic-variant record, carried by evaluate so link can
-tell an automatic arm label from an authored one (`stampLabelProvenance`). Absent for a
-grammar that never ran through `wire()`; then no label is automatic.
+The automatic-variant record of the wire run that evaluated the grammar, the top layer's from its record or a
+stage's own, so link can tell an automatic arm label from an authored one (`stampLabelProvenance`). Absent for a
+grammar no wire ran over; then no label is automatic.
 
 ### `packages/codegen/src/compiler/types.ts::visibleAliasTargets`
 
@@ -7581,52 +7402,14 @@ The global `grammar()` during evaluation, under the DSL's contract: `grammar(opt
 `grammar(base, options)` to extend a `grammar()` result. The base is told apart from options by its `grammar`
 property, and a call that mixes the two shapes throws. It reads the base's `name` and `externals`, calls the
 `externals` callback, and only then reads the base's rules and other lists, the order tree-sitter's `dsl.js` reads in
-(`dsl/layer.ts::VERIFIED_TREE_SITTER`): a layer's pass runs inside that call and completes the base. Its `bodyPatternZeroMatches` are the base's, then the ones the pass found in its own layer (`dsl/wire/wire.ts::WireContext.bodyPatternZeroMatches`).
+(`dsl/layer.ts::VERIFIED_TREE_SITTER`): a layer's pass runs inside that call and completes the base.
 
-#### body
-
-```text
-// Extension mode: first arg is a base grammar result
-```
-
-#### body
-
-```text
-// Extract metadata
-```
-
-#### body
-
-```text
-// renderAs is drained into the rules map so the synthesized rule
-// bodies reach the compile boundary's rule catalog. It also strips any base-grammar
-// body for the same key (keeping the sittir-side def authoritative).
-// The DSL globals (string, etc.) are still injected at this point —
-// evaluate()'s try block is still active.
-```
-
-#### body
-
-```text
-// Rules map mirrors tree-sitter's view: no synthesized top-level
-// entry for alias TARGETS. The source (`_X`) is the canonical
-// sittir-internal kind; the visible target is identity-only.
-//
-// One necessary accommodation: when an alias's source is an
-// INLINE expression (e.g. `alias(choice(...), $.primitive_type)`)
-// rather than a bare symbol, there's no existing `_X` rule for
-// downstream to point at. Synthesize `_${target}` with the inline
-// body so the `_X → X` invariant holds uniformly — every alias
-// target has a named hidden source in the rules map.
-```
-
-#### body
-
-```text
-// Per-grammar role bindings collected from inline `role()`
-// calls inside externals/rules. Empty when the grammar
-// declares no roles.
-```
+It is the counterpart of `dsl.js`'s `grammar()` over evaluate's rule types. It evaluates the rule callbacks over the
+base's rules (`evaluateRuleFunctions`) and the list callbacks (`evaluateMetadataCallbacks`), inherits the lists the
+options do not declare (`inheritBaseGrammarMetadata`), and records the result. It reads no wire context and merges no
+record of its base: what crosses layers rides on the layer record, which `evaluatedGrammarOf` reads. So a layer above
+receives the same base in both runtimes. Its `evaluateSynthesized` is empty: only a layer record names rules sittir
+adds.
 
 ### `packages/codegen/src/compiler/evaluate.ts::appendCallbackMetadataNames`
 
@@ -7892,11 +7675,10 @@ property, and a call that mixes the two shapes throws. It reads the base's `name
 #### body
 
 ```text
-// visibleExternals: nothing to register here. evaluate's
-// drainVisibleExternalsMetadata already injected each body into the
-// rules map under the HIDDEN name (the storage identity, mirroring
-// drainRenderAsMetadata), replacing the external's empty-pattern
-// placeholder; the SYMBOL→ALIAS reference rewrites carry the visible
+// visibleExternals: nothing to register here. evaluate already
+// injected each body into the rules map under the HIDDEN name (the
+// storage identity, as for renderAs; `evaluate.ts::withRecords`),
+// replacing the external's empty-pattern placeholder; the SYMBOL→ALIAS reference rewrites carry the visible
 // parse identity. Registering under the VISIBLE name here instead
 // creates a second node colliding on the same typeName — the transport
 // struct then emits from the empty placeholder (no render text).
@@ -9882,22 +9664,6 @@ The raw symbols a parser folds onto another public symbol: the entries of `ts_sy
 ### `packages/codegen/src/compiler/evaluate.ts::withDslGlobals`
 
 Runs a callback with the tree-sitter DSL globals (`grammar`, `seq`, `sym`, …) installed and the prior values restored after, under the evaluation mutex, so two imports never see each other's globals. `evaluateDsl` imports a grammar layer inside it.
-
-### `packages/codegen/src/compiler/evaluate.ts::LayerCtx`
-
-The base layer's value of one metadata entry (`previous`), the context the `inherited*` helpers merge the current layer's value over.
-
-### `packages/codegen/src/compiler/evaluate.ts::inheritedRecord`
-
-Carries an optional metadata record through grammar extension, with explicit entries of the current layer replacing the same base entries.
-
-### `packages/codegen/src/compiler/evaluate.ts::inheritedMap`
-
-Carries optional keyed metadata through grammar extension, preserving base keys absent from the current layer.
-
-### `packages/codegen/src/compiler/evaluate.ts::inheritedPatchSites`
-
-Carries patch-site provenance through grammar extension; a current site at the same owner and path replaces the older site.
 
 ### `packages/codegen/src/compiler/canonical-rules.ts::canonicalChoiceRule`
 

@@ -287,7 +287,7 @@ function splitFromOf(effects: readonly Effect[]): Record<string, string> {
 	return splitFrom;
 }
 
-type RecordRename = 'optionPaths' | 'keysAndBodies' | 'keys' | 'names' | 'reparseHosts' | 'invariant' | { readonly entry: string };
+type RecordRename = 'optionPaths' | 'keysAndBodies' | 'keys' | 'names' | 'reparseHosts' | { readonly entry: string };
 
 const RECORD_RENAMES = {
 	options: 'optionPaths',
@@ -302,7 +302,6 @@ const RECORD_RENAMES = {
 	externalRoles: 'keys',
 	expectDiagnostics: 'names',
 	expectTestFailures: 'keys',
-	stages: 'invariant',
 	protectedRuleNames: 'names',
 	whitespaceCollisions: { entry: 'name' },
 	bodyPatternZeroMatches: 'names'
@@ -328,13 +327,7 @@ function renamedRecord(value: unknown, as: RecordRename, rename: (name: string) 
 			return renameValue(value, rename);
 		case 'reparseHosts':
 			return isRecord(value) ? renameReparseHosts(value, rename) : value;
-		case 'invariant':
-			return value;
 	}
-}
-
-export function recordsOf(grammar: GrammarRecord): LayerRecords {
-	return Object.fromEntries(Object.keys(RECORD_RENAMES).flatMap((key) => (grammar[key] === undefined ? [] : [[key, grammar[key]]]))) as LayerRecords;
 }
 
 export function renameRecords(records: GrammarRecord, rename: (name: string) => string, fields: ReadonlySet<string>): GrammarRecord {

@@ -15,11 +15,13 @@ import {
 	type GrammarResult
 } from './enrich.ts';
 import type { TransformPatchMap } from '../grammar-shapes/path-type.ts';
-import { layerRecordOf, withLayerRecord, type LayerRecord, type LayerRecords } from './layer-record.ts';
+import type { ExternalRole } from '../types/ir.ts';
+import { layerRecordOf, mergedRecords, synthesizedOf, withLayerRecord, type LayerRecord, type LayerRecords, type StageBases } from './layer-record.ts';
+import { withRoleScope } from './primitives/role.ts';
 import { isRecord, type GrammarRecord } from './rule-patterns.ts';
 import { baseRulesOf } from './shared.ts';
 import { verbCtxOf, type VerbCtx } from './verbs/copy.ts';
-import { appendProvenance, effectsForOwners, provenanceOf, recordsOf, rewriteInherited, type AliasEffect, type Effect, type SegmentEffect } from './verbs/effects.ts';
+import { appendProvenance, effectsForOwners, provenanceOf, rewriteInherited, type AliasEffect, type Effect, type SegmentEffect } from './verbs/effects.ts';
 import { applyLeads } from './verbs/lead.ts';
 import { applyNarrows } from './verbs/narrow.ts';
 import { deadEnrichMints, withoutDeadNames } from './wire/dead-mints.ts';
@@ -28,7 +30,7 @@ import type { LiftName } from './wire/lift-names.ts';
 import type { OptionsConfig } from './wire/options-block.ts';
 import {
 	authoredFieldSites,
-	authoredGroupBodies,
+	evaluatedConfig,
 	layerSymbols,
 	namedSymbols,
 	protectedWireRuleNames,
@@ -36,6 +38,7 @@ import {
 	unmatchedGroupPatterns,
 	wireImpl,
 	type EditsCheck,
+	type EvaluatedConfig,
 	type IsShaped,
 	type OptionsCheck,
 	type WireConfig,
@@ -98,6 +101,7 @@ export interface LayerCtx extends VerbCtx {
 	readonly protectedNames: readonly string[];
 	readonly rules: Record<string, Rule>;
 	readonly symbols: Record<string, unknown>;
+	readonly stageBases: StageBases | undefined;
 }
 
 interface LayerHandle {
@@ -152,10 +156,6 @@ function copyProperties(target: object, source: object, skip: ReadonlySet<Proper
 		const enumerable = Object.getOwnPropertyDescriptor(source, key)!.enumerable;
 		Object.defineProperty(target, key, { value: Reflect.get(source, key), writable: true, enumerable, configurable: true });
 	}
-}
-
-function completePendingRecords(pending: PendingBase, records: LayerRecords): void {
-	copyProperties(pending.grammar, records, new Set());
 }
 
 function completePendingBase(pending: PendingBase, completed: GrammarResult): void {
@@ -249,13 +249,14 @@ interface IntakeCtx {
 	readonly name: string;
 	readonly inherited: LayerRecord | undefined;
 	readonly diagnostics: GrammarDiagnostic[];
+	readonly declared: EvaluatedConfig;
 }
 
 function intake(source: GrammarResult, ctx: IntakeCtx): GrammarResult {
 	const { config, inherited } = ctx;
 	if (inherited === undefined)
 		return enrich(source, {
-			groupBodies: authoredGroupBodies(config.groups),
+			groupBodies: ctx.declared.patterns.filter((pattern) => pattern.section === 'groups').map((pattern) => pattern.body),
 			extras: config.extras,
 			fieldSites: authoredFieldSites(config.edits)
 		}) as unknown as GrammarResult;
@@ -284,15 +285,20 @@ function wireConfigOf(config: LayerConfig, ctx: Pick<IntakeCtx, 'name' | 'inheri
 export function runLayerPass(base: PendingBase<unknown>, config: LayerConfig): LayerOutput {
 	const handle = handleOf(base.grammar.externals);
 	if (handle?.pending !== base) throw new Error(`runLayerPass(): the base is not a pending base enrich() made`);
-	const { source } = handle;
+	const { result, roles } = withRoleScope(() => evaluatedLayer(base, handle.source, config));
+	return completeLayer(result.evaluated, result.ctx, roles);
+}
+
+function evaluatedLayer(base: PendingBase<unknown>, source: GrammarResult, config: LayerConfig): { readonly evaluated: Omit<LayerLists, 'conflicts'>; readonly ctx: LayerCtx } {
 	const inherited = layerRecordOf(source);
 	const name = config.name ?? source.grammar.name;
 	const diagnostics = [...(inherited?.diagnostics ?? [])];
-	const completed = intake(source, { config, name, inherited, diagnostics });
+	const declared = evaluatedConfig(config);
+	const completed = intake(source, { config, name, inherited, diagnostics, declared });
 	completePendingBase(base, completed);
 	const depth = (inherited?.depth ?? 0) + 1;
 	const layer: WireLayer = { name, depth, diagnostics, narrows: [], leads: [] };
-	const wired = wireImpl(wireConfigOf(config, { name, inherited }), completed, source, layer);
+	const wired = wireImpl(wireConfigOf(config, { name, inherited }), completed, source, layer, declared);
 	const wire = wired.__wireContext__!;
 	const anyName = layerSymbols();
 	const externals = wired.externals!.call(anyName, anyName, completed.grammar.externals as unknown[]);
@@ -314,14 +320,17 @@ export function runLayerPass(base: PendingBase<unknown>, config: LayerConfig): L
 		resolutions: inherited?.resolutions ?? config.resolutions ?? EMPTY_CONFLICT_RESOLUTIONS,
 		conflictsAuthored: (inherited?.derivationRecords.conflictsAuthored ?? false) || config.conflicts !== undefined,
 		wire,
-		protectedNames: protectedWireRuleNames(wired),
-		symbols
+		protectedNames: protectedWireRuleNames(wire),
+		symbols,
+		stageBases: inherited?.stageBases ?? (departsFromBase(wire, config) ? { name, raw: source, enriched: completed, inherited } : undefined)
 	};
 	applyNarrows(layer.narrows, ctx);
 	applyLeads(layer.leads, ctx);
-	const output = completeLayer(evaluated, ctx);
-	completePendingRecords(base, output.record.records);
-	return output;
+	return { evaluated, ctx };
+}
+
+function departsFromBase(wire: WireContext, config: LayerConfig): boolean {
+	return wire.authoredRuleNames.size > 0 || Object.keys(config.edits ?? {}).length > 0;
 }
 
 function layerView(name: string, rules: Record<string, Rule>, evaluated: Omit<LayerLists, 'conflicts'>, base: GrammarResult): GrammarRecord {
@@ -384,7 +393,7 @@ function layerConflicts(ctx: LayerCtx): readonly (readonly unknown[])[] {
 	return [...given, ...own];
 }
 
-function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx): LayerOutput {
+function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx, roles: ReadonlyMap<string, ExternalRole>): LayerOutput {
 	const { rules, wire, depth } = ctx;
 	const projections = ctx.inherited === undefined ? undefined : appendProvenance(ctx.inherited.projections, provenanceOf(ctx.effects, rules));
 	const view = { grammar: { ...ctx.grammar, rules, supertypes: ctx.lists.supertypes, inline: ctx.lists.inline } };
@@ -395,7 +404,13 @@ function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx):
 	const deadMints = new Set([...(ctx.inherited?.deadMints ?? []), ...dead]);
 	const liftNames = new Map<string, LiftName>([...(ctx.inherited?.liftNames ?? []), ...wire.liftNames]);
 	const sections = resolutionSections(ctx.resolutions);
-	wire.bodyPatternZeroMatches = unmatchedGroupPatterns(rules, baseRulesOf(ctx.base) ?? {}, wire);
+	const supertypes = withoutDeadNames(ctx.lists.supertypes, dead) as readonly unknown[];
+	const baseRules = baseRulesOf(ctx.base) ?? {};
+	const start = Object.keys(rules)[0];
+	const bodies = new Map<string, unknown>();
+	for (const [name, body] of wire.evaluatedBodies!) bodies.set(name, name === start || dead.has(name) || isRecord(body) ? rules[name] : body);
+	for (const name of ctx.created) if (!bodies.has(name)) bodies.set(name, rules[name]);
+	const own = ownRecordsOf(wire, { supertypes: [...symbolNamesOf(supertypes)], roles, unmatchedGroups: unmatchedGroupPatterns(rules, baseRules, wire) });
 	const record: LayerRecord = {
 		depth,
 		upstream: ctx.upstream,
@@ -405,7 +420,10 @@ function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx):
 		textTokens: [...getEnrichTextTokens(ctx.base).keys()].filter((name) => !deadMints.has(name)),
 		liftNames,
 		effects: [...(ctx.inherited?.effects ?? []), ...ctx.effects],
-		records: ctx.inherited === undefined ? {} : rewriteInherited(recordsOf(ctx.base.grammar), { effects: ctx.effects, rules }),
+		records: mergedRecords(ctx.inherited === undefined ? undefined : rewriteInherited(ctx.inherited.records, { effects: ctx.effects, rules }), own),
+		synthesized: [...(ctx.inherited?.synthesized ?? []), ...synthesizedOf(new Set([...Object.keys(baseRules), ...bodies.keys()]).size, own)],
+		automaticVariants: wire.automaticVariants,
+		stageBases: ctx.stageBases,
 		projections,
 		derivationRecords: derivationRecordsOf(rules, {
 			upstream: ctx.upstream,
@@ -414,10 +432,6 @@ function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx):
 		}),
 		diagnostics: ctx.diagnostics
 	};
-	const start = Object.keys(rules)[0];
-	const bodies = new Map<string, unknown>();
-	for (const [name, body] of wire.evaluatedBodies!) bodies.set(name, name === start || dead.has(name) || isRecord(body) ? rules[name] : body);
-	for (const name of ctx.created) if (!bodies.has(name)) bodies.set(name, rules[name]);
 	if (start !== undefined) bodies.set(start, withLayerRecord(rules[start]!, record));
 	return {
 		name: ctx.name,
@@ -426,9 +440,55 @@ function completeLayer(evaluated: Omit<LayerLists, 'conflicts'>, ctx: LayerCtx):
 			...evaluated,
 			conflicts: layerConflicts(ctx),
 			inline: withoutDeadNames(ctx.lists.inline, dead) as readonly unknown[],
-			supertypes: withoutDeadNames(ctx.lists.supertypes, dead) as readonly unknown[]
+			supertypes
 		},
 		record,
 		wire
 	};
+}
+
+export interface OwnRecordFacts {
+	readonly supertypes: readonly string[];
+	readonly roles: ReadonlyMap<string, ExternalRole>;
+	readonly unmatchedGroups: readonly string[];
+}
+
+export function ownRecordsOf(wire: WireContext, facts: OwnRecordFacts): LayerRecords {
+	const undeclaredRules = [...wire.undeclaredRules].sort();
+	const patchSites = [...wire.patchSites]
+		.sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+		.map(([key, site]) => {
+			const lifts = wire.liftClaims.get(key);
+			return lifts === undefined ? site : { ...site, lifts: [...lifts].sort() };
+		});
+	const groups = Object.entries(wire.groups ?? {}).filter((entry): entry is [string, Record<string, string>] => entry[1] !== undefined && typeof entry[1] !== 'function');
+	return {
+		options: nonEmpty(wire.options),
+		groups: nonEmpty(Object.fromEntries(groups)),
+		renderAs: normalizedBodies(wire.renderAs),
+		visibleExternals: normalizedBodies(wire.visibleExternals),
+		reparseHosts: wire.reparseHosts,
+		refineForms: wire.refineForms.size === 0 ? undefined : new Map(wire.refineForms),
+		ruleCauses: wire.ruleCauses.size === 0 ? undefined : Object.fromEntries(wire.ruleCauses),
+		undeclaredRules: undeclaredRules.length === 0 ? undefined : undeclaredRules,
+		patchSites: patchSites.length === 0 ? undefined : patchSites,
+		externalRoles: facts.roles.size === 0 ? undefined : new Map(facts.roles),
+		expectDiagnostics: definedEntries(wire.expectDiagnostics),
+		expectTestFailures: definedEntries(wire.expectTestFailures),
+		protectedRuleNames: [...protectedWireRuleNames(wire), ...facts.supertypes],
+		whitespaceCollisions: wire.whitespaceCollisions?.length ? wire.whitespaceCollisions : undefined,
+		bodyPatternZeroMatches: facts.unmatchedGroups.length === 0 ? undefined : facts.unmatchedGroups
+	};
+}
+
+function nonEmpty<T extends object>(value: T | undefined): T | undefined {
+	return value === undefined || Object.keys(value).length === 0 ? undefined : value;
+}
+
+function definedEntries<V>(entries: Partial<Record<string, V>> | undefined): Record<string, V> | undefined {
+	return nonEmpty(Object.fromEntries(Object.entries(entries ?? {}).filter((entry): entry is [string, V] => entry[1] !== undefined)));
+}
+
+function normalizedBodies(bodies: Readonly<Record<string, unknown>> | undefined): Record<string, Rule> | undefined {
+	return nonEmpty(Object.fromEntries(Object.entries(bodies ?? {}).map(([name, body]) => [name, normalizedBody(body, name)])));
 }
