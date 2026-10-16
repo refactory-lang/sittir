@@ -133,7 +133,7 @@ impl LineTable {
         let row = point.row as usize;
         let start = *self.starts.get(row)?;
         let row_end = self.starts.get(row + 1).map_or(self.len, |next| *next - 1);
-        let byte = start + point.column;
+        let byte = start.checked_add(point.column)?;
         (byte <= row_end).then_some(byte)
     }
 }
@@ -186,6 +186,12 @@ mod tests {
         let trailing = LineTable::new("ab\n");
         assert_eq!(trailing.point(3), Some(p(1, 0)));
         assert_eq!(trailing.byte(p(1, 0)), Some(3));
+    }
+
+    #[test]
+    fn a_column_past_the_offset_width_names_no_byte() {
+        let lines = LineTable::new("\na");
+        assert_eq!(lines.byte(p(1, u32::MAX)), None);
     }
 
     #[test]
