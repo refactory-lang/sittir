@@ -523,9 +523,17 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 - Test: the snapshots. Every key of every grammar's evaluated grammar is unchanged.
 - Test (Review Focus 4, a layer's own records): over a fixture chain, a `field()` entry in layer 1 leaves layer 1's own `options` as written, while the same entry in layer 2 rewrites the inherited option path. Both are read from the evaluated grammar.
 
-- [ ] **Step 1:** Write the own-records test and confirm it fails. Implement, then run `tool output-gate --check-snapshot`. Every snapshot is equal.
-- [ ] **Step 2: Each config callback once** (spec §1.3). With the drains gone, wire's readers of `groups`, `visibleExternals` and `renderAs` take what its entry evaluated, so each callback runs once per evaluation. Extend `layer.test.ts`'s spy test to the three.
-- [ ] **Step 3:** Run the suite and the stage gate. Commit.
+- [x] **Step 1:** Write the own-records test and confirm it fails. Implement, then run `tool output-gate --check-snapshot`. Every snapshot is equal.
+- [x] **Step 2: Each config callback once** (spec §1.3). With the drains gone, wire's readers of `groups`, `visibleExternals` and `renderAs` take what its entry evaluated, so each callback runs once per evaluation. Extend `layer.test.ts`'s spy test to the three.
+- [x] **Step 3:** Run the suite and the stage gate. Commit.
+  - **Landed:** f5a24a318 on `feat/authoring-dsl`. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - **The own-records test** existed, reading the runtime's result, which carried the drained records. It now reads the evaluated grammar (`evaluatedGrammarOf`, the half of `importAndExtractGrammar` after the import) and the layer record, whose records were empty at depth 1, which made it fail first.
+    - **The record holds every record.** `completeLayer` merges the layer's own records (`ownRecordsOf`, read off the wire context as the drains read it) over the inherited ones, rewritten through its effects, through one typed table (`RECORD_MERGES`). The pass opens its own role scope, so `externalRoles` is a record too. `completePendingRecords` and `recordsOf` go.
+    - **Render bodies keep their place.** `grammarFn` injected a layer's `renderAs` and `visibleExternals` bodies after its rules, and the layer above took them as base rules. Evaluate now inserts each layer's bodies after the rules its runtime held, which the record states (`synthesized`). Appending them all at the end moved rust's and typescript's render modules.
+    - **The stages leave the records.** The first departing layer records the stage bases (`StageBases`), which the layers above inherit unchanged, and evaluate evaluates the stages from them, so the tree-sitter run never does. `stages` leaves `LayerRecords` and `RECORD_RENAMES`, which keeps the ruling that no rename rewrites them.
+    - **The record also carries** the top layer's automatic-variant record, which `grammarFn` read off the wire context.
+    - **Each callback once** needed the layer pass, not wire's entry, to evaluate `groups:`, since intake reads the bodies before wire exists: `evaluatedConfig` evaluates `groups:`, `injects:`, `renderAs:` and `visibleExternals:` once, with the runtime's symbols, and every reader takes its values. A group mint refuses an unknown name when its body joins the rules, as the entry's evaluation did.
+    - **Fixture grammars use the authoring entry.** Two fixtures that evaluate's tests load were written with `wire.ts`'s internal two-argument `wire(config, base)`, which skips the layer pass, so their records no longer reached evaluate. They become `grammar(enrich(base), wire({ … }))`. Their enriched stage now holds enrich's `_layout` supertype, since the internal entry never ran enrich.
 
 ### Task 2.3: `injects:` and the record form of `groups:` go
 
