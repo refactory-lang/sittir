@@ -603,6 +603,9 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
 
 - [ ] **Step 1:** Test that an inline `edit` records the same patch sites and effects as the same entry in `edits`.
 - [ ] **Step 2:** Implement, migrate python, and run the gate. Commit.
+  - **Landed:** 9ef77c098 on `feat/authoring-dsl`. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal; python's migrated layer is byte-neutral. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - `edit` is exported from `dsl-authoring.ts`, as the typed view of `transform`, so `transform.ts` is unchanged. The public DSL module exports `edit` in place of `transform`.
+    - The test compares an inline `edit` with the `edits` entry for each path segment form in a bindings layer, so the projected effects are compared as well as the body and the patch sites.
 
 ### Task 4.2: `replace`, and the replacing function
 
