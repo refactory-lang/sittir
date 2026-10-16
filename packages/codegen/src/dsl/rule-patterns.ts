@@ -325,9 +325,14 @@ function flattenSeqMembers(members: unknown[]): unknown[] {
 	return out;
 }
 
+export function throughEnrichedField(rule: unknown): unknown {
+	const r = rule as { type?: unknown; content?: unknown; metadata?: { fieldSource?: string } } | null | undefined;
+	return typeof r?.type === 'string' && isFieldType(r.type) && r.metadata?.fieldSource === 'enriched' ? r.content : rule;
+}
+
 function seqHasTopLevelRepeat(members: unknown[]): boolean {
 	for (const m of flattenSeqMembers(members)) {
-		const core = unwrapPrec(m);
+		const core = unwrapPrec(throughEnrichedField(unwrapPrec(m)));
 		if (!core || typeof core !== 'object') continue;
 		const ct = (core as Record<string, unknown>).type;
 		if (typeof ct === 'string' && isRepeatLike(ct)) return true;
@@ -374,7 +379,7 @@ function seqHasGenuineSeparatorVariability(members: unknown[], symbols: SymbolSo
 	const flat = flattenSeqMembers(members);
 	const repeatMembers: RuntimeRule[] = [];
 	for (const m of flat) {
-		const core = unwrapPrec(m);
+		const core = unwrapPrec(throughEnrichedField(unwrapPrec(m)));
 		if (!core || typeof core !== 'object') continue;
 		const ct = (core as Record<string, unknown>).type;
 		if (typeof ct !== 'string' || !isRepeatLike(ct)) continue;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { hiddenChoiceClass, mapTerminatedListElements, separatedListBodyInfo, separatorOf, rulesEqual } from '../rule-patterns.ts';
+import { hiddenChoiceClass, mapTerminatedListElements, separatedListBodyInfo, separatorOf, rulesEqual, throughEnrichedField } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
 
 const symbols = predictedSymbolSourceOf({
@@ -300,5 +300,22 @@ describe('hiddenChoiceClass', () => {
 		const none = (): undefined => undefined;
 		expect(hiddenChoiceClass(resolved, none, false)).toBe('supertype');
 		expect(hiddenChoiceClass(wrapped, none, false)).toBe('supertype');
+	});
+});
+
+describe('throughEnrichedField', () => {
+	it('reads an enriched field through to its content', () => {
+		const content = { type: 'SYMBOL', name: 'item' };
+		expect(throughEnrichedField({ type: 'FIELD', name: 'item', content, metadata: { fieldSource: 'enriched' } })).toBe(content);
+	});
+
+	it('reads an authored field as itself', () => {
+		const authored = { type: 'FIELD', name: 'item', content: { type: 'SYMBOL', name: 'item' } };
+		expect(throughEnrichedField(authored)).toBe(authored);
+	});
+
+	it('reads a non-field rule as itself', () => {
+		const rule = { type: 'SYMBOL', name: 'item' };
+		expect(throughEnrichedField(rule)).toBe(rule);
 	});
 });

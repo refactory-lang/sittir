@@ -79,6 +79,7 @@ import {
 	armsDifferOnlyByLiteralChoice,
 	selfReferentialFoldOf,
 	type SeparatedListBodyInfo,
+	throughEnrichedField,
 	throughPrec,
 	type SymbolSource,
 	ruleKey,
@@ -1414,7 +1415,11 @@ function countSymbolsInRepeat(
 	if (!node) return;
 	const t = (node as { type?: string }).type;
 	if (!t) return;
-	if (isFieldType(t)) return;
+	if (isFieldType(t)) {
+		const content = throughEnrichedField(node);
+		if (content !== node) countSymbolsInRepeat(content as Rule, kindCounts, inRepeat);
+		return;
+	}
 	if (t === 'ALIAS') return;
 	if (isSymbolType(t)) {
 		if (!inRepeat) return;

@@ -266,6 +266,10 @@ not immediate.
  */
 ```
 
+An enriched field is not a boundary: the count descends into it (`rule-patterns.ts::throughEnrichedField`), so the
+`element` wrap enrich gives a separated list's items later in the run does not hide them from a second run, and a
+re-run disqualifies the same bare symbols the first run did.
+
 #### body
 
 ```text
@@ -4187,6 +4191,18 @@ has its separator); asking the form directly does. This is what makes
 optional head-form list does. The rest of the predicate is described under its
 earlier home, `dsl/group-classify.ts::isInlineSafe`.
 
+A repeat inside an enriched field is still a top-level repeat (`throughEnrichedField`): the `elements` field enrich
+puts around a repeat of promoted keywords later in the run leaves a seq inline-safe on a second run, as it was on the
+first.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::throughEnrichedField`
+
+The content of a field enrich placed (`fieldSource: 'enriched'`), or the rule itself. Enrich's detectors read through
+it where a wrap enrich adds later in the run would otherwise change what they see: the top-level repeats of an
+inline-safe seq (`isInlineSafe`) and the repeated occurrences that keep a bare symbol unfielded
+(`enrich.ts::countSymbolsInRepeat`). Enrich re-run over its own output therefore detects what it detected the first
+time. An authored field stays a boundary.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::terminatedListOf`
 
 The one recognizer of the `terminated` list form, in either spelling
@@ -6390,8 +6406,9 @@ Gives every display name one parser identity. A display is overloaded when named
 different parser classes under it. Each storage is keyed by its symbol, or by its content when inline, and marked
 terminal when tree-sitter would give it a token (`SymbolSource.isTerminal`; an inlined symbol is judged by its body).
 
-- Display that is a rule of its own: sites over the rule itself stay. When the display rule is terminal, terminal
-  storages stay too — tree-sitter reuses the display's symbol for them (a keyword aliased to `identifier` is
+- Display that is a rule of its own: sites over the rule itself stay. When the display rule is terminal, by its catalog
+  row or by its body (a choice whose every arm is terminal, which is what the token-choice hoist leaves of a
+  `token(choice(…))`, so the judgement is the same before and after the hoist), terminal storages stay too — tree-sitter reuses the display's symbol for them (a keyword aliased to `identifier` is
   `sym_identifier`). Every other storage is split off.
 - Display with no rule: two or more nonterminal storages are all split; a single nonterminal among terminals is
   split unless its stripped name is the display, in which case the terminals' aliases are dropped instead.

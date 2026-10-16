@@ -28,6 +28,14 @@ describe('unaliasOverloadedDisplays', () => {
 		expect(run(rules, ['_reserved'])).toBe(rules);
 	});
 
+	it('keeps a terminal storage aliased onto a display rule of token choices', () => {
+		const rules = {
+			program: choice(alias(S('signed'), 'primitive_type'), sym('primitive_type')),
+			primitive_type: choice({ type: 'TOKEN', content: S('int') } as R, { type: 'TOKEN', content: S('char') } as R)
+		};
+		expect(run(rules)).toBe(rules);
+	});
+
 	it('renames a hidden nonterminal aliased onto a nonterminal display rule', () => {
 		const rules = {
 			program: seq(sym('tree'), alias(sym('_delim'), 'tree')),
