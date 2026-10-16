@@ -540,7 +540,11 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 **Files:**
 - Modify: `packages/codegen/src/dsl/wire/wire.ts` (`WireConfig.injects`, the record arm of `GroupsConfigValue`, and the inject branch of `declaredPatterns`), `packages/codegen/src/compiler/types.ts` (`groups` holds function entries only)
 
-- [ ] **Step 1:** Confirm with Infigraph `search` that no grammar file or test fixture uses `injects:` or a record-valued `groups:` entry. Delete, run the suite and the stage gate, then commit.
+- [x] **Step 1:** Confirm with Infigraph `search` that no grammar file or test fixture uses `injects:` or a record-valued `groups:` entry. Delete, run the suite and the stage gate, then commit.
+  - **Landed:** 02b582c36 on `feat/authoring-dsl`. The search found the two forms only in their own unit tests. Against the 913f2cfec reference, the output gate and the snapshots match with no exceptions, and the rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite (its 6 timeouts under load pass alone) and the cargo gates are green. Where it differs from the step above:
+    - **`RawGrammar.groups` goes** rather than narrowing to function entries: it only ever held the record form, since the function form never leaves wire. Its one reader, link's group lift (`applyGroupOverrides` and its helpers), goes with it, as do the `groups` record, its rename and merge entries, the `groups-config-invalid` code and `types/rule.ts`'s `replaceAtPath`.
+    - **A hidden pattern is an authored hidden rule.** `declaredPatterns` refuses a hidden `groups:` key by naming `rules:`. `wire-injects.test.ts` becomes `wire-patterns.test.ts`, with its hidden inject case written as an authored hidden rule.
+    - **The surfacing test moves to refine.** The removed `groups-config-invalid` case was the one test of a link config issue reaching the grammar diagnostics; it now does so with an unresolvable refine form.
 
 ---
 
