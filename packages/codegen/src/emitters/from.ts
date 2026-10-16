@@ -69,7 +69,6 @@ import {
 	fieldElementType,
 	childElementType,
 	kindEnumMemberDiscriminants,
-	kindEnumTextMapExpr,
 	keywordArmTextMapExpr,
 	delimiterMembersFor,
 	listHasOptions,
@@ -78,7 +77,9 @@ import {
 	listOptionKeys,
 	listSpreadTarget,
 	leadingOptionsSplit,
-	leafReDeclaration
+	leafReDeclaration,
+	slotStorageCoercion,
+	storageCallExpr
 } from './factories.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import {
@@ -155,7 +156,7 @@ function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEnt
 	}
 	lines.push(DELIMITER_IMPORT);
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
-	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind, isNodeValue } from '@sittir/common/utils';");
+	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind, isNodeValue, listStorage } from '@sittir/common/utils';");
 	lines.push('');
 }
 
@@ -383,14 +384,7 @@ function emitBranchFrom(
 		const signature = `export function ${fieldResolverName(typeName, f)}(value: ${valueType}): Admit<T.${typeName}[${JSON.stringify(f.storageKey)}]> {`;
 		if (needsNonEmptyHoist(f, nodeMap)) {
 			const storageKeyExpr = JSON.stringify(f.storageKey);
-			lines.push(
-				signature,
-				`  const resolved: readonly Admit<T.${typeName}[${storageKeyExpr}][number]>[] = ${body};`,
-				`  _assertNonEmpty(resolved, '${node.kind}.${f.propertyName}');`,
-				'  return resolved;',
-				'}',
-				''
-			);
+			lines.push(signature, `  return ${body} as Admit<T.${typeName}[${storageKeyExpr}]>;`, '}', '');
 		} else {
 			const shape = numericSlotShape(f);
 			const numeric = shape === undefined ? body : `${numberInputTest(shape, 'value')} ? numberText(${numberTextArgs(shape)}, value) : ${body}`;
@@ -483,14 +477,6 @@ function emitBranchFrom(
 				`  const _cfg = (typeof input === 'string'${bareShape === undefined ? '' : ` || ${numberInputTest(bareShape, 'input')}`} ? { ${bareContent.configKey}: input } : input) as T.${typeName}.LooseConfig;`
 			);
 		}
-		const neName = (f: AssembledNonterminal) => `_ne_${f.propertyName}`;
-		for (const f of slots) {
-			if (needsNonEmptyHoist(f, nodeMap) && !resolverFor.has(f.propertyName)) {
-				const call = fieldValue(f, `${cfg}${inputOptional ? '?' : ''}.${f.configKey}`);
-				lines.push(`  const ${neName(f)} = ${call};`);
-				lines.push(`  _assertNonEmpty(${neName(f)}, '${node.kind}.${f.propertyName}');`);
-			}
-		}
 		if (canDirectFactoryCall) {
 			const soleGuard = interiorSlotGuards(node.kind, node).find((guard) => guard.slot === soleField.name);
 			if (fullForm !== undefined && spelled.length > 0) {
@@ -526,30 +512,14 @@ function emitBranchFrom(
 			);
 			const call = soleShape === undefined ? resolved : `(${numberInputTest(soleShape, '_value')} ? _value : ${resolved})`;
 			const directDefault = emptyDefaultOf(soleField, nodeMap, kindEntries, 'F.');
-			const guardedCall = directDefault
-				? `${call} ?? ${directDefault}`
-				: isRequired(soleField)
-					? `_requireField(${JSON.stringify(node.kind)}, ${JSON.stringify(soleField.configKey)}, ${call})`
-					: call;
+			const guardedCall = directDefault ? `${call} ?? ${directDefault}` : call;
 			lines.push(`  return ${factory}(${guardedCall}${callOptions})${spelledType === undefined ? '' : ` as ${spelledType}`};`);
 		} else {
 			lines.push(`  return ${factory}({`);
 			for (const f of slots) {
-				if (needsNonEmptyHoist(f, nodeMap) && !resolverFor.has(f.propertyName)) {
-					lines.push(`    ${f.configKey}: ${neName(f)},`);
-				} else {
-					const call = fieldValue(f, `${cfg}${inputOptional ? '?' : ''}.${f.configKey}`);
-					const emptyDefault = emptyDefaultOf(f, nodeMap, kindEntries, 'F.');
-					if (emptyDefault) {
-						lines.push(`    ${f.configKey}: ${call} ?? ${emptyDefault},`);
-					} else if (isRequired(f)) {
-						lines.push(
-							`    ${f.configKey}: _requireField(${JSON.stringify(node.kind)}, ${JSON.stringify(f.configKey)}, ${call}),`
-						);
-					} else {
-						lines.push(`    ${f.configKey}: ${call},`);
-					}
-				}
+				const call = fieldValue(f, `${cfg}${inputOptional ? '?' : ''}.${f.configKey}`);
+				const emptyDefault = emptyDefaultOf(f, nodeMap, kindEntries, 'F.');
+				lines.push(`    ${f.configKey}: ${emptyDefault ? `${call} ?? ${emptyDefault}` : call},`);
 			}
 			lines.push(`  }${optionsArg});`);
 		}
@@ -1076,15 +1046,10 @@ function storedFieldCall(
 					elementType,
 					defaultArmKindOf(field, nodeMap)
 				);
-	if (storageInfo?.kind === 'kindEnum') {
-		const table = kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap, kindEntries);
-		return `coerceKindEnumStorage(_resolveKindEnumScalar(${prop}, () => ${baseCall}), ${table})`;
-	}
-	if (storageInfo?.kind === 'mixedEnum') {
-		const table = kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap, kindEntries);
-		return `coerceMixedEnumStorage(_resolveKindEnum(${prop}, () => ${baseCall}), ${table})`;
-	}
-	return baseCall;
+	if (storageInfo?.kind !== 'kindEnum' && storageInfo?.kind !== 'mixedEnum') return baseCall;
+	const coercion = slotStorageCoercion(field as AssembledNonterminal, nodeMap, kindEntries, true, storageInfo);
+	const resolved = storageInfo.kind === 'kindEnum' ? `_resolveKindEnumScalar(${prop}, () => ${baseCall})` : `_resolveKindEnum(${prop}, () => ${baseCall})`;
+	return storageCallExpr(resolved, coercion, fieldMultiple);
 }
 
 function keywordPresenceResolverCall(
@@ -1441,32 +1406,12 @@ function emitResolveOneHelper(lines: string[], resolvesScalars: boolean): void {
 	lines.push('');
 }
 
-function emitAssertNonEmptyHelper(lines: string[]): void {
-	lines.push('function _assertNonEmpty<T>(');
-	lines.push('  arr: readonly T[],');
-	lines.push('  label: string,');
-	lines.push('): asserts arr is readonly [T, ...(readonly T[])] {');
-	lines.push('  if (arr.length === 0) {');
-	lines.push('    throw new Error(`${label}: requires at least one element`);');
-	lines.push('  }');
-	lines.push('}');
-}
-
 function emitLooseConfigGuard(lines: string[]): void {
 	lines.push('/** Narrows a coercer input to its config arm. A bare `isNodeValue` check');
 	lines.push(' *  cannot: the UntypedNode arm is not a strict subtype of the config arm, so');
 	lines.push(' *  negative narrowing leaves it in place. */');
 	lines.push('function _isLooseConfig<C>(v: C | AnyUntypedNode): v is C {');
 	lines.push('  return !isNodeValue(v);');
-	lines.push('}');
-}
-
-function emitRequireFieldHelper(lines: string[]): void {
-	lines.push('function _requireField<T>(kind: string, slot: string, v: T | undefined | null): T {');
-	lines.push('  if (v === undefined || v === null) {');
-	lines.push("    throw new Error(`Missing required slot '${slot}' on ${kind}.from()`);");
-	lines.push('  }');
-	lines.push('  return v;');
 	lines.push('}');
 }
 
@@ -1876,10 +1821,7 @@ function emitResolverHelpers(
 	lines.push('}');
 	lines.push('');
 
-	emitAssertNonEmptyHelper(lines);
-	lines.push('');
 	emitLooseConfigGuard(lines);
-	emitRequireFieldHelper(lines);
 }
 
 export class FromEmitter implements CodegenEmitter<string> {
@@ -1991,6 +1933,6 @@ export class FromEmitter implements CodegenEmitter<string> {
 			}
 			return [l];
 		});
-		return pruneUnusedImports(pruned, ['Delimiter', ...TYPES_IMPORT_OPTIONAL]).join('\n');
+		return pruneUnusedImports(pruned, ['Delimiter', 'listStorage', ...TYPES_IMPORT_OPTIONAL]).join('\n');
 	}
 }

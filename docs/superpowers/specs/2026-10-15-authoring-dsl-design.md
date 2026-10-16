@@ -41,7 +41,7 @@ Maintainer, 2026-10-15:
   - `refine(forms)` as an entry;
   - `export const hash`;
   - `injects:` and the record form of `groups:` go.
-- **Order of work.** The first stage is gated byte-identical against the 2b head, 946114382. 2b waits for the rewrite.
+- **Order of work.** The first stage is gated byte-identical against the 2b head, 946114382, once wire's visible-externals rewrite is idempotent (§10). 2b waits for the rewrite.
 
 Carried forward unchanged:
 - One copy primitive serves splits, contextual aliases, literal splits and the receiver lead.
@@ -99,6 +99,12 @@ The externals callback is therefore the one point where a layer sees its base be
 - **Every other callback returns what the pass computed,** and evaluates nothing.
 
 The two halves share only that handle. No state is ambient: two layers evaluated in one process, or one layer evaluated twice, never share a pending base.
+
+**Guards.** The hook rests on the order in which tree-sitter's `dsl.js` calls the callbacks. That order is internal to tree-sitter, so a change to it must fail loudly, never skip the pass:
+- `options.rules` throws if it is read before the pass has run. The message names the tree-sitter version the order was verified against (0.26.9).
+- The handle is consumed once. The externals callback refuses a handle it has already consumed, so the pass cannot run twice.
+- `enrich(base)` refuses a base that carries a handle no pass consumed.
+- A test runs the pinned CLI over a fixture chain and asserts the pass ran once, before `$` was built. Bumping tree-sitter's version fails that test until the order is verified again.
 
 ### 1.3 One layer
 
@@ -199,6 +205,10 @@ Instead, a completed layer's result carries one non-enumerable **layer record**.
 - Both runtimes keep a rule callback's return value by identity: tree-sitter's `normalize` and sittir's `coerceToRule` return a rule object unchanged.
 - So the layer's callback for its start rule, the grammar's first rule, returns a fresh copy of that rule's body that carries the record under a symbol key. `layerRecordOf(result)` reads it there.
 - JSON serialization skips symbol keys, so `grammar.json` never sees the record. An upstream grammar has none.
+- **The pass owns the start rule's callback.**
+  - When `rules:` overrides the start rule, or an entry edits it, the pass evaluates both as it does for any rule. It then attaches the record to the final body.
+  - The pass returns every body already normalized. A bare string or pattern becomes its `STRING` or `PATTERN` object first, so the runtime keeps the object it is given.
+  - `rename` refuses the start rule (§3.3), so the first rule is always the start rule.
 
 | field | contents | across layers |
 | --- | --- | --- |
@@ -235,14 +245,22 @@ One table states what each effect rewrites. It replaces `renameGrammar`'s three 
 | `_labels` addresses | the segment | `(from)` segments | heads | by origin, below |
 | reparse hosts | — | — | keys, priority, gated | — |
 | render-as, visible externals, groups | — | — | keys | — |
+| rule causes, refine forms, external roles, test-failure expectations | — | — | keys | — |
+| protected and undeclared rule names, body-pattern zero matches | — | — | names | — |
+| diagnostic expectations | — | — | the kinds each code lists | — |
+| patch sites, whitespace collisions | — | — | each entry's owner kind or name | — |
+| stages | — | — | — | — |
 | supertypes, inline, factory-inline | — | — | names | a whole copy joins every list its source is in |
 | rule bodies, `word`, conflicts, precedences, reserved | — | — | names | — |
+
+A rename leaves the old name only as an unreachable blank rule (§3.3), so a fact still keyed to it would describe nothing. Every record that holds a kind name therefore follows the rename, as a key or as a name. The one exception is `stages`, the layer's evaluation snapshots, which stay as they were recorded.
 
 How a copy is treated depends on its origin:
 - **A path that enters a rule, or `copy()`.** The copy inherits its source's options and `_labels` entries, layout included, as split copies do today (`inheritSplitOptions`).
 - **`narrow`, or a `lead`.** The copy has a new shape and inherits nothing, as the lead's forms do today.
 
 **Projections.**
+- Only a layer that inherits a record projects. It appends its own effects' projections to the inherited ones, under today's presence rules: `splitFrom` and `bindingEffects` on every such layer, `leadFrom` only when a lead made a copy, and `renamedFrom` only when a rename exists. Layer 1 records its effects but projects nothing.
 - `splitFrom` maps each copy whose origin is a path or `copy()` to its source.
 - `leadFrom` maps each copy whose origin is a `lead` to its source.
 - `renamedFrom` maps each rename's target to its source. It is absent when the layer renames nothing.
@@ -380,7 +398,9 @@ The "parser" column says whether tree-sitter sees the edit, or only the model do
 
   **The alias check.** In a layer above the first, `alias` refuses a target the base already has, and an alias that flips hiddenness (`alias-target-invalid`).
   - The check reads the member's displayed name, so naming a copy of a visible kind with another visible name flips nothing.
-  - Over a completed grammar, such an alias is a merge or a hiddenness change, which the stage-2 merge rules handle.
+  - Over a completed grammar, such an alias is a merge or a hiddenness change.
+  - A merge the layer declares is a display family, not an overload. Enrich splits a display that a grammar overloads by accident; its detector (`unaliasOverloadedDisplays`) never matches a display family a layer declared. This narrows what the detector matches; it is not a skip set or a decline.
+  - The declared families, read from the layer's alias effects, are an input to enrich and to the completion check (§1.3), so a declared merge passes the fixpoint check.
   - Layer 1 is exempt, because it writes tree-sitter's own aliases.
   - Today this is `checkBindingPatches`, run on the bindings layer only.
 - **`variant`.**
@@ -401,15 +421,15 @@ The "parser" column says whether tree-sitter sees the edit, or only the model do
 - appends a rule `to` with the kind's body;
 - rewrites every reference to the kind, in every rule and in `word`, `extras`, `externals`, `inline`, `supertypes`, `conflicts`, `precedences` and `reserved`;
 - leaves the old name as an unreachable blank rule, as a dead enrich mint is left;
-- records the rename effect. The effect rewrites every inherited record that a kind name keys (§1.7) and gives `renamedFrom`.
+- records the rename effect. The effect rewrites every kind name an inherited record holds, as a key or as a name, except in `stages`, which stays as recorded (§1.7). It also gives `renamedFrom`.
 
 It is refused with `rename-invalid` when:
 - the source is not a rule or an external;
 - the source is the start rule, which must stay first;
 - the rename flips hiddenness;
-- the grammar already has the target name. That makes it a merge, which the stage-2 merge rules handle.
+- the grammar already has the target name. That makes it a merge, which an `alias` to the existing display declares (§3.2).
 
-No layer uses it yet. The derived kind renames stay data (§2.4), and the generator never writes a `rename` entry.
+No layer uses it yet. The derived kind renames stay data (§2.4), and the generator never writes a `rename` entry. Where `rename` is unused, which today is everywhere, it adds no rule, and `parser.c`'s symbol table is unchanged.
 
 ### 3.4 Declarations that are not edits
 
@@ -632,13 +652,14 @@ The `leadFrom` and `bindingEffects` projections read the same effects (§1.7). `
 - **The baseline.**
   - The rewrite branches from master, with the 2b head merged in.
   - Master has since changed 22 generated files, all downstream of the grammar: the packages' `api.ts`, `portable.ts`, `types.ts`, `utils.ts` and `node-model-portable.json5`, and the crates' `lib.rs`.
-  - So the baseline is recorded at that merge. Before it is recorded, the merge's grammar-level outputs are checked against 946114382's blobs: `grammar.json`, `parser.c`, `node-types.json`, `parser.wasm`, `resolutions.json` and the generated layers.
+  - So the baseline is recorded after that merge. Before it is recorded, the merge's grammar-level outputs are checked against 946114382's blobs: `grammar.json`, `parser.c`, `node-types.json`, `parser.wasm`, `resolutions.json` and the generated layers.
+  - It is recorded once wire's visible-externals rewrite is idempotent. At 946114382 the bindings layer wraps layer 1's aliases a second time, `alias(alias($._newline, newline), newline)`, which enrich cannot run over again. The idempotent rewrite collapses those aliases in `grammar.json` (python 10, rust 8, typescript 8), restores the whitespace factory entries the nesting had dropped, and moves only the grammar hashes in `resolutions.json`. `parser.c`, `node-types.json` and `parser.wasm` do not move.
 - **Generated files.** Every file in the baseline manifest matches its blob, except:
   - grammar.bindings.ts, which is rewritten as a layer;
   - `.sittir/grammar.js` for rust, typescript and python, which re-exports the top layer;
   - `grammar.json` for rust, typescript and python, which drops `splitFrom`, `leadFrom` and `bindingEffects`. The rest of `grammar.json`, and `parser.c`, `node-types.json` and `parser.wasm`, stay byte-identical.
 - **Validation rows.** `validate:native` rows equal the baseline's rows. Those are `reshape-gate-rows-946114382.txt`, unless the merge moved a row, and any moved row is reported before the baseline is accepted.
-- **Evaluated grammars.** Each layer's evaluated grammar, including the record's projections, deep-equals the baseline's. A snapshot is taken at the merge. Equality keeps both conflict sections reused.
+- **Evaluated grammars.** Each layer's evaluated grammar, including the record's projections, deep-equals the baseline's. A snapshot is taken at the baseline. Equality keeps both conflict sections reused.
 - **The standing gates:**
   - the full unit suite;
   - workspace type-check and lint;

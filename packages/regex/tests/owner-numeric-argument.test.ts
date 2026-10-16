@@ -4,6 +4,7 @@ import regex from '../src/index.ts';
 import { buildCountQuantifierGroup } from '../src/factories/raw.ts';
 
 const rx = await createEngine(regex);
+const verifying = await createEngine(regex, { verifyStructure: 'runtime' });
 
 describe('a strict builder whose one slot holds a numeric leaf', () => {
 	it('takes the built leaf', () => {
@@ -16,7 +17,9 @@ describe('a strict builder whose one slot holds a numeric leaf', () => {
 		const fromNumber = buildCountQuantifierGroup(3);
 		expect(() => rx.render(fromNumber as never).toString()).toThrow(/DecimalDigitsTransport renders from a node, not a kind id/);
 		// @ts-expect-error a bigint is not a built leaf
-		expect(() => buildCountQuantifierGroup(1n)).toThrow(/a strict factory takes a built node, not a bigint/);
+		expect(() => verifying.build.countQuantifier.strict({ content: 1n })).toThrow(
+			'CountQuantifier.content: a strict factory takes a built node, not a bigint; expected buildDecimalDigits(…), or use .coerce'
+		);
 	});
 
 	it('leaves the number to the loose entry', () => {

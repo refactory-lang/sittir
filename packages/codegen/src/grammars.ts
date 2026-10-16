@@ -91,6 +91,8 @@ export function upstreamPackage(name: GrammarName): string {
 	return `tree-sitter-${name}`;
 }
 
+export const UPSTREAM_WASM = 'upstream.wasm';
+
 export function packageRequire(pkg: Pick<GrammarPackage, 'dir'>): NodeJS.Require {
 	return createRequire(join(pkg.dir, 'package.json'));
 }

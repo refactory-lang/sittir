@@ -464,23 +464,11 @@ function _resolveBitflag<T>(v: _LooseFieldInput): T {
 	return v as T;
 }
 
-function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
-	if (arr.length === 0) {
-		throw new Error(`${label}: requires at least one element`);
-	}
-}
-
 /** Narrows a coercer input to its config arm. A bare `isNodeValue` check
  *  cannot: the UntypedNode arm is not a strict subtype of the config arm, so
  *  negative narrowing leaves it in place. */
 function _isLooseConfig<C>(v: C | AnyUntypedNode): v is C {
 	return !isNodeValue(v);
-}
-function _requireField<T>(kind: string, slot: string, v: T | undefined | null): T {
-	if (v === undefined || v === null) {
-		throw new Error(`Missing required slot '${slot}' on ${kind}.from()`);
-	}
-	return v;
 }
 
 // Interned resolver kind lists (dedup)
@@ -561,16 +549,12 @@ export function resolveEscapeSequence_content(
 export function coerceToEscapeSequence(input: T.EscapeSequence.Loose): ReturnType<typeof F.buildEscapeSequence> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequence>;
 	return F.buildEscapeSequence(
-		_requireField(
-			'escape_sequence',
-			'content',
-			_resolveOne<string>(
-				configFieldOr(input, 'content', () =>
-					typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequence_content) : input
-				),
-				_K0,
-				_K0
-			)
+		_resolveOne<string>(
+			configFieldOr(input, 'content', () =>
+				typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequence_content) : input
+			),
+			_K0,
+			_K0
 		)
 	);
 }
@@ -594,13 +578,9 @@ export function resolveCapture_name(value: T.Capture.LooseConfig['name']): Admit
 export function coerceToCapture(input: T.Capture.Loose): ReturnType<typeof F.buildCapture> {
 	if (isNodeOfKind(input, TSKindId.Capture)) return input as unknown as ReturnType<typeof F.buildCapture>;
 	return F.buildCapture(
-		_requireField(
-			'capture',
-			'name',
-			_resolveOneLeaf<T.ImmediateIdentifier>(
-				configFieldOr(input, 'name', () => (typeof input === 'string' ? spelledInterior(input, '@', '') : input)),
-				'_immediate_identifier'
-			)
+		_resolveOneLeaf<T.ImmediateIdentifier>(
+			configFieldOr(input, 'name', () => (typeof input === 'string' ? spelledInterior(input, '@', '') : input)),
+			'_immediate_identifier'
 		)
 	);
 }
@@ -714,24 +694,18 @@ export function resolveComment_content(value: T.Comment.LooseConfig['content']):
 export function coerceToComment(input: T.Comment.Loose): ReturnType<typeof F.buildComment> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildComment>;
 	return F.buildComment(
-		_requireField(
-			'comment',
-			'content',
-			_resolveOne<string>(
-				configFieldOr(input, 'content', () =>
-					typeof input === 'string' ? spelledInterior(input, ';', '', F._slotRe_buildComment_content) : input
-				),
-				_K0,
-				_K0
-			)
+		_resolveOne<string>(
+			configFieldOr(input, 'content', () =>
+				typeof input === 'string' ? spelledInterior(input, ';', '', F._slotRe_buildComment_content) : input
+			),
+			_K0,
+			_K0
 		)
 	);
 }
 
 export function resolveList_definitions(value: T.List.LooseConfig['definitions']): Admit<T.List['_definitions']> {
-	const resolved: readonly Admit<T.List['_definitions'][number]>[] = _resolveMany<T.Definition>(value, _K0, _K1);
-	_assertNonEmpty(resolved, 'list.definitions');
-	return resolved;
+	return _resolveMany<T.Definition>(value, _K0, _K1) as Admit<T.List['_definitions']>;
 }
 
 export function resolveList_elements(value: T.List.LooseConfig['elements']): Admit<T.List['_elements']> {
@@ -741,7 +715,7 @@ export function resolveList_elements(value: T.List.LooseConfig['elements']): Adm
 export function coerceToList(input: T.List.Loose): ReturnType<typeof F.buildList> {
 	if (!_isLooseConfig<T.List.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildList>;
 	return F.buildList({
-		definitions: _requireField('list', 'definitions', resolveList_definitions(input.definitions)),
+		definitions: resolveList_definitions(input.definitions),
 		elements: resolveList_elements(input.elements)
 	});
 }
@@ -749,12 +723,7 @@ export function coerceToList(input: T.List.Loose): ReturnType<typeof F.buildList
 export function resolveGrouping_groupingGroups(
 	value: T.Grouping.LooseConfig['groupingGroup']
 ): Admit<T.Grouping['_grouping_group']> {
-	const resolved: readonly Admit<T.Grouping['_grouping_group'][number]>[] = _resolveManyBranch<T.GroupingGroup>(
-		value,
-		'grouping_group'
-	);
-	_assertNonEmpty(resolved, 'grouping.groupingGroups');
-	return resolved;
+	return _resolveManyBranch<T.GroupingGroup>(value, 'grouping_group') as Admit<T.Grouping['_grouping_group']>;
 }
 
 export function resolveGrouping_elements(value: T.Grouping.LooseConfig['elements']): Admit<T.Grouping['_elements']> {
@@ -764,7 +733,7 @@ export function resolveGrouping_elements(value: T.Grouping.LooseConfig['elements
 export function coerceToGrouping(input: T.Grouping.Loose): ReturnType<typeof F.buildGrouping> {
 	if (!_isLooseConfig<T.Grouping.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildGrouping>;
 	return F.buildGrouping({
-		groupingGroup: _requireField('grouping', 'groupingGroup', resolveGrouping_groupingGroups(input.groupingGroup)),
+		groupingGroup: resolveGrouping_groupingGroups(input.groupingGroup),
 		elements: resolveGrouping_elements(input.elements)
 	});
 }
@@ -809,7 +778,7 @@ export function coerceToAnonymousNode(input: T.AnonymousNode.Loose): ReturnType<
 	if (!_isLooseConfig<T.AnonymousNode.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAnonymousNode>;
 	return F.buildAnonymousNode({
-		name: _requireField('anonymous_node', 'name', resolveAnonymousNode_name(input.name)),
+		name: resolveAnonymousNode_name(input.name),
 		elements: resolveAnonymousNode_elements(input.elements)
 	});
 }
@@ -830,8 +799,8 @@ export function coerceToFieldDefinition(input: T.FieldDefinition.Loose): ReturnT
 	if (!_isLooseConfig<T.FieldDefinition.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFieldDefinition>;
 	return F.buildFieldDefinition({
-		name: _requireField('field_definition', 'name', resolveFieldDefinition_name(input.name)),
-		definition: _requireField('field_definition', 'definition', resolveFieldDefinition_definition(input.definition))
+		name: resolveFieldDefinition_name(input.name),
+		definition: resolveFieldDefinition_definition(input.definition)
 	});
 }
 
@@ -844,13 +813,9 @@ export function resolveNegatedField_identifier(
 export function coerceToNegatedField(input: T.NegatedField.Loose): ReturnType<typeof F.buildNegatedField> {
 	if (isNodeOfKind(input, TSKindId.NegatedField)) return input as unknown as ReturnType<typeof F.buildNegatedField>;
 	return F.buildNegatedField(
-		_requireField(
-			'negated_field',
-			'identifier',
-			_resolveOneLeaf<T.Identifier>(
-				configFieldOr(input, 'identifier', () => (typeof input === 'string' ? spelledInterior(input, '!', '') : input)),
-				'identifier'
-			)
+		_resolveOneLeaf<T.Identifier>(
+			configFieldOr(input, 'identifier', () => (typeof input === 'string' ? spelledInterior(input, '!', '') : input)),
+			'identifier'
 		)
 	);
 }
@@ -882,9 +847,9 @@ export function resolvePredicate_parameters(
 export function coerceToPredicate(input: T.Predicate.Loose): ReturnType<typeof F.buildPredicate> {
 	if (!_isLooseConfig<T.Predicate.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildPredicate>;
 	return F.buildPredicate({
-		prefix: _requireField('predicate', 'prefix', resolvePredicate_prefix(input.prefix)),
-		name: _requireField('predicate', 'name', resolvePredicate_name(input.name)),
-		type: _requireField('predicate', 'type', resolvePredicate_type(input.type)),
+		prefix: resolvePredicate_prefix(input.prefix),
+		name: resolvePredicate_name(input.name),
+		type: resolvePredicate_type(input.type),
 		parameters: resolvePredicate_parameters(input.parameters)
 	});
 }
@@ -904,20 +869,16 @@ export function coerceToListElementQuantifier(
 	if (isNodeOfKind(input, TSKindId.ListElementQuantifier))
 		return input as unknown as ReturnType<typeof F.buildListElementQuantifier>;
 	return F.buildListElementQuantifier(
-		_requireField(
-			'list_element_quantifier',
-			'quantifier',
-			coerceKindEnumStorage(
-				_resolveKindEnumScalar(
-					configFieldOr(input, 'quantifier', () => input),
-					() =>
-						_resolveOneLeaf<'*' | '+' | '?'>(
-							configFieldOr(input, 'quantifier', () => input),
-							'quantifier'
-						)
-				),
-				[['*', TSKindId.Star] as const, ['+', TSKindId.Plus] as const, ['?', TSKindId.Qmark] as const]
-			)
+		coerceKindEnumStorage(
+			_resolveKindEnumScalar(
+				configFieldOr(input, 'quantifier', () => input),
+				() =>
+					_resolveOneLeaf<'*' | '+' | '?'>(
+						configFieldOr(input, 'quantifier', () => input),
+						'quantifier'
+					)
+			),
+			[['*', TSKindId.Star] as const, ['+', TSKindId.Plus] as const, ['?', TSKindId.Qmark] as const]
 		)
 	);
 }
@@ -940,8 +901,8 @@ export function coerceToGroupExpressionArm(
 	if (!_isLooseConfig<T.GroupExpressionArm.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildGroupExpressionArm>;
 	return F.buildGroupExpressionArm({
-		left: _requireField('group_expression_arm', 'left', resolveGroupExpressionArm_left(input.left)),
-		right: _requireField('group_expression_arm', 'right', resolveGroupExpressionArm_right(input.right))
+		left: resolveGroupExpressionArm_left(input.left),
+		right: resolveGroupExpressionArm_right(input.right)
 	});
 }
 
@@ -963,8 +924,8 @@ export function coerceToNamedNodeExpressionArm(
 	if (!_isLooseConfig<T.NamedNodeExpressionArm.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildNamedNodeExpressionArm>;
 	return F.buildNamedNodeExpressionArm({
-		left: _requireField('named_node_expression_arm', 'left', resolveNamedNodeExpressionArm_left(input.left)),
-		right: _requireField('named_node_expression_arm', 'right', resolveNamedNodeExpressionArm_right(input.right))
+		left: resolveNamedNodeExpressionArm_left(input.left),
+		right: resolveNamedNodeExpressionArm_right(input.right)
 	});
 }
 
@@ -984,11 +945,7 @@ export function coerceToGroupingGroup(input: T.GroupingGroup.Loose): ReturnType<
 	if (!_isLooseConfig<T.GroupingGroup.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildGroupingGroup>;
 	return F.buildGroupingGroup({
-		groupExpression: _requireField(
-			'grouping_group',
-			'groupExpression',
-			resolveGroupingGroup_groupExpression(input.groupExpression)
-		),
+		groupExpression: resolveGroupingGroup_groupExpression(input.groupExpression),
 		anchor: resolveGroupingGroup_anchor(input.anchor)
 	});
 }
@@ -1031,7 +988,7 @@ export function coerceToNamedNodePlain(input: T.NamedNodePlain.Loose): ReturnTyp
 	if (!_isLooseConfig<T.NamedNodePlain.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildNamedNodePlain>;
 	return F.buildNamedNodePlain({
-		name: _requireField('named_node_plain', 'name', resolveNamedNodePlain_name(input.name)),
+		name: resolveNamedNodePlain_name(input.name),
 		namedNodeGroup: resolveNamedNodePlain_namedNodeGroup(input.namedNodeGroup),
 		elements: resolveNamedNodePlain_elements(input.elements)
 	});
@@ -1067,12 +1024,8 @@ export function coerceToNamedNodeSupertyped(
 	if (!_isLooseConfig<T.NamedNodeSupertyped.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildNamedNodeSupertyped>;
 	return F.buildNamedNodeSupertyped({
-		supertype: _requireField(
-			'named_node_supertyped',
-			'supertype',
-			resolveNamedNodeSupertyped_supertype(input.supertype)
-		),
-		name: _requireField('named_node_supertyped', 'name', resolveNamedNodeSupertyped_name(input.name)),
+		supertype: resolveNamedNodeSupertyped_supertype(input.supertype),
+		name: resolveNamedNodeSupertyped_name(input.name),
 		namedNodeGroup: resolveNamedNodeSupertyped_namedNodeGroup(input.namedNodeGroup),
 		elements: resolveNamedNodeSupertyped_elements(input.elements)
 	});
@@ -1087,11 +1040,9 @@ export function resolveNamedNodeGroupChildren_anchor(
 export function resolveNamedNodeGroupChildren_namedNodeExpressions(
 	value: T.NamedNodeGroupChildren.LooseConfig['namedNodeExpressions']
 ): Admit<T.NamedNodeGroupChildren['_named_node_expressions']> {
-	const resolved: readonly Admit<T.NamedNodeGroupChildren['_named_node_expressions'][number]>[] = _resolveMany<
-		T.Definition | T.NegatedField | T.NamedNodeExpressionArm
-	>(value, _K0, _K7);
-	_assertNonEmpty(resolved, 'named_node_group_children.namedNodeExpressions');
-	return resolved;
+	return _resolveMany<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K7) as Admit<
+		T.NamedNodeGroupChildren['_named_node_expressions']
+	>;
 }
 
 export function coerceToNamedNodeGroupChildren(
@@ -1101,11 +1052,7 @@ export function coerceToNamedNodeGroupChildren(
 		return input as unknown as ReturnType<typeof F.buildNamedNodeGroupChildren>;
 	return F.buildNamedNodeGroupChildren({
 		anchor: resolveNamedNodeGroupChildren_anchor(input.anchor),
-		namedNodeExpressions: _requireField(
-			'named_node_group_children',
-			'namedNodeExpressions',
-			resolveNamedNodeGroupChildren_namedNodeExpressions(input.namedNodeExpressions)
-		)
+		namedNodeExpressions: resolveNamedNodeGroupChildren_namedNodeExpressions(input.namedNodeExpressions)
 	});
 }
 
@@ -1135,7 +1082,7 @@ export function coerceToNamedNodeGroupAnchoredLast(
 	return F.buildNamedNodeGroupAnchoredLast({
 		anchor: resolveNamedNodeGroupAnchoredLast_anchor(input.anchor),
 		namedNodeExpressions: resolveNamedNodeGroupAnchoredLast_namedNodeExpressions(input.namedNodeExpressions),
-		last: _requireField('named_node_group_anchored_last', 'last', resolveNamedNodeGroupAnchoredLast_last(input.last))
+		last: resolveNamedNodeGroupAnchoredLast_last(input.last)
 	});
 }
 

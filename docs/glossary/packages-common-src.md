@@ -34,9 +34,17 @@ The engine object and its `EngineIdentity` are frozen, so no member can be reass
 
 `is` on the engine is the language's table through `languageGuards`, so `engine.is.<kind>` and `engine.is.<supertype>` check the language as `isNode` does; the package-level `is` has no engine and stays a check on the kind id alone.
 
+### `packages/common/src/create-engine.ts::scopeBuilders`
+
+A builder table run through an engine's own build scope: the same `scopedBuild` proxy, handle, `settle` and build middleware the engine's `build` has. Tooling that holds builder tables `build` does not expose (a grammar's raw factory map, the `ir` module's entries) scopes them here, so there is one scope and a `'runtime'` engine checks what they build. It throws for an object `createEngine` did not make.
+
+### `packages/common/src/create-engine.ts::settlerOf`
+
+The handle's `settle`, chosen once when the engine is assembled: the identity in the default `'compileTimeOnly'` mode, or, in `'runtime'` mode, `verifyStructure` over the language's structure table with one `seen` set for the engine. So no build or rebuild tests the mode; two engines in one process keep their own. A refusal is raised when the outermost call returns, and its message names the kind and the slot.
+
 ### `packages/common/src/create-engine.ts::scopedBuild`
 
-The builder table with every call, including its build middleware, run inside the engine's handle. Each function and namespace it reaches through an own property is wrapped once, so nested variant builders and their `strict` and `coerce` flavours are scoped like the top-level ones, and a builder that calls another builder keeps the same handle.
+The builder table with every call, including its build middleware, run inside the engine's handle. Each function and namespace it reaches through an own property is wrapped once, so nested variant builders and their `strict` and `coerce` flavours are scoped like the top-level ones, and a builder that calls another builder keeps the same handle. The result of each call, after its middleware, passes through the handle's `settle`.
 
 When build middleware is active, the wrapper caches by object and access path, so aliases of one callable report the path actually used. Repeated accesses through the same path retain their identity; with no build hooks, aliases keep their original shared wrapper identity. The hook receives the path and arguments and can observe, replace the result or throw. Raw generated builders invoked internally remain under the scope without generating duplicate public-call events.
 
@@ -76,7 +84,7 @@ An engine's identity plus its `render` and `query`: what a node's `$render` and 
 
 ### `packages/common/src/engine-scope.ts::EngineHandle`
 
-The one object an engine shares with every node it stamps. `current` is the live engine, or its identity once the engine is disposed, so swapping it detaches every node of that engine at once with no registry of nodes and no walk over them. A node holds the handle strongly, so `$render` never depends on when the collector runs. `lineGapsOf` is the engine's line-gap query while it lives, the one `readTrivia` derives a read node's whitespace from; dispose removes it, so a detached node reads only the trivia it stores.
+The one object an engine shares with every node it stamps. `current` is the live engine, or its identity once the engine is disposed, so swapping it detaches every node of that engine at once with no registry of nodes and no walk over them. A node holds the handle strongly, so `$render` never depends on when the collector runs. `lineGapsOf` is the engine's line-gap query while it lives, the one `readTrivia` derives a read node's whitespace from; dispose removes it, so a detached node reads only the trivia it stores. `settle` is what a build or rebuild hands its result through before returning it (`settlerOf`).
 
 ### `packages/common/src/engine-scope.ts::inEngine`
 
@@ -379,7 +387,15 @@ Binds the runtime to a grammar's type map. `isNode` is the shared implementation
 
 ### `packages/common/src/runtime.ts::rejectBareText`
 
-`rejectBareText(value, where, expected)` is the strict surface's bare-text guard: a string or a bigint throws `<where>: a strict factory takes a built node, not a string; expected <expected>, or use .coerce` (naming which it was). Arrays are checked element-wise and every other value passes through unchanged. A number passes, because a slot that also holds fixed-text kinds stores their kind ids as numbers and the guard cannot tell a kind id from a scalar; where the slot holds no such kind, the native render refuses the number, naming the slot (`renders from a node, not a kind id`). A bigint is never a kind id, and the transport would drop it without a word, so it is refused here. The loose surface (`.coerce`) is where text becomes a node. A slot that stores only kind ids (a kind enum with no node value) takes no guard: its strict input is one of its declared fixed values, not a leaf's text, so `coerceKindEnumStorage` maps a matching string to its id.
+`rejectBareText(value, where, expected)` is the bare-text refusal a `'runtime'` engine's structure verifier makes for a node-only slot (no builder calls it): a string or a bigint throws `<where>: a strict factory takes a built node, not a string; expected <expected>, or use .coerce` (naming which it was). Arrays are checked element-wise and every other value passes through unchanged. A number passes, because a slot that also holds fixed-text kinds stores their kind ids as numbers and the guard cannot tell a kind id from a scalar; where the slot holds no such kind, the native render refuses the number, naming the slot (`renders from a node, not a kind id`). A bigint is never a kind id, and the transport would drop it without a word, so it is refused here. The loose surface (`.coerce`) is where text becomes a node. A slot that stores only kind ids (a kind enum with no node value) takes no guard: its strict input is one of its declared fixed values, not a leaf's text, so `coerceKindEnumStorage` maps a matching string to its id.
+
+### `packages/common/src/verify-structure.ts::verifyStructure`
+
+`verifyStructure(value, table, seen)` checks a built node against the facts its generated types prove: each kind's row in the language's structure table (`StructureRow`). A required slot holds a value (`Missing required slot '<slot>' on <kind>`), a non-empty list holds an item (`<label>: requires at least one element`, an absent list included), and a node-only slot holds no bare text, through `rejectBareText` so the message is the builder's. It walks depth-first through every slot value that is an object or an array, so a node is checked wherever it sits. It checks the node it is given whatever wrote it, and below it only the nodes a builder wrote: those stamped `$source: Source.Factory`, and those a `$with` rebuild returned (`isRebuilt`), since a rebuild of a read node writes its slots but keeps its read provenance, from whichever engine ran it. A coordinate or an untouched read node it holds is the reader's shape, checked when it was read. A node joins `seen` after it and everything under it pass, so one engine's per-engine set walks each built node once, and a refused node is refused again on the next walk. An engine in `verifyStructure: 'runtime'` mode runs it on the result of each top-level build and rebuild; in the default mode nothing calls it, and the native decode refuses a malformed node at render.
+
+### `packages/common/src/runtime.ts::strictBooleanStorage`
+
+A strict builder's storage for a boolean-keyword slot: bare text (a string or a bigint) is stored as given, so a `'runtime'` engine's verifier refuses it as `a boolean` and the native decode refuses it at render. Every other value stores as `coerceBooleanKeywordStorage` stores it. The loose surface stores keyword text through `coerceBooleanKeywordStorage` itself, so `'mut'` still reads as `true` there.
 
 ### `packages/common/src/runtime.ts::rejectKeywordText`
 
@@ -391,7 +407,7 @@ The runtime half of `aliasContentAdmission`: it maps arrays element-wise, reads 
 
 ### `packages/common/src/runtime.ts::coerceMixedEnumStorage`
 
-Storage for a slot that holds either a fixed text's kind id or a node: text in the slot's table becomes its id, any other text is kept, a node whose `$type` is one of the table's ids becomes that id, and arrays map element-wise, dropping absent entries.
+Storage for a slot that holds either a fixed text's kind id or a node: text in the slot's table becomes its id, any other text is kept, and a node whose `$type` is one of the table's ids becomes that id. A list slot maps its items through it with `listStorage`.
 
 ### `packages/common/src/runtime.ts::coerceKindEnumStorage`
 
@@ -532,7 +548,7 @@ What a parsed node's `$query` runs: the query facet its engine makes for it. It 
 
 ### `packages/common/src/utils.ts::rebuilt`
 
-What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none) and hands the node the rebuild returns what it keeps of the source node: that a read produced it (`carryRead`), its source identity (`carrySource`), through which the sides it does not hold are its source's (`sideOf`; the render fills them from the table through `$_layout.sides`), and a built source's stored trivia. It gives each fresh node the rebuild minted in a slot the source node held the same (`carryRebuiltSlots`). Inner comments can only travel to a node that is still empty: once the rebuild gives the node a child, a comment would sit beside it, so the call throws and names the kind. Inner layout alone (whitespace and depth members, which cross as bare kinds) spelled the inside of the empty node, so a node that gains a child takes an empty inner side in its place: `{\n}` takes its first statement as `{}` does.
+What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none), stamps the node the rebuild returns as rebuilt (`markRebuilt`), and hands it what it keeps of the source node: that a read produced it (`carryRead`), its source identity (`carrySource`), through which the sides it does not hold are its source's (`sideOf`; the render fills them from the table through `$_layout.sides`), and a built source's stored trivia. It gives each fresh node the rebuild minted in a slot the source node held the same (`carryRebuiltSlots`). Inner comments can only travel to a node that is still empty: once the rebuild gives the node a child, a comment would sit beside it, so the call throws and names the kind. Inner layout alone (whitespace and depth members, which cross as bare kinds) spelled the inside of the empty node, so a node that gains a child takes an empty inner side in its place: `{\n}` takes its first statement as `{}` does. A rebuild inside an engine returns through the handle's `settle`, so a `'runtime'` engine checks the edited node's structure, read node or built.
 
 ### `packages/common/src/utils.ts::triviaSide`
 
@@ -545,6 +561,10 @@ What every `$with` setter runs its rebuild through. It runs the rebuild inside t
 ### `packages/common/src/transport-data.ts::carryRead`
 
 Carries read provenance from a read object to the object rebuilt from it, which is the same node in another shape. The wrap's `wrapNode` carries it to every wrapped node, and the validator's `materialize` carries it to every plain node it resolves. Every other copy is not read.
+
+### `packages/common/src/transport-data.ts::markRebuilt`
+
+Stamps the node a `$with` rebuild returned (`rebuilt` calls it), and `isRebuilt` reads the stamp. Read provenance alone cannot tell an edited read node from an untouched one, since the rebuild carries it (`carryRead`); the stamp is what tells `verifyStructure` that a builder wrote this node's slots, so a parent built in `'runtime'` mode checks it even when another engine ran the rebuild.
 
 ### `packages/common/src/transport-data.ts::changedEdges`
 
@@ -623,9 +643,13 @@ Whether a key names one of a node's slots (`_<name>`). Slots are a subset of sto
 
 Whether a key carries node data across the native boundary: a storage key (`_<slot>`, `$other`) or a `$` metadata key that is not a member (`$with`, `$trivia`, `$engine`, `$render`). A reader, a list index, `length` and a list option are members and so are not data. The boundary projection and every walker that visits a node's keys select by this, and read only the keys it selects, so a member that throws when read is never read.
 
+### `packages/common/src/runtime.ts::listStorage`
+
+A builder's storage for a list slot: a new array of the input's items, each stored through `item` (the slot's coercion, or as given), with the absent ones dropped; a value that is not an array is stored through `item` alone. The builder owns the array it stores, so a caller mutating its own array after the build changes neither the node nor its render, and a `'runtime'` engine's check of the node holds for its life.
+
 ### `packages/common/src/runtime.ts::kindIdStorage`
 
-A strict builder's storage for a kind-enum or mixed slot: absent stays absent, a kind id stays itself, and an array is read item by item with the absent ones dropped. It reads no text: a string passes through unchanged and the slot's refusal (`rejectBareText`, naming a kind id or the built node the slot holds) rejects it. The loose coercers keep `coerceKindEnumStorage` and `coerceMixedEnumStorage`, whose tables map text.
+A strict builder's storage for one kind-enum or mixed value: absent stays absent and a kind id stays itself (a list slot maps its items through it with `listStorage`). It reads no text: a string passes through unchanged and the slot's refusal (`rejectBareText`, naming a kind id or the built node the slot holds) rejects it. The loose coercers keep `coerceKindEnumStorage` and `coerceMixedEnumStorage`, whose tables map text.
 
 ### `packages/common/src/utils.ts::LIST_READ`
 

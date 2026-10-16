@@ -3,6 +3,7 @@ import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const rs = await createEngine(rust);
+const verifying = await createEngine(rust, { verifyStructure: 'runtime' });
 
 describe('a text leaf slot takes a built node strictly and its text loosely', () => {
 	it('takes the built leaf strictly and renders it', () => {
@@ -12,7 +13,7 @@ describe('a text leaf slot takes a built node strictly and its text loosely', ()
 
 	it('rejects bare text strictly, naming the leaf builder', () => {
 		// @ts-expect-error a strict slot takes a built node, not text
-		expect(() => rs.build.stringLiteral.strict({ stringOpen: '"', elements: [] })).toThrow(/a strict factory takes a built node, not a string; expected buildStringOpen/);
+		expect(() => verifying.build.stringLiteral.strict({ stringOpen: '"', elements: [] })).toThrow(/a strict factory takes a built node, not a string; expected buildStringOpen/);
 	});
 
 	it('builds the sole text leaf from bare text when coercing', () => {
@@ -24,6 +25,6 @@ describe('a text leaf slot takes a built node strictly and its text loosely', ()
 	});
 	it('rejects bare text strictly in a node slot', () => {
 		// @ts-expect-error a strict node slot takes a built node, not text
-		expect(() => rs.build.returnExpression.strict('x')).toThrow(/ReturnExpression\.expression: a strict factory takes a built node, not a string; expected a built /);
+		expect(() => verifying.build.returnExpression.strict('x')).toThrow(/ReturnExpression\.expression: a strict factory takes a built node, not a string; expected a built /);
 	});
 });

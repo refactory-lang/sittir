@@ -440,16 +440,12 @@ export const records = {
 	RangeExpressionPrefixTransport: { words: 7, end: { word: 2, width: 5 } },
 	RangeExpressionBareTransport: { words: 7, range_expression_bare: { word: 2, width: 5 } },
 	ExpressionStatementWithSemiTransport: { words: 7, expression: { word: 2, width: 5 } },
-	ForeignModItemSemiTransport: {
-		words: 12,
-		visibility_modifier: { word: 2, width: 5 },
-		extern_modifier: { word: 7, width: 5 }
-	},
+	ForeignModItemSemiTransport: { words: 8, unsafe_: { word: 2, bit: 0 }, extern_modifier: { word: 3, width: 5 } },
 	ForeignModItemBodyTransport: {
-		words: 17,
-		visibility_modifier: { word: 2, width: 5 },
-		extern_modifier: { word: 7, width: 5 },
-		body: { word: 12, width: 5 }
+		words: 13,
+		unsafe_: { word: 2, bit: 0 },
+		extern_modifier: { word: 3, width: 5 },
+		body: { word: 8, width: 5 }
 	},
 	MatchArmWithCommaTransport: {
 		words: 14,
@@ -568,6 +564,7 @@ export const records = {
 		parameters_elements_receiver_group: { word: 7, width: 5 }
 	},
 	ParametersElementsReceiverGroupTransport: { words: 7, elements: { word: 2, width: 5 } },
+	StringCloseTransport: { words: 2 },
 	ErrorSentinelTransport: { words: 2 },
 	TypeIdentifierTransport: { words: 7, content: { word: 2, width: 5 } },
 	FieldIdentifierTransport: { words: 7, content: { word: 2, width: 5 } },

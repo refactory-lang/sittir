@@ -28,12 +28,20 @@ scope.
    fix → the test passes; reapply → it fails; find a production case with the
    identical shape.
 
-5. **Three-way verification before every commit:**
+5. **Three-way verification before every commit that can change what
+   the pipeline reads, renders, parses or validates** (codegen and its
+   emitters, grammars, the native engine and its bindings, validators):
    1. targeted probes of the specific cases fixed (wrap AND render layers);
    2. `sittir validate history` comparison across all three grammars —
       numbers compared, not eyeballed;
    3. the full unit suite, with any new failure isolated via stash-and-rerun
       before accepting it as pre-existing.
+
+   A change outside that pipeline (repo tooling, git hooks, CI, docs,
+   dependency and checkout hygiene) can't move validation rows, so it is
+   not run through them. It is proved by what it changes: a guard red
+   before and green after, a fresh clone that installs and type-checks,
+   the one command it fixes.
 
 5b. **A failed gate stops the work for review — it is never auto-reverted.**
    An unexpected diff under a supposed no-behavior-change edit, or a

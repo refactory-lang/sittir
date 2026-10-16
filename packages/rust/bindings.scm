@@ -122,16 +122,8 @@
 (mod_item_inline (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.module.public.internal
 (mod_item_inline (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.module.public.restricted
 (foreign_mod_item) @declaration.module.foreign
-(foreign_mod_item_body (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.module.foreign.private
-(foreign_mod_item_body (visibility_modifier (visibility_modifier_pub))) @declaration.module.foreign.public
-(foreign_mod_item_body (visibility_modifier (crate))) @declaration.module.foreign.public.internal
-(foreign_mod_item_body (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.module.foreign.public.internal
-(foreign_mod_item_body (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.module.foreign.public.restricted
-(foreign_mod_item_semi (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.module.foreign.private
-(foreign_mod_item_semi (visibility_modifier (visibility_modifier_pub))) @declaration.module.foreign.public
-(foreign_mod_item_semi (visibility_modifier (crate))) @declaration.module.foreign.public.internal
-(foreign_mod_item_semi (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.module.foreign.public.internal
-(foreign_mod_item_semi (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.module.foreign.public.restricted
+(foreign_mod_item_body "unsafe" @unsafe)
+(foreign_mod_item_semi "unsafe" @unsafe)
 (extern_crate_declaration) @statement.import.package
 (extern_crate_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @statement.import.package.private
 (extern_crate_declaration (visibility_modifier (visibility_modifier_pub))) @statement.import.package.public

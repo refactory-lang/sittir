@@ -14,7 +14,7 @@ import {
 	type RustTypeMap
 } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { querySlots, triviaFacts } from './utils.js';
+import { querySlots, structure, triviaFacts } from './utils.js';
 import { coerceToLineComment, coerceToBlockComment } from './factories/coerce.js';
 import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type SourceFileRoot } from './render-engine.js';
@@ -50,6 +50,7 @@ export const hooks: LanguageHooks<RustAPI> = Object.freeze<LanguageHooks<RustAPI
 		])
 	}),
 	querySlots,
+	structure,
 	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<RustAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as SourceFileRoot & ParsedRoot, tree as TreeHandle),

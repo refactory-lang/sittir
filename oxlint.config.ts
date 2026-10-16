@@ -30,6 +30,15 @@ export default defineConfig({
 			}
 		},
 		{
+			// Each kind namespace declares an unexported `NonEmptySlots` proof
+			// that only type-check reads: it fails to compile when a non-empty
+			// list's surface accepts `[]`.
+			files: ['packages/*/src/types.ts'],
+			rules: {
+				'no-unused-vars': ['error', { varsIgnorePattern: '^NonEmptySlots$' }]
+			}
+		},
+		{
 			// The vocabulary declares `G extends GrammarContext<G>` on every
 			// namespace-level interface for API uniformity, including the ones
 			// whose own members do not read it.

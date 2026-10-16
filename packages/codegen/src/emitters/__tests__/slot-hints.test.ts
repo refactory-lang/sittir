@@ -41,7 +41,7 @@ describe('__slotHints__', () => {
 	});
 	it('a list slot reads as the stored list node', () => {
 		const ps = interfaceBlock(rustTypes(), 'Parameters').replace(/\s+/g, ' ');
-		expect(ps).toContain('elements(): ParametersElements | ParametersElementsReceiver | undefined;');
+		expect(ps).toContain('readonly elements: () => ParametersElements | ParametersElementsReceiver | undefined;');
 	});
 	it('a list slot stamps builder arguments while a parameter branch slot takes its node', () => {
 		const fn = interfaceBlock(rustTypes(), 'FunctionItem').replace(/\s+/g, ' ');

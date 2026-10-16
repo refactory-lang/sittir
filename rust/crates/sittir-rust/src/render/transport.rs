@@ -273,7 +273,7 @@ pub enum AnyTransport {
     LineComment(LineCommentTransport),
     #[kind(kind::BLOCK_COMMENT)]
     BlockComment(BlockCommentTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SHEBANG)]
     Shebang(ShebangTransport),
@@ -513,6 +513,8 @@ pub enum AnyTransport {
     ParametersElementsReceiver(ParametersElementsReceiverTransport),
     #[kind(kind::PARAMETERS_ELEMENTS_RECEIVER_GROUP)]
     ParametersElementsReceiverGroup(ParametersElementsReceiverGroupTransport),
+    #[kind(kind::STRING_CLOSE)]
+    StringClose(StringCloseTransport),
     #[kind(kind::_ERROR_SENTINEL)]
     ErrorSentinel(ErrorSentinelTransport),
     #[kind(kind::_TYPE_IDENTIFIER, display)]
@@ -776,8 +778,6 @@ pub enum AnyTransport {
     TryKeyword,
     #[kind(kind::AT)]
     At,
-    #[kind(kind::DQUOTE)]
-    Dquote,
     #[kind(kind::TRUE_KEYWORD)]
     TrueKeyword,
     #[kind(kind::FALSE_KEYWORD)]
@@ -1089,6 +1089,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::AttributedParameterReceiver(t) => t.prepare(ctx),
             AnyTransport::ParametersElementsReceiver(t) => t.prepare(ctx),
             AnyTransport::ParametersElementsReceiverGroup(t) => t.prepare(ctx),
+            AnyTransport::StringClose(t) => t.prepare(ctx),
             AnyTransport::ErrorSentinel(t) => t.prepare(ctx),
             AnyTransport::TypeIdentifier(t) => t.prepare(ctx),
             AnyTransport::FieldIdentifier(t) => t.prepare(ctx),
@@ -1216,7 +1217,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::GenKeyword => Ok(()),
             AnyTransport::TryKeyword => Ok(()),
             AnyTransport::At => Ok(()),
-            AnyTransport::Dquote => Ok(()),
             AnyTransport::TrueKeyword => Ok(()),
             AnyTransport::FalseKeyword => Ok(()),
             AnyTransport::SlashSlash => Ok(()),
@@ -1497,6 +1497,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::AttributedParameterReceiver(t) => t.gap_edges(),
             AnyTransport::ParametersElementsReceiver(t) => t.gap_edges(),
             AnyTransport::ParametersElementsReceiverGroup(t) => t.gap_edges(),
+            AnyTransport::StringClose(t) => t.gap_edges(),
             AnyTransport::ErrorSentinel(t) => t.gap_edges(),
             AnyTransport::TypeIdentifier(t) => t.gap_edges(),
             AnyTransport::FieldIdentifier(t) => t.gap_edges(),
@@ -1624,7 +1625,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::GenKeyword => None,
             AnyTransport::TryKeyword => None,
             AnyTransport::At => None,
-            AnyTransport::Dquote => None,
             AnyTransport::TrueKeyword => None,
             AnyTransport::FalseKeyword => None,
             AnyTransport::SlashSlash => None,
@@ -1905,6 +1905,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::AttributedParameterReceiver(t) => t.snapshot_edge(),
             AnyTransport::ParametersElementsReceiver(t) => t.snapshot_edge(),
             AnyTransport::ParametersElementsReceiverGroup(t) => t.snapshot_edge(),
+            AnyTransport::StringClose(t) => t.snapshot_edge(),
             AnyTransport::ErrorSentinel(t) => t.snapshot_edge(),
             AnyTransport::TypeIdentifier(t) => t.snapshot_edge(),
             AnyTransport::FieldIdentifier(t) => t.snapshot_edge(),
@@ -2032,7 +2033,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::GenKeyword => None,
             AnyTransport::TryKeyword => None,
             AnyTransport::At => None,
-            AnyTransport::Dquote => None,
             AnyTransport::TrueKeyword => None,
             AnyTransport::FalseKeyword => None,
             AnyTransport::SlashSlash => None,
@@ -2313,6 +2313,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::AttributedParameterReceiver(t) => t.source_separator(ctx),
             AnyTransport::ParametersElementsReceiver(t) => t.source_separator(ctx),
             AnyTransport::ParametersElementsReceiverGroup(t) => t.source_separator(ctx),
+            AnyTransport::StringClose(t) => t.source_separator(ctx),
             AnyTransport::ErrorSentinel(t) => t.source_separator(ctx),
             AnyTransport::TypeIdentifier(t) => t.source_separator(ctx),
             AnyTransport::FieldIdentifier(t) => t.source_separator(ctx),
@@ -2440,7 +2441,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::GenKeyword => None,
             AnyTransport::TryKeyword => None,
             AnyTransport::At => None,
-            AnyTransport::Dquote => None,
             AnyTransport::TrueKeyword => None,
             AnyTransport::FalseKeyword => None,
             AnyTransport::SlashSlash => None,
@@ -3742,7 +3742,7 @@ pub enum ExpressionTransport {
     IntegerLiteral(IntegerLiteralTransport),
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SELF)]
     #[transport(edged)]
@@ -4467,7 +4467,7 @@ impl ::sittir_core::render::Render for ClosureExpressionTransport {
 pub enum PatternTransport {
     #[kind(kind::STRING_LITERAL, kind::RAW_STRING_LITERAL, kind::CHAR_LITERAL_ESCAPED_SIMPLE, kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED, kind::CHAR_LITERAL_ESCAPED_UNICODE_BRACED, kind::CHAR_LITERAL_ESCAPED_HEX, kind::CHAR_LITERAL_PLAIN, kind::CHAR_LITERAL_EMPTY, kind::BOOLEAN_LITERAL, kind::INTEGER_LITERAL_DECIMAL, kind::INTEGER_LITERAL_HEX, kind::INTEGER_LITERAL_BINARY, kind::INTEGER_LITERAL_OCTAL, kind::FLOAT_LITERAL, kind::NEGATIVE_LITERAL, kind::_LITERAL_PATTERN, kind::CHAR_LITERAL, kind::INTEGER_LITERAL, kind::TRUE_KEYWORD, kind::FALSE_KEYWORD)]
     LiteralPattern(LiteralPatternTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -5572,7 +5572,7 @@ pub enum NonSpecialTokenContentTransportSlot {
     IntegerLiteralOctal(IntegerLiteralOctalTransport),
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::_PRIMITIVE_TYPE, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD)]
     PrimitiveType(PrimitiveTypeEnum),
@@ -5730,7 +5730,7 @@ impl ::sittir_core::view::KindOf for NonSpecialTokenContentTransportSlot {
             Self::PrimitiveType(inner) => inner.kind_in(kinds),
             Self::TokenTreePunctuation(inner) => inner.kind_in(kinds),
             Self::TokenKeywords(inner) => inner.kind_in(kinds),
-            Self::MutableSpecifier => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
+            Self::MutableSpecifier => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
             Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
             Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
@@ -5774,7 +5774,7 @@ impl ::sittir_core::render::Render for NonSpecialTokenContentTransportSlot {
 pub enum AttributePathTransportSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -5929,7 +5929,7 @@ impl ::sittir_core::render::Render for EnumVariantBodyTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum FunctionItemNameTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
@@ -6052,10 +6052,10 @@ impl ::sittir_core::view::KindOf for FunctionModifiersModifierTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::ExternModifier(inner) => inner.kind_in(kinds),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
+            Self::AsyncKeyword => [::sittir_core::types::KindId(113)].iter().any(|k| kinds.contains(k)),
             Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
             Self::ConstKeyword => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
-            Self::UnsafeKeyword => [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k)),
+            Self::UnsafeKeyword => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -6409,7 +6409,7 @@ impl ::sittir_core::render::Render for TraitBoundsBoundsTransportSlot {
 pub enum ConstParameterDefaultTransportSlot {
     #[kind(kind::BLOCK)]
     Block(BlockTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::STRING_LITERAL)]
     StringLiteral(StringLiteralTransport),
@@ -6594,7 +6594,7 @@ impl ::sittir_core::render::Render for ConstParameterDefaultTransportSlot {
 pub enum UseDeclarationArgumentTransportSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -7091,7 +7091,7 @@ impl ::sittir_core::render::Render for FunctionTypeContentTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum GenericFunctionFunctionTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -7166,7 +7166,7 @@ impl ::sittir_core::render::Render for GenericFunctionFunctionTransportSlot {
 pub enum GenericTypeTypeTransportSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
     ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
@@ -7685,7 +7685,7 @@ impl ::sittir_core::render::Render for DynamicTypeTraitTransportSlot {
 pub enum MacroInvocationFunctionTransportSlot {
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[transport(verbatim)]
     Verbatim(VerbatimTransport),
@@ -7750,7 +7750,7 @@ impl ::sittir_core::render::Render for MacroInvocationFunctionTransportSlot {
 pub enum ScopedIdentifierPathTransportSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -7864,7 +7864,7 @@ impl ::sittir_core::render::Render for ScopedIdentifierPathTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum ScopedIdentifierNameTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SUPER)]
     #[transport(edged)]
@@ -7932,7 +7932,7 @@ impl ::sittir_core::render::Render for ScopedIdentifierNameTransportSlot {
 pub enum ScopedTypeIdentifierInExpressionPositionPathTransportSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -8040,7 +8040,7 @@ impl ::sittir_core::render::Render for ScopedTypeIdentifierInExpressionPositionP
 pub enum ScopedTypeIdentifierPathTransportSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -8186,7 +8186,7 @@ impl ::sittir_core::prepare::Prepare for UnaryExpressionOperatorTransportSlot {
 impl ::sittir_core::view::KindOf for UnaryExpressionOperatorTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Dash => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
+            Self::Dash => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
             Self::Star => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
             Self::Bang => [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k)),
         }
@@ -8290,24 +8290,24 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionOperatorTransportSlot {
 impl ::sittir_core::view::KindOf for BinaryExpressionOperatorTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::AmpAmp => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
-            Self::PipePipe => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
-            Self::Amp => [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k)),
-            Self::Pipe => [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k)),
-            Self::Caret => [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k)),
-            Self::EqEq => [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k)),
-            Self::BangEq => [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k)),
+            Self::AmpAmp => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
+            Self::PipePipe => [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k)),
+            Self::Amp => [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k)),
+            Self::Pipe => [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k)),
+            Self::Caret => [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k)),
+            Self::EqEq => [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k)),
+            Self::BangEq => [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k)),
             Self::Lt => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
-            Self::LtEq => [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k)),
+            Self::LtEq => [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k)),
             Self::Gt => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
-            Self::GtEq => [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k)),
-            Self::LtLt => [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k)),
-            Self::GtGt => [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k)),
+            Self::GtEq => [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k)),
+            Self::LtLt => [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k)),
+            Self::GtGt => [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k)),
             Self::Plus => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
-            Self::Dash => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
+            Self::Dash => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
             Self::Star => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
-            Self::Slash => [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k)),
-            Self::Percent => [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k)),
+            Self::Slash => [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k)),
+            Self::Percent => [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -8385,16 +8385,16 @@ impl ::sittir_core::prepare::Prepare for CompoundAssignmentExprOperatorTransport
 impl ::sittir_core::view::KindOf for CompoundAssignmentExprOperatorTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::PlusEq => [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k)),
-            Self::DashEq => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
-            Self::StarEq => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
-            Self::SlashEq => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
-            Self::PercentEq => [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k)),
-            Self::AmpEq => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
-            Self::PipeEq => [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k)),
-            Self::CaretEq => [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
-            Self::LtLtEq => [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
-            Self::GtGtEq => [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k)),
+            Self::PlusEq => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
+            Self::DashEq => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
+            Self::StarEq => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
+            Self::SlashEq => [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k)),
+            Self::PercentEq => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
+            Self::AmpEq => [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k)),
+            Self::PipeEq => [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
+            Self::CaretEq => [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::LtLtEq => [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k)),
+            Self::GtGtEq => [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -8473,7 +8473,7 @@ pub enum CallExpressionFunctionTransportSlot {
     IntegerLiteralOctal(IntegerLiteralOctalTransport),
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -9126,7 +9126,7 @@ pub enum IfExpressionConditionTransportSlot {
     IntegerLiteralOctal(IntegerLiteralOctalTransport),
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -9685,7 +9685,7 @@ pub enum LetChainLeftTransportSlot {
     IntegerLiteralOctal(IntegerLiteralOctalTransport),
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -10238,7 +10238,7 @@ pub enum LetChainRightTransportSlot {
     IntegerLiteralOctal(IntegerLiteralOctalTransport),
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -10873,7 +10873,7 @@ pub enum ClosureParametersParametersTransportSlot {
     FloatLiteral(FloatLiteralTransport),
     #[kind(kind::NEGATIVE_LITERAL)]
     NegativeLiteral(NegativeLiteralTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -11174,7 +11174,7 @@ impl ::sittir_core::render::Render for ClosureParametersParametersTransportSlot 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum GenericPatternNameTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -11239,7 +11239,7 @@ impl ::sittir_core::render::Render for GenericPatternNameTransportSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
 #[transport(choice)]
 pub enum TupleStructPatternTypeTransportSlot {
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -11526,7 +11526,7 @@ impl ::sittir_core::view::KindOf for StringLiteralElementsTransportSlot {
             Self::EscapeSequenceUnicodeBraced(inner) => inner.kind_in(kinds),
             Self::EscapeSequenceHex(inner) => inner.kind_in(kinds),
             Self::StringContent(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(157)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -11853,7 +11853,7 @@ pub enum TuplePatternElementsItemTransportSlot {
     FloatLiteral(FloatLiteralTransport),
     #[kind(kind::NEGATIVE_LITERAL)]
     NegativeLiteral(NegativeLiteralTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -12282,7 +12282,7 @@ pub enum ClosureExpressionExprBodyTransportSlot {
     IntegerLiteralOctal(IntegerLiteralOctalTransport),
     #[kind(kind::FLOAT_LITERAL)]
     FloatLiteral(FloatLiteralTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -13002,7 +13002,7 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionBinaryOperatorTransportS
 impl ::sittir_core::view::KindOf for RangeExpressionBinaryOperatorTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::DotDot => [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k)),
+            Self::DotDot => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
             Self::DotDotDot => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
             Self::DotDotEq => [::sittir_core::types::KindId(137)].iter().any(|k| kinds.contains(k)),
         }
@@ -13264,7 +13264,7 @@ pub enum RangePatternPrefixRightTransportSlot {
     NegativeLiteral(NegativeLiteralTransport),
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableTransport),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
+    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierTransport),
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierTransport),
@@ -13474,7 +13474,7 @@ impl ::sittir_core::view::KindOf for RangePatternPrefixContentTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::DotDotEq => [::sittir_core::types::KindId(137)].iter().any(|k| kinds.contains(k)),
-            Self::DotDot => [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k)),
+            Self::DotDot => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -13529,7 +13529,7 @@ impl ::sittir_core::view::KindOf for RangePatternWithLeftWithRightContentTranspo
         match self {
             Self::DotDotDot => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
             Self::DotDotEq => [::sittir_core::types::KindId(137)].iter().any(|k| kinds.contains(k)),
-            Self::DotDot => [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k)),
+            Self::DotDot => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -18136,7 +18136,7 @@ pub enum MutableSpecifierTransport {
 
 impl ::sittir_core::view::KindOf for MutableSpecifierTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -21167,7 +21167,7 @@ impl ::sittir_core::prepare::Prepare for NegativeLiteralTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::STRING_LITERAL, layout = [kind::DQUOTE], words = 9)]
+#[transport(kind = kind::STRING_LITERAL, layout = [kind::STRING_CLOSE], words = 9)]
 pub struct StringLiteralTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -21468,7 +21468,7 @@ impl ::sittir_core::prepare::Prepare for BlockCommentTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::IDENTIFIER, folded = [kind::DEFAULT_KEYWORD, kind::UNION_KEYWORD, kind::GEN_KEYWORD, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD], text, words = 2)]
+#[transport(kind = kind::IDENTIFIER, folded = [kind::DEFAULT_KEYWORD, kind::UNION_KEYWORD, kind::GEN_KEYWORD, kind::RAW_KEYWORD, kind::U8_KEYWORD, kind::I8_KEYWORD, kind::U16_KEYWORD, kind::I16_KEYWORD, kind::U32_KEYWORD, kind::I32_KEYWORD, kind::U64_KEYWORD, kind::I64_KEYWORD, kind::U128_KEYWORD, kind::I128_KEYWORD, kind::ISIZE_KEYWORD, kind::USIZE_KEYWORD, kind::F32_KEYWORD, kind::F64_KEYWORD, kind::BOOL_KEYWORD, kind::STR_KEYWORD, kind::CHAR_KEYWORD], text, words = 2)]
 pub struct IdentifierTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
@@ -21804,23 +21804,23 @@ impl ::sittir_core::prepare::Prepare for PrimitiveTypeEnum {
 impl ::sittir_core::view::KindOf for PrimitiveTypeEnum {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::U8 => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8 => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16 => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16 => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32 => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32 => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64 => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64 => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128 => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128 => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::Isize => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::Usize => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32 => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64 => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::Bool => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::Str => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::Char => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
+            Self::U8 => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
+            Self::I8 => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
+            Self::U16 => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
+            Self::I16 => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
+            Self::U32 => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
+            Self::I32 => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
+            Self::U64 => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
+            Self::I64 => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
+            Self::U128 => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
+            Self::I128 => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
+            Self::Isize => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
+            Self::Usize => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
+            Self::F32 => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
+            Self::F64 => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
+            Self::Bool => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
+            Self::Str => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
+            Self::Char => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -23194,39 +23194,39 @@ impl ::sittir_core::view::KindOf for TokenTreePunctuationEnum {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Plus => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
-            Self::Minus => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
+            Self::Minus => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
             Self::Star => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
-            Self::Slash => [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k)),
-            Self::Percent => [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k)),
-            Self::Caret => [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k)),
+            Self::Slash => [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k)),
+            Self::Percent => [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k)),
+            Self::Caret => [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k)),
             Self::Bang => [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k)),
-            Self::Amp => [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k)),
-            Self::Pipe => [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k)),
-            Self::AmpAmp => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
-            Self::PipePipe => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
-            Self::LtLt => [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k)),
-            Self::GtGt => [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k)),
-            Self::PlusEq => [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k)),
-            Self::MinusEq => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
-            Self::StarEq => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
-            Self::SlashEq => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
-            Self::PercentEq => [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k)),
-            Self::CaretEq => [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
-            Self::AmpEq => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
-            Self::PipeEq => [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k)),
-            Self::LtLtEq => [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
-            Self::GtGtEq => [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k)),
+            Self::Amp => [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k)),
+            Self::Pipe => [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k)),
+            Self::AmpAmp => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
+            Self::PipePipe => [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k)),
+            Self::LtLt => [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k)),
+            Self::GtGt => [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k)),
+            Self::PlusEq => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
+            Self::MinusEq => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
+            Self::StarEq => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
+            Self::SlashEq => [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k)),
+            Self::PercentEq => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
+            Self::CaretEq => [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::AmpEq => [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k)),
+            Self::PipeEq => [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
+            Self::LtLtEq => [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k)),
+            Self::GtGtEq => [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k)),
             Self::Eq => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::EqEq => [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k)),
-            Self::BangEq => [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k)),
+            Self::EqEq => [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k)),
+            Self::BangEq => [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k)),
             Self::Gt => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
             Self::Lt => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
-            Self::GtEq => [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k)),
-            Self::LtEq => [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k)),
-            Self::At => [::sittir_core::types::KindId(115)].iter().any(|k| kinds.contains(k)),
+            Self::GtEq => [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k)),
+            Self::LtEq => [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k)),
+            Self::At => [::sittir_core::types::KindId(116)].iter().any(|k| kinds.contains(k)),
             Self::Underscore => [::sittir_core::types::KindId(136)].iter().any(|k| kinds.contains(k)),
-            Self::Dot => [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k)),
-            Self::DotDot => [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k)),
+            Self::Dot => [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k)),
+            Self::DotDot => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
             Self::DotDotDot => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
             Self::DotDotEq => [::sittir_core::types::KindId(137)].iter().any(|k| kinds.contains(k)),
             Self::Comma => [::sittir_core::types::KindId(130)].iter().any(|k| kinds.contains(k)),
@@ -23369,33 +23369,33 @@ impl ::sittir_core::view::KindOf for TokenKeywordsEnum {
         match self {
             Self::V27 => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
             Self::AsKw => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKw => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKw => [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k)),
-            Self::BreakKw => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
+            Self::AsyncKw => [::sittir_core::types::KindId(113)].iter().any(|k| kinds.contains(k)),
+            Self::AwaitKw => [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k)),
+            Self::BreakKw => [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k)),
             Self::ConstKw => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
-            Self::ContinueKw => [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k)),
+            Self::ContinueKw => [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k)),
             Self::DefaultKw => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
             Self::EnumKw => [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k)),
             Self::FnKw => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
             Self::ForKw => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
             Self::Gen => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
-            Self::IfKw => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
-            Self::ImplKw => [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k)),
+            Self::IfKw => [::sittir_core::types::KindId(102)].iter().any(|k| kinds.contains(k)),
+            Self::ImplKw => [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k)),
             Self::LetKw => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
-            Self::LoopKw => [::sittir_core::types::KindId(105)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKw => [::sittir_core::types::KindId(103)].iter().any(|k| kinds.contains(k)),
+            Self::LoopKw => [::sittir_core::types::KindId(106)].iter().any(|k| kinds.contains(k)),
+            Self::MatchKw => [::sittir_core::types::KindId(104)].iter().any(|k| kinds.contains(k)),
             Self::ModKw => [::sittir_core::types::KindId(138)].iter().any(|k| kinds.contains(k)),
             Self::PubKw => [::sittir_core::types::KindId(139)].iter().any(|k| kinds.contains(k)),
-            Self::ReturnKw => [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k)),
+            Self::ReturnKw => [::sittir_core::types::KindId(99)].iter().any(|k| kinds.contains(k)),
             Self::StaticKw => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
             Self::StructKw => [::sittir_core::types::KindId(140)].iter().any(|k| kinds.contains(k)),
             Self::TraitKw => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
             Self::TypeKw => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
             Self::Union => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::UnsafeKw => [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k)),
+            Self::UnsafeKw => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
             Self::UseKw => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
             Self::WhereKw => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
-            Self::WhileKw => [::sittir_core::types::KindId(104)].iter().any(|k| kinds.contains(k)),
+            Self::WhileKw => [::sittir_core::types::KindId(105)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -25739,15 +25739,15 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementWithSemiTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::FOREIGN_MOD_ITEM_SEMI, layout = [kind::SEMI], words = 12)]
+#[transport(kind = kind::FOREIGN_MOD_ITEM_SEMI, layout = [kind::SEMI], words = 8)]
 pub struct ForeignModItemSemiTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_visibility_modifier")]
-    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 5)]
-    pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
+    #[wire(key = "_unsafe")]
+    #[slot(field = field::UNSAFE, presence = kind::UNSAFE_KEYWORD, word = 2, bit = 0)]
+    pub unsafe_: bool,
     #[wire(key = "_extern_modifier")]
-    #[slot(field = field::EXTERN_MODIFIER, word = 7, width = 5)]
+    #[slot(field = field::EXTERN_MODIFIER, word = 3, width = 5)]
     pub extern_modifier: ::sittir_core::SlotValue<ExternModifierTransport>,
 }
 
@@ -25773,7 +25773,7 @@ impl ::sittir_core::prepare::Prepare for ForeignModItemSemiTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.visibility_modifier.prepare(ctx)?;
+        self.unsafe_.prepare(ctx)?;
         self.extern_modifier.prepare(ctx)?;
         Ok(())
     }
@@ -25792,18 +25792,18 @@ impl ::sittir_core::prepare::Prepare for ForeignModItemSemiTransport {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
-#[transport(kind = kind::FOREIGN_MOD_ITEM_BODY, words = 17)]
+#[transport(kind = kind::FOREIGN_MOD_ITEM_BODY, words = 13)]
 pub struct ForeignModItemBodyTransport {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<TransportLayout>>,
-    #[wire(key = "_visibility_modifier")]
-    #[slot(field = field::VISIBILITY_MODIFIER, word = 2, width = 5)]
-    pub visibility_modifier: Option<::sittir_core::SlotValue<VisibilityModifierTransport>>,
+    #[wire(key = "_unsafe")]
+    #[slot(field = field::UNSAFE, presence = kind::UNSAFE_KEYWORD, word = 2, bit = 0)]
+    pub unsafe_: bool,
     #[wire(key = "_extern_modifier")]
-    #[slot(field = field::EXTERN_MODIFIER, word = 7, width = 5)]
+    #[slot(field = field::EXTERN_MODIFIER, word = 3, width = 5)]
     pub extern_modifier: ::sittir_core::SlotValue<ExternModifierTransport>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 12, width = 5)]
+    #[slot(field = field::BODY, word = 8, width = 5)]
     pub body: ::sittir_core::SlotValue<DeclarationListTransport>,
 }
 
@@ -25829,7 +25829,7 @@ impl ::sittir_core::prepare::Prepare for ForeignModItemBodyTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.visibility_modifier.prepare(ctx)?;
+        self.unsafe_.prepare(ctx)?;
         self.extern_modifier.prepare(ctx)?;
         self.body.prepare(ctx)?;
         Ok(())
@@ -28010,19 +28010,19 @@ pub struct StringContentTransport {
 
 impl ::sittir_core::view::KindOf for StringContentTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(157)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for StringContentTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(158) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(157) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for StringContentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(158)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(158)); w.text(&self.text) })
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(157)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.leaf_kind(::sittir_core::types::KindId(157)); w.text(&self.text) })
     }
 }
 
@@ -28747,6 +28747,52 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsReceiverGroupTranspor
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.elements.prepare(ctx)?;
+        Ok(())
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<u16> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Transport)]
+#[transport(kind = kind::STRING_CLOSE, text, words = 2)]
+pub struct StringCloseTransport {
+    #[wire(key = "$_layout")]
+    pub layout: Option<Box<TransportLayout>>,
+    #[wire(key = "$text")]
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for StringCloseTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(158)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for StringCloseTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(158) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for StringCloseTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        TransportLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(158)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for StringCloseTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.layout.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -29998,7 +30044,7 @@ pub enum RefKeywordTransport {
 
 impl ::sittir_core::view::KindOf for RefKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(114)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(115)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30110,7 +30156,7 @@ pub enum AsyncKeywordTransport {
 
 impl ::sittir_core::view::KindOf for AsyncKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(113)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30166,7 +30212,7 @@ pub enum UnsafeKeywordTransport {
 
 impl ::sittir_core::view::KindOf for UnsafeKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30362,7 +30408,7 @@ pub enum ElseKeywordTransport {
 
 impl ::sittir_core::view::KindOf for ElseKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(102)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(103)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30446,7 +30492,7 @@ pub enum AmpTransport {
 
 impl ::sittir_core::view::KindOf for AmpTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30530,7 +30576,7 @@ pub enum ImplKeywordTransport {
 
 impl ::sittir_core::view::KindOf for ImplKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30558,7 +30604,7 @@ pub enum DynKeywordTransport {
 
 impl ::sittir_core::view::KindOf for DynKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30586,7 +30632,7 @@ pub enum DashTransport {
 
 impl ::sittir_core::view::KindOf for DashTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30614,7 +30660,7 @@ pub enum AmpAmpTransport {
 
 impl ::sittir_core::view::KindOf for AmpAmpTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30642,7 +30688,7 @@ pub enum PipePipeTransport {
 
 impl ::sittir_core::view::KindOf for PipePipeTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30670,7 +30716,7 @@ pub enum PipeTransport {
 
 impl ::sittir_core::view::KindOf for PipeTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30698,7 +30744,7 @@ pub enum CaretTransport {
 
 impl ::sittir_core::view::KindOf for CaretTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30726,7 +30772,7 @@ pub enum EqEqTransport {
 
 impl ::sittir_core::view::KindOf for EqEqTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30754,7 +30800,7 @@ pub enum BangEqTransport {
 
 impl ::sittir_core::view::KindOf for BangEqTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30782,7 +30828,7 @@ pub enum LtEqTransport {
 
 impl ::sittir_core::view::KindOf for LtEqTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30810,7 +30856,7 @@ pub enum GtEqTransport {
 
 impl ::sittir_core::view::KindOf for GtEqTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30838,7 +30884,7 @@ pub enum LtLtTransport {
 
 impl ::sittir_core::view::KindOf for LtLtTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30866,7 +30912,7 @@ pub enum GtGtTransport {
 
 impl ::sittir_core::view::KindOf for GtGtTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30894,7 +30940,7 @@ pub enum SlashTransport {
 
 impl ::sittir_core::view::KindOf for SlashTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30922,7 +30968,7 @@ pub enum PercentTransport {
 
 impl ::sittir_core::view::KindOf for PercentTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30950,7 +30996,7 @@ pub enum PlusEqTransport {
 
 impl ::sittir_core::view::KindOf for PlusEqTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -30978,7 +31024,7 @@ pub enum DashEqTransport {
 
 impl ::sittir_core::view::KindOf for DashEqTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31006,7 +31052,7 @@ pub enum StarEqTransport {
 
 impl ::sittir_core::view::KindOf for StarEqTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31034,7 +31080,7 @@ pub enum SlashEqTransport {
 
 impl ::sittir_core::view::KindOf for SlashEqTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31062,7 +31108,7 @@ pub enum PercentEqTransport {
 
 impl ::sittir_core::view::KindOf for PercentEqTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31090,7 +31136,7 @@ pub enum AmpEqTransport {
 
 impl ::sittir_core::view::KindOf for AmpEqTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31118,7 +31164,7 @@ pub enum PipeEqTransport {
 
 impl ::sittir_core::view::KindOf for PipeEqTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31146,7 +31192,7 @@ pub enum CaretEqTransport {
 
 impl ::sittir_core::view::KindOf for CaretEqTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31174,7 +31220,7 @@ pub enum LtLtEqTransport {
 
 impl ::sittir_core::view::KindOf for LtLtEqTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31202,7 +31248,7 @@ pub enum GtGtEqTransport {
 
 impl ::sittir_core::view::KindOf for GtGtEqTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31230,7 +31276,7 @@ pub enum ReturnKeywordTransport {
 
 impl ::sittir_core::view::KindOf for ReturnKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(99)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31258,7 +31304,7 @@ pub enum YieldKeywordTransport {
 
 impl ::sittir_core::view::KindOf for YieldKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(99)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31286,7 +31332,7 @@ pub enum DotDotTransport {
 
 impl ::sittir_core::view::KindOf for DotDotTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31314,7 +31360,7 @@ pub enum IfKeywordTransport {
 
 impl ::sittir_core::view::KindOf for IfKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(102)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31342,7 +31388,7 @@ pub enum MatchKeywordTransport {
 
 impl ::sittir_core::view::KindOf for MatchKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(103)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(104)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31398,7 +31444,7 @@ pub enum WhileKeywordTransport {
 
 impl ::sittir_core::view::KindOf for WhileKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(104)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(105)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31426,7 +31472,7 @@ pub enum LoopKeywordTransport {
 
 impl ::sittir_core::view::KindOf for LoopKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(105)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(106)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31454,7 +31500,7 @@ pub enum InKeywordTransport {
 
 impl ::sittir_core::view::KindOf for InKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(106)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31482,7 +31528,7 @@ pub enum BreakKeywordTransport {
 
 impl ::sittir_core::view::KindOf for BreakKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31510,7 +31556,7 @@ pub enum ContinueKeywordTransport {
 
 impl ::sittir_core::view::KindOf for ContinueKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31538,7 +31584,7 @@ pub enum DotTransport {
 
 impl ::sittir_core::view::KindOf for DotTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31566,7 +31612,7 @@ pub enum AwaitKeywordTransport {
 
 impl ::sittir_core::view::KindOf for AwaitKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31650,7 +31696,7 @@ pub enum TryKeywordTransport {
 
 impl ::sittir_core::view::KindOf for TryKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(113)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(114)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31678,7 +31724,7 @@ pub enum AtTransport {
 
 impl ::sittir_core::view::KindOf for AtTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(115)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(116)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31694,34 +31740,6 @@ impl ::sittir_core::prepare::Prepare for AtTransport {
 impl ::sittir_core::render::Render for AtTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_at(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Transport)]
-#[transport(choice)]
-pub enum DquoteTransport {
-    #[kind(kind::DQUOTE)]
-    Dquote,
-}
-
-impl ::sittir_core::view::KindOf for DquoteTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(116)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for DquoteTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: u32) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for DquoteTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_dquote(w)
     }
 }
 
@@ -31874,7 +31892,7 @@ pub enum U8KeywordTransport {
 
 impl ::sittir_core::view::KindOf for U8KeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31902,7 +31920,7 @@ pub enum I8KeywordTransport {
 
 impl ::sittir_core::view::KindOf for I8KeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31930,7 +31948,7 @@ pub enum U16KeywordTransport {
 
 impl ::sittir_core::view::KindOf for U16KeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31958,7 +31976,7 @@ pub enum I16KeywordTransport {
 
 impl ::sittir_core::view::KindOf for I16KeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -31986,7 +32004,7 @@ pub enum U32KeywordTransport {
 
 impl ::sittir_core::view::KindOf for U32KeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -32014,7 +32032,7 @@ pub enum I32KeywordTransport {
 
 impl ::sittir_core::view::KindOf for I32KeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -32042,7 +32060,7 @@ pub enum U64KeywordTransport {
 
 impl ::sittir_core::view::KindOf for U64KeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -32070,7 +32088,7 @@ pub enum I64KeywordTransport {
 
 impl ::sittir_core::view::KindOf for I64KeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -32098,7 +32116,7 @@ pub enum U128KeywordTransport {
 
 impl ::sittir_core::view::KindOf for U128KeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -32126,7 +32144,7 @@ pub enum I128KeywordTransport {
 
 impl ::sittir_core::view::KindOf for I128KeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -32154,7 +32172,7 @@ pub enum IsizeKeywordTransport {
 
 impl ::sittir_core::view::KindOf for IsizeKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -32182,7 +32200,7 @@ pub enum UsizeKeywordTransport {
 
 impl ::sittir_core::view::KindOf for UsizeKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -32210,7 +32228,7 @@ pub enum F32KeywordTransport {
 
 impl ::sittir_core::view::KindOf for F32KeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -32238,7 +32256,7 @@ pub enum F64KeywordTransport {
 
 impl ::sittir_core::view::KindOf for F64KeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -32266,7 +32284,7 @@ pub enum BoolKeywordTransport {
 
 impl ::sittir_core::view::KindOf for BoolKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -32294,7 +32312,7 @@ pub enum StrKeywordTransport {
 
 impl ::sittir_core::view::KindOf for StrKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -32322,7 +32340,7 @@ pub enum CharKeywordTransport {
 
 impl ::sittir_core::view::KindOf for CharKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -32490,7 +32508,7 @@ pub enum RawKeywordTransport {
 
 impl ::sittir_core::view::KindOf for RawKeywordTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(157)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -37246,6 +37264,7 @@ fn render_string_literal(node: &StringLiteralTransport, w: &mut dyn ::sittir_cor
     w.edge(::sittir_core::types::KindId(332), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_string_open", 0, w, |w| string_open.render(w))?;
     elements.render(w)?;
+    w.site_at(options::SITE_STRING_LITERAL_STRING_CLOSE_BEFORE);
     w.text("\"")?;
     w.edge(::sittir_core::types::KindId(332), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -38287,9 +38306,12 @@ fn render_expression_statement_with_semi(node: &ExpressionStatementWithSemiTrans
 
 fn render_foreign_mod_item_semi(node: &ForeignModItemSemiTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let extern_modifier = &node.extern_modifier;
-    let visibility_modifier = View::new(&node.visibility_modifier, "{}");
+    let unsafe_ = View::new(&node.unsafe_, "unsafe");
     w.edge(::sittir_core::types::KindId(395), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_visibility_modifier", 0, w, |w| visibility_modifier.render(w))?;
+    if unsafe_.is_present() {
+        unsafe_.render(w)?;
+        w.site_at(options::SITE_FOREIGN_MOD_ITEM_SEMI_UNSAFE_AFTER);
+    }
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_extern_modifier", 0, w, |w| extern_modifier.render(w))?;
     w.site_at(options::SITE_FOREIGN_MOD_ITEM_SEMI_SEMI_BEFORE);
     w.text(";")?;
@@ -38300,9 +38322,12 @@ fn render_foreign_mod_item_semi(node: &ForeignModItemSemiTransport, w: &mut dyn 
 fn render_foreign_mod_item_body(node: &ForeignModItemBodyTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let body = &node.body;
     let extern_modifier = &node.extern_modifier;
-    let visibility_modifier = View::new(&node.visibility_modifier, "{}");
+    let unsafe_ = View::new(&node.unsafe_, "unsafe");
     w.edge(::sittir_core::types::KindId(396), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_visibility_modifier", 0, w, |w| visibility_modifier.render(w))?;
+    if unsafe_.is_present() {
+        unsafe_.render(w)?;
+        w.site_at(options::SITE_FOREIGN_MOD_ITEM_BODY_UNSAFE_AFTER);
+    }
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_extern_modifier", 0, w, |w| extern_modifier.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", 0, w, |w| body.render(w))?;
     w.edge(::sittir_core::types::KindId(396), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -38979,7 +39004,7 @@ fn render_float_literal(t: &FloatLiteralTransport, w: &mut dyn ::sittir_core::re
 }
 
 fn render_string_content(t: &StringContentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.leaf_kind(::sittir_core::types::KindId(158));
+    w.leaf_kind(::sittir_core::types::KindId(157));
     w.text(&t.text)
 }
 
@@ -39056,6 +39081,10 @@ fn render_parameters_elements_receiver_group(node: &ParametersElementsReceiverGr
     Ok(())
 }
 
+fn render_string_close(t: &StringCloseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
 fn render_error_sentinel(t: &ErrorSentinelTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
@@ -39091,7 +39120,7 @@ fn render_never_type(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_
 }
 
 fn render_mutable_specifier(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(57)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("mut"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(58)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("mut"))
 }
 
 fn render_unit_expression(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -39327,7 +39356,7 @@ fn render_static_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sit
 }
 
 fn render_ref_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(114)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("ref"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(115)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("ref"))
 }
 
 fn render_type_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -39343,7 +39372,7 @@ fn render_dash_gt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_cor
 }
 
 fn render_async_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(112)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("async"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(113)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("async"))
 }
 
 fn render_default_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -39351,7 +39380,7 @@ fn render_default_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::si
 }
 
 fn render_unsafe_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(111)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("unsafe"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(112)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("unsafe"))
 }
 
 fn render_where_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -39379,7 +39408,7 @@ fn render_let_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir
 }
 
 fn render_else_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(102)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("else"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(103)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("else"))
 }
 
 fn render_use_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -39391,7 +39420,7 @@ fn render_colon_colon(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir
 }
 
 fn render_amp(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(54)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("&"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(55)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("&"))
 }
 
 fn render_dot_dot_dot(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -39403,123 +39432,123 @@ fn render_squote(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core
 }
 
 fn render_impl_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(55)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("impl"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(56)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("impl"))
 }
 
 fn render_dyn_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(56)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("dyn"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(57)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("dyn"))
 }
 
 fn render_dash(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(75)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("-"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(76)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("-"))
 }
 
 fn render_amp_amp(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(76)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("&&"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(77)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("&&"))
 }
 
 fn render_pipe_pipe(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(77)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("||"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(78)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("||"))
 }
 
 fn render_pipe(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(78)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("|"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(79)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("|"))
 }
 
 fn render_caret(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(79)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("^"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(80)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("^"))
 }
 
 fn render_eq_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(80)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("=="))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(81)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("=="))
 }
 
 fn render_bang_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(81)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("!="))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(82)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("!="))
 }
 
 fn render_lt_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(82)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<="))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(83)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<="))
 }
 
 fn render_gt_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(83)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">="))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(84)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">="))
 }
 
 fn render_lt_lt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(84)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<<"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(85)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<<"))
 }
 
 fn render_gt_gt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(85)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">>"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(86)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">>"))
 }
 
 fn render_slash(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(86)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("/"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(87)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("/"))
 }
 
 fn render_percent(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(87)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("%"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(88)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("%"))
 }
 
 fn render_plus_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(88)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("+="))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(89)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("+="))
 }
 
 fn render_dash_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(89)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("-="))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(90)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("-="))
 }
 
 fn render_star_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(90)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("*="))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(91)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("*="))
 }
 
 fn render_slash_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(91)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("/="))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(92)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("/="))
 }
 
 fn render_percent_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(92)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("%="))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(93)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("%="))
 }
 
 fn render_amp_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(93)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("&="))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(94)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("&="))
 }
 
 fn render_pipe_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(94)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("|="))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(95)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("|="))
 }
 
 fn render_caret_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(95)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("^="))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(96)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("^="))
 }
 
 fn render_lt_lt_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(96)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<<="))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(97)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<<="))
 }
 
 fn render_gt_gt_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(97)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">>="))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(98)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">>="))
 }
 
 fn render_return_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(98)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("return"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(99)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("return"))
 }
 
 fn render_yield_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(99)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("yield"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(100)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("yield"))
 }
 
 fn render_dot_dot(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(100)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(".."))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(101)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(".."))
 }
 
 fn render_if_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(101)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("if"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(102)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("if"))
 }
 
 fn render_match_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(103)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("match"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(104)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("match"))
 }
 
 fn render_comma(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -39527,31 +39556,31 @@ fn render_comma(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core:
 }
 
 fn render_while_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(104)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("while"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(105)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("while"))
 }
 
 fn render_loop_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(105)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("loop"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(106)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("loop"))
 }
 
 fn render_in_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(106)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("in"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(107)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("in"))
 }
 
 fn render_break_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(107)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("break"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(108)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("break"))
 }
 
 fn render_continue_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(108)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("continue"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(109)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("continue"))
 }
 
 fn render_dot(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(109)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("."))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(110)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("."))
 }
 
 fn render_await_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(110)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("await"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(111)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("await"))
 }
 
 fn render_move_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -39563,15 +39592,11 @@ fn render_gen_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir
 }
 
 fn render_try_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(113)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("try"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(114)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("try"))
 }
 
 fn render_at(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(115)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("@"))
-}
-
-fn render_dquote(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(116)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("\""))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(116)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("@"))
 }
 
 fn render_true_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -39595,71 +39620,71 @@ fn render_star_slash(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_
 }
 
 fn render_u8_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(58)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u8"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(59)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u8"))
 }
 
 fn render_i8_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(59)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i8"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(60)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i8"))
 }
 
 fn render_u16_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(60)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u16"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(61)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u16"))
 }
 
 fn render_i16_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(61)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i16"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(62)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i16"))
 }
 
 fn render_u32_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(62)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u32"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(63)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u32"))
 }
 
 fn render_i32_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(63)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i32"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(64)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i32"))
 }
 
 fn render_u64_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(64)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u64"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(65)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u64"))
 }
 
 fn render_i64_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(65)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i64"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(66)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i64"))
 }
 
 fn render_u128_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(66)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u128"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(67)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u128"))
 }
 
 fn render_i128_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(67)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i128"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(68)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i128"))
 }
 
 fn render_isize_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(68)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("isize"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(69)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("isize"))
 }
 
 fn render_usize_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(69)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("usize"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(70)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("usize"))
 }
 
 fn render_f32_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(70)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("f32"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(71)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("f32"))
 }
 
 fn render_f64_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(71)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("f64"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(72)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("f64"))
 }
 
 fn render_bool_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(72)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("bool"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(73)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("bool"))
 }
 
 fn render_str_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(73)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("str"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(74)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("str"))
 }
 
 fn render_char_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(74)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("char"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(75)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("char"))
 }
 
 fn render_underscore(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -39683,7 +39708,7 @@ fn render_struct_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sit
 }
 
 fn render_raw_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    TransportLayout::render(None, Some(::sittir_core::types::KindId(157)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("raw"))
+    TransportLayout::render(None, Some(::sittir_core::types::KindId(53)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("raw"))
 }
 
 fn render_macro_rules_bang(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -40273,6 +40298,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::AttributedParameterReceiver(inner) => inner.kind_in(kinds),
             Self::ParametersElementsReceiver(inner) => inner.kind_in(kinds),
             Self::ParametersElementsReceiverGroup(inner) => inner.kind_in(kinds),
+            Self::StringClose(inner) => inner.kind_in(kinds),
             Self::ErrorSentinel(inner) => inner.kind_in(kinds),
             Self::TypeIdentifier(inner) => inner.kind_in(kinds),
             Self::FieldIdentifier(inner) => inner.kind_in(kinds),
@@ -40280,7 +40306,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::EmptyStatement(_) => [::sittir_core::types::KindId(178)].iter().any(|k| kinds.contains(k)),
             Self::UnitType(_) => [::sittir_core::types::KindId(244)].iter().any(|k| kinds.contains(k)),
             Self::NeverType(_) => [::sittir_core::types::KindId(254)].iter().any(|k| kinds.contains(k)),
-            Self::MutableSpecifier => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
+            Self::MutableSpecifier => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
             Self::UnitExpression(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
             Self::RemainingFieldPattern(_) => [::sittir_core::types::KindId(321)].iter().any(|k| kinds.contains(k)),
             Self::InnerLineDocCommentMarker => [::sittir_core::types::KindId(338)].iter().any(|k| kinds.contains(k)),
@@ -40339,96 +40365,95 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::AsKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
             Self::ConstKeyword => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
             Self::StaticKeyword => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
-            Self::RefKeyword => [::sittir_core::types::KindId(114)].iter().any(|k| kinds.contains(k)),
+            Self::RefKeyword => [::sittir_core::types::KindId(115)].iter().any(|k| kinds.contains(k)),
             Self::TypeKeyword => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
             Self::FnKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
             Self::DashGt => [::sittir_core::types::KindId(131)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
+            Self::AsyncKeyword => [::sittir_core::types::KindId(113)].iter().any(|k| kinds.contains(k)),
             Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnsafeKeyword => [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k)),
+            Self::UnsafeKeyword => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
             Self::WhereKeyword => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
             Self::TraitKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
             Self::ForKeyword => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
             Self::Lt => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
             Self::Gt => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
             Self::LetKeyword => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
-            Self::ElseKeyword => [::sittir_core::types::KindId(102)].iter().any(|k| kinds.contains(k)),
+            Self::ElseKeyword => [::sittir_core::types::KindId(103)].iter().any(|k| kinds.contains(k)),
             Self::UseKeyword => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
             Self::ColonColon => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
-            Self::Amp => [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k)),
+            Self::Amp => [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k)),
             Self::DotDotDot => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
             Self::Squote => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::ImplKeyword => [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k)),
-            Self::DynKeyword => [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k)),
-            Self::Dash => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
-            Self::AmpAmp => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
-            Self::PipePipe => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
-            Self::Pipe => [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k)),
-            Self::Caret => [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k)),
-            Self::EqEq => [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k)),
-            Self::BangEq => [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k)),
-            Self::LtEq => [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k)),
-            Self::GtEq => [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k)),
-            Self::LtLt => [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k)),
-            Self::GtGt => [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k)),
-            Self::Slash => [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k)),
-            Self::Percent => [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k)),
-            Self::PlusEq => [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k)),
-            Self::DashEq => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
-            Self::StarEq => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
-            Self::SlashEq => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
-            Self::PercentEq => [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k)),
-            Self::AmpEq => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
-            Self::PipeEq => [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k)),
-            Self::CaretEq => [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
-            Self::LtLtEq => [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
-            Self::GtGtEq => [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k)),
-            Self::ReturnKeyword => [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k)),
-            Self::YieldKeyword => [::sittir_core::types::KindId(99)].iter().any(|k| kinds.contains(k)),
-            Self::DotDot => [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k)),
-            Self::IfKeyword => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(103)].iter().any(|k| kinds.contains(k)),
+            Self::ImplKeyword => [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k)),
+            Self::DynKeyword => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
+            Self::Dash => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
+            Self::AmpAmp => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
+            Self::PipePipe => [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k)),
+            Self::Pipe => [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k)),
+            Self::Caret => [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k)),
+            Self::EqEq => [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k)),
+            Self::BangEq => [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k)),
+            Self::LtEq => [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k)),
+            Self::GtEq => [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k)),
+            Self::LtLt => [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k)),
+            Self::GtGt => [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k)),
+            Self::Slash => [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k)),
+            Self::Percent => [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k)),
+            Self::PlusEq => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
+            Self::DashEq => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
+            Self::StarEq => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
+            Self::SlashEq => [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k)),
+            Self::PercentEq => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
+            Self::AmpEq => [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k)),
+            Self::PipeEq => [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
+            Self::CaretEq => [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::LtLtEq => [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k)),
+            Self::GtGtEq => [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k)),
+            Self::ReturnKeyword => [::sittir_core::types::KindId(99)].iter().any(|k| kinds.contains(k)),
+            Self::YieldKeyword => [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k)),
+            Self::DotDot => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
+            Self::IfKeyword => [::sittir_core::types::KindId(102)].iter().any(|k| kinds.contains(k)),
+            Self::MatchKeyword => [::sittir_core::types::KindId(104)].iter().any(|k| kinds.contains(k)),
             Self::Comma => [::sittir_core::types::KindId(130)].iter().any(|k| kinds.contains(k)),
-            Self::WhileKeyword => [::sittir_core::types::KindId(104)].iter().any(|k| kinds.contains(k)),
-            Self::LoopKeyword => [::sittir_core::types::KindId(105)].iter().any(|k| kinds.contains(k)),
-            Self::InKeyword => [::sittir_core::types::KindId(106)].iter().any(|k| kinds.contains(k)),
-            Self::BreakKeyword => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
-            Self::ContinueKeyword => [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k)),
-            Self::Dot => [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k)),
+            Self::WhileKeyword => [::sittir_core::types::KindId(105)].iter().any(|k| kinds.contains(k)),
+            Self::LoopKeyword => [::sittir_core::types::KindId(106)].iter().any(|k| kinds.contains(k)),
+            Self::InKeyword => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
+            Self::BreakKeyword => [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k)),
+            Self::ContinueKeyword => [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k)),
+            Self::Dot => [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k)),
+            Self::AwaitKeyword => [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k)),
             Self::MoveKeyword => [::sittir_core::types::KindId(129)].iter().any(|k| kinds.contains(k)),
             Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
-            Self::TryKeyword => [::sittir_core::types::KindId(113)].iter().any(|k| kinds.contains(k)),
-            Self::At => [::sittir_core::types::KindId(115)].iter().any(|k| kinds.contains(k)),
-            Self::Dquote => [::sittir_core::types::KindId(116)].iter().any(|k| kinds.contains(k)),
+            Self::TryKeyword => [::sittir_core::types::KindId(114)].iter().any(|k| kinds.contains(k)),
+            Self::At => [::sittir_core::types::KindId(116)].iter().any(|k| kinds.contains(k)),
             Self::TrueKeyword => [::sittir_core::types::KindId(117)].iter().any(|k| kinds.contains(k)),
             Self::FalseKeyword => [::sittir_core::types::KindId(118)].iter().any(|k| kinds.contains(k)),
             Self::SlashSlash => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
             Self::SlashStar => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
             Self::StarSlash => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
-            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
+            Self::U8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
+            Self::I8Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
+            Self::U16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
+            Self::I16Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
+            Self::U32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
+            Self::I32Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
+            Self::U64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
+            Self::I64Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
+            Self::U128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
+            Self::I128Keyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
+            Self::IsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
+            Self::UsizeKeyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
+            Self::F32Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
+            Self::F64Keyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
+            Self::BoolKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
+            Self::StrKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
+            Self::CharKeyword => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
             Self::Underscore => [::sittir_core::types::KindId(136)].iter().any(|k| kinds.contains(k)),
             Self::DotDotEq => [::sittir_core::types::KindId(137)].iter().any(|k| kinds.contains(k)),
             Self::ModKeyword => [::sittir_core::types::KindId(138)].iter().any(|k| kinds.contains(k)),
             Self::PubKeyword => [::sittir_core::types::KindId(139)].iter().any(|k| kinds.contains(k)),
             Self::StructKeyword => [::sittir_core::types::KindId(140)].iter().any(|k| kinds.contains(k)),
-            Self::RawKeyword => [::sittir_core::types::KindId(157)].iter().any(|k| kinds.contains(k)),
+            Self::RawKeyword => [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k)),
             Self::MacroRulesBang => [::sittir_core::types::KindId(156)].iter().any(|k| kinds.contains(k)),
             _ => false,
         }
@@ -40684,6 +40709,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::AttributedParameterReceiver(t) => t.render(w),
             AnyTransport::ParametersElementsReceiver(t) => t.render(w),
             AnyTransport::ParametersElementsReceiverGroup(t) => t.render(w),
+            AnyTransport::StringClose(t) => t.render(w),
             AnyTransport::ErrorSentinel(t) => t.render(w),
             AnyTransport::TypeIdentifier(t) => t.render(w),
             AnyTransport::FieldIdentifier(t) => t.render(w),
@@ -40811,7 +40837,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::GenKeyword => render_gen_keyword(w),
             AnyTransport::TryKeyword => render_try_keyword(w),
             AnyTransport::At => render_at(w),
-            AnyTransport::Dquote => render_dquote(w),
             AnyTransport::TrueKeyword => render_true_keyword(w),
             AnyTransport::FalseKeyword => render_false_keyword(w),
             AnyTransport::SlashSlash => render_slash_slash(w),
@@ -41067,6 +41092,7 @@ const _: () = assert!(::core::mem::size_of::<ShorthandFieldInitializerTransport>
 const _: () = assert!(::core::mem::size_of::<SlicePatternTransport>() <= 256, "SlicePatternTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<SourceFileTransport>() <= 256, "SourceFileTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StaticItemTransport>() > 256, "StaticItemTransport is within the 256-byte payload ceiling: unpin it in boxed-payloads.ts");
+const _: () = assert!(::core::mem::size_of::<StringCloseTransport>() <= 256, "StringCloseTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StringContentTransport>() <= 256, "StringContentTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StringLiteralTransport>() <= 256, "StringLiteralTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<StringOpenTransport>() <= 256, "StringOpenTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
@@ -41131,4 +41157,4 @@ const _: () = assert!(::core::mem::size_of::<WherePredicatesTransport>() <= 256,
 const _: () = assert!(::core::mem::size_of::<WhileExpressionTransport>() <= 256, "WhileExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionTransport>() <= 256, "YieldExpressionTransport is over the 256-byte payload ceiling: pin it in boxed-payloads.ts");
 
-::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, StatementTransport, DeclarationStatementTransport, MacroDefinitionTransport, TokenTreePatternTransport, TokenTreeTransport, ModItemTransport, ForeignModItemTransport, StructItemTransport, ImplItemTransport, TypeTransport, PointerTypeTransport, ExpressionTransport, DelimTokenTreeTransport, RangeExpressionTransport, ReferenceExpressionTransport, ArrayExpressionTransport, MatchArmTransport, ClosureExpressionTransport, PatternTransport, RangePatternTransport, OrPatternTransport, LiteralPatternTransport, IntegerLiteralTransport, CharLiteralTransport, CharLiteralEscapedTransport, ExpressionStatementContentTransportSlot, TokenRepetitionPatternTokenPatternsTransportSlot, TokenRepetitionPatternOperatorTransportSlot, TokenRepetitionTokensTransportSlot, TokenRepetitionOperatorTransportSlot, NonSpecialTokenContentTransportSlot, AttributePathTransportSlot, EnumVariantBodyTransportSlot, FunctionItemNameTransportSlot, FunctionModifiersModifierTransportSlot, WherePredicateLeftTransportSlot, TraitBoundsBoundsTransportSlot, ConstParameterDefaultTransportSlot, UseDeclarationArgumentTransportSlot, ParametersElementsTransportSlot, VisibilityModifierContentTransportSlot, BracketedTypeTypeTransportSlot, FunctionTypeContentTransportSlot, GenericFunctionFunctionTransportSlot, GenericTypeTypeTransportSlot, GenericTypeWithTurbofishTypeTransportSlot, BoundedTypeLeftTransportSlot, AbstractTypeTraitTransportSlot, DynamicTypeTraitTransportSlot, MacroInvocationFunctionTransportSlot, ScopedIdentifierPathTransportSlot, ScopedIdentifierNameTransportSlot, ScopedTypeIdentifierInExpressionPositionPathTransportSlot, ScopedTypeIdentifierPathTransportSlot, UnaryExpressionOperatorTransportSlot, BinaryExpressionOperatorTransportSlot, CompoundAssignmentExprOperatorTransportSlot, CallExpressionFunctionTransportSlot, StructExpressionNameTransportSlot, FieldInitializerFieldTransportSlot, IfExpressionConditionTransportSlot, LetChainLeftTransportSlot, LetChainRightTransportSlot, ElseClauseBodyTransportSlot, LastMatchArmAttributesTransportSlot, ClosureParametersParametersTransportSlot, GenericPatternNameTransportSlot, TupleStructPatternTypeTransportSlot, StructPatternTypeTransportSlot, NegativeLiteralValueTransportSlot, StringLiteralElementsTransportSlot, LineCommentContentTransportSlot, BlockCommentContentTransportSlot, UseBoundsElementsItemTransportSlot, FieldInitializerListElementsItemTransportSlot, TuplePatternElementsItemTransportSlot, StructPatternElementsItemTransportSlot, ClosureExpressionExprBodyTransportSlot, ImplItemPositiveClauseTraitTransportSlot, ImplItemBodyTraitClauseTransportSlot, VisibilityModifierPubScopeContentTransportSlot, RangeExpressionBinaryOperatorTransportSlot, MatchArmBlockEndingValueTransportSlot, DelimTokenTreeParenDelimTokensTransportSlot, RangePatternPrefixRightTransportSlot, RangePatternPrefixContentTransportSlot, RangePatternWithLeftWithRightContentTransportSlot, RangePatternWithLeftContentTransportSlot, AttributedParameterContentTransportSlot, AttributedTypeParameterContentTransportSlot, TypeArgumentContentTransportSlot, AttributedParameterReceiverContentTransportSlot, SourceFileTransport, EmptyStatementTransport, ExpressionStatementTransport, MacroRuleTransport, TokenBindingPatternTransport, TokenRepetitionPatternTransport, FragmentSpecifierEnum, TokenRepetitionTransport, NonSpecialTokenTransport, AttributeItemTransport, InnerAttributeItemTransport, AttributeTransport, DeclarationListTransport, UnionItemTransport, EnumItemTransport, EnumVariantListTransport, EnumVariantTransport, FieldDeclarationListTransport, FieldDeclarationTransport, OrderedFieldDeclarationListTransport, ExternCrateDeclarationTransport, ConstItemTransport, StaticItemTransport, TypeItemTransport, FunctionItemTransport, FunctionSignatureItemTransport, FunctionModifiersTransport, WhereClauseTransport, WherePredicateTransport, TraitItemTransport, AssociatedTypeTransport, TraitBoundsTransport, HigherRankedTraitBoundTransport, RemovedTraitBoundTransport, TypeParametersTransport, ConstParameterTransport, TypeParameterTransport, LifetimeParameterTransport, LetDeclarationTransport, UseDeclarationTransport, ScopedUseListTransport, UseListTransport, UseAsClauseTransport, UseWildcardTransport, ParametersTransport, SelfParameterTransport, VariadicParameterTransport, ParameterTransport, ExternModifierTransport, VisibilityModifierTransport, BracketedTypeTransport, QualifiedTypeTransport, LifetimeTransport, ArrayTypeTransport, ForLifetimesTransport, FunctionTypeTransport, TupleTypeTransport, UnitTypeTransport, GenericFunctionTransport, GenericTypeTransport, GenericTypeWithTurbofishTransport, BoundedTypeTransport, UseBoundsTransport, TypeArgumentsTransport, TypeBindingTransport, ReferenceTypeTransport, NeverTypeTransport, AbstractTypeTransport, DynamicTypeTransport, MutableSpecifierTransport, MacroInvocationTransport, ScopedIdentifierTransport, ScopedTypeIdentifierInExpressionPositionTransport, ScopedTypeIdentifierTransport, UnaryExpressionTransport, TryExpressionTransport, BinaryExpressionTransport, AssignmentExpressionTransport, CompoundAssignmentExprTransport, TypeCastExpressionTransport, ReturnExpressionTransport, YieldExpressionTransport, CallExpressionTransport, ArgumentsTransport, ParenthesizedExpressionTransport, TupleExpressionTransport, UnitExpressionTransport, StructExpressionTransport, FieldInitializerListTransport, ShorthandFieldInitializerTransport, FieldInitializerTransport, BaseFieldInitializerTransport, IfExpressionTransport, LetConditionTransport, LetChainTransport, ElseClauseTransport, MatchExpressionTransport, MatchBlockTransport, LastMatchArmTransport, MatchPatternTransport, WhileExpressionTransport, LoopExpressionTransport, ForExpressionTransport, ConstBlockTransport, ClosureParametersTransport, LabelTransport, BreakExpressionTransport, ContinueExpressionTransport, IndexExpressionTransport, AwaitExpressionTransport, FieldExpressionTransport, UnsafeBlockTransport, AsyncBlockTransport, GenBlockTransport, TryBlockTransport, BlockTransport, GenericPatternTransport, TuplePatternTransport, SlicePatternTransport, TupleStructPatternTransport, StructPatternTransport, RemainingFieldPatternTransport, MutPatternTransport, RefPatternTransport, CapturedPatternTransport, ReferencePatternTransport, NegativeLiteralTransport, StringLiteralTransport, RawStringLiteralTransport, BooleanLiteralEnum, LineCommentTransport, InnerLineDocCommentMarkerTransport, OuterLineDocCommentMarkerTransport, BlockCommentTransport, IdentifierTransport, ShebangTransport, Self_Transport, SuperTransport, CrateTransport, MetavariableTransport, PrimitiveTypeEnum, MacroRulesTransport, EnumVariantListElementsTransport, FieldDeclarationListElementsTransport, OrderedFieldDeclarationListElementsTransport, WherePredicatesTransport, TypeParametersElementsTransport, UseClausesTransport, ParametersElementsTransport, LifetimesTransport, TypesTransport, UseBoundsElementsTransport, TypeArgumentsElementsTransport, ArgumentsElementsTransport, ExpressionsTransport, FieldInitializerListElementsTransport, TuplePatternElementsTransport, PatternsTransport, StructPatternElementsTransport, UseWildcardGroupTransport, TokenRepetitionPatternTextTransport, StringOpenTransport, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareTransport, ImplItemUnsafeMarkerTransport, IntegerLiteralDecimalTransport, IntegerLiteralHexTransport, IntegerLiteralBinaryTransport, IntegerLiteralOctalTransport, CharLiteralPlainTransport, CharLiteralEmptyTransport, CharLiteralEscapedSimpleTransport, CharLiteralEscapedUnicodeFixedTransport, CharLiteralEscapedUnicodeBracedTransport, CharLiteralEscapedHexTransport, EscapeSequenceSimpleTransport, EscapeSequenceUnicodeFixedTransport, EscapeSequenceUnicodeBracedTransport, EscapeSequenceHexTransport, ArrayExpressionSemiTransport, ArrayExpressionListTransport, AttributeInputTransport, ClosureExpressionBlockTransport, ClosureExpressionExprTransport, ReferenceExpressionRawConstTransport, ReferenceExpressionRawMutTransport, ReferenceExpressionMutTransport, ReferenceExpressionBareTransport, ImplItemPositiveClauseTransport, ImplItemNegativeClauseTransport, ImplItemBodyTransport, ImplItemSemiTransport, VisibilityModifierPubScopeInPathTransport, VisibilityModifierPubScopeTransport, VisibilityModifierPubTransport, FunctionTypeTraitFormTransport, FunctionTypeFnFormTransport, ModItemExternalTransport, ModItemInlineTransport, OrPatternBinaryTransport, OrPatternPrefixTransport, PointerTypeConstTransport, PointerTypeMutTransport, RangeExpressionBinaryTransport, RangeExpressionPostfixTransport, RangeExpressionPrefixTransport, RangeExpressionBareTransport, ExpressionStatementWithSemiTransport, ForeignModItemSemiTransport, ForeignModItemBodyTransport, MatchArmWithCommaTransport, MatchArmBlockEndingTransport, LineCommentExtraSlashesTransport, LineCommentDocOuterTransport, LineCommentDocInnerTransport, LineCommentRegularTransport, BlockCommentDocOuterTransport, BlockCommentDocInnerTransport, BlockCommentRegularTransport, TokenTreePatternParenTransport, TokenTreePatternBracketTransport, TokenTreePatternBraceTransport, TokenTreeParenTransport, TokenTreeBracketTransport, TokenTreeBraceTransport, DelimTokenTreeParenTransport, DelimTokenTreeBracketTransport, DelimTokenTreeBraceTransport, FieldPatternShorthandTransport, FieldPatternNamedTransport, MacroDefinitionParenTransport, MacroDefinitionBracketTransport, MacroDefinitionBraceTransport, RangePatternPrefixTransport, RangePatternWithLeftWithRightTransport, RangePatternWithLeftBareTransport, RangePatternWithLeftTransport, StructItemBraceTransport, StructItemTupleTransport, StructItemUnitTransport, WildcardPatternTransport, AttributedFieldDeclarationTransport, AttributedEnumVariantTransport, AttributedParameterTransport, AttributedTypeParameterTransport, AttributedArgumentTransport, AttributedOrderedFieldTransport, TypeArgumentTransport, MatchBlockArmsTransport, FloatLiteralTransport, StringContentTransport, RawStringLiteralContentTransport, OuterDocCommentMarkerTransport, InnerDocCommentMarkerTransport, RawStringLiteralStartTransport, RawStringLiteralEndTransport, DocCommentTransport, BlockCommentContentTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, IndentTransport, DedentTransport, ReceiverParameterDeclarationTransport, AttributedParameterReceiverTransport, ParametersElementsReceiverTransport, ParametersElementsReceiverGroupTransport, ErrorSentinelTransport, TypeIdentifierTransport, FieldIdentifierTransport, ShorthandFieldIdentifierTransport, SemiTransport, EqGtTransport, ColonTransport, DollarTransport, LparenTransport, RparenTransport, PlusTransport, StarTransport, QmarkTransport, BlockKeywordTransport, ExprKeywordTransport, Expr2021KeywordTransport, IdentKeywordTransport, ItemKeywordTransport, LifetimeKeywordTransport, LiteralKeywordTransport, MetaKeywordTransport, PatKeywordTransport, PatParamKeywordTransport, PathKeywordTransport, StmtKeywordTransport, TtKeywordTransport, TyKeywordTransport, VisKeywordTransport, PoundTransport, LbrackTransport, RbrackTransport, BangTransport, LbraceTransport, RbraceTransport, UnionKeywordTransport, EnumKeywordTransport, EqTransport, ExternKeywordTransport, AsKeywordTransport, ConstKeywordTransport, StaticKeywordTransport, RefKeywordTransport, TypeKeywordTransport, FnKeywordTransport, DashGtTransport, AsyncKeywordTransport, DefaultKeywordTransport, UnsafeKeywordTransport, WhereKeywordTransport, TraitKeywordTransport, ForKeywordTransport, LtTransport, GtTransport, LetKeywordTransport, ElseKeywordTransport, UseKeywordTransport, ColonColonTransport, AmpTransport, DotDotDotTransport, SquoteTransport, ImplKeywordTransport, DynKeywordTransport, DashTransport, AmpAmpTransport, PipePipeTransport, PipeTransport, CaretTransport, EqEqTransport, BangEqTransport, LtEqTransport, GtEqTransport, LtLtTransport, GtGtTransport, SlashTransport, PercentTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, PercentEqTransport, AmpEqTransport, PipeEqTransport, CaretEqTransport, LtLtEqTransport, GtGtEqTransport, ReturnKeywordTransport, YieldKeywordTransport, DotDotTransport, IfKeywordTransport, MatchKeywordTransport, CommaTransport, WhileKeywordTransport, LoopKeywordTransport, InKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, DotTransport, AwaitKeywordTransport, MoveKeywordTransport, GenKeywordTransport, TryKeywordTransport, AtTransport, DquoteTransport, TrueKeywordTransport, FalseKeywordTransport, SlashSlashTransport, SlashStarTransport, StarSlashTransport, U8KeywordTransport, I8KeywordTransport, U16KeywordTransport, I16KeywordTransport, U32KeywordTransport, I32KeywordTransport, U64KeywordTransport, I64KeywordTransport, U128KeywordTransport, I128KeywordTransport, IsizeKeywordTransport, UsizeKeywordTransport, F32KeywordTransport, F64KeywordTransport, BoolKeywordTransport, StrKeywordTransport, CharKeywordTransport, UnderscoreTransport, DotDotEqTransport, ModKeywordTransport, PubKeywordTransport, StructKeywordTransport, RawKeywordTransport, MacroRulesBangTransport, TriviaTransport);
+::sittir_core::grammar_trivia!(TriviaTransport; AnyTransport, StatementTransport, DeclarationStatementTransport, MacroDefinitionTransport, TokenTreePatternTransport, TokenTreeTransport, ModItemTransport, ForeignModItemTransport, StructItemTransport, ImplItemTransport, TypeTransport, PointerTypeTransport, ExpressionTransport, DelimTokenTreeTransport, RangeExpressionTransport, ReferenceExpressionTransport, ArrayExpressionTransport, MatchArmTransport, ClosureExpressionTransport, PatternTransport, RangePatternTransport, OrPatternTransport, LiteralPatternTransport, IntegerLiteralTransport, CharLiteralTransport, CharLiteralEscapedTransport, ExpressionStatementContentTransportSlot, TokenRepetitionPatternTokenPatternsTransportSlot, TokenRepetitionPatternOperatorTransportSlot, TokenRepetitionTokensTransportSlot, TokenRepetitionOperatorTransportSlot, NonSpecialTokenContentTransportSlot, AttributePathTransportSlot, EnumVariantBodyTransportSlot, FunctionItemNameTransportSlot, FunctionModifiersModifierTransportSlot, WherePredicateLeftTransportSlot, TraitBoundsBoundsTransportSlot, ConstParameterDefaultTransportSlot, UseDeclarationArgumentTransportSlot, ParametersElementsTransportSlot, VisibilityModifierContentTransportSlot, BracketedTypeTypeTransportSlot, FunctionTypeContentTransportSlot, GenericFunctionFunctionTransportSlot, GenericTypeTypeTransportSlot, GenericTypeWithTurbofishTypeTransportSlot, BoundedTypeLeftTransportSlot, AbstractTypeTraitTransportSlot, DynamicTypeTraitTransportSlot, MacroInvocationFunctionTransportSlot, ScopedIdentifierPathTransportSlot, ScopedIdentifierNameTransportSlot, ScopedTypeIdentifierInExpressionPositionPathTransportSlot, ScopedTypeIdentifierPathTransportSlot, UnaryExpressionOperatorTransportSlot, BinaryExpressionOperatorTransportSlot, CompoundAssignmentExprOperatorTransportSlot, CallExpressionFunctionTransportSlot, StructExpressionNameTransportSlot, FieldInitializerFieldTransportSlot, IfExpressionConditionTransportSlot, LetChainLeftTransportSlot, LetChainRightTransportSlot, ElseClauseBodyTransportSlot, LastMatchArmAttributesTransportSlot, ClosureParametersParametersTransportSlot, GenericPatternNameTransportSlot, TupleStructPatternTypeTransportSlot, StructPatternTypeTransportSlot, NegativeLiteralValueTransportSlot, StringLiteralElementsTransportSlot, LineCommentContentTransportSlot, BlockCommentContentTransportSlot, UseBoundsElementsItemTransportSlot, FieldInitializerListElementsItemTransportSlot, TuplePatternElementsItemTransportSlot, StructPatternElementsItemTransportSlot, ClosureExpressionExprBodyTransportSlot, ImplItemPositiveClauseTraitTransportSlot, ImplItemBodyTraitClauseTransportSlot, VisibilityModifierPubScopeContentTransportSlot, RangeExpressionBinaryOperatorTransportSlot, MatchArmBlockEndingValueTransportSlot, DelimTokenTreeParenDelimTokensTransportSlot, RangePatternPrefixRightTransportSlot, RangePatternPrefixContentTransportSlot, RangePatternWithLeftWithRightContentTransportSlot, RangePatternWithLeftContentTransportSlot, AttributedParameterContentTransportSlot, AttributedTypeParameterContentTransportSlot, TypeArgumentContentTransportSlot, AttributedParameterReceiverContentTransportSlot, SourceFileTransport, EmptyStatementTransport, ExpressionStatementTransport, MacroRuleTransport, TokenBindingPatternTransport, TokenRepetitionPatternTransport, FragmentSpecifierEnum, TokenRepetitionTransport, NonSpecialTokenTransport, AttributeItemTransport, InnerAttributeItemTransport, AttributeTransport, DeclarationListTransport, UnionItemTransport, EnumItemTransport, EnumVariantListTransport, EnumVariantTransport, FieldDeclarationListTransport, FieldDeclarationTransport, OrderedFieldDeclarationListTransport, ExternCrateDeclarationTransport, ConstItemTransport, StaticItemTransport, TypeItemTransport, FunctionItemTransport, FunctionSignatureItemTransport, FunctionModifiersTransport, WhereClauseTransport, WherePredicateTransport, TraitItemTransport, AssociatedTypeTransport, TraitBoundsTransport, HigherRankedTraitBoundTransport, RemovedTraitBoundTransport, TypeParametersTransport, ConstParameterTransport, TypeParameterTransport, LifetimeParameterTransport, LetDeclarationTransport, UseDeclarationTransport, ScopedUseListTransport, UseListTransport, UseAsClauseTransport, UseWildcardTransport, ParametersTransport, SelfParameterTransport, VariadicParameterTransport, ParameterTransport, ExternModifierTransport, VisibilityModifierTransport, BracketedTypeTransport, QualifiedTypeTransport, LifetimeTransport, ArrayTypeTransport, ForLifetimesTransport, FunctionTypeTransport, TupleTypeTransport, UnitTypeTransport, GenericFunctionTransport, GenericTypeTransport, GenericTypeWithTurbofishTransport, BoundedTypeTransport, UseBoundsTransport, TypeArgumentsTransport, TypeBindingTransport, ReferenceTypeTransport, NeverTypeTransport, AbstractTypeTransport, DynamicTypeTransport, MutableSpecifierTransport, MacroInvocationTransport, ScopedIdentifierTransport, ScopedTypeIdentifierInExpressionPositionTransport, ScopedTypeIdentifierTransport, UnaryExpressionTransport, TryExpressionTransport, BinaryExpressionTransport, AssignmentExpressionTransport, CompoundAssignmentExprTransport, TypeCastExpressionTransport, ReturnExpressionTransport, YieldExpressionTransport, CallExpressionTransport, ArgumentsTransport, ParenthesizedExpressionTransport, TupleExpressionTransport, UnitExpressionTransport, StructExpressionTransport, FieldInitializerListTransport, ShorthandFieldInitializerTransport, FieldInitializerTransport, BaseFieldInitializerTransport, IfExpressionTransport, LetConditionTransport, LetChainTransport, ElseClauseTransport, MatchExpressionTransport, MatchBlockTransport, LastMatchArmTransport, MatchPatternTransport, WhileExpressionTransport, LoopExpressionTransport, ForExpressionTransport, ConstBlockTransport, ClosureParametersTransport, LabelTransport, BreakExpressionTransport, ContinueExpressionTransport, IndexExpressionTransport, AwaitExpressionTransport, FieldExpressionTransport, UnsafeBlockTransport, AsyncBlockTransport, GenBlockTransport, TryBlockTransport, BlockTransport, GenericPatternTransport, TuplePatternTransport, SlicePatternTransport, TupleStructPatternTransport, StructPatternTransport, RemainingFieldPatternTransport, MutPatternTransport, RefPatternTransport, CapturedPatternTransport, ReferencePatternTransport, NegativeLiteralTransport, StringLiteralTransport, RawStringLiteralTransport, BooleanLiteralEnum, LineCommentTransport, InnerLineDocCommentMarkerTransport, OuterLineDocCommentMarkerTransport, BlockCommentTransport, IdentifierTransport, ShebangTransport, Self_Transport, SuperTransport, CrateTransport, MetavariableTransport, PrimitiveTypeEnum, MacroRulesTransport, EnumVariantListElementsTransport, FieldDeclarationListElementsTransport, OrderedFieldDeclarationListElementsTransport, WherePredicatesTransport, TypeParametersElementsTransport, UseClausesTransport, ParametersElementsTransport, LifetimesTransport, TypesTransport, UseBoundsElementsTransport, TypeArgumentsElementsTransport, ArgumentsElementsTransport, ExpressionsTransport, FieldInitializerListElementsTransport, TuplePatternElementsTransport, PatternsTransport, StructPatternElementsTransport, UseWildcardGroupTransport, TokenRepetitionPatternTextTransport, StringOpenTransport, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareTransport, ImplItemUnsafeMarkerTransport, IntegerLiteralDecimalTransport, IntegerLiteralHexTransport, IntegerLiteralBinaryTransport, IntegerLiteralOctalTransport, CharLiteralPlainTransport, CharLiteralEmptyTransport, CharLiteralEscapedSimpleTransport, CharLiteralEscapedUnicodeFixedTransport, CharLiteralEscapedUnicodeBracedTransport, CharLiteralEscapedHexTransport, EscapeSequenceSimpleTransport, EscapeSequenceUnicodeFixedTransport, EscapeSequenceUnicodeBracedTransport, EscapeSequenceHexTransport, ArrayExpressionSemiTransport, ArrayExpressionListTransport, AttributeInputTransport, ClosureExpressionBlockTransport, ClosureExpressionExprTransport, ReferenceExpressionRawConstTransport, ReferenceExpressionRawMutTransport, ReferenceExpressionMutTransport, ReferenceExpressionBareTransport, ImplItemPositiveClauseTransport, ImplItemNegativeClauseTransport, ImplItemBodyTransport, ImplItemSemiTransport, VisibilityModifierPubScopeInPathTransport, VisibilityModifierPubScopeTransport, VisibilityModifierPubTransport, FunctionTypeTraitFormTransport, FunctionTypeFnFormTransport, ModItemExternalTransport, ModItemInlineTransport, OrPatternBinaryTransport, OrPatternPrefixTransport, PointerTypeConstTransport, PointerTypeMutTransport, RangeExpressionBinaryTransport, RangeExpressionPostfixTransport, RangeExpressionPrefixTransport, RangeExpressionBareTransport, ExpressionStatementWithSemiTransport, ForeignModItemSemiTransport, ForeignModItemBodyTransport, MatchArmWithCommaTransport, MatchArmBlockEndingTransport, LineCommentExtraSlashesTransport, LineCommentDocOuterTransport, LineCommentDocInnerTransport, LineCommentRegularTransport, BlockCommentDocOuterTransport, BlockCommentDocInnerTransport, BlockCommentRegularTransport, TokenTreePatternParenTransport, TokenTreePatternBracketTransport, TokenTreePatternBraceTransport, TokenTreeParenTransport, TokenTreeBracketTransport, TokenTreeBraceTransport, DelimTokenTreeParenTransport, DelimTokenTreeBracketTransport, DelimTokenTreeBraceTransport, FieldPatternShorthandTransport, FieldPatternNamedTransport, MacroDefinitionParenTransport, MacroDefinitionBracketTransport, MacroDefinitionBraceTransport, RangePatternPrefixTransport, RangePatternWithLeftWithRightTransport, RangePatternWithLeftBareTransport, RangePatternWithLeftTransport, StructItemBraceTransport, StructItemTupleTransport, StructItemUnitTransport, WildcardPatternTransport, AttributedFieldDeclarationTransport, AttributedEnumVariantTransport, AttributedParameterTransport, AttributedTypeParameterTransport, AttributedArgumentTransport, AttributedOrderedFieldTransport, TypeArgumentTransport, MatchBlockArmsTransport, FloatLiteralTransport, StringContentTransport, RawStringLiteralContentTransport, OuterDocCommentMarkerTransport, InnerDocCommentMarkerTransport, RawStringLiteralStartTransport, RawStringLiteralEndTransport, DocCommentTransport, BlockCommentContentTransport, TightTransport, SpaceTransport, TabTransport, NewlineTransport, BlanklineTransport, DoubleBlanklineTransport, IndentTransport, DedentTransport, ReceiverParameterDeclarationTransport, AttributedParameterReceiverTransport, ParametersElementsReceiverTransport, ParametersElementsReceiverGroupTransport, StringCloseTransport, ErrorSentinelTransport, TypeIdentifierTransport, FieldIdentifierTransport, ShorthandFieldIdentifierTransport, SemiTransport, EqGtTransport, ColonTransport, DollarTransport, LparenTransport, RparenTransport, PlusTransport, StarTransport, QmarkTransport, BlockKeywordTransport, ExprKeywordTransport, Expr2021KeywordTransport, IdentKeywordTransport, ItemKeywordTransport, LifetimeKeywordTransport, LiteralKeywordTransport, MetaKeywordTransport, PatKeywordTransport, PatParamKeywordTransport, PathKeywordTransport, StmtKeywordTransport, TtKeywordTransport, TyKeywordTransport, VisKeywordTransport, PoundTransport, LbrackTransport, RbrackTransport, BangTransport, LbraceTransport, RbraceTransport, UnionKeywordTransport, EnumKeywordTransport, EqTransport, ExternKeywordTransport, AsKeywordTransport, ConstKeywordTransport, StaticKeywordTransport, RefKeywordTransport, TypeKeywordTransport, FnKeywordTransport, DashGtTransport, AsyncKeywordTransport, DefaultKeywordTransport, UnsafeKeywordTransport, WhereKeywordTransport, TraitKeywordTransport, ForKeywordTransport, LtTransport, GtTransport, LetKeywordTransport, ElseKeywordTransport, UseKeywordTransport, ColonColonTransport, AmpTransport, DotDotDotTransport, SquoteTransport, ImplKeywordTransport, DynKeywordTransport, DashTransport, AmpAmpTransport, PipePipeTransport, PipeTransport, CaretTransport, EqEqTransport, BangEqTransport, LtEqTransport, GtEqTransport, LtLtTransport, GtGtTransport, SlashTransport, PercentTransport, PlusEqTransport, DashEqTransport, StarEqTransport, SlashEqTransport, PercentEqTransport, AmpEqTransport, PipeEqTransport, CaretEqTransport, LtLtEqTransport, GtGtEqTransport, ReturnKeywordTransport, YieldKeywordTransport, DotDotTransport, IfKeywordTransport, MatchKeywordTransport, CommaTransport, WhileKeywordTransport, LoopKeywordTransport, InKeywordTransport, BreakKeywordTransport, ContinueKeywordTransport, DotTransport, AwaitKeywordTransport, MoveKeywordTransport, GenKeywordTransport, TryKeywordTransport, AtTransport, TrueKeywordTransport, FalseKeywordTransport, SlashSlashTransport, SlashStarTransport, StarSlashTransport, U8KeywordTransport, I8KeywordTransport, U16KeywordTransport, I16KeywordTransport, U32KeywordTransport, I32KeywordTransport, U64KeywordTransport, I64KeywordTransport, U128KeywordTransport, I128KeywordTransport, IsizeKeywordTransport, UsizeKeywordTransport, F32KeywordTransport, F64KeywordTransport, BoolKeywordTransport, StrKeywordTransport, CharKeywordTransport, UnderscoreTransport, DotDotEqTransport, ModKeywordTransport, PubKeywordTransport, StructKeywordTransport, RawKeywordTransport, MacroRulesBangTransport, TriviaTransport);

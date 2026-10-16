@@ -22,12 +22,12 @@
 
 - **Branch.**
   - `feat/authoring-dsl`, in the worktree `scratchpad/wt-dsl-authoring`, is cut from master, with the 2b head (946114382, `codex/bindings-parser-layer`) merged in (Task 0.0). `codex/bindings-parser-layer` stays as it is.
-  - Each stage is a PR into `feat/authoring-dsl`. Never rebase; master comes in by merge.
+  - Stages land back to back on `feat/authoring-dsl`, with no per-stage PR and no review hold. Each stage has its own commits, passes its own gate before the next starts, and carries its gate results in its commit messages. Never rebase; master comes in by merge.
+  - One PR, `feat/authoring-dsl` → master, opens when every stage has landed. Its body starts `Owner: sittir-design` and carries a per-stage gate table, the rows compared against master, and a whole-branch Codex adversarial review. Coordinate and brainstorm review it.
   - The branch merges to master on the maintainer's word, carrying 2b.
-  - PR bodies start `Owner: sittir-design`. Coordinate reviews the stages.
 - **Execution.** The design session executes this plan inline, with superpowers:executing-plans. It uses no subagents.
 - **Byte-identical gates.** Every stage leaves generated output byte-identical to the previous stage's commit, except the exceptions the stage names.
-  - Stage 1's reference is the baseline recorded at Task 0.0's merge (spec §10). That baseline's grammar-level outputs equal 946114382's (`scratchpad/handoffs/reshape-gate-manifest-946114382.txt`). Its rows equal `scratchpad/handoffs/reshape-gate-rows-946114382.txt`, unless Task 0.0 reports a moved row.
+  - Stage 1's reference is the baseline re-recorded at Task 0.4 (2867fa8ed, spec §10). Its grammar-level outputs equal 946114382's with each nested alias collapsed, and its rows equal the merge's.
   - A failed gate stops the stage for review. Nothing is reverted to make a gate pass.
 - **Erasable syntax only** in `grammar.sittir.ts`, `grammar.bindings.ts` and every module they import: no enums, no namespaces with values, no parameter properties.
 - **Generated outputs are never hand-edited;** regenerate them. The generated layer is written only by `bindings-inventory --write`.
@@ -43,7 +43,7 @@
   - `cargo test --workspace --no-default-features`;
   - `bindings-inventory --check`;
   - `tool output-gate --check` (Task 0.1);
-  - the Codex adversarial review before each PR opens, with each finding fixed or declined in the PR body.
+  - the whole-branch Codex adversarial review before the PR opens, with each finding fixed or declined in the PR body.
 
 ## Review Focus
 
@@ -60,7 +60,7 @@
    - Test: in Task 1.2.
 4. **Effects rewrite inherited records only.**
    - Expected: a `field()` entry in layer 1 leaves layer 1's own `options` untouched, while the same entry in layer 2 rewrites the inherited option path.
-   - Test: in Task 1.1.
+   - Test: in Task 1.1 (the inherited records), and in Task 2.2 (a layer's own records, read from the evaluated grammar).
 5. **The same-site check under two spellings.**
    - Expected: an inline `edit(previous, { '1': field('a') })` and an entry `{ 'body:': field('b') }` that resolve to one member raise `edit-site-conflict`.
    - Test: in Task 4.4.
@@ -73,50 +73,65 @@ No behaviour change. Its deliverables let every later stage prove it is byte-ide
 
 ### Task 0.0: the branch and its merge
 
-- [ ] **Step 1: Create the worktree.**
+**Landed:** merge 590bbe204 on `feat/authoring-dsl`. Every grammar-level output equals its 946114382 blob: the 33 files Step 4 names and the 15 `src/tree_sitter` headers. Of the 145 rows, the 130 in `reshape-gate-rows-946114382.txt` are unchanged and 15 are new from master.
+
+- [x] **Step 1: Create the worktree.**
   `git worktree add -b feat/authoring-dsl scratchpad/wt-dsl-authoring origin/master`
-- [ ] **Step 2: Merge the 2b head.** `git -C scratchpad/wt-dsl-authoring merge --no-ff 946114382`. A trial merge conflicts in two kinds of file:
+- [x] **Step 2: Merge the 2b head.** `git -C scratchpad/wt-dsl-authoring merge --no-ff 946114382`. A trial merge conflicts in two kinds of file:
   - three source files, resolved by hand, keeping both sides' changes: `packages/codegen/src/bindings/facts.ts`, `packages/codegen/src/bindings/input.ts` and `packages/codegen/src/bindings/__tests__/routes.test.ts`;
   - generated files under `packages/*/src`, resolved by regeneration in Step 3, never by hand.
-- [ ] **Step 3: Regenerate.** Run `pnpm run validate:native`, which generates, then `bindings-inventory --check`. A failing check means master's bindings changes moved the derivation: stop and report the difference to brainstorm.
-- [ ] **Step 4: Compare the grammar-level outputs with 946114382's blobs.** These are `grammar.json`, `parser.c`, `node-types.json`, `parser.wasm`, `resolutions.json`, `grammar.bindings.ts` and `.sittir/grammar.js`, for all five grammars.
+- [x] **Step 3: Regenerate.** Run `pnpm run validate:native`, which generates, then `bindings-inventory --check`. A failing check means master's bindings changes moved the derivation: stop and report the difference to brainstorm.
+- [x] **Step 4: Compare the grammar-level outputs with 946114382's blobs.** These are `grammar.json`, `parser.c`, `node-types.json`, `parser.wasm`, `resolutions.json`, `grammar.bindings.ts` and `.sittir/grammar.js`, for all five grammars.
   - Use `git hash-object` against the manifest's blob ids.
   - Any difference stops the work and is reported.
-- [ ] **Step 5: Run the standing gates.** Compare the rows with `reshape-gate-rows-946114382.txt`, and report any moved row to brainstorm before the baseline is accepted.
-- [ ] **Step 6: Commit the merge** with the regenerated outputs. Send coordinate the three hand-resolved files for review.
+  - The baseline is recorded (Task 0.1, Step 4) only after every one of these outputs equals its 946114382 blob.
+- [x] **Step 5: Run the standing gates.** Compare the rows with `reshape-gate-rows-946114382.txt`, and report any moved row to brainstorm before the baseline is accepted.
+- [x] **Step 6: Commit the merge** with the regenerated outputs. Send coordinate the three hand-resolved files for review.
 
 ### Task 0.1: `tool output-gate`
+
+**Landed** on `feat/authoring-dsl`: 88a0fa67f, with Task 0.2. The adversarial review's fixes are 7c7a65377, and the tool-list test is 65a8a912c. The baseline `scratchpad/handoffs/reshape-gate-manifest-merge.txt` lists 245 files at 590bbe204: 946114382's 233, the native `index.cjs` and `index.d.ts` of five grammars, and the scm and regex test fixtures.
 
 **Files:**
 - Create: `packages/tools/src/output-gate/index.ts`
 - Create: `packages/cli/src/commands/tool/output-gate.ts`, registered beside the other tool commands
-- Modify: `docs/cli-command-glossary.md` (regenerated from the commander tree), `docs/glossary/packages-tools-src.md`
+- Modify: `docs/cli-command-glossary.md` (regenerated from the commander tree); create `docs/glossary/packages-tools-src-output-gate.md`
 - Test: `packages/tools/src/output-gate/__tests__/output-gate.test.ts`
 
 **Interfaces:**
 - Produces:
   ```ts
-  export interface GateManifest { readonly entries: ReadonlyMap<string, string> }   // path → git blob id
-  export function readGateManifest(path: string): GateManifest;                    // '<blob> <path>' lines, '#' comments
-  export function recordGateManifest(paths: readonly string[], rev: string): GateManifest;
+  export interface GateManifest { readonly entries: ReadonlyMap<string, string> }   // path → git blob id, sorted by path
   export interface GateException { readonly path: string; readonly dropJsonKeys?: readonly string[] }
-  export function checkGate(manifest: GateManifest, rev: string | 'worktree', except: readonly GateException[]): readonly string[];   // the differing paths
+  export type GateRevision = string | 'worktree';
+  export interface GateDifference { readonly path: string; readonly change: 'changed' | 'missing' | 'added' }
+  export function readGateManifest(path: string): GateManifest;                    // '<blob> <path>' lines, '#' comments
+  export function printGateManifest(manifest: GateManifest, comment: string): string;
+  export async function generatedOutputRoots(): Promise<readonly string[]>;        // generatedRootsFor, plus each grammar's bindings layer
+  export function gateBlobs(roots: readonly string[], rev: GateRevision, root?: string): Map<string, string>;
+  export function recordGateManifest(roots: readonly string[], rev: string, root?: string): GateManifest;
+  export function checkGate(manifest: GateManifest, current: ReadonlyMap<string, string>, rev: GateRevision,
+      except: readonly GateException[], root?: string): readonly GateDifference[];
+  export function parseGateException(spec: string): GateException;                 // 'path' or 'path:key,key'
   ```
-- The blob id of a worktree file is `git hash-object <file>`.
-- A `dropJsonKeys` exception compares the file with those top-level keys removed from both sides: parse, delete, re-serialize with the generator's formatting.
+- At a revision the blobs come from `git ls-tree`.
+- In the worktree, the bytes on disk are hashed with `git hash-object --no-filters`. The files hashed are every tracked file under the roots, and every untracked one the repository's own `.gitignore` files allow. Local and global excludes do not hide a file.
+- A `dropJsonKeys` exception compares the file with those top-level keys removed from both sides.
+  - The comparison is exact only for JSON in the form `JSON.stringify(value, null, 2)` prints, with or without one final newline. A file in any other form must match byte for byte.
+  - An added file is reported even when a key exception names it.
 - CLI:
-  - `tool output-gate --record <out> [--rev <rev>]` records the generated outputs that `generated-manifest.ts` lists;
-  - `tool output-gate --check <manifest> [--except <path>[:key,key]]…` prints each differing path and exits 1 if any differ.
+  - `tool output-gate --record <out> [--rev <rev>]` records the roots `generatedOutputRoots()` lists, at `HEAD` by default;
+  - `tool output-gate --check <manifest> [--rev <rev>] [--except <path>[:key,key]]…` prints each changed, missing or added file and exits 1 if there is any. `--except` repeats.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - A manifest written by `recordGateManifest` checks clean against the same revision.
   - Changing one byte of a listed file names that file.
   - `--except packages/x/grammar.json:splitFrom` ignores a difference only in that key, and still reports a difference in `rules`.
-- [ ] **Step 2: Run them and confirm they fail.**
+- [x] **Step 2: Run them and confirm they fail.**
   `pnpm exec vitest run packages/tools/src/output-gate/__tests__/output-gate.test.ts`
-- [ ] **Step 3: Implement.** Read the generated-output list from `packages/codegen/src/scripts/generated-manifest.ts`; do not keep a second list.
-- [ ] **Step 4: Run the tests, then record the baseline.** Run `tool output-gate --record scratchpad/handoffs/reshape-gate-manifest-merge.txt --rev <Task 0.0's merge>`. Do not commit the manifest. Checking it against the merge prints nothing.
-- [ ] **Step 5: Commit** the tool, its command, its test and its glossary entries.
+- [x] **Step 3: Implement.** Read the generated-output list from `packages/codegen/src/scripts/generated-manifest.ts`; do not keep a second list.
+- [x] **Step 4: Run the tests, then record the baseline.** Run `tool output-gate --record scratchpad/handoffs/reshape-gate-manifest-merge.txt --rev <Task 0.0's merge>`. Do not commit the manifest. Checking it against the merge prints nothing.
+- [x] **Step 5: Commit** the tool, its command, its test and its glossary entries.
 
 ### Task 0.2: evaluated-grammar snapshots
 
@@ -127,24 +142,58 @@ No behaviour change. Its deliverables let every later stage prove it is byte-ide
 **Interfaces:**
 - Produces:
   ```ts
-  export function evaluatedSnapshot(grammar: GrammarName, layer: 'sittir' | 'top'): string;   // canonical JSON
+  export type GateLayer = 'sittir' | 'top';
+  export const GATE_LAYERS: readonly GateLayer[];
+  export async function evaluatedGrammarOf(grammar: GrammarName, layer: GateLayer): Promise<unknown>;
+  export async function snapshotOf(evaluated: unknown): Promise<string>;                          // canonical JSON
+  export async function evaluatedSnapshot(grammar: GrammarName, layer: GateLayer): Promise<string>;
+  export async function writeSnapshots(dir: string): Promise<readonly string[]>;
+  export async function checkSnapshots(dir: string): Promise<readonly string[]>;                 // the files that differ or are missing
   ```
-- `evaluatedSnapshot` is `JSON.stringify` of the evaluated grammar as `importAndExtractGrammar` returns it, with keys sorted and `Map` and `Set` canonicalized. It uses the same `canonical()` as `evaluate-for-derivation.ts`: export that one, do not copy it.
+- `snapshotOf` is `JSON.stringify` of `canonical(evaluated)`, indented by 2 and ending in a newline. `canonical()` sorts keys and turns `Map` and `Set` into sorted entry lists. It is the one exported from `evaluate-for-derivation.ts`, not a copy.
+- `canonical()` throws on a value that JSON would drop or turn into null: a function, a bigint, a non-finite number, a non-plain object, or an undefined element. Such a value then cannot read like another one in the snapshots or in the conflict hash. The merge's evaluated grammars hold none of these.
 - CLI: `tool output-gate --snapshot <dir>` writes `<dir>/<grammar>.<layer>.json`, and `--check-snapshot <dir>` compares.
 
-- [ ] **Step 1: Write the failing test.** Two snapshots of one grammar and layer, taken in one process, are equal. A snapshot taken after mutating the result's `options` differs.
-- [ ] **Step 2: Run it and confirm it fails.**
-- [ ] **Step 3: Implement.** Until Task 1.4, "sittir" means evaluating with `SITTIR_UNBOUND=1` and "top" without it. From Task 1.4 on, the layer is chosen by module.
-- [ ] **Step 4: Record the baselines.** Write the snapshots for rust, typescript, python, scm and regex to `scratchpad/handoffs/reshape-snapshots-merge/`. Their grammars are the merge's, since Tasks 0.1 and 0.2 change no grammar. Do not commit them.
-- [ ] **Step 5: Commit** the code and the test.
+- [x] **Step 1: Write the failing test.** Two snapshots of one grammar and layer, taken in one process, are equal. A snapshot taken after mutating the result's `options` differs.
+- [x] **Step 2: Run it and confirm it fails.**
+- [x] **Step 3: Implement.** Until Task 1.4, "sittir" is `evaluateUnboundDsl` and "top" is `evaluateDsl`. From Task 1.4 on, the layer is chosen by module.
+- [x] **Step 4: Record the baselines.** Write the snapshots for rust, typescript, python, scm and regex to `scratchpad/handoffs/reshape-snapshots-merge/`. Their grammars are the merge's, since Tasks 0.1 and 0.2 change no grammar. Do not commit them.
+- [x] **Step 5: Commit** the code and the test.
 
 ### Task 0.3: measure the fixpoint check at completion
 
-- [ ] **Step 1: List what enrich would change.** For rust, typescript and python, enrich each layer's result once with its sidecars, using `assertEnrichFixpoint`'s comparison as a probe; do not change it.
+**Landed:** the probe `docs/superpowers/probes/2026-10-15-authoring-dsl/` (a7e5a5eca), sent to brainstorm.
+- Layer 1 is a fixpoint in all three grammars: `assertEnrichFixpoint` checks it on every bound evaluation.
+- The top layer is a fixpoint in rust and typescript.
+- On python's top layer enrich throws (`newline displays an inline nonterminal`) on `alias(alias($._newline, newline), newline)`.
+  - Cause: wire's visible-externals rewrite descends into an alias's content, and the bindings layer applies it again over layer 1's aliases.
+  - Extent: python 10, rust 8 and typescript 8 nested sites in `grammar.json`. They arrived with 64d63fc03.
+  - Collapsing them leaves `parser.c` and `node-types.json` byte-identical.
+- Ruled: the idempotent rewrite lands before Stage 1 (Task 0.4), and the baseline is re-recorded there.
+
+- [x] **Step 1: List what enrich would change.** For rust, typescript and python, enrich each layer's result once with its sidecars, using `assertEnrichFixpoint`'s comparison as a probe; do not change it.
   - Layer 1 is today's gate and is expected to list nothing.
   - The top layer is the new check (spec §1.3, step 5).
   - List every rule enrich adds, removes or changes.
-- [ ] **Step 2: Report.** Send the list to brainstorm, per grammar and layer. A non-empty top-layer list blocks Stage 3, not Stage 1, and is a finding for the maintainer.
+- [x] **Step 2: Report.** Send the list to brainstorm, per grammar and layer. A non-empty top-layer list blocks Stage 3, not Stage 1, and is a finding for the maintainer.
+
+### Task 0.4: the idempotent visible-externals rewrite, and the baseline
+
+**Landed:** 2867fa8ed. The baseline Stage 1 checks against is recorded there: `scratchpad/handoffs/reshape-gate-manifest-2867fa8ed.txt` (245 files), `reshape-snapshots-2867fa8ed/` and `reshape-gate-rows-2867fa8ed.txt` (rows identical to the merge's).
+
+- `rewriteVisibleExternalRefsRt` leaves an alias whose content is a lone symbol as it is: the alias already names its symbol, and an outer alias decides the displayed name. Every layer's wire can then apply the rewrite over its base's rules without adding a second alias.
+- evaluate.ts's copy (`applyVisibleExternalsRewrite` and its helpers) goes, with its glossary entries. It changed no evaluated grammar.
+- Test: `packages/codegen/src/dsl/__tests__/visible-externals.test.ts`.
+  - A second layer that wires a visible external aliases it once.
+  - Rust's and typescript's completed top layers are enrich fixpoints.
+  - Python's changes only `expression` and `_expression_within_for_in_clause`: its lambda display merge, pinned until Task 3.0.
+- Gate, as ruled:
+  - `grammar.json` equals 946114382's with each nested alias collapsed, byte for byte.
+  - `parser.c`, `node-types.json` and `parser.wasm` are unchanged.
+  - Accepted as consequences:
+    - the generated `coerce.ts` and `raw.ts` regain the whitespace members' factory entries, which the nesting had dropped, every added line as on master;
+    - `resolutions.json` moves in its grammar hashes only;
+    - python's sittir snapshot loses one nested alias in its enriched-stage record.
 
 ---
 
@@ -159,16 +208,28 @@ In this stage, the intake over a completed layer still re-enriches its base with
 
 **Gate:** spec §10. Run:
 ```
-tool output-gate --check scratchpad/handoffs/reshape-gate-manifest-merge.txt \
+tool output-gate --check scratchpad/handoffs/reshape-gate-manifest-2867fa8ed.txt \
   --except packages/rust/grammar.bindings.ts --except packages/typescript/grammar.bindings.ts --except packages/python/grammar.bindings.ts \
   --except packages/rust/.sittir/grammar.js --except packages/typescript/.sittir/grammar.js --except packages/python/.sittir/grammar.js \
   --except packages/rust/.sittir/src/grammar.json:splitFrom,leadFrom,bindingEffects \
   --except packages/typescript/.sittir/src/grammar.json:splitFrom,leadFrom,bindingEffects \
   --except packages/python/.sittir/src/grammar.json:splitFrom,bindingEffects
 ```
-Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshots-merge/`. The rows must equal the baseline's.
+Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshots-2867fa8ed/`. The rows must equal `reshape-gate-rows-2867fa8ed.txt`.
 
 ### Task 1.1: the layer record and the effect table
+
+**Landed** on `feat/authoring-dsl`: f2d2de021, and 5322cee2c for coordinate's review. Byte-neutral: regen moved no file, and the output gate and the snapshot check match the 2867fa8ed baseline.
+
+- Moved without rewriting:
+  - into `verbs/effects.ts`: the seven functions below, their private helpers, `bindingEffectsForOwners` (as `effectsForOwners`), and the types `LeadWithin`, `LeadMatch`, `Lead`, `LeadEffect` and `BindingEffect`;
+  - into `rule-patterns.ts`: the record walkers `GrammarRecord`, `isRecord`, `symbolNames`, `fieldNames`, `supertypesOf` and `transparentReach`, which `bind.ts` and the table share without an import cycle.
+  - `enrich.ts` gains `EnrichSidecars` and `enrichSidecarsOf`, sharing one key list with `withEnrichSidecarsOf`.
+- **Field effects are resolved per owner** over the rules as the edits leave them (`effectsForOwners`), as `bindGrammar` does today. Resolved over the final rules instead, typescript loses `required_parameter`'s `pattern:` → `name:` entry, because the lead's rest side copies `_parameter_name`. The log keeps the resolved entries: `provenanceOf` passes them through, and `rewriteInherited` reads each owner's own.
+- **A copy effect records `admitted`,** the admitted kind a narrowing made the copy as the form of. It keys a lead's `variants`: rust's `_attributed_parameter` copy stands for `attributed_parameter`, which its source's name cannot give.
+- **`RECORD_RENAMES`** states, for every `LayerRecords` key, what a kind rename does to it, typed so that a new record fails the type-check until it has an entry. `renameRecords` applies it, for `rewriteInherited` and for `renameGrammar`. As ruled, every record that holds a kind name follows a rename, as a key or as a name, except `stages` (spec §1.7), and a test case pins each record the ruling added: rule causes, test-failure expectations, refine forms and external roles by key; diagnostic expectations, patch sites, whitespace collisions and body-pattern zero matches by name.
+- `rewriteInherited` takes only inherited records, so a layer's own records never reach it. The test that a layer's own records stay as written moves to Task 2.2, where the record's records reach the evaluated grammar.
+- Tests: `provenanceOf` and `rewriteInherited` reproduce the bindings layer byte for byte, key order included, for rust, typescript and python, from a fixture taken from the baseline (`__tests__/fixtures/bindings-layer-effects.json`): its `splitFrom`, `leadFrom` and `bindingEffects`, and its options, reparse hosts, render-as and visible externals.
 
 **Files:**
 - Create: `packages/codegen/src/dsl/layer-record.ts`
@@ -188,10 +249,10 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   	| { readonly kind: 'segment'; readonly owner: string; readonly from: string; readonly to: string }
   	| { readonly kind: 'alias'; readonly from: string; readonly to: string }
   	| { readonly kind: 'rename'; readonly from: string; readonly to: string }
-  	| { readonly kind: 'copy'; readonly copy: string; readonly source: string; readonly part: string; readonly context: string; readonly display: string | undefined; readonly origin: CopyOrigin };
+  	| { readonly kind: 'copy'; readonly copy: string; readonly source: string; readonly part: string; readonly context: string; readonly display: string | undefined; readonly admitted: string | undefined; readonly origin: CopyOrigin };
   export interface LayerRecord {
   	readonly depth: number;
-  	readonly upstream: unknown;
+  	readonly upstream: GrammarJson;
   	readonly sidecars: EnrichSidecars;                     // Stage 3 replaces this with `enrichment` (spec §1.6)
   	readonly resolutions: ConflictResolutionsFile;
   	readonly deadMints: ReadonlySet<string>;
@@ -209,11 +270,11 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   ```
 - `provenanceOf` must reproduce the baseline's `splitFrom`, `leadFrom` and `bindingEffects` exactly, key order included (spec §1.7, projections).
   - A lead's `bindingEffects` entry takes its list, item, field and admits from the copy origin.
-  - Its `receiver` and `variants` come from the displayed names of the lead's copies.
+  - Its `receiver` is the displayed name of the list's copy, and its `variants` map each copy's `admitted` kind to its displayed name.
   - Its `group` and `restField` come from the receiver form's body in `rules`.
   - `renamedFrom` is absent when no rename effect exists.
 
-- [ ] **Step 1: Write the failing tests** (Review Focus 4).
+- [x] **Step 1: Write the failing tests** (Review Focus 4).
   - `rewriteInherited` applies a segment effect to an inherited option path, `'item:/separator/","/after'` on owner `o`.
   - It applies an alias effect to a `(from)` segment.
   - It applies a copy effect with origin `path` as `inheritSplitOptions` does today: the source's options and `_labels`, layout included.
@@ -221,11 +282,11 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   - A layer's own records passed beside inherited ones are never rewritten.
   - `layerRecordOf` reads the record from a result whose first rule's body carries it. JSON serialization of that result does not contain the record.
   - On the effects the rust and typescript leads record, `provenanceOf` deep-equals the baseline's `leadFrom` and `bindingEffects`, taken from the snapshot.
-- [ ] **Step 2: Run them and confirm they fail.**
+- [x] **Step 2: Run them and confirm they fail.**
   `pnpm exec vitest run packages/codegen/src/dsl/__tests__/layer-record.test.ts packages/codegen/src/dsl/__tests__/effects.test.ts`
-- [ ] **Step 3: Implement.** Move the functions listed above; do not rewrite them. Keep `bind.ts` compiling, since its remaining passes still call them until Task 1.5.
-- [ ] **Step 4: Run the tests and the existing `split-layout`, `lead-grammar` and `grammar-bindings` tests.** All pass.
-- [ ] **Step 5: Write the glossary entries and commit.**
+- [x] **Step 3: Implement.** Move the functions listed above; do not rewrite them. Keep `bind.ts` compiling, since its remaining passes still call them until Task 1.5.
+- [x] **Step 4: Run the tests and the existing `split-layout`, `lead-grammar` and `grammar-bindings` tests.** All pass.
+- [x] **Step 5: Write the glossary entries and commit.**
 
 ### Task 1.2: the pending base and the layer pass
 
@@ -260,6 +321,7 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   - a known name gives `{ type: 'SYMBOL', name }`;
   - an unknown name gives a `ReferenceError` carrying `.symbol`, which `alias()` accepts and `normalize` throws.
 - Intake: a base without a record takes today's layer-1 path, enrich with the config's authored inputs. A base with a record runs today's gate (`assertEnrichFixpoint`, moved here, reporting `layer-not-enrich-fixpoint`) with the record's sidecars.
+- Effects: the pass resolves the layer's field effects per owner (`effectsForOwners`) over the rules as its edits leave them, before the whole-grammar phase runs, and logs the resolved entries. `rewriteInherited` takes those rules as `EffectCtx.rules`; `provenanceOf` takes the final rules, where the receiver forms and groups sit.
 - Completion, in the pass:
   - `stampWiredVariants`;
   - the dead mints;
@@ -271,6 +333,15 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 - [ ] **Step 1: Rename `patches` to `edits`, with no other change.** Regenerate all five grammars. `tool output-gate --check` shows no difference. Commit.
 - [ ] **Step 2: Write the failing tests.**
   - Reading a pending base's `rules` before completion throws, while its `name` and `externals` read.
+  - **The hook's guards** (spec §1.2):
+    - reading `options.rules` before the pass has run throws, naming tree-sitter 0.26.9;
+    - calling the externals callback twice with one handle refuses;
+    - `enrich(base)` refuses a base that carries an unconsumed handle;
+    - the pinned CLI, run over the fixture chain, records the pass running once, before `$` is built. The test asserts the CLI's version is 0.26.9 and says, on failure, that the call order must be verified again.
+  - **The record** (spec §1.6):
+    - the fixture's `grammar.json` from the CLI carries no trace of the record. Give the record a sentinel string and assert it is absent from the file;
+    - a layer whose `rules:` overrides the start rule, and one whose entry edits the start rule, still carry the record on the result's first rule;
+    - a start rule whose body is a bare string still carries it.
   - A fixture chain (a small upstream grammar, a layer 1 with a group and an edit, and a layer 2 with a field entry) gives the same rules, rule order and lists from sittir's `evaluate()` and from the pinned CLI's `tree-sitter generate`. Compare `grammar.json` from the CLI with the evaluated grammar's parser input.
   - Layer 2's record is read from the result's start rule in both runtimes.
   - `grammarFn` calls the externals callback before it reads the base's rules. Assert with a spy on a pending base.
@@ -350,7 +421,7 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 ### Task 1.5: removals, and the stage gate
 
 **Files:**
-- Modify: `packages/codegen/src/dsl/bind.ts`. Delete `bindings`, `Bindings`, `bindGrammar`, `bindingEffectsForOwners`, `rewriteBindingOptions`, `checkBindingPatches`, `leadGrammar`, `LeadEffect`, `LeadRefusal`, `BINDING_SET`, `markBindingSet` and `isBindingSet`.
+- Modify: `packages/codegen/src/dsl/bind.ts`. Delete `bindings`, `Bindings`, `bindGrammar`, `rewriteBindingOptions`, `checkBindingPatches`, `leadGrammar`, `LeadRefusal`, `BINDING_SET`, `markBindingSet` and `isBindingSet`. `effectsForOwners` and `LeadEffect` stay in the effect table.
   - `aliasTargetIssue` moves into the `alias` verb as the check for layers above the first (`alias-target-invalid`), reading the member's displayed name.
   - `splitGrammar` and `renameGrammar` stay as library code, with their tests, until Stages 6 and 9.
 - Modify: `packages/codegen/src/dsl/transform/transform.ts`. `transform` loses the `isBindingSet` branch. `recordFieldEffect` and `recordAliasEffect` record into `LayerCtx.effects` in every layer.
@@ -363,7 +434,7 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 - [ ] **Step 1:** Delete, migrate, and run the full suite as its own call. Any new failure is isolated with stash-and-rerun before it is accepted as pre-existing.
 - [ ] **Step 2:** Regenerate all five grammars with `pnpm run validate:native`, which generates.
 - [ ] **Step 3: Run the stage gate** (above): output-gate, snapshots and rows.
-- [ ] **Step 4:** Run the standing gates, then the Codex adversarial review. Open the stage PR into `feat/authoring-dsl`, with a body that starts `Owner: sittir-design` and gives the gate numbers. Ask coordinate to review it.
+- [ ] **Step 4:** Run the standing gates. Commit, with the stage gate's numbers in the message.
 
 ---
 
@@ -374,7 +445,7 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 ### Task 2.1: evaluate's duplicate passes go
 
 **Files:**
-- Modify: `packages/codegen/src/compiler/evaluate.ts`. Delete `injectSyntheticRules`, the `groups:` body evaluation in `evaluateRulesAndInjectSynthetics` (with its swallowed `catch`), `applyPatternReplacement` and its helpers, and `applyVisibleExternalsRewrite` and its helpers.
+- Modify: `packages/codegen/src/compiler/evaluate.ts`. Delete `injectSyntheticRules`, the `groups:` body evaluation in `evaluateRulesAndInjectSynthetics` (with its swallowed `catch`), and `applyPatternReplacement` and its helpers. `applyVisibleExternalsRewrite` already went in Task 0.4.
 - Modify: `packages/codegen/src/compiler/types.ts` (`desugarDivergences` goes; the pass's pattern injection fills `bodyPatternZeroMatches`), `packages/codegen/src/compiler/link.ts`, `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts` (`fromDesugarDivergence` goes)
 - Test: `packages/codegen/src/compiler/__tests__/evaluate.test.ts` (the two `desugarDivergences` cases go), `packages/codegen/src/compiler/__tests__/grammar-diagnostics.test.ts`, `packages/codegen/src/compiler/__tests__/post-evaluate-invariant.test.ts`
 
@@ -389,8 +460,9 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   - `inheritedRecord`, `inheritedMap`, `inheritedPatchSites`, the `drain*Metadata` functions and evaluate's `LayerCtx<T>` go.
   - `importAndExtractGrammar` reads `layerRecordOf`, and spreads its records and projections into the evaluated grammar.
 - Test: the snapshots. Every key of every grammar's evaluated grammar is unchanged.
+- Test (Review Focus 4, a layer's own records): over a fixture chain, a `field()` entry in layer 1 leaves layer 1's own `options` as written, while the same entry in layer 2 rewrites the inherited option path. Both are read from the evaluated grammar.
 
-- [ ] **Step 1:** Implement, then run `tool output-gate --check-snapshot`. Every snapshot is equal.
+- [ ] **Step 1:** Write the own-records test and confirm it fails. Implement, then run `tool output-gate --check-snapshot`. Every snapshot is equal.
 - [ ] **Step 2:** Run the suite and the stage gate. Commit.
 
 ### Task 2.3: `injects:` and the record form of `groups:` go
@@ -404,9 +476,22 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 
 ## Stage 3: the fixpoint check at completion
 
-Task 0.3 must have shown that the top layer's check passes. Otherwise this stage waits for the maintainer.
+Task 0.3 must have shown that the top layer's check passes. Otherwise this stage waits for the maintainer. Task 0.4 removed the nested aliases; python's top layer still fails the check on its lambda display merge until Task 3.0.
 
 **Gate:** byte-identical to Stage 2's commit, rows equal, and snapshots equal.
+
+### Task 3.0: a declared display family is not an overload
+
+Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a display that a grammar overloads by accident (spec §3.2).
+
+**Files:**
+- Modify: `packages/codegen/src/dsl/rule-transforms.ts` (`unaliasOverloadedDisplays`). Its detector never matches a display family the layer declared. This narrows what the detector matches; it is not a skip set or a decline.
+- Modify: the enrich inputs (`packages/codegen/src/dsl/enrich.ts`) and the completion check (`packages/codegen/src/dsl/layer.ts`). The declared families come from the layer record's alias effects: a display that two or more alias effects name.
+- Test: `packages/codegen/src/dsl/__tests__/visible-externals.test.ts`. Python's pin goes, and its completed top layer is a plain fixpoint.
+
+- [ ] **Step 1:** Change python's case to expect no change. It fails on `expression` and `_expression_within_for_in_clause`.
+- [ ] **Step 2:** Implement. The test passes, and the output gate against Stage 2's commit shows no difference.
+- [ ] **Step 3:** Commit, with the gate in the message.
 
 ### Task 3.1
 
@@ -524,6 +609,30 @@ Task 0.3 must have shown that the top layer's check passes. Otherwise this stage
 
 ---
 
+## Stage 6b: TypeScript accessor arity, the new verbs' proof of feature
+
+Ruled (maintainer): the TypeScript grammar authors ECMAScript's productions for accessors. A getter takes `()`. A setter takes exactly one parameter, and never a rest. The TypeScript 1.8 spec's productions judge; newer checker rules are early errors and stay out of scope. This stage carries the acceptance plan's accessor-arity task.
+
+- **Rules:** `method_definition` (class members and object literals), `method_signature` and `abstract_method_signature`. Each takes the same three arms: plain, get and set.
+- **Census:** the 11 `accessor-arity` rows, plus `async get x() {}`. A generator getter already errors, and a constructor written as a getter is an early error.
+- **Verbs:** the getter and the setter are named arms, `variant(name, rule)` (Stage 4), written with `replace` (Stage 4) and `copy()` (Stage 6). The builder-contexts table then has real accessor kinds.
+
+**Before it:**
+- Merge, never rebase:
+  - the JavaScript 0.25 pin (`chore/pin-javascript-reserved`), which the TypeScript rule composes;
+  - the acceptance plan's `accepts-invalid-syntax` cause, from master once it lands. After this merge `reauthored` takes witness arrays (`Witnesses<W>`), and `diagnoseRuleCauses` takes `authoredRules`;
+  - `feat/ts-accessor-arity`, the red acceptance test `packages/typescript/tests/acceptance.test.ts`.
+- Re-record the baseline at the merge. Every file the merge moves must be explained by the merged commits.
+
+**Gate:** valid input parses to identical trees, the accessor census rows close, and the standard gates.
+
+- [ ] **Step 1:** Merge, regenerate, and re-record the baseline. Report any moved file the merged commits don't explain.
+- [ ] **Step 2:** Run the acceptance test. The 12 excluded forms fail and the 10 valid neighbours pass.
+- [ ] **Step 3:** Author the three rules with the verbs. The acceptance test passes. Check the parse trees of the valid corpus and the rows against the baseline.
+- [ ] **Step 4:** Commit, with the gate in the message.
+
+---
+
 ## Stage 7: the conflict hash keys the derivation's inputs
 
 **Gate:** both resolution arrays in every `resolutions.json` are byte-identical. The `grammarHash` fields change once. A second regeneration reuses every section, with `resolutions reused` printed for both.
@@ -554,7 +663,7 @@ Task 0.3 must have shown that the top layer's check passes. Otherwise this stage
 
 ## Stage 9: the `rename` verb
 
-**Gate:** byte-identical to Stage 8's commit, rows equal. No layer uses the verb.
+**Gate:** byte-identical to Stage 8's commit, rows equal. No layer uses the verb, so it adds no rule, and `parser.c`'s symbol table is unchanged for every grammar.
 
 ### Task 9.1
 
@@ -567,7 +676,7 @@ Task 0.3 must have shown that the top layer's check passes. Otherwise this stage
 - [ ] **Step 1: Write the failing tests.**
   - `k: { '.': rename('t') }` appends `t` with `k`'s body, rewrites every reference in rules and in every list, and leaves `k` as a blank rule that nothing reaches.
   - Each refusal in spec §3.3 is `rename-invalid`: the start rule, a hiddenness flip, a taken target, and a source that is no rule or external.
-  - The rename effect rewrites inherited option paths, render-as keys and reparse hosts, and gives `renamedFrom`.
+  - The rename effect rewrites every inherited record `RECORD_RENAMES` names (Task 1.1 pins each), and gives `renamedFrom`.
   - A fixture layer with a rename generates with the pinned CLI.
 - [ ] **Step 2:** Implement and run the gate. Commit.
 

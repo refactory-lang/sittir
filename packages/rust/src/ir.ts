@@ -9,42 +9,6 @@
 
 import * as F from './factories/index.js';
 
-// Role synonyms — resolve a native JS value to this grammar's node for that role.
-// Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.
-export const synonym = Object.freeze({
-	number: Object.assign(
-		function number(value: number): ReturnType<typeof F.integerLiteral> | ReturnType<typeof F.buildFloatLiteral> {
-			return Number.isInteger(value) ? F.integerLiteral(String(value)) : F.buildFloatLiteral(String(value));
-		},
-		{
-			integer(value: number): ReturnType<typeof F.integerLiteral> {
-				return F.integerLiteral(String(value));
-			},
-			float(value: number): ReturnType<typeof F.buildFloatLiteral> {
-				return F.buildFloatLiteral(String(value));
-			}
-		}
-	),
-	type(name: string): ReturnType<typeof F.buildTypeIdentifier> {
-		return F.buildTypeIdentifier(F.buildIdentifier(name));
-	},
-	identifier(name: string): ReturnType<typeof F.buildIdentifier> {
-		return F.buildIdentifier(name);
-	},
-	// definition.function → function_item
-	get function(): (typeof ir)['functionItem'] {
-		return ir.functionItem;
-	},
-	// definition.method → function_item
-	get method(): (typeof ir)['functionItem'] {
-		return ir.functionItem;
-	},
-	// definition.interface → trait_item
-	get interface(): (typeof ir)['traitItem'] {
-		return ir.traitItem;
-	}
-} as const);
-
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
 export const statement: {
@@ -606,7 +570,6 @@ export const ir: {
 	readonly literal: typeof literal;
 	readonly literalPattern: typeof literalPattern;
 	readonly layout: typeof layout;
-	readonly synonym: typeof synonym;
 } = Object.freeze({
 	// Node factories
 	sourceFile: F.sourceFile,
@@ -876,6 +839,5 @@ export const ir: {
 	pattern,
 	literal,
 	literalPattern,
-	layout,
-	synonym
+	layout
 });

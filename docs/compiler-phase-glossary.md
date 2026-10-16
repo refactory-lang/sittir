@@ -102,7 +102,6 @@ Reference: [glossary/dsl.md](glossary/dsl.md),
 | `grammar-shapes/` (typed grammar-shape projections) | [glossary/grammar-shapes.md](glossary/grammar-shapes.md) |
 | `transpile/` (grammar.sittir.ts → .sittir/grammar.js) | [glossary/transpile.md](glossary/transpile.md) |
 | `types/` (Rule IR, runtime shapes, diagnostics types) | [glossary/types.md](glossary/types.md) |
-| `scm/` | [glossary/scm.md](glossary/scm.md) |
 | `scripts/` | [glossary/scripts.md](glossary/scripts.md) |
 | `util/` | [glossary/util.md](glossary/util.md) |
 | `validate/` (codegen-side validation helpers) | [glossary/validate.md](glossary/validate.md) |

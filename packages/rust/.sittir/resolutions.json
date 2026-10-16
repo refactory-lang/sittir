@@ -1,6 +1,41 @@
 {
-	"grammarHash": "dedaf2f3c3e971f295418fdde73eb709b769df6a83cfb67ad27f3d5bc4e28d2f",
+	"grammarHash": "f813863d245ad4a450b1625e43037cad162c6eeaddd80dfc45153aa04643c884",
 	"resolutions": [
+		{
+			"resolution": {
+				"kind": "AddConflict",
+				"symbols": [
+					"function_modifiers",
+					"foreign_mod_item_semi",
+					"foreign_mod_item_body"
+				]
+			},
+			"step": "upstream-declared",
+			"sourceChains": [
+				[
+					"function_modifiers"
+				],
+				[
+					"foreign_mod_item_semi",
+					"foreign_mod_item"
+				],
+				[
+					"foreign_mod_item_body",
+					"foreign_mod_item"
+				]
+			],
+			"conflict": {
+				"symbolSequence": [
+					"'unsafe'"
+				],
+				"lookahead": "'extern'",
+				"interpretations": [
+					"foreign_mod_item_semi",
+					"foreign_mod_item_body",
+					"function_modifiers_repeat1"
+				]
+			}
+		},
 		{
 			"resolution": {
 				"kind": "AddConflict",
@@ -221,7 +256,7 @@
 		}
 	],
 	"bound": {
-		"grammarHash": "13ca30da916650136584c654052039a74c1687e0772038c6ed1c27f504ce8585",
+		"grammarHash": "277784a65b2a59e778ba148adc9a3a69f485bce89013123b140d8d146f869a1d",
 		"resolutions": [
 			{
 				"resolution": {

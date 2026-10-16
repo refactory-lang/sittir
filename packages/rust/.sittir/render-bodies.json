@@ -2802,11 +2802,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "visibility_modifier",
+					"test": "unsafe",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "visibility_modifier"
+							"name": "unsafe"
+						},
+						{
+							"kind": "seam",
+							"field": "unsafe_after"
 						}
 					]
 				}
@@ -2834,11 +2838,15 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "visibility_modifier",
+					"test": "unsafe",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "visibility_modifier"
+							"name": "unsafe"
+						},
+						{
+							"kind": "seam",
+							"field": "unsafe_after"
 						}
 					]
 				}
@@ -6397,6 +6405,10 @@
 		{
 			"kind": "slot",
 			"name": "elements"
+		},
+		{
+			"kind": "seam",
+			"field": "string_close_before"
 		},
 		{
 			"kind": "text",

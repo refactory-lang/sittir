@@ -3047,13 +3047,13 @@
           }
         ]
       },
-      "visibility_modifier": {
+      "unsafe": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "visibility_modifier",
-            "named": true
+            "type": "unsafe",
+            "named": false
           }
         ]
       }
@@ -3073,13 +3073,13 @@
           }
         ]
       },
-      "visibility_modifier": {
+      "unsafe": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "visibility_modifier",
-            "named": true
+            "type": "unsafe",
+            "named": false
           }
         ]
       }

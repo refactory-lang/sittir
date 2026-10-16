@@ -6861,15 +6861,15 @@ export function wrapForeignModItemSemi(data: T.ForeignModItemSemi, tree: TreeHan
 	const node = {
 		...data,
 		$type: TSKindId.ForeignModItemSemi as const,
-		visibilityModifier() {
-			return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
+		unsafe() {
+			return this._unsafe;
 		},
 		externModifier() {
 			return hydrateSlot<T.ExternModifier>(this, '_extern_modifier', tree);
 		},
 		$with: {
-			visibilityModifier: (v: NonNullable<T.ForeignModItemSemi['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapForeignModItemSemi({ ...$edited(data), _visibility_modifier: v }, tree)),
+			unsafe: (v: NonNullable<T.ForeignModItemSemi['_unsafe']>) =>
+				rebuilt(node, handle, () => wrapForeignModItemSemi({ ...$edited(data), _unsafe: v }, tree)),
 			externModifier: (v: NonNullable<T.ForeignModItemSemi['_extern_modifier']>) =>
 				rebuilt(node, handle, () => wrapForeignModItemSemi({ ...$edited(data), _extern_modifier: v }, tree))
 		},
@@ -6890,8 +6890,8 @@ export function wrapForeignModItemBody(data: T.ForeignModItemBody, tree: TreeHan
 	const node = {
 		...data,
 		$type: TSKindId.ForeignModItemBody as const,
-		visibilityModifier() {
-			return hydrateSlot<T.VisibilityModifier | undefined>(this, '_visibility_modifier', tree);
+		unsafe() {
+			return this._unsafe;
 		},
 		externModifier() {
 			return hydrateSlot<T.ExternModifier>(this, '_extern_modifier', tree);
@@ -6900,8 +6900,8 @@ export function wrapForeignModItemBody(data: T.ForeignModItemBody, tree: TreeHan
 			return hydrateSlot<T.DeclarationList>(this, '_body', tree);
 		},
 		$with: {
-			visibilityModifier: (v: NonNullable<T.ForeignModItemBody['_visibility_modifier']>) =>
-				rebuilt(node, handle, () => wrapForeignModItemBody({ ...$edited(data), _visibility_modifier: v }, tree)),
+			unsafe: (v: NonNullable<T.ForeignModItemBody['_unsafe']>) =>
+				rebuilt(node, handle, () => wrapForeignModItemBody({ ...$edited(data), _unsafe: v }, tree)),
 			externModifier: (v: NonNullable<T.ForeignModItemBody['_extern_modifier']>) =>
 				rebuilt(node, handle, () => wrapForeignModItemBody({ ...$edited(data), _extern_modifier: v }, tree)),
 			body: (v: NonNullable<T.ForeignModItemBody['_body']>) =>

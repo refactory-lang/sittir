@@ -19,4 +19,10 @@ describe('list storage in the emitted types', () => {
 		expect(types).toContain('readonly _decorator: NonEmptyArray<Decorator>;');
 		expect(types).not.toMatch(/readonly _\w+\?: (readonly|NonEmptyArray)/);
 	});
+
+	it('proves a non-empty list refuses the empty list on its strict, loose and $with surfaces', () => {
+		expect(types).toContain(
+			'  type NonEmptySlots = Proven<[KeyRefusesEmpty<Config, "decorator">, KeyRefusesEmpty<LooseConfig, "decorator">, SetterRefusesEmpty<Bound, "decorators">]>;'
+		);
+	});
 });
