@@ -450,9 +450,9 @@ fn a_spelled_member_reports_as_its_unit_the_id_its_read_stores() {
     for (source, stored) in [("declare const x: unique symbol;", ts::UNIQUE), ("declare const x: symbol;", ts::SYMBOL_KEYWORD)] {
         let tree = parse(&sittir_typescript::language(), source);
         let mut cursor = find(&tree, ts::PREDEFINED_TYPE, 0);
-        let at = cursor.descendant_index();
+        let at = sittir_core::read::index_of(&cursor);
         assert_eq!(Predefined::unit_id(&mut cursor), Some(stored), "{source}");
-        assert_eq!(cursor.descendant_index(), at, "the cursor ends where it started");
+        assert_eq!(sittir_core::read::index_of(&cursor), at, "the cursor ends where it started");
     }
 }
 
