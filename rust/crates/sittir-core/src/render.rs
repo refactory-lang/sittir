@@ -90,7 +90,7 @@ pub trait SourceTable {
     /// begin inside a token (`engine::line_starts_inside_tokens`): a slice
     /// re-indented to its new column leaves these lines as they are. A table
     /// of bare sources knows no tokens and answers none.
-    fn line_starts_inside_tokens(&self, coord: &crate::slot::NodeCoordinate) -> Vec<usize> {
+    fn line_starts_inside_tokens(&self, coord: &crate::slot::NodeCoordinate) -> Vec<u32> {
         let _ = coord;
         Vec::new()
     }

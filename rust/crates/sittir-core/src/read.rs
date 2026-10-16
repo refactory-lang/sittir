@@ -199,14 +199,14 @@ impl<'s> SnapshotCtx<'s> {
     /// A snapshot of the node at `root`, measuring from the byte `holder`,
     /// or from the source's start when absent.
     pub fn new(lines: &'s crate::points::LineTable, holder: Option<u32>, root: NodeIndex) -> Self {
-        let holder = holder.and_then(|byte| lines.point(byte as usize)).unwrap_or(crate::points::Point::ZERO);
+        let holder = holder.and_then(|byte| lines.point(byte)).unwrap_or(crate::points::Point::ZERO);
         Self { lines, root, holder: std::cell::Cell::new(holder), replaced: std::cell::RefCell::default() }
     }
 
     /// `span`'s two ends as points measured from the holder's start.
     pub fn span_of(&self, span: Span) -> crate::points::PointSpan {
         let holder = self.holder.get();
-        let point = |byte: u32| self.lines.point(byte as usize).expect("a node's bytes lie in its source").offset_from(holder);
+        let point = |byte: u32| self.lines.point(byte).expect("a node's bytes lie in its source").offset_from(holder);
         crate::points::PointSpan { start: point(span.start), end: point(span.end) }
     }
 }
@@ -360,7 +360,7 @@ impl<'s> ReadCtx<'s> {
     #[inline(never)]
     fn hold_in(&self, snapshot: &SnapshotCtx<'_>, cursor: &TreeCursor<'_>) {
         let start = self.coordinate(&cursor.node(), index_of(cursor)).span.start;
-        let own = snapshot.lines.point(start as usize).expect("a node's start lies in its source");
+        let own = snapshot.lines.point(start).expect("a node's start lies in its source");
         snapshot.replaced.borrow_mut().push(snapshot.holder.replace(own));
     }
 
@@ -415,12 +415,7 @@ impl<'s> ReadCtx<'s> {
     /// root stands for the file, whose leading and trailing bytes its
     /// coordinate render must keep.
     pub fn coordinate(&self, node: &Node<'_>, index: NodeIndex) -> NodeCoordinate {
-        let range = node.byte_range();
-        let span = if index == NodeIndex::ROOT {
-            Span { start: 0, end: self.source.len() as u32 }
-        } else {
-            Span { start: range.start as u32, end: range.end as u32 }
-        };
+        let span = if index == NodeIndex::ROOT { Span::whole(self.source) } else { Span::of(node) };
         NodeCoordinate {
             kind: Some(self.node_kind(node)),
             ..NodeCoordinate::new(self.tree_id, index, index + node.descendant_count() as u32, span)
@@ -429,7 +424,7 @@ impl<'s> ReadCtx<'s> {
 
     /// The source text a node spans.
     pub fn text(&self, node: &Node<'_>) -> &'s str {
-        &self.source[node.byte_range()]
+        &self.source[Span::of(node).range()]
     }
 }
 
@@ -485,8 +480,8 @@ impl Child {
             named: node.is_named(),
             trivia: node.is_extra() || node.is_error(),
             descendants: node.descendant_count() as u32,
-            start: node.start_byte() as u32,
-            end: node.end_byte() as u32,
+            start: Span::of(&node).start,
+            end: Span::of(&node).end,
         }
     }
 }
@@ -501,15 +496,15 @@ impl Child {
 /// non-trivia children each starting where the one before ends, from the
 /// node's start to its end. A text leaf whose children tile it reads the text
 /// it spans.
-pub fn tiles(children: &[Child], start: u32, end: u32) -> bool {
-    let mut at = start;
+pub fn tiles(children: &[Child], span: Span) -> bool {
+    let mut at = span.start;
     for child in children {
         if child.trivia || child.start != at {
             return false;
         }
         at = child.end;
     }
-    children.is_empty() || at == end
+    children.is_empty() || at == span.end
 }
 
 /// The one id every spelling token of a node displays: its children apart
@@ -1185,7 +1180,7 @@ pub fn delimiter(list: &Node<'_>, children: &[Child], routes: &[Route], items: c
         Some((child, false)) => past(child),
         _ => others > item_children.len().saturating_sub(1) + mandatory as usize,
     };
-    let (start, end) = (list.start_byte() as u32, list.end_byte() as u32);
+    let Span { start, end } = Span::of(list);
     let mut bits = 0;
     if leading.is_some_and(|mandatory| flank(item_children.first(), mandatory, &|child| start < child.start)) {
         bits |= LEADING;
@@ -1229,7 +1224,7 @@ mod tests {
         let ctx = ReadCtx::new(source, crate::types::TreeId(1), |_| false).snapshot(&measure);
         let root = tree.walk();
         let item_span = Origin::Snapshot(PointSpan { start: Point { row: 2, column: 0 }, end: Point { row: 4, column: 1 } });
-        assert_eq!(ctx.at_of(&root), Origin::Snapshot(PointSpan { start: Point::ZERO, end: lines.point(source.len()).unwrap() }));
+        assert_eq!(ctx.at_of(&root), Origin::Snapshot(PointSpan { start: Point::ZERO, end: lines.point(Span::whole(source).end).unwrap() }));
         let mut item = tree.walk();
         item.goto_first_child();
         ctx.hold(&root);
@@ -1243,7 +1238,7 @@ mod tests {
         ctx.release();
         assert_eq!(ctx.at_of(&item), item_span, "a released holder measures the next sibling from the shared holder");
         ctx.release();
-        assert_eq!(ctx.at_of(&root), Origin::Snapshot(PointSpan { start: Point::ZERO, end: lines.point(source.len()).unwrap() }));
+        assert_eq!(ctx.at_of(&root), Origin::Snapshot(PointSpan { start: Point::ZERO, end: lines.point(Span::whole(source).end).unwrap() }));
     }
 
     /// A lookup that gives every node one leading extra, one layout run and
@@ -1396,11 +1391,11 @@ mod tests {
 
     #[test]
     fn children_tile_a_span_when_contiguous_and_free_of_trivia() {
-        assert!(tiles(&[], 0, 3));
-        assert!(tiles(&[token(0, 1, false), token(1, 3, false)], 0, 3));
-        assert!(!tiles(&[token(0, 1, false), token(2, 3, false)], 0, 3));
-        assert!(!tiles(&[token(0, 1, false)], 0, 3));
-        assert!(!tiles(&[token(0, 1, false), token(1, 3, true)], 0, 3));
+        assert!(tiles(&[], Span { start: 0, end: 3 }));
+        assert!(tiles(&[token(0, 1, false), token(1, 3, false)], Span { start: 0, end: 3 }));
+        assert!(!tiles(&[token(0, 1, false), token(2, 3, false)], Span { start: 0, end: 3 }));
+        assert!(!tiles(&[token(0, 1, false)], Span { start: 0, end: 3 }));
+        assert!(!tiles(&[token(0, 1, false), token(1, 3, true)], Span { start: 0, end: 3 }));
     }
 
     #[test]

@@ -174,9 +174,9 @@ impl TriviaText {
     /// `adjacent` names before and after it (an `ERROR`'s), and `at` where a
     /// snapshot places it.
     pub fn of_source(kind: KindId, source: &str, span: crate::types::Span, adjacent: Option<(crate::types::Span, crate::types::Span)>, at: Option<crate::points::PointSpan>) -> Self {
-        let slice = |run: crate::types::Span| (run.start < run.end).then(|| source[run.start as usize..run.end as usize].to_owned());
+        let slice = |run: crate::types::Span| (run.start < run.end).then(|| source[run.range()].to_owned());
         let (before, after) = adjacent.map_or((None, None), |(before, after)| (slice(before), slice(after)));
-        Self { kind, text: source[span.start as usize..span.end as usize].to_owned(), span: at, before, after }
+        Self { kind, text: source[span.range()].to_owned(), span: at, before, after }
     }
 }
 

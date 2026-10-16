@@ -620,7 +620,7 @@ fn text_body(ident: &Ident, fields: &[Field<'_>], fixed: Option<&LitStr>) -> syn
         read: quote! {
             #pass
             let node = cursor.node();
-            let spanned = if __rt::tiles(&children, node.start_byte() as u32, node.end_byte() as u32) {
+            let spanned = if __rt::tiles(&children, ::sittir_core::types::Span::of(&node)) {
                 ctx.text(&node)
             } else {
                 ""

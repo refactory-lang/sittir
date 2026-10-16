@@ -226,7 +226,7 @@ fn slot_hits<'s>(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'s>, slots: &Slots,
     let (Some(&slot), Some(router)) = (slots.slots.get(&(ctx.stamp)(&node)), (ctx.router)(&node)) else {
         return false;
     };
-    let text = |node: &Node<'_>| ctx.source.get(node.byte_range()).unwrap_or("");
+    let text = |node: &Node<'_>| ctx.source.get(crate::types::Span::of(node).range()).unwrap_or("");
     match router {
         Router::Children(route) => {
             let mut routed = true;

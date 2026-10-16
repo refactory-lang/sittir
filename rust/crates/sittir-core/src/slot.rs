@@ -141,7 +141,7 @@ impl NodeCoordinate {
                 handle: self.handle(),
                 tree_id: self.tree,
             })?;
-        let (start, end) = (self.span.start as usize, self.span.end as usize);
+        let std::ops::Range { start, end } = self.span.range();
         let in_range = start <= end && end <= source.len();
         if !in_range || !source.is_char_boundary(start) || !source.is_char_boundary(end) {
             return Err(CoordinateError::BadSpan {

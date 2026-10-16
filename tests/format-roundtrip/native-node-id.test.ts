@@ -32,6 +32,13 @@ const invalidKindIds = [
 	{ label: 'kind id past u16', $type: 2 ** 16 + 5, expected: /KindId 65541 does not fit a u16/ }
 ] as const;
 
+/** A byte offset crosses the same way: a coordinate's `$span`, or the byte a snapshot measures from. */
+const invalidOffsets = [
+	{ label: 'negative offset', offset: -1, expected: /must not be negative/ },
+	{ label: 'fractional offset', offset: 0.5, expected: /must be a whole number/ },
+	{ label: 'offset past u32', offset: 2 ** 32, expected: /does not fit a u32/ }
+] as const;
+
 const sources = { rust: 'fn a() {}\n', typescript: 'let a = 1;\n', python: 'a = 1\n' } as const;
 
 /** The first coordinate a read node holds in one of its slots. */
@@ -55,6 +62,27 @@ for (const grammar of ['rust', 'typescript', 'python'] as const) {
 				const root = engine.read(treeId, 0, 1) as Record<string, unknown>;
 				slotCoordinate(root).$type = testCase.$type;
 				expect(() => engine.render(root)).toThrow(testCase.expected);
+			});
+		}
+
+		for (const testCase of invalidOffsets) {
+			it(`render rejects a coordinate whose span starts at a ${testCase.label}`, () => {
+				const engine = tryLoadNativeEngine(grammar);
+				if (!engine) return;
+
+				const { treeId } = parseNativeFixture(engine, sources[grammar]);
+				const root = engine.read(treeId, 0, 1) as Record<string, unknown>;
+				const coordinate = slotCoordinate(root);
+				coordinate.$span = { ...(coordinate.$span as object), start: testCase.offset };
+				expect(() => engine.render(root)).toThrow(testCase.expected);
+			});
+
+			it(`snapshot rejects a holder byte at a ${testCase.label}`, () => {
+				const engine = tryLoadNativeEngine(grammar);
+				if (!engine) return;
+
+				const { treeId } = parseNativeFixture(engine, sources[grammar]);
+				expect(() => engine.snapshot(treeId, 0, testCase.offset)).toThrow(testCase.expected);
 			});
 		}
 

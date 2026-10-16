@@ -30,7 +30,7 @@
 //! in a gap of a list slot, from the class the slot stores
 //! (`ParsedTree::deviation`, `list_slots`).
 
-use crate::types::{KindId, NodeIndex};
+use crate::types::{KindId, NodeIndex, Span};
 use std::collections::BTreeMap;
 
 /// A side of a node that holds trivia: before its first token, after its
@@ -160,7 +160,8 @@ fn is_entry(node: &tree_sitter::Node<'_>) -> bool {
 /// a built node's child has the width of its rendered text, so a stored
 /// automatic semicolon, which renders `"\n"`, has width there.
 pub fn holds_sides(node: &tree_sitter::Node<'_>) -> bool {
-    node.is_named() && !is_entry(node) && node.end_byte() > node.start_byte()
+    let span = Span::of(node);
+    node.is_named() && !is_entry(node) && span.end > span.start
 }
 
 /// Whether `node` is empty: no child of it holds sides (`holds_sides`), so
@@ -206,7 +207,7 @@ pub fn walk(node: tree_sitter::Node<'_>, index: NodeIndex, source: &str) -> Walk
     loop {
         let node = cursor.node();
         let local = crate::read::offset_of(&cursor);
-        let (start, end) = (node.start_byte() as u32, node.end_byte() as u32);
+        let Span { start, end } = Span::of(&node);
         let i = local as usize;
         nodes.kind[i] = crate::read::grammar_id(&node);
         nodes.start[i] = start;
@@ -402,7 +403,7 @@ impl TriviaTable {
         let local = |index: NodeIndex| index.offset_from(base);
         let global = |at: u32| base + at;
         let lines = crate::points::LineTable::new(source);
-        let row = |byte: u32| lines.point(byte as usize).map_or(0, |point| point.row);
+        let row = |byte: u32| lines.point(byte).map_or(0, |point| point.row);
         let mut table = TriviaTable::default();
         let mut structure = Structure::new(tree, source, base, kinds.depth, &tokens, unit);
         let mut excess = Excess::default();
@@ -644,7 +645,10 @@ impl<'t> Structure<'t> {
                 let mut children = node.walk();
                 node.children(&mut children)
                     .filter(|child| !child.is_named())
-                    .filter_map(|child| source.get(child.byte_range()).map(|text| (child.start_byte() as u32, child.end_byte() as u32, text)))
+                    .filter_map(|child| {
+                        let span = Span::of(&child);
+                        source.get(span.range()).map(|text| (span.start, span.end, text))
+                    })
                     .collect()
             };
             let kind = crate::read::grammar_id(&node);
@@ -653,12 +657,12 @@ impl<'t> Structure<'t> {
                 .filter(|region| region.kind == kind)
                 .filter_map(|region| {
                     let open = match region.open {
-                        DepthAnchor::Start => node.start_byte() as u32 + 1,
+                        DepthAnchor::Start => Span::of(&node).start + 1,
                         DepthAnchor::After(texts) => literals.iter().find(|(_, _, text)| texts.contains(text))?.1,
                         DepthAnchor::End | DepthAnchor::Before(_) => return None,
                     };
                     let close = match region.close {
-                        DepthAnchor::End => node.end_byte() as u32,
+                        DepthAnchor::End => Span::of(&node).end,
                         DepthAnchor::Before(texts) => literals.iter().rev().find(|(_, _, text)| texts.contains(text))?.0,
                         DepthAnchor::Start | DepthAnchor::After(_) => return None,
                     };

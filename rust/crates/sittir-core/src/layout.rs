@@ -477,11 +477,11 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
 impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue for UnitSides<T> {
     /// `{ slot, item, leading?, trailing?, inner? }`.
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
-        use crate::boundary::property;
+        use crate::boundary::{property, property_whole};
         unsafe {
             Ok(Self {
                 slot: property(env, napi_val, c"slot")?.ok_or_else(|| ::napi::Error::from_reason("a unit's sides name its slot"))?,
-                item: property(env, napi_val, c"item")?.unwrap_or(0),
+                item: property_whole(env, napi_val, c"item", "a unit's sides")?.unwrap_or(0),
                 trivia: TransportTrivia::from_napi_value(env, napi_val)?,
             })
         }

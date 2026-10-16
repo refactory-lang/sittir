@@ -17,7 +17,7 @@ fn index_of(tree: &Tree, source: &str, kind: &str, text: &str) -> NodeIndex {
     let mut cursor = tree.walk();
     loop {
         let node: Node<'_> = cursor.node();
-        if node.kind() == kind && &source[node.byte_range()] == text {
+        if node.kind() == kind && &source[sittir_core::types::Span::of(&node).range()] == text {
             return sittir_core::read::index_of(&cursor);
         }
         if cursor.goto_first_child() {

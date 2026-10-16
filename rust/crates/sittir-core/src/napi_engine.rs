@@ -256,7 +256,8 @@ macro_rules! napi_engine {
             /// measured from the byte `holderByte`, or from its own start when
             /// absent. Refuses as `read` does.
             #[::napi_derive::napi(ts_return_type = "object")]
-            pub fn snapshot(&self, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, holder_byte: Option<u32>) -> ::napi::Result<::napi::Either<$any, $crate::ErrorRead>> {
+            pub fn snapshot(&self, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, holder_byte: Option<f64>) -> ::napi::Result<::napi::Either<$any, $crate::ErrorRead>> {
+                let holder_byte = holder_byte.map(|byte| $crate::napi_engine::checked_whole::<u32>(byte, "holderByte")).transpose()?;
                 LIVE_TREES.with(|trees| {
                     let trees = trees.borrow();
                     let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
@@ -382,11 +383,14 @@ macro_rules! napi_engine {
                 &mut self,
                 from: String,
                 #[napi(ts_arg_type = "Array<import('../src/types.ts').TSKindId> | undefined | null")] kinds: Option<Vec<$crate::types::KindId>>,
-                resume: Option<Vec<u32>>,
-                limit: u32,
+                resume: Option<Vec<f64>>,
+                limit: f64,
                 plan: Option<String>,
-                depth: Option<u32>,
+                depth: Option<f64>,
             ) -> ::napi::Result<String> {
+                let resume = resume.map(|path| path.into_iter().map(|child| $crate::napi_engine::checked_whole::<u32>(child, "resume")).collect::<::napi::Result<Vec<_>>>()).transpose()?;
+                let limit: u32 = $crate::napi_engine::checked_whole(limit, "limit")?;
+                let depth = depth.map(|levels| $crate::napi_engine::checked_whole::<u32>(levels, "depth")).transpose()?;
                 let plan = plan.map(|json| $crate::napi_engine::compile_plan(&json)).transpose()?;
                 let from = $crate::napi_engine::address_from_json(&from)?;
                 let kinds = kinds.unwrap_or_default();
@@ -414,7 +418,7 @@ macro_rules! napi_engine {
                     let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
                     let node = $crate::engine::node_at_index(parsed.tree(), index)
                         .ok_or_else(|| ::napi::Error::from_reason(format!("index {index} names no node of tree {tree_id}")))?;
-                    Ok($crate::engine::line_starts_inside_tokens(node, index, parsed.source()).into_iter().map(|at| at as u32).collect())
+                    Ok($crate::engine::line_starts_inside_tokens(node, index, parsed.source()))
                 })
             }
 
@@ -533,7 +537,7 @@ macro_rules! napi_engine {
 /// Left to the cast, a nonsense handle would name tree 0 node 0 — the root —
 /// and be answered as though it were a real request. Every rejection here is a
 /// value that would otherwise have been silently rounded into a valid one.
-pub fn checked_index(value: f64, label: &str) -> napi::Result<u64> {
+pub fn checked_index(value: f64, label: impl std::fmt::Display) -> napi::Result<u64> {
     /// Above this a double no longer counts integers exactly, so a handle
     /// could not survive the trip through JavaScript intact.
     const MAX_EXACT: f64 = 9_007_199_254_740_991.0; // 2^53 - 1
@@ -558,6 +562,15 @@ pub fn checked_index(value: f64, label: &str) -> napi::Result<u64> {
         )));
     }
     Ok(value as u64)
+}
+
+/// A JavaScript number that is meant to be a whole number of `T`: checked as
+/// `checked_index` checks it, then in `T`'s width. napi's own integer readers
+/// wrap a negative, truncate a fraction and read `NaN` as 0, so every whole
+/// number crossing in is read as a double and narrowed here.
+pub fn checked_whole<T: TryFrom<u64>>(value: f64, label: impl std::fmt::Display) -> napi::Result<T> {
+    let whole = checked_index(value, &label)?;
+    T::try_from(whole).map_err(|_| napi::Error::from_reason(format!("{label} {whole} does not fit a {}", std::any::type_name::<T>())))
 }
 
 /// A `where` plan from its JSON (`query::PlanSpec`), compiled; a pattern the

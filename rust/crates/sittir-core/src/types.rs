@@ -56,10 +56,7 @@ macro_rules! id_newtype {
         impl napi::bindgen_prelude::FromNapiValue for $name {
             unsafe fn from_napi_value(env: napi::sys::napi_env, val: napi::sys::napi_value) -> napi::Result<Self> {
                 let value = unsafe { <f64 as napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, val) }?;
-                let id = crate::napi_engine::checked_index(value, stringify!($name))?;
-                <$repr>::try_from(id).map(Self).map_err(|_| {
-                    napi::Error::from_reason(format!("{} {id} does not fit a {}", stringify!($name), stringify!($repr)))
-                })
+                crate::napi_engine::checked_whole::<$repr>(value, stringify!($name)).map(Self)
             }
         }
 
@@ -209,7 +206,7 @@ impl napi::bindgen_prelude::FromNapiValue for Source {
         env: napi::sys::napi_env,
         val: napi::sys::napi_value,
     ) -> napi::Result<Self> {
-        let n = u32::from_napi_value(env, val)?;
+        let n: u8 = crate::napi_engine::checked_whole(unsafe { f64::from_napi_value(env, val) }?, "Source")?;
         match n {
             0 => Ok(Source::Ts),
             1 => Ok(Source::Sg),
@@ -252,13 +249,33 @@ pub struct Span {
     pub end: u32,
 }
 
+impl Span {
+    /// The bytes `node` spans. tree-sitter keeps offsets as `uint32_t`, so
+    /// the narrowing loses nothing.
+    #[allow(clippy::disallowed_methods)]
+    pub fn of(node: &tree_sitter::Node<'_>) -> Self {
+        Self { start: node.start_byte() as u32, end: node.end_byte() as u32 }
+    }
+
+    /// The bytes of the whole of `source`, which tree-sitter parsed and so
+    /// spans in `u32` offsets.
+    pub fn whole(source: &str) -> Self {
+        Self { start: 0, end: source.len() as u32 }
+    }
+
+    /// The span as a range that slices its source.
+    pub fn range(self) -> std::ops::Range<usize> {
+        self.start as usize..self.end as usize
+    }
+}
+
 #[cfg(feature = "napi-bindings")]
 impl napi::bindgen_prelude::FromNapiValue for Span {
     unsafe fn from_napi_value(env: napi::sys::napi_env, napi_val: napi::sys::napi_value) -> napi::Result<Self> {
         let obj = unsafe { crate::boundary::object(env, napi_val)? };
         Ok(Self {
-            start: unsafe { crate::boundary::required(env, obj, c"start", "Span")? },
-            end: unsafe { crate::boundary::required(env, obj, c"end", "Span")? },
+            start: unsafe { crate::boundary::required_whole(env, obj, c"start", "Span")? },
+            end: unsafe { crate::boundary::required_whole(env, obj, c"end", "Span")? },
         })
     }
 }

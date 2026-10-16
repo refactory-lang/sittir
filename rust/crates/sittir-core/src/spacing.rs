@@ -394,7 +394,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             return std::borrow::Cow::Borrowed(text);
         }
         let Some(source) = sources.source_of(coord.tree) else { return std::borrow::Cow::Borrowed(text) };
-        let start = coord.span.start as usize;
+        let start = coord.span.range().start;
         let line_start = source[..start].rfind('\n').map_or(0, |at| at + 1);
         let base = &source[line_start..start];
         let base = &base[..base.len() - base.trim_start_matches([' ', '\t']).len()];
@@ -405,7 +405,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         }
         let inside = sources.line_starts_inside_tokens(coord);
         let mut out = String::with_capacity(text.len());
-        let mut at = start;
+        let mut at = coord.span.start;
         for (index, line) in text.split('\n').enumerate() {
             if index > 0 {
                 out.push('\n');
@@ -417,7 +417,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             } else {
                 out.push_str(line);
             }
-            at += line.len() + 1;
+            at += line.len() as u32 + 1;
         }
         std::borrow::Cow::Owned(out)
     }
