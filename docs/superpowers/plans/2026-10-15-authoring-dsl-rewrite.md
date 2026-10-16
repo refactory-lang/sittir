@@ -28,7 +28,7 @@
 - **Execution.** The design session executes this plan inline, with superpowers:executing-plans. It uses no subagents.
 - **Byte-identical gates.** Every stage leaves generated output byte-identical to the previous stage's commit, except the exceptions the stage names.
   - Stage 1's reference was recorded at Task 0.4 (2867fa8ed, spec §10). Its grammar-level outputs equal 946114382's with each nested alias collapsed, and its rows equal the merge's.
-  - A master merge re-records the reference at the merge, and every file the merge moves must be explained by the merged commits. The current reference is b56cee690's: the second master merge's (below Task 1.4). The first, 777411578, is below Task 1.1, and Task 1.2 Step 1's accepted consequence was re-recorded at 2adb24cf3.
+  - A master merge re-records the reference at the merge, and every file the merge moves must be explained by the merged commits. The current reference is 913f2cfec's: Task 1.4's switch, with the two consequences the user accepted (below Task 1.4). The master merges re-recorded it at 777411578 (below Task 1.1) and b56cee690 (below Task 1.4), and Task 1.2 Step 1's accepted consequence at 2adb24cf3.
   - A failed gate stops the stage for review. Nothing is reverted to make a gate pass.
 - **Erasable syntax only** in `grammar.sittir.ts`, `grammar.bindings.ts` and every module they import: no enums, no namespaces with values, no parameter properties.
 - **Generated outputs are never hand-edited;** regenerate them. The generated layer is written only by `bindings-inventory --write`.
@@ -434,7 +434,7 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
 - Regenerate: `packages/{rust,typescript,python}/grammar.bindings.ts` with `pnpm exec tsx packages/cli/src/cli.ts tool bindings-inventory --write`
 - Test: `packages/codegen/src/bindings/__tests__/grammar-bindings.test.ts`, `packages/codegen/src/bindings/__tests__/hash.test.ts`, `packages/codegen/src/transpile/__tests__/conflict-driver.test.ts`, `packages/codegen/src/transpile/__tests__/evaluate-for-derivation.test.ts`, and a new `packages/codegen/src/compiler/__tests__/layer-selection.test.ts`
 
-- [ ] **Step 1: Write the failing tests** (Review Focus 2).
+- [x] **Step 1: Write the failing tests** (Review Focus 2).
   - The printed module of a fixture with one field patch, one alias patch and one lead equals an expected string in the layer form, with `renames` as data.
   - `loadBindingsHash` reads `hash`. A module with no `hash` export is `StaleBindingsError` with the regenerate command, as today.
   - The printed module evaluates. Write it into a temp package beside a fixture `grammar.sittir.ts`, then evaluate. Port the existing record-form test at line 335.
@@ -442,10 +442,22 @@ Also run `tool output-gate --check-snapshot scratchpad/handoffs/reshape-snapshot
   - `compile` on a package whose layer `hash` is stale throws `StaleBindingsError` before any evaluation. Spy on `runLayerPass`.
   - `.sittir/grammar.js` for rust names `../grammar.bindings.ts`, and for scm names `../grammar.sittir.ts`.
   - `evaluateForDerivation` returns the baseline's `base` and `bound` hashes, read from `resolutions.json`.
-- [ ] **Step 2: Run them and confirm they fail.**
-- [ ] **Step 3: Implement and regenerate.** A name search for `SITTIR_UNBOUND`, `UNBOUND_ENV` and `sittirGrammar` (Infigraph `search` with `regex=true`) returns no hits outside the glossary's history-free text.
-- [ ] **Step 4: Run the tests, `bindings-inventory --check`, and the stage gate's `output-gate` and snapshot checks.** A difference outside the named exceptions stops the task. Report the paths, and the first differing rule or key, to brainstorm.
-- [ ] **Step 5: Glossary entries.** Commit the code, the tests and the three regenerated layers together.
+- [x] **Step 2: Run them and confirm they fail.**
+- [x] **Step 3: Implement and regenerate.** A name search for `SITTIR_UNBOUND`, `UNBOUND_ENV` and `sittirGrammar` (Infigraph `search` with `regex=true`) returns no hits outside the glossary's history-free text.
+- [x] **Step 4: Run the tests, `bindings-inventory --check`, and the stage gate's `output-gate` and snapshot checks.** A difference outside the named exceptions stops the task. Report the paths, and the first differing rule or key, to brainstorm.
+- [x] **Step 5: Glossary entries.** Commit the code, the tests and the three regenerated layers together.
+  - **Landed:** 5c20d509e (an inheriting layer rewrites its records and projects its effects) and 913f2cfec (the switch) on `feat/authoring-dsl`, with the master merge b56cee690 between them. The switch's gates are against the b56cee690 reference. The rows, the bindings inventory, the type-check, lint and the grammar type-check ratchet are equal or green. The output gate and the snapshots differ only by the two consequences the user accepted:
+    - **The lead patch site.** rust's and typescript's top layers each record one more `patchSites` entry, the lead entry at `.`, and each one's bound `grammarHash` moves in `.sittir/resolutions.json`.
+    - **The dead JSX group.** typescript's layer 1 records `bodyPatternZeroMatches: ["_jsx_opening_element_content"]`, `.sittir/grammar-diagnostics.json` gains the `body-pattern-zero-match` warning, and typescript's base and bound `grammarHash` move. A follow-up deletes the dead group from typescript's `grammar.sittir.ts`.
+
+    The reference is re-recorded at 913f2cfec: `scratchpad/handoffs/reshape-gate-manifest-913f2cfec.txt`, `reshape-snapshots-913f2cfec/` and `reshape-gate-rows-913f2cfec.txt`, whose rows equal b56cee690's. Where it differs from the steps above:
+    - **The alias-target check** moved into the alias verb here, not in Task 1.5, because deleting `sittirGrammar` removed `checkBindingPatches`' only caller. `WireLayer` carries the layer's depth. Above layer 1, an alias that flips hiddenness or names a rule of the base is the layer's `alias-target-invalid`.
+    - **The hash** is read through the pinned TypeScript reader (a new `exportedStrings` mode), not by importing the layer. The parse it shares with the vocabulary reader is `bindings/pinned-typescript.ts`.
+    - **`evaluateUnboundDsl`** goes rather than being repointed: layer 1 is `evaluateDsl` of its own file.
+    - **The scratch entry** (`transpile/scratch-entry.ts::withScratchEntry`) also serves the conflict loop's base runs, which no longer generate in the package's `.sittir/`.
+    - **The spy** counts `evaluatePackage` calls, since `runLayerPass` is called inside `layer.ts`.
+    - **A layer above the first is not path-checked by type.** Its base is a `grammar()` result, whose type names no kind, so `BaseEditsCheck` declines it before enriching it; otherwise an editor shows TS2589 at the generated layer's `wire({`. Type checks in a grammar layer file serve IntelliSense (the user's ruling), and evaluation checks the generated layer's paths, so the generated layer stays out of the grammar type-check.
+    - **For Task 1.5:** deleting `sittirGrammar` orphans `attachTextTokens`, `wireBindings`, `wireBindingEffects`, `blankDeadEnrichMints`, `attachDerivationRecords`, `applyConflictResolutions` and `applyBoundConflictResolutions`, and evaluate's fallbacks that read their keys (`getDeadEnrichMints`, `getDerivationRecords`, `getTextTokens`). They go with the removals.
 
 ### The master merge during Task 1.4
 
