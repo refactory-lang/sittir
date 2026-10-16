@@ -583,6 +583,10 @@ Ruled (maintainer): a merge a layer declares is not an overload. Enrich splits a
   - A top layer whose created rule enrich would change reports `layer-not-enrich-fixpoint` naming that layer and rule.
   - Counted with a spy, one evaluation of the top layer runs enrich three times: layer 1's intake, layer 1's check, and layer 2's check. Layer 2's intake runs none.
 - [ ] **Step 2:** Implement, then run the suite and the gate. Commit.
+  - **Landed:** 386ca0a11 and 825ad2334 on `feat/authoring-dsl`. Against the 913f2cfec reference, each commit's own regenerated tree passes the output gate and the snapshot check with no exceptions, and its rows are equal. The bindings inventory, the type-check, lint, the grammar type-check ratchet, the suite and the cargo gates are green. Where it differs from the steps above:
+    - Checking every layer's own result surfaced tree-sitter-c: its single layer was not enrich's fixpoint, because three detectors matched shapes that enrich itself produced later in the same run. As ruled, those stages are fixed in their own commit before the check (386ca0a11), and c's first-run output is kept. A display rule is terminal by its row or by its body, and an enriched field is transparent to the nested-repeat count and to the inline-safe repeat test.
+    - The check builds the layer's result by calling the runtime's own `grammar()` inside the pass, with the options the layer hands the runtime, so the checked enrichment carries every runtime field.
+    - `enrichSidecarsOf` and `EnrichSidecars` go: the record's `enrichment` carries the sidecars.
 
 ---
 
