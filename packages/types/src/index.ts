@@ -13,6 +13,7 @@ export type {
 	QueryFlags,
 	QuerySlotFlags,
 	SlotFlagRefusal,
+	SlotFlagTest,
 	FlagOf,
 	QueryPlan,
 	QuerySlotEntry,
