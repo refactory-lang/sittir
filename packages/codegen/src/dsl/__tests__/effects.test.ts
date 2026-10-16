@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { LayerRecords } from '../layer-record.ts';
 import { preference } from '../primitives/preference.ts';
-import { appendProvenance, effectsForOwners, provenanceOf, rewriteInherited, type CopyOrigin, type Effect, type LeadMatch, type Provenance } from '../verbs/effects.ts';
+import { appendProvenance, displayFamiliesOf, effectsForOwners, provenanceOf, rewriteInherited, type CopyOrigin, type Effect, type LeadMatch, type Provenance } from '../verbs/effects.ts';
 import { LABELS_KEY } from '../wire/options-block.ts';
 
 interface FixtureCopy {
@@ -239,6 +239,20 @@ describe('appendProvenance', () => {
 
 	it('leaves leadFrom and renamedFrom out while neither side has an entry', () => {
 		expect(Object.keys(appendProvenance(inherited, { splitFrom: {}, bindingEffects: [] }))).toEqual(['splitFrom', 'bindingEffects']);
+	});
+});
+
+describe('displayFamiliesOf', () => {
+	it('names each display two or more alias effects give, with the members they alias', () => {
+		const effects: Effect[] = [
+			{ kind: 'alias', from: 'lambda', to: 'lambda_expression' },
+			{ kind: 'alias', from: 'inner_lambda', to: 'lambda_expression' },
+			{ kind: 'alias', from: 'lambda', to: 'lambda_expression' },
+			{ kind: 'alias', from: 'x', to: 'y' },
+			{ kind: 'alias', from: 'x', to: 'y' },
+			{ kind: 'rename', from: 'a', to: 'y' }
+		];
+		expect(displayFamiliesOf(effects)).toEqual(new Map([['lambda_expression', new Set(['lambda', 'inner_lambda'])]]));
 	});
 });
 

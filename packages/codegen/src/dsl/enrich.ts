@@ -16,7 +16,8 @@ import {
 	liftAliasedHiddenRuleBodies,
 	mintInlineLiteralAliasStorage,
 	mintInlineTextTokens,
-	unaliasOverloadedDisplays
+	unaliasOverloadedDisplays,
+	type DisplayFamilies
 } from './rule-transforms.ts';
 import { makeRuleMetadata, normalizeEnumMembers } from './rule-metadata.ts';
 import { isLexedBoundary, SyntacticRuleWalker } from './rule-walker.ts';
@@ -122,6 +123,7 @@ export interface EnrichAuthoredConfig {
 	readonly groupBodies?: readonly RuntimeRule[];
 	readonly extras?: (...args: never[]) => unknown;
 	readonly fieldSites?: ReadonlyMap<string, readonly AuthoredFieldSite[]>;
+	readonly displayFamilies?: DisplayFamilies;
 }
 
 export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthoredConfig = {}): EnrichedGrammar<B> {
@@ -175,7 +177,7 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 		});
 	}
 	const enrichedSymbols = enrichSymbolSource(ctx, { ...enrichedRules, ...ctx.kwRules, ...ctx.clauseGroupRules });
-	const unaliased = unaliasOverloadedDisplays(enrichedRules, { symbols: enrichedSymbols });
+	const unaliased = unaliasOverloadedDisplays(enrichedRules, { symbols: enrichedSymbols, families: authored.displayFamilies ?? new Map() });
 	for (const [name, rule] of Object.entries(unaliased)) enrichedRules[name] = applyFieldWrapPasses(name, rule, ctx);
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];

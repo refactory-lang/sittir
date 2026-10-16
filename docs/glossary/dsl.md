@@ -4884,6 +4884,9 @@ lexes (`authoredExtrasOf`). Enrich evaluates it once, and its result carries the
 
 `fieldSites` maps each kind to the sites its authored patches mark with `field()` (`authoredFieldSites`): index path and field name. The token-form hoist leaves a choice at one of those paths unsplit, and an element choice under a fielded repeat takes the site's name as its slot (`elementChoiceSlots`).
 
+`displayFamilies` are the display families the layers declared (`rule-transforms.ts::DisplayFamilies`), which the
+overload detector never matches. The fixpoint check passes them (`layer.ts::enrichFixpoint`).
+
 ### `packages/codegen/src/dsl/automatic-groups.ts::coveredByAuthoredGroup`
 
 Whether an authored group pattern covers a would-be visible group's whole
@@ -6370,9 +6373,15 @@ symbol.
 
 ### `packages/codegen/src/dsl/rule-transforms.ts::OverloadedDisplayCtx`
 
-```text
-The `SymbolSource` `unaliasOverloadedDisplays` classifies storages with (enrich passes the predicted source over the enriched rules).
-```
+What `unaliasOverloadedDisplays` judges sites with: the `SymbolSource` it classifies storages by (enrich passes the
+predicted source over the enriched rules), and the display families the layers declared (`families`), whose sites it
+never matches.
+
+### `packages/codegen/src/dsl/rule-transforms.ts::DisplayFamilies`
+
+Display families a layer declared, each display with the members it shows. A layer declares one by aliasing two or
+more kinds to one display, which its effect log records (`verbs/effects.ts::displayFamiliesOf`). A declared merge is a
+family, not an overload, so enrich's overload detector never matches it (`unaliasOverloadedDisplays`).
 
 ### `packages/codegen/src/dsl/rule-transforms.ts::unaliasOverloadedDisplays`
 
@@ -6394,6 +6403,10 @@ symbol's name without underscores (or `<display>_<name>` when that is taken; a f
 throws), and throws for an inline nonterminal, which needs a rule of its own. Runs in enrich, so the parser and the
 model see the same kinds.
 ```
+
+A display family a layer declared is not an overload (`DisplayFamilies`). A site whose display and storage symbol a
+family names is not collected, so the detector never matches the family, and a split storage is never minted the
+family's display.
 
 ### `packages/codegen/src/dsl/rule-transforms.ts::innermostNamedAliasContent`
 
@@ -7307,7 +7320,9 @@ Fills the options from a pass's output: `name` when the config gives none, a ret
 
 ### `packages/codegen/src/dsl/layer.ts::enrichFixpoint`
 
-Runs enrich once over a completed result with the given sidecars, and names every rule enrich would add, remove or change, sorted. The checked result is returned for the layer above to build on.
+Runs enrich once over a completed result with its record's sidecars and the display families its effect log declares
+(`verbs/effects.ts::displayFamiliesOf`), and names every rule enrich would add, remove or change, sorted. A merge a layer
+declared therefore passes. The checked result is returned for the layer above to build on.
 
 ### `packages/codegen/src/dsl/layer.ts::IntakeCtx`
 
@@ -7316,7 +7331,7 @@ appends to and the config's evaluated callbacks (`declared`), whose `groups:` bo
 
 ### `packages/codegen/src/dsl/layer.ts::intake`
 
-Completes a layer's base. Over an upstream base, which carries no record, enrich runs with the config's enrich inputs: the `groups:` bodies the layer evaluated, the `extras:` callback, which enrich evaluates once against the base's list (`enrich.ts::authoredExtrasOf`), and the field sites `edits` names. Over a completed layer the config's enrich inputs reach no enrich: `resolutions` is refused, since it belongs to the first layer, and enrich runs once over the base with the record's sidecars (`enrichFixpoint`), recording `layer-not-enrich-fixpoint` with the rules it would change.
+Completes a layer's base. Over an upstream base, which carries no record, enrich runs with the config's enrich inputs: the `groups:` bodies the layer evaluated, the `extras:` callback, which enrich evaluates once against the base's list (`enrich.ts::authoredExtrasOf`), and the field sites `edits` names. Over a completed layer the config's enrich inputs reach no enrich: `resolutions` is refused, since it belongs to the first layer, and enrich runs once over the base with its record (`enrichFixpoint`), recording `layer-not-enrich-fixpoint` with the rules it would change.
 
 ### `packages/codegen/src/dsl/layer.ts::wireConfigOf`
 

@@ -28,7 +28,7 @@ function aliasSites(rules: Readonly<Record<string, unknown>>): AliasSites {
 async function topLayerChanges(grammar: string): Promise<readonly string[]> {
 	const evaluated = await evaluateDsl(topLayerPath(grammarPackage(grammar)));
 	const record = layerRecordOf({ grammar: evaluated });
-	return (await withDslGlobals(async () => enrichFixpoint({ grammar: evaluated } as unknown as GrammarResult, record!.sidecars))).changed;
+	return (await withDslGlobals(async () => enrichFixpoint({ grammar: evaluated } as unknown as GrammarResult, record!))).changed;
 }
 
 describe('visible externals across layers', () => {
@@ -39,11 +39,7 @@ describe('visible externals across layers', () => {
 		expect(sites.nested).toEqual([]);
 	}, 60_000);
 
-	it.each(['rust', 'typescript'])("takes %s's completed top layer as a fixpoint of enrich", async (grammar) => {
+	it.each(['rust', 'typescript', 'python'])("takes %s's completed top layer as a fixpoint of enrich", async (grammar) => {
 		expect(await topLayerChanges(grammar)).toEqual([]);
-	}, 240_000);
-
-	it("changes nothing in python's completed top layer but the two rules its lambda display merge aliases", async () => {
-		expect(await topLayerChanges('python')).toEqual(['_expression_within_for_in_clause', 'expression']);
 	}, 240_000);
 });

@@ -276,8 +276,11 @@ export function liftAliasedHiddenRuleBodies<R extends AnyRule>(rules: Record<str
 	return out;
 }
 
+export type DisplayFamilies = ReadonlyMap<string, ReadonlySet<string>>;
+
 export interface OverloadedDisplayCtx {
 	readonly symbols: SymbolSource;
+	readonly families: DisplayFamilies;
 }
 
 type AliasSite<R> = NamedAliasShape<R> & { readonly value: string };
@@ -286,13 +289,19 @@ type StorageOf = { readonly key: string; readonly symbol?: string; readonly term
 
 export function unaliasOverloadedDisplays<R extends AnyRule>(rules: Record<string, R>, ctx: OverloadedDisplayCtx): Record<string, R> {
 	const walker = new SyntacticRuleWalker<R>();
+	const symbolOf = (content: R): string | undefined => (content.type === SYMBOL ? (content as unknown as { name: string }).name : undefined);
+	const declared = (site: AliasSite<R>): boolean => {
+		const symbol = symbolOf(site.content);
+		return symbol !== undefined && ctx.families.get(site.value)?.has(symbol) === true;
+	};
 	const siteOf = (r: R): AliasSite<R> | undefined => {
 		const alias = r as unknown as NamedAliasShape<R>;
-		return alias.type === ALIAS && alias.named === true && alias.value && !isGroupAlias(alias) ? (alias as AliasSite<R>) : undefined;
+		if (alias.type !== ALIAS || alias.named !== true || !alias.value || isGroupAlias(alias)) return undefined;
+		return declared(alias as AliasSite<R>) ? undefined : (alias as AliasSite<R>);
 	};
 	const terminalContent = (content: R): boolean => terminalContentOf(content, ctx.symbols.isTerminal);
 	const storageOf = (content: R): StorageOf => {
-		const symbol = content.type === SYMBOL ? (content as unknown as { name: string }).name : undefined;
+		const symbol = symbolOf(content);
 		return { key: symbol ?? JSON.stringify(content), symbol, terminal: terminalContent(content) };
 	};
 
@@ -309,7 +318,7 @@ export function unaliasOverloadedDisplays<R extends AnyRule>(rules: Record<strin
 		});
 	}
 
-	const taken = new Set([...Object.keys(rules), ...storagesByDisplay.keys()]);
+	const taken = new Set([...Object.keys(rules), ...storagesByDisplay.keys(), ...ctx.families.keys()]);
 	const minted = new Map<string, string>();
 	const mintFor = ({ storage, display }: { readonly storage: string; readonly display: string }): string => {
 		const known = minted.get(`${storage} ${display}`);

@@ -32,6 +32,12 @@ A field edit's effect on option paths: under the kind `owner`, the slot segment 
 
 An alias edit's effect: the member displayed as `from` now shows as `to`. On inherited option paths it renames `(from)` segments, and `from:` slot segments that name no field.
 
+### `packages/codegen/src/dsl/verbs/effects.ts::displayFamiliesOf`
+
+The display families an effect log declares (`rule-transforms.ts::DisplayFamilies`): each display that alias effects
+give two or more distinct members (`AliasEffect.to`), with those members (`from`). A display that one member shows,
+however often, is not a family. Enrich's fixpoint run reads them (`layer.ts::enrichFixpoint`).
+
 ### `packages/codegen/src/dsl/verbs/effects.ts::RenameEffect`
 
 A kind rename's effect: the kind `from` is now `to` wherever a kind is named. On inherited records it rewrites what `RECORD_RENAMES` names.

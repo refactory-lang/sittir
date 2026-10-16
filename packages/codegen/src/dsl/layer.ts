@@ -11,7 +11,6 @@ import {
 	stampWiredVariants,
 	withEnrichSidecarsOf,
 	type EnrichedGrammar,
-	type EnrichSidecars,
 	type GrammarResult
 } from './enrich.ts';
 import type { TransformPatchMap } from '../grammar-shapes/path-type.ts';
@@ -21,7 +20,7 @@ import { withRoleScope } from './primitives/role.ts';
 import { isRecord, type GrammarRecord } from './rule-patterns.ts';
 import { baseRulesOf } from './shared.ts';
 import { verbCtxOf, type VerbCtx } from './verbs/copy.ts';
-import { appendProvenance, effectsForOwners, provenanceOf, rewriteInherited, type AliasEffect, type Effect, type SegmentEffect } from './verbs/effects.ts';
+import { appendProvenance, displayFamiliesOf, effectsForOwners, provenanceOf, rewriteInherited, type AliasEffect, type Effect, type SegmentEffect } from './verbs/effects.ts';
 import { applyLeads } from './verbs/lead.ts';
 import { applyNarrows } from './verbs/narrow.ts';
 import { deadEnrichMints, withoutDeadNames } from './wire/dead-mints.ts';
@@ -234,9 +233,12 @@ function fillLayerOptions(options: Record<string, unknown>, output: LayerOutput)
 	Object.defineProperty(options, '__wireContext__', { value: output.wire, enumerable: false, configurable: true });
 }
 
-export function enrichFixpoint(result: GrammarResult, sidecars: EnrichSidecars): { readonly checked: GrammarResult; readonly changed: readonly string[] } {
+export function enrichFixpoint(
+	result: GrammarResult,
+	record: Pick<LayerRecord, 'sidecars' | 'effects'>
+): { readonly checked: GrammarResult; readonly changed: readonly string[] } {
 	const before = baseRulesOf<unknown>(result) ?? {};
-	const checked = enrich(withEnrichSidecarsOf(result, sidecars)) as unknown as GrammarResult;
+	const checked = enrich(withEnrichSidecarsOf(result, record.sidecars), { displayFamilies: displayFamiliesOf(record.effects) }) as unknown as GrammarResult;
 	const after = baseRulesOf<unknown>(checked) ?? {};
 	const changed = [...new Set([...Object.keys(before), ...Object.keys(after)])].filter(
 		(name) => JSON.stringify(before[name]) !== JSON.stringify(after[name])
@@ -262,7 +264,7 @@ function intake(source: GrammarResult, ctx: IntakeCtx): GrammarResult {
 		}) as unknown as GrammarResult;
 	if (config.resolutions !== undefined)
 		throw new Error(`wire(): '${ctx.name}' gives resolutions, which belong to the first layer; its layer applies its section of the first layer's file`);
-	const { checked, changed } = enrichFixpoint(source, inherited.sidecars);
+	const { checked, changed } = enrichFixpoint(source, inherited);
 	if (changed.length > 0)
 		ctx.diagnostics.push({
 			scope: 'grammar',

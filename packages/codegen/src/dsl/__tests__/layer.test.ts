@@ -638,7 +638,7 @@ describe('the grammar bindings layer', () => {
 			const evaluated = await evaluateDsl(join(packages, grammar, 'grammar.sittir.ts'));
 			const record = layerRecordOf({ grammar: evaluated });
 			expect(record?.depth).toBe(1);
-			const { changed } = await withDslGlobals(async () => enrichFixpoint({ grammar: evaluated } as unknown as GrammarResult, record!.sidecars));
+			const { changed } = await withDslGlobals(async () => enrichFixpoint({ grammar: evaluated } as unknown as GrammarResult, record!));
 			expect(changed).toEqual([]);
 		},
 		240_000
