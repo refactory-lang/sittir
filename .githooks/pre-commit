@@ -14,6 +14,12 @@ cd "$repo" || exit 0
 # Both gates evaluate the index (the commit's snapshot; the temporary index for
 # `git commit -- <paths>`), never the working tree, so unrelated unstaged work
 # cannot fail or pass a commit.
+if ! bash scripts/assert-no-tracked-node-modules.sh; then
+  echo "" >&2
+  echo "🚫 pre-commit: node_modules paths are tracked (see above)." >&2
+  exit 1
+fi
+
 # Principle #14 ratchet: block commits that INCREASE any pipeline module's
 # non-conforming signature count over packages/codegen/.principle14-baseline.json.
 if [ -f packages/codegen/.principle14-baseline.json ] && ! pnpm exec tsx packages/cli/src/cli.ts tool propose-14 --staged; then
