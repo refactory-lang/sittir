@@ -253,6 +253,7 @@ How a copy is treated depends on its origin:
 - **`narrow`, or a `lead`.** The copy has a new shape and inherits nothing, as the lead's forms do today.
 
 **Projections.**
+- Only a layer that inherits a record projects. It appends its own effects' projections to the inherited ones, under today's presence rules: `splitFrom` and `bindingEffects` on every such layer, `leadFrom` only when a lead made a copy, and `renamedFrom` only when a rename exists. Layer 1 records its effects but projects nothing.
 - `splitFrom` maps each copy whose origin is a path or `copy()` to its source.
 - `leadFrom` maps each copy whose origin is a `lead` to its source.
 - `renamedFrom` maps each rename's target to its source. It is absent when the layer renames nothing.
