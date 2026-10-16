@@ -62,7 +62,7 @@ export declare class SittirEngine {
    * where its source spells another than the one the slot renders.
    * Refuses as `triviaSide` does.
    */
-  separatorBefore(treeId: number, index: number): number | null
+  separatorBefore(treeId: number, index: number): import('../src/types.ts').TSKindId | null
   /**
    * A snapshot of the node at `index` of the live tree `treeId`: the
    * node read at every depth into plain data with no tree, each

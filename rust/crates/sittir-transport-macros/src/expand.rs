@@ -67,7 +67,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     ::core::option::Option::Some(Self::#name)
                 }
             });
-            builds.push(quote!(if id == ::sittir_core::options::BLANK_ARM { return ::core::option::Option::Some(Self::#name); }));
+            builds.push(quote!(if id == ::sittir_core::types::KindId::BLANK { return ::core::option::Option::Some(Self::#name); }));
             wire.push(codec::WireVariant { blank: true, ..unread(None) });
             continue;
         }
@@ -89,7 +89,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
         if payload.is_none() {
             let claims = kinds.kinds.iter().chain(&kinds.shown);
             let built = unit(quote!(Self));
-            builds.push(quote!(if [#(#claims),*].iter().any(|k| k.0 == id) { return ::core::option::Option::Some(#built); }));
+            builds.push(quote!(if [#(#claims),*].contains(&id) { return ::core::option::Option::Some(#built); }));
         }
         let i = at as u16;
         wire.push(codec::WireVariant {
@@ -208,7 +208,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
     let from_kind_id = all_units.then(|| {
         quote! {
             impl #ident {
-                pub fn from_kind_id(id: u16) -> ::core::option::Option<Self> {
+                pub fn from_kind_id(id: ::sittir_core::types::KindId) -> ::core::option::Option<Self> {
                     #(#builds)*
                     ::core::option::Option::None
                 }
@@ -241,7 +241,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 _ctx: &__rt::ReadCtx<'_>,
                 _depth: __rt::Depth,
             ) -> ::core::result::Result<T, __rt::ReadError> {
-                ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: __Kind(cursor.node().grammar_id()), index: __rt::index_of(cursor) })
+                ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: ::sittir_core::read::grammar_id(&cursor.node()), index: __rt::index_of(cursor) })
             }
             fn __no_routes(_cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed> {
                 ::core::option::Option::None
@@ -284,7 +284,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     depth: __rt::Depth,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
                     let node = cursor.node();
-                    let (grammar, display) = (__Kind(node.grammar_id()), __rt::display_id(&node));
+                    let (grammar, display) = (::sittir_core::read::grammar_id(&node), __rt::display_id(&node));
                     match __variant(grammar, display) {
                         ::core::option::Option::Some(i) => __READS[i as usize](cursor, ctx, depth),
                         ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, index: __rt::index_of(cursor) }),
@@ -297,7 +297,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     depth: __rt::Depth,
                 ) -> ::core::result::Result<::std::boxed::Box<Self>, __rt::ReadError> {
                     let node = cursor.node();
-                    let (grammar, display) = (__Kind(node.grammar_id()), __rt::display_id(&node));
+                    let (grammar, display) = (::sittir_core::read::grammar_id(&node), __rt::display_id(&node));
                     match __variant(grammar, display) {
                         ::core::option::Option::Some(i) => __READS_BOXED[i as usize](cursor, ctx, depth),
                         ::core::option::Option::None => ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: grammar, index: __rt::index_of(cursor) }),
@@ -305,7 +305,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 }
                 fn routes(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed> {
                     let node = cursor.node();
-                    __variant(__Kind(node.grammar_id()), __rt::display_id(&node)).and_then(|i| __ROUTES[i as usize](cursor))
+                    __variant(::sittir_core::read::grammar_id(&node), __rt::display_id(&node)).and_then(|i| __ROUTES[i as usize](cursor))
                 }
                 fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
                     __variant(grammar, display).and_then(|i| __ROUTERS[i as usize](grammar, display))
@@ -368,11 +368,11 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
                     _depth: __rt::Depth,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
                     let node = cursor.node();
-                    if let ::core::option::Option::Some(member) = __member(__Kind(node.grammar_id()), __rt::display_id(&node)) {
+                    if let ::core::option::Option::Some(member) = __member(::sittir_core::read::grammar_id(&node), __rt::display_id(&node)) {
                         return ::core::result::Result::Ok(member);
                     }
                     #spelled
-                    ::core::result::Result::Err(__rt::ReadError::Unspelled { kind: __Kind(node.grammar_id()), index: __rt::index_of(cursor) })
+                    ::core::result::Result::Err(__rt::ReadError::Unspelled { kind: ::sittir_core::read::grammar_id(&node), index: __rt::index_of(cursor) })
                 }
             }
             impl<__L: ::core::default::Default> __rt::HasLayout<__L> for #ident {
@@ -497,9 +497,9 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
                 /// The separator kind a list stores for a separator token of
                 /// grammar id `grammar`: the kind of the candidate group the
                 /// token is one of.
-                pub fn separator_kind_of(grammar: u16) -> ::core::option::Option<u16> {
+                pub fn separator_kind_of(grammar: __Kind) -> ::core::option::Option<__Kind> {
                     let groups: &[&[__Kind]] = &[#(#groups),*];
-                    groups.iter().find(|group| group.iter().any(|kind| kind.0 == grammar)).and_then(|group| group.first()).map(|kind| kind.0)
+                    groups.iter().find(|group| group.contains(&grammar)).and_then(|group| group.first()).copied()
                 }
             }
         }
@@ -548,8 +548,8 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
                     depth: __rt::Depth,
                 ) -> ::core::result::Result<Self, __rt::ReadError> {
                     let __node = cursor.node();
-                    if !<Self as __rt::ReadTransport>::admits(__Kind(__node.grammar_id()), __rt::display_id(&__node)) {
-                        return ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: __Kind(__node.grammar_id()), index: __rt::index_of(cursor) });
+                    if !<Self as __rt::ReadTransport>::admits(::sittir_core::read::grammar_id(&__node), __rt::display_id(&__node)) {
+                        return ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: ::sittir_core::read::grammar_id(&__node), index: __rt::index_of(cursor) });
                     }
                     #read
                 }
@@ -700,7 +700,7 @@ fn envelope_body(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             quote! {
                 let own = __rt::index_of(cursor);
                 let wrapped = __rt::survey(cursor).into_iter().find(|child| !child.trivia).ok_or(
-                    __rt::ReadError::Unadmitted { kind: __Kind(cursor.node().grammar_id()), index: own },
+                    __rt::ReadError::Unadmitted { kind: ::sittir_core::read::grammar_id(&cursor.node()), index: own },
                 )?;
                 cursor.goto_descendant(wrapped.index as usize);
             },
@@ -771,6 +771,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
     let mut untagged = Vec::new();
     let mut separators = Vec::new();
     for &(i, field, slot) in &slots {
+        let i = slot_id(i);
         let ty = field.ty;
         let kind = slot_kind(field, slot);
         let scalar = match kind {
@@ -830,7 +831,8 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
 
     let accs: Vec<Ident> = slots.iter().map(|(i, ..)| format_ident!("__acc{}", i)).collect();
     let tys: Vec<&Type> = slots.iter().map(|(_, field, _)| field.ty).collect();
-    let idxs: Vec<u16> = slots.iter().map(|(i, ..)| *i).collect();
+    let idxs: Vec<TokenStream> = slots.iter().map(|&(i, ..)| slot_id(i)).collect();
+    let positions: Vec<usize> = slots.iter().map(|&(i, ..)| usize::from(i)).collect();
     let names: Vec<&Ident> = slots.iter().map(|(_, field, _)| field.ident).collect();
     let labels: Vec<LitStr> = names.iter().map(|name| LitStr::new(&name.to_string(), name.span())).collect();
     let keys: Vec<&LitStr> = slots
@@ -849,7 +851,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
         routes: quote! {
             fn routes(cursor: &mut ::tree_sitter::TreeCursor<'_>) -> ::core::option::Option<__rt::Routed> {
                 let __node = cursor.node();
-                if !<Self as __rt::ReadTransport>::admits(__Kind(__node.grammar_id()), __rt::display_id(&__node)) {
+                if !<Self as __rt::ReadTransport>::admits(::sittir_core::read::grammar_id(&__node), __rt::display_id(&__node)) {
                     return ::core::option::Option::None;
                 }
                 let children = __rt::survey(cursor);
@@ -882,7 +884,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
             let unit_slots = if idxs.is_empty() {
                 quote!()
             } else {
-                quote!(let mut __unit_slots: ::std::vec::Vec<u16> = ::std::vec::Vec::new();)
+                quote!(let mut __unit_slots: ::std::vec::Vec<::sittir_core::types::SlotId> = ::std::vec::Vec::new();)
             };
             let unit_positions = if idxs.is_empty() {
                 quote!()
@@ -910,7 +912,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                     match routes[i] {
                         #(__rt::Route::Slot { slot: #idxs, scalar } => {
                             let __child = __rt::index_of(cursor);
-                            let __arrival = <#tys as __rt::ReadSlot>::arrival(&#accs, __items[#idxs as usize]);
+                            let __arrival = <#tys as __rt::ReadSlot>::arrival(&#accs, __items[#positions]);
                             <#tys as __rt::ReadSlot>::take(
                                 &mut #accs,
                                 cursor,
@@ -924,7 +926,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<Body> {
                                     __unit_slots.push(#idxs);
                                 }
                             }
-                            __items[#idxs as usize] += 1;
+                            __items[#positions] += 1;
                         })*
                         #(__rt::Route::Separator { slot: #idxs, tagged } => <#tys as __rt::ReadSlot>::separator(&mut #accs, tagged),)*
                         _ => {}
@@ -956,7 +958,7 @@ fn list_inits(attrs: &KindAttrs, fields: &[Field<'_>], slots: &[(u16, &Field<'_>
                 let slot = slots
                     .iter()
                     .find(|(_, f, _)| f.ident == item)
-                    .map(|(i, ..)| *i)
+                    .map(|&(i, ..)| slot_id(i))
                     .ok_or_else(|| syn::Error::new_spanned(item, "`item` names one of the list's slots"))?;
                 let (leading, trailing) = (option(flank.leading), option(flank.trailing));
                 inits.push(quote! {
@@ -968,6 +970,11 @@ fn list_inits(attrs: &KindAttrs, fields: &[Field<'_>], slots: &[(u16, &Field<'_>
         }
     }
     Ok(inits)
+}
+
+/// A slot position as the `SlotId` a route names it by.
+fn slot_id(position: u16) -> TokenStream {
+    quote!(::sittir_core::types::SlotId(#position))
 }
 
 fn option(value: Option<u16>) -> TokenStream {
@@ -1007,7 +1014,7 @@ mod tests {
         assert!(has(
             &out,
             "::core::option::Option::Some(__field) if (__field == field::KEY) && <SlotValue<KeyTransport> as __rt::ReadSlot>::takes_tagged(child.grammar, child.display, child.named) => {
-                return ::core::result::Result::Ok(__rt::Route::Slot { slot: 0u16, scalar: <SlotValue<KeyTransport> as __rt::ReadSlot>::scalar(child.grammar, child.display) });
+                return ::core::result::Result::Ok(__rt::Route::Slot { slot: ::sittir_core::types::SlotId(0u16), scalar: <SlotValue<KeyTransport> as __rt::ReadSlot>::scalar(child.grammar, child.display) });
             }"
         ));
         assert!(has(
@@ -1042,8 +1049,8 @@ mod tests {
         });
         assert!(has(
             &out,
-            "if !<Self as __rt::ReadTransport>::admits(__Kind(__node.grammar_id()), __rt::display_id(&__node)) {
-                return ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: __Kind(__node.grammar_id()), index: __rt::index_of(cursor) });
+            "if !<Self as __rt::ReadTransport>::admits(::sittir_core::read::grammar_id(&__node), __rt::display_id(&__node)) {
+                return ::core::result::Result::Err(__rt::ReadError::Unadmitted { kind: ::sittir_core::read::grammar_id(&__node), index: __rt::index_of(cursor) });
             }"
         ));
     }
@@ -1064,10 +1071,10 @@ mod tests {
         assert!(has(
             &out,
             "impl Terminator {
-                pub fn from_kind_id(id: u16) -> ::core::option::Option<Self> {
-                    if [kind::_AUTOMATIC_SEMICOLON].iter().any(|k| k.0 == id) { return ::core::option::Option::Some(Self::AutomaticSemicolon); }
-                    if [kind::SEMI, kind::SEMI_ALIAS].iter().any(|k| k.0 == id) { return ::core::option::Option::Some(Self::Semi); }
-                    if id == ::sittir_core::options::BLANK_ARM { return ::core::option::Option::Some(Self::Blank); }
+                pub fn from_kind_id(id: ::sittir_core::types::KindId) -> ::core::option::Option<Self> {
+                    if [kind::_AUTOMATIC_SEMICOLON].contains(&id) { return ::core::option::Option::Some(Self::AutomaticSemicolon); }
+                    if [kind::SEMI, kind::SEMI_ALIAS].contains(&id) { return ::core::option::Option::Some(Self::Semi); }
+                    if id == ::sittir_core::types::KindId::BLANK { return ::core::option::Option::Some(Self::Blank); }
                     ::core::option::Option::None
                 }
             }"
@@ -1086,7 +1093,7 @@ mod tests {
         });
         assert!(has(
             &out,
-            "if [kind::EMPTY_STATEMENT].iter().any(|k| k.0 == id) { return ::core::option::Option::Some(Self::EmptyStatement(::core::default::Default::default())); }"
+            "if [kind::EMPTY_STATEMENT].contains(&id) { return ::core::option::Option::Some(Self::EmptyStatement(::core::default::Default::default())); }"
         ));
         assert!(has(&out, "::core::result::Result::Ok(Statement::EmptyStatement(::core::default::Default::default()))"));
     }

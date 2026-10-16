@@ -294,8 +294,8 @@ seat through their subtypes, not a slot).
 ### `packages/codegen/src/emitters/render-module.ts::seatWrappersOf`
 
 Each polymorph wrapper's seat passage, the rows of `SEAT_WRAPPERS`: its kind
-id and the field id of its content slot (`wrapperSlotOf`), 0 for an
-unfielded content slot. A coordinate of a wrapper kind seats through the node
+id and the field id of its content slot (`wrapperSlotOf`), none for an
+unfielded content slot, which seats through `SeatPath::Content`. A coordinate of a wrapper kind seats through the node
 it holds there, as a wrapper transport seats through its content
 (`sittir_core::prepare::coord_seat`). A fielded content slot with no field id
 fails at codegen.
@@ -13829,8 +13829,9 @@ The kind id a planned row carries for a kind, read from the node the model stamp
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::SeatWrapper`
 
-One `SEAT_WRAPPERS` row: a wrapper's kind id and its content field, 0 for
-unfielded content (`seatWrappersOf`).
+One `SEAT_WRAPPERS` row: a wrapper's kind id and its content field, absent
+for unfielded content (`seatWrappersOf`). The emitter writes it as a
+`SeatPath` cell: `Field(FieldId(n))`, or `Content`.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::DepthSites`
 
@@ -13893,7 +13894,7 @@ kind-indexed `EDGE_ROWS`, one dense `SEATS_*` table per seated slot
 (`seatTablesOf`), `DEPTH_SITES`, `spacing_text`, `defaults()`, the address
 trie `ADDRESSES` (`emitAddressTrie`), a `Sites` marker implementing
 `sittir_core::options::OptionSites` over those tables, and
-`pub type Options = sittir_core::options::Options<Sites>`. `KIND_FLAGS` (`kindFlagsOf`, through `denseFlags`) sits beside `EDGE_ROWS`, and `defaults()` hands it to the resolved options as `kind_flags`. `SEAT_WRAPPERS` (per kind id, the field a wrapper's seat passes through, `NO_SITE` for any other kind) follows the seat tables, and `defaults()` hands it over as `seat_wrappers`. No per-grammar
+`pub type Options = sittir_core::options::Options<Sites>`. `KIND_FLAGS` (`kindFlagsOf`, through `denseFlags`) sits beside `EDGE_ROWS`, and `defaults()` hands it to the resolved options as `kind_flags`. `SEAT_WRAPPERS` (per kind id, the `SeatPath` a wrapper's seat passes through, `None` for any other kind) follows the seat tables, and `defaults()` hands it over as `seat_wrappers`. No per-grammar
 struct, deserializer or resolver is emitted: reading a JS object through the
 trie and resolving it over a base table live once in core, and this file only
 supplies the tables. `defaults()` builds `spacing` through
@@ -13915,7 +13916,7 @@ A `DepthAnchor` as the Rust expression of `sittir_core::trivia_table::DepthAncho
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::allowed`
 
-`allowed(site) -> &'static [u16]`: the arms a spacing site admits, the last
+`allowed(site: SiteId) -> &'static [KindId]`: the arms a spacing site admits, the last
 column of its `SPACING_SITES` row. It is one of the `OptionTables` a grammar's
 `Sites` marker hands core, so `Options::resolve` refuses a value the site does
 not admit, and the prepare walk's gap classification asks it which measured
@@ -14012,16 +14013,20 @@ by default, with that row's kind: setting it to indent must trip the
 resolver's depth balance. `undefined` when the grammar has no such leaf
 (python), and the smoke test is then not emitted.
 
-### `packages/codegen/src/emitters/render-options-rs.ts::NO_SITE`
+### `packages/codegen/src/emitters/render-options-rs.ts::IdType`
 
-The Rust spelling of an empty cell in a kind-indexed site table
-(`sittir_core::options::NO_SITE`); `NO_SITE_ID` is its value, the bound a
-real site index must stay below (`siteOrNone`).
+The `sittir_core::types` id newtypes an options table cell can hold: `SiteId`,
+`FlankId`, `EdgeRow` and `FieldId`.
 
-### `packages/codegen/src/emitters/render-options-rs.ts::NO_SITE_ID`
+### `packages/codegen/src/emitters/render-options-rs.ts::idLiteral`
 
-The value `NO_SITE` spells, `0xffff`; a real site index must stay below it
-to fit a `u16` table cell.
+An id as its Rust newtype literal, `SiteId(3)`. An id past `u16` fails at
+codegen, since the newtype could not hold it.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::idOrNone`
+
+An optional id as a Rust `Option`: `Some(SiteId(3))`, or `None` (an edge row
+side with no site).
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::UNCATALOGUED_KIND_ID`
 
@@ -14031,22 +14036,22 @@ A kind id no grammar's catalog holds, one below `ERROR_KIND_ID`. The emitted res
 
 The cell count of a dense table: one past its highest key. It fails at codegen when a key reaches `ERROR_KIND_ID`, since one ERROR row would make a 65536-cell static. ERROR carries no flag, edge or seat, so no table ever needs its row.
 
-### `packages/codegen/src/emitters/render-options-rs.ts::siteOrNone`
-
-A table cell: a site index as written, or `NO_SITE` for none. A site index
-at or above `NO_SITE_ID` fails at codegen, since it would be read back as
-empty.
-
 ### `packages/codegen/src/emitters/render-options-rs.ts::denseTable`
 
-`pub static NAME: &[u16]`, a table indexed by kind id up to the highest key
-present, `NO_SITE` in every gap, sixteen cells to a line. `EDGE_ROWS` and the
-`SEATS_*` tables are written through it so a runtime lookup by kind id is one
+A dense table of one id type: each value written as its newtype literal
+(`idLiteral`) through `denseCells`. `EDGE_ROWS` (`EdgeRow`) and the `SEATS_*`
+tables (`SiteId`) are written through it so a runtime lookup by kind id is one
 array read instead of a search.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::denseCells`
+
+`pub static NAME: &[Option<T>]`, a table indexed by kind id up to the highest
+key present: `Some(cell)` at a key, `None` in every gap, sixteen cells to a
+line. `SEAT_WRAPPERS` writes its `SeatPath` cells through it directly.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::denseFlags`
 
-`pub static NAME: &[u8]`, a table indexed by kind id up to the highest flagged id, `0` in every gap, thirty-two cells to a line. `KIND_FLAGS` is written through it. It is separate from `denseTable` because a flag cell's empty value is `0`, not `NO_SITE`.
+`pub static NAME: &[u8]`, a table indexed by kind id up to the highest flagged id, `0` in every gap, thirty-two cells to a line. `KIND_FLAGS` is written through it. It is separate from `denseTable` because a flag cell's empty value is `0`, not `None`.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::leafEdgesTable`
 

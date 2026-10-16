@@ -533,9 +533,8 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
 impl ::napi::bindgen_prelude::FromNapiValue for TriviaText {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { crate::boundary::object(env, napi_val)? };
-        let kind: u16 = unsafe { crate::boundary::required(env, obj, c"$type", "TriviaText")? };
         Ok(Self {
-            kind: KindId(kind),
+            kind: unsafe { crate::boundary::required(env, obj, c"$type", "TriviaText")? },
             text: unsafe { crate::boundary::required(env, obj, c"$text", "TriviaText")? },
             span: unsafe { crate::boundary::property(env, obj, c"span")? },
             before: unsafe { crate::boundary::property(env, obj, c"$before")? },

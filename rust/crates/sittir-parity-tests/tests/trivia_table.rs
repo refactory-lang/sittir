@@ -371,7 +371,7 @@ fn a_list_items_siblings_are_the_items_of_its_own_list() {
     let (language, _) = python();
     let source = "@a\n@b\ndef f(): pass\n";
     let tree = parse(&language, source);
-    let decorator = language.id_for_node_kind("decorator", true);
+    let decorator = sittir_core::read::kind_named(&language, "decorator", true);
     let sibling = |start, end| Some(sittir_core::engine::Sibling { start, end, kind: decorator });
     let first = sittir_core::engine::siblings(&tree, index_of(&tree, source, "decorator", "@a"));
     let last = sittir_core::engine::siblings(&tree, index_of(&tree, source, "decorator", "@b"));

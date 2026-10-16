@@ -170,7 +170,7 @@ fn find(tree: &tree_sitter::Tree, kind: KindId, nth: usize) -> tree_sitter::Tree
     let mut seen = 0;
     for index in 0..tree.root_node().descendant_count() {
         cursor.goto_descendant(index);
-        if cursor.node().grammar_id() == kind.0 {
+        if sittir_core::read::grammar_id(&cursor.node()) == kind {
             if seen == nth {
                 return cursor;
             }
@@ -252,7 +252,7 @@ fn a_child_no_route_takes_is_refused_only_with_debug_checks() {
         assert_eq!((parent, child), (kind::FUNCTION_ITEM, kind::BLOCK));
         let mut at = tree.walk();
         at.goto_descendant(index as usize);
-        assert_eq!(at.node().grammar_id(), kind::BLOCK.0);
+        assert_eq!(sittir_core::read::grammar_id(&at.node()), kind::BLOCK);
         assert!(routes.is_none());
     } else {
         let value = result.unwrap();

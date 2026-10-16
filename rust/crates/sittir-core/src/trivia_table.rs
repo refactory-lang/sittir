@@ -30,6 +30,7 @@
 //! in a gap of a list slot, from the class the slot stores
 //! (`ParsedTree::deviation`, `list_slots`).
 
+use crate::types::KindId;
 use std::collections::BTreeMap;
 
 /// A side of a node that holds trivia: before its first token, after its
@@ -97,7 +98,7 @@ pub enum DepthAnchor {
 /// stretch of its children.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct DepthRegion {
-    pub kind: u16,
+    pub kind: KindId,
     pub open: DepthAnchor,
     pub close: DepthAnchor,
 }
@@ -110,17 +111,17 @@ pub struct DepthRegion {
 /// structural indentation (`depth`).
 #[derive(Debug, Clone, Copy, Default)]
 pub struct SurfaceKinds {
-    pub lists: &'static [u16],
-    pub units: &'static [u16],
-    pub layout: &'static [u16],
-    pub indent: u16,
-    pub dedent: u16,
+    pub lists: &'static [KindId],
+    pub units: &'static [KindId],
+    pub layout: &'static [KindId],
+    pub indent: KindId,
+    pub dedent: KindId,
     pub depth: &'static [DepthRegion],
 }
 
 /// The nodes of a tree by descendant index, as far as the walk reads them.
 struct Nodes {
-    kind: Vec<u16>,
+    kind: Vec<KindId>,
     parent: Vec<u32>,
     depth: Vec<u32>,
     start: Vec<u32>,
@@ -175,7 +176,7 @@ pub fn is_empty(node: &tree_sitter::Node<'_>) -> bool {
 pub fn walk(node: tree_sitter::Node<'_>, index: u32, source: &str) -> Walk {
     let count = node.descendant_count();
     let mut nodes = Nodes {
-        kind: vec![0; count],
+        kind: vec![KindId::BLANK; count],
         parent: vec![NONE; count],
         depth: vec![0; count],
         start: vec![0; count],
@@ -207,7 +208,7 @@ pub fn walk(node: tree_sitter::Node<'_>, index: u32, source: &str) -> Walk {
         let local = cursor.descendant_index() as u32;
         let (start, end) = (node.start_byte() as u32, node.end_byte() as u32);
         let i = local as usize;
-        nodes.kind[i] = node.grammar_id();
+        nodes.kind[i] = crate::read::grammar_id(&node);
         nodes.start[i] = start;
         nodes.end[i] = end;
         nodes.count[i] = node.descendant_count() as u32;
@@ -640,7 +641,7 @@ impl<'t> Structure<'t> {
                     .filter_map(|child| source.get(child.byte_range()).map(|text| (child.start_byte() as u32, child.end_byte() as u32, text)))
                     .collect()
             };
-            let kind = node.grammar_id();
+            let kind = crate::read::grammar_id(&node);
             regions
                 .iter()
                 .filter(|region| region.kind == kind)

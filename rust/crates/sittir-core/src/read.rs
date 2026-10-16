@@ -16,20 +16,60 @@ use crate::trivia_table::TriviaSide;
 use crate::types::{FieldId, KindId, Span};
 use std::num::NonZeroU32;
 use std::sync::OnceLock;
-use tree_sitter::{Node, TreeCursor};
+use tree_sitter::{Language, Node, TreeCursor};
 
 pub use regex::Captures;
 
 /// Opt-in parser/model drift diagnostics after typed slot routing.
 pub const DEBUG_READ_CHECKS: bool = cfg!(feature = "read-debug-checks");
 
+/// The kind `node` has in the grammar, the key of every flag, edge and seat
+/// table. The one call of `Node::grammar_id`.
+#[allow(clippy::disallowed_methods)]
+pub fn grammar_id(node: &Node<'_>) -> KindId {
+    KindId(node.grammar_id())
+}
+
 /// The kind the parser shows `node` as: the alias target at an alias site,
-/// else the grammar id. Every flag, edge and seat table is keyed on the
-/// grammar id (`grammar_id()`), never on this one; the display id is for the
-/// places that carry an alias envelope. The one call of `Node::kind_id`.
+/// else the grammar id. Tables are keyed on the grammar id (`grammar_id`),
+/// never on this one; the display id is for the places that carry an alias
+/// envelope. The one call of `Node::kind_id`.
 #[allow(clippy::disallowed_methods)]
 pub fn display_id(node: &Node<'_>) -> KindId {
     KindId(node.kind_id())
+}
+
+/// The field the cursor's child is tagged with in its parent, none when it is
+/// unfielded. The one call of `TreeCursor::field_id`.
+#[allow(clippy::disallowed_methods)]
+pub fn field_id(cursor: &TreeCursor<'_>) -> Option<FieldId> {
+    cursor.field_id().map(|field| FieldId(field.get()))
+}
+
+/// `node`'s first child tagged with `field`. The one call of
+/// `Node::child_by_field_id`.
+#[allow(clippy::disallowed_methods)]
+pub fn child_by_field<'t>(node: &Node<'t>, field: FieldId) -> Option<Node<'t>> {
+    node.child_by_field_id(field.get())
+}
+
+/// The grammar's name for `field`. The one call of `Language::field_name_for_id`.
+#[allow(clippy::disallowed_methods)]
+pub fn field_name(language: &Language, field: FieldId) -> Option<&'static str> {
+    language.field_name_for_id(field.get())
+}
+
+/// The grammar's name for `kind`. The one call of `Language::node_kind_for_id`.
+#[allow(clippy::disallowed_methods)]
+pub fn kind_name(language: &Language, kind: KindId) -> Option<&'static str> {
+    language.node_kind_for_id(kind.get())
+}
+
+/// The kind the grammar names `name`, named or anonymous; `KindId::BLANK`
+/// when it names none. The one call of `Language::id_for_node_kind`.
+#[allow(clippy::disallowed_methods)]
+pub fn kind_named(language: &Language, name: &str, named: bool) -> KindId {
+    KindId(language.id_for_node_kind(name, named))
 }
 
 /// How many levels a read expands below the node it starts at.
@@ -136,7 +176,7 @@ pub trait SideLookup {
     }
     /// The separator before the node at `index` as an item of its parent's
     /// list slot, where it is not the one the slot renders.
-    fn separator(&self, index: u32) -> Option<u16> {
+    fn separator(&self, index: u32) -> Option<KindId> {
         let _ = index;
         None
     }
@@ -342,7 +382,7 @@ impl<'s> ReadCtx<'s> {
 
     /// [`Self::stamped_kind`] of a parsed node.
     pub fn node_kind(&self, node: &tree_sitter::Node<'_>) -> KindId {
-        self.stamped_kind(KindId(node.grammar_id()), display_id(node))
+        self.stamped_kind(grammar_id(node), display_id(node))
     }
 
     /// Where the node the cursor is on came from: each transport's own
@@ -423,9 +463,9 @@ impl Child {
         let node = cursor.node();
         Child {
             index: index_of(cursor),
-            grammar: KindId(node.grammar_id()),
+            grammar: grammar_id(&node),
             display: display_id(&node),
-            field: cursor.field_id().map(|field| FieldId(field.get())),
+            field: field_id(cursor),
             named: node.is_named(),
             trivia: node.is_extra() || node.is_error(),
             descendants: node.descendant_count() as u32,
@@ -491,10 +531,10 @@ pub enum Route {
     Trivia,
     /// Stored in slot `slot`. `scalar` when the slot stores it as a unit
     /// variant.
-    Slot { slot: u16, scalar: bool },
+    Slot { slot: crate::types::SlotId, scalar: bool },
     /// A separator of slot `slot`, stored nowhere. `tagged` when it carries
     /// the slot's own field: only those mark an elided slot's holes.
-    Separator { slot: u16, tagged: bool },
+    Separator { slot: crate::types::SlotId, tagged: bool },
     /// A token the kind's own template writes: skipped.
     Layout,
 }
@@ -1111,7 +1151,7 @@ pub const TRAILING: u8 = 2;
 /// that item is a unit variant, the flank is present when the list holds
 /// more anonymous unfielded tokens than the separators between its items and
 /// the mandatory flank tokens account for.
-pub fn delimiter(list: &Node<'_>, children: &[Child], routes: &[Route], items: u16, leading: Option<u16>, trailing: Option<u16>) -> u8 {
+pub fn delimiter(list: &Node<'_>, children: &[Child], routes: &[Route], items: crate::types::SlotId, leading: Option<u16>, trailing: Option<u16>) -> u8 {
     let item_children: Vec<(&Child, bool)> = children
         .iter()
         .zip(routes)
@@ -1153,12 +1193,12 @@ mod tests {
 
     #[test]
     fn a_relaxed_keyword_stamps_its_display_and_a_plain_token_stamps_its_grammar_id() {
-        const WORD: u16 = 1;
-        const RELAXED: u16 = 40;
-        let ctx = ReadCtx::new("", 1, |_| false).with_relaxes(|grammar, display| display.0 == WORD && grammar.0 == RELAXED);
-        assert_eq!(ctx.stamped_kind(KindId(RELAXED), KindId(WORD)), KindId(WORD), "the relaxed keyword reads as the word rule");
-        assert_eq!(ctx.stamped_kind(KindId(RELAXED), KindId(RELAXED)), KindId(RELAXED), "the same token undisplayed reads as itself");
-        assert_eq!(ctx.stamped_kind(KindId(41), KindId(WORD)), KindId(41), "another token displayed as the word rule is not relaxed");
+        const WORD: KindId = KindId(1);
+        const RELAXED: KindId = KindId(40);
+        let ctx = ReadCtx::new("", 1, |_| false).with_relaxes(|grammar, display| display == WORD && grammar == RELAXED);
+        assert_eq!(ctx.stamped_kind(RELAXED, WORD), WORD, "the relaxed keyword reads as the word rule");
+        assert_eq!(ctx.stamped_kind(RELAXED, RELAXED), RELAXED, "the same token undisplayed reads as itself");
+        assert_eq!(ctx.stamped_kind(KindId(41), WORD), KindId(41), "another token displayed as the word rule is not relaxed");
     }
 
     #[test]

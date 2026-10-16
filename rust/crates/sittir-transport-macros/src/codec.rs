@@ -242,15 +242,15 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         }
         if !variant.decodes.is_empty() {
             let ids = &variant.decodes;
-            by_decodes.push(quote!(if [#(#ids),*].contains(&__Kind(id)) { return ::core::result::Result::Ok(#value); }));
+            by_decodes.push(quote!(if [#(#ids),*].contains(&id) { return ::core::result::Result::Ok(#value); }));
         }
         if variant.blank {
-            blank = quote!(if id == ::sittir_core::options::BLANK_ARM { return ::core::result::Result::Ok(#ident::#name); });
+            blank = quote!(if id == ::sittir_core::types::KindId::BLANK { return ::core::result::Result::Ok(#ident::#name); });
         }
         if variant.verbatim || variant.error {
             let ty = variant.payload.ok_or_else(|| syn::Error::new_spanned(name, "a verbatim variant holds its text"))?;
             let value = decoded(name, ty);
-            error_arm = quote!(if id == ::sittir_core::types::KindId::ERROR.0 { return ::core::result::Result::Ok(#value); });
+            error_arm = quote!(if id == ::sittir_core::types::KindId::ERROR { return ::core::result::Result::Ok(#value); });
             if variant.verbatim {
                 string_arm = quote!(#napi::ValueType::String => ::core::result::Result::Ok(#value),);
             }
@@ -259,7 +259,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
             let ty = variant.payload.ok_or_else(|| syn::Error::new_spanned(name, "a text variant holds its text"))?;
             let value = decoded(name, ty);
             text_arm = quote! {
-                if [#(#ids),*].contains(&__Kind(id))
+                if [#(#ids),*].contains(&id)
                     && unsafe { ::sittir_core::boundary::property::<::std::string::String>(env, napi_val, c"$text")? }.is_some()
                 {
                     return ::core::result::Result::Ok(#value);
@@ -268,9 +268,9 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         }
         encodes.push(match (variant.payload, variant.blank, &variant.first) {
             (Some(ty), _, _) => quote!(Self::#name(payload) => unsafe { <#ty as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, payload) },),
-            (None, true, _) => quote!(Self::#name => unsafe { <u16 as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, ::sittir_core::options::BLANK_ARM) },),
-            (None, false, Some(first)) if variant.edged => quote!(Self::#name(_) => unsafe { <u16 as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, (#first).0) },),
-            (None, false, Some(first)) => quote!(Self::#name => unsafe { <u16 as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, (#first).0) },),
+            (None, true, _) => quote!(Self::#name => unsafe { <::sittir_core::types::KindId as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, ::sittir_core::types::KindId::BLANK) },),
+            (None, false, Some(first)) if variant.edged => quote!(Self::#name(_) => unsafe { <::sittir_core::types::KindId as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, #first) },),
+            (None, false, Some(first)) => quote!(Self::#name => unsafe { <::sittir_core::types::KindId as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, #first) },),
             (None, false, None) => return Err(syn::Error::new_spanned(name, "a unit variant names the kind it writes: `#[kind(…)]`")),
         });
     }
@@ -282,8 +282,8 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
     let missing = format!("$type property missing in {owner}");
     let boxed = boxed(ident);
     Ok(gated(quote! {
-        unsafe fn __decode_id(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value, id: u16) -> #napi::Result<#ident> {
-            match __variant(__Kind(id), __Kind(id)) {
+        unsafe fn __decode_id(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value, id: __Kind) -> #napi::Result<#ident> {
+            match __variant(id, id) {
                 #(#by_index)*
                 _ => {}
             }
@@ -295,11 +295,11 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
             unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
                 match unsafe { ::sittir_core::slot::transport_value_type(env, napi_val)? } {
                     #napi::ValueType::Number => {
-                        let id = unsafe { <u16 as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? };
+                        let id = unsafe { <__Kind as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? };
                         unsafe { __decode_id(env, napi_val, id) }
                     }
                     #napi::ValueType::Object => {
-                        let id: u16 = unsafe { ::sittir_core::boundary::property(env, napi_val, c"$type")? }
+                        let id: __Kind = unsafe { ::sittir_core::boundary::property(env, napi_val, c"$type")? }
                             .ok_or_else(|| #napi::Error::from_reason(#missing))?;
                         #text_arm
                         #error_arm
@@ -325,21 +325,21 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
 pub fn members(ident: &Ident, firsts: &[(&Ident, Path)]) -> TokenStream {
     let napi = napi();
     let owner = ident.to_string();
-    let encodes = firsts.iter().map(|(name, first)| quote!(Self::#name => (#first).0,));
+    let encodes = firsts.iter().map(|(name, first)| quote!(Self::#name => #first,));
     let boxed = boxed(ident);
     gated(quote! {
         impl #napi::bindgen_prelude::FromNapiValue for #ident {
             unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
-                let id = unsafe { <u16 as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? };
-                __member(__Kind(id), __Kind(id)).ok_or_else(|| #napi::Error::from_reason(::std::format!("kind id {id} is not a kind {} takes", #owner)))
+                let id = unsafe { <__Kind as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? };
+                __member(id, id).ok_or_else(|| #napi::Error::from_reason(::std::format!("kind id {id} is not a kind {} takes", #owner)))
             }
         }
         impl #napi::bindgen_prelude::ToNapiValue for #ident {
             unsafe fn to_napi_value(env: #napi::sys::napi_env, val: Self) -> #napi::Result<#napi::sys::napi_value> {
-                let id: u16 = match val {
+                let id: __Kind = match val {
                     #(#encodes)*
                 };
-                unsafe { <u16 as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, id) }
+                unsafe { <__Kind as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, id) }
             }
         }
         #boxed
@@ -446,9 +446,9 @@ mod tests {
                 Blank,
             }
         });
-        assert!(has(&out, "match __variant(__Kind(id), __Kind(id)) { ::core::option::Option::Some(0u16) => return"));
-        assert!(has(&out, "if [kind::GET_KEYWORD, kind::SET_KEYWORD].contains(&__Kind(id))"));
-        assert!(has(&out, "if id == ::sittir_core::options::BLANK_ARM { return ::core::result::Result::Ok(PropertyTransportSlot::Blank); }"));
+        assert!(has(&out, "match __variant(id, id) { ::core::option::Option::Some(0u16) => return"));
+        assert!(has(&out, "if [kind::GET_KEYWORD, kind::SET_KEYWORD].contains(&id)"));
+        assert!(has(&out, "if id == ::sittir_core::types::KindId::BLANK { return ::core::result::Result::Ok(PropertyTransportSlot::Blank); }"));
         assert!(has(&out, r#"::std::format!("unknown kind id {id} in {}", "PropertyTransportSlot")"#));
         assert!(!has(&out, "if let ::core::result::Result::Ok("));
     }
@@ -464,8 +464,8 @@ mod tests {
                 Blank,
             }
         });
-        assert!(has(&out, "Self::AutomaticSemicolon => unsafe { <u16 as ::sittir_core::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, (kind::_AUTOMATIC_SEMICOLON).0) },"));
-        assert!(has(&out, "Self::Blank => unsafe { <u16 as ::sittir_core::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, ::sittir_core::options::BLANK_ARM) },"));
+        assert!(has(&out, "Self::AutomaticSemicolon => unsafe { <::sittir_core::types::KindId as ::sittir_core::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, kind::_AUTOMATIC_SEMICOLON) },"));
+        assert!(has(&out, "Self::Blank => unsafe { <::sittir_core::types::KindId as ::sittir_core::__napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, ::sittir_core::types::KindId::BLANK) },"));
     }
 
     #[test]
@@ -479,7 +479,7 @@ mod tests {
                 Verbatim(VerbatimTransport),
             }
         });
-        assert!(has(&out, "if id == ::sittir_core::types::KindId::ERROR.0 { return ::core::result::Result::Ok(AnyTransport::Verbatim("));
+        assert!(has(&out, "if id == ::sittir_core::types::KindId::ERROR { return ::core::result::Result::Ok(AnyTransport::Verbatim("));
         assert!(!has(&out, "ValueType::String =>"));
     }
 
@@ -497,9 +497,9 @@ mod tests {
                 Text(::sittir_core::trivia::TriviaText),
             }
         });
-        assert!(has(&out, "if id == ::sittir_core::types::KindId::ERROR.0 { return ::core::result::Result::Ok(TriviaTransport::Verbatim("));
+        assert!(has(&out, "if id == ::sittir_core::types::KindId::ERROR { return ::core::result::Result::Ok(TriviaTransport::Verbatim("));
         assert!(has(&out, "::sittir_core::__napi::ValueType::String => ::core::result::Result::Ok(TriviaTransport::Verbatim("));
-        assert!(has(&out, r#"if [kind::LINE_COMMENT].contains(&__Kind(id)) && unsafe { ::sittir_core::boundary::property::<::std::string::String>(env, napi_val, c"$text")? }.is_some()"#));
+        assert!(has(&out, r#"if [kind::LINE_COMMENT].contains(&id) && unsafe { ::sittir_core::boundary::property::<::std::string::String>(env, napi_val, c"$text")? }.is_some()"#));
         assert!(!has(&out, "::core::option::Option::Some(2u16)"));
         assert!(!out.contains("ReadTransport"));
     }
@@ -515,8 +515,8 @@ mod tests {
                 Bool,
             }
         });
-        assert!(has(&out, r#"__member(__Kind(id), __Kind(id)).ok_or_else(|| ::sittir_core::__napi::Error::from_reason(::std::format!("kind id {id} is not a kind {} takes", "PrimitiveTypeEnum")))"#));
-        assert!(has(&out, "Self::U8 => (kind::U8_KEYWORD).0,"));
+        assert!(has(&out, r#"__member(id, id).ok_or_else(|| ::sittir_core::__napi::Error::from_reason(::std::format!("kind id {id} is not a kind {} takes", "PrimitiveTypeEnum")))"#));
+        assert!(has(&out, "Self::U8 => kind::U8_KEYWORD,"));
     }
 
     #[test]

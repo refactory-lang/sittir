@@ -21,7 +21,7 @@ pub enum SlotSide {
 /// A gap's separator: its grammar id and bytes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Separator {
-    pub kind: u16,
+    pub kind: crate::types::KindId,
     pub start: u32,
     pub end: u32,
 }
@@ -48,7 +48,7 @@ pub struct SlotGaps {
 /// The list slots of a routed node, each with the separator gaps it spells;
 /// `run_at` finds the run from one byte to another.
 pub fn slot_gaps(routed: &Routed, run_at: impl Fn(u32, u32) -> Option<usize>) -> Vec<SlotGaps> {
-    let mut items: BTreeMap<u16, Vec<usize>> = BTreeMap::new();
+    let mut items: BTreeMap<crate::types::SlotId, Vec<usize>> = BTreeMap::new();
     for (at, route) in routed.routes.iter().enumerate() {
         if let Route::Slot { slot, .. } = *route {
             items.entry(slot).or_default().push(at);
@@ -58,7 +58,7 @@ pub fn slot_gaps(routed: &Routed, run_at: impl Fn(u32, u32) -> Option<usize>) ->
         .into_iter()
         .filter(|(_, at)| at.len() >= 2)
         .filter_map(|(slot, at)| {
-            let key = *routed.keys.get(usize::from(slot))?;
+            let key = *routed.keys.get(slot.index())?;
             let gaps = at
                 .windows(2)
                 .filter_map(|pair| {
@@ -75,7 +75,7 @@ pub fn slot_gaps(routed: &Routed, run_at: impl Fn(u32, u32) -> Option<usize>) ->
                         items: (first.index, last.index),
                         before: run_at(first.end, separator.start),
                         after: run_at(separator.end, last.start),
-                        separator: Separator { kind: separator.grammar.0, start: separator.start, end: separator.end },
+                        separator: Separator { kind: separator.grammar, start: separator.start, end: separator.end },
                     })
                 })
                 .collect();
@@ -115,11 +115,11 @@ mod tests {
         let routed = Routed {
             children: vec![child(1, 0, 1), child(2, 2, 3), child(3, 4, 5), child(4, 5, 6), child(5, 6, 7)],
             routes: vec![
-                Route::Slot { slot: 0, scalar: false },
-                Route::Separator { slot: 0, tagged: false },
-                Route::Slot { slot: 0, scalar: false },
-                Route::Separator { slot: 0, tagged: false },
-                Route::Slot { slot: 0, scalar: false },
+                Route::Slot { slot: crate::types::SlotId(0), scalar: false },
+                Route::Separator { slot: crate::types::SlotId(0), tagged: false },
+                Route::Slot { slot: crate::types::SlotId(0), scalar: false },
+                Route::Separator { slot: crate::types::SlotId(0), tagged: false },
+                Route::Slot { slot: crate::types::SlotId(0), scalar: false },
             ],
             keys: &["_item"],
         };
@@ -128,14 +128,14 @@ mod tests {
         let [slot] = slot_gaps(&routed, run_at).try_into().unwrap();
         assert_eq!(slot.key, "_item");
         assert_eq!(slot.gaps.iter().map(|gap| (gap.before, gap.after)).collect::<Vec<_>>(), vec![(Some(0), Some(1)), (Some(2), Some(3))]);
-        assert_eq!(slot.gaps[0].separator, Separator { kind: 2, start: 2, end: 3 });
+        assert_eq!(slot.gaps[0].separator, Separator { kind: KindId(2), start: 2, end: 3 });
     }
 
     #[test]
     fn a_gap_with_no_separator_is_not_spelled() {
         let routed = Routed {
             children: vec![child(1, 0, 1), child(2, 2, 3)],
-            routes: vec![Route::Slot { slot: 0, scalar: false }, Route::Slot { slot: 0, scalar: false }],
+            routes: vec![Route::Slot { slot: crate::types::SlotId(0), scalar: false }, Route::Slot { slot: crate::types::SlotId(0), scalar: false }],
             keys: &["_statements"],
         };
         let [slot] = slot_gaps(&routed, |_, _| Some(0)).try_into().unwrap();
@@ -147,11 +147,11 @@ mod tests {
         let routed = Routed {
             children: vec![child(1, 0, 1), child(2, 2, 3), child(3, 4, 5), child(4, 6, 7), child(5, 8, 9)],
             routes: vec![
-                Route::Slot { slot: 0, scalar: false },
+                Route::Slot { slot: crate::types::SlotId(0), scalar: false },
                 Route::Trivia,
-                Route::Slot { slot: 0, scalar: false },
-                Route::Slot { slot: 1, scalar: false },
-                Route::Slot { slot: 0, scalar: false },
+                Route::Slot { slot: crate::types::SlotId(0), scalar: false },
+                Route::Slot { slot: crate::types::SlotId(1), scalar: false },
+                Route::Slot { slot: crate::types::SlotId(0), scalar: false },
             ],
             keys: &["_item", "_other"],
         };

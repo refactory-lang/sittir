@@ -2,19 +2,21 @@
 //! around it, one `ListView` over a slice with the separator parts, head and
 //! tail spacing, and the list's own template.
 
+use sittir_core::KindId;
+
 use sittir_core::render::{render_to_string, Render, RenderResult, RenderSink, WhitespaceTable};
 use sittir_core::options::{ResolvedOptions, SiteSpec};
 use sittir_core::spacing::{SpacingWriter, WordMatcher};
 use sittir_core::view::{ListView, View, NO_ITEMS};
 use sittir_core::SlotValue;
 
-const TIGHT: u16 = 1;
-const SPACE: u16 = 2;
-const NEWLINE: u16 = 3;
-const BLANK: u16 = 4;
-const INDENT: u16 = 5;
-const DEDENT: u16 = 6;
-fn text_of(kind: u16) -> &'static str {
+const TIGHT: KindId = KindId(1);
+const SPACE: KindId = KindId(2);
+const NEWLINE: KindId = KindId(3);
+const BLANK: KindId = KindId(4);
+const INDENT: KindId = KindId(5);
+const DEDENT: KindId = KindId(6);
+fn text_of(kind: KindId) -> &'static str {
     match kind {
         TIGHT => "",
         SPACE => " ",
@@ -27,7 +29,7 @@ fn text_of(kind: u16) -> &'static str {
 const TABLE: WhitespaceTable = WhitespaceTable {
     text_of,
     indent: INDENT,
-    dedent: DEDENT, leaf_edges: &[], gaps: &[(1, 1), (2, 2), (8, 3), (16, 4)]
+    dedent: DEDENT, leaf_edges: &[], gaps: &[(1, KindId(1)), (2, KindId(2)), (8, KindId(3)), (16, KindId(4))]
 };
 
 fn rt(value: &dyn Render) -> String {
@@ -131,9 +133,9 @@ fn presence_follows_the_slot_shape() {
 
 fn list<'a>(
     items: &'a [SlotValue<Word>],
-    before: u16,
+    before: KindId,
     token: &'a str,
-    after: u16,
+    after: KindId,
     leading: bool,
     trailing: bool,
 ) -> ListView<'a, SlotValue<Word>> {
@@ -155,8 +157,8 @@ fn list<'a>(
 #[test]
 fn an_item_with_its_own_separator_writes_it_in_place_of_the_token() {
     let items = [node("a"), node("b"), node("c")];
-    let tokens = [None, None, Some(2)];
-    let view = ListView { separators: Some((&tokens, |kind| if kind == 2 { ";" } else { "," })), ..list(&items, TIGHT, ",", SPACE, false, false) };
+    let tokens = [None, None, Some(KindId(2))];
+    let view = ListView { separators: Some((&tokens, |kind| if kind == KindId(2) { ";" } else { "," })), ..list(&items, TIGHT, ",", SPACE, false, false) };
     assert_eq!(rt(&view), "a, b; c");
 }
 
@@ -223,8 +225,8 @@ fn an_empty_list_writes_nothing_even_with_flanks_head_tail_and_template() {
         after: SPACE,
         leading: true,
         trailing: true,
-        head: Some(0),
-        tail: Some(1),
+        head: Some(sittir_core::types::SiteId(0)),
+        tail: Some(sittir_core::types::SiteId(1)),
         units: None,
     };
     assert_eq!(rt_with_sites(&view), "");
@@ -256,8 +258,8 @@ fn template_is_outside_head_and_tail() {
         after: TIGHT,
         leading: false,
         trailing: false,
-        head: Some(0),
-        tail: Some(1),
+        head: Some(sittir_core::types::SiteId(0)),
+        tail: Some(sittir_core::types::SiteId(1)),
         units: None,
     };
     assert_eq!(rt_with_sites(&view), "{\na,b\n}");

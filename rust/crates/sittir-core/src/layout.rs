@@ -55,7 +55,7 @@ pub struct TransportLayout<T> {
     /// id, where its source spells another than the one the slot renders
     /// (`$_layout.separator`, `ParsedTree::separator_before`). A read writes
     /// it; a node without a tree carries it as data.
-    pub separator: Option<u16>,
+    pub separator: Option<KindId>,
 }
 
 /// A list slot's layout: the class its separator gaps take before and after
@@ -67,14 +67,14 @@ pub struct TransportLayout<T> {
 pub struct SlotLayout {
     /// The slot's wire key.
     pub slot: String,
-    pub before: Option<u16>,
-    pub after: Option<u16>,
-    pub separator: Option<u16>,
+    pub before: Option<KindId>,
+    pub after: Option<KindId>,
+    pub separator: Option<KindId>,
     /// The separator before each item, by its place in the slot, as a
     /// candidate kind of the list's separator, where its source spells
     /// another than the slot's (`prepare::fill_slot_separators`). The prepare
     /// walk fills it; it never crosses.
-    pub tokens: Vec<Option<u16>>,
+    pub tokens: Vec<Option<KindId>>,
 }
 
 impl SlotLayout {
@@ -150,7 +150,7 @@ pub fn slot_entry<'a, T>(layout: &'a mut Option<Box<TransportLayout<T>>>, slot: 
 
 /// Each item's own separator in the list slot `slot`, by its place
 /// (`SlotLayout::tokens`); empty where none differs from the slot's.
-pub fn slot_tokens<'a, T>(layout: Option<&'a TransportLayout<T>>, slot: &str) -> &'a [Option<u16>] {
+pub fn slot_tokens<'a, T>(layout: Option<&'a TransportLayout<T>>, slot: &str) -> &'a [Option<KindId>] {
     slot_layout(layout, slot).map_or(&[], |entry| &entry.tokens)
 }
 
@@ -158,7 +158,7 @@ pub fn slot_tokens<'a, T>(layout: Option<&'a TransportLayout<T>>, slot: &str) ->
 /// is not the slot's: the one it carries (`TransportLayout::separator`), else,
 /// while its neighbour before is still its source's, the one its source
 /// stores (its own coordinate, or the node it was rebuilt from).
-pub fn source_separator<T>(layout: Option<&TransportLayout<T>>, ctx: &RenderContext<'_>) -> Option<u16> {
+pub fn source_separator<T>(layout: Option<&TransportLayout<T>>, ctx: &RenderContext<'_>) -> Option<KindId> {
     let layout = layout?;
     layout.separator.or_else(|| {
         if layout.changed.leading {
@@ -588,6 +588,7 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
 
 #[cfg(test)]
 mod tests {
+    use crate::types::KindId;
     use super::{TransportLayout, TriviaRole};
     use crate::render::{Render, RenderResult, RenderSink};
     use crate::slot::SlotValue;
@@ -728,16 +729,16 @@ mod tests {
     fn a_stamped_edge_of_a_kind_with_no_edge_site_is_written_around_the_node() {
         use crate::options::{EdgeArm, Edges};
         use crate::spacing::{SEAM_DECLARED, SEAM_TRIVIA};
-        const TIGHT: u16 = 1;
-        const SPACE: u16 = 2;
-        fn text_of(kind: u16) -> &'static str {
+        const TIGHT: KindId = KindId(1);
+        const SPACE: KindId = KindId(2);
+        fn text_of(kind: KindId) -> &'static str {
             if kind == SPACE {
                 " "
             } else {
                 ""
             }
         }
-        const TABLE: crate::render::WhitespaceTable = crate::render::WhitespaceTable { text_of, indent: 0, dedent: 0 , leaf_edges: &[], gaps: &[(1, 1), (2, 2)]};
+        const TABLE: crate::render::WhitespaceTable = crate::render::WhitespaceTable { text_of, indent: KindId(0), dedent: KindId(0) , leaf_edges: &[], gaps: &[(1, KindId(1)), (2, KindId(2))]};
         let tight = Some(EdgeArm { arm: TIGHT, strength: Some(SEAM_TRIVIA), dedent: None });
         let edged = |text, edges| MockTransport {
             text,

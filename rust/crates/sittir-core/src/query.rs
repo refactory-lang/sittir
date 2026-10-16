@@ -31,12 +31,12 @@ pub struct QueryCoordinate {
     #[serde(rename = "$span")]
     pub span: Span,
     #[serde(rename = "$type")]
-    pub kind: u16,
+    pub kind: crate::types::KindId,
 }
 
 impl From<NodeCoordinate> for QueryCoordinate {
     fn from(coord: NodeCoordinate) -> Self {
-        QueryCoordinate { handle: coord.handle(), end: coord.end, span: coord.span, kind: coord.kind.map_or(0, |kind| kind.0) }
+        QueryCoordinate { handle: coord.handle(), end: coord.end, span: coord.span, kind: coord.kind.unwrap_or_default() }
     }
 }
 
@@ -66,15 +66,15 @@ impl Address {
 #[derive(serde::Deserialize, Debug, Clone, Default)]
 pub struct Slots {
     #[serde(deserialize_with = "numbered_by_kind")]
-    pub slots: HashMap<u16, u16>,
+    pub slots: HashMap<crate::types::KindId, crate::types::SlotId>,
 }
 
 /// A JSON object of slot numbers by kind id: its keys are the ids as text.
-fn numbered_by_kind<'de, D: serde::Deserializer<'de>>(deserializer: D) -> Result<HashMap<u16, u16>, D::Error> {
-    let by_text: HashMap<String, u16> = serde::Deserialize::deserialize(deserializer)?;
+fn numbered_by_kind<'de, D: serde::Deserializer<'de>>(deserializer: D) -> Result<HashMap<crate::types::KindId, crate::types::SlotId>, D::Error> {
+    let by_text: HashMap<String, crate::types::SlotId> = serde::Deserialize::deserialize(deserializer)?;
     by_text
         .into_iter()
-        .map(|(kind, slot)| kind.parse().map(|kind| (kind, slot)).map_err(|_| serde::de::Error::custom(format!("kind id {kind:?} is not a number"))))
+        .map(|(kind, slot)| kind.parse().map(|kind| (crate::types::KindId(kind), slot)).map_err(|_| serde::de::Error::custom(format!("kind id {kind:?} is not a number"))))
         .collect()
 }
 
@@ -99,7 +99,7 @@ pub enum PlanSpec {
     Is {
         #[serde(flatten)]
         slots: Slots,
-        types: Vec<u16>,
+        types: Vec<crate::types::KindId>,
     },
     Child {
         #[serde(flatten)]
@@ -128,7 +128,7 @@ pub enum Plan {
     Eq { slots: Slots, text: String },
     Match { slots: Slots, pattern: regex::Regex },
     Present { slots: Slots },
-    Is { slots: Slots, types: Vec<u16> },
+    Is { slots: Slots, types: Vec<crate::types::KindId> },
     Child { slots: Slots, anchor: Option<Anchor>, of: Box<Plan> },
     Not(Box<Plan>),
     And(Vec<Plan>),
@@ -140,14 +140,14 @@ pub enum Plan {
 /// slots (`ReadTransport::router`).
 pub struct QueryCtx<'a> {
     pub source: &'a str,
-    pub stamp: &'a dyn Fn(&Node<'_>) -> u16,
+    pub stamp: &'a dyn Fn(&Node<'_>) -> crate::types::KindId,
     pub router: &'a dyn Fn(&Node<'_>) -> Option<Router>,
 }
 
 /// One value a slot holds: its text, and the node that spells it, by its
 /// descendant index and kind, unless it is a group of a token's text.
 struct Hit<'s> {
-    node: Option<(u32, u16)>,
+    node: Option<(u32, crate::types::KindId)>,
     text: &'s str,
 }
 
@@ -251,17 +251,17 @@ fn slot_hits<'s>(cursor: &mut TreeCursor<'_>, ctx: &QueryCtx<'s>, slots: &Slots,
         }
         Router::Interior(interior, captures) => {
             let Some(groups) = interior.captures(text(&node)) else { return false };
-            if let Some(group) = captures.get(slot as usize).and_then(|name| groups.name(name)) {
+            if let Some(group) = captures.get(slot.index()).and_then(|name| groups.name(name)) {
                 visit(Hit { node: None, text: group.as_str() });
             }
             true
         }
         Router::Envelope { wraps_hidden } => {
-            if slot != 0 {
+            if slot != crate::types::SlotId(0) {
                 return false;
             }
             if !wraps_hidden {
-                visit(Hit { node: Some((index_of(cursor), node.grammar_id())), text: text(&node) });
+                visit(Hit { node: Some((index_of(cursor), crate::read::grammar_id(&node))), text: text(&node) });
                 return true;
             }
             let mut wrapped = None;
@@ -318,14 +318,14 @@ mod tests {
             return Ok(Route::Trivia);
         }
         let (_, slots, strict) = TABLES[T];
-        let kind = language().node_kind_for_id(child.grammar.0).unwrap_or("");
-        let field = child.field.and_then(|field| language().field_name_for_id(field.0));
+        let kind = crate::read::kind_name(language(), child.grammar).unwrap_or("");
+        let field = child.field.and_then(|field| crate::read::field_name(language(), field));
         let slot = slots.iter().position(|sel| match sel {
             Sel::Field(name) => field == Some(*name),
             Sel::Kind(name) => field.is_none() && kind == *name,
         });
         match slot {
-            Some(slot) => Ok(Route::Slot { slot: slot as u16, scalar: false }),
+            Some(slot) => Ok(Route::Slot { slot: crate::types::SlotId(u16::try_from(slot).expect("a test kind has few slots")), scalar: false }),
             None if strict && child.named => Err(ReadError::Unrouted { kind: KindId(0), child: child.grammar, index: child.index }),
             None => Ok(Route::Layout),
         }
@@ -343,8 +343,8 @@ mod tests {
         }
     }
 
-    fn id(kind: &str) -> u16 {
-        language().id_for_node_kind(kind, true)
+    fn id(kind: &str) -> KindId {
+        crate::read::kind_named(language(), kind, true)
     }
 
     /// `slots` JSON for slot `n` of each kind.
@@ -363,7 +363,7 @@ mod tests {
         let mut parser = tree_sitter::Parser::new();
         parser.set_language(language()).unwrap();
         let tree = parser.parse(source, None).unwrap();
-        let stamp = |node: &Node<'_>| crate::read::display_id(node).0;
+        let stamp = |node: &Node<'_>| crate::read::display_id(node);
         let ctx = QueryCtx { source, stamp: &stamp, router: &router };
         let mut cursor = tree.walk();
         let mut out = Vec::new();
