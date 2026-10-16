@@ -346,20 +346,9 @@ each comment wrapper.
   JavaScript needs the layout too: codegen emits the JavaScript readers from the same declaration it
   writes the attributes from, so the layout has one derivation and the macro computes no offset.
 
-**Ruled: arena records** (ruling 3). They decode for a render 15–32 times faster than the other
-wires and compile smallest, and they drop the napi marshaling from every `transport.rs`. With the
-same members attached they do not read faster or hold less: a batch reads 0.2–0.4 µs a node faster,
-one node per call reads 0.2–0.7 µs slower, and a node over a record holds about 1.9 KB more. They
-land as their own step after the typed reader (ruling 6), and only with the object wire's numbers
-re-taken in the engine beside theirs.
+**Architectural choice: packed arena records** (ruling 3, revised 2026-10-16). The probe measured native render decoding 15–32 times faster than the other wires, but its initial record wrappers read no faster and held more heap per node. These are historical results for the tested representations, not general performance guarantees. The packed immutable AST is the definitive format; the typed reader and relative coordinates precede the record cutover (ruling 6). Objects remain only as a temporary comparison and compatibility path.
 
-**Gate on the record step.** Its plan lands only if records match or beat napi objects on read
-time, one node per call and every match in one call, and on retained heap per node, as well as
-beating them on render decode. The 1.9 KB a node holds over a record is not its member closures
-as such: every form carries the same ones, and the views as first committed, with an empty `$with`
-and no `$trivia`, held 3 702 B against the objects' 4 949 B. How V8 builds the view's literal moves
-it, and adding member groups one at a time does not raise it monotonically (the transport probes'
-README), so the record step attacks the view's construction first.
+**Measurement and cutover readiness, not an adoption gate.** Compare single-node and batch reads, retained heap, and native render decoding against the object path under identical wrapper APIs. A slower or larger implementation calls for a documented optimization and retest, not abandonment of the packed format. Correctness, source fidelity, lifetime and memory safety are mandatory cutover conditions. The initial record wrapper's 1.9 KB overhead was sensitive to accessor/closure construction: the first view with an empty `$with` and no `$trivia` held 3 702 B against objects' 4 949 B. The view-construction study and its later V2 improvements remain relevant, but wrapper form is a separate choice from the record format.
 
 ### What the JavaScript wrap keeps
 
@@ -372,7 +361,7 @@ helpers, the enum projections, `readTerminalFromOther`, `_aliasEnvelope`, the sp
 
 A parsed node's literal holds a reference to its record, the buffer and offset, instead of copies
 of its slots (ruling 4); until the record step lands, it holds the transport's fields as own keys.
-A built node holds its fields, encoded into records at each render (ruling 5).
+A built node is constructed directly into an immutable arena record; before the record cutover only, it holds fields on its JavaScript object and is encoded through the transitional object wire (ruling 5 was superseded on 2026-10-06, reaffirmed 2026-10-16).
 
 A wrapped node's heap is mostly its wrapper, not its read data: the wrapped tree holds 7–8 times
 its read data today, 2.2–2.5 KB a wrapped node (§ Problem), and a `function_item`'s own wrapper is
@@ -389,8 +378,7 @@ an accessor first reaches the node (ruling 11).
   node never has a rebuilt descendant. The walk that is 95 % of today's untouched whole-read
   render goes with the record step. Until then a parsed node holds fields, and the walk stays
   until no write touches a parsed node's storage, which the trivia table brings (§ Trivia).
-- **A built node or a draft** crosses as its content: its fields encoded into records at each render
-  (ruling 5); until the record step, as today's object graph.
+- **A built node or draft** references its immutable arena record directly after cutover; a `$with` draft produces a new record sharing unchanged child addresses. Before cutover the object-backed construction and native decode remain transitional. There is no permanent built-object-to-record encoding at each render.
 - The native side reads, prepares and renders as today. The prepare walk stamps a private copy, never
   memory JavaScript can see.
 
@@ -619,7 +607,7 @@ raised (11).
    kind's minimum depth (a list owner brings its items) is a fact codegen stamps and the reader
    applies. The depth decides only where coordinates start, never the struct or its attributes
    (§ Laziness).
-3. **The wire is arena records,** landing only past the gate on the record step (§ The wire).
+3. **The wire is canonical packed immutable arena records,** following the measured implementation and safety/correctness cutover checks; performance numbers guide optimization, not whether the format is adopted (§ The wire; Architectural decision, 2026-10-16).
 4. **A parsed node's storage is a reference to its record** (§ What the JavaScript wrap keeps,
    § Render).
 5. **A built node's storage is fields on the object, encoded at render** (§ What the JavaScript wrap
@@ -627,18 +615,14 @@ raised (11).
    Superseded on 2026-10-06: arena storage holds built nodes too, written eagerly and read and
    written by their members directly, and the object encoder is retired
    (`2026-10-06-relative-coordinates-design.md`, § The record wire).
-6. **The typed reader lands first, on today's object wire; the record wire is a separate, measured
-   step.** Where the relative-coordinates work falls was left to this draft; placed here and
+6. **The typed reader lands first on the transitional object wire; the definitive record format is implemented and measured in its own later step.** Where the relative-coordinates work falls was left to this draft; placed here and
    accepted in review:
    1. **The typed reader**, emitting today's napi objects: the cursor reader, tree-and-row
       coordinates, `depth`, opt-in `read-debug-checks` refusal of unrouted children, and the wrap reduced to members. Handles
       go, which settles a source-backed node's coordinate.
    2. **Relative coordinates**, re-based on rows and narrowed to what rows leave (§ Relationship to
       other designs). This settles a detached node's coordinate.
-   3. **The record wire**, laid out once against both forms: records in both directions, parsed
-      nodes over their records with no fold walk, built nodes encoded at render, and the napi impls
-      gone. It lands with the object wire's numbers re-taken beside its own, and only past the
-      gate on the record step (§ The wire).
+   3. **The definitive record format**, laid out once for Rust and TypeScript: records in both directions, parsed nodes over lazily materialized records with no fold walk, built nodes written directly as immutable records, and the N-API object codecs removed at cutover. Object-wire measurements are re-taken beside record measurements to optimize and verify the implementation; numerical performance superiority is not a prerequisite for adoption (§ The wire; Architectural decision, 2026-10-16).
       Extended on 2026-10-09 (the maintainer): built nodes' trivia lands in this step, in their
       records (§ Trivia).
       Extended on 2026-10-10 (the maintainer): the parsed tree's table lands in this step too, ahead
