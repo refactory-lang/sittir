@@ -99,10 +99,8 @@ jobs:
   # against `specs/016-parity-regressions/baselines/ts.json` via
   # `SITTIR_BACKEND=typescript`) — it drove the deprecated js/dispatch
   # engine, which is no longer the source of truth (the Rust native
-  # engine is, per CLAUDE.md) and per
-  # docs/superpowers/specs/2026-04-27-js-backend-rename-design.md,
-  # `SITTIR_BACKEND=typescript` isn't even the supported non-native
-  # selector anymore (`js` is). This native-mode job is the durable gate
+  # engine is, per CLAUDE.md), and `SITTIR_BACKEND=typescript` isn't
+  # even the supported non-native selector anymore (`js` is). This native-mode job is the durable gate
   # going forward; `ts.json` / the retired job's history remain under
   # specs/016-parity-regressions/ as a record of the completed feature.
   #

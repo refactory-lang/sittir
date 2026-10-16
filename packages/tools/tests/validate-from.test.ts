@@ -1,6 +1,6 @@
 /**
- * Regression test for `validateFrom`'s module-load-failure sentinel
- * (TODO.md item 7): a rejected dynamic import of the generated
+ * Regression test for `validateFrom`'s module-load-failure sentinel: a
+ * rejected dynamic import of the generated
  * `from.ts`/`factories.ts` module must surface as a
  * `(from-module-load)`/`(factory-module-load)` sentinel error with
  * total/pass/fail/skip all 0 — not a silently-passing false "0/0" result,
