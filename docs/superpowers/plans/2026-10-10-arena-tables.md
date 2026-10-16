@@ -24,7 +24,7 @@ This plan implements the **canonical grammar-generated packed immutable AST** sp
 
 ## Scope and sequencing
 
-`feat/typed-reader` carries the shared arena's steps 1 and 2: the typed reader (`docs/superpowers/plans/2026-10-05-typed-reader.md`, 1a to 1c-ii) and relative coordinates (`docs/superpowers/plans/2026-10-06-relative-coordinates.md`). This plan is step 3 with both trivia tables, a feature of its own on `feat/arena` that starts after that one lands. Its stages are detailed against the code when each starts: 3a and 3b's gate (3b-i) below, 3b past the gate (3b-ii) still an outline.
+`feat/typed-reader` carries the shared arena's steps 1 and 2: the typed reader (`docs/superpowers/plans/2026-10-05-typed-reader.md`, 1a to 1c-ii) and relative coordinates (`docs/superpowers/plans/2026-10-06-relative-coordinates.md`). This plan is step 3 with both trivia tables, a feature of its own on `feat/arena` that starts after that one lands. Its stages are detailed against the code when each starts: 3a and 3b's measured implementation stage (3b-i) below, followed by the definitive-format cutover (3b-ii), still an outline.
 
 | PR, on `feat/arena` | Lands | Gate |
 | --- | --- | --- |
@@ -503,7 +503,7 @@ Each record prototype and measuring tool the arena steps already hold, with its 
 
    It differs from master in two places, and both are superseded. A keyword's presence is a plain `bool` (the maintainer, 2026-10-12, which replaces master's `Option<bool>` before 3b starts), not an `Option` of the one-literal choice. Inner gaps are no longer an attribute: 3a's ruling 9 removed the named inner gaps, and `inner` is a childless node's side. Nothing in the patch is folded into the spec.
 5. **The record-layout ruling** (the maintainer, 2026-10-10). Codegen is the single source of each slot's word offset and width, stamped into the Rust attributes (`words = …`, `word = …`) and into the generated TypeScript accessors as literal offsets. The derive checks fit and derives nothing, and there is no runtime layout table. This is Task 7.
-6. **The eager-built-records option** (the relative-coordinates spec's ruling 6 and its § The record wire, which supersede the shared-arena spec's ruling 5). Built nodes are written into records as they are built, their members read and write the records directly, and the object encoder is retired. Task 10 measures it against fields encoded at render (item 1):
+6. **Direct eager immutable built records are the target** (the relative-coordinates spec's ruling 6 and the 2026-10-16 definitive-format decision). Builders write records as they construct nodes; accessors read their immutable storage and `$with` produces new records with structural sharing. The object encoder is retired at cutover. Task 10 compares this against transitional object fields encoded at render (item 1):
    - build cost per node and heap per built node;
    - render decode;
    - buffer growth, and whether compaction is needed;
@@ -549,7 +549,7 @@ Each record prototype and measuring tool the arena steps already hold, with its 
 
    Task 10 still times the alternatives as reference rows: for parsed text, UTF-16 offsets slicing a JavaScript copy of the source, and a native call on first access cached on the wrapper; for built text, a JavaScript array of strings that records index, crossing at each render. The designs are the ones above.
 2. **The match-all row: both wires get a batch read** (`read_many(tree, indexes, depth, wire)`). The object wire returns an array of transports, and the record wire one buffer range. The measurement row compares those, as the probe did, and today's path (coordinates, then a read each) is timed beside them.
-3. **Built-node storage: both are measured.** Eager built records (prior art 6), on a generated builder for rust `function_item` and its slot kinds, beside today's built objects encoded at render by the 2026-10-01 encoder (prior art 1). The rows are build time and heap per built node, render decode, and the native call per slot value over the parity fixtures.
+3. **Built-node storage: both implementations are benchmarked, one is the destination.** A generated eager immutable record builder for rust `function_item` and its slot kinds is compared with today's transitional built objects encoded at render by the 2026-10-01 encoder (prior art 1). Compare build cost, retained memory, native render and sharing; benchmark failure drives optimization, not continued object storage.
 4. **A failed performance row is documented and optimized,** not treated as an adoption veto. Correctness, lifetime and memory-safety failures block the affected implementation/cutover until resolved. Keep the record of all measurements.
 
 ### The source copy
@@ -705,7 +705,7 @@ raw-string routing metadata where the type alone cannot express its parser behav
 - **the rebuilt render's native call per slot value** over the parity fixtures (`measure-rebuilt.mts`, `layout-rounds.sh`);
 - **`$text` by the ruled design, with the alternatives as reference rows** (ruling 1): time per access, and heap per leaf over a whole-tree walk, with and without a decoded string cached on the wrapper;
 - **heap per tree with and without a text access:** a parse read for structure only (no `$text`, so no source buffer) against the same parse after one `$text`, beside today's tree with its JavaScript source copy;
-- **built nodes, eager records and encoded at render** (ruling 3): build time and heap per node, decode, buffer growth over 10 000 builds, and the in-place against copying setter on a shared child.
+- **built nodes, eager immutable records against transitional encode-at-render objects** (ruling 3): build time and full retained memory per node, decode, chunk growth over 10 000 builds, and an immutable copy-on-update of a shared child against a mutating baseline used for measurement only. Verify that neither parent changes when a shared child is updated through the other.
 
 **The evidence.** Report each object/record comparison, absolute values and deltas. Separate performance misses (optimize and retest) from source-fidelity, correctness, ownership and memory-safety failures (block cutover). Include allocation counts, record capacity/slack, native/external memory and RSS. The PR records findings without reopening the packed-format decision.
 
