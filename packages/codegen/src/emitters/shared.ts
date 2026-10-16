@@ -927,6 +927,18 @@ export function emptyDefaultOf(
 	return target?.rawFactoryName === undefined || isFixedTextLeaf(target) ? null : `${factoryNs}${target.rawFactoryName}()`;
 }
 
+export function assertOmittedSlotsFilled(
+	node: { readonly kind: string; readonly configSlots: readonly AssembledNonterminal[] },
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): void {
+	for (const slot of node.configSlots) {
+		if (isRequired(slot) && slotFilledWhenOmitted(slot, nodeMap) && emptyDefaultOf(slot, nodeMap, kindEntries) === null) {
+			throw new Error(`${node.kind}: its builder may omit the required slot ${slot.name}, which has no empty default`);
+		}
+	}
+}
+
 export function registeredSlots(node: {
 	readonly slots: readonly AssembledNonterminal[];
 	readonly configSlots?: readonly AssembledNonterminal[];

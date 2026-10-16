@@ -15,6 +15,7 @@ export interface LiveEngine extends EngineIdentity {
 
 export interface EngineHandle {
 	current: LiveEngine | EngineIdentity;
+	readonly settle: <T>(node: T) => T;
 }
 
 /** The handle a parsed tree is bound to (`bindTree`): the engine that read it, which hydrates the coordinates it names. */

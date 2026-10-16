@@ -4,23 +4,24 @@ import python from '../src/index.ts';
 import type { ComprehensionClauses, StringContent } from '../src/types.ts';
 
 const py = await createEngine(python);
+const verifying = await createEngine(python, { verifyStructure: 'runtime' });
 
 describe('required repeated content', () => {
 	it('rejects empty comprehension clauses', () => {
 		expectTypeOf<[]>().not.toMatchTypeOf<ComprehensionClauses.BuildArgs>();
-		expect(() => Reflect.apply(py.build.comprehensionClauses, undefined, [])).toThrow('requires at least one element');
-		expect(() => Reflect.apply(py.build.comprehensionClauses.strict, undefined, [])).toThrow(
+		expect(() => Reflect.apply(verifying.build.comprehensionClauses, undefined, [])).toThrow('requires at least one element');
+		expect(() => Reflect.apply(verifying.build.comprehensionClauses.strict, undefined, [])).toThrow(
 			'requires at least one element'
 		);
 	});
 
 	it('rejects empty string content', () => {
 		expectTypeOf<[]>().not.toMatchTypeOf<StringContent.BuildArgs>();
-		expect(() => Reflect.apply(py.build.stringContent, undefined, [])).toThrow('requires at least one element');
+		expect(() => Reflect.apply(verifying.build.stringContent, undefined, [])).toThrow('requires at least one element');
 	});
 
 	it('rejects a comprehension without its required clauses', () => {
-		expect(() => Reflect.apply(py.build.listComprehension, undefined, [{ body: 'x' }])).toThrow(
+		expect(() => Reflect.apply(verifying.build.listComprehension, undefined, [{ body: 'x' }])).toThrow(
 			/clauses|content/
 		);
 	});

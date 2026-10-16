@@ -4,6 +4,7 @@ import rust from '../src/index.ts';
 import type { FunctionModifiers } from '../src/types.ts';
 
 const rs = await createEngine(rust);
+const verifying = await createEngine(rust, { verifyStructure: 'runtime' });
 
 describe('loose repeated-envelope inputs', () => {
 	it('coerces a single text array per element', () => {
@@ -25,7 +26,7 @@ describe('loose repeated-envelope inputs', () => {
 
 	it('rejects an empty array for a non-empty repeat', () => {
 		expectTypeOf<[[]]>().not.toMatchTypeOf<FunctionModifiers.LooseArgs>();
-		expect(() => Reflect.apply(rs.build.functionModifiers, undefined, [[]])).toThrow('requires at least one element');
+		expect(() => Reflect.apply(verifying.build.functionModifiers, undefined, [[]])).toThrow('requires at least one element');
 	});
 
 	it('keeps config arrays equivalent to spread arguments', () => {

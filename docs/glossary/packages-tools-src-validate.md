@@ -1711,7 +1711,7 @@ A read leaf that carries `$text`, whose shown kind has a token interior and whos
 
 ### `packages/tools/src/validate/common.ts::loadScopedFactoryMap`
 
-The grammar's raw factory map with every builder run inside the validators' native engine, so a composite that checks its content parses it back the way a user's build would. The ir surface carries the same scope and dispatch enters it.
+The grammar's raw factory map with every builder run through the validators' native engine (`scopeBuilders`), so a composite that checks its content parses it back the way a user's build would. The engine is constructed with `verifyStructure: 'runtime'`, so every node a validator builds is checked against its kind's structure row. `loadIrSurface` scopes the ir entries the same way.
 
 ### `packages/tools/src/validate/common.ts::loadReparseHosts`
 

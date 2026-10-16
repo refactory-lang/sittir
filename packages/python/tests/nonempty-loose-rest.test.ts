@@ -3,12 +3,13 @@ import { createEngine } from '@sittir/common';
 import python from '../src/index.ts';
 
 const py = await createEngine(python);
+const verifying = await createEngine(python, { verifyStructure: 'runtime' });
 afterAll(() => py.dispose());
 
 describe('nonempty loose rest arguments', () => {
 	it('requires a dotted-name component for rest and array calls', () => {
-		expect(() => Reflect.apply(py.build.dottedName, undefined, [])).toThrow(/at least one/);
-		expect(() => Reflect.apply(py.build.dottedName, undefined, [[]])).toThrow(/at least one/);
+		expect(() => Reflect.apply(verifying.build.dottedName, undefined, [])).toThrow(/at least one/);
+		expect(() => Reflect.apply(verifying.build.dottedName, undefined, [[]])).toThrow(/at least one/);
 	});
 
 	it('accepts scalar and readonly array input with the same result', () => {

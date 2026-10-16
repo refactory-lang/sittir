@@ -13,7 +13,8 @@ import {
 	type HostedText,
 	type ReparseHosts
 } from '@sittir/common';
-import { hydrateTriviaEntry, inEngine, type EngineHandle } from '@sittir/common/utils';
+import { hydrateTriviaEntry } from '@sittir/common/utils';
+import { scopeBuilders } from '@sittir/common/engine';
 import {
 	carryRead,
 	carrySource,
@@ -174,7 +175,7 @@ const cachedNativeEngines = new Map<
 >();
 
 async function createNativeEngine(grammar: string): Promise<NativeEngine> {
-	const engine = await createEngine(await languageByName(grammar));
+	const engine = await createEngine(await languageByName(grammar), { verifyStructure: 'runtime' });
 	const profile = engine.diagnostics.buildProfile;
 	if (profile === 'debug' && process.env.SITTIR_ALLOW_DEBUG_VALIDATE !== '1') {
 		throw new Error(
@@ -840,35 +841,10 @@ export interface IrSurface {
 	readonly entries: Record<string, IrEntry>;
 	readonly seats: SeatTable;
 	readonly modelTypes: Record<string, string>;
-	readonly scope?: EngineHandle;
-}
-
-const factoryScopes = new Map<string, Promise<EngineHandle>>();
-
-export function factoryScope(grammar: string): Promise<EngineHandle> {
-	let scope = factoryScopes.get(grammar);
-	if (scope === undefined) {
-		scope = loadNativeEngine(grammar).then((engine) => ({ current: engine }));
-		factoryScopes.set(grammar, scope);
-	}
-	return scope;
-}
-
-export function scopedBuilders<T extends object>(value: T, scope: EngineHandle): T {
-	return new Proxy(value, {
-		apply: (target, self, args) =>
-			inEngine(scope, () => Reflect.apply(target as unknown as (...a: unknown[]) => unknown, self, args)),
-		get: (target, key, receiver) => {
-			const member = Reflect.get(target, key, receiver);
-			return typeof member === 'function' || (typeof member === 'object' && member !== null && key !== 'prototype')
-				? scopedBuilders(member, scope)
-				: member;
-		}
-	});
 }
 
 export async function loadScopedFactoryMap<T extends Record<string, unknown>>(grammar: string, map: T): Promise<T> {
-	return scopedBuilders(map, await factoryScope(grammar));
+	return scopeBuilders(await loadNativeEngine(grammar), map);
 }
 
 export async function loadIrSurface(grammar: string): Promise<IrSurface | undefined> {
@@ -876,12 +852,12 @@ export async function loadIrSurface(grammar: string): Promise<IrSurface | undefi
 	if (mod?.ir === undefined) return undefined;
 	const model = await loadNodeModel(grammar);
 	const entries: Record<string, IrEntry> = {};
-	const scope = await factoryScope(grammar);
+	const engine = await loadNativeEngine(grammar);
 	for (const [kind, irKey] of Object.entries(model.irKeys)) {
 		const entry = mod.ir[irKey];
-		if (entry !== null && (typeof entry === 'object' || typeof entry === 'function')) entries[kind] = entry as IrEntry;
+		if (entry !== null && (typeof entry === 'object' || typeof entry === 'function')) entries[kind] = scopeBuilders(engine, entry as IrEntry);
 	}
-	return { entries, seats: model.seats, modelTypes: model.modelTypes, scope };
+	return { entries, seats: model.seats, modelTypes: model.modelTypes };
 }
 
 export async function loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined> {
@@ -1814,6 +1790,5 @@ export function buildFactoryNodeFromReference(
 		tree: opts.tree,
 		hydrate: opts.hydrate
 	} as NodeToConfigOpts;
-	const build = () => buildWithFactory(referenceData, kind, factory, configOpts);
-	return surface?.scope === undefined ? build() : inEngine(surface.scope, build);
+	return buildWithFactory(referenceData, kind, factory, configOpts);
 }
