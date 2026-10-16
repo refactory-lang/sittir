@@ -10,14 +10,26 @@
 
 **Specs:** `docs/superpowers/specs/2026-10-09-trivia-table-design.md` (§ 1–5, rulings in § 7) and `docs/superpowers/specs/2026-10-01-shared-arena-design.md` (§ The wire, § Trivia, ruling 6.3). A bare § in 3a is the trivia-table spec's. A gap's default spacing is the seam defaults' (`docs/superpowers/specs/2026-09-14-token-seam-defaults-design.md`, over the sites of `docs/superpowers/specs/2026-09-06-punctuation-seam-spacing-design.md`); this plan derives it from them and declares none of its own.
 
+## Definitive-format decision and revised execution gate (2026-10-16)
+
+This plan implements the **canonical grammar-generated packed immutable AST** specified in `2026-10-01-shared-arena-design.md` (§ Packed AST is definitive). The object codec remains a temporary baseline/fallback while record implementation is optimized and validated; it is not a permanent alternative format. The original measurement results, hypotheses and tasks are retained for traceability.
+
+**Stage 3b-i is a measurement and correctness milestone, not an architectural referendum.** Complete Tasks 6–10 and publish all results even when a record variant loses. A failing performance row creates an optimization follow-up with the measured workload, regression size and suspected cost; it does not cancel 3b-ii or restore the object wire as the target. An incorrect or unsafe implementation must not ship, and a performance regression blocks cutover only when the maintainer rules it blocking on Task 10's numbers; resolve a blocking problem before cutover, keeping the existing transport meanwhile.
+
+**Stage 3b-ii implements the definitive format.** Detail it against the measured branch, then switch constructed nodes to eager immutable, kind-specific packed records, preserving structural sharing on `$with`. The five-word generic cell in Task 7 is an initial codec/measurement vehicle, not a final requirement: assess direct per-kind inline scalar/bit/ID fields, inline fixed-size child references, list runs and UTF-8 offsets. Generated Rust attributes and TypeScript offsets remain derived from one layout pass. Parsed nodes are projected directly from Tree-sitter lazily; unchanged parsed subtrees can remain coordinates. No intermediate JS AST is needed to populate records.
+
+**Required measurement extensions:** report native allocator calls/allocated bytes, occupied record bytes versus chunk capacity/slack, JS `heapUsed`, external buffers, native retained memory and RSS; compare object/record storage with equivalent wrapper forms to isolate prototype/closure effects; include parse → inspect → edit → render, native rebuilt render, single and batch read, repeated member access, small trees, deep recursion, shared children, 10,000 builds, snapshot retention, disposal and chunk growth. An external `ArrayBuffer` is zero-copy exposure, not concurrent shared-memory semantics. Check native backing lifetimes under disposal and garbage collection.
+
+**Deliverable boundaries:** distinguish (a) the packed in-process AST representation, which is definitive, from (b) a future stable persisted/interchange file format, which is not promised by this step. Do not describe immutable arena records as stack-resident; fixed-size fields are inline within heap-backed arena chunks. Keep the existing 3a trivia ownership decisions unchanged.
+
 ## Scope and sequencing
 
-`feat/typed-reader` carries the shared arena's steps 1 and 2: the typed reader (`docs/superpowers/plans/2026-10-05-typed-reader.md`, 1a to 1c-ii) and relative coordinates (`docs/superpowers/plans/2026-10-06-relative-coordinates.md`). This plan is step 3 with both trivia tables, a feature of its own on `feat/arena` that starts after that one lands. Its stages are detailed against the code when each starts: 3a and 3b's gate (3b-i) below, 3b past the gate (3b-ii) still an outline.
+`feat/typed-reader` carries the shared arena's steps 1 and 2: the typed reader (`docs/superpowers/plans/2026-10-05-typed-reader.md`, 1a to 1c-ii) and relative coordinates (`docs/superpowers/plans/2026-10-06-relative-coordinates.md`). This plan is step 3 with both trivia tables, a feature of its own on `feat/arena` that starts after that one lands. Its stages are detailed against the code when each starts: 3a and 3b's measured implementation stage (3b-i) below, followed by the definitive-format cutover (3b-ii), still an outline.
 
 | PR, on `feat/arena` | Lands | Gate |
 | --- | --- | --- |
 | **3a** | the parsed-tree trivia table: one token walk that assigns each gap's entries to a node's side, and a native table by (node, side) on `ParsedTree`; a parsed node's `$trivia` reads and writes the table, and the render prints parsed trivia from it; snapshots take their sides from it; the reader's placement, trivia on parsed wrappers, the line-gap query, the client edited set, the query-write refusal and the ir validator lane's trivia carriers go | untouched renders and validation rows unchanged in every task, the trivia-placement census recorded; every corpus extra's owner is its tree-sitter parent, and every extra lands in one side or is counted as in none; an edited render's bytes move only where a ruling moves them |
-| **3b** | the record wire: records in both directions, a parsed node's literal over its record, the derive's object codec and the napi impls gone; built nodes' trivia in their records | records match or beat napi objects on read time, one node per call and every match in one call, and on retained heap per node, and beat them on render decode, with the object wire's numbers re-taken beside the records'; then rendered bytes and validation rows unchanged |
+| **3b** | the definitive packed AST record wire: records in both directions, a parsed node's literal over its record, the derive's object codec and the napi impls gone; built nodes' trivia in their own native table | record and object transport measured like-for-like, optimization regressions recorded and addressed before cutover as warranted; rendered bytes, validation rows, ownership and memory safety unchanged |
 
 ## Global Constraints
 
@@ -80,8 +92,8 @@ Each prototype and measurement the arena steps already hold, and what 3a takes f
      - `4e78426b9`'s `$detach()`, which `$snapshot()` replaces.
    - **Not ported:** `bed56e9db`'s `trace-rt` tool, which replays a named corpus entry. It is ported only if Task 4's debugging needs it.
 5. **Standing record-step context.**
-   - **Ruling 3's gate stands for 3b.** Records must match or beat napi objects on read time and retained heap, and win on render decode. Like for like, records lost the read (4.8/5.0 µs against 4.5/4.3) and held about 1.9 KB more per node.
-   - **The maintainer's eager-built-records option** is to be measured against ruling 5. So nothing in 3a requires document order or contiguous subtree ranges of built records:
+   - **Historical ruling 3 measurements inform 3b.** The initial records lost single-node reads (4.8/5.0 µs versus 4.5/4.3) and held about 1.9 KB more per node. These figures motivate optimization, not an adoption veto; correctness and safety still govern cutover.
+   - **Direct eager immutable built records are the definitive 3b target,** compared with original ruling 5's transitional encoding at render. Nothing in 3a requires document order or contiguous subtree ranges of built records:
      - the table, its written sides and its edited test are a parsed tree's, keyed by descendant index within that tree;
      - a built node's trivia stays on the node until 3b;
      - the render asks a coordinate's tree for its sides, never a built holder.
@@ -453,14 +465,14 @@ Commit the probes and the README. Open the PR into `feat/typed-reader` with its 
 
 ## 3b, the record wire and built nodes' trivia
 
-Detailed against master `591b07885`, where 3a has merged (the trivia table, depth members, inferred options, the format record retired). 3b has two halves, split by the gate on the record step:
+Detailed against master `591b07885`, where 3a has merged (the trivia table, depth members, inferred options, the format record retired). 3b has two halves separated by a measurement and readiness milestone:
 
-- **3b-i, the gate.** It is detailed below, in Tasks 6 to 10. The record wire is built beside today's object wire, in one build, and measured against it. 3b-i ends with the gate's verdict, which goes to the maintainer.
-- **3b-ii, past the gate.** The cutover to records only, eager built records, built nodes' trivia in records, and the name of the typed model. It stays an outline until the maintainer rules on the verdict, and is detailed against the code then.
+- **3b-i, measurement and parity.** Tasks 6–10 implement the record representation beside the temporary object transport, check equivalence, and report comparative performance. Numbers select optimizations, not whether packed AST is adopted.
+- **3b-ii, definitive-format cutover.** Detail this against the measured implementation: direct immutable built records, parsed records, native built trivia and removal of the object codec. Correctness, source fidelity, lifetime and memory safety must pass before cutover.
 
-**Branch.** `feat/records`, cut from master. Each task is a commit series. 3b-i's PR opens with the verdict in its body. If a gate row fails, the branch stops for the maintainer's review: nothing is reverted and nothing merges. Master is merged in when it moves, never rebased.
+**Branch.** `feat/records`, cut from master. Every task is a commit series. The 3b-i PR reports regressions and optimization actions. A performance miss creates an investigation and retest, not an automatic stop or request to reconsider the architecture. Correctness or safety defects block the affected implementation until fixed. Master is merged in when it moves, never rebased.
 
-**Order.** Keyword presence as a plain `bool` lands in master first, as its own PR, and `feat/records` is cut after it, because Task 7 stamps each presence slot as one bit. Then Task 6 → Task 7 → Task 8 → Task 9 → Task 10. Task 6 needs no engine change, and it can stop the step on its own. If no form of the view holds the heap the gate asks for, Tasks 7 to 10 wait for the maintainer.
+**Order.** Keyword presence as a plain `bool` lands in master first, as its own PR, and `feat/records` is cut after it, because Task 7 stamps each presence slot as one bit. Then Task 6 → Task 7 → Task 8 → Task 9 → Task 10. Task 6 selects and profiles a viable wrapper form; even if its numbers trail objects, proceed with the layout, codec and engine comparisons while investigating the regression.
 
 ### Prior art reused
 
@@ -471,7 +483,7 @@ Each record prototype and measuring tool the arena steps already hold, with its 
    - **Measured against:** its generic encoder (`encode-proto.mts`, 51 / 45 / 56 ns a slot value over the parity fixtures). This is the "fields encoded at render" form that Task 10 times beside eager built records (item 5).
    - **Reused by Task 6:** the construction probes' method (one literal form against another, the same members, heap and time per node).
 2. **The typed-transport and derive prototype**, `…/transport/proto/` (`probe/`, `slot-derive/`, `synthetic/`).
-   - **Reused:** the record cell (`rt.rs`: a five-word cell of tag, kind and three payload words; a list as an offset and length into a run outside the record) is the starting layout that Task 7 states as codegen facts. The probe's three forms with identical members, checked slot by slot before timing, are Task 6's harness.
+   - **Reused as a prototype:** the record cell (`rt.rs`: five words for tag, kind and payload) provides a measurement and correctness baseline. The canonical immutable layout need not allocate five words per scalar, choice or reference; Task 7 derives kind-specific inline layouts.
    - **Superseded:** the probe's macro (`slot-derive`). The real derive (`sittir-transport-macros`) already expands the reader, the opt-in debug diagnostic and the object codec from the generated declarations, and Task 8 adds the record codec to it.
    - **Measured against:** the probe's numbers, the spec's § The wire table. Task 10 re-takes them in the engine.
    - **Reused unchanged:** `synthetic/` and `time-synthetic.sh`, the compile-cost probe re-run for Verification 12 at the cutover.
@@ -491,11 +503,10 @@ Each record prototype and measuring tool the arena steps already hold, with its 
 
    It differs from master in two places, and both are superseded. A keyword's presence is a plain `bool` (the maintainer, 2026-10-12, which replaces master's `Option<bool>` before 3b starts), not an `Option` of the one-literal choice. Inner gaps are no longer an attribute: 3a's ruling 9 removed the named inner gaps, and `inner` is a childless node's side. Nothing in the patch is folded into the spec.
 5. **The record-layout ruling** (the maintainer, 2026-10-10). Codegen is the single source of each slot's word offset and width, stamped into the Rust attributes (`words = …`, `word = …`) and into the generated TypeScript accessors as literal offsets. The derive checks fit and derives nothing, and there is no runtime layout table. This is Task 7.
-6. **The eager-built-records option** (the relative-coordinates spec's ruling 6 and its § The record wire, which supersede the shared-arena spec's ruling 5). Built nodes are written into records as they are built, their members read and write the records directly, and the object encoder is retired. Task 10 measures it against fields encoded at render (item 1):
+6. **Direct eager immutable built records are the target** (the relative-coordinates spec's ruling 6 and the 2026-10-16 definitive-format decision). Builders write records as they construct nodes; accessors read their immutable storage and `$with` produces new records with structural sharing. The object encoder is retired at cutover. Task 10 compares this against transitional object fields encoded at render (item 1):
    - build cost per node and heap per built node;
    - render decode;
    - buffer growth, and whether compaction is needed;
-   - an in-place setter against a copying one on a child two parents share;
    - reclaiming records nothing names.
 
    3b-ii's outline holds the semantics the maintainer then rules on.
@@ -520,8 +531,8 @@ Each record prototype and measuring tool the arena steps already hold, with its 
   The glossary entry for `shareIdenticalChoices` lists the three facts.
 - **Match-all in the engine is not one call.** `$descendants` returns a JSON batch of coordinates (`engine.descendants`), and each match is then read by its own `engine.read` (`packages/common/src/engine.ts`, `tree.query.descendants` and `readAt`). The probe's "every match in one call" has no engine counterpart on the object wire. Task 8 adds one for both wires (ruling 2).
 - **A transport's `$_layout` is wire too.** `TransportLayout` crosses with every node: `edges`, `gap`, `flank`, `at`, `span`, `sides`, `changed`, `units`, and, on built nodes, `trivia`. The probe had none of it. The record layout must place it, which Task 7 does as a side record.
-- **Built-node trivia today** is written by `setTriviaData` (`packages/common/src/utils.ts`, from `rebuilt` and the trivia writer `write`). It crosses as `TransportLayout::trivia` (`TransportTrivia`, `TriviaEntry`). 3b-ii moves it into records.
-- **The shared-arena spec's § What the JavaScript wrap keeps** still says a built node holds fields encoded at render (its ruling 5). The ruling's own note records the supersession, and 3b-ii updates the section when the maintainer rules on the eager option.
+- **Built-node trivia today** is written by `setTriviaData` (`packages/common/src/utils.ts`, from `rebuilt` and the trivia writer `write`). It crosses as `TransportLayout::trivia` (`TransportTrivia`, `TriviaEntry`). 3b-ii moves it into the built nodes' native trivia table.
+- **The shared-arena spec's § What the JavaScript wrap keeps** now defines eager immutable built records after cutover. Fields encoded at render are strictly transitional object-wire behavior, not a pending option.
 
 ### Rulings (the maintainer, 2026-10-12; ruling 1.1 revised the same day)
 
@@ -536,9 +547,9 @@ Each record prototype and measuring tool the arena steps already hold, with its 
    3. **No JavaScript-side interning of `$text`.** Ruling 1.1 creates no napi strings, so there is nothing to intern unless Task 10's numbers show otherwise.
 
    Task 10 still times the alternatives as reference rows: for parsed text, UTF-16 offsets slicing a JavaScript copy of the source, and a native call on first access cached on the wrapper; for built text, a JavaScript array of strings that records index, crossing at each render. The designs are the ones above.
-2. **The match-all row: both wires get a batch read** (`read_many(tree, indexes, depth, wire)`). The object wire returns an array of transports, and the record wire one buffer range. The gate row compares those, as the probe did, and today's path (coordinates, then a read each) is timed beside them.
-3. **Built-node storage: both are measured.** Eager built records (prior art 6), on a generated builder for rust `function_item` and its slot kinds, beside today's built objects encoded at render by the 2026-10-01 encoder (prior art 1). The rows are build time and heap per built node, render decode, and the native call per slot value over the parity fixtures.
-4. **A failed gate row stays unmerged** on `feat/records`, with the verdict, for the maintainer. Nothing is reverted.
+2. **The match-all row: both wires get a batch read** (`read_many(tree, indexes, depth, wire)`). The object wire returns an array of transports, and the record wire one buffer range. The measurement row compares those, as the probe did, and today's path (coordinates, then a read each) is timed beside them.
+3. **Built-node storage: both implementations are benchmarked, one is the destination.** A generated eager immutable record builder for rust `function_item` and its slot kinds is compared with today's transitional built objects encoded at render by the 2026-10-01 encoder (prior art 1). Compare build cost, retained memory, native render and sharing; benchmark failure drives optimization, not continued object storage.
+4. **A failed performance row is documented and optimized,** not treated as an adoption veto. Correctness, lifetime and memory-safety failures block the affected implementation/cutover until resolved. Keep the record of all measurements.
 
 ### The source copy
 
@@ -561,7 +572,7 @@ Shared by Tasks 7 to 10. These are proposals that Task 7 fixes as codegen facts.
   - A record's address is (chunk, word): one `f64`-safe number, `chunk * 2^20 + word`.
 - **The source bytes** (ruling 1.1). A tree's UTF-8 source, held natively, crosses to JavaScript as one external `ArrayBuffer` over that memory, finalized with the tree. It is made on the first `$text` or source-bytes access (`TreeHandle.bytes()`), never at parse, and never copied. `TreeHandle.text(span)` decodes a byte span from it.
 - **A record.** Word 0 is the kind's grammar id and word 1 the side record's address (0 for none). Next come the kind's presence words, if it has presence slots, and then each other slot's cell at its stamped `word`.
-  - A parsed record's side record carries `at` (tree, index, end) and the layout facts the reader stamps. A built record's carries `edges`, `gap`, `flank`, `sides`, `changed` and `units`, and, from 3b-ii, its trivia.
+  - A parsed record's side record carries `at` (tree, index, end) and the layout facts the reader stamps. A built record's carries `edges`, `gap`, `flank`, `sides`, `changed` and `units`. A built node's trivia is not in its records: from 3b-ii it is in the built nodes' native trivia table.
   - The record names its tree once, on the arena, so a parsed cell names no tree.
 - **A cell.** Its width is stamped per slot by codegen, from the widest form the slot admits: five for a coordinate, as the probe's cell (tag, kind, index, start, end), and four for a parsed leaf (tag, kind, byte start and end, by ruling 1.1) or a built leaf. Tags:
   - 0, absent;
@@ -615,7 +626,7 @@ It measures each form on both inputs, three rounds alternating, idle-gated. Each
 - `$with` and `$trivia` built with the node's literal, against built on first access by a method that caches them on the node (the closures stay in a literal, as the rulings require);
 - keys in one fixed order across kinds, so views of one kind share a hidden class.
 
-**Done when:** a form holds no more heap per node than the object form, with the same members, and reads no slower. If none does, the step stops here: the table and the closest form go to the maintainer.
+**Done when:** candidate forms are checked for equivalent semantics, heap and read times are recorded, and the selected wrapper plus regressions are documented. If none beats objects, proceed to evaluate the layout and codec while tracking wrapper optimizations; this is not an architecture stop.
 
 **Result (done; the maintainer, 2026-10-12).** The view's extra heap came from accessors written as arrows that closed over its buffers. The view is V2: accessors as methods over one own number, the record's address. It holds less than the object form (5 185 / 5 174 B against 5 637 / 5 578 B a node), reads faster in both rows, and keeps every node in fast mode. It needs no ruling or API change.
 
@@ -681,7 +692,7 @@ raw-string routing metadata where the type alone cannot express its parser behav
 4. The record-backed wraps are tested against today's: every corpus node's accessors, kinds and `$text` are equal on both wires (Review Focus 3). A view held across arena growth (Review Focus 2) and a disposed tree's view (Review Focus 4) are pinned.
 5. For ruling 3, a generated eager builder for rust `function_item` and its slot kinds writes records as it builds. It is measurement code, in the probe folder, not in the grammar package.
 
-### Task 10: The gate, measured in the engine
+### Task 10: Record-wire measurement and cutover-readiness evidence
 
 **Files:** create `docs/superpowers/probes/2026-10-12-record-wire/` with its `README.md`, and flags on the transport scripts (prior art 3).
 
@@ -693,24 +704,23 @@ raw-string routing metadata where the type alone cannot express its parser behav
 - **the rebuilt render's native call per slot value** over the parity fixtures (`measure-rebuilt.mts`, `layout-rounds.sh`);
 - **`$text` by the ruled design, with the alternatives as reference rows** (ruling 1): time per access, and heap per leaf over a whole-tree walk, with and without a decoded string cached on the wrapper;
 - **heap per tree with and without a text access:** a parse read for structure only (no `$text`, so no source buffer) against the same parse after one `$text`, beside today's tree with its JavaScript source copy;
-- **built nodes, eager records and encoded at render** (ruling 3): build time and heap per node, decode, buffer growth over 10 000 builds, and the in-place against copying setter on a shared child.
+- **built nodes, eager immutable records against transitional encode-at-render objects** (ruling 3): build time and full retained memory per node, decode, chunk growth over 10 000 builds, and an immutable `$with` of a child two parents share: verify that neither parent changes when the child is updated through the other.
 
-**The verdict.** Each gate row, records against objects, is marked met or not met with its numbers. The README states the verdict. The branch's PR opens with it, and brainstorm takes it to the maintainer. A row that is not met stops the step with the branch intact.
+**The evidence.** Report each object/record comparison, absolute values and deltas. Separate performance misses (optimize and retest) from source-fidelity, correctness, ownership and memory-safety failures (block cutover). Include allocation counts, record capacity/slack, native/external memory and RSS. The PR records findings without reopening the packed-format decision.
 
-## Outline: 3b-ii, past the gate
+## Outline: 3b-ii, definitive packed AST cutover
 
-Detailed against master once the maintainer rules on Task 10's verdict.
+Detail against the measured implementation after Task 10 and the resulting optimization work. The definitive-format decision is settled; implementation choices and safe cutover readiness remain.
 
 - **The cutover.** Records become the only wire.
   - A parsed node's literal holds its record's address (the shared-arena spec's ruling 4).
   - The render functions read through a view over the record, expanded by the derive from the same declaration, and no record is decoded into a struct. Prepare resolves into side arrays keyed by record address, never into records.
   - The derive's object codec, the `#[napi(object)]` attributes and every `FromNapiValue` and `ToNapiValue` impl go, along with `toTransportData` and the napi decode of `SlotValue`.
   - Verification 12 (each crate's compile time, peak memory, binary size and `transport.rs` lines) and Verification 13 (type-check time) are re-taken before and after.
-- **Eager built records,** if the maintainer takes them (prior art 6). Builders append records, children before parents. Members read and write records. `$with` appends a record naming the unchanged children. The two semantics the relative-coordinates spec leaves to this step:
-  - a setter on a child two parents share writes in place or appends a copy;
-  - records nothing names are reclaimed by chunk generation or compaction.
-- **Built nodes' trivia in records** (the trivia-table spec's § 7.1).
-  - A built node's sides move from the node into its side record and travel with it. A write to a built node's side lands in its record, held or not. A built holder keeps nothing for its children. A parsed node placed in a built holder keeps its sides in its tree's table. The render reads trivia from native storage only.
+- **Eager immutable built records are required.** Builders append kind-specific packed records; accessors read them, and updates publish new records. `$with` reuses unchanged child addresses, including shared children, without mutating the original record. There is no in-place node setter option. Reclaim unreferenced records/chunks only while preserving the lifetime of all live snapshots and views.
+- **Parsed units are records.** A parsed unit (a variant with no fields, such as `;`) reads as a reference to its record, not a bare kind-id number, so it has identity: alignment matches units by record as it matches read nodes, and the `is` guards classify them.
+- **Built nodes' trivia in their own native table** (the trivia-table spec's § 7.1).
+  - A built node's sides move from the node into the built nodes' trivia table, keyed by record address and side, and travel with it. Writing a side updates the table; the node's record stays immutable, and no record that shares it changes. A built holder keeps nothing for its children. A parsed node placed in a built holder keeps its sides in its tree's table. The render reads trivia from native storage only.
   - **Retires:** `$_layout.trivia`, `setTriviaData` and the trivia writer's client store; `TransportLayout::trivia`, `TransportTrivia` and `TriviaEntry` with their napi decode.
 - **A native file-based parse** (the maintainer, 2026-10-12). `parseFile(path)`, only for grammars that declare file types: native code reads the file, JavaScript gets records, and text decodes lazily from the shared source bytes, so the source never exists as a JavaScript string. Its API shape (the name, options, errors for an unreadable file, and encoding and BOM handling) is designed here and goes to the maintainer before code.
 - **The typed model's name** (prior art 7). Once the structs are views over records or stay structs, they are renamed across the attribute, `ReadTransport`, `TransportLayout`, the macro crate, the emitters, every generated `…Transport`, and the glossary and specs, in one commit series with no other change.
